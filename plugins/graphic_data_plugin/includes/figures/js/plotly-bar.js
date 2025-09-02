@@ -521,7 +521,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
           logFormFieldValues();
       });
 
-  for (let i = 1; i < 7; i++){
+  for (let i = 1; i < 15; i++){
       let selectNumberBarsOption = document.createElement("option");
       selectNumberBarsOption.value = i;
       selectNumberBarsOption.innerHTML = i; 
