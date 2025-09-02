@@ -606,7 +606,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
           logFormFieldValues();
       });
 
-  for (let i = 1; i < 11; i++){
+  for (let i = 1; i < 15; i++){
       let selectNumberLinesOption = document.createElement("option");
       selectNumberLinesOption.value = i;
       selectNumberLinesOption.innerHTML = i; 
