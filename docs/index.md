@@ -18,11 +18,11 @@ Content Organization Hierarchy: **Instance Type → Instances → Scenes → Mod
 ## Quick Start
 
 1. **[Installation]({{ site.baseurl }}/installation)** - How to install Graphic Data on your WordPress site.
-2. **[InstanceTypes]({{ site.baseurl }}/instance-types)** - How to create "Instance Types"
+2. **[Instance Types]({{ site.baseurl }}/instance-types)** - How to create "Instance Types"
 3. **[Instances]({{ site.baseurl }}/instances)** - How to create "Instances"
-4. **[CreatingSVGFiles]({{ site.baseurl }}/creating-svg-files)** - How to create the .svg files for "Scenes"
-5. **[Scenes]({{ site.baseurl }}/scenes)** - How to create "Scenes"
+4. **[Scenes]({{ site.baseurl }}/scenes)** - How to create "Scenes"
+5. **[Images]({{ site.baseurl }}/creating_svg_files)** - How to create the .svg files for "Scenes"
 6. **[Modals]({{ site.baseurl }}/modals)** - How to create "Modals"
 7. **[Figures]({{ site.baseurl }}/figures)** - How to create "Figures"
-8. **[FigureTypes]({{ site.baseurl }}/figure-types)** - How to create figures with "Internal/External Images" or "Code"
-9. **[InteractiveFigures]({{ site.baseurl }}/figures-interactive)** - How to create "Interactive Figures"
+8. **[Ineractive figures]({{ site.baseurl }}/figures-interactive)** - How to create "Interactive Figures"
+9. **[Non-interactive figures]({{ site.baseurl }}/figure-types)** - How to create figure with "Internal/External Images & Code"

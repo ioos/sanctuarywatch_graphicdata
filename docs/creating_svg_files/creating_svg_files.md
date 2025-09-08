@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Scene SVG Creation
-permalink: /creating-svg-files/
+title: Creating the images 
+permalink: /creating_svg_files/
 ---
 
 # Creating an .svg file for use in Graphic Data #
