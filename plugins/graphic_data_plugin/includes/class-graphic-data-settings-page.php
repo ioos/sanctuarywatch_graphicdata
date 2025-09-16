@@ -19,6 +19,19 @@ class Graphic_Data_Settings_Page {
         );
     }
 
+    // Register settings-plotly-timeseries-line.js script to display the script.
+
+
+    function enqueue_admin_interactive_line_default_styles() {
+        wp_enqueue_script(
+                'load_default_line_styles', // Handle.
+                plugin_dir_url(__FILE__) . '../includes/figures/js/settings-plotly-timeseries-line.js',
+                [], // Dependencies (e.g., array('jquery')).
+                null, // Version.
+                true // Load in footer.
+            );
+    }
+
     function webcr_settings_init() {
         // Register a new settings group
         register_setting('theme_settings_group', 'webcr_settings');
@@ -245,24 +258,24 @@ class Graphic_Data_Settings_Page {
         wp_editor(wp_kses_post($value), $editor_id, $settings);
         // Inject inline JS to hide the whole <tr> row on load
         ?>
-        <script>
+        <!-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const row = document.getElementById("interactive_line_arguments_editor").closest("tr");
             if (row) {
                 row.style.display = "none";
             }
         });
-        </script>
+        </script> -->
         <?php
     }
 
 
     function interactive_line_defaults_callback() {
         $options = get_option('webcr_settings');
-        $interactive_line_arguments_value   = isset($options['interactive_line_arguments']) ? $options['interactive_line_arguments'] : '';
+        $interactive_line_arguments_value = isset($options['interactive_line_arguments']) ? $options['interactive_line_arguments'] : '';
         $value   = isset($options['interactive_line_defaults']) ? $options['interactive_line_defaults'] : '';
-         
         ?>
+        <div id="interactive_line_arguments_value" data-value="<?php echo $interactive_line_arguments_value; ?>"></div>
         <details>
         <summary style="cursor:pointer; font-weight:bold;">
             Expand/Collapse Line Graph (Time Series) Default Settings
@@ -896,7 +909,9 @@ class Graphic_Data_Settings_Page {
         })();
         </script>
         <?php
+        
     }
+    
 
     /**
      * Callback function for rendering the Google Tags Container ID field in the settings page.
@@ -1010,7 +1025,7 @@ class Graphic_Data_Settings_Page {
                         console.error("Error fetching the JSON file:", error);
                     });
             });
-        </script>
+        </script> -->
         <?php
     }
 

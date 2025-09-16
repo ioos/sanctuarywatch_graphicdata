@@ -1,4 +1,5 @@
 
+
 // ---- globals used across your helpers
 let jsonColumns = {};
 let fieldValueSaved;
@@ -7,9 +8,6 @@ let interactive_line_arguments_value = document.getElementById("interactive_line
 
 // ====== Your functions (lightly tidied/safe-guarded) ======
 async function loadJson(targetContainer) {
-
-    const rootURL = window.location.origin;
-    const idEl = document.getElementsByName("post_ID")[0];
 
     // Only build GUI if we actually have columns
     const lengthJsonColumns = Object.keys(jsonColumns).length;
@@ -38,7 +36,8 @@ async function loadJson(targetContainer) {
 
 
         //Pull saved interactive args (if any)
-        // const iaEl = <?php echo json_encode($interactive_line_arguments_value); ?>; 
+        // const iaEl = <?php echo json_encode($interactive_line_arguments_value); ?>;
+        const iaEl = document.getElementById("interactive_line_arguments_value").dataset.value;
         const interactive_arguments = iaEl ? iaEl : "";
 
 
@@ -146,6 +145,7 @@ function logFormFieldValues() {
  */
 function fillFormFieldValues(elementID){
     // const interactiveFields = <?php echo json_encode($interactive_line_arguments_value); ?>;
+    const interactiveFields = document.getElementById("interactive_line_arguments_value").dataset.value;
     console.log('interactiveFields', interactiveFields);
     if (interactiveFields != ""  && interactiveFields != null) {
         const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));

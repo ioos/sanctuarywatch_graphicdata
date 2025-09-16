@@ -230,7 +230,8 @@ class Webcr {
 		$this->loader->add_action( 'admin_init', $plugin_admin_settings_page, 'webcr_settings_init' ); 
         $plugin = plugin_basename(__FILE__); //Used in the next line
         $this->loader->add_filter("plugin_action_links_$plugin", $plugin_admin_settings_page, 'add_settings_link');
-		$this->loader->add_action( 'rest_api_init', $plugin_admin_settings_page, 'webcr_register_rest_settings'); 
+		$this->loader->add_action( 'rest_api_init', $plugin_admin_settings_page, 'webcr_register_rest_settings');
+		//$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_line_default_styles');
 
 		// Load class and functions associated with Instance Types
 		$plugin_admin_instance_type = new Webcr_Instance_Type ( $this->get_plugin_name(), $this->get_version() );		

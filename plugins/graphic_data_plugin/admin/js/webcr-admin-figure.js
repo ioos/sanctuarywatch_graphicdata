@@ -18,7 +18,7 @@ function run_webcr_admin_figures() {
 
 
     // Hide the parent element of the "figure_interactive_arguments" field
-    document.getElementsByName("figure_interactive_arguments")[0].parentElement.parentElement.style.display="none";
+    //document.getElementsByName("figure_interactive_arguments")[0].parentElement.parentElement.style.display="none";
 
     /**
      * Updates the figure scene, modal, and tab options dynamically when the figure instance changes.
