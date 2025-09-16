@@ -5,7 +5,6 @@
  */
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-utility.php';
 
-
 class Webcr_Figure {
 
     /**
@@ -27,10 +26,13 @@ class Webcr_Figure {
     }
 
     // Register AJAX action for handling interactive graph data retrieval
+    // Register default_interactive_arguments from the plugin settings page
     public function enqueue_admin_interactive_graph_script($hook) {
         if ($hook !== 'post.php' && $hook !== 'post-new.php') return;
         $current_post_type = get_post_type();
         if ($current_post_type == "figure"){
+
+            //AJAX action for handling interactive graph data retrieval
             wp_enqueue_script(
                 'webcr-admin-figure',
                 plugin_dir_url(__FILE__) . '../admin/js/webcr-admin-figure.js',
@@ -38,13 +40,24 @@ class Webcr_Figure {
                 null,
                 true
             );
-
             wp_localize_script('webcr-admin-figure', 'wpApiSettings', [
                 'nonce' => wp_create_nonce('wp_rest'),
                 'root'  => esc_url_raw(rest_url()),
             ]);
+
+            
+            // default_interactive_arguments from graphic_data_plugin/includes/class-graphic-data-settings-page.php
+            $settings = get_option('webcr_settings');
+            $default_interactive_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
+            wp_localize_script(
+                'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
+                'webcrDefaults',           // global object name
+                ['interactive_line_arguments' => $default_interactive_arguments]
+            );
         }
     }
+
+
 
     /**
 	 * Set columns in admin screen for Figure custom content type.
@@ -74,6 +87,7 @@ class Webcr_Figure {
 	 * @since    1.0.0
 	 */
     public function custom_figure_column( $column, $post_id ) {  
+
 
         $modal_id = get_post_meta( $post_id, 'figure_modal', true ); 
 
@@ -561,14 +575,14 @@ class Webcr_Figure {
                     'type'           => 'select',
                     'title'          => 'Icon*',
                     'options'        => $modal_icons, 
-                    'description' => 'What icon is this figure part of?',
+                    'description' => 'What modal is this figure part of?',
                 ),
                 array(
                     'id'             => 'figure_tab',
                     'type'           => 'select',
                     'title'          => 'Tab*',
                     'options'        => $modal_tabs,
-                    'description' => 'What modal tab is this figure part of?',
+                    'description' => 'What tab in the modal is this figure part of?',
                 ),
                 array(
                     'id'      => 'figure_order',
