@@ -42,6 +42,8 @@ function loadExternalScript(url) {
         document.head.appendChild(script);
     });
 }
+
+
  
 /**
  * Logs the values of form fields (inputs, selects, etc.) associated with
@@ -62,11 +64,13 @@ function logFormFieldValues() {
     const allFields = document.getElementsByName("plotFields");
     let fieldValues = [];
     allFields.forEach((uniqueField) => {
-        console.log([uniqueField.id, uniqueField.value]);
+        //console.log([uniqueField.id, uniqueField.value]);
         fieldValues.push([uniqueField.id, uniqueField.value]);
     });
+    //console.log('logformfieldvalues', JSON.stringify(fieldValues));
     document.getElementsByName("figure_interactive_arguments")[0].value = JSON.stringify(fieldValues); 
 }
+
 
 /**
  * Fills in the values of form fields associated with JavaScript figure
@@ -86,6 +90,7 @@ function logFormFieldValues() {
  */
 function fillFormFieldValues(elementID){
     const interactiveFields = document.getElementsByName("figure_interactive_arguments")[0].value;
+
     if (interactiveFields != ""  && interactiveFields != null) {
         const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
 

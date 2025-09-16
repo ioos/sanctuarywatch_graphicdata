@@ -58,6 +58,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
         const startDate = new Date(start).toLocaleDateString();
         const endDate = new Date(end).toLocaleDateString();     
         const fillColor = (figureArguments['EvaluationPeriodFillColor'] || '#999') + '15';
+        const EvalDisplayText = figureArguments['EvaluationPeriodText'];
 
         overlays.push({
             x: [start, end, end, start],
@@ -67,11 +68,11 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
             type: 'scatter',
             mode: 'lines',
             line: { color: fillColor, width: 0 },
-            hoverinfo: `Evaluation Period`,
+            // hoverinfo: EvalDisplayText,
             // hovertemplate:
             // `${startDate}<br>` +
             // `${endDate}<extra></extra>`,
-            name: `Evaluation Period`,
+            name: EvalDisplayText,
             showlegend: true,
             yaxis: 'y',
             xaxis: 'x'
@@ -120,7 +121,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
         }
         
     }
-    Plotly.react(plotDiv, [...mainDataTraces, ...overlays], layout);
+    Plotly.react(plotDiv, [...overlays, ...mainDataTraces], layout);
+    //Plotly.react(plotDiv, [...mainDataTraces, ...overlays], layout);
 }
 
 
@@ -228,6 +230,30 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
             let allLinesPlotly = [];
             let shapesForLayout = [];
 
+
+            //Shows the grid lines if it is set to 'on' in the figure arguments
+
+            const showGrid = figureArguments['showGrid'];
+            if (showGrid === 'on') {
+                var showGridBool = true;     
+            } else {
+                var showGridBool = false;     
+            }
+                
+
+            //Shows the graph ticks on the outside if it is set to 'on' in the figure arguments
+            const graphTicks = figureArguments['graphTicks'];
+            if (graphTicks === 'on') {
+                var graphTickModeBool = '';
+                var graphTickPositionBool = '';       
+            } else {
+                var graphTickModeBool = 'auto';
+                var graphTickPositionBool = 'outside';    
+            }
+            console.log('graphTicks', graphTicks);            
+            console.log('graphTickModeBool', graphTickModeBool);
+            console.log('graphTickPositionBool', graphTickPositionBool);
+
             // Plotly figure production logic
             for (let i = 1; i <= figureArguments['NumberOfLines']; i++) {
                 const targetLineColumn = 'Line' + i;
@@ -255,7 +281,6 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                 } else {
                     var showLegendBool = false;     
                 }
-
 
                 //Connects gaps in line where there is missing data
                 const connectGapsOpt = figureArguments[targetLineColumn + 'ConnectGaps'] === 'on';     
@@ -462,7 +487,10 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                     },
                     linecolor: 'black', 
                     linewidth: 1,
-                    range: [figureArguments['XAxisLowBound'], figureArguments['XAxisHighBound']]                      
+                    range: [figureArguments['XAxisLowBound'], figureArguments['XAxisHighBound']],
+                    tickmode: graphTickModeBool,
+                    ticks: graphTickPositionBool,
+                    showgrid: showGridBool,                 
                 },
                 yaxis: {
                     title: {
@@ -470,7 +498,10 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                     },
                     linecolor: 'black', 
                     linewidth: 1,
-                    range: [figureArguments['YAxisLowBound'], figureArguments['YAxisHighBound']]     
+                    range: [figureArguments['YAxisLowBound'], figureArguments['YAxisHighBound']],
+                    tickmode: graphTickModeBool,
+                    ticks: graphTickPositionBool,
+                    showgrid: showGridBool, 
                 },
                 legend: {
                     orientation: 'h',       // horizontal layout
@@ -503,6 +534,8 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
             const plotDiv = document.getElementById(plotlyDivID);         
             plotDiv.style.setProperty("width", "100%", "important");
             plotDiv.style.setProperty("max-width", "none", "important");
+            //plotDiv.style.border = "1px solid black";
+            //plotDiv.style.display = "inline-block";
                          
             // Create the plot with all lines
             // await Plotly.newPlot(plotlyDivID, allLinesPlotly, layout, config);
@@ -520,7 +553,118 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
     }
 }
 
+
+function loadDefaultInteractiveLineArguments (jsonColumns) {
+    // ---------- helpers ----------
+    function safeParseJSON(s) { try { return JSON.parse(s); } catch { return null; } }
+
+    function pairsToObject(pairs) {
+        const o = {};
+        if (Array.isArray(pairs)) {
+        for (const p of pairs) {
+            if (Array.isArray(p) && p.length >= 2) o[String(p[0])] = String(p[1] ?? "");
+        }
+        }
+        return o;
+    }
+    function kvStringToObject(str) {
+        const o = {};
+        if (!str) return o;
+        for (const part of str.split(/[;,]/)) {
+        const [k, v] = part.split(/[:=]/).map(s => (s || "").trim());
+        if (k) o[k] = v ?? "";
+        }
+        return o;
+    }
+    function toObjectFlexible(s) {
+        if (!s) return {};
+        const asJSON = safeParseJSON(s);
+        if (asJSON && typeof asJSON === "object") {
+        return Array.isArray(asJSON) ? pairsToObject(asJSON) : asJSON;
+        }
+        return kvStringToObject(s);
+    }
+    function toPairsFlexible(s) {
+        const asJSON = safeParseJSON(s);
+        if (Array.isArray(asJSON)) return asJSON;
+        const obj = toObjectFlexible(s);
+        return Object.entries(obj).map(([k, v]) => [k, v]);
+    }
+    // preserve original order from currentPairs; append unseen keys at the end
+    function objectToPairsPreserveOrder(obj, currentPairs) {
+        const seen = new Set();
+        const out = [];
+        for (const [k] of currentPairs) {
+        if (!seen.has(k) && k in obj) {
+            out.push([k, String(obj[k] ?? "")]);
+            seen.add(k);
+        }
+        }
+        // append any remaining keys (e.g., required keys not in original)
+        for (const k of Object.keys(obj)) {
+        if (!seen.has(k)) out.push([k, String(obj[k] ?? "")]);
+        }
+        return out;
+    }
+
+    // ---------- main ----------
+    const field = document.getElementsByName("figure_interactive_arguments")[0];
+    if (!field) return;
+
+    const currentStr  = field.value || "";
+    const defaultsStr = (typeof webcrDefaults !== "undefined" && webcrDefaults.interactive_line_arguments)
+                            ? webcrDefaults.interactive_line_arguments : "";
+
+    // Parse both to objects and keep original pair order from current
+    const currentPairs   = toPairsFlexible(currentStr);
+    const currentObj     = toObjectFlexible(currentStr);
+    const defaultsObj    = toObjectFlexible(defaultsStr);
+
+    // How many lines should be considered?
+    const numEl = document.getElementById("NumberOfLines");
+    const numberOfLines = numEl && numEl.value ? parseInt(numEl.value, 10) : 0;
+    if (numberOfLines > 0) currentObj.NumberOfLines = String(numberOfLines);
+
+    // Overwrite ONLY keys that:
+    //  - start with Line1..Line{N}, AND
+    //  - already exist in currentObj, AND
+    //  - also exist in defaultsObj
+    if (numberOfLines > 0) {
+        const linePrefixes = Array.from({ length: numberOfLines }, (_, i) => `Line${i + 1}`);
+        for (const key of Object.keys(currentObj)) {
+        const isWithinLines = linePrefixes.some(prefix => key.startsWith(prefix));
+        if (isWithinLines && (key in defaultsObj)) {
+            currentObj[key] = defaultsObj[key];
+        }
+        }
+    }
+
+    // Ensure/overwrite these non-line keys regardless of line count
+    currentObj.showGrid    = (defaultsObj.showGrid    ?? "on");
+    currentObj.graphTicks  = (defaultsObj.graphTicks  ?? "on");
+    currentObj.XAxisFormat = (defaultsObj.XAxisFormat ?? "YYYY");
+
+    // Convert back to array-of-pairs, preserving the original order from currentPairs
+    const mergedPairs = objectToPairsPreserveOrder(currentObj, currentPairs);
+
+    // Write back EXACTLY as array-of-pairs JSON
+    let mergedPairs_string = JSON.stringify(mergedPairs);
+
+    // console.log('interactive_arguments', currentStr);
+    // console.log('default_interactive_arguments', defaultsStr);
+    // console.log('mergedPairs_string', mergedPairs_string);
+
+    document.getElementsByName("figure_interactive_arguments")[0].value = mergedPairs_string;
+
+    displayLineFields(numberOfLines, jsonColumns, mergedPairs_string);
+
+    return;
+    
+}
+
+
 function plotlyLineParameterFields(jsonColumns, interactive_arguments){
+
 
   let newDiv = document.createElement("div");
   newDiv.id = 'secondaryGraphFields';
@@ -529,6 +673,49 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   let newRow;
   let newColumn1;
   let newColumn2;
+
+
+  //Add checkboxes for showgrid and graphTicks
+    const features = ["showGrid", "graphTicks"];
+    const featureNames = ["Show X&Y Lines on Grid", "Remove Outside Graph Ticks"];
+    for (let i = 0; i < features.length; i++) {
+        const feature = features[i];
+        const featureName = featureNames[i];
+
+        let newRow = document.createElement("div");
+        newRow.classList.add("row", "fieldPadding");
+
+        let newColumn1 = document.createElement("div");
+        newColumn1.classList.add("col-3");
+        let newColumn2 = document.createElement("div");
+        newColumn2.classList.add("col");
+
+        let label = document.createElement("label");
+        label.for = feature;
+        label.innerHTML = `${featureName}`;
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = feature;
+        checkbox.name = "plotFields";
+
+        let fieldValueSaved = fillFormFieldValues(checkbox.id, interactive_arguments);
+        checkbox.value = fieldValueSaved === 'on' ? 'on' : "";
+        checkbox.checked = fieldValueSaved === 'on';
+
+        // Toggle visibility dynamically
+        checkbox.addEventListener('change', function () {
+            checkbox.value = checkbox.checked ? 'on' : "";
+            logFormFieldValues();
+        });
+
+        newColumn1.appendChild(label);
+        newColumn2.appendChild(checkbox);
+        newRow.append(newColumn1, newColumn2);
+        newDiv.append(newRow);
+
+        newRow.style.display = "none";
+        
+    }
 
   // Create input fields for X and Y Axis Titles
   const axisTitleArray = ["X", "Y"];
@@ -628,6 +815,8 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   newRow.append(newColumn1, newColumn2);
   newDiv.append(newRow);
 
+
+  //X Axis Date Format
   let labelSelectXAxisFormat = document.createElement("label");
   labelSelectXAxisFormat.for = "XAxisFormat";
   labelSelectXAxisFormat.innerHTML = "X Axis Date Format";
@@ -686,11 +875,6 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
   if (numLines > 0) {
       let newDiv = document.createElement("div");
       newDiv.id = "assignColumnsToPlot";
-
-      let fieldLabels = [["XAxis", "X Axis Column"]];
-      for (let i = 1; i <= numLines; i++){
-          fieldLabels.push(["Line" + i, "Line " + i + " Column"]);
-      }
 
       //"EvaluationPeriod" & "EventMarkers"
       const features = ["EvaluationPeriod", "EventMarkers"];
@@ -820,7 +1004,8 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
                 const { label: labelStartDate, input: StartDateValues } = createDatefield(`Start Date`,  feature + "StartDate");
                 const { label: labelEndDate, input: EndDateValues } = createDatefield('End Date', feature + "EndDate");
                 const { label: labelColor, input: ColorValue } = createColorfield(`Fill Color`,  feature + "FillColor");
-                controls.push(labelStartDate, document.createElement('br'), StartDateValues, document.createElement('br'), labelEndDate, document.createElement('br'), EndDateValues, document.createElement('br'), labelColor, document.createElement('br'), ColorValue);
+                const { label: textLabel, input: textInput }   = createTextfield(`Display Text`, feature + "Text");
+                controls.push(labelStartDate, document.createElement('br'), StartDateValues, document.createElement('br'), document.createElement('br'), labelEndDate, document.createElement('br'), EndDateValues, document.createElement('br'), document.createElement('br'), labelColor, document.createElement('br'), ColorValue, document.createElement('br'), document.createElement('br'), textLabel, document.createElement('br'), textInput, document.createElement('br'));
             }
 
             if (feature === "EventMarkers") {
@@ -928,7 +1113,42 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
         }
         let newHR = document.createElement("hr");
         newHR.style = "margin-top:15px";
-        newDiv.append(newHR);        
+        newDiv.append(newHR); 
+        
+        
+        // Create the button for default styles
+        let labelApplyDefaults = document.createElement("label");
+        labelApplyDefaults.for = "ApplyLineDefaults";
+        labelApplyDefaults.innerHTML = "Apply Default Line Styles";
+
+        let btnApplyDefaults = document.createElement("button");
+        btnApplyDefaults.id = "ApplyLineDefaults";
+        btnApplyDefaults.type = "button"; // prevent accidental form submit
+        btnApplyDefaults.classList.add("button", "button-primary"); // WP admin button style
+        btnApplyDefaults.innerHTML = "Click to Apply Default Line Styles";
+
+        // Add event listener
+        btnApplyDefaults.addEventListener('click', function() {
+            // Call your function here
+            loadDefaultInteractiveLineArguments(jsonColumns, interactive_arguments);
+        });
+
+        // Wrap in row/col just like your select
+        let newRowBtn = document.createElement("div");
+        newRowBtn.classList.add("row", "fieldPadding");
+        let newColumn1Btn = document.createElement("div");
+        newColumn1Btn.classList.add("col-3");
+        let newColumn2Btn = document.createElement("div");
+        newColumn2Btn.classList.add("col");
+        newColumn1Btn.appendChild(labelApplyDefaults);
+        newColumn2Btn.appendChild(btnApplyDefaults);
+        newRowBtn.append(newColumn1Btn, newColumn2Btn);
+        newDiv.append(newRowBtn);
+
+      let fieldLabels = [["XAxis", "X Axis Column"]];
+      for (let i = 1; i <= numLines; i++){
+          fieldLabels.push(["Line" + i, "Line " + i + " Column"]);
+      }
 
       fieldLabels.forEach((fieldLabel) => {
           //Select the data source from dropdown menu  

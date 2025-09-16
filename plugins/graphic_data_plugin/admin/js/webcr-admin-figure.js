@@ -16,6 +16,7 @@ function run_webcr_admin_figures() {
     let fieldLabelNumber;
     let fieldValueSaved;
 
+
     // Hide the parent element of the "figure_interactive_arguments" field
     document.getElementsByName("figure_interactive_arguments")[0].parentElement.parentElement.style.display="none";
 
@@ -381,6 +382,8 @@ function run_webcr_admin_figures() {
                             }));
                         }
 
+
+                        // Initialize jsonColumns to read .geojson ot regular .json files
                         if (!uploaded_path_json.includes(".geojson")) {
                             // Map data columns into an object with index-based keys
                             jsonColumns = Object.fromEntries(
@@ -654,7 +657,8 @@ function run_webcr_admin_figures() {
             //document.querySelector('[data-depend-id="figure_preview"]').insertAdjacentElement("afterend", previewDiv);
             document.querySelector('.figureTitle').insertAdjacentElement("afterend", previewDiv);
         }
-    }   
+    }
+
 
     //FIGURE PREVIEW BUTTON 
     /**
