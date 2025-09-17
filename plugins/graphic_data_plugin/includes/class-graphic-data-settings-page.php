@@ -20,12 +20,18 @@ class Graphic_Data_Settings_Page {
     }
 
     // Register settings-plotly-timeseries-line.js script to display the script.
-
-
-    function enqueue_admin_interactive_line_default_styles() {
+    function enqueue_admin_interactive_default_styles() {
         wp_enqueue_script(
                 'load_default_line_styles', // Handle.
                 plugin_dir_url(__FILE__) . '../includes/figures/js/settings-plotly-timeseries-line.js',
+                [], // Dependencies (e.g., array('jquery')).
+                null, // Version.
+                true // Load in footer.
+            );
+        
+        wp_enqueue_script(
+                'load_default_bar_styles', // Handle.
+                plugin_dir_url(__FILE__) . '../includes/figures/js/settings-plotly-bar.js',
                 [], // Dependencies (e.g., array('jquery')).
                 null, // Version.
                 true // Load in footer.
@@ -112,8 +118,24 @@ class Graphic_Data_Settings_Page {
 
         add_settings_field(
             'interactive_line_defaults',
-            'Line Graph (Time Series) Default Settings',
+            'Line Graph (Time Series) Custom Style Settings',
             [$this, 'interactive_line_defaults_callback'],
+            'theme_settings',
+            'interactive_figures_defaults_section'
+        );
+
+        add_settings_field(
+            'interactive_bar_arguments',
+            'Bar Graph Arguments',
+            [$this, 'interactive_bar_arguments_callback'],
+            'theme_settings',
+            'interactive_figures_defaults_section'
+        );
+
+        add_settings_field(
+            'interactive_bar_defaults',
+            'Bar Graph Custom Style Settings',
+            [$this, 'interactive_bar_defaults_callback'],
             'theme_settings',
             'interactive_figures_defaults_section'
         );
@@ -267,9 +289,40 @@ class Graphic_Data_Settings_Page {
         <div id="interactive_line_arguments_value" data-value="<?php echo $interactive_line_arguments_value; ?>"></div>
         <details>
         <summary style="cursor:pointer; font-weight:bold;">
-            Expand/Collapse Line Graph (Time Series) Default Settings
+            Expand/Collapse Options
         </summary>
         <div id="lineDefaultSelector" style="margin-top:10px;"></div>
+        
+        </details> 
+        <?php    
+    }
+
+    public function interactive_bar_arguments_callback() {
+        $options = get_option('webcr_settings');
+        $value = isset($options['interactive_bar_arguments']) ? $options['interactive_bar_arguments'] : '';
+        $editor_id = 'interactive_bar_arguments_editor'; // Unique ID for the editor
+        $settings = array(
+            'textarea_name' => 'webcr_settings[interactive_bar_arguments]', // Important for saving
+            'media_buttons' => false, // Set to false if you don't want media buttons
+            'textarea_rows' => 10, // Number of rows
+            'tinymce'       => false, // Use TinyMCE
+            'quicktags'     => false  // Enable quicktags
+        );
+        wp_editor(wp_kses_post($value), $editor_id, $settings);
+    }
+
+
+    function interactive_bar_defaults_callback() {
+        $options = get_option('webcr_settings');
+        $interactive_bar_arguments_value = isset($options['interactive_bar_arguments']) ? $options['interactive_bar_arguments'] : '';
+        $value   = isset($options['interactive_bar_defaults']) ? $options['interactive_bar_defaults'] : '';
+        ?>
+        <div id="interactive_bar_arguments_value" data-value="<?php echo $interactive_bar_arguments_value; ?>"></div>
+        <details>
+        <summary style="cursor:pointer; font-weight:bold;">
+            Expand/Collapse Options
+        </summary>
+        <div id="barDefaultSelector" style="margin-top:10px;"></div>
         
         </details>
 
@@ -279,8 +332,7 @@ class Graphic_Data_Settings_Page {
             Be sure to click the "Save Changes" below when complete.
             <br>
         </p>   
-        <?php
-        
+        <?php    
     }
     
 

@@ -1,10 +1,9 @@
 
-
 // ---- globals used across your helpers
 let jsonColumns = {};
 let fieldValueSaved;
 
-let interactive_line_arguments_value = document.getElementById("interactive_line_arguments_editor").value
+const interactive_line_arguments_value = document.getElementById("interactive_line_arguments_editor").value
 
 
 //Hide the Line Graph (Time Series) Arguments Editor row on load
@@ -49,10 +48,8 @@ async function loadJson(targetContainer) {
         const iaEl = document.getElementById("interactive_line_arguments_value").dataset.value;
         const interactive_arguments = iaEl ? iaEl : "";
 
-        
-        //console.log('interactive_arguments', interactive_arguments);
-
         //Restore saved selection (uses your own fill/log helpers)
+
         if (typeof fillFormFieldValues === "function") {
             fieldValueSaved = fillFormFieldValues(selectGraphType.id);
             if (fieldValueSaved !== undefined) selectGraphType.value = fieldValueSaved;
@@ -77,7 +74,7 @@ async function loadJson(targetContainer) {
         console.log('fieldValueSaved', fieldValueSaved);
 
         //Write button values is the fields do not have any saved values. 
-        if (fieldValueSaved == undefined) {
+        if (fieldValueSaved === undefined && interactive_arguments === "" || interactive_arguments === undefined) {
             plotlyLineParameterFields(jsonColumns, interactive_arguments);
             logFormFieldValues();
         }
@@ -100,7 +97,6 @@ function secondaryGraphFields(interactive_arguments) {
     }
     
     clearPreviousGraphFields();
-    console.log('TEST1');
     plotlyLineParameterFields(jsonColumns, interactive_arguments);        
 }
 
@@ -153,16 +149,27 @@ function logFormFieldValues() {
  * const xAxisTitle = fillFormFieldValues('xAxisTitle'); // xAxisTitle will be set to "Date"
  */
 function fillFormFieldValues(elementID){
-    // const interactiveFields = <?php echo json_encode($interactive_line_arguments_value); ?>;
-    const interactiveFields = document.getElementById("interactive_line_arguments_value").dataset.value;
-    console.log('interactiveFields', interactiveFields);
-    if (interactiveFields != ""  && interactiveFields != null) {
-        const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
-
-        if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
-            return resultJSON[elementID];
+    // const interactiveFields = <?php echo json_encode($interactive_line_arguments_value); ?>; //only for php scripts
+    try {
+        const interactiveFields = document.getElementById("interactive_line_arguments_value").dataset.value;
+        console.log('interactiveFields', interactiveFields);
+        if (interactiveFields != ""  && interactiveFields != null) {
+            const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
+            if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
+                return resultJSON[elementID];
+            }
+        }
+    } catch {
+        const interactiveFields = document.getElementById("interactive_line_arguments_editor").value
+        console.log('interactiveFields', interactiveFields);
+        if (interactiveFields != ""  && interactiveFields != null) {
+            const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
+            if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
+                return resultJSON[elementID];
+            }
         }
     }
+    
 }
 
 function plotlyLineParameterFields(jsonColumns, interactive_arguments){

@@ -1119,13 +1119,13 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
         // Create the button for default styles
         let labelApplyDefaults = document.createElement("label");
         labelApplyDefaults.for = "ApplyLineDefaults";
-        labelApplyDefaults.innerHTML = "Apply Default Line Styles";
+        labelApplyDefaults.innerHTML = "Apply Custom Line Styles to All Lines";
 
         let btnApplyDefaults = document.createElement("button");
         btnApplyDefaults.id = "ApplyLineDefaults";
         btnApplyDefaults.type = "button"; // prevent accidental form submit
         btnApplyDefaults.classList.add("button", "button-primary"); // WP admin button style
-        btnApplyDefaults.innerHTML = "Click to Apply Default Line Styles";
+        btnApplyDefaults.innerHTML = "Click to Apply Styles";
 
         // Add event listener
         btnApplyDefaults.addEventListener('click', function() {
@@ -1197,6 +1197,7 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
           newColumn2.appendChild(selectColumn);
           newRow.append(newColumn1, newColumn2);
           newDiv.append(newRow);
+          
 
           
           // Add line label and color fields, line type, marker type, and marker size
