@@ -256,7 +256,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
     targetElement.appendChild(newDiv);
 
     // Run display line fields
-    displayLineFields(14, jsonColumns, interactive_arguments);
+    displayLineFields(14, jsonColumns, interactive_arguments); //set the number of lines here
     }
 
 

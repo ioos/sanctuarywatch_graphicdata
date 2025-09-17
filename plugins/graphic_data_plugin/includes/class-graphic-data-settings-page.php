@@ -256,7 +256,6 @@ class Graphic_Data_Settings_Page {
             'quicktags'     => false  // Enable quicktags
         );
         wp_editor(wp_kses_post($value), $editor_id, $settings);
-        // Inject inline JS to hide the whole <tr> row on load
     }
 
 
