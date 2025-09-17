@@ -6,6 +6,15 @@ let fieldValueSaved;
 
 let interactive_line_arguments_value = document.getElementById("interactive_line_arguments_editor").value
 
+
+//Hide the Line Graph (Time Series) Arguments Editor row on load
+document.addEventListener("DOMContentLoaded", function() {
+    const row = document.getElementById("interactive_line_arguments_editor").closest("tr");
+    if (row) {
+        row.style.display = "none";
+    }
+});
+
 // ====== Your functions (lightly tidied/safe-guarded) ======
 async function loadJson(targetContainer) {
 
@@ -40,20 +49,15 @@ async function loadJson(targetContainer) {
         const iaEl = document.getElementById("interactive_line_arguments_value").dataset.value;
         const interactive_arguments = iaEl ? iaEl : "";
 
+        
+        //console.log('interactive_arguments', interactive_arguments);
 
-        console.log('iaEl', iaEl);
-        console.log('interactive_arguments', interactive_arguments);
-
-        // Restore saved selection (uses your own fill/log helpers)
+        //Restore saved selection (uses your own fill/log helpers)
         if (typeof fillFormFieldValues === "function") {
             fieldValueSaved = fillFormFieldValues(selectGraphType.id);
             if (fieldValueSaved !== undefined) selectGraphType.value = fieldValueSaved;
         }
 
-        selectGraphType.addEventListener('change', function () {
-            secondaryGraphFields(this.value, interactive_arguments);
-            if (typeof logFormFieldValues === "function") logFormFieldValues();
-        });
 
         // Layout
         const row = document.createElement("div");
@@ -72,6 +76,11 @@ async function loadJson(targetContainer) {
 
         console.log('fieldValueSaved', fieldValueSaved);
 
+        //Write button values is the fields do not have any saved values. 
+        if (fieldValueSaved == undefined) {
+            plotlyLineParameterFields(jsonColumns, interactive_arguments);
+            logFormFieldValues();
+        }
 
         //Trigger secondaries if saved
         if (fieldValueSaved !== undefined) {
