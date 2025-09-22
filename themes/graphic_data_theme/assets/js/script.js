@@ -1838,22 +1838,40 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
     let postID = info_obj["postID"];
     let title = info_obj['figureTitle'];
-    
-    const containerDiv = document.createElement('div');
+
+
+    // Create the table row div
+    const tableRowDiv = document.createElement(`div`);
+    tableRowDiv.style.display = 'table-row';
+
+
+    //Create a separator to make this figure distinct from others
+    const separator = document.createElement('div');
+    separator.classList.add("separator");
+    separator.innerHTML = '<hr style="border-bottom: 1px rgb(252, 252, 252);">';
+    tableRowDiv.appendChild(separator);
+
+
+
+    //CONSTRUCT THE MAIN DIV "FIGURE" WHERE THE CONTENT WILL GO
+    //const figureDiv = document.createElement('div');
+    const figureDiv = tableRowDiv;
+    figureDiv.classList.add('figure');
+
+    //Container for more science and data links
+    const containerDiv = document.createElement(`div`);
     containerDiv.style.background = '#e3e3e354';
     containerDiv.style.width = '100%';
     containerDiv.style.display = 'table';
     containerDiv.style.fontSize = '120%';
     containerDiv.style.padding = '10px';
-    containerDiv.style.marginBottom = '10px';
+    containerDiv.style.marginBottom = '15px';
+    containerDiv.style.marginTop = '15px';
     containerDiv.style.margin = '0 auto'; 
     containerDiv.style.borderRadius = '6px 6px 6px 6px'; 
     containerDiv.style.borderWidth = '1px'; 
     containerDiv.style.borderColor = 'lightgrey'; 
 
-    // Create the table row div
-    const tableRowDiv = document.createElement('div');
-    tableRowDiv.style.display = 'table-row';
 
     // Create the left cell div
     const leftCellDiv = document.createElement('div');
@@ -1891,23 +1909,12 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
         rightCellDiv.appendChild(secondLink);
     }
 
-    tableRowDiv.appendChild(leftCellDiv);
-    tableRowDiv.appendChild(rightCellDiv);
-    containerDiv.appendChild(tableRowDiv);
     if (info_obj['dataLink']!='' || info_obj['scienceText']!=''){
-        tabContentElement.appendChild(containerDiv);
+        containerDiv.appendChild(leftCellDiv);
+        containerDiv.appendChild(rightCellDiv);
+        figureDiv.appendChild(containerDiv);
     }
 
-
-    //CONSTRUCT THE MAIN DIV "FIGURE" WHERE THE CONTENT WILL GO
-    const figureDiv = document.createElement('div');
-    figureDiv.classList.add('figure');
-
-    //Create a separator to make this figure distinct from others
-    const separator = document.createElement('div');
-    separator.classList.add("separator");
-    separator.innerHTML = '<hr style="border-bottom: 1px rgb(252, 252, 252);">';
-    figureDiv.appendChild(separator);
 
 
     //CREATE THE FIGURE TITLE
@@ -1915,6 +1922,8 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     figureTitle.classList.add('figureTitle');
     figureTitle.innerHTML = info_obj['figureTitle'];
     figureTitle.style.marginBottom = '2px';
+    figureTitle.style.marginTop = '15px';
+    figureTitle.style.textAlign = 'center';
     figureDiv.appendChild(figureTitle);
 
 
