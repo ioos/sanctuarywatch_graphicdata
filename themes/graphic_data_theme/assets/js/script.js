@@ -1605,7 +1605,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly line graph (time series)") {
 
-                async function waitForPlotlyDiv(plotlyDivID, retries = 20, interval = 250) {
+                async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -1617,7 +1617,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 1000);
+                    await waitForElementByIdPolling(targetId, 10000);
                     await producePlotlyLineFigure(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
@@ -1668,7 +1668,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly bar graph") {
 
-                 async function waitForPlotlyDiv(plotlyDivID, retries = 20, interval = 250) {
+                 async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -1680,7 +1680,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 1000);
+                    await waitForElementByIdPolling(targetId, 10000);
                     await producePlotlyBarFigure(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
@@ -1731,7 +1731,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly map") {
 
-                 async function waitForPlotlyDiv(plotlyDivID, retries = 20, interval = 250) {
+                 async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 250) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -1743,7 +1743,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 1000);
+                    await waitForElementByIdPolling(targetId, 10000);
                     await producePlotlyMap(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
