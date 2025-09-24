@@ -232,7 +232,6 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
 
 
             //Shows the grid lines if it is set to 'on' in the figure arguments
-
             const showGrid = figureArguments['showGrid'];
             if (showGrid === 'on') {
                 var showGridBool = true;     

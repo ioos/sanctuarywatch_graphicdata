@@ -2007,7 +2007,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
             
             //Append the codeDiv to the figureDiv
-            figureDiv.appendChild(codeDiv);
+            await figureDiv.appendChild(codeDiv);
             embedCode = info_obj['code'];
             // Parse the embed code and extract <script> tags
             const tempDiv = document.createElement("div");

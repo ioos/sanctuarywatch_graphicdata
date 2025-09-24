@@ -71,7 +71,7 @@ async function loadJson(targetContainer) {
 
         targetElement.appendChild(newDiv);
 
-        console.log('fieldValueSaved', fieldValueSaved);
+        //console.log('fieldValueSaved', fieldValueSaved);
 
         //Write button values is the fields do not have any saved values. 
         if (fieldValueSaved === undefined && interactive_arguments === "" || interactive_arguments === undefined) {
@@ -126,7 +126,7 @@ function logFormFieldValues() {
     const allFields = document.getElementsByName("plotFields");
     let fieldValues = [];
     allFields.forEach((uniqueField) => {
-        console.log([uniqueField.id, uniqueField.value]);
+        //console.log([uniqueField.id, uniqueField.value]);
         fieldValues.push([uniqueField.id, uniqueField.value]);
     });
     document.getElementById("interactive_line_arguments_editor").value = JSON.stringify(fieldValues); 
@@ -152,7 +152,7 @@ function fillFormFieldValues(elementID){
     // const interactiveFields = <?php echo json_encode($interactive_line_arguments_value); ?>; //only for php scripts
     try {
         const interactiveFields = document.getElementById("interactive_line_arguments_value").dataset.value;
-        console.log('interactiveFields', interactiveFields);
+        //console.log('interactiveFields', interactiveFields);
         if (interactiveFields != ""  && interactiveFields != null) {
             const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
             if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
@@ -161,7 +161,7 @@ function fillFormFieldValues(elementID){
         }
     } catch {
         const interactiveFields = document.getElementById("interactive_line_arguments_editor").value
-        console.log('interactiveFields', interactiveFields);
+        //console.log('interactiveFields', interactiveFields);
         if (interactiveFields != ""  && interactiveFields != null) {
             const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
             if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
@@ -619,6 +619,7 @@ function startLoadJson() {
     // If your other helpers are loaded asynchronously, delay slightly:
     // setTimeout(() => loadJson(target), 50);
     loadJson(target);
+    
 }
 
 if (document.readyState === 'loading') {
