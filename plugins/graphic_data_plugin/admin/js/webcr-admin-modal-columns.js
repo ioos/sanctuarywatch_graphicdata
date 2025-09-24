@@ -20,7 +20,9 @@ function modal_instance_change(){
             data.forEach(targetRow => {
                     let optionScene = document.createElement('option');
                     optionScene.value = targetRow['id'];
-                    optionScene.text = targetRow['title']['rendered'];
+    let tempDiv = document.createElement('div');
+    tempDiv.innerHTML = targetRow['title']['rendered'];
+    optionScene.text = tempDiv.textContent;
                     modal_scene.appendChild(optionScene);
             });
         })

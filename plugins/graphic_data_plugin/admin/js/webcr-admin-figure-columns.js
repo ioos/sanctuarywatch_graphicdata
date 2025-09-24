@@ -49,7 +49,8 @@ function figure_scene_change(){
         .then(data => {        
             data.forEach(targetRow => {
                     let optionIcon = document.createElement('option');
-                    optionIcon.value = targetRow['id'];
+                    optionIcon.value = targetRow['id'];     
+
                     optionIcon.text = targetRow['title']['rendered'];
                     figure_icon.appendChild(optionIcon);
             });

@@ -250,7 +250,6 @@ for (const [key, value] of sorted_child_entries) {
 function make_scene_elements(info, iText, iUrl, scene_data, type, name){
     let collapseListHTML = '<div><ul>';
     for (let i = 1; i < 7; i++){
-
                 let info_field = info + i;
                 let info_text = iText + i;
                 let info_url = iUrl + i;
@@ -284,8 +283,9 @@ function make_scene_elements(info, iText, iUrl, scene_data, type, name){
                 listItem.appendChild(anchor);
 
                 collapseListHTML += `<li> <a href="${scene_info_url}" target="_blank">${scene_info_text}</a> </li>`;
-                collapseListHTML += '</ul></div>';
+
     }
+    collapseListHTML += '</ul></div>';
     let acc = createAccordionItem(`${type}-item-1`, `${type}-header-1`, `${type}-collapse-1`, name, collapseListHTML);
 
     return acc;
@@ -2155,10 +2155,10 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id));
 
             // Third filter: If user is not logged in, only show published figures
-            const isUserLoggedIn = document.body.classList.contains('logged-in');
-            if (!isUserLoggedIn) {
-                all_figure_data = all_figure_data.filter(figure => figure.figure_published === "published");
-            }
+           // const isUserLoggedIn = document.body.classList.contains('logged-in');
+           // if (!isUserLoggedIn) {
+           //     all_figure_data = all_figure_data.filter(figure => figure.figure_published === "published");
+           // }
 
             // Sort with the following priority:
             // 1. figure_order == 1 → sorted by id
@@ -2468,8 +2468,9 @@ function render_modal(key){
                     listItem.appendChild(anchor);
 
                     collapseListHTML += `<li> <a href="${modal_info_url}" target="_blank">${modal_info_text}</a> </li>`;
-                    collapseListHTML += '</ul></div>';
+
                 }
+                collapseListHTML += '</ul></div>';
                 let accordionItem1 = createAccordionItem("accordion-item-1", "accordion-header-1", "accordion-collapse-1", "More Info", collapseListHTML);
                 acc.appendChild(accordionItem1);
             }
