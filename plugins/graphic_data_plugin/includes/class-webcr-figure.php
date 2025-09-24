@@ -611,6 +611,8 @@ class Webcr_Figure {
                             'type'        => 'text',
                             'title'       => 'URL',
                             'class'       => 'text-class',
+                            'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+
                         ),
                     ),
                 ),
@@ -631,6 +633,8 @@ class Webcr_Figure {
                             'type'        => 'text',
                             'title'       => 'URL',
                             'class'       => 'text-class',
+                            'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+
                         ),
                     ),
                 ),
@@ -660,6 +664,8 @@ class Webcr_Figure {
                     'title'       => 'External URL*',
                     'class'       => 'text-class',
                     'description' => 'This external URL should link just to the image itself (that is the URL should end in .png .jpeg .jpg or .tiff)',
+                    'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+
                 ),
                 array(
                     'id'          => 'figure_external_alt',

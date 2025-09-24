@@ -176,9 +176,9 @@ foreach ($terms_array as $term){
         wp_reset_postdata();
     }
     
-    // Custom sorting function: reverse alphabetically by instance_status, then alphabetically by post_title
+    // Custom sorting function: alphabetically by instance_status, then alphabetically by post_title
     usort($instances, function ($a, $b) {
-        $statusCompare = strcasecmp($b['instance_status'], $a['instance_status']); // Reverse order
+        $statusCompare = strcasecmp($a['instance_status'], $b['instance_status']); // Reverse order
         if ($statusCompare !== 0) {
             return $statusCompare;
         }

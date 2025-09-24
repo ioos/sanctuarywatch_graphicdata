@@ -82,7 +82,7 @@ function run_webcr_admin_figures() {
 
         //FIX: the REST API for modal is retrieving all records even when icon_function and modal_scene are set for some reason 
         // CHECK - THIS IS FIXED I THINK?
-        const restModal = protocol + "//" + host  + "/wp-json/wp/v2/modal?_fields=id,title,modal_scene,icon_function&orderby=title&order=asc&per_page=100";
+        const restModal = protocol + "//" + host  + "/wp-json/wp/v2/modal?_fields=id,title,modal_scene,icon_function&orderby=title&order=asc&per_page=100&modal_scene="+figureScene;
         fetch(restModal)
         .then(response => response.json())
         .then(data => {
@@ -98,8 +98,10 @@ function run_webcr_admin_figures() {
                 if (targetRow['icon_function']=="Modal" && targetRow['modal_scene']==figureScene ){
 
                     let optionIcon = document.createElement('option');
+                    let tempTitleDiv = document.createElement('div');
+                    tempTitleDiv.innerHTML = targetRow['title']['rendered'];
                     optionIcon.value = targetRow['id'];
-                    optionIcon.text = targetRow['title']['rendered'];
+                    optionIcon.text = tempTitleDiv.textContent;
                     figureModal.appendChild(optionIcon);
                 }
             });
