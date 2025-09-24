@@ -795,6 +795,8 @@ class Webcr_Scene {
                         'type'        => 'text',
                         'title'       => 'URL',
                         'class'       => 'text-class',
+                        'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+
                     ),
                 ),
             );
@@ -827,6 +829,8 @@ class Webcr_Scene {
                         'type'        => 'text',
                         'title'       => 'URL',
                         'class'       => 'text-class',
+                        'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+
                     ),
                     array(
                         'id'    => 'scene_photo_internal' . $i,

@@ -230,6 +230,8 @@ class Webcr_Modal {
                 'title'       => 'Icon External URL*',
                 'class'       => 'text-class',   
                 'description' => 'What is the external URL that the user should be taken to when the icon is clicked?',  
+                'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+
             ),
             array(
                 'id'             => 'icon_scene_out',
@@ -311,6 +313,7 @@ class Webcr_Modal {
                         'type'        => 'text',
                         'title'       => 'URL',
                         'class'       => 'text-class',
+                        'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
                     ),
                 ),
             );
@@ -343,6 +346,8 @@ class Webcr_Modal {
                         'type'        => 'text',
                         'title'       => 'URL',
                         'class'       => 'text-class',
+                        'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+
                     ),
                     array(
                         'id'    => 'modal_photo_internal' . $i,
