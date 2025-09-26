@@ -136,6 +136,24 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
             const barStackedByX = figureArguments['StackedBarColumns'] === 'on';
 
+            //Shows the grid lines if it is set to 'on' in the figure arguments
+            const showGrid = figureArguments['showGrid'];
+            if (showGrid === 'on') {
+                var showGridBool = true;     
+            } else {
+                var showGridBool = false;     
+            }
+
+            //Shows the graph ticks on the outside if it is set to 'on' in the figure arguments
+            const graphTicks = figureArguments['graphTicks'];
+            if (graphTicks === 'on') {
+                var graphTickModeBool = '';
+                var graphTickPositionBool = '';       
+            } else {
+                var graphTickModeBool = 'auto';
+                var graphTickPositionBool = 'outside';    
+            }
+
             for (let i = 1; i <= figureArguments['NumberOfBars']; i++) {
                 const targetBarColumn = 'Bar' + i;
                 const columnXHeader = figureArguments['XAxis'];
@@ -145,6 +163,9 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                 const StackedSeparatorColor = figureArguments[targetBarColumn + 'StackedSeparatorLineColor'];
                 const showLegend = figureArguments[targetBarColumn + 'Legend'];
                 const showLegendBool = showLegend === 'on';
+                const fillType = figureArguments[targetBarColumn + 'FillType'];
+
+                console.log('fillType', fillType);
 
                 function lightenColor(hex, factor = 0.2) {
                     const rgb = parseInt(hex.slice(1), 16);
@@ -178,7 +199,8 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                                 line: {
                                     width: 1,
                                     color: StackedSeparatorColor
-                                }
+                                },
+                                pattern: { shape: fillType, size: 4, solidity: 0.5 }
                             },
                             hovertemplate: `${columnXHeader}: ${stackCategory}`
                         });
@@ -199,7 +221,8 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                         name: `${figureArguments[targetBarColumn + 'Title']}`,
                         showlegend: showLegendBool,
                         marker: {
-                            color: figureArguments[targetBarColumn + 'Color']
+                            color: figureArguments[targetBarColumn + 'Color'],
+                            pattern: { shape: fillType, size: 4, solidity: 0.5 }
                         },
                         hovertemplate: `${figureArguments['YAxisTitle']}: %{y}`
                     });
@@ -226,7 +249,8 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                         name: `${figureArguments[targetBarColumn + 'Title']}`,
                         showlegend: showLegendBool,
                         marker: {
-                            color: figureArguments[targetBarColumn + 'Color']
+                            color: figureArguments[targetBarColumn + 'Color'],
+                            pattern: { shape: fillType, size: 4, solidity: 0.5 }
                         },
                         hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
                     });
@@ -361,7 +385,8 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                         name: `${figureArguments[targetBarColumn + 'Title']}`,
                         showlegend: showLegendBool,
                         marker: {
-                            color: figureArguments[targetBarColumn + 'Color']
+                            color: figureArguments[targetBarColumn + 'Color'],
+                            pattern: { shape: fillType, size: 4, solidity: 0.5 }
                         },
                         hovertemplate: `${figureArguments['XAxisTitle'] || ''}: %{x}<br>${figureArguments['YAxisTitle'] || ''}: %{y}`,
                         ...(error_y ? { error_y } : {})
@@ -382,7 +407,9 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                     linewidth: 1,
                     tickmode: 'array',
                     tickangle: -45,
-                    automargin: true
+                    automargin: true,
+                    tickmode: graphTickModeBool,
+                    ticks: graphTickPositionBool 
                 },
                 yaxis: {
                     title: { text: figureArguments['YAxisTitle'] || '' },
@@ -394,7 +421,10 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                         figureArguments['YAxisLowBound'] !== '' && figureArguments['YAxisHighBound'] !== ''
                         ? [parseFloat(figureArguments['YAxisLowBound']), parseFloat(figureArguments['YAxisHighBound'])]
                         : undefined
-                    )
+                    ),
+                    tickmode: graphTickModeBool,
+                    ticks: graphTickPositionBool,
+                    showgrid: showGridBool
                 },
                 legend: {
                     orientation: 'h',
@@ -444,6 +474,48 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
   let newRow;
   let newColumn1;
   let newColumn2;
+
+  //Add checkboxes for showgrid and graphTicks
+    const features = ["showGrid", "graphTicks"];
+    const featureNames = ["Show X&Y Lines on Grid", "Remove Outside Graph Ticks"];
+    for (let i = 0; i < features.length; i++) {
+        const feature = features[i];
+        const featureName = featureNames[i];
+
+        let newRow = document.createElement("div");
+        newRow.classList.add("row", "fieldPadding");
+
+        let newColumn1 = document.createElement("div");
+        newColumn1.classList.add("col-3");
+        let newColumn2 = document.createElement("div");
+        newColumn2.classList.add("col");
+
+        let label = document.createElement("label");
+        label.for = feature;
+        label.innerHTML = `${featureName}`;
+        let checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = feature;
+        checkbox.name = "plotFields";
+
+        let fieldValueSaved = fillFormFieldValues(checkbox.id, interactive_arguments);
+        checkbox.value = fieldValueSaved === 'on' ? 'on' : "";
+        checkbox.checked = fieldValueSaved === 'on';
+
+        // Toggle visibility dynamically
+        checkbox.addEventListener('change', function () {
+            checkbox.value = checkbox.checked ? 'on' : "";
+            logFormFieldValues();
+        });
+
+        newColumn1.appendChild(label);
+        newColumn2.appendChild(checkbox);
+        newRow.append(newColumn1, newColumn2);
+        newDiv.append(newRow);
+
+        newRow.style.display = "none";
+        
+    }
 
   // Create input fields for X and Y Axis Titles
   const axisTitleArray = ["X", "Y"];
@@ -612,22 +684,13 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
         checkboxStackedBarColumns.id = "StackedBarColumns";
         checkboxStackedBarColumns.name = "plotFields";
         checkboxStackedBarColumns.addEventListener("change", function () {
-            if (numBars > 1) {
-                checkboxStackedBarColumns.value = checkboxStackedBarColumns.checked ? 'on' : "";
-                logFormFieldValues();
-            }
-            if (numBars <= 1) {
-                checkboxStackedBarColumns.value = checkboxStackedBarColumns.checked ? "" : "";
-                logFormFieldValues();
-            } else {}
+            checkboxStackedBarColumns.value = checkboxStackedBarColumns.checked ? "on" : "";
+            logFormFieldValues();
         });
   
-
-        // Pre-fill value if previously saved
         fieldValueSaved = fillFormFieldValues(checkboxStackedBarColumns.id, interactive_arguments);
-        if (fieldValueSaved === 'on') {
-            checkboxStackedBarColumns.checked = true;
-        }
+        checkboxStackedBarColumns.checked = (fieldValueSaved === 'on');  // only true if exactly "on"
+        checkboxStackedBarColumns.value = checkboxStackedBarColumns.checked ? 'on' : '';
 
         newRow = document.createElement("div");
         newRow.classList.add("row", "fieldPadding");
@@ -640,8 +703,9 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
         newColumn2.appendChild(checkboxStackedBarColumns);
         newRow.append(newColumn1, newColumn2);
         newDiv.append(newRow);
-        //end checkbox for StackedBarColumns
 
+
+        //Create select fields for X Axis and each line to be plotted
         let fieldLabels = [["XAxis", "X Axis Column"]];
         for (let i = 1; i <= numBars; i++){
             fieldLabels.push(["Bar" + i, "Bar " + i + " Column"]);
@@ -758,6 +822,63 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
                 newColumn2.appendChild(inputColor);
                 newRow.append(newColumn1, newColumn2);
                 newDiv.append(newRow);
+
+
+                // Create pattern/fill select field
+                let labelPatternSelect = document.createElement("label");
+                labelPatternSelect.htmlFor = fieldLabel[0] + "FillType";
+                labelPatternSelect.innerHTML = fieldLabel[1] + " Fill Type";
+
+                let selectColumnPattern = document.createElement("select");
+                selectColumnPattern.id = fieldLabel[0] + "FillType";  // use consistent key
+                selectColumnPattern.name = "plotFields";
+                selectColumnPattern.addEventListener('change', function() {
+                    logFormFieldValues();
+                });
+
+                const patternJsonColumns = {
+                    'Solid': '', 
+                    'Slanted Line': '/', 
+                    'Crosshatch': 'x', 
+                    'Dots': '.', 
+                    'Horizontal Line': '-', 
+                    'Vertical Line': '|'
+                };
+
+                Object.entries(patternJsonColumns).forEach(([label, value]) => {
+                    option = document.createElement("option");
+                    option.value = value;
+                    option.innerHTML = label;
+                    selectColumnPattern.appendChild(option);
+                });
+
+                fieldValueSaved = fillFormFieldValues(selectColumnPattern.id, interactive_arguments);
+                if (fieldValueSaved !== undefined) {
+                    selectColumnPattern.value = fieldValueSaved;
+                }
+
+                // Create and append row
+                newRow = document.createElement("div");
+                newRow.classList.add("row", "fieldPadding");
+
+                if (fieldLabel[0] !== "XAxis") {
+                    fieldLabelNumber = parseInt(fieldLabel[0].slice(-1));
+                    if (fieldLabelNumber % 2 !== 0) {
+                        newRow.classList.add("row", "fieldBackgroundColor");
+                    }
+                }
+
+                newColumn1 = document.createElement("div");
+                newColumn1.classList.add("col-3");   
+                newColumn2 = document.createElement("div");
+                newColumn2.classList.add("col");
+
+                newColumn1.appendChild(labelPatternSelect);
+                newColumn2.appendChild(selectColumnPattern);
+                newRow.append(newColumn1, newColumn2);
+                newDiv.append(newRow);
+                
+                
 
                 //   // Create the informational text box
                 //   const infoBox = document.createElement("div");

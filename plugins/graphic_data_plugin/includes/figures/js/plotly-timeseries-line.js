@@ -238,7 +238,6 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
             } else {
                 var showGridBool = false;     
             }
-                
 
             //Shows the graph ticks on the outside if it is set to 'on' in the figure arguments
             const graphTicks = figureArguments['graphTicks'];
