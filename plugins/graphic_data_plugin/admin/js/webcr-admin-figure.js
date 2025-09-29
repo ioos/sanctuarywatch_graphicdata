@@ -48,8 +48,14 @@ function run_webcr_admin_figures() {
             data.forEach(targetRow => {
                     let optionScene = document.createElement('option');
                     optionScene.value = targetRow['id'];
-                    optionScene.text = targetRow['title']['rendered'];
+                    const tmp = document.createElement("textarea");
+                    tmp.innerHTML = targetRow['title']['rendered'];
+                    optionScene.text = tmp.value;
+                    //optionScene.text = targetRow['title']['rendered'];
                     figureScene.appendChild(optionScene);
+
+                    console.log('optionScene.value', optionScene.value);
+                    console.log('optionScene.text', optionScene.text)
             });
 
             // Reset and update the "figure_modal" dropdown
@@ -101,8 +107,15 @@ function run_webcr_admin_figures() {
                     let tempTitleDiv = document.createElement('div');
                     tempTitleDiv.innerHTML = targetRow['title']['rendered'];
                     optionIcon.value = targetRow['id'];
-                    optionIcon.text = tempTitleDiv.textContent;
+
+                    const tmp = document.createElement("textarea");
+                    tmp.innerHTML = targetRow['title']['rendered'];
+                    optionIcon.text = tmp.value;
+                    //optionIcon.text = tempTitleDiv.textContent;
                     figureModal.appendChild(optionIcon);
+
+                    console.log('optionIcon.value', optionIcon.value);
+                    console.log('optionIcon.text', optionIcon.text);
                 }
             });
             let figureTab = document.getElementsByName("figure_tab")[0];
@@ -147,7 +160,10 @@ function run_webcr_admin_figures() {
                         targetField = "modal_tab_title" + i;
                         if (data[targetField]!= ""){
                             let optionTitleTab = document.createElement('option');
-                            optionTitleTab.text = data[targetField];
+                            const tmp = document.createElement("textarea");
+                            tmp.innerHTML = data[targetField];
+                            optionTitleTab.text = tmp.value;
+                            //optionTitleTab.text = data[targetField];
                             optionTitleTab.value = i;
                             figureTab.appendChild(optionTitleTab);
                         }
