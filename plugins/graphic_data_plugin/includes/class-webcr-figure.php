@@ -46,13 +46,21 @@ class Webcr_Figure {
             ]);
 
             
-            // default_interactive_arguments from graphic_data_plugin/includes/class-graphic-data-settings-page.php
+            // default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/class-graphic-data-settings-page.php
             $settings = get_option('webcr_settings');
-            $default_interactive_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
+            $default_interactive_line_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
             wp_localize_script(
                 'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
                 'webcrDefaults',           // global object name
-                ['interactive_line_arguments' => $default_interactive_arguments]
+                ['interactive_line_arguments' => $default_interactive_line_arguments]
+            );
+            
+            $settings = get_option('webcr_settings');
+            $default_interactive_bar_arguments = isset($settings['interactive_bar_arguments']) ? $settings['interactive_bar_arguments'] : '';
+            wp_localize_script(
+                'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
+                'webcrDefaults',           // global object name
+                ['interactive_bar_arguments' => $default_interactive_bar_arguments]
             );
         }
     }

@@ -30,7 +30,7 @@ class Graphic_Data_Settings_Page {
             );
     }
 
-    // Register settings-plotly-bar.js script to display the script.
+    //Register settings-plotly-bar.js script to display the script.
     function enqueue_admin_interactive_default_bar_styles() {     
         wp_enqueue_script(
                 'load_default_bar_styles', // Handle.

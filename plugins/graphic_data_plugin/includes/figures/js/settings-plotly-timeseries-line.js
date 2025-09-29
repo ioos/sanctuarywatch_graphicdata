@@ -71,7 +71,7 @@ async function loadJson(targetContainer) {
 
         targetElement.appendChild(newDiv);
 
-        //console.log('fieldValueSaved', fieldValueSaved);
+        ////console.log('fieldValueSaved', fieldValueSaved);
 
         //Write button values is the fields do not have any saved values. 
         if (fieldValueSaved === undefined && interactive_arguments === "" || interactive_arguments === undefined) {
@@ -126,7 +126,7 @@ function logFormFieldValues() {
     const allFields = document.getElementsByName("plotFields");
     let fieldValues = [];
     allFields.forEach((uniqueField) => {
-        //console.log([uniqueField.id, uniqueField.value]);
+        ////console.log([uniqueField.id, uniqueField.value]);
         fieldValues.push([uniqueField.id, uniqueField.value]);
     });
     document.getElementById("interactive_line_arguments_editor").value = JSON.stringify(fieldValues); 
@@ -152,7 +152,7 @@ function fillFormFieldValues(elementID){
     // const interactiveFields = <?php echo json_encode($interactive_line_arguments_value); ?>; //only for php scripts
     try {
         const interactiveFields = document.getElementById("interactive_line_arguments_value").dataset.value;
-        //console.log('interactiveFields', interactiveFields);
+        ////console.log('interactiveFields', interactiveFields);
         if (interactiveFields != ""  && interactiveFields != null) {
             const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
             if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
@@ -161,7 +161,7 @@ function fillFormFieldValues(elementID){
         }
     } catch {
         const interactiveFields = document.getElementById("interactive_line_arguments_editor").value
-        //console.log('interactiveFields', interactiveFields);
+        ////console.log('interactiveFields', interactiveFields);
         if (interactiveFields != ""  && interactiveFields != null) {
             const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
             if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
@@ -482,17 +482,26 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
                     let label = document.createElement("label");
                     label.for = fieldLabel[0] + feature;
                     label.innerHTML = `${featureName}`;
-                    let checkbox = document.createElement("input");
-                    checkbox.type = "checkbox";
-                    checkbox.id = fieldLabel[0] + feature;
-                    checkbox.name = "plotFields";
-
-                    let fieldValueSaved = fillFormFieldValues(checkbox.id, interactive_arguments);
-                    checkbox.value = fieldValueSaved === 'on' ? 'on' : "";
-                    checkbox.checked = fieldValueSaved === 'on';
-
                     newColumn1.appendChild(label);
-                    newColumn2.appendChild(checkbox);
+
+                    if (feature == "Legend") {
+                        let checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.id = fieldLabel[0] + feature;
+                        checkbox.name = "plotBarFields";
+
+                        let fieldValueBarSaved = fillFormFieldBarValues(checkbox.id, interactive_arguments);
+                        checkbox.value = fieldValueBarSaved === 'on' ? 'on' : "";
+                        checkbox.checked = fieldValueBarSaved === 'on';
+
+                        // Toggle visibility dynamically
+                        checkbox.addEventListener('change', function () {
+                            checkbox.value = checkbox.checked ? 'on' : "";
+                            logFormFieldBarValues();
+                        });
+                        newColumn2.appendChild(checkbox);
+                    }
+
                     newRow.append(newColumn1, newColumn2);
                     newDiv.append(newRow);
                     
@@ -510,42 +519,6 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
                         const dropdownInputCol = document.createElement("div");
                         dropdownInputCol.classList.add("col");
 
-                        function createDropdown(labelText, selectId) {
-                            const label = document.createElement("label");
-                            label.innerHTML = labelText;
-                            const select = document.createElement("select");
-                            select.id = selectId;
-                            select.name = "plotFields";
-
-                            if (feature === "Mean" || feature === "ErrorBars" || feature === "StdDev") {
-                                const autoOpt = document.createElement("option");
-
-                                if (feature != "ErrorBars") {
-                                    autoOpt.value = "auto";
-                                    autoOpt.innerHTML = "Auto Calculate Based on Line Column Selection";
-                                    select.appendChild(autoOpt);
-                                }
-                                if (feature === "ErrorBars") {
-                                    autoOpt.value = "auto";
-                                    autoOpt.innerHTML = "Example Error Bars";
-                                    select.appendChild(autoOpt);
-                                }
-
-                            for (let col of Object.values(jsonColumns)) {
-                                const opt = document.createElement("option");
-                                opt.value = col;
-                                opt.innerHTML = col;
-                                select.appendChild(opt);
-                            }
-
-                            const saved = fillFormFieldValues(select.id, interactive_arguments);
-                            if (saved) select.value = saved;
-
-                            select.addEventListener("change", logFormFieldValues);
-                            return { label, select };
-                            }
-
-                        }
 
                         function createColorfield(labelText, inputId) {
                             const label = document.createElement("label");
@@ -578,23 +551,23 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
                         }             
 
                         // Initially hide the dropdown container
-                        dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
+                        //dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
 
                         controls.forEach(control => dropdownInputCol.appendChild(control));
                         dropdownContainer.append(dropdownLabelCol, dropdownInputCol);
                         newDiv.append(dropdownContainer);
 
-                        // Toggle visibility dynamically
-                        checkbox.addEventListener('change', function () {
-                            checkbox.value = checkbox.checked ? 'on' : "";
-                            dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
-                            logFormFieldValues();
-                        });
+                        // // Toggle visibility dynamically
+                        // checkbox.addEventListener('change', function () {
+                        //     checkbox.value = checkbox.checked ? 'on' : "";
+                        //     dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
+                        //     logFormFieldValues();
+                        // });
                     } else {
-                        checkbox.addEventListener('change', function () {
-                            checkbox.value = checkbox.checked ? 'on' : "";
-                            logFormFieldValues();
-                        });
+                        // checkbox.addEventListener('change', function () {
+                        //     checkbox.value = checkbox.checked ? 'on' : "";
+                        //     logFormFieldValues();
+                        // });
                     }
                 }
                 

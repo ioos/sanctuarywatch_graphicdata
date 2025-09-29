@@ -82,12 +82,12 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
         if (postID == null) {
             // ADMIN SIDE POST ID GRAB
             figureID = document.getElementsByName("post_ID")[0].value;
-            //console.log("figureID ADMIN:", figureID);
+            ////console.log("figureID ADMIN:", figureID);
         }
         if (postID != null) {
             // THEME SIDE POST ID GRAB
             figureID = postID;
-            //console.log("figureID THEME:", figureID);
+            ////console.log("figureID THEME:", figureID);
         }
 
         // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyBarFigure a chance to finish running before the next one kicked off
@@ -119,7 +119,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
         if (figureID == targetElementpostID) {
 
-            //console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;            
+            ////console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;            
             const targetElement = await waitForElementById(targetFigureElement);
             targetElement.appendChild(newDiv);
             
@@ -165,7 +165,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                 const showLegendBool = showLegend === 'on';
                 const fillType = figureArguments[targetBarColumn + 'FillType'];
 
-                console.log('fillType', fillType);
+                //console.log('fillType', fillType);
 
                 function lightenColor(hex, factor = 0.2) {
                     const rgb = parseInt(hex.slice(1), 16);
@@ -177,7 +177,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Individual Bar Column Stacking ===
                 if (isStacked === 'on' && columnXHeader !== 'None') {
-                    console.log('// === CASE: Individual Bar Column Stacking ===');
+                    //console.log('// === CASE: Individual Bar Column Stacking ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
@@ -209,7 +209,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Single Bar (no X axis) ===
                 else if (columnXHeader === 'None') {
-                    console.log(' // === CASE: Single Bar (no X axis) ===');
+                    //console.log(' // === CASE: Single Bar (no X axis) ===');
                     plotlyX = [figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`];
                     const sumY = dataToBePlotted[columnYHeader].map(val => parseFloat(val)).filter(val => !isNaN(val)).reduce((a, b) => a + b, 0);
                     plotlyY = [sumY];
@@ -230,7 +230,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Stacked across columns by X axis ===
                 else if (barStackedByX && columnXHeader !== 'None') {
-                    console.log(' // === CASE: Stacked across columns by X axis ===');
+                    //console.log(' // === CASE: Stacked across columns by X axis ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
@@ -258,7 +258,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Separate columns side-by-side per bar ===
                 else {
-                    console.log('// === CASE: Separate columns side-by-side per bar ===');
+                    //console.log('// === CASE: Separate columns side-by-side per bar ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
@@ -268,9 +268,9 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                     });
 
                     plotlyX = Object.keys(groupMap);
-                    //console.log(plotlyX);
+                    ////console.log(plotlyX);
                     plotlyY = Object.values(groupMap);
-                    //console.log(plotlyY);
+                    ////console.log(plotlyY);
 
 
 
@@ -464,6 +464,116 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
         console.error('Error loading scripts:', error);
     }
 }
+
+
+function loadDefaultInteractiveBarArguments (jsonColumns) {
+    // ---------- helpers ----------
+    function safeParseJSON(s) { try { return JSON.parse(s); } catch { return null; } }
+
+    function pairsToObject(pairs) {
+        const o = {};
+        if (Array.isArray(pairs)) {
+        for (const p of pairs) {
+            if (Array.isArray(p) && p.length >= 2) o[String(p[0])] = String(p[1] ?? "");
+        }
+        }
+        return o;
+    }
+    function kvStringToObject(str) {
+        const o = {};
+        if (!str) return o;
+        for (const part of str.split(/[;,]/)) {
+        const [k, v] = part.split(/[:=]/).map(s => (s || "").trim());
+        if (k) o[k] = v ?? "";
+        }
+        return o;
+    }
+    function toObjectFlexible(s) {
+        if (!s) return {};
+        const asJSON = safeParseJSON(s);
+        if (asJSON && typeof asJSON === "object") {
+        return Array.isArray(asJSON) ? pairsToObject(asJSON) : asJSON;
+        }
+        return kvStringToObject(s);
+    }
+    function toPairsFlexible(s) {
+        const asJSON = safeParseJSON(s);
+        if (Array.isArray(asJSON)) return asJSON;
+        const obj = toObjectFlexible(s);
+        return Object.entries(obj).map(([k, v]) => [k, v]);
+    }
+    // preserve original order from currentPairs; append unseen keys at the end
+    function objectToPairsPreserveOrder(obj, currentPairs) {
+        const seen = new Set();
+        const out = [];
+        for (const [k] of currentPairs) {
+        if (!seen.has(k) && k in obj) {
+            out.push([k, String(obj[k] ?? "")]);
+            seen.add(k);
+        }
+        }
+        // append any remaining keys (e.g., required keys not in original)
+        for (const k of Object.keys(obj)) {
+        if (!seen.has(k)) out.push([k, String(obj[k] ?? "")]);
+        }
+        return out;
+    }
+
+    // ---------- main ----------
+    const field = document.getElementsByName("figure_interactive_arguments")[0];
+    if (!field) return;
+
+    const currentStr  = field.value || "";
+    const defaultsStr = (typeof webcrDefaults !== "undefined" && webcrDefaults.interactive_bar_arguments)
+                            ? webcrDefaults.interactive_bar_arguments : "";
+
+    // Parse both to objects and keep original pair order from current
+    const currentPairs   = toPairsFlexible(currentStr);
+    const currentObj     = toObjectFlexible(currentStr);
+    const defaultsObj    = toObjectFlexible(defaultsStr);
+
+    // How many bars should be considered?
+    const numEl = document.getElementById("NumberOfBars");
+    const numberOfBars = numEl && numEl.value ? parseInt(numEl.value, 10) : 0;
+    if (numberOfBars > 0) currentObj.NumberOfBars = String(numberOfBars);
+
+    // Overwrite ONLY keys that:
+    //  - start with Bar1..Bar{N}, AND
+    //  - already exist in currentObj, AND
+    //  - also exist in defaultsObj
+    if (numberOfBars > 0) {
+        const barPrefixes = Array.from({ length: numberOfBars }, (_, i) => `Bar${i + 1}`);
+        for (const key of Object.keys(currentObj)) {
+        const isWithinBars = barPrefixes.some(prefix => key.startsWith(prefix));
+        if (isWithinBars && (key in defaultsObj)) {
+            currentObj[key] = defaultsObj[key];
+        }
+        }
+    }
+
+    // Ensure/overwrite these non-bar keys regardless of bar count
+    currentObj.showGrid    = (defaultsObj.showGrid    ?? "on");
+    currentObj.graphTicks  = (defaultsObj.graphTicks  ?? "on");
+    currentObj.XAxisFormat = (defaultsObj.XAxisFormat ?? "YYYY");
+
+    // Convert back to array-of-pairs, preserving the original order from currentPairs
+    const mergedPairs = objectToPairsPreserveOrder(currentObj, currentPairs);
+
+    // Write back EXACTLY as array-of-pairs JSON
+    let mergedPairs_string = JSON.stringify(mergedPairs);
+
+    //console.log('interactive_arguments', currentStr);
+    //console.log('default_interactive_arguments', defaultsStr);
+    //console.log('mergedPairs_string', mergedPairs_string);
+
+    document.getElementsByName("figure_interactive_arguments")[0].value = mergedPairs_string;
+
+    displayBarFields(numberOfBars, jsonColumns, mergedPairs_string);
+
+    return;
+    
+}
+
 
 function plotlyBarParameterFields(jsonColumns, interactive_arguments){
 
@@ -678,7 +788,7 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
         // Add checkbox for StackedBarColumns
         let labelStackedBarColumns = document.createElement("label");
         labelStackedBarColumns.for = "StackedBarColumns";
-        labelStackedBarColumns.innerHTML = "Group Bars by X-axis (Stacked Columns)";
+        labelStackedBarColumns.innerHTML = "Group Bars by X Axis (Stacked Columns)";
         let checkboxStackedBarColumns = document.createElement("input");
         checkboxStackedBarColumns.type = "checkbox";
         checkboxStackedBarColumns.id = "StackedBarColumns";
@@ -703,6 +813,34 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
         newColumn2.appendChild(checkboxStackedBarColumns);
         newRow.append(newColumn1, newColumn2);
         newDiv.append(newRow);
+
+
+        // Create the button for default styles
+        let labelApplyDefaults = document.createElement("label");
+        labelApplyDefaults.for = "ApplyBarDefaults";
+        labelApplyDefaults.innerHTML = "Apply Custom Bar Styles to All Bars";
+
+        let btnApplyDefaults = document.createElement("button");
+        btnApplyDefaults.id = "ApplyBarDefaults";
+        btnApplyDefaults.type = "button"; // prevent accidental form submit
+        btnApplyDefaults.classList.add("button", "button-primary"); // WP admin button style
+        btnApplyDefaults.innerHTML = "Click to Apply Styles";
+
+        btnApplyDefaults.addEventListener('click', function() {
+            loadDefaultInteractiveBarArguments(jsonColumns);
+        });
+
+        let newRowBtn = document.createElement("div");
+        newRowBtn.classList.add("row", "fieldPadding");
+        let newColumn1Btn = document.createElement("div");
+        newColumn1Btn.classList.add("col-3");
+        let newColumn2Btn = document.createElement("div");
+        newColumn2Btn.classList.add("col");
+        newColumn1Btn.appendChild(labelApplyDefaults);
+        newColumn2Btn.appendChild(btnApplyDefaults);
+        newRowBtn.append(newColumn1Btn, newColumn2Btn);
+        newDiv.append(newRowBtn);
+
 
 
         //Create select fields for X Axis and each line to be plotted
@@ -757,6 +895,8 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
             newColumn2.appendChild(selectColumn);
             newRow.append(newColumn1, newColumn2);
             newDiv.append(newRow);
+
+
 
             if (fieldLabel[0] != "XAxis"){
                 // Add line label field
@@ -898,7 +1038,7 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
 
                 //Add checkboxes for error bars, standard deviation, mean, and percentiles
                 const features = ["Legend", "Mean", "ErrorBars", "Percentiles", "Stacked"];
-                const featureNames = ["Graph Legend Visible?", "Mean Bar Visible?", "Symmetric Error Bars Visible?", "90th & 10th Percentile Bars (Auto Calculated) Visible?", "Stack Bar by X Axis Column Values? (Not for use with Mean, Error Bars, or Percentiles)"];
+                const featureNames = ["Add Bar to Legend", "Mean Line", "Symmetric Error Bars", "90th & 10th Percentile Lines", "Group Bar X Axis By Category"];
                 for (let i = 0; i < features.length; i++) {
                     const feature = features[i];
                     const featureName = featureNames[i];

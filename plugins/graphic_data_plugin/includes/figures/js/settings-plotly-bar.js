@@ -11,12 +11,12 @@ let interactive_bar_arguments_value = document.getElementById("interactive_bar_a
 
 
 //Hide the Bar Graph (Time Series) Arguments Editor row on load
-// document.addEventListener("DOMContentLoaded", function() {
-//     const row = document.getElementById("interactive_bar_arguments_editor").closest("tr");
-//     if (row) {
-//         row.style.display = "none";
-//     }
-// });
+document.addEventListener("DOMContentLoaded", function() {
+    const row = document.getElementById("interactive_bar_arguments_editor").closest("tr");
+    if (row) {
+        row.style.display = "none";
+    }
+});
 
 // ====== Your functions (lightly tidied/safe-guarded) ======
 async function loadBarJson(targetBarContainer) {
@@ -53,7 +53,7 @@ async function loadBarJson(targetBarContainer) {
         const interactive_arguments = iaEl ? iaEl : "";
 
         
-        //console.log('interactive_arguments', interactive_arguments);
+        ////console.log('interactive_arguments', interactive_arguments);
 
         //Restore saved selection (uses your own fill/log helpers)
         if (typeof fillFormFieldBarValues === "function") {
@@ -77,7 +77,7 @@ async function loadBarJson(targetBarContainer) {
 
         targetBarElement.appendChild(newDiv);
 
-        console.log('fieldValueBarSaved', fieldValueBarSaved);
+        //console.log('fieldValueBarSaved', fieldValueBarSaved);
 
         //Write button values is the fields do not have any saved values. 
         if (fieldValueBarSaved == undefined) {
@@ -132,7 +132,7 @@ function logFormFieldBarValues() {
     const allFields = document.getElementsByName("plotBarFields");
     let fieldValues = [];
     allFields.forEach((uniqueField) => {
-        console.log([uniqueField.id, uniqueField.value]);
+        //console.log([uniqueField.id, uniqueField.value]);
         fieldValues.push([uniqueField.id, uniqueField.value]);
     });
     document.getElementById("interactive_bar_arguments_editor").value = JSON.stringify(fieldValues); 
@@ -158,7 +158,7 @@ function fillFormFieldBarValues(elementID){
     // const interactiveBarFields = <?php echo json_encode($interactive_bar_arguments_value); ?>;
     // const interactiveBarFields = document.getElementById("interactive_bar_arguments_value").dataset.value;
     const interactiveBarFields = document.getElementById("interactive_bar_arguments_editor").value
-    console.log('interactiveBarFields', interactiveBarFields);
+    //console.log('interactiveBarFields', interactiveBarFields);
     if (interactiveBarFields != ""  && interactiveBarFields != null) {
         const resultJSON = Object.fromEntries(JSON.parse(interactiveBarFields));
 
@@ -371,95 +371,64 @@ function plotlyBarParameterFields(jsonBarColumns, interactive_arguments){
                 barTypeSelect.id = fieldLabel[0] + 'BarType';
                 barTypeSelect.name = 'plotBarFields';
 
-                //bar types
-                ["solid", "dash", "dot", "dashdot", "longdash", "longdashdot"].forEach(type => {
-                const opt = document.createElement('option');
-                opt.value = type;
-                opt.innerHTML = type.charAt(0).toUpperCase() + type.slice(1);
-                barTypeSelect.appendChild(opt);
+                // Create pattern/fill select field
+                let labelPatternSelect = document.createElement("label");
+                labelPatternSelect.htmlFor = fieldLabel[0] + "FillType";
+                labelPatternSelect.innerHTML = fieldLabel[1] + " Fill Type";
+
+                let selectColumnPattern = document.createElement("select");
+                selectColumnPattern.id = fieldLabel[0] + "FillType";  // use consistent key
+                selectColumnPattern.name = "plotBarFields";
+                selectColumnPattern.addEventListener('change', function() {
+                    logFormFieldBarValues();
                 });
 
-                const barTypeSaved = fillFormFieldBarValues(barTypeSelect.id, interactive_arguments);
-                if (barTypeSaved) barTypeSelect.value = barTypeSaved;
+                const patternJsonColumns = {
+                    'Solid': '', 
+                    'Slanted Line': '/', 
+                    'Crosshatch': 'x', 
+                    'Dots': '.', 
+                    'Horizontal Line': '-', 
+                    'Vertical Line': '|'
+                };
 
-                barTypeSelect.addEventListener('change', logFormFieldBarValues);
-                barTypeCol1.appendChild(barTypeLabel);
-                barTypeCol2.appendChild(barTypeSelect);
-                barTypeRow.append(barTypeCol1, barTypeCol2);
-                newDiv.append(barTypeRow);
-
-                // Add marker type dropdown
-                const markerRow = document.createElement('div');
-                markerRow.classList.add('row', 'fieldPadding');
-                if (fieldLabelNumber % 2 != 0) markerRow.classList.add('fieldBackgroundColor');
-
-                const markerCol1 = document.createElement('div');
-                markerCol1.classList.add('col-3');
-                const markerCol2 = document.createElement('div');
-                markerCol2.classList.add('col');
-
-                const markerLabel = document.createElement('label');
-                markerLabel.textContent = fieldLabel[1] + ' Marker Type';
-                markerLabel.htmlFor = fieldLabel[0] + 'MarkerType';
-                const markerSelect = document.createElement('select');
-                markerSelect.id = fieldLabel[0] + 'MarkerType';
-                markerSelect.name = 'plotBarFields';
-
-                ["circle", "square", "diamond", "x", "triangle-up", "triangle-down", "pentagon", "hexagon", "star", "hourglass", "bowtie", "cross"].forEach(type => {
-                    const opt = document.createElement('option');
-                    opt.value = type;
-                    opt.innerHTML = type.charAt(0).toUpperCase() + type.slice(1);
-                    markerSelect.appendChild(opt);
+                Object.entries(patternJsonColumns).forEach(([label, value]) => {
+                    option = document.createElement("option");
+                    option.value = value;
+                    option.innerHTML = label;
+                    selectColumnPattern.appendChild(option);
                 });
 
-                const markerSaved = fillFormFieldBarValues(markerSelect.id, interactive_arguments);
-                if (markerSaved) markerSelect.value = markerSaved;
+                fieldValueBarSaved = fillFormFieldBarValues(selectColumnPattern.id, interactive_arguments);
+                if (fieldValueBarSaved !== undefined) {
+                    selectColumnPattern.value = fieldValueBarSaved;
+                }
 
-                markerSelect.addEventListener('change', logFormFieldBarValues);
-                markerCol1.appendChild(markerLabel);
-                markerCol2.appendChild(markerSelect);
-                markerRow.append(markerCol1, markerCol2);
-                newDiv.append(markerRow);
+                // Create and append row
+                newRow = document.createElement("div");
+                newRow.classList.add("row", "fieldPadding");
 
+                if (fieldLabel[0] !== "XAxis") {
+                    fieldLabelNumber = parseInt(fieldLabel[0].slice(-1));
+                    if (fieldLabelNumber % 2 !== 0) {
+                        newRow.classList.add("row", "fieldBackgroundColor");
+                    }
+                }
 
-                // Add markerSize type dropdown
-                const markerSizeRow = document.createElement('div');
-                markerSizeRow.classList.add('row', 'fieldPadding');
-                if (fieldLabelNumber % 2 != 0) markerSizeRow.classList.add('fieldBackgroundColor');
+                newColumn1 = document.createElement("div");
+                newColumn1.classList.add("col-3");   
+                newColumn2 = document.createElement("div");
+                newColumn2.classList.add("col");
 
-                const markerSizeCol1 = document.createElement('div');
-                markerSizeCol1.classList.add('col-3');
-                const markerSizeCol2 = document.createElement('div');
-                markerSizeCol2.classList.add('col');
-
-                const markerSizeLabel = document.createElement('label');
-                markerSizeLabel.textContent = fieldLabel[1] + ' Marker Size';
-                markerSizeLabel.htmlFor = fieldLabel[0] + 'MarkerSize';
-                const markerSizeSelect = document.createElement('select');
-                markerSizeSelect.id = fieldLabel[0] + 'MarkerSize';
-                markerSizeSelect.name = 'plotBarFields';
-
-                // Sizes 1 through 20
-                [0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20].forEach(size => {
-                const opt = document.createElement('option');
-                opt.value = size;
-                opt.innerHTML = size + ' px';
-                markerSizeSelect.appendChild(opt);
-                });
-
-                const markerSizeSaved = fillFormFieldBarValues(markerSizeSelect.id, interactive_arguments);
-                if (markerSizeSaved) markerSizeSelect.value = markerSizeSaved;
-
-                markerSizeSelect.addEventListener('change', logFormFieldBarValues);
-                markerSizeCol1.appendChild(markerSizeLabel);
-                markerSizeCol2.appendChild(markerSizeSelect);
-                markerSizeRow.append(markerSizeCol1, markerSizeCol2);
-                newDiv.append(markerSizeRow);
+                newColumn1.appendChild(labelPatternSelect);
+                newColumn2.appendChild(selectColumnPattern);
+                newRow.append(newColumn1, newColumn2);
+                newDiv.append(newRow);
 
 
                 //Add checkboxes for error bars, standard deviation, mean, and percentiles
-                const features = ["Legend", "StdDev", "ErrorBars"];
-                const featureNames = ["Add Bar to Legend", "+-1 Std Dev Fill ", "Symmetric Error Bars"];
+                const features = ["Legend", "ErrorBars", "Stacked"];
+                const featureNames = ["Add Bar to Legend", "Symmetric Error Bars", "Group Bar X Axis By Category"];
                 for (let i = 0; i < features.length; i++) {
                     const feature = features[i];
                     const featureName = featureNames[i];
@@ -478,23 +447,32 @@ function plotlyBarParameterFields(jsonBarColumns, interactive_arguments){
                     let label = document.createElement("label");
                     label.for = fieldLabel[0] + feature;
                     label.innerHTML = `${featureName}`;
-                    let checkbox = document.createElement("input");
-                    checkbox.type = "checkbox";
-                    checkbox.id = fieldLabel[0] + feature;
-                    checkbox.name = "plotBarFields";
-
-                    let fieldValueBarSaved = fillFormFieldBarValues(checkbox.id, interactive_arguments);
-                    checkbox.value = fieldValueBarSaved === 'on' ? 'on' : "";
-                    checkbox.checked = fieldValueBarSaved === 'on';
-
                     newColumn1.appendChild(label);
-                    newColumn2.appendChild(checkbox);
+
+                    if (feature == "Legend") {
+                        let checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.id = fieldLabel[0] + feature;
+                        checkbox.name = "plotBarFields";
+
+                        let fieldValueBarSaved = fillFormFieldBarValues(checkbox.id, interactive_arguments);
+                        checkbox.value = fieldValueBarSaved === 'on' ? 'on' : "";
+                        checkbox.checked = fieldValueBarSaved === 'on';
+
+                        // Toggle visibility dynamically
+                        checkbox.addEventListener('change', function () {
+                            checkbox.value = checkbox.checked ? 'on' : "";
+                            logFormFieldBarValues();
+                        });
+                        newColumn2.appendChild(checkbox);
+                    }
+
                     newRow.append(newColumn1, newColumn2);
                     newDiv.append(newRow);
                     
 
                     // === Add dropdowns for feature-specific data ===
-                    if (["Mean", "ErrorBars", "StdDev"].includes(feature)) {
+                    if (["ErrorBars", "Stacked"].includes(feature)) {
                         const dropdownContainer = document.createElement("div");
                         dropdownContainer.classList.add("row", "fieldPadding");
                         if (fieldLabelNumber % 2 != 0) {
@@ -506,42 +484,6 @@ function plotlyBarParameterFields(jsonBarColumns, interactive_arguments){
                         const dropdownInputCol = document.createElement("div");
                         dropdownInputCol.classList.add("col");
 
-                        function createDropdown(labelText, selectId) {
-                            const label = document.createElement("label");
-                            label.innerHTML = labelText;
-                            const select = document.createElement("select");
-                            select.id = selectId;
-                            select.name = "plotBarFields";
-
-                            if (feature === "Mean" || feature === "ErrorBars" || feature === "StdDev") {
-                                const autoOpt = document.createElement("option");
-
-                                if (feature != "ErrorBars") {
-                                    autoOpt.value = "auto";
-                                    autoOpt.innerHTML = "Auto Calculate Based on Bar Column Selection";
-                                    select.appendChild(autoOpt);
-                                }
-                                if (feature === "ErrorBars") {
-                                    autoOpt.value = "auto";
-                                    autoOpt.innerHTML = "Example Error Bars";
-                                    select.appendChild(autoOpt);
-                                }
-
-                            for (let col of Object.values(jsonBarColumns)) {
-                                const opt = document.createElement("option");
-                                opt.value = col;
-                                opt.innerHTML = col;
-                                select.appendChild(opt);
-                            }
-
-                            const saved = fillFormFieldBarValues(select.id, interactive_arguments);
-                            if (saved) select.value = saved;
-
-                            select.addEventListener("change", logFormFieldBarValues);
-                            return { label, select };
-                            }
-
-                        }
 
                         function createColorfield(labelText, inputId) {
                             const label = document.createElement("label");
@@ -562,35 +504,24 @@ function plotlyBarParameterFields(jsonBarColumns, interactive_arguments){
 
                         const controls = [];
 
-                        // if (feature === "Mean") {
-                        //     const { label, select } = createDropdown("Mean Source Column", fieldLabel[0] + feature + "Field");
-                        //     controls.push(label, select);
-                        // }
+                        if (feature === "Stacked") {
+                            const { label: labelColor, input: ColorValue } = createColorfield(`Separator Line Color`, fieldLabel[0] + feature + "SeparatorLineColor");
+                            controls.push(labelColor, document.createElement('br'), ColorValue);
+                        }
 
                         if (feature === "ErrorBars" || feature === "StdDev") {
                             //const { label: labelValues, select: selectValues } = createDropdown(`${featureName} Input Column Values`, fieldLabel[0] + feature + "InputValues");
                             const { label: labelColor, input: ColorValue } = createColorfield(`Color`, fieldLabel[0] + feature + "Color");
                             controls.push(labelColor, document.createElement('br'), ColorValue);
-                        }             
-
-                        // Initially hide the dropdown container
-                        dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
+                        }
 
                         controls.forEach(control => dropdownInputCol.appendChild(control));
                         dropdownContainer.append(dropdownLabelCol, dropdownInputCol);
                         newDiv.append(dropdownContainer);
 
-                        // Toggle visibility dynamically
-                        checkbox.addEventListener('change', function () {
-                            checkbox.value = checkbox.checked ? 'on' : "";
-                            dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
-                            logFormFieldBarValues();
-                        });
+                    
                     } else {
-                        checkbox.addEventListener('change', function () {
-                            checkbox.value = checkbox.checked ? 'on' : "";
-                            logFormFieldBarValues();
-                        });
+                        
                     }
                 }
                 
@@ -610,7 +541,7 @@ function plotlyBarParameterFields(jsonBarColumns, interactive_arguments){
 // ====== Boot: run loadBarJson with targetBarContainer = #barDefaultSelector ======
 function startLoadBarJson() {
     let targetBar = document.getElementById('barDefaultSelector');
-    console.log('targetBar', targetBar);
+    ////console.log('targetBar', targetBar);
     if (!targetBar) return;
 
     // If your other helpers are loaded asynchronously, delay slightly:

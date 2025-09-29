@@ -169,7 +169,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         await loadPlotlyScript(); // ensures Plotly is ready
 
         const rawField = interactive_arguments;
-        //console.log(rawField);
+        ////console.log(rawField);
         const figureArguments = Object.fromEntries(JSON.parse(rawField));
         const rootURL = window.location.origin;
 
@@ -177,12 +177,12 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         if (postID == null) {
             // ADMIN SIDE POST ID GRAB
             figureID = document.getElementsByName("post_ID")[0].value;
-            //console.log("figureID ADMIN:", figureID);
+            ////console.log("figureID ADMIN:", figureID);
         }
         if (postID != null) {
             // THEME SIDE POST ID GRAB
             figureID = postID;
-            //console.log("figureID THEME:", figureID);
+            ////console.log("figureID THEME:", figureID);
         }
 
         // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyLineFigure a chance to finish running before the next one kicked off
@@ -214,7 +214,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
 
         if (figureID == targetElementpostID) {
 
-            //console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;            
+            ////console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;            
             // const targetElement = document.getElementById(targetFigureElement);
             const targetElement = await waitForElementById(targetFigureElement);
             targetElement.appendChild(newDiv);
@@ -248,9 +248,9 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                 var graphTickModeBool = 'auto';
                 var graphTickPositionBool = 'outside';    
             }
-            console.log('graphTicks', graphTicks);            
-            console.log('graphTickModeBool', graphTickModeBool);
-            console.log('graphTickPositionBool', graphTickPositionBool);
+            //console.log('graphTicks', graphTicks);            
+            //console.log('graphTickModeBool', graphTickModeBool);
+            //console.log('graphTickPositionBool', graphTickPositionBool);
 
             // Plotly figure production logic
             for (let i = 1; i <= figureArguments['NumberOfLines']; i++) {
@@ -268,7 +268,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                 if (lineType === undefined) {
                     const lineType = 'solid';
                 } 
-                console.log('lineType', lineType);
+                //console.log('lineType', lineType);
                 const markerType = figureArguments[targetLineColumn + 'MarkerType'];
                 const markerSize = parseInt(figureArguments[targetLineColumn + 'MarkerSize'], 10);
 
@@ -648,9 +648,9 @@ function loadDefaultInteractiveLineArguments (jsonColumns) {
     // Write back EXACTLY as array-of-pairs JSON
     let mergedPairs_string = JSON.stringify(mergedPairs);
 
-    // console.log('interactive_arguments', currentStr);
-    // console.log('default_interactive_arguments', defaultsStr);
-    // console.log('mergedPairs_string', mergedPairs_string);
+    // //console.log('interactive_arguments', currentStr);
+    // //console.log('default_interactive_arguments', defaultsStr);
+    // //console.log('mergedPairs_string', mergedPairs_string);
 
     document.getElementsByName("figure_interactive_arguments")[0].value = mergedPairs_string;
 
