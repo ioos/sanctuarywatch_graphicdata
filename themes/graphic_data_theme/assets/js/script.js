@@ -2764,6 +2764,9 @@ function sectioned_list(){
     sections.sort();
     sections.push('None');
 
+    let sectionNoneCount = sections.filter(s => s === "None").length;
+
+
     let toc_container = document.querySelector("#toc-container");
     let toc_group = document.createElement("div");
 
@@ -2794,7 +2797,7 @@ function sectioned_list(){
             heading.style.display = 'inline-block';
             heading.style.padding = '0 5px';
         }
-        if (sections[i] == "None"){
+        if (sections[i] == "None" && sectionNoneCount > 1){
             heading.innerHTML = 'No Section';
             let color = scene_default_hover_color;
             heading.style.backgroundColor = hexToRgba(color, 0.2);
@@ -2853,6 +2856,9 @@ function toc_sections() {
     sections.sort();
     sections.push('None');
 
+
+    let sectionNoneCount = sections.filter(s => s === "None").length;
+
     let toc_container = document.querySelector("#toc-container");
     let toc_group = document.createElement("div");
     toc_group.classList.add("accordion");
@@ -2900,7 +2906,7 @@ function toc_sections() {
             } else {}
         }
 
-        if (sections[i]=="None" || title_test == "None"){
+        if (sectionNoneCount > 1 && sections[i]=="None" || title_test == "None"){
             button.innerHTML = 'No Section';
             let color = scene_default_hover_color;
             button.style.backgroundColor = hexToRgba(color, 0.2);
