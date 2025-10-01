@@ -198,7 +198,8 @@ class Webcr {
 		add_filter('screen_options_show_screen', '__return_false'); //Disable Screen Options in admin screens
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin, 'remove_view_link_from_post_type', 10, 2); 
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'plugin_check_required_theme' ); 
-		$this->loader->add_action( 'init', $plugin_admin, 'start_session' ); 
+	//	$this->loader->add_action( 'init', $plugin_admin, 'start_session' ); 
+	//	$this->loader->add_action( 'shutdown', $plugin_admin, 'close_session' ); 
 		$this->loader->add_action( 'admin_footer-post.php', $plugin_admin, 'adjust_admin_post_time_display', 10); 
 		$this->loader->add_action( 'admin_footer-post-new.php', $plugin_admin, 'adjust_admin_post_time_display', 10); 
 

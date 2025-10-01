@@ -28,25 +28,32 @@ class webcr_validation {
 	public $version = '1.0.0';
 
     public function master_validate($validate_content_type){
+        
+        // I think a session is needed for validation, but not 100% sure. Stashing
+        // the session start and stop within this function for now.
+        session_start();
+
         switch ($validate_content_type) {
             case "about":
-                return $this->validate_about();
+                $result = $this->validate_about();
                 break;
             case "scene":
-                return $this->validate_scene();
+                $result = $this->validate_scene();
                 break;
             case "modal":
-                return $this->validate_modal();
+                $result = $this->validate_modal();
                 break;
             case "figure":
-                return $this->validate_figure();
+                $result = $this->validate_figure();
                 break;
             case "instance":
-                return $this->validate_instance();
+                $result = $this->validate_instance();
                 break;
             case "default":
-                return false;
+                $result = false;
         }
+       // session_write_close();
+        return $result;
     }
 
     // The purpose of this function is to validate the fields of the About custom content type. 
