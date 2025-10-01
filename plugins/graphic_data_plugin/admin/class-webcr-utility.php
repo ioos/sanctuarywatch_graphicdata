@@ -91,15 +91,15 @@ class Webcr_Utility {
      * @param int $expiration Optional. Time until expiration in seconds. Default 1800 (30 minutes)
      * @since 1.0.0
      */
-    public function fields_to_transient($content_type, $fields_config, $key_type, $expiration = 1800) {
+    public function fields_to_transient($key_name, $fields_config, $expiration = 1800) {
         delete_expired_transients(); // Ensure expired transients are cleaned up before storing new ones
         $all_fields = [];
         
-        // Process the fields configuration to extract field IDs and handle fieldsets
+        // Process the fields configuration to extract field IDss and handle fieldsets
         $this->extract_field_values($fields_config, $all_fields);
         
         // Create a unique transient key for this user and content type
-        $transient_key = $this->get_user_transient_key($content_type . "_error_all_fields");
+        $transient_key = $this->get_user_transient_key($key_name);
         
         // Store in transient instead of session
         set_transient($transient_key, $all_fields, $expiration);

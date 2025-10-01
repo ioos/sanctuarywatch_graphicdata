@@ -94,7 +94,7 @@ class webcr_validation {
             
             // save the fields to the transient
             $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('about', $fields_config, 30);
+            $function_utilities ->  fields_to_transient('about_error_all_fields', $fields_config, 30);
         } else {
             $_SESSION["about_post_status"] = "post_good";
         }
@@ -233,7 +233,7 @@ class webcr_validation {
             
             // save the fields to the transient
             $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('instance', $fields_config, 30);
+            $function_utilities ->  fields_to_transient('instance_error_all_fields', $fields_config, 30);
         } else {
             $_SESSION["instance_post_status"] = "post_good";
         }
@@ -384,7 +384,7 @@ class webcr_validation {
             
             // save the fields to the transient
             $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('figure', $fields_config, 30);
+            $function_utilities ->  fields_to_transient('figure_error_all_fields', $fields_config, 30);
         } else {
             $_SESSION["figure_post_status"] = "post_good";
         }
@@ -621,7 +621,7 @@ class webcr_validation {
             
             // save the fields to the transient
             $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('modal', $fields_config, 30);
+            $function_utilities ->  fields_to_transient('modal_error_all_fields', $fields_config, 30);
 
         } else {
             $_SESSION["modal_post_status"] = "post_good";
@@ -747,7 +747,7 @@ class webcr_validation {
             
             // save the fields to the transient
             $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('scene', $fields_config, 30);
+            $function_utilities ->  fields_to_transient('scene_error_all_fields', $fields_config, 30);
         } else {
             $_SESSION["scene_post_status"] = "post_good";
         }
