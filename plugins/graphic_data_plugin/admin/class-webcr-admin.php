@@ -131,18 +131,22 @@ class Webcr_Admin {
 		if ($current_post_type == "figure" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
 
 			// Enqueue utility.js
-			wp_enqueue_script('figure-utility', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/utility.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			wp_enqueue_script('figure-utility', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/interactive/plotly-utility.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
 		
 			// Enqueue plotly-timeseries-line.js
-			wp_enqueue_script('plotly-timeseries-line', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/plotly-timeseries-line.js', array(), '1.0.0', array('strategy'  => 'defer'));
+			wp_enqueue_script('plotly-timeseries-line', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-timeseries-line.js', array(), '1.0.0', array('strategy'  => 'defer'));
 
 			// Enqueue plotly-bar.js
-			wp_enqueue_script('plotly-bar', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/plotly-bar.js', array(), '1.0.0', array('strategy'  => 'defer'));
+			wp_enqueue_script('plotly-bar', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-bar.js', array(), '1.0.0', array('strategy'  => 'defer'));
 
 			// Enqueue plotly-map.js
-			wp_enqueue_script('plotly-map', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/plotly-map.js', array(), '1.0.0', array('strategy'  => 'defer'));
+			wp_enqueue_script('plotly-map', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-map.js', array(), '1.0.0', array('strategy'  => 'defer'));
 
-			wp_enqueue_script( "webcr-admin-figure", plugin_dir_url( __FILE__ ) . 'js/webcr-admin-figure.js', array( ), $this->version, array('strategy'  => 'defer') );
+			// Enqueue file-upload.js
+			wp_enqueue_script('file-upload', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/file-upload.js', array(), '1.0.0', array('strategy'  => 'defer'));
+
+			// Enqueue admin-figure.js
+			wp_enqueue_script( "admin-figure", plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array( ), $this->version, array('strategy'  => 'defer') );
 
 		}
 
@@ -153,13 +157,13 @@ class Webcr_Admin {
 
 		// Load Figure-specific Javascript only for admin columns screen 
 		if ($current_post_type == "figure" && $hook_suffix == "edit.php" ){
-			wp_enqueue_script( "webcr-admin-figure_columns", plugin_dir_url( __FILE__ ) . 'js/webcr-admin-figure-columns.js', array( ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure_columns", plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js', array( ), $this->version, array('strategy'  => 'defer') );
 		}
 
 		// Load Figure Export Javascript, but only when on Figure Export Tool page 
 		$current_screen = get_current_screen();
 		if ($current_screen-> base == "tools_page_export-figures"){
-			wp_enqueue_script( "webcr-admin-figure_export", plugin_dir_url( __FILE__ ) . 'js/webcr-admin-export-figures.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure_export", plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js', array(  ), $this->version, array('strategy'  => 'defer') );
 			// Enqueue Bootstrap JavaScript
 			wp_enqueue_script('PptxGenJS', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js', array(), '3.12.0', true);
 

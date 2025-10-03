@@ -524,8 +524,8 @@ function loadDefaultInteractiveBarArguments (jsonColumns) {
     if (!field) return;
 
     const currentStr  = field.value || "";
-    const defaultsStr = (typeof webcrDefaults !== "undefined" && webcrDefaults.interactive_bar_arguments)
-                            ? webcrDefaults.interactive_bar_arguments : "";
+    const defaultsStr = (typeof webcrDefaultsBar !== "undefined" && webcrDefaultsBar.interactive_bar_arguments)
+                            ? webcrDefaultsBar.interactive_bar_arguments : "";
 
     // Parse both to objects and keep original pair order from current
     const currentPairs   = toPairsFlexible(currentStr);

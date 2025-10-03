@@ -40,7 +40,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 			?>
 
 			<?php		
-			// Expoite array variables from the FILE UPLOAD ARRAY BOX field in class-webcr-figure.php
+			// Expoite array variables from the FILE UPLOAD ARRAY BOX field in class-figure.php
 			//$maxsize = $this->field['options']['maxsize']; //not used
 
 			// WP variables for post values in database

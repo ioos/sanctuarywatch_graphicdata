@@ -620,7 +620,7 @@ add_action('after_setup_theme', 'set_theme_default_site_icon');
   add_action('admin_notices', 'theme_check_required_plugin');
 
 
-  //enqueue javascript for infographiq
+  //enqueue javascript 
   function enqueue_info_scripts() {
     wp_enqueue_script(
         'script-js',
@@ -659,7 +659,7 @@ add_action('wp_enqueue_scripts', 'enqueue_info_scripts2');
 function enqueue_plotly_utility_script() {
   wp_enqueue_script(
     'utility', 
-    content_url() . '/plugins/graphic_data_plugin/includes/utilities/js/utility.js', 
+    content_url() . '/plugins/graphic_data_plugin/includes/utilities/js/interactive/plotly-utility.js', 
     array(), '1.0.0', 
     array('strategy'  => 'defer')
   );
@@ -671,7 +671,7 @@ add_action('wp_enqueue_scripts', 'enqueue_plotly_utility_script');
 function enqueue_plotly_script() {
   wp_enqueue_script(
     'plotly-timeseries-line', 
-    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/plotly-timeseries-line.js', 
+    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-line.js', 
     array(), '1.0.0', 
     array('strategy'  => 'defer')
   );
@@ -682,7 +682,7 @@ add_action('wp_enqueue_scripts', 'enqueue_plotly_script');
 function enqueue_plotly_bar_script() {
   wp_enqueue_script(
     'plotly-bar', 
-    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/plotly-bar.js', 
+    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-bar.js', 
     array(), '1.0.0', 
     array('strategy'  => 'defer')
   );
@@ -693,7 +693,7 @@ add_action('wp_enqueue_scripts', 'enqueue_plotly_bar_script');
 function enqueue_plotly_map_script() {
   wp_enqueue_script(
     'plotly-map', 
-    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/plotly-map.js', 
+    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-map.js', 
     array(), '1.0.0', 
     array('strategy'  => 'defer')
   );

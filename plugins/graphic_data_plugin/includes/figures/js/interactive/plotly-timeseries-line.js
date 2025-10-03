@@ -610,8 +610,9 @@ function loadDefaultInteractiveLineArguments (jsonColumns) {
     if (!field) return;
 
     const currentStr  = field.value || "";
-    const defaultsStr = (typeof webcrDefaults !== "undefined" && webcrDefaults.interactive_line_arguments)
-                            ? webcrDefaults.interactive_line_arguments : "";
+    const defaultsStr = (typeof webcrDefaultsLine !== "undefined" && webcrDefaultsLine.interactive_line_arguments)
+                            ? webcrDefaultsLine.interactive_line_arguments : "";
+
 
     // Parse both to objects and keep original pair order from current
     const currentPairs   = toPairsFlexible(currentStr);
@@ -648,9 +649,9 @@ function loadDefaultInteractiveLineArguments (jsonColumns) {
     // Write back EXACTLY as array-of-pairs JSON
     let mergedPairs_string = JSON.stringify(mergedPairs);
 
-    // //console.log('interactive_arguments', currentStr);
-    // //console.log('default_interactive_arguments', defaultsStr);
-    // //console.log('mergedPairs_string', mergedPairs_string);
+    // console.log('interactive_arguments', currentStr);
+    // console.log('default_interactive_line_arguments', defaultsStr);
+    // console.log('mergedPairs_string', mergedPairs_string);
 
     document.getElementsByName("figure_interactive_arguments")[0].value = mergedPairs_string;
 

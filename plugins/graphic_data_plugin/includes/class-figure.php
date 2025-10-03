@@ -34,13 +34,13 @@ class Webcr_Figure {
 
             //AJAX action for handling interactive graph data retrieval
             wp_enqueue_script(
-                'webcr-admin-figure',
-                plugin_dir_url(__FILE__) . '../admin/js/webcr-admin-figure.js',
+                'admin-figure',
+                plugin_dir_url(__FILE__) . '../admin/js/admin-figure.js',
                 [], // <-- no jquery needed
                 null,
                 true
             );
-            wp_localize_script('webcr-admin-figure', 'wpApiSettings', [
+            wp_localize_script('admin-figure', 'wpApiSettings', [
                 'nonce' => wp_create_nonce('wp_rest'),
                 'root'  => esc_url_raw(rest_url()),
             ]);
@@ -51,7 +51,7 @@ class Webcr_Figure {
             $default_interactive_line_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
             wp_localize_script(
                 'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
-                'webcrDefaults',           // global object name
+                'webcrDefaultsLine',           // global object name
                 ['interactive_line_arguments' => $default_interactive_line_arguments]
             );
             
@@ -59,7 +59,7 @@ class Webcr_Figure {
             $default_interactive_bar_arguments = isset($settings['interactive_bar_arguments']) ? $settings['interactive_bar_arguments'] : '';
             wp_localize_script(
                 'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
-                'webcrDefaults',           // global object name
+                'webcrDefaultsBar',           // global object name
                 ['interactive_bar_arguments' => $default_interactive_bar_arguments]
             );
         }
