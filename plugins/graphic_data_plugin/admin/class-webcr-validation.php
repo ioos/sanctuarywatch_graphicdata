@@ -58,12 +58,9 @@ class webcr_validation {
 
     // The purpose of this function is to validate the fields of the About custom content type. 
     public function validate_about (){
+        $function_utilities = new Webcr_Utility();
+        
         $save_about_fields = true;
-
-        // Clear previous validation data from session
-        unset($_SESSION["about_errors"]);
-        unset($_SESSION["about_post_status"]);
-
         $about_errors = [];
         $about_warnings = [];
 
@@ -83,20 +80,20 @@ class webcr_validation {
         }
 
         if ($save_about_fields == FALSE) {
-            $_SESSION["about_errors"] = $about_errors; // Store array directly
-            $_SESSION["about_post_status"] = "post_error";
+            $function_utilities ->  fields_to_transient('about_errors', $about_errors, 30);
+            $function_utilities ->  fields_to_transient('about_post_status', "post_error", 30);
 
-            // Instamtiate the modal class 
+            // Instantiate the modal class 
             $about_class = new Webcr_About( $this->plugin_name, $this->version ); // Assuming this is your modal class
             
             // Get the fields configuration
             $fields_config = $this->get_fields_config('about', $about_class);
             
             // save the fields to the transient
-            $function_utilities = new Webcr_Utility();
+
             $function_utilities ->  fields_to_transient('about_error_all_fields', $fields_config, 30);
         } else {
-            $_SESSION["about_post_status"] = "post_good";
+            $function_utilities ->  fields_to_transient('about_post_status', "post_good", 30);
         }
 
         return $save_about_fields;
