@@ -95,9 +95,14 @@ class Webcr_Utility {
         delete_expired_transients(); // Ensure expired transients are cleaned up before storing new ones
         $all_fields = [];
         
+        $variable_type = gettype($fields_config);
+
+        if ($variable_type !== 'array') {
         // Process the fields configuration to extract field IDss and handle fieldsets
-        $this->extract_field_values($fields_config, $all_fields);
-        
+            $this->extract_field_values($fields_config, $all_fields);
+        } else if ($variable_type === 'string') {
+            $all_fields = $fields_config;
+        }
         // Create a unique transient key for this user and content type
         $transient_key = $this->get_user_transient_key($key_name);
         
@@ -262,6 +267,47 @@ class Webcr_Utility {
             }
         }
     }
+
+    /**
+     * Return post status for custom posts.
+     * 
+     * This function the post status associated with custom
+     * posts of type about, instance, scene, modal, and figure. The retrieval
+     * occurs from a WordPress transient, which is recorded at the moment
+     * that the post in question was saved. This function is used after that
+     * posts reloads after the save.
+     * 
+     * Return warnings and errors associated with custom posts.
+     * 
+     * This function retrieves errors and warnings associated with custom
+     * posts of type about, instance, scene, modal, and figure. The retrieval
+     * occurs from WordPress transients, which are recorded at the moment
+     * that the post in question was saved. This function is used after that
+     * posts reloads after the save.
+     * 
+     * @param string $key_name 
+     */
+    function retrieve_post_status ($post_type) {
+        $user_id = get_current_user_id();
+        
+        if (!$user_id) {
+            return "none";
+        }
+        
+        // Check if transient exists for this user
+        $transient_name = $post_type . "_post_status_user_{$user_id}";
+
+        // retrieve transient, if it's there
+        $transient_data = get_transient($transient_name);
+        // post_status
+        if ($transient_data == false) {
+            return "none";
+        } else {
+            return $transient_data;
+            delete_transient($transient_name);
+        }
+    }
+
 
     /**
      * Get a list of all instances, filtered for 'content_editor' role.
