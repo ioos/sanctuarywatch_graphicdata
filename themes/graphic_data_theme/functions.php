@@ -659,7 +659,7 @@ add_action('wp_enqueue_scripts', 'enqueue_info_scripts2');
 function enqueue_plotly_utility_script() {
   wp_enqueue_script(
     'utility', 
-    content_url() . '/plugins/graphic_data_plugin/includes/utilities/js/interactive/plotly-utility.js', 
+    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-utility.js', 
     array(), '1.0.0', 
     array('strategy'  => 'defer')
   );

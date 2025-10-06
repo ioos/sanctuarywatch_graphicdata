@@ -1,38 +1,5 @@
 
 
-let plotlyScriptPromise = null;
-
-function loadPlotlyScript() {
-    if (window.Plotly) return Promise.resolve();
-
-    // Reuse the same Promise if already started
-    if (plotlyScriptPromise) return plotlyScriptPromise;
-
-    plotlyScriptPromise = new Promise((resolve, reject) => {
-        const existingScript = document.querySelector('script[src="https://cdn.plot.ly/plotly-3.0.0.min.js"]');
-        if (existingScript) {
-            existingScript.onload = () => {
-                if (window.Plotly) resolve();
-                else reject(new Error("Plotly failed to initialize."));
-            };
-            existingScript.onerror = reject;
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = 'https://cdn.plot.ly/plotly-3.0.0.min.js';
-        script.onload = () => {
-            if (window.Plotly) resolve();
-            else reject(new Error("Plotly failed to initialize."));
-        };
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-
-    return plotlyScriptPromise;
-}
-
-
 function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted) {
     if (!plotDiv || !layout || !layout.yaxis || !layout.yaxis.range) {
         console.warn("[Overlay] Missing layout or y-axis range");
@@ -146,23 +113,6 @@ function waitForElementById(id, timeout = 1000) {
     });
 }
 
-function computeStandardDeviation(arr) {
-    const n = arr.length;
-    const mean = arr.reduce((a, b) => a + b, 0) / n;
-    const variance = arr.reduce((acc, val) => acc + (val - mean) ** 2, 0) / n;
-    return Math.sqrt(variance);
-}
-
-function computePercentile(arr, percentile) {
-    if (arr.length === 0) return undefined;
-    if (arr.length === 1) return arr[0];
-    const sorted = [...arr].sort((a, b) => a - b);
-    const index = (percentile / 100) * (sorted.length - 1);
-    const lower = Math.floor(index);
-    const upper = Math.ceil(index);
-    if (lower === upper) return sorted[lower];
-    return sorted[lower] + (index - lower) * (sorted[upper] - sorted[lower]);
-}
 
 async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
     try {
@@ -610,8 +560,8 @@ function loadDefaultInteractiveLineArguments (jsonColumns) {
     if (!field) return;
 
     const currentStr  = field.value || "";
-    const defaultsStr = (typeof webcrDefaultsLine !== "undefined" && webcrDefaultsLine.interactive_line_arguments)
-                            ? webcrDefaultsLine.interactive_line_arguments : "";
+    const defaultsStr = (typeof argumentsDefaultsLine !== "undefined" && argumentsDefaultsLine.interactive_line_arguments)
+                            ? argumentsDefaultsLine.interactive_line_arguments : "";
 
 
     // Parse both to objects and keep original pair order from current
@@ -663,8 +613,6 @@ function loadDefaultInteractiveLineArguments (jsonColumns) {
 
 
 function plotlyLineParameterFields(jsonColumns, interactive_arguments){
-
-
   let newDiv = document.createElement("div");
   newDiv.id = 'secondaryGraphFields';
   const targetElement = document.getElementById('graphGUI');

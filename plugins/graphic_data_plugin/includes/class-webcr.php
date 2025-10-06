@@ -126,7 +126,7 @@ class Webcr {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-webcr-modal.php';
 
 		// The class that defines the functions used for the Figure custom content type
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-figure.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-figure.php';
 
 		// The class that defines the functions used for the Instance custom content type
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-webcr-instance.php';

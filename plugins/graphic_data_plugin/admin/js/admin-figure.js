@@ -54,8 +54,8 @@ function run_admin_figures() {
                     //optionScene.text = targetRow['title']['rendered'];
                     figureScene.appendChild(optionScene);
 
-                    console.log('optionScene.value', optionScene.value);
-                    console.log('optionScene.text', optionScene.text)
+                    //console.log('optionScene.value', optionScene.value);
+                    //console.log('optionScene.text', optionScene.text)
             });
 
             // Reset and update the "figure_modal" dropdown
@@ -114,8 +114,8 @@ function run_admin_figures() {
                     //optionIcon.text = tempTitleDiv.textContent;
                     figureModal.appendChild(optionIcon);
 
-                    console.log('optionIcon.value', optionIcon.value);
-                    console.log('optionIcon.text', optionIcon.text);
+                    //console.log('optionIcon.value', optionIcon.value);
+                    //console.log('optionIcon.text', optionIcon.text);
                 }
             });
             let figureTab = document.getElementsByName("figure_tab")[0];
@@ -536,7 +536,7 @@ function run_admin_figures() {
                     producePlotlyBarFigure(`javascript_figure_target_${figureID}`, interactive_arguments, null);
                 }
                 if (graphType === "Plotly map") {
-                    //console.log(`javascript_figure_target_${figureID}`);
+                    ////console.log(`javascript_figure_target_${figureID}`);
                     producePlotlyMap(`javascript_figure_target_${figureID}`, interactive_arguments, null);
                 }
                 if (graphType === "Plotly line graph (time series)") {
@@ -563,7 +563,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof attachPlainTextPasteHandlers === 'function') {
         // Attempt to attach handlers immediately after DOM is ready
         if (!attachPlainTextPasteHandlers(figureEditorIds)) {
-            console.log('Figure Plain Text Paste: Trumbowyg editors not immediately found, setting timeout...');
+            //console.log('Figure Plain Text Paste: Trumbowyg editors not immediately found, setting timeout...');
             // Retry after a delay if editors weren't found (Trumbowyg might initialize later)
             setTimeout(() => attachPlainTextPasteHandlers(figureEditorIds), 1000); // Adjust timeout if needed (e.g., 500, 1500)
         }

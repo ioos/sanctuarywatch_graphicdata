@@ -40,7 +40,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 			?>
 
 			<?php		
-			// Expoite array variables from the FILE UPLOAD ARRAY BOX field in class-figure.php
+			// Expoite array variables from the FILE UPLOAD ARRAY BOX field in admin-figure.php
 			//$maxsize = $this->field['options']['maxsize']; //not used
 
 			// WP variables for post values in database
@@ -261,7 +261,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				jsonStr += '\n    }\n}';
 				
 				// Return the fully formatted compact JSON string
-				console.log(jsonStr);
+				//console.log(jsonStr);
 				return jsonStr;
 			}
 			</script>
@@ -296,7 +296,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				const updateButton = document.getElementById("publish"); // Find the button by ID
 				if (updateButton) {
 					updateButton.click(); // Simulate a click event
-					console.log("Update button clicked!");
+					//console.log("Update button clicked!");
 				} else {
 					console.error("Update button not found!");
 				}
@@ -343,7 +343,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				formData.append('file_name', fileName); // Send only the stored filename
 				formData.append('action', 'custom_file_delete'); // Match WordPress AJAX action
 
-				//console.log("Sending post_id:", postId, "file_name:", fileName); // Debugging
+				////console.log("Sending post_id:", postId, "file_name:", fileName); // Debugging
 
 				fetch('<?php echo admin_url("admin-ajax.php"); ?>', { // Correct URL
 					method: 'POST',
@@ -352,7 +352,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				})
 				.then(response => response.json())
 				.then(data => {
-					//console.log("Server response:", data); // Debugging
+					////console.log("Server response:", data); // Debugging
 					if (data.success) {
 						alert("Success: " + (data.message || "File deleted successfully."));
 						clickUpdateButton(); // Save and reload the page to reflect deletion
@@ -456,7 +456,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				formData.append('action', 'custom_file_upload'); // Required for WordPress AJAX
 
 				// AJAX processing request
-				console.log("Sending post_id:", postId);
+				//console.log("Sending post_id:", postId);
 				fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
 					method: 'POST',
 					body: formData,
@@ -464,7 +464,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				})
 				.then(response => response.json())
 				.then(data => {
-					console.log("Server response:", data);
+					//console.log("Server response:", data);
 					// If the Ajax Request was successful
 					if (data.success) {
 						// If the file is a .csv file, trigger CSV-to-JSON conversion
@@ -491,7 +491,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 								// Convert Blob to a File
 								var jsonFile = new File([jsonBlob], json_fileName, { type: "application/json" });
 								var jsonFile_metadata = jsonFile.metadata
-								console.log(jsonFile_metadata)
+								//console.log(jsonFile_metadata)
 
 								// Prepare FormData for AJAX request
 								var formData_csvtojson = new FormData();
@@ -499,7 +499,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 								formData_csvtojson.append('post_id', postId);
 								formData_csvtojson.append('action', 'custom_file_upload');
 
-								console.log("Sending JSON file to server:", json_fileName);
+								//console.log("Sending JSON file to server:", json_fileName);
 
 								fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
 									method: 'POST',
@@ -508,7 +508,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 								})
 								.then(response => response.json())
 								.then(data => {
-									console.log("Server response:", data);
+									//console.log("Server response:", data);
 									if (data.success) {
 										//alert("Success: " + (data.message || "File Upload Successful.") +  "\n" +	"\nClick 'Update' button in the top-right to save your changes, access the delete button, and the Interactive Figure Settings.");
 										alert("Success: " + (data.message || "File Upload Successful" + '\n\n' + 'Click "OK" to save your changes.'));

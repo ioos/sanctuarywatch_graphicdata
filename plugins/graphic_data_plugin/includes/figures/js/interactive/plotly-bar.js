@@ -1,75 +1,78 @@
 
-function loadPlotlyScript() {
-    if (window.Plotly) return Promise.resolve();
-
-    // Reuse the same Promise if already started
-    if (plotlyScriptPromise) return plotlyScriptPromise;
-
-    plotlyScriptPromise = new Promise((resolve, reject) => {
-        const existingScript = document.querySelector('script[src="https://cdn.plot.ly/plotly-3.0.0.min.js"]');
-        if (existingScript) {
-            existingScript.onload = () => {
-                if (window.Plotly) resolve();
-                else reject(new Error("Plotly failed to initialize."));
-            };
-            existingScript.onerror = reject;
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = 'https://cdn.plot.ly/plotly-3.0.0.min.js';
-        script.onload = () => {
-            if (window.Plotly) resolve();
-            else reject(new Error("Plotly failed to initialize."));
-        };
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
-
-    return plotlyScriptPromise;
-}
-
-
-function waitForElementById(id, timeout = 1000) {
-    return new Promise((resolve, reject) => {
-        const intervalTime = 50;
-        let elapsedTime = 0;
-
-        const interval = setInterval(() => {
-            const element = document.getElementById(id);
-            if (element) {
-                clearInterval(interval);
-                resolve(element);
-            }
-            elapsedTime += intervalTime;
-            if (elapsedTime >= timeout) {
-                clearInterval(interval);
-                reject(new Error(`Element with id ${id} not found after ${timeout}ms`));
-            }
-        }, intervalTime);
-    });
-}
-
-function computeStandardDeviation(arr) {
-    if (!Array.isArray(arr) || arr.length === 0) return 0;
-
-    const n = arr.length;
-    const mean = arr.reduce((a, b) => a + b, 0) / n;
-    const variance = arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
-    return Math.sqrt(variance);
-}
-
-function computePercentile(arr, percentile) {
-    if (arr.length === 0) return undefined;
-    if (arr.length === 1) return arr[0];
-    const sorted = [...arr].sort((a, b) => a - b);
-    const index = (percentile / 100) * (sorted.length - 1);
-    const lower = Math.floor(index);
-    const upper = Math.ceil(index);
-    if (lower === upper) return sorted[lower];
-    return sorted[lower] + (index - lower) * (sorted[upper] - sorted[lower]);
-}
-
+/**
+ * Asynchronously generates a Plotly bar chart and appends it to a target HTML element.
+ * 
+ * This function fetches data from a WordPress REST API endpoint, processes the data,
+ * and renders a Plotly bar chart based on the provided arguments. It supports various
+ * configurations such as stacked bars, grid visibility, error bars, percentiles, and
+ * mean lines.
+ * 
+ * @async
+ * @function producePlotlyBarFigure
+ * @param {string} targetFigureElement - The ID of the target HTML element where the chart will be appended.
+ * @param {string} interactive_arguments - A JSON string containing the configuration arguments for the chart.
+ * @param {string|null} postID - The WordPress post ID. If null, the function attempts to retrieve the post ID from the admin interface.
+ * 
+ * @throws {Error} Throws an error if there is an issue with network requests or data processing.
+ * 
+ * @example
+ * const targetElement = "chartContainer_123";
+ * const args = JSON.stringify({
+ *   NumberOfBars: 3,
+ *   XAxis: "Category",
+ *   Bar1: "Value1",
+ *   Bar1Color: "#FF0000",
+ *   Bar1Title: "Bar 1",
+ *   YAxisTitle: "Values",
+ *   showGrid: "on",
+ *   graphTicks: "off"
+ * });
+ * const postID = "123";
+ * producePlotlyBarFigure(targetElement, args, postID);
+ * 
+ * @description
+ * The function performs the following steps:
+ * 1. Ensures that the Plotly library is loaded.
+ * 2. Fetches the `uploaded_path_json` from the WordPress REST API for the given post ID.
+ * 3. Fetches the data file from the resolved URL.
+ * 4. Processes the data and generates Plotly traces based on the provided arguments.
+ * 5. Configures the layout and rendering options for the Plotly chart.
+ * 6. Appends the chart to the specified target HTML element.
+ * 
+ * @see {@link https://plotly.com/javascript/} for more information about Plotly.
+ * 
+ * @param {Object} figureArguments - Parsed configuration arguments for the chart.
+ * @param {number} figureArguments.NumberOfBars - The number of bars to display in the chart.
+ * @param {string} figureArguments.XAxis - The column name for the X-axis data.
+ * @param {string} figureArguments.YAxisTitle - The title for the Y-axis.
+ * @param {string} figureArguments.showGrid - Whether to show grid lines ("on" or "off").
+ * @param {string} figureArguments.graphTicks - Whether to show graph ticks ("on" or "off").
+ * @param {string} figureArguments.StackedBarColumns - Whether bars should be stacked ("on" or "off").
+ * @param {string} figureArguments.Bar{n} - The column name for the Y-axis data of the nth bar.
+ * @param {string} figureArguments.Bar{n}Color - The color of the nth bar.
+ * @param {string} figureArguments.Bar{n}Title - The title of the nth bar.
+ * @param {string} figureArguments.Bar{n}Stacked - Whether the nth bar is stacked ("on" or "off").
+ * @param {string} figureArguments.Bar{n}Legend - Whether to show the legend for the nth bar ("on" or "off").
+ * @param {string} figureArguments.Bar{n}FillType - The fill pattern for the nth bar.
+ * @param {string} figureArguments.Bar{n}Percentiles - Whether to show percentiles for the nth bar ("on" or "off").
+ * @param {string} figureArguments.Bar{n}Mean - Whether to show the mean line for the nth bar ("on" or "off").
+ * @param {string} figureArguments.Bar{n}MeanField - The column name for the mean values of the nth bar.
+ * @param {string} figureArguments.Bar{n}ErrorBars - Whether to show error bars for the nth bar ("on" or "off").
+ * @param {string} figureArguments.Bar{n}ErrorBarsInputValues - The column name for error bar values or "auto".
+ * @param {string} figureArguments.Bar{n}ErrorBarsColor - The color of the error bars for the nth bar.
+ * 
+ * @param {Object} layout - The layout configuration for the Plotly chart.
+ * @param {string} layout.barmode - The bar mode ("stack" or "group").
+ * @param {Object} layout.xaxis - Configuration for the X-axis.
+ * @param {Object} layout.yaxis - Configuration for the Y-axis.
+ * @param {Object} layout.legend - Configuration for the chart legend.
+ * 
+ * @param {Object} config - The rendering configuration for the Plotly chart.
+ * @param {boolean} config.responsive - Whether the chart is responsive to window resizing.
+ * @param {string} config.renderer - The rendering mode ("svg" or "webgl").
+ * @param {boolean} config.displayModeBar - Whether to display the mode bar.
+ * @param {Array<string>} config.modeBarButtonsToRemove - List of mode bar buttons to remove.
+ */
 async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID){
     try {
         await loadPlotlyScript(); // ensures Plotly is ready
@@ -466,6 +469,64 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 }
 
 
+/**
+ * Loads and merges default interactive bar arguments with the current arguments,
+ * ensuring proper handling of bar-specific keys and other configuration options.
+ * Updates the value of the "figure_interactive_arguments" field and displays
+ * the bar fields accordingly.
+ *
+ * @param {Object} jsonColumns - JSON object representing the columns of the bar chart.
+ *
+ * @description
+ * This function is designed to handle the merging of default and current arguments
+ * for an interactive bar chart. It ensures that bar-specific keys are updated based
+ * on the number of bars specified, while also preserving the original order of keys
+ * in the current arguments. Non-bar-specific keys are always updated with default values.
+ * The merged arguments are written back to the "figure_interactive_arguments" field
+ * as a JSON string and used to display the bar fields.
+ *
+ * @returns {void}
+ *
+ * @example
+ * // Assuming `argumentsDefaultsBar.interactive_bar_arguments` contains default arguments
+ * // and the "figure_interactive_arguments" field exists in the DOM:
+ * loadDefaultInteractiveBarArguments(jsonColumns);
+ *
+ * @throws {Error} This function does not throw errors but may fail silently if
+ * required DOM elements are not present.
+ *
+ * @global
+ * - `argumentsDefaultsBar` (optional): A global object containing default arguments
+ *   for the interactive bar chart.
+ *
+ * @helper
+ * - `safeParseJSON(s)`: Safely parses a JSON string, returning `null` if parsing fails.
+ * - `pairsToObject(pairs)`: Converts an array of key-value pairs to an object.
+ * - `kvStringToObject(str)`: Converts a key-value string to an object.
+ * - `toObjectFlexible(s)`: Converts a string to an object, supporting JSON and key-value formats.
+ * - `toPairsFlexible(s)`: Converts a string to an array of key-value pairs, supporting JSON and key-value formats.
+ * - `objectToPairsPreserveOrder(obj, currentPairs)`: Converts an object to an array of key-value pairs,
+ *   preserving the order of keys from the current pairs.
+ *
+ * @DOM
+ * - Reads the value of the "figure_interactive_arguments" field.
+ * - Reads the value of the "NumberOfBars" input field to determine the number of bars.
+ * - Writes the merged arguments back to the "figure_interactive_arguments" field.
+ * - Calls `displayBarFields` to update the bar fields in the UI.
+ *
+ * @variables
+ * - `field`: The DOM element representing the "figure_interactive_arguments" field.
+ * - `currentStr`: The current value of the "figure_interactive_arguments" field.
+ * - `defaultsStr`: The default arguments for the interactive bar chart.
+ * - `currentPairs`: The current arguments as an array of key-value pairs.
+ * - `currentObj`: The current arguments as an object.
+ * - `defaultsObj`: The default arguments as an object.
+ * - `numEl`: The DOM element representing the "NumberOfBars" input field.
+ * - `numberOfBars`: The number of bars specified in the "NumberOfBars" input field.
+ * - `barPrefixes`: An array of prefixes for bar-specific keys (e.g., "Bar1", "Bar2").
+ * - `mergedPairs`: The merged arguments as an array of key-value pairs.
+ * - `mergedPairs_string`: The merged arguments as a JSON string.
+ */
 function loadDefaultInteractiveBarArguments (jsonColumns) {
     // ---------- helpers ----------
     function safeParseJSON(s) { try { return JSON.parse(s); } catch { return null; } }
@@ -524,8 +585,8 @@ function loadDefaultInteractiveBarArguments (jsonColumns) {
     if (!field) return;
 
     const currentStr  = field.value || "";
-    const defaultsStr = (typeof webcrDefaultsBar !== "undefined" && webcrDefaultsBar.interactive_bar_arguments)
-                            ? webcrDefaultsBar.interactive_bar_arguments : "";
+    const defaultsStr = (typeof argumentsDefaultsBar !== "undefined" && argumentsDefaultsBar.interactive_bar_arguments)
+                            ? argumentsDefaultsBar.interactive_bar_arguments : "";
 
     // Parse both to objects and keep original pair order from current
     const currentPairs   = toPairsFlexible(currentStr);
@@ -772,6 +833,51 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
 
 
 // generate the form fields needed for users to indicate preferences for how a figure should appear 
+/**
+ * Dynamically generates and displays a GUI for configuring bar chart fields, including options for 
+ * X-axis, bar columns, styles, and additional features such as error bars, mean lines, and percentiles.
+ *
+ * @param {number} numBars - The number of bars to be plotted in the chart.
+ * @param {Object} jsonColumns - An object representing the available data columns, where keys are column identifiers 
+ *                               and values are column names.
+ * @param {Object} interactive_arguments - An object containing previously saved form field values, used to prepopulate 
+ *                                         the GUI fields.
+ *
+ * @description
+ * This function creates a dynamic interface for configuring bar chart settings. It includes:
+ * - A checkbox for grouping bars by the X-axis (stacked columns).
+ * - A button to apply default styles to all bars.
+ * - Dropdowns for selecting the X-axis column and bar columns.
+ * - Input fields for customizing bar titles and colors.
+ * - Dropdowns for selecting fill patterns for bars.
+ * - Checkboxes for enabling additional features such as adding bars to the legend, mean lines, error bars, 
+ *   percentiles, and stacked bar grouping.
+ * - Additional dropdowns and input fields for configuring feature-specific settings, such as error bar values 
+ *   and mean source columns.
+ *
+ * The generated GUI is appended to an HTML element with the ID `graphGUI`. If a GUI already exists, it is removed 
+ * before creating a new one.
+ *
+ * @example
+ * // Example usage:
+ * const numBars = 3;
+ * const jsonColumns = { col1: "Column 1", col2: "Column 2", col3: "Column 3" };
+ * const interactive_arguments = { XAxis: "col1", Bar1: "col2", Bar1Title: "Bar 1 Title" };
+ * displayBarFields(numBars, jsonColumns, interactive_arguments);
+ *
+ * @listens change - Logs form field values when dropdowns, checkboxes, or input fields are modified.
+ * @listens click - Applies default styles when the "Apply Custom Bar Styles to All Bars" button is clicked.
+ *
+ * @requires logFormFieldValues - A function to log the current values of the form fields.
+ * @requires fillFormFieldValues - A function to retrieve and populate saved values for form fields.
+ * @requires loadDefaultInteractiveBarArguments - A function to load default arguments for bar chart customization.
+ *
+ * @modifies
+ * - Removes the existing GUI element with the ID `assignColumnsToPlot` if it exists.
+ * - Appends a new GUI element to the HTML element with the ID `graphGUI`.
+ *
+ * @throws {Error} If the target element with ID `graphGUI` does not exist in the DOM.
+ */
 function displayBarFields (numBars, jsonColumns, interactive_arguments) {
     let assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
     // If the element exists

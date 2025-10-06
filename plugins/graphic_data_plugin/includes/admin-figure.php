@@ -51,7 +51,7 @@ class Webcr_Figure {
             $default_interactive_line_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
             wp_localize_script(
                 'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
-                'webcrDefaultsLine',           // global object name
+                'argumentsDefaultsLine',           // global object name
                 ['interactive_line_arguments' => $default_interactive_line_arguments]
             );
             
@@ -59,7 +59,7 @@ class Webcr_Figure {
             $default_interactive_bar_arguments = isset($settings['interactive_bar_arguments']) ? $settings['interactive_bar_arguments'] : '';
             wp_localize_script(
                 'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
-                'webcrDefaultsBar',           // global object name
+                'argumentsDefaultsBar',           // global object name
                 ['interactive_bar_arguments' => $default_interactive_bar_arguments]
             );
         }
