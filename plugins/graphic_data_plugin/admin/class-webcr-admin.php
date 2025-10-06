@@ -438,29 +438,6 @@ class Webcr_Admin {
 		}
 	}
 
-	/**
-	 * Starts the PHP session (used for field validation) using the 'init' WordPress hook.
-	 *
-	 * @since 1.0.0
-	 */
-	function start_session () {
-
-		if (!session_id() && !headers_sent()) {
-			session_start();
-		}
-	}
-
-	/**
-	 * Ends the PHP session (used for field validation) using the 'shutdown' WordPress hook.
-	 *
-	 * @since 1.0.0
-	 */
-	function close_session() {
-        if (session_id()) {
-            session_write_close();
-        }
-    }
-
 function adjust_admin_post_time_display() {
     global $post;
     
