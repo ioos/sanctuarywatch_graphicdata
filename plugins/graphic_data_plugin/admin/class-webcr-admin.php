@@ -130,8 +130,8 @@ class Webcr_Admin {
 		// Load Figure -specific Javascript only when editing/creating a Figure post 
 		if ($current_post_type == "figure" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
 
-			// Enqueue figure_render.js
-			wp_enqueue_script('figure_render', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/figure_render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			// Enqueue figure-render.js
+			wp_enqueue_script('figure-render', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/figure-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
 
 			// Enqueue utility.js
 			wp_enqueue_script('figure-utility', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/interactive/plotly-utility.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
@@ -148,8 +148,8 @@ class Webcr_Admin {
 			// Enqueue file-upload.js
 			wp_enqueue_script('file-upload', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/file-upload.js', array(), '1.0.0', array('strategy'  => 'defer'));
 
-			// Enqueue figure_code.js
-			wp_enqueue_script('figure_code', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/code/figure_code.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			// Enqueue figure-code.js
+			wp_enqueue_script('figure-code', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/code/figure-code.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
 
 			// Enqueue admin-figure.js
 			wp_enqueue_script( "admin-figure", plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array( ), $this->version, array('strategy'  => 'defer') );

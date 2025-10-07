@@ -658,8 +658,8 @@ add_action('wp_enqueue_scripts', 'enqueue_info_scripts2');
 
 function enqueue_figure_render_script() {
   wp_enqueue_script(
-    'figure_render', 
-    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/figure_render.js', 
+    'figure-render', 
+    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/figure-render.js', 
     array(), '1.0.0', 
     array('strategy'  => 'defer')
   );
@@ -669,8 +669,8 @@ add_action('wp_enqueue_scripts', 'enqueue_figure_render_script');
 
 function enqueue_figure_code_script() {
   wp_enqueue_script(
-    'figure_code', 
-    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/code/figure_code.js', 
+    'figure-code', 
+    content_url() . '/plugins/graphic_data_plugin/includes/figures/js/code/figure-code.js', 
     array(), '1.0.0', 
     array('strategy'  => 'defer')
   );
