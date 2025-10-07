@@ -96,6 +96,7 @@ function waitForElementById(id, timeout = 1000) {
     });
 }
 
+
 /**
  * Computes the standard deviation of an array of numbers.
  *

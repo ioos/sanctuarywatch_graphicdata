@@ -635,7 +635,52 @@ function loadDefaultInteractiveBarArguments (jsonColumns) {
     
 }
 
-
+/**
+ * Dynamically generates and appends form fields for configuring Plotly bar chart parameters in the UI.
+ *
+ * This function creates a set of HTML form controls (checkboxes, text inputs, color pickers, and select dropdowns)
+ * for customizing various aspects of a Plotly bar chart, such as grid lines, axis titles, axis bounds, number of bars,
+ * axis date format, and other bar-specific options. The generated fields are appended to the element with ID 'graphGUI'.
+ * The function also prepopulates field values using the provided interactive arguments and attaches event listeners
+ * to update the underlying data model when fields are changed.
+ *
+ * @function plotlyBarParameterFields
+ * @param {Object} jsonColumns - An object representing available data columns, where keys are column identifiers and values are column names.
+ * @param {Object} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
+ *
+ * @description
+ * The function performs the following steps:
+ * 1. Creates a container div for the parameter fields.
+ * 2. Adds checkboxes for toggling grid lines and graph ticks.
+ * 3. Adds input fields for X and Y axis titles and their low/high bounds.
+ * 4. Adds a select dropdown for the number of bars to be plotted (1–14).
+ * 5. Adds a select dropdown for the X axis date format.
+ * 6. Appends all generated fields to the 'graphGUI' element in the DOM.
+ * 7. Calls `displayBarFields` to generate additional bar-specific configuration fields based on the selected number of bars.
+ * 8. Attaches event listeners to all fields to update the hidden input storing the configuration as a JSON string.
+ *
+ * @modifies
+ * - Appends a new div with ID 'secondaryGraphFields' to the element with ID 'graphGUI'.
+ * - Updates the value of the hidden input field named 'figure_interactive_arguments' when any field is changed.
+ * - Calls `displayBarFields` to update bar-specific fields dynamically.
+ *
+ * @requires
+ * - fillFormFieldValues: Function to retrieve saved values for form fields.
+ * - logFormFieldValues: Function to update the hidden input with current form values.
+ * - displayBarFields: Function to generate bar-specific configuration fields.
+ *
+ * @listens change - Updates the hidden input and UI when any field is changed.
+ *
+ * @example
+ * // Example usage:
+ * const jsonColumns = { col1: "Column 1", col2: "Column 2" };
+ * const interactive_arguments = { XAxisTitle: "Year", NumberOfBars: 2 };
+ * plotlyBarParameterFields(jsonColumns, interactive_arguments);
+ *
+ * @global
+ * - Assumes the existence of a DOM element with ID 'graphGUI'.
+ * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
+ */
 function plotlyBarParameterFields(jsonColumns, interactive_arguments){
 
   let newDiv = document.createElement("div");

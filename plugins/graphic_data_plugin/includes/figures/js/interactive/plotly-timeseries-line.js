@@ -1,5 +1,47 @@
 
 
+/**
+ * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
+ *
+ * This function modifies the provided Plotly layout and data by injecting overlays that visually represent
+ * special periods (e.g., evaluation periods) and event markers (vertical or horizontal lines) on the chart.
+ * Overlays are constructed based on the configuration in `figureArguments` and the data in `dataToBePlotted`.
+ * The function supports both shaded regions (for evaluation periods) and lines (for event markers on x or y axes).
+ * After constructing the overlays, the function calls `Plotly.react` to update the chart with the overlays and main data traces.
+ *
+ * @function injectOverlays
+ * @param {HTMLElement} plotDiv - The DOM element where the Plotly chart is rendered.
+ * @param {Object} layout - The Plotly layout object, which will be modified to include overlay settings.
+ * @param {Array} mainDataTraces - The main data traces to be plotted (typically lines).
+ * @param {Object} figureArguments - An object containing user-specified arguments for overlays, such as:
+ *   - 'EvaluationPeriod': 'on' to enable evaluation period overlay.
+ *   - 'EvaluationPeriodStartDate', 'EvaluationPeriodEndDate': Date strings for the evaluation period.
+ *   - 'EvaluationPeriodFillColor': Color for the evaluation period overlay.
+ *   - 'EvaluationPeriodText': Label for the evaluation period.
+ *   - 'EventMarkers': 'on' to enable event markers.
+ *   - 'EventMarkersField': Number of event markers.
+ *   - 'EventMarkersEventAxis{n}': 'x' or 'y' for each marker.
+ *   - 'EventMarkersEventText{n}': Label for each marker.
+ *   - 'EventMarkersEventColor{n}': Color for each marker.
+ *   - 'EventMarkersEventDate{n}': Date for x-axis marker.
+ *   - 'EventMarkersEventYValue{n}': Y value for y-axis marker.
+ * @param {Object} dataToBePlotted - The data object containing arrays for each column, used for plotting overlays.
+ *
+ * @description
+ * - If the evaluation period is enabled, a shaded region is added to the chart between the specified start and end dates.
+ * - If event markers are enabled, vertical or horizontal lines are added at specified positions, with labels and colors.
+ * - The function ensures overlays are drawn using the current y-axis range and x-axis data.
+ * - The overlays are combined with the main data traces and rendered using `Plotly.react`.
+ *
+ * @modifies
+ * - Modifies the `layout` object to ensure correct axis types.
+ * - Updates the chart in `plotDiv` by calling `Plotly.react`.
+ *
+ * @example
+ * injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted);
+ *
+ * @returns {void}
+ */
 function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted) {
     if (!plotDiv || !layout || !layout.yaxis || !layout.yaxis.range) {
         console.warn("[Overlay] Missing layout or y-axis range");
@@ -93,27 +135,61 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
 }
 
 
-function waitForElementById(id, timeout = 1000) {
-    return new Promise((resolve, reject) => {
-        const intervalTime = 50;
-        let elapsedTime = 0;
-
-        const interval = setInterval(() => {
-            const element = document.getElementById(id);
-            if (element) {
-                clearInterval(interval);
-                resolve(element);
-            }
-            elapsedTime += intervalTime;
-            if (elapsedTime >= timeout) {
-                clearInterval(interval);
-                reject(new Error(`Element with id ${id} not found after ${timeout}ms`));
-            }
-        }, intervalTime);
-    });
-}
-
-
+/**
+ * Asynchronously generates and renders a Plotly time series line chart with interactive features and overlays.
+ *
+ * This function loads the necessary Plotly library, retrieves figure configuration and data via REST API calls,
+ * constructs the chart's data traces and layout based on user-specified arguments, and injects overlays such as
+ * evaluation periods, event markers, standard deviation fills, error bars, mean and percentile lines. It supports
+ * both admin and theme contexts for retrieving the figure's post ID.
+ *
+ * @async
+ * @function producePlotlyLineFigure
+ * @param {string} targetFigureElement - The ID of the DOM element where the chart should be rendered.
+ * @param {string} interactive_arguments - A JSON string (array of key-value pairs) representing user-specified chart configuration.
+ * @param {string|number|null} postID - The WordPress post ID for the figure. If null, the function attempts to retrieve it from the admin page.
+ *
+ * @description
+ * - Ensures Plotly.js is loaded before proceeding.
+ * - Retrieves the figure's configuration and data file path via a REST API call.
+ * - Fetches the actual data to be plotted from the resolved file URL.
+ * - Dynamically creates a container div for the Plotly chart and appends it to the target element.
+ * - Constructs Plotly data traces for each line, including options for error bars, standard deviation fills, mean and percentile lines, and legend visibility.
+ * - Configures the chart layout, including axis titles, bounds, grid lines, tick settings, and legend position.
+ * - Renders the chart using Plotly.newPlot, then injects overlays (evaluation periods and event markers) using the `injectOverlays` function.
+ * - Handles both admin and theme contexts for post ID resolution.
+ * - Catches and logs errors related to script loading or network requests.
+ *
+ * @modifies
+ * - Appends a new div to the target DOM element for rendering the chart.
+ * - Updates the chart in the DOM with Plotly.
+ *
+ * @requires
+ * - loadPlotlyScript: Ensures Plotly.js is loaded.
+ * - waitForElementById: Waits for the target DOM element to be available.
+ * - computeStandardDeviation: Computes standard deviation for error bars and fills.
+ * - computePercentile: Computes percentiles for percentile lines.
+ * - injectOverlays: Adds overlays such as evaluation periods and event markers to the chart.
+ *
+ * @example
+ * // Render a Plotly line chart in the element with ID 'figure_123' using saved arguments and post ID 123:
+ * producePlotlyLineFigure('figure_123', '[["XAxisTitle","Date"],["YAxisTitle","Value"],...]', 123);
+ *
+ * @throws {Error} Logs errors to the console if Plotly fails to load, network requests fail, or data cannot be parsed.
+ *
+ * @variables
+ * - figureID: The resolved post ID for the figure.
+ * - figureArguments: Object containing parsed chart configuration.
+ * - rootURL: The root URL of the current site.
+ * - figureRestCall: REST API endpoint for retrieving the figure's data file path.
+ * - uploaded_path_json: Path to the uploaded data file.
+ * - finalURL: Full URL to the data file.
+ * - dataToBePlotted: The parsed data object used for plotting.
+ * - plotlyDivID: The ID assigned to the Plotly chart container div.
+ * - allLinesPlotly: Array of Plotly trace objects for each line and overlay.
+ * - layout: Plotly layout object for axis, legend, and display settings.
+ * - config: Plotly configuration object for rendering options.
+ */
 async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
     try {
         await loadPlotlyScript(); // ensures Plotly is ready
@@ -502,6 +578,63 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
 }
 
 
+/**
+ * Loads and merges default interactive line arguments with the current arguments,
+ * ensuring proper handling of line-specific keys and other configuration options.
+ * Updates the value of the "figure_interactive_arguments" field and displays
+ * the line fields accordingly.
+ *
+ * @function loadDefaultInteractiveLineArguments
+ * @param {Object} jsonColumns - JSON object representing the columns of the line chart.
+ *
+ * @description
+ * This function is designed to handle the merging of default and current arguments
+ * for an interactive line chart. It ensures that line-specific keys are updated based
+ * on the number of lines specified, while also preserving the original order of keys
+ * in the current arguments. Non-line-specific keys are always updated with default values.
+ * The merged arguments are written back to the "figure_interactive_arguments" field
+ * as a JSON string and used to display the line fields.
+ *
+ * The function uses several helper functions:
+ * - `safeParseJSON(s)`: Safely parses a JSON string, returning `null` if parsing fails.
+ * - `pairsToObject(pairs)`: Converts an array of key-value pairs to an object.
+ * - `kvStringToObject(str)`: Converts a key-value string to an object.
+ * - `toObjectFlexible(s)`: Converts a string to an object, supporting JSON and key-value formats.
+ * - `toPairsFlexible(s)`: Converts a string to an array of key-value pairs, supporting JSON and key-value formats.
+ * - `objectToPairsPreserveOrder(obj, currentPairs)`: Converts an object to an array of key-value pairs,
+ *    preserving the order of keys from the current pairs.
+ *
+ * @modifies
+ * - Reads and updates the value of the "figure_interactive_arguments" field in the DOM.
+ * - Reads the value of the "NumberOfLines" input field to determine the number of lines.
+ * - Calls `displayLineFields` to update the line fields in the UI.
+ *
+ * @variables
+ * - `field`: The DOM element representing the "figure_interactive_arguments" field.
+ * - `currentStr`: The current value of the "figure_interactive_arguments" field.
+ * - `defaultsStr`: The default arguments for the interactive line chart.
+ * - `currentPairs`: The current arguments as an array of key-value pairs.
+ * - `currentObj`: The current arguments as an object.
+ * - `defaultsObj`: The default arguments as an object.
+ * - `numEl`: The DOM element representing the "NumberOfLines" input field.
+ * - `numberOfLines`: The number of lines specified in the "NumberOfLines" input field.
+ * - `mergedPairs`: The merged arguments as an array of key-value pairs.
+ * - `mergedPairs_string`: The merged arguments as a JSON string.
+ *
+ * @returns {void}
+ *
+ * @example
+ * // Assuming `argumentsDefaultsLine.interactive_line_arguments` contains default arguments
+ * // and the "figure_interactive_arguments" field exists in the DOM:
+ * loadDefaultInteractiveLineArguments(jsonColumns);
+ *
+ * @throws {Error} This function does not throw errors but may fail silently if
+ * required DOM elements are not present.
+ *
+ * @global
+ * - `argumentsDefaultsLine` (optional): A global object containing default arguments
+ *   for the interactive line chart.
+ */
 function loadDefaultInteractiveLineArguments (jsonColumns) {
     // ---------- helpers ----------
     function safeParseJSON(s) { try { return JSON.parse(s); } catch { return null; } }
@@ -611,7 +744,53 @@ function loadDefaultInteractiveLineArguments (jsonColumns) {
     
 }
 
-
+/**
+ * Dynamically generates and appends form fields for configuring Plotly time series line chart parameters in the UI.
+ *
+ * This function creates a set of HTML form controls (checkboxes, text inputs, color pickers, and select dropdowns)
+ * for customizing various aspects of a Plotly time series line chart, such as grid lines, axis titles, axis bounds,
+ * number of lines, axis date format, and line-specific options (color, type, marker, error bars, standard deviation, mean, percentiles, legend, etc.).
+ * The generated fields are appended to the element with ID 'graphGUI'.
+ * The function also prepopulates field values using the provided interactive arguments and attaches event listeners
+ * to update the underlying data model when fields are changed.
+ *
+ * @function plotlyLineParameterFields
+ * @param {Object} jsonColumns - An object representing available data columns, where keys are column identifiers and values are column names.
+ * @param {Object|string} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
+ *
+ * @description
+ * The function performs the following steps:
+ * 1. Creates a container div for the parameter fields.
+ * 2. Adds checkboxes for toggling grid lines and graph ticks.
+ * 3. Adds input fields for X and Y axis titles and their low/high bounds.
+ * 4. Adds a select dropdown for the number of lines to be plotted (1–14).
+ * 5. Adds a select dropdown for the X axis date format.
+ * 6. Appends all generated fields to the 'graphGUI' element in the DOM.
+ * 7. Calls `displayLineFields` to generate additional line-specific configuration fields based on the selected number of lines.
+ * 8. Attaches event listeners to all fields to update the hidden input storing the configuration as a JSON string.
+ *
+ * @modifies
+ * - Appends a new div with ID 'secondaryGraphFields' to the element with ID 'graphGUI'.
+ * - Updates the value of the hidden input field named 'figure_interactive_arguments' when any field is changed.
+ * - Calls `displayLineFields` to update line-specific fields dynamically.
+ *
+ * @requires
+ * - fillFormFieldValues: Function to retrieve saved values for form fields.
+ * - logFormFieldValues: Function to update the hidden input with current form values.
+ * - displayLineFields: Function to generate line-specific configuration fields.
+ *
+ * @listens change - Updates the hidden input and UI when any field is changed.
+ *
+ * @example
+ * // Example usage:
+ * const jsonColumns = { col1: "Column 1", col2: "Column 2" };
+ * const interactive_arguments = { XAxisTitle: "Year", NumberOfLines: 2 };
+ * plotlyLineParameterFields(jsonColumns, interactive_arguments);
+ *
+ * @global
+ * - Assumes the existence of a DOM element with ID 'graphGUI'.
+ * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
+ */
 function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   let newDiv = document.createElement("div");
   newDiv.id = 'secondaryGraphFields';
@@ -810,7 +989,55 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
 }
 
 
-// generate the form fields needed for users to indicate preferences for how a figure should appear 
+/**
+ * Dynamically generates and appends form fields for configuring line-specific and overlay parameters
+ * for a Plotly time series line chart in the UI.
+ *
+ * This function creates a set of HTML form controls for each line to be plotted, including dropdowns for
+ * selecting data columns, line and marker styles, and checkboxes for enabling features such as legend display,
+ * connecting gaps, mean lines, standard deviation fills, error bars, and percentile lines. It also generates
+ * controls for overlays such as evaluation periods and event markers, including their specific configuration fields.
+ * The generated fields are appended to the element with ID 'graphGUI'.
+ * The function prepopulates field values using the provided interactive arguments and attaches event listeners
+ * to update the underlying data model when fields are changed.
+ *
+ * @function displayLineFields
+ * @param {number} numLines - The number of lines to generate configuration fields for.
+ * @param {Object} jsonColumns - An object representing available data columns, where keys are column identifiers and values are column names.
+ * @param {Object|string} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
+ *
+ * @description
+ * The function performs the following steps:
+ * 1. Removes any existing line assignment container from the DOM.
+ * 2. For each line, generates dropdowns for selecting the data column, line title, color, line type, marker type, and marker size.
+ * 3. Adds checkboxes for enabling/disabling legend, connecting gaps, mean line, standard deviation fill, error bars, and percentile lines.
+ * 4. For features that require additional configuration (mean, error bars, standard deviation), generates dropdowns for selecting the source column and color pickers.
+ * 5. Generates controls for overlays, including evaluation period and event markers, with their own configuration fields (dates, colors, labels, axis, etc.).
+ * 6. Adds a button to apply default line styles to all lines.
+ * 7. Appends all generated fields to the 'graphGUI' element in the DOM.
+ * 8. Prepopulates all fields using the provided interactive arguments and attaches event listeners to update the hidden input storing the configuration as a JSON string.
+ *
+ * @modifies
+ * - Appends a new div with ID 'assignColumnsToPlot' to the element with ID 'graphGUI'.
+ * - Updates the value of the hidden input field named 'figure_interactive_arguments' when any field is changed.
+ *
+ * @requires
+ * - fillFormFieldValues: Function to retrieve saved values for form fields.
+ * - logFormFieldValues: Function to update the hidden input with current form values.
+ * - loadDefaultInteractiveLineArguments: Function to apply default line styles.
+ *
+ * @listens change - Updates the hidden input and UI when any field is changed.
+ *
+ * @example
+ * // Example usage:
+ * const jsonColumns = { col1: "Column 1", col2: "Column 2" };
+ * const interactive_arguments = { XAxisTitle: "Year", NumberOfLines: 2 };
+ * displayLineFields(2, jsonColumns, interactive_arguments);
+ *
+ * @global
+ * - Assumes the existence of a DOM element with ID 'graphGUI'.
+ * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
+ */
 function displayLineFields (numLines, jsonColumns, interactive_arguments) {
   let assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
   // If the element exists
