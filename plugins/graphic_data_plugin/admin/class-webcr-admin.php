@@ -124,7 +124,10 @@ class Webcr_Admin {
 
 		// Load Modal-specific Javascript only when editing/creating a Modal post 
 		if ($current_post_type == "modal" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "webcr-admin-modal", plugin_dir_url( __FILE__ ) . 'js/webcr-admin-modal.js', array( ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-modal", plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array( ), $this->version, array('strategy'  => 'defer') );
+
+			// Enqueue modal-render.js
+			wp_enqueue_script('modal-render', dirname(plugin_dir_url(__FILE__)) . '/includes/modals/js/modal-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
 		}
 
 		// Load Figure -specific Javascript only when editing/creating a Figure post 
@@ -158,7 +161,7 @@ class Webcr_Admin {
 
 		// Load Modal-specific Javascript only for admin columns screen 
 		if ($current_post_type == "modal" && $hook_suffix == "edit.php" ){
-			wp_enqueue_script( "webcr-admin-modal_columns", plugin_dir_url( __FILE__ ) . 'js/webcr-admin-modal-columns.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-modal_columns", plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js', array(  ), $this->version, array('strategy'  => 'defer') );
 		}
 
 		// Load Figure-specific Javascript only for admin columns screen 

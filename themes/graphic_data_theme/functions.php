@@ -656,6 +656,17 @@ function enqueue_info_scripts2() {
 add_action('wp_enqueue_scripts', 'enqueue_info_scripts2');
 
 
+function enqueue_modal_render_script() {
+  wp_enqueue_script(
+    'modal-render', 
+    content_url() . '/plugins/graphic_data_plugin/includes/modals/js/modal-render.js', 
+    array(), '1.0.0', 
+    array('strategy'  => 'defer')
+  );
+}
+add_action('wp_enqueue_scripts', 'enqueue_modal_render_script');
+
+
 function enqueue_figure_render_script() {
   wp_enqueue_script(
     'figure-render', 
