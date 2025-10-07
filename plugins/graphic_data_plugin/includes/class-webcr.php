@@ -120,7 +120,7 @@ class Webcr {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-login.php';
 
 		// The class that defines the functions used for the Scene custom content type
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-webcr-scene.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-scene.php';
 
 		// The class that defines the functions used for the Modal custom content type
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-modal.php';

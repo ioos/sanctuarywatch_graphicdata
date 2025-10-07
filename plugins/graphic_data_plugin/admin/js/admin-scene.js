@@ -11,6 +11,14 @@ writeCookieValuesToSceneFields();
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
 
+// Initialize the number of visible scene section fields and set up TOC-related field visibility on page load.
+//
+// - Retrieves the current value of the "scene_section_number" field to determine how many section fields to display.
+// - Calls displaySceneEntries to show/hide the appropriate number of section fields.
+// - Calls tableOfContentsFieldOptions to set the initial visibility and defaults for TOC and hover color fields
+//   based on the selected TOC style.
+//
+// This ensures the scene editor UI is correctly initialized when the page loads.
 let openingSceneSections = document.getElementsByName("scene_section_number")[0].value;
 displaySceneEntries(openingSceneSections);
 tableOfContentsFieldOptions();
@@ -24,6 +32,42 @@ document.querySelector('[data-depend-id="scene_orphan_icon_action"]').addEventLi
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
 
+/**
+ * Controls the visibility and default values of scene section and hover color fields based on the selected Table of Contents (TOC) style.
+ *
+ * This function dynamically shows or hides various scene section fields and hover color fields in the scene editor UI,
+ * depending on whether the TOC style is set to "list" or another value. When "list" is selected, section fields are hidden,
+ * the section number is set to 0, and only the global hover color fields are shown. For other TOC styles, the function
+ * displays section fields and determines whether to show global or per-section hover color fields based on the value of
+ * "scene_same_hover_color_sections".
+ *
+ * @function tableOfContentsFieldOptions
+ *
+ * @description
+ * - Retrieves the current TOC style from the "scene_toc_style" select field.
+ * - If TOC style is "list":
+ *   - Sets "scene_same_hover_color_sections" to "yes" and hides its field.
+ *   - Sets "scene_section_number" to 0 and hides its field.
+ *   - Hides all section fields and shows only the global hover color fields.
+ * - If TOC style is not "list":
+ *   - Shows the "scene_same_hover_color_sections" and "scene_section_number" fields.
+ *   - If "scene_same_hover_color_sections" is "no", hides global hover color fields and shows per-section hover color fields.
+ *   - If "scene_same_hover_color_sections" is "yes", shows global hover color fields and hides per-section hover color fields.
+ * - Calls `displaySceneEntries` to update the number of visible section fields as needed.
+ *
+ * @modifies
+ * - The display style and values of fields named "scene_same_hover_color_sections", "scene_section_number",
+ *   "scene_hover_color", "scene_hover_text_color", and per-section hover color fields in the DOM.
+ *
+ * @example
+ * // Update field visibility when the TOC style changes:
+ * tableOfContentsFieldOptions();
+ *
+ * @global
+ * - Assumes the existence of fields named "scene_toc_style", "scene_same_hover_color_sections", "scene_section_number",
+ *   "scene_hover_color", "scene_hover_text_color", and per-section hover color fields in the DOM.
+ * - Assumes the existence of the helper function displaySceneEntries.
+ */
 // function to show hover color field, based on table of contents type
 function tableOfContentsFieldOptions () {
 	const tocStyle = document.getElementsByName("scene_toc_style")[0].value;
@@ -62,7 +106,33 @@ function tableOfContentsFieldOptions () {
 }
 
 
-
+/**
+ * Shows or hides scene section fields based on the specified number of sections.
+ *
+ * This function manages the visibility and values of up to six scene section input fields in the scene editor form.
+ * For each section field beyond the specified entry number, the field is hidden and its value is cleared.
+ * For each section field up to and including the specified entry number, the field is shown.
+ *
+ * @function displaySceneEntries
+ * @param {number|string} entry_number - The number of scene section fields to display (typically 1–6).
+ *
+ * @description
+ * - Iterates from 6 down to entry_number + 1, hiding and clearing each section title field and its associated container.
+ * - Iterates from 1 up to entry_number, showing each section title field and its associated container.
+ * - Ensures that only the desired number of scene section fields are visible and populated in the UI.
+ *
+ * @modifies
+ * - The display style and value of input fields named "scene_section{n}[scene_section_title{n}]" in the DOM, where {n} is 1–6.
+ * - The display style of their parent containers, which may include associated hover color fields.
+ *
+ * @example
+ * // Show the first three scene section fields and hide the rest:
+ * displaySceneEntries(3);
+ *
+ * @global
+ * - Assumes the existence of input fields named "scene_section{n}[scene_section_title{n}]" in the DOM, where {n} is 1–6.
+ * - Assumes the parent containers are structured such that setting their style.display property will show/hide the section fields.
+ */
 // function to display Scene Section fields
 function displaySceneEntries (entry_number){
 	let target_title_element = "";
@@ -86,7 +156,35 @@ function displaySceneEntries (entry_number){
 	}
 }
 
-
+/**
+ * Displays either a URL input field or an internal image upload field for a scene photo,
+ * based on the selected photo location type for a given field number.
+ *
+ * This function toggles the visibility of the URL input and internal image upload fields
+ * for a specific photo entry in the scene editor form. If the user selects "Internal" as the photo
+ * location, the URL input is hidden and the internal image upload field is shown. If "External"
+ * is selected, the internal image upload field is hidden and the URL input is shown. The function
+ * also clears the values of the hidden fields to prevent unintended data submission.
+ *
+ * @function displayPhotoPath
+ * @param {number} fieldNumber - The index of the photo field to update (typically 1–6).
+ *
+ * @description
+ * - Determines the target select element and associated fields for the specified photo entry.
+ * - Checks the selected value ("Internal" or "External") for the photo location.
+ * - Shows or hides the appropriate input fields and clears the values of hidden fields.
+ *
+ * @modifies
+ * - The display style and value of the URL input and internal image upload fields for the specified photo entry in the DOM.
+ *
+ * @example
+ * // Show or hide the photo fields for the first photo entry based on user selection:
+ * displayPhotoPath(1);
+ *
+ * @global
+ * - Assumes the existence of form fields named "scene_photo{n}[scene_photo_location{n}]", "scene_photo{n}[scene_photo_url{n}]", and
+ *   elements with data-depend-id="scene_photo_internal{n}" in the DOM, where {n} is the field number.
+ */
 // Function to display either URL or image under scene image link
 function displayPhotoPath (fieldNumber){
 	const targetElement = "scene_photo" + fieldNumber + "[scene_photo_location" + fieldNumber + "]";
@@ -109,6 +207,31 @@ function displayPhotoPath (fieldNumber){
 	}
 }
 
+/**
+ * Resizes the SVG element in the scene preview to match the width of its container.
+ *
+ * This function retrieves the SVG element with the ID "previewSvg" and its parent container with the ID "previewSvgContainer".
+ * It then sets the SVG's width attribute to match the client width of the container, ensuring the SVG scales responsively
+ * within the preview area.
+ *
+ * @function resizeSvg
+ *
+ * @description
+ * - Gets the SVG element by ID "previewSvg".
+ * - Gets the container div by ID "previewSvgContainer".
+ * - Sets the SVG's width attribute to the container's clientWidth.
+ * - Ensures the SVG scales to fit the available space in the preview.
+ *
+ * @modifies
+ * - The width attribute of the SVG element with ID "previewSvg".
+ *
+ * @example
+ * // Resize the SVG to fit its container after loading or updating the preview:
+ * resizeSvg();
+ *
+ * @global
+ * - Assumes the existence of elements with IDs "previewSvg" and "previewSvgContainer" in the DOM.
+ */
 // Function to resize the SVG
 function resizeSvg() {
 	// Get the SVG element
@@ -122,7 +245,34 @@ function resizeSvg() {
 	svg.setAttribute('width', width);
 	}
 
-
+/**
+ * Dynamically creates and appends an accordion UI component for displaying lists of info or photo links in the scene preview.
+ *
+ * This function generates a Bootstrap-style accordion section (either "info" or "photo") and appends it to the specified parent div.
+ * Each accordion contains a header button and a collapsible body with a list of links. The links are constructed from the provided
+ * list of element indices, using the corresponding text and URL values from the scene form fields.
+ *
+ * @function createAccordion
+ * @param {string} accordionType - The type of accordion to create ("info" or "photo"). Determines field names and header text.
+ * @param {HTMLElement} parentDiv - The parent DOM element to which the accordion will be appended.
+ * @param {Array<number>} listElements - An array of indices representing the info or photo entries to include in the accordion.
+ *
+ * @description
+ * - Creates a container div for the accordion item and its header.
+ * - Sets the header text to "More info" for "info" type or "Images" for "photo" type.
+ * - Builds a collapsible section containing a list of links, where each link uses the text and URL from the corresponding scene form fields.
+ * - Appends the completed accordion item to the specified parent div.
+ *
+ * @modifies
+ * - Appends a new accordion item to the given parentDiv in the DOM.
+ *
+ * @example
+ * // Example usage to create an info accordion with entries 1 and 2:
+ * createAccordion("info", document.getElementById("allAccordions"), [1, 2]);
+ *
+ * @global
+ * - Assumes the existence of scene form fields named "scene_{type}{n}[scene_{type}_text{n}]" and "scene_{type}{n}[scene_{type}_url{n}]" in the DOM.
+ */
 function createAccordion(accordionType, parentDiv, listElements){
 
 	let accordionItem = document.createElement("div");
@@ -178,6 +328,42 @@ function createAccordion(accordionType, parentDiv, listElements){
 	parentDiv.appendChild(accordionItem);
 	
 }
+
+/**
+ * Handles the click event for the "Scene preview" button, generating a live preview of the scene.
+ *
+ * This event listener dynamically creates a scene preview window that displays the scene title, tagline,
+ * info and photo accordions, and a preview of the SVG infographic with highlighted icons. It ensures that
+ * any previous preview is removed before generating a new one. The preview includes:
+ * - Scene title (from the "title" field)
+ * - Tagline (from the "scene_tagline" field)
+ * - Accordions for info and photo links if any are present
+ * - SVG infographic preview (if a valid SVG path is provided), with clickable icons highlighted using the scene's hover color
+ * - A table of contents (TOC) listing the IDs of the SVG's icon layers, if present
+ *
+ * @event scene_preview_click
+ *
+ * @description
+ * - Removes any existing preview window.
+ * - Collects info and photo entries with both text and URL fields populated.
+ * - Builds and appends accordions for info and photo links if present.
+ * - Displays the tagline and scene title.
+ * - Loads and displays the SVG infographic, highlights icon layers, and lists their IDs in a TOC.
+ * - Handles errors in fetching or processing the SVG.
+ *
+ * @modifies
+ * - The DOM by removing and creating the scene preview window, and by updating the SVG preview and TOC.
+ *
+ * @example
+ * // This code is typically run on page load to enable scene preview functionality:
+ * document.querySelector('[data-depend-id="scene_preview"]').addEventListener('click', ...);
+ *
+ * @global
+ * - Assumes the existence of form fields named "title", "scene_tagline", "scene_info{n}[scene_info_text{n}]", "scene_info{n}[scene_info_url{n}]",
+ *   "scene_photo{n}[scene_photo_text{n}]", "scene_photo{n}[scene_photo_url{n}]", "scene_infographic", "scene_hover_color", and "scene_location" in the DOM.
+ * - Assumes the existence of the helper functions createAccordion and resizeSvg.
+ * - Requires the SVG to have a group with id="icons" for icon highlighting and TOC generation.
+ */
 // Create scene preview from clicking on the "Scene preview button"
 document.querySelector('[data-depend-id="scene_preview"]').addEventListener('click', function() {
 
@@ -473,6 +659,29 @@ if (OnSceneEditPage === 1 && SceneError === "post_error") {
 	}
 }
 
+/**
+ * Retrieves the value of a specified cookie by name.
+ *
+ * This function searches the document's cookies for a cookie with the given name and returns its decoded value.
+ * If the cookie is not found, it returns null.
+ *
+ * @function getCookie
+ * @param {string} cookieName - The name of the cookie to retrieve.
+ * @returns {string|null} The decoded value of the cookie if found, or null if not found.
+ *
+ * @description
+ * - Splits the document.cookie string into individual cookies.
+ * - Iterates through the cookies to find one matching the specified name.
+ * - Decodes and returns the value of the matching cookie.
+ * - Returns null if the cookie does not exist.
+ *
+ * @example
+ * // Retrieve the value of a cookie named "session_id":
+ * const sessionId = getCookie("session_id");
+ *
+ * @global
+ * - Uses document.cookie to access browser cookies.
+ */
 function getCookie(cookieName) {
 	let cookies = document.cookie;
 	let cookieArray = cookies.split("; ");
@@ -489,6 +698,31 @@ function getCookie(cookieName) {
 	return null;
 }
 
+
+/**
+ * Controls the visibility of the "scene_orphan_icon_color" field based on the selected orphan icon action.
+ *
+ * This function shows or hides the color picker field for orphan icons in the scene editor form,
+ * depending on the value selected in the "scene_orphan_icon_action" dropdown. If the action is set to "color",
+ * the color field is displayed; otherwise, it is hidden.
+ *
+ * @function orphanColorFieldVisibility
+ *
+ * @description
+ * - Retrieves the value of the "scene_orphan_icon_action" select field.
+ * - If the value is "color", shows the "scene_orphan_icon_color" field.
+ * - If the value is not "color", hides the "scene_orphan_icon_color" field.
+ *
+ * @modifies
+ * - The display style of the field named "scene_orphan_icon_color" in the DOM.
+ *
+ * @example
+ * // Update the visibility of the orphan icon color field when the action changes:
+ * orphanColorFieldVisibility();
+ *
+ * @global
+ * - Assumes the existence of form fields named "scene_orphan_icon_action" and "scene_orphan_icon_color" in the DOM.
+ */
 // make the field scene_orphan_icon_color visible or not visible based upon the value for the field scene_orphan_icon_action
 function orphanColorFieldVisibility() {
 	const iconOrphanAction = document.getElementsByName("scene_orphan_icon_action")[0].value;
