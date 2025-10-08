@@ -1105,9 +1105,9 @@ class Webcr_Figure {
                     }
 
                     // Unset the session variables so that the notices are not shown again on page reload.
-                    unset($_SESSION["figure_errors"]);
-                    unset($_SESSION["figure_warnings"]);
-                    unset($_SESSION["figure_post_status"]);             
+                    // unset($_SESSION["figure_errors"]);
+                    // unset($_SESSION["figure_warnings"]);
+                    // unset($_SESSION["figure_post_status"]);             
                 }
             }
         }
