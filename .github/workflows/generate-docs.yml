@@ -3,7 +3,7 @@ name: Generate PHP Documentation
 on:
   push:
     branches:
-      - main  
+      - main  # Change to your default branch if different
     paths:
       - 'plugins/graphic_data_plugin/**/*.php'
       - '.github/workflows/generate-docs.yml'
@@ -37,7 +37,7 @@ jobs:
             --target=./docs/function_documentation \
             --title="Graphic Data Plugin Documentation" \
             --template=default \
-            --ignore="*/vendor/*,*/node_modules/*"
+            --ignore="*/vendor/*,*/node_modules/*,*/admin/exopite-simple-options/*"
       
       - name: Commit documentation changes
         run: |
