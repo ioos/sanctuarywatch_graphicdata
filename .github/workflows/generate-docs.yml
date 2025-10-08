@@ -1,4 +1,4 @@
-name: Generate PHP Documentation
+nname: Generate PHP Documentation
 
 on:
   push:
@@ -27,11 +27,14 @@ jobs:
           php-version: '8.1'
           tools: phpdoc
       
+      - name: Create documentation directory
+        run: mkdir -p ./docs/function_documentation
+      
       - name: Generate documentation with phpDocumentor
         run: |
           phpdoc run \
             --directory=./plugins/graphic_data_plugin \
-            --target=./docs \
+            --target=./docs/function_documentation \
             --title="Graphic Data Plugin Documentation" \
             --template=default \
             --ignore="*/vendor/*,*/node_modules/*"
