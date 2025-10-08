@@ -535,26 +535,39 @@ class webcr_validation {
         $field_types = array("info", "photo");
 
         foreach ($field_types as $field_type){
-            for ($i = 1; $i < 7; $i++){
+
+            if ($field_type == "info"){
+                $field_max = intval($_POST["modal_info_entries"]) +1;
+            } else {
+                $field_max = intval($_POST["modal_photo_entries"]) +1;
+            }
+
+            for ($i = 1; $i < $field_max; $i++){
 
                 $form_fieldset = 'modal_' . $field_type .  $i;
                 $field_couplet = $_POST[$form_fieldset];
                 $field_text = "modal_" . $field_type . "_text" . $i;
                 $field_url = "modal_" . $field_type . "_url" . $i;
                 $field_photo_internal = "modal_photo_internal" . $i;
-                if (!$field_couplet[$field_url] == "" || !$field_couplet[$field_text] == "" ){
-                    if ( ($field_type == "info" && ($field_couplet[$field_url] == "" || $field_couplet[$field_text] == "")) || ($field_type == "photo" && ( ($field_couplet[$field_url] == "" && $field_couplet[$field_photo_internal]  == "")  || $field_couplet[$field_text] == ""))   ){
-                        $save_modal_fields = FALSE;
-                        array_push($modal_errors,  "Error in Modal " . ucfirst($field_type) . " Link " . $i);
-                    }
-                    if (!$field_couplet[$field_url] == "" ) {
-                        if ( $this -> url_check($field_couplet[$field_url]) == FALSE ) {
+
+                if ($field_couplet[$field_url] == "" && $field_couplet[$field_text] == "" ){
+                    $save_modal_fields = FALSE;
+                    array_push($modal_errors,  "The Modal " . ucfirst($field_type) . " Link " . $i . " is blank.");
+                } else {
+                    if (!$field_couplet[$field_url] == "" || !$field_couplet[$field_text] == "" ){
+                        if ( ($field_type == "info" && ($field_couplet[$field_url] == "" || $field_couplet[$field_text] == "")) || ($field_type == "photo" && ( ($field_couplet[$field_url] == "" && $field_couplet[$field_photo_internal]  == "")  || $field_couplet[$field_text] == ""))   ){
                             $save_modal_fields = FALSE;
-                            array_push($modal_errors, "The URL for Modal " . ucfirst($field_type) . " Link " . $i . " is not valid");
-                        } else {
-                            $url_http_code = $this -> check_url_is_accessible($field_couplet[$field_url]);
-                            if ($url_http_code != 200){
-                                array_push($modal_warnings, "The URL for Modal " . ucfirst($field_type) . " Link " . $i . " cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case.");                               
+                            array_push($modal_errors,  "Error in Modal " . ucfirst($field_type) . " Link " . $i);
+                        }
+                        if (!$field_couplet[$field_url] == "" ) {
+                            if ( $this -> url_check($field_couplet[$field_url]) == FALSE ) {
+                                $save_modal_fields = FALSE;
+                                array_push($modal_errors, "The URL for Modal " . ucfirst($field_type) . " Link " . $i . " is not valid");
+                            } else {
+                                $url_http_code = $this -> check_url_is_accessible($field_couplet[$field_url]);
+                                if ($url_http_code != 200){
+                                    array_push($modal_warnings, "The URL for Modal " . ucfirst($field_type) . " Link " . $i . " cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case.");                               
+                                }
                             }
                         }
                     }
@@ -662,14 +675,22 @@ class webcr_validation {
         $field_types = array("info", "photo");
 
         foreach ($field_types as $field_type){
-            for ($i = 1; $i < 7; $i++){
+            if ($field_type == "info"){
+                $field_max = intval($_POST["scene_info_entries"]) +1;
+            } else {
+                $field_max = intval($_POST["scene_photo_entries"]) +1;
+            }
+            for ($i = 1; $i < $field_max; $i++){
                 $form_fieldset = 'scene_' . $field_type .  $i;
                 $field_couplet = $_POST[$form_fieldset];
                 $field_text = "scene_" . $field_type . "_text" . $i;
                 $field_url = "scene_" . $field_type . "_url" . $i;
                 $field_photo_internal = "scene_photo_internal" . $i;
-                if (!$field_couplet[$field_url] == "" || !$field_couplet[$field_text] == "" ){
-                    if ( ($field_type == "info" && ($field_couplet[$field_url] == "" || $field_couplet[$field_text] == "")) || ($field_type == "photo" && ( ($field_couplet[$field_url] == "" && $field_couplet[$field_photo_internal]  == "")  || $field_couplet[$field_text] == ""))   ){
+                if ($field_couplet[$field_url] == "" && $field_couplet[$field_text] == "" ){
+                    $save_scene_fields = FALSE;
+                    array_push($scene_errors,  "The Scene " . ucfirst($field_type) . " Link " . $i . " is blank.");
+                } else {
+                    if ( ($field_type === "info" && ($field_couplet[$field_url] === "" || $field_couplet[$field_text] === "")) || ($field_type === "photo" && ( ($field_couplet[$field_url] === "" && $field_couplet[$field_photo_internal]  === "")  || $field_couplet[$field_text] === ""))   ){
                         $save_scene_fields = FALSE;
                         array_push($scene_errors,  "Error in Scene " . ucfirst($field_type) . " Link " . $i);
                     }

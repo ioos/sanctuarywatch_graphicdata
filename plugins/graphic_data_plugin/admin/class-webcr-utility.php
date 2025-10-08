@@ -66,7 +66,8 @@ class Webcr_Utility {
         // Check if transient exists for this user
         $transient_name = $current_post_type . "_error_all_fields_user_{$user_id}";
 
-        //modal_error_all_fields_user_1
+        $transient_list = $this->get_all_transients();
+
         $transient_data = get_transient($transient_name);
         
         if ($transient_data !== false) {
@@ -82,6 +83,19 @@ class Webcr_Utility {
         }
     }
 
+//temp function to get all transients
+function get_all_transients() {
+    global $wpdb;
+    
+    $transients = $wpdb->get_results(
+        "SELECT option_name AS name, option_value AS value 
+        FROM $wpdb->options 
+        WHERE option_name LIKE '_transient_%' 
+        OR option_name LIKE '_site_transient_%'"
+    );
+    
+    return $transients;
+}
 
     /**
      * Generalized function to write all field values from any custom content type to transients
@@ -98,8 +112,11 @@ class Webcr_Utility {
         $variable_type = gettype($fields_config);
 
         if ($variable_type == 'array') {
-        // Process the fields configuration to extract field IDss and handle fieldsets
-            $this->extract_field_values($fields_config, $all_fields);
+            if (substr($key_name, -16) === 'error_all_fields') {
+                $this->extract_field_values($fields_config, $all_fields);
+            } else {
+                $all_fields = $fields_config;
+            }
         } else if ($variable_type === 'string') {
             $all_fields = $fields_config;
         }
