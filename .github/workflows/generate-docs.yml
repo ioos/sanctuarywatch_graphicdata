@@ -3,7 +3,7 @@ name: Generate PHP Documentation
 on:
   push:
     branches:
-      - main  # Change to your default branch if different
+      - main  
     paths:
       - 'plugins/graphic_data_plugin/**/*.php'
       - '.github/workflows/generate-docs.yml'
