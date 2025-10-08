@@ -39,7 +39,7 @@ jobs:
             --template=default \
             --ignore="*/vendor/*" \
             --ignore="*/node_modules/*" \
-            --ignore= "plugins/graphic_data_plugin/admin/exopite-simple-options/*"
+            --ignore= "*/exopite-simple-options/*"
       
       - name: Commit documentation changes
         run: |
