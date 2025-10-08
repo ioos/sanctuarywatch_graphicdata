@@ -231,7 +231,6 @@ function get_all_transients() {
      * Shows informational, error, or warning messages based on the status of the post.
      * Notices are displayed only on the post type edit screen after a post has been updated.
      *
-     * @param string $post_type The type of post for which the notice is being displayed.
      * @return void Outputs the appropriate admin notice.
      */
     public function post_admin_notice() {
