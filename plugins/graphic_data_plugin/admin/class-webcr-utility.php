@@ -66,7 +66,8 @@ class Webcr_Utility {
         // Check if transient exists for this user
         $transient_name = $current_post_type . "_error_all_fields_user_{$user_id}";
 
-        //modal_error_all_fields_user_1
+        $transient_list = $this->get_all_transients();
+
         $transient_data = get_transient($transient_name);
         
         if ($transient_data !== false) {
@@ -82,6 +83,19 @@ class Webcr_Utility {
         }
     }
 
+//temp function to get all transients
+function get_all_transients() {
+    global $wpdb;
+    
+    $transients = $wpdb->get_results(
+        "SELECT option_name AS name, option_value AS value 
+        FROM $wpdb->options 
+        WHERE option_name LIKE '_transient_%' 
+        OR option_name LIKE '_site_transient_%'"
+    );
+    
+    return $transients;
+}
 
     /**
      * Generalized function to write all field values from any custom content type to transients
@@ -91,15 +105,23 @@ class Webcr_Utility {
      * @param int $expiration Optional. Time until expiration in seconds. Default 1800 (30 minutes)
      * @since 1.0.0
      */
-    public function fields_to_transient($content_type, $fields_config, $expiration = 1800) {
+    public function fields_to_transient($key_name, $fields_config, $expiration = 1800) {
         delete_expired_transients(); // Ensure expired transients are cleaned up before storing new ones
         $all_fields = [];
         
-        // Process the fields configuration to extract field IDs and handle fieldsets
-        $this->extract_field_values($fields_config, $all_fields);
-        
+        $variable_type = gettype($fields_config);
+
+        if ($variable_type == 'array') {
+            if (substr($key_name, -16) === 'error_all_fields') {
+                $this->extract_field_values($fields_config, $all_fields);
+            } else {
+                $all_fields = $fields_config;
+            }
+        } else if ($variable_type === 'string') {
+            $all_fields = $fields_config;
+        }
         // Create a unique transient key for this user and content type
-        $transient_key = $this->get_user_transient_key($content_type . "_error_all_fields");
+        $transient_key = $this->get_user_transient_key($key_name);
         
         // Store in transient instead of session
         set_transient($transient_key, $all_fields, $expiration);
@@ -222,29 +244,29 @@ class Webcr_Utility {
             if ($current_screen){
                 $post_type = $current_screen->post_type; 
                 if ($current_screen->base == "post" && $current_screen->id == $post_type && !($current_screen->action =="add") ) { 
-                    if( isset( $_SESSION[$post_type . "_post_status"] ) ) {
-                        $selected_post_status =  $_SESSION[$post_type . "_post_status"];
-                        if ($selected_post_status == "post_good") {
-                            echo '<div class="notice notice-info is-dismissible"><p>' . ucfirst($post_type) . ' created or updated.</p></div>';
-                        } 
-                        else {
-                            if (isset($_SESSION[$post_type . "_errors"])) {
-                                $error_message = "<p>Error or errors in " . $post_type . "</p>";
-                                $error_list_array = $_SESSION[$post_type . "_errors"];
-                                $error_array_length = count($error_list_array);
-                                $error_message = $error_message . '<p><ul>';
-                                for ($i = 0; $i < $error_array_length; $i++){
-                                    $error_message = $error_message . '<li>' . $error_list_array[$i] . '</li>';
-                                }
-                                $error_message = $error_message . '</ul></p>';
-                            }
-                            echo '<div class="notice notice-error is-dismissible">' . $error_message . '</div>'; 
-                        }
-                    //   setcookie("scene_post_status", "", time() - 300, "/");
+                    $current_post_status = $this->retrieve_post_status($post_type);
+                    if ($current_post_status == "none"){
+                        return;
                     }
-                    if (isset($_SESSION[$post_type . "_warnings"])){
+                    if ($current_post_status == "post_good"){
+                        echo '<div class="notice notice-info is-dismissible"><p>' . ucfirst($post_type) . ' created or updated.</p></div>';
+                    } else if ($current_post_status == "post_error"){
+                        $error_message = "<p>Error or errors in " . $post_type . "</p>";
+                        $error_list_array =  $this->retrieve_post_errors_warnings($post_type, "_errors");
+                        if ($error_list_array != "none"){
+                            $error_array_length = count($error_list_array);
+                            $error_message = $error_message . '<p><ul>';
+                            for ($i = 0; $i < $error_array_length; $i++){
+                                $error_message = $error_message . '<li>' . $error_list_array[$i] . '</li>';
+                            }
+                            $error_message = $error_message . '</ul></p>';
+                        }
+
+                        echo '<div class="notice notice-error is-dismissible">' . $error_message . '</div>'; 
+                    }
+                    $warning_list_array =  $this->retrieve_post_errors_warnings($post_type, "_warnings");
+                    if ($warning_list_array != "none"){
                         $warning_message = "<p>Warning or warnings in " . $post_type . "</p>";
-                        $warning_list_array = $_SESSION[$post_type . "_warnings"];
                         $warning_array_length = count($warning_list_array);
                         $warning_message = $warning_message . '<p><ul>';
                         for ($i = 0; $i < $warning_array_length; $i++){
@@ -252,16 +274,77 @@ class Webcr_Utility {
                         }
                         $warning_message = $warning_message . '</ul></p>';
                         echo '<div class="notice notice-warning is-dismissible">' . $warning_message . '</div>'; 
-                    }
-
-                    // Unset the session variables so that the notices are not shown again on page reload.
-                    unset($_SESSION[$post_type . "_errors"]);
-                    unset($_SESSION[$post_type . "_warnings"]);
-                    unset($_SESSION[$post_type . "_post_status"]);       
+                    }   
                 }
             }
         }
     }
+
+    /**
+     * Return post status for custom posts.
+     * 
+     * This function the post status associated with custom
+     * posts of type about, instance, scene, modal, and figure. The retrieval
+     * occurs from a WordPress transient, which is recorded at the moment
+     * that the post in question was saved. This function is used after that
+     * posts reloads after the save.
+     * 
+     * @param string $post_type The custom post type. 
+     */
+    function retrieve_post_status ($post_type) {
+        $user_id = get_current_user_id();
+        
+        if (!$user_id) {
+            return "none";
+        }
+        
+        // Check if transient exists for this user
+        $transient_name = $post_type . "_post_status_user_{$user_id}";
+
+        // retrieve transient, if it's there
+        $transient_data = get_transient($transient_name);
+        // post_status
+        if ($transient_data == false) {
+            return "none";
+        } else {
+            return $transient_data;
+            delete_transient($transient_name);
+        }
+    }
+
+    /**
+     * Return data entry errors and warnings associated with custom posts.
+     * 
+     * This function retrieves errors and warnings associated with custom
+     * posts of type about, instance, scene, modal, and figure. The retrieval
+     * occurs from WordPress transients, which are recorded at the moment
+     * that the post in question was saved. This function is used after that
+     * posts reloads after the save.
+     * 
+     * @param string $post_type The custom post type. 
+     * @param string $issue_type Either 'errors' or 'warnings'.
+     */
+    function retrieve_post_errors_warnings ($post_type, $issue_type) {
+        $user_id = get_current_user_id();
+        
+        if (!$user_id) {
+            return "none";
+        }
+        
+        // Check if transient exists for this user
+        $transient_name = $post_type . $issue_type . "_user_{$user_id}";
+
+        // retrieve transient, if it's there
+        $transient_data = get_transient($transient_name);
+        // post_status
+        if ($transient_data == false) {
+            return "none";
+        } else {
+            return $transient_data;
+            delete_transient($transient_name);
+        }
+    }
+
 
     /**
      * Get a list of all instances, filtered for 'content_editor' role.
@@ -606,7 +689,7 @@ class Webcr_Utility {
         }
     }
 
-    // used by register_custon_rest_fields
+    // used by register_custom_rest_fields
     public function meta_get_callback($object, $field_name, $request) {
         return get_post_meta($object['id'], $field_name, true);
     }

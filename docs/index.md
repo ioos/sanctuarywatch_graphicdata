@@ -26,3 +26,7 @@ Content Organization Hierarchy: **Instance Type → Instances → Scenes → Mod
 7. **[Figures]({{ site.baseurl }}/figures)** - How to create "Figures"
 8. **[Ineractive figures]({{ site.baseurl }}/figures-interactive)** - How to create "Interactive Figures"
 9. **[Non-interactive figures]({{ site.baseurl }}/figure-types)** - How to create figure with "Internal/External Images & Code"
+
+## Function Documentation
+
+**[Documentation]({{ site.baseurl }}/function_documentation/index.html)** Technical documentation for the plugin and theme.

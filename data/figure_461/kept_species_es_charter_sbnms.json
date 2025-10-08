@@ -1,9 +1,0 @@
-{
-    "metadata": {
-
-    },
-    "data": {
-        "Species": ["COD","HADD","POLL","CUSK","RED","MACK","BFT","DGSP","CAT","BLU","STB","ALB","DGSP","SHAK","LOB","HERR","WHB","MACC"],
-        "Kept": [712381,279311,119051,23410,22366,20859,19741,1374,4167,3389,3031,1608,1374,996,839,761,529,513]
-    }
-}

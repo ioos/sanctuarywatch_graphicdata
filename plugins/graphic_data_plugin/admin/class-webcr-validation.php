@@ -28,6 +28,7 @@ class webcr_validation {
 	public $version = '1.0.0';
 
     public function master_validate($validate_content_type){
+        
         switch ($validate_content_type) {
             case "about":
                 return $this->validate_about();
@@ -51,12 +52,9 @@ class webcr_validation {
 
     // The purpose of this function is to validate the fields of the About custom content type. 
     public function validate_about (){
+        $function_utilities = new Webcr_Utility();
+        
         $save_about_fields = true;
-
-        // Clear previous validation data from session
-        unset($_SESSION["about_errors"]);
-        unset($_SESSION["about_post_status"]);
-
         $about_errors = [];
         $about_warnings = [];
 
@@ -76,36 +74,53 @@ class webcr_validation {
         }
 
         if ($save_about_fields == FALSE) {
-            $_SESSION["about_errors"] = $about_errors; // Store array directly
-            $_SESSION["about_post_status"] = "post_error";
+            $function_utilities ->  fields_to_transient('about_errors', $about_errors, 30);
+            $function_utilities ->  fields_to_transient('about_post_status', "post_error", 30);
 
-            // Instamtiate the modal class 
-            $about_class = new Webcr_About( $this->plugin_name, $this->version ); // Assuming this is your modal class
+            // Instantiate the about class - we need this to get the current custom fields list for the content type
+            $about_class = new Webcr_About( $this->plugin_name, $this->version ); 
             
-            // Get the fields configuration
+            // Get the list of custom fields for the content type
             $fields_config = $this->get_fields_config('about', $about_class);
             
             // save the fields to the transient
-            $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('about', $fields_config, 30);
+
+            $function_utilities ->  fields_to_transient('about_error_all_fields', $fields_config, 30);
         } else {
-            $_SESSION["about_post_status"] = "post_good";
+            $function_utilities ->  fields_to_transient('about_post_status', "post_good", 30);
         }
 
         return $save_about_fields;
     }
 
 
-    // The purpose of this function is to validate the fields of the Instance custom content type. If validation fails, it sets a cookie with the error messages and the values of the fields that were submitted. 
-    // It also sets a cookie to indicate whether the post was successful or not. If the function returns false, it means that the validation failed and the post was not saved. 
-    // However, the page is reloaded and an error message is displayed to the user.
+    /**
+     * Validates a post of Instance custom post type before saving.
+     *
+     * Performs comprehensive validation on a given Instance post. If the validation succeeds, the function 
+     * returns true, allowing the post to be saved. If any validation checks fail, it returns false and sets
+     * several transients to store error messages, warnings, and field values for display after a page reload.
+     *
+     * @since 1.0.0
+     *
+     * @global array $_POST Contains the submitted Modal post type field values.
+     * @return bool True if all validation passes and post can be saved, false otherwise.
+     *
+     * Transients set on validation failure:
+     * - 'instance_errors': Array of error messages (30 second expiration)
+     * - 'instance_post_status': Set to "post_error" (30 second expiration)
+     * - 'instance_error_all_fields': Field configuration and submitted values (30 second expiration)
+     *
+     * Transient set on validation success:
+     * - 'modal_post_status': Set to "post_good" (30 second expiration)
+     *
+     * Transient potentially set on either validation failure or success:
+     * - 'instance_warnings': Array of error messages (30 second expiration)
+     */
     public function validate_instance (){
-        $save_instance_fields = true;
 
-        // Clear previous validation data from session
-        unset($_SESSION["instance_errors"]);
-        unset($_SESSION["instance_warnings"]);
-        unset($_SESSION["instance_post_status"]);
+        $function_utilities = new Webcr_Utility();
+        $save_instance_fields = true;
 
         $instance_errors = [];
         $instance_warnings = [];
@@ -176,25 +191,8 @@ class webcr_validation {
                     $save_instance_fields = FALSE;
                     array_push($instance_errors, "The Legacy content URL is not valid");
                 } else {
-                    // Set cURL options
-                    $ch = curl_init($instance_legacy_content_url);
-                    $userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Return the transfer as a string
-                    curl_setopt($ch, CURLOPT_NOBODY, true);  // Exclude the body from the output
-                    curl_setopt($ch, CURLOPT_HEADER, true);  // Include the header in the output
-                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
-                    curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);  // Set User-Agent header
-
-                    // Execute cURL session
-                    curl_exec($ch);
-
-                    // Get the headers
-                    $headers = curl_getinfo($ch);
-
-                    // Close cURL session
-                    curl_close($ch);
-
-                    if ($headers["http_code"] != 200){
+                    $url_http_code = $this -> check_url_is_accessible($instance_legacy_content_url);
+                    if ($url_http_code != 200){
                         array_push($instance_warnings, "The 'Legacy content URL' field cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case.");                               
                     }
                 }
@@ -212,39 +210,55 @@ class webcr_validation {
         }   
 
         if (!empty($instance_warnings)){
-            $_SESSION["instance_warnings"] = $instance_warnings;             
+            $function_utilities ->  fields_to_transient('instance_warnings', $instance_warnings, 30);         
         }
         if ($save_instance_fields == FALSE) {
-            $_SESSION["instance_errors"] = $instance_errors; // Store array directly
-            $_SESSION["instance_post_status"] = "post_error";
+            $function_utilities ->  fields_to_transient('instance_errors', $instance_errors, 30);  
+            $function_utilities ->  fields_to_transient('instance_post_status', "post_error", 30);  
 
-            // Instamtiate the modal class 
-            $instance_class = new Webcr_Instance( $this->plugin_name, $this->version ); // Assuming this is your modal class
+            // Instantiate the modal class - we need this to get the current custom fields list for the content type
+            $instance_class = new Webcr_Instance( $this->plugin_name, $this->version ); 
             
-            // Get the fields configuration
+            // Get the list of custom fields for the content type
             $fields_config = $this->get_fields_config('instance', $instance_class);
             
             // save the fields to the transient
-            $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('instance', $fields_config, 30);
+            $function_utilities ->  fields_to_transient('instance_error_all_fields', $fields_config, 30);
         } else {
-            $_SESSION["instance_post_status"] = "post_good";
+            $function_utilities ->  fields_to_transient('instance_post_status', "post_good", 30);  
         }
 
         return $save_instance_fields;
     }
 
 
-    // The purpose of this function is to validate the fields of the Figure custom content type. If validation fails, it saves to the session the error messages and the values of the fields that were submitted. 
-    // It also save to the session to indicate whether the post was successful or not. If the function returns false, it means that the validation failed and the post was not saved. 
-    // However, the page is reloaded and an error message is displayed to the user.
+    /**
+     * Validates a post of Figure custom post type before saving.
+     *
+     * Performs comprehensive validation on a given Figure post. If the validation succeeds, the function 
+     * returns true, allowing the post to be saved. If any validation checks fail, it returns false and sets
+     * several transients to store error messages, warnings, and field values for display after a page reload.
+     *
+     * @since 1.0.0
+     *
+     * @global array $_POST Contains the submitted Figure post type field values.
+     * @return bool True if all validation passes and post can be saved, false otherwise.
+     *
+     * Transients set on validation failure:
+     * - 'figure_errors': Array of error messages (30 second expiration)
+     * - 'figure_post_status': Set to "post_error" (30 second expiration)
+     * - 'figure_error_all_fields': Field configuration and submitted values (30 second expiration)
+     *
+     * Transient set on validation success:
+     * - 'figure_post_status': Set to "post_good" (30 second expiration)
+     *
+     * Transient potentially set on either validation failure or success:
+     * - 'figure_warnings': Array of error messages (30 second expiration)
+     */
     public function validate_figure (){
-        $save_figure_fields = true;
 
-        // Clear previous figure validation data from session
-        unset($_SESSION["figure_errors"]);
-        unset($_SESSION["figure_warnings"]);
-        unset($_SESSION["figure_post_status"]);
+        $function_utilities = new Webcr_Utility();
+        $save_figure_fields = true;
 
         $figure_errors = [];
         $figure_warnings = [];
@@ -285,25 +299,8 @@ class webcr_validation {
                     $save_figure_fields = FALSE;
                     array_push($figure_errors, "The External URL is not a valid URL.");
                 } else {
-                    // Set cURL options
-                    $ch = curl_init($figure_external_url);
-                    $userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Return the transfer as a string
-                    curl_setopt($ch, CURLOPT_NOBODY, true);  // Exclude the body from the output
-                    curl_setopt($ch, CURLOPT_HEADER, true);  // Include the header in the output
-                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
-                    curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);  // Set User-Agent header
-
-                    // Execute cURL session
-                    curl_exec($ch);
-
-                    // Get the headers
-                    $headers = curl_getinfo($ch);
-
-                    // Close cURL session
-                    curl_close($ch);
-
-                    if ($headers["http_code"] != 200){
+                    $url_http_code = $this -> check_url_is_accessible($figure_external_url);
+                    if ($url_http_code != 200){
                         array_push($figure_warnings, "The 'External URL' field cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case.");                               
                     }
                 }
@@ -336,25 +333,8 @@ class webcr_validation {
                         $save_figure_fields = FALSE;
                         array_push($figure_errors, "The URL for the " . $error_notice_name[$field_type] . " link is not valid");
                     } else {
-                        // Set cURL options
-                        $ch = curl_init($field_couplet[$field_url]);
-                        $userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Return the transfer as a string
-                        curl_setopt($ch, CURLOPT_NOBODY, true);  // Exclude the body from the output
-                        curl_setopt($ch, CURLOPT_HEADER, true);  // Include the header in the output
-                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
-                        curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);  // Set User-Agent header
-
-                        // Execute cURL session
-                        curl_exec($ch);
-
-                        // Get the headers
-                        $headers = curl_getinfo($ch);
-
-                        // Close cURL session
-                        curl_close($ch);
-
-                        if ($headers["http_code"] != 200){
+                        $url_http_code = $this -> check_url_is_accessible($field_couplet[$field_url]);
+                        if ($url_http_code != 200){
                             array_push($figure_warnings, "The URL for the " . $error_notice_name[$field_type] . " link cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case.");                               
                         }
                     }
@@ -363,37 +343,54 @@ class webcr_validation {
         }
 
         if (!empty($figure_warnings)){
-            $_SESSION["figure_warnings"] = $figure_warnings; // Store array directly   
+            $function_utilities ->  fields_to_transient('figure_warnings', $figure_warnings, 30);         
         }
         if ($save_figure_fields == FALSE) {
-            $_SESSION["figure_errors"] = $figure_errors; // Store array directly
-            $_SESSION["figure_post_status"] = "post_error";
+            $function_utilities ->  fields_to_transient('figure_errors', $figure_errors, 30);  
+            $function_utilities ->  fields_to_transient('figure_post_status', "post_error", 30);  
 
-            // Instamtiate the modal class 
-            $figure_class = new Webcr_Figure( $this->plugin_name, $this->version ); // Assuming this is your modal class
+            // Instantiate the figure class - we need this to get the current custom fields list for the content type
+            $figure_class = new Webcr_Figure( $this->plugin_name, $this->version ); 
             
-            // Get the fields configuration
+            // Get the list of custom fields for the content type
             $fields_config = $this->get_fields_config('figure', $figure_class);
             
             // save the fields to the transient
-            $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('figure', $fields_config, 30);
+
+            $function_utilities ->  fields_to_transient('figure_error_all_fields', $fields_config, 30);
         } else {
-            $_SESSION["figure_post_status"] = "post_good";
+            $function_utilities ->  fields_to_transient('figure_post_status', "post_good", 30);  
         }
         return $save_figure_fields;
     }
     
-    // The purpose of this function is to validate the fields of the Modal custom content type. If validation fails, it sets a cookie with the error messages and the values of the fields that were submitted. 
-    // It also sets a cookie to indicate whether the post was successful or not. If the function returns false, it means that the validation failed and the post was not saved. 
-    // However, the page is reloaded and an error message is displayed to the user.
+    /**
+     * Validates a post of Modal custom post type before saving.
+     *
+     * Performs comprehensive validation on a given Modal post. If the validation succeeds, the function 
+     * returns true, allowing the post to be saved. If any validation checks fail, it returns false and sets
+     * several transients to store error messages, warnings, and field values for display after a page reload.
+     *
+     * @since 1.0.0
+     *
+     * @global array $_POST Contains the submitted Modal post type field values.
+     * @return bool True if all validation passes and post can be saved, false otherwise.
+     *
+     * Transients set on validation failure:
+     * - 'modal_errors': Array of error messages (30 second expiration)
+     * - 'modal_post_status': Set to "post_error" (30 second expiration)
+     * - 'modal_error_all_fields': Field configuration and submitted values (30 second expiration)
+     *
+     * Transient set on validation success:
+     * - 'modal_post_status': Set to "post_good" (30 second expiration)
+     *
+     * Transient potentially set on either validation failure or success:
+     * - 'modal_warnings': Array of error messages (30 second expiration)
+     */
     public function validate_modal(){
-        $save_modal_fields = true;
 
-        // Clear previous validation data from session
-        unset($_SESSION["modal_errors"]);
-        unset($_SESSION["modal_warnings"]);
-        unset($_SESSION["modal_post_status"]);
+        $function_utilities = new Webcr_Utility();
+        $save_modal_fields = true;
 
         $modal_errors = [];
         $modal_warnings = [];
@@ -503,25 +500,8 @@ class webcr_validation {
                         $save_modal_fields = FALSE;
                         array_push($modal_errors, "The Icon External URL is not valid");
                     } else {
-                        // Set cURL options
-                        $ch = curl_init($icon_external_url);
-                        $userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Return the transfer as a string
-                        curl_setopt($ch, CURLOPT_NOBODY, true);  // Exclude the body from the output
-                        curl_setopt($ch, CURLOPT_HEADER, true);  // Include the header in the output
-                        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
-                        curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);  // Set User-Agent header
-
-                        // Execute cURL session
-                        curl_exec($ch);
-
-                        // Get the headers
-                        $headers = curl_getinfo($ch);
-
-                        // Close cURL session
-                        curl_close($ch);
-
-                        if ($headers["http_code"] != 200){
+                        $url_http_code = $this -> check_url_is_accessible($icon_external_url);
+                        if ($url_http_code != 200){
                             array_push($modal_warnings, "The 'Icon External URL' field cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case.");                               
                         }
                     }
@@ -555,43 +535,39 @@ class webcr_validation {
         $field_types = array("info", "photo");
 
         foreach ($field_types as $field_type){
-            for ($i = 1; $i < 7; $i++){
+
+            if ($field_type == "info"){
+                $field_max = intval($_POST["modal_info_entries"]) +1;
+            } else {
+                $field_max = intval($_POST["modal_photo_entries"]) +1;
+            }
+
+            for ($i = 1; $i < $field_max; $i++){
 
                 $form_fieldset = 'modal_' . $field_type .  $i;
                 $field_couplet = $_POST[$form_fieldset];
                 $field_text = "modal_" . $field_type . "_text" . $i;
                 $field_url = "modal_" . $field_type . "_url" . $i;
                 $field_photo_internal = "modal_photo_internal" . $i;
-                if (!$field_couplet[$field_url] == "" || !$field_couplet[$field_text] == "" ){
-                    if ( ($field_type == "info" && ($field_couplet[$field_url] == "" || $field_couplet[$field_text] == "")) || ($field_type == "photo" && ( ($field_couplet[$field_url] == "" && $field_couplet[$field_photo_internal]  == "")  || $field_couplet[$field_text] == ""))   ){
-                        $save_modal_fields = FALSE;
-                        array_push($modal_errors,  "Error in Modal " . ucfirst($field_type) . " Link " . $i);
-                    }
-                    if (!$field_couplet[$field_url] == "" ) {
-                        if ( $this -> url_check($field_couplet[$field_url]) == FALSE ) {
+
+                if ($field_couplet[$field_url] == "" && $field_couplet[$field_text] == "" ){
+                    $save_modal_fields = FALSE;
+                    array_push($modal_errors,  "The Modal " . ucfirst($field_type) . " Link " . $i . " is blank.");
+                } else {
+                    if (!$field_couplet[$field_url] == "" || !$field_couplet[$field_text] == "" ){
+                        if ( ($field_type == "info" && ($field_couplet[$field_url] == "" || $field_couplet[$field_text] == "")) || ($field_type == "photo" && ( ($field_couplet[$field_url] == "" && $field_couplet[$field_photo_internal]  == "")  || $field_couplet[$field_text] == ""))   ){
                             $save_modal_fields = FALSE;
-                            array_push($modal_errors, "The URL for Modal " . ucfirst($field_type) . " Link " . $i . " is not valid");
-                        } else {
-                            // Set cURL options
-                            $ch = curl_init($field_couplet[$field_url]);
-                            $userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Return the transfer as a string
-                            curl_setopt($ch, CURLOPT_NOBODY, true);  // Exclude the body from the output
-                            curl_setopt($ch, CURLOPT_HEADER, true);  // Include the header in the output
-                            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
-                            curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);  // Set User-Agent header
-
-                            // Execute cURL session
-                            curl_exec($ch);
-
-                            // Get the headers
-                            $headers = curl_getinfo($ch);
-
-                            // Close cURL session
-                            curl_close($ch);
-
-                            if ($headers["http_code"] != 200){
-                                array_push($modal_warnings, "The URL for Modal " . ucfirst($field_type) . " Link " . $i . " cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case.");                               
+                            array_push($modal_errors,  "Error in Modal " . ucfirst($field_type) . " Link " . $i);
+                        }
+                        if (!$field_couplet[$field_url] == "" ) {
+                            if ( $this -> url_check($field_couplet[$field_url]) == FALSE ) {
+                                $save_modal_fields = FALSE;
+                                array_push($modal_errors, "The URL for Modal " . ucfirst($field_type) . " Link " . $i . " is not valid");
+                            } else {
+                                $url_http_code = $this -> check_url_is_accessible($field_couplet[$field_url]);
+                                if ($url_http_code != 200){
+                                    array_push($modal_warnings, "The URL for Modal " . ucfirst($field_type) . " Link " . $i . " cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case.");                               
+                                }
                             }
                         }
                     }
@@ -600,39 +576,56 @@ class webcr_validation {
         }
 
         if (!empty($modal_warnings)){
-            $_SESSION["modal_warnings"] = $modal_warnings;          
+            $function_utilities ->  fields_to_transient('modal_warnings', $modal_warnings, 30);                
         }
         if ($save_modal_fields == FALSE) {
-            $_SESSION["modal_errors"] = $modal_errors; // Store array directly
-            $_SESSION["modal_post_status"] = "post_error";
 
-            // Instamtiate the modal class 
-            $modal_class = new Webcr_Modal( $this->plugin_name, $this->version ); // Assuming this is your modal class
+            $function_utilities ->  fields_to_transient('modal_errors', $modal_errors, 30);  
+            $function_utilities ->  fields_to_transient('modal_post_status', "post_error", 30);  
+
+            // Instantiate the modal class - we need this to get the current custom fields list for the content type
+            $modal_class = new Webcr_Modal( $this->plugin_name, $this->version ); 
             
-            // Get the fields configuration
+            // Get the custom fields list for the content type
             $fields_config = $this->get_fields_config('modal', $modal_class);
             
             // save the fields to the transient
-            $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('modal', $fields_config, 30);
+            $function_utilities ->  fields_to_transient('modal_error_all_fields', $fields_config, 30);
 
         } else {
-            $_SESSION["modal_post_status"] = "post_good";
+            $function_utilities ->  fields_to_transient('modal_post_status', "post_good", 30);  
         }
 
         return $save_modal_fields;
     }
 
-    // The purpose of this function is to validate the fields of the Scene custom content type. If validation fails, it sets a cookie with the error messages and the values of the fields that were submitted. 
-    // It also sets a cookie to indicate whether the post was successful or not. If the function returns false, it means that the validation failed and the post was not saved. 
-    // However, the page is reloaded and an error message is displayed to the user.
+    /**
+     * Validates a post of Scene custom post type before saving.
+     *
+     * Performs comprehensive validation on a given Scene post. If the validation succeeds, the function 
+     * returns true, allowing the post to be saved. If any validation checks fail, it returns false and sets
+     * several transients to store error messages, warnings, and field values for display after a page reload.
+     *
+     * @since 1.0.0
+     *
+     * @global array $_POST Contains the submitted Scene post type field values.
+     * @return bool True if all validation passes and post can be saved, false otherwise.
+     *
+     * Transients set on validation failure:
+     * - 'scene_errors': Array of error messages (30 second expiration)
+     * - 'scene_warnings': Array of warning messages (30 second expiration)
+     * - 'scene_post_status': Set to "post_error" (30 second expiration)
+     * - 'scene_error_all_fields': Field configuration and submitted values (30 second expiration)
+     *
+     * Transient set on validation success:
+     * - 'scene_post_status': Set to "post_good" (30 second expiration)
+     *
+     * Transient potentially set on either validation failure or success:
+     * - 'scene_warnings': Array of error messages (30 second expiration)
+     */
     public function validate_scene (){
+        $function_utilities = new Webcr_Utility();
         $save_scene_fields = true;
-
-        // Clear previous validation data from session
-        unset($_SESSION["scene_errors"]);
-        unset($_SESSION["scene_warnings"]);
-        unset($_SESSION["scene_post_status"]);
 
         $scene_errors = [];
         $scene_warnings = [];
@@ -682,14 +675,22 @@ class webcr_validation {
         $field_types = array("info", "photo");
 
         foreach ($field_types as $field_type){
-            for ($i = 1; $i < 7; $i++){
+            if ($field_type == "info"){
+                $field_max = intval($_POST["scene_info_entries"]) +1;
+            } else {
+                $field_max = intval($_POST["scene_photo_entries"]) +1;
+            }
+            for ($i = 1; $i < $field_max; $i++){
                 $form_fieldset = 'scene_' . $field_type .  $i;
                 $field_couplet = $_POST[$form_fieldset];
                 $field_text = "scene_" . $field_type . "_text" . $i;
                 $field_url = "scene_" . $field_type . "_url" . $i;
                 $field_photo_internal = "scene_photo_internal" . $i;
-                if (!$field_couplet[$field_url] == "" || !$field_couplet[$field_text] == "" ){
-                    if ( ($field_type == "info" && ($field_couplet[$field_url] == "" || $field_couplet[$field_text] == "")) || ($field_type == "photo" && ( ($field_couplet[$field_url] == "" && $field_couplet[$field_photo_internal]  == "")  || $field_couplet[$field_text] == ""))   ){
+                if ($field_couplet[$field_url] == "" && $field_couplet[$field_text] == "" ){
+                    $save_scene_fields = FALSE;
+                    array_push($scene_errors,  "The Scene " . ucfirst($field_type) . " Link " . $i . " is blank.");
+                } else {
+                    if ( ($field_type === "info" && ($field_couplet[$field_url] === "" || $field_couplet[$field_text] === "")) || ($field_type === "photo" && ( ($field_couplet[$field_url] === "" && $field_couplet[$field_photo_internal]  === "")  || $field_couplet[$field_text] === ""))   ){
                         $save_scene_fields = FALSE;
                         array_push($scene_errors,  "Error in Scene " . ucfirst($field_type) . " Link " . $i);
                     }
@@ -698,26 +699,8 @@ class webcr_validation {
                             $save_scene_fields = FALSE;
                             array_push($scene_errors, "The URL for Scene " . ucfirst($field_type) . " Link " . $i . " is not valid");
                         } else {
-
-                            // Set cURL options
-                            $ch = curl_init($field_couplet[$field_url]);
-                            $userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
-                            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Return the transfer as a string
-                            curl_setopt($ch, CURLOPT_NOBODY, true);  // Exclude the body from the output
-                            curl_setopt($ch, CURLOPT_HEADER, true);  // Include the header in the output
-                            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
-                            curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);  // Set User-Agent header
-
-                            // Execute cURL session
-                            curl_exec($ch);
-
-                            // Get the headers
-                            $headers = curl_getinfo($ch);
-
-                            // Close cURL session
-                            curl_close($ch);
-
-                            if ($headers["http_code"] != 200){
+                            $url_http_code = $this -> check_url_is_accessible($field_couplet[$field_url]);
+                            if ($url_http_code != 200){
                                 array_push($scene_warnings, "The URL for Scene " . ucfirst($field_type) . " Link " . $i . " cannot be accessed");                               
                             }
                         }
@@ -726,28 +709,75 @@ class webcr_validation {
             }
         }
         if (!empty($scene_warnings)){
-            $_SESSION["scene_warnings"] = $scene_warnings;       
+            $function_utilities ->  fields_to_transient('scene_warnings', $scene_warnings, 30);        
         }
         if ($save_scene_fields == FALSE) {
-            $_SESSION["scene_errors"] = $scene_errors; // Store array directly
-            $_SESSION["scene_post_status"] = "post_error";
+            $function_utilities ->  fields_to_transient('scene_errors', $scene_errors, 30);  
+            $function_utilities ->  fields_to_transient('scene_post_status', "post_error", 30);  
 
-            // Instamtiate the modal class 
-            $scene_class = new Webcr_Scene( $this->plugin_name, $this->version ); // Assuming this is your modal class
+            // Instantiate the scene class - we need this to get the current custom fields list for the content type
+            $scene_class = new Webcr_Scene( $this->plugin_name, $this->version ); 
             
-            // Get the fields configuration
+            // Get the custom fields list for the content type
             $fields_config = $this->get_fields_config('scene', $scene_class);
             
             // save the fields to the transient
-            $function_utilities = new Webcr_Utility();
-            $function_utilities ->  fields_to_transient('scene', $fields_config, 30);
+            $function_utilities ->  fields_to_transient('scene_error_all_fields', $fields_config, 30);
         } else {
-            $_SESSION["scene_post_status"] = "post_good";
+            $function_utilities ->  fields_to_transient('scene_post_status', "post_good", 30);  
         }
         return $save_scene_fields;
     }
 
-    // This function checks whether an input url has valid syntax
+    /**
+     * Return HTTP status code for a given URL to check if it's accessible.
+     * 
+     * This function uses cURL to perform a HEAD request to the specified URL and retrieves the HTTP status code. Note that 
+     * prior to this funciton being called, the URL to be checked has already been validated for correct syntax, so it
+     * doesn't need to be validated again here.
+     * 
+     * @param string $url_to_be_checked The URL to be checked for accessibility.
+     * @return integer The HTTP status code for the URL (e.g., 200 for accessible, 404 for not found, etc.)
+     */
+    public function check_url_is_accessible($url_to_be_checked) {
+
+        // Set cURL options
+        $ch = curl_init($url_to_be_checked);
+        $userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Return the transfer as a string
+        curl_setopt($ch, CURLOPT_NOBODY, true);  // Exclude the body from the output
+        curl_setopt($ch, CURLOPT_HEADER, true);  // Include the header in the output
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);  // Follow redirects
+        curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);  // Set User-Agent header
+
+        // Execute cURL session
+        curl_exec($ch);
+        // Get the headers
+        $headers = curl_getinfo($ch);
+
+        // Close cURL session
+        curl_close($ch);
+
+        // return the HTTP code for url that is being checked (note anything other than 200 is a problem)
+        return $headers["http_code"];
+    }
+
+    /**
+     * Validates URL syntax with path requirement.
+     *
+     * Checks whether the provided URL has valid syntax according to PHP's URL
+     * validation filter. The URL must include a path component to pass validation.
+     *
+     * @since 1.0.0
+     *
+     * @param string $input_url The URL to validate.
+     * @return bool True if the URL is valid and contains a path, false otherwise.
+     *
+     * @example
+     * $this->url_check('https://example.com/path'); // Returns true
+     * $this->url_check('https://example.com');      // Returns false (no path)
+     * $this->url_check('not-a-url');                // Returns false
+     */
     public function url_check ($input_url) {
         if ( filter_var($input_url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED) == FALSE ) {
             return FALSE;

@@ -1,0 +1,49 @@
+name: Generate PHP Documentation
+
+on:
+  push:
+    branches:
+      - main  # Change to your default branch if different
+    paths:
+      - 'plugins/graphic_data_plugin/**/*.php'
+      - '.github/workflows/generate-docs.yml'
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: phpdoc
+      
+      - name: Create documentation directory
+        run: mkdir -p ./docs/function_documentation
+      
+      - name: Generate documentation with phpDocumentor
+        run: |
+          phpdoc run \
+            --directory=./plugins/graphic_data_plugin \
+            --target=./docs/function_documentation \
+            --title="Graphic Data Plugin Documentation" \
+            --template=default \
+            --ignore="*/vendor/*" \
+            --ignore="*/node_modules/*" \
+            --ignore="*/exopite-simple-options/*"
+      
+      - name: Commit documentation changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update documentation [skip ci]" && git push)

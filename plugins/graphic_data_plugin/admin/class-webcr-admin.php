@@ -61,17 +61,18 @@ class Webcr_Admin {
 	 */
 	public function enqueue_styles() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Webcr_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Webcr_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		// Only enqueue on admin screens where the plugin needs its styles.
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+			if ( ! $screen ) {
+				return;
+			}
+
+			// Skip Site Health / tools pages to avoid interfering with health checks.
+			if ( in_array( $screen->id, array( 'tools_page_site-health', 'site-health' ), true ) ) {
+				return;
+			}
+		}
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/webcr-admin.css', array(), $this->version, 'all' );
 
@@ -92,7 +93,7 @@ class Webcr_Admin {
 	public function enqueue_scripts($hook_suffix) {
 
 		/**
-		 * This function is provided for demonstration purposes only.
+		 * This function is provided for demonstration purposes only.  
 		 *
 		 * An instance of this class should be passed to the run() function
 		 * defined in Webcr_Loader as all of the hooks are defined
@@ -450,17 +451,6 @@ class Webcr_Admin {
 				__('Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.', 'your-plugin-textdomain'));
 			
 			echo '<div class="notice notice-warning is-dismissible"><p>' . $message . '</p></div>';
-		}
-	}
-
-	/**
-	 * Starts the PHP session (used for field validation) using the 'init' WordPress hook.
-	 *
-	 * @since 1.0.0
-	 */
-	function start_session () {
-		if (!session_id() && !headers_sent()) {
-			session_start();
 		}
 	}
 
