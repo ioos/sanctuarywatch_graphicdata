@@ -712,7 +712,7 @@ add_action('wp_enqueue_scripts', 'enqueue_plotly_utility_script');
 
 
 
-function enqueue_plotly_script() {
+function enqueue_plotly_line_script() {
   wp_enqueue_script(
     'plotly-timeseries-line', 
     content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-line.js', 
@@ -720,7 +720,7 @@ function enqueue_plotly_script() {
     array('strategy'  => 'defer')
   );
 }
-add_action('wp_enqueue_scripts', 'enqueue_plotly_script');
+add_action('wp_enqueue_scripts', 'enqueue_plotly_line_script');
 
 
 function enqueue_plotly_bar_script() {

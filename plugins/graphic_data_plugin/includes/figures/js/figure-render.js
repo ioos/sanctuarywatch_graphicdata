@@ -37,7 +37,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
     let targetId = `javascript_figure_target_${postID}`;
     let plotlyDivID = `plotlyFigure${postID}`;
     let interactive_arguments = info_obj["figure_interactive_arguments"];
-    console.log('interactive_arguments', interactive_arguments);
+    //console.log('interactive_arguments', interactive_arguments);
 
     async function waitForElementByIdPolling(id, timeout = 10000, interval = 100) {
         const start = Date.now();
