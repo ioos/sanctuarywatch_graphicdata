@@ -37,7 +37,9 @@ jobs:
             --target=./docs/function_documentation \
             --title="Graphic Data Plugin Documentation" \
             --template=default \
-            --ignore="*/vendor/*,*/node_modules/*,*/exopite-simple-options/*"
+            --ignore="*/vendor/*" \
+            --ignore="*/node_modules/*" \
+            --ignore="*/exopite-simple-options/*"
       
       - name: Commit documentation changes
         run: |
