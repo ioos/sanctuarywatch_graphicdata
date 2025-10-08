@@ -93,7 +93,7 @@ class Webcr_Admin {
 	public function enqueue_scripts($hook_suffix) {
 
 		/**
-		 * This function is provided for demonstration purposes only.
+		 * This function is provided for demonstration purposes only.  
 		 *
 		 * An instance of this class should be passed to the run() function
 		 * defined in Webcr_Loader as all of the hooks are defined
