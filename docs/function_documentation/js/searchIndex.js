@@ -1976,11 +1976,6 @@ Search.appendIndex(
             "summary": "Handles\u0020the\u0020custom\u0020file\u0020deletion\u0020process\u0020for\u0020the\u0020WebCR\u0020plugin.",
             "url": "classes/Webcr-Figure.html#method_custom_file_delete_handler"
         },                {
-            "fqsen": "\\Webcr_Figure\u003A\u003Afigure_admin_notice\u0028\u0029",
-            "name": "figure_admin_notice",
-            "summary": "Displays\u0020admin\u0020notices\u0020for\u0020the\u0020WebCR\u0020plugin\u0020for\u0020Figure\u0020posts.",
-            "url": "classes/Webcr-Figure.html#method_figure_admin_notice"
-        },                {
             "fqsen": "\\Webcr_Figure\u003A\u003Aregister_get_alt_text_by_url_route\u0028\u0029",
             "name": "register_get_alt_text_by_url_route",
             "summary": "Registers\u0020a\u0020custom\u0020REST\u0020API\u0020route\u0020to\u0020get\u0020alt\u0020text\u0020by\u0020image\u0020URL.",
