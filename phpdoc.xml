@@ -3,11 +3,13 @@
     <title>Graphic Data Plugin Documentation</title>
     <parser>
         <target>./docs/function_documentation</target>
+        <extensions>php</extensions>
         <ignore>
-            <directory>plugins/graphic_data_plugin/admin/exopite-simple-options</directory>
-            <directory>plugins/graphic_data_plugin/vendor</directory>
-            <directory>plugins/graphic_data_plugin/node_modules</directory>
+            <file>plugins/graphic_data_plugin/admin/exopite-simple-options</file>
+            <file>plugins/graphic_data_plugin/vendor</file>
+            <file>plugins/graphic_data_plugin/node_modules</file>
         </ignore>
+        <visibility>public,protected,private</visibility>
     </parser>
     <transformer>
         <target>./docs/function_documentation</target>
