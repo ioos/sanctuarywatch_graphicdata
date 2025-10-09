@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <title>Graphic Data Plugin Documentation</title>
+    <parser>
+        <target>./docs/function_documentation</target>
+        <ignore>
+            <directory>plugins/graphic_data_plugin/admin/exopite-simple-options</directory>
+            <directory>plugins/graphic_data_plugin/vendor</directory>
+            <directory>plugins/graphic_data_plugin/node_modules</directory>
+        </ignore>
+    </parser>
+    <transformer>
+        <target>./docs/function_documentation</target>
+    </transformer>
+</phpdoc>
