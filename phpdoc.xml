@@ -14,10 +14,6 @@
         <extensions>
             <extension>php</extension>
         </extensions>
-        <markers>
-            <marker>TODO</marker>
-            <marker>FIXME</marker>
-        </markers>
         <visibility>public,protected,private</visibility>
     </parser>
 
