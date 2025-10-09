@@ -2,16 +2,22 @@
 <phpdoc>
     <title>Graphic Data Plugin Documentation</title>
 
+    <files>
+        <directory>plugins/graphic_data_plugin</directory>
+        <ignore>plugins/graphic_data_plugin/admin/exopite-simple-options</ignore>
+        <ignore>plugins/graphic_data_plugin/vendor</ignore>
+        <ignore>plugins/graphic_data_plugin/node_modules</ignore>
+    </files>
+
     <parser>
         <target>./docs/function_documentation</target>
         <extensions>
             <extension>php</extension>
         </extensions>
-        <ignore>
-            <file>plugins/graphic_data_plugin/admin/exopite-simple-options</file>
-            <file>plugins/graphic_data_plugin/vendor</file>
-            <file>plugins/graphic_data_plugin/node_modules</file>
-        </ignore>
+        <markers>
+            <marker>TODO</marker>
+            <marker>FIXME</marker>
+        </markers>
         <visibility>public,protected,private</visibility>
     </parser>
 
