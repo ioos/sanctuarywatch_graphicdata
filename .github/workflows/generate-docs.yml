@@ -37,7 +37,7 @@ jobs:
           find ./plugins/graphic_data_plugin -maxdepth 3 -type d | sort
 
       - name: Generate documentation with phpDocumentor
-        run: phpdoc run --config=./plugins/graphic_data_plugin/phpdoc.xml
+        run: phpdoc run --config=phpdoc.xml
 
       - name: Commit documentation changes
         run: |
