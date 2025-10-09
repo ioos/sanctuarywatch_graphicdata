@@ -165,7 +165,7 @@ class Webcr {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	public function define_admin_hooks() {
+	public function define_admin_hooks() { 
 		// Load class and functions of utility functions
 		$plugin_utility = new Webcr_Utility();
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'post_admin_notice' ); 
