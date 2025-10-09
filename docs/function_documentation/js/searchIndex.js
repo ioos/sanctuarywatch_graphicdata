@@ -526,6 +526,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Webcr-Utility.html#method_meta_get_callback"
         },                {
+            "fqsen": "\\Webcr_Utility\u003A\u003Adisplay_warning_message_if_new_post_impossible\u0028\u0029",
+            "name": "display_warning_message_if_new_post_impossible",
+            "summary": "Display\u0020warning\u0020message\u0020if\u0020add\u0020new\u0020post\u0020is\u0020not\u0020possible\u0020for\u0020custom\u0020content\u0020post\u0020type.",
+            "url": "classes/Webcr-Utility.html#method_display_warning_message_if_new_post_impossible"
+        },                {
             "fqsen": "\\webcr_validation",
             "name": "webcr_validation",
             "summary": "",
@@ -2056,11 +2061,6 @@ Search.appendIndex(
             "summary": "Populate\u0020custom\u0020fields\u0020for\u0020Modal\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
             "url": "classes/Webcr-Modal.html#method_custom_modal_column"
         },                {
-            "fqsen": "\\Webcr_Modal\u003A\u003Amodal_admin_notice\u0028\u0029",
-            "name": "modal_admin_notice",
-            "summary": "Displays\u0020admin\u0020notices\u0020for\u0020the\u0020WebCR\u0020plugin\u0020for\u0020Modal\u0020posts.",
-            "url": "classes/Webcr-Modal.html#method_modal_admin_notice"
-        },                {
             "fqsen": "\\Webcr_Modal\u003A\u003A\u0024plugin_name",
             "name": "plugin_name",
             "summary": "The\u0020ID\u0020of\u0020this\u0020plugin.",
@@ -2395,11 +2395,6 @@ Search.appendIndex(
             "name": "custom_content_type_instance",
             "summary": "Create\u0020Instance\u0020custom\u0020content\u0020type.",
             "url": "classes/Webcr-Instance.html#method_custom_content_type_instance"
-        },                {
-            "fqsen": "\\Webcr_Instance\u003A\u003Ataxonomy_problem_admin_notice\u0028\u0029",
-            "name": "taxonomy_problem_admin_notice",
-            "summary": "Show\u0020admin\u0020notice\u0020on\u0020Instance\u0020edit\u0020post\u0020page\u0020that\u0020there\u0020is\u0020a\u0020problem\u0020with\u0020the\u0020Instance\u0020Type\u0020taxonomy,\u0020if\u0020the\u0020appropriate\u0020flag\u0020has\u0020been\u0020set\u0020in\u0020the\u0020session.",
-            "url": "classes/Webcr-Instance.html#method_taxonomy_problem_admin_notice"
         },                {
             "fqsen": "\\Webcr_Instance\u003A\u003Acreate_instance_fields\u0028\u0029",
             "name": "create_instance_fields",
