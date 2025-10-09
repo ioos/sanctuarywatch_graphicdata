@@ -210,6 +210,13 @@
 <dd>Helper function to delete field values from transients</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Webcr-Utility.html#method_display_warning_message_if_new_post_impossible">display_warning_message_if_new_post_impossible()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Display warning message if add new post is not possible for custom content post type.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Webcr-Utility.html#method_dummy_sanitize">dummy_sanitize()</a>
     <span>
                                 &nbsp;: string    </span>
@@ -415,6 +422,86 @@
         <span class="phpdocumentor-signature__response_type">bool</span>
                     &mdash;
                 <section class="phpdocumentor-description"><p>True if successful, false otherwise</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_display_warning_message_if_new_post_impossible">
+        display_warning_message_if_new_post_impossible()
+        <a href="classes/Webcr-Utility.html#method_display_warning_message_if_new_post_impossible" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-webcr-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-webcr-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-webcr-utility.php">class-webcr-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">710</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Display warning message if add new post is not possible for custom content post type.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">display_warning_message_if_new_post_impossible</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>This function display a warning message on the admin screen for a custom content type, if the underlying data necessary
+to create a new post of that content type is not present. This function is only currently
+implemented for the instance content type, but is intended to be generalized for use with scene, modal, and figure content types as well.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Webcr-Utility.html#method_display_warning_message_if_new_post_impossible#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">global</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>string $pagenow  The current admin page filename.</p>
+</section>
+
+                                    </dd>
+                            <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">global</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>string $typenow  The current post type being viewed.</p>
+</section>
+
+                                    </dd>
+                                                <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">void</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Outputs HTML directly to the admin screen. No return value.</p>
 </section>
 
             </section>
@@ -1663,6 +1750,7 @@ posts reloads after the save.</p>
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Webcr-Utility.html#method_delete_fields_transient">delete_fields_transient()</a></li>
+                                            <li class=""><a href="classes/Webcr-Utility.html#method_display_warning_message_if_new_post_impossible">display_warning_message_if_new_post_impossible()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_dummy_sanitize">dummy_sanitize()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_extract_field_values">extract_field_values()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_fields_to_transient">fields_to_transient()</a></li>
