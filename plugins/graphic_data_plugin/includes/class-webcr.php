@@ -165,11 +165,12 @@ class Webcr {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	public function define_admin_hooks() {
+	public function define_admin_hooks() { 
 		// Load class and functions of utility functions
 		$plugin_utility = new Webcr_Utility();
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'post_admin_notice' ); 
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' ); 
+		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible',10 ); 
 
 		// Load class and functions to change overall look and function of admin screens
 		$plugin_admin = new Webcr_Admin( $this->get_plugin_name(), $this->get_version() );
@@ -220,7 +221,6 @@ class Webcr {
 		$this->loader->add_filter( 'bulk_actions-edit-instance', $plugin_admin_instance, 'remove_bulk_actions' ); 
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin_instance, 'custom_content_remove_quick_edit_link', 10, 2 ); 
 		$this->loader->add_filter( 'rest_api_init', $plugin_admin_instance, 'register_instance_rest_fields' ); 
-		$this->loader->add_action( 'admin_notices', $plugin_admin_instance, 'taxonomy_problem_admin_notice',10 ); 
 		$this->loader->add_action( 'admin_notices', $plugin_admin_instance, 'instance_admin_notice',20 ); 
 
 		// Load class and functions associated with the Settings Page
@@ -279,14 +279,12 @@ class Webcr {
 		// Load  class and functions associated with Figure custom content type
 		$plugin_admin_figure = new Webcr_Figure( $this->get_plugin_name());		
 		$this->loader->add_action( 'init', $plugin_admin_figure, 'custom_content_type_figure' ); 
-//		$this->loader->add_action( 'exopite_options_framework_init', $plugin_admin_figure, 'create_figure_fields', 1 ); //Robbie's version of the previous line
 		$this->loader->add_action( 'admin_menu', $plugin_admin_figure, 'create_figure_fields', 1 );
 		$this->loader->add_action( 'manage_figure_posts_columns', $plugin_admin_figure, 'change_figure_columns' ); 
 		$this->loader->add_action( 'manage_figure_posts_custom_column', $plugin_admin_figure, 'custom_figure_column', 10, 2 ); 
 		$this->loader->add_action( 'restrict_manage_posts', $plugin_admin_figure, 'figure_filter_dropdowns' ); 
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_figure, 'figure_location_filter_results' ); 
 		$this->loader->add_action( 'current_screen', $plugin_admin_figure, 'cleanup_expired_figure_filters' ); 
-		$this->loader->add_action( 'admin_notices', $plugin_admin_figure, 'figure_admin_notice' ); 
 		$this->loader->add_filter( 'bulk_actions-edit-figure', $plugin_admin_instance, 'remove_bulk_actions' ); 
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_figure, 'register_figure_rest_fields' ); 
 		$this->loader->add_filter( 'rest_figure_query', $plugin_admin_figure, 'filter_figure_by_figure_modal', 10, 2); 

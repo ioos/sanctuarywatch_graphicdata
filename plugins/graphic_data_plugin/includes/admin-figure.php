@@ -1056,64 +1056,7 @@ class Webcr_Figure {
     }
     
 
-    /**
-     * Displays admin notices for the WebCR plugin for Figure posts.
-     * 
-     * Shows informational, error, or warning messages based on the status of the figure post.
-     * Notices are displayed only on the "figure" post type edit screen after a post has been updated.
-     *
-     * @return void Outputs the appropriate admin notice.
-     */
-    public function figure_admin_notice() {
-        // First let's determine where we are. We only want to show admin notices in the right places. Namely in one of our custom 
-        // posts after it has been updated. The if statement is looking for three things: 1. Figure post type? 2. An individual post (as opposed to the scene
-        // admin screen)? 3. A new post
-        if (function_exists('get_current_screen')) {
-            $current_screen = get_current_screen();
-            if ($current_screen){
-                if ($current_screen->base == "post" && $current_screen->id =="figure" && !($current_screen->action =="add") ) { 
-                    if( isset( $_SESSION["figure_post_status"] ) ) {
-                        $modal_post_status =  $_SESSION["figure_post_status"];
-                        if ($modal_post_status == "post_good") {
-                            echo '<div class="notice notice-info is-dismissible"><p>Figure created or updated.</p></div>';
-                        } 
-                        else {
-                            if (isset($_SESSION["figure_errors"])) {
-                                $error_message = "<p>Error or errors in figure</p>";
-                                $error_list_array = $_SESSION["figure_errors"];
-                                $error_array_length = count($error_list_array);
-                                $error_message = $error_message . '<p><ul>';
-                                for ($i = 0; $i < $error_array_length; $i++){
-                                    $error_message = $error_message . '<li>' . $error_list_array[$i] . '</li>';
-                                }
-                                $error_message = $error_message . '</ul></p>';
-                            }
-                            echo '<div class="notice notice-error is-dismissible">' . $error_message . '</div>'; 
-                        }
-                    //   setcookie("scene_post_status", "", time() - 300, "/");
-                    }
-                    if (isset($_SESSION["figure_warnings"])){
-                        $warning_message = "<p>Warning or warnings in figure</p>";
-                        $warning_list_array = $_SESSION["figure_warnings"];
-                        $warning_array_length = count($warning_list_array);
-                        $warning_message = $warning_message . '<p><ul>';
-                        for ($i = 0; $i < $warning_array_length; $i++){
-                            $warning_message = $warning_message . '<li>' . $warning_list_array[$i] . '</li>';
-                        }
-                        $warning_message = $warning_message . '</ul></p>';
-                        echo '<div class="notice notice-warning is-dismissible">' . $warning_message . '</div>'; 
-                    }
-
-                    // Unset the session variables so that the notices are not shown again on page reload.
-                    // unset($_SESSION["figure_errors"]);
-                    // unset($_SESSION["figure_warnings"]);
-                    // unset($_SESSION["figure_post_status"]);             
-                }
-            }
-        }
-    }
-
-		/**
+	/**
 	 * Registers a custom REST API route to get alt text by image URL.
 	 *
 	 * @since 1.0.1
