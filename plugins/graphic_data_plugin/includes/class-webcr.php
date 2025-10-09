@@ -170,6 +170,7 @@ class Webcr {
 		$plugin_utility = new Webcr_Utility();
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'post_admin_notice' ); 
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' ); 
+		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible',10 ); 
 
 		// Load class and functions to change overall look and function of admin screens
 		$plugin_admin = new Webcr_Admin( $this->get_plugin_name(), $this->get_version() );
@@ -220,7 +221,6 @@ class Webcr {
 		$this->loader->add_filter( 'bulk_actions-edit-instance', $plugin_admin_instance, 'remove_bulk_actions' ); 
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin_instance, 'custom_content_remove_quick_edit_link', 10, 2 ); 
 		$this->loader->add_filter( 'rest_api_init', $plugin_admin_instance, 'register_instance_rest_fields' ); 
-		$this->loader->add_action( 'admin_notices', $plugin_admin_instance, 'taxonomy_problem_admin_notice',10 ); 
 		$this->loader->add_action( 'admin_notices', $plugin_admin_instance, 'instance_admin_notice',20 ); 
 
 		// Load class and functions associated with the Settings Page

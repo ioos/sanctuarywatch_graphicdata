@@ -69,28 +69,7 @@ class Webcr_Instance {
         register_post_type( 'instance', $args );
     }
 
-    /**
-	 * Show admin notice on Instance edit post page that there is a problem with the Instance Type taxonomy, if the appropriate flag has been set in the session.
-     * 
-	 * @since    1.0.0
-	 */
-    function taxonomy_problem_admin_notice() {
 
-                // Only run on edit post pages for the modal post type
-        global $pagenow, $post;
-        
-        if ($pagenow == 'post.php' || $pagenow == 'post-new.php') {
-        
-            $current_post_type = isset($post->post_type) ? $post->post_type : '';
-
-            if (!$post || $current_post_type != 'instance') { 
-                if (isset($_SESSION["instance_type_taxonomy_error"]) && $_SESSION["instance_type_taxonomy_error"] == "true") {
-                    echo '<div class="notice notice-error is-dismissible">Error! You must create at least one Instance Type first, before you can create an Instance. </div>'; 
-                    unset($_SESSION["instance_type_taxonomy_error"]); // clear the session variable so we don't show this notice again
-                }
-            }
-        }
-    }
     /**
 	 * Create custom fields, using metaboxes, for Instance custom content type.
      * 
@@ -138,9 +117,7 @@ class Webcr_Instance {
              foreach ($instance_type_terms as $term) {
                 $instance_type_array[$term->term_id] = ucwords($term->slug);
             }
-        } else {
-            $_SESSION["instance_type_taxonomy_error"] = "true";
-        }   
+        } 
 
         $fields = array(
             array(

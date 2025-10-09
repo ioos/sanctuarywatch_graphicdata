@@ -693,5 +693,44 @@ function get_all_transients() {
         return get_post_meta($object['id'], $field_name, true);
     }
 
+
+    /**
+	 * Display warning message if add new post is not possible for custom content post type.
+     * 
+     * This function display a warning message on the admin screen for a custom content type, if the underlying data necessary
+     * to create a new post of that content type is not present. This function is only currently
+     * implemented for the instance content type, but is intended to be generalized for use with scene, modal, and figure content types as well.
+     * 
+     * @global string $pagenow  The current admin page filename.
+     * @global string $typenow  The current post type being viewed.
+     * 
+     * @return void  Outputs HTML directly to the admin screen. No return value.
+	 * @since    1.0.0
+	 */
+    function display_warning_message_if_new_post_impossible () {
+
+        global $pagenow, $typenow;
+        
+        // Check if we're on the instance post type admin page
+        if ($pagenow == 'edit.php' && $typenow == 'instance') {
+            // Check if there are no terms
+            $terms = get_terms(array(
+                'taxonomy' => 'instance_type',
+                'hide_empty' => false,
+                'number' => 1,
+                'fields' => 'ids'
+            ));
+            
+            if (is_wp_error($terms) || empty($terms)) {
+                ?>
+                <div class="notice notice-error is-dismissible">
+                    <p><strong>Cannot create Instance posts.</strong> You must create at least one <a href="<?php echo admin_url('edit-tags.php?taxonomy=instance_type&post_type=instance'); ?>">Instance Type</a> before you can add an Instance post. </p>
+                </div>
+                <?php
+            }
+        }
+    }
+
+
 }
 
