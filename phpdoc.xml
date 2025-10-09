@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdoc>
     <title>Graphic Data Plugin Documentation</title>
+
     <parser>
         <target>./docs/function_documentation</target>
-        <extensions>php</extensions>
+        <extensions>
+            <extension>php</extension>
+        </extensions>
         <ignore>
             <file>plugins/graphic_data_plugin/admin/exopite-simple-options</file>
             <file>plugins/graphic_data_plugin/vendor</file>
@@ -11,6 +14,7 @@
         </ignore>
         <visibility>public,protected,private</visibility>
     </parser>
+
     <transformer>
         <target>./docs/function_documentation</target>
     </transformer>
