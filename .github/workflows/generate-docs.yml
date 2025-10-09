@@ -3,7 +3,7 @@ name: Generate PHP Documentation
 on:
   push:
     branches:
-      - main  # Change to your default branch if different
+      - main
     paths:
       - 'plugins/graphic_data_plugin/**/*.php'
       - '.github/workflows/generate-docs.yml'
@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup PHP
+      - name: Setup PHP with phpDocumentor
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
@@ -30,18 +30,19 @@ jobs:
       - name: Create documentation directory
         run: mkdir -p ./docs/function_documentation
 
-      # 👇 Debug step to verify directory structure
+      # 👇 Debug step to verify plugin directory tree
       - name: Debug directory tree
         run: |
           echo "Listing plugin directory structure (depth 3):"
           find ./plugins/graphic_data_plugin -maxdepth 3 -type d | sort
 
       - name: Generate documentation with phpDocumentor
-        run: |
-          phpdoc run --config=./plugins/graphic_data_plugin/phpdoc.xml
+        run: phpdoc run --config=./plugins/graphic_data_plugin/phpdoc.xml
+
       - name: Commit documentation changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add docs/
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update documentation [skip ci]" && git push)
+          git diff --quiet && git diff --staged --quiet || \
+            (git commit -m "Update documentation [skip ci]" && git push)
