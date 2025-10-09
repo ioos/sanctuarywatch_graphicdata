@@ -38,17 +38,7 @@ jobs:
 
       - name: Generate documentation with phpDocumentor
         run: |
-          phpdoc run \
-            --directory=./plugins/graphic_data_plugin \
-            --target=./docs/function_documentation \
-            --title="Graphic Data Plugin Documentation" \
-            --template=default \
-            --ignore="admin/exopite-simple-options" \
-            --ignore="admin/exopite-simple-options/*" \
-            --ignore="admin/exopite-simple-options/**" \
-            --ignore="vendor/**" \
-            --ignore="node_modules/**"
-
+          phpdoc run --config=./plugins/graphic_data_plugin/phpdoc.xml
       - name: Commit documentation changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
