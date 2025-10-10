@@ -1,3 +1,123 @@
+// Deep clone the child_ids object to create child_obj, ensuring that modifications to child_obj do not affect the original child_ids.
+// This is useful for safely manipulating or filtering the child_obj data structure later in the script.
+let child_obj = JSON.parse(JSON.stringify(child_ids));
+
+
+// Convert the svg_url variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
+// This is likely done to strip extra quotes or escape characters from the serialized string.
+let url1 =(JSON.stringify(svg_url));
+url = url1.substring(2, url1.length - 2);
+
+
+// Declare variables to hold data and state throughout the script.
+// These will be assigned values later as the script loads and processes scene/instance data.
+let testData;      // Will hold instance data or API results
+let thisInstance;  // Will reference the current instance object
+let thisScene;     // Will reference the current scene object
+let sceneLoc;      // Will store the current scene location or identifier
+
+// Initialize empty objects to store section data and section colors for the scene.
+// These will be populated as the script processes scene/section information.
+let sectionObj = {};
+let sectColors = {};
+
+// If the current device is NOT mobile, inject custom CSS styles for tablet/desktop layouts.
+// This block creates a <style> element with specific CSS rules for elements in the 512px–768px width range,
+// ensuring proper alignment and sizing for the table of contents, scene row, title container, and buttons.
+if (!is_mobile()) {
+    // Create a new style element
+    const style = document.createElement('style');
+
+    style.innerHTML = `
+        @media (min-width: 512px) and (max-width: 768px) {
+            #toc-container{
+                margin-left: 0px !important;
+            }
+            #scene-row > div.col-md-9{
+                margin-left: 0px !important;
+            }
+            #title-container{
+                margin-left: 0px !important;
+            }
+            #title-container > div > div.col-md-2 > div{
+                max-width: 96% !important;
+            }
+            #top-button{
+                margin-bottom: 5px;
+                font-size: large;
+                z-index: 1;
+                margin-top: 2%;
+            }
+            #toggleButton{
+                margin-bottom: 0px;
+                font-size: large;
+                z-index: 1;
+            }
+            #toc-group{
+                padding-top: 2%;
+            }
+        }
+    `;
+    // Append the style to the head of the document
+    document.head.appendChild(style);
+}
+
+// The lines below from step 1 through step 3 are used for organizing child_obj(of modals) when it is fed into the toc as sorted_child_entries. 
+// If all modals are set to 1 then it now organized alphabetically. other wise it respects the modal order.
+process_child_obj();
+
+// Step 1: get [key, value] pairs
+let sorted_child_entries = Object.entries(child_obj);
+
+// Step 2: check if all modal_icon_order are 1 (or missing)
+/**
+ * Checks if all objects in the `sorted_child_entries` array have their `modal_icon_order` property equal to 1.
+ *
+ * @constant {boolean} allOrdersAreOne - A boolean indicating whether all entries satisfy the condition.
+ * @param {Array} sorted_child_entries - An array of entries where each entry is a tuple containing a key and an object.
+ * @param {Array} sorted_child_entries[].0 - The key of the entry (not used in the condition).
+ * @param {Object} sorted_child_entries[].1 - The object containing the `modal_icon_order` property.
+ * @param {string} sorted_child_entries[].1.modal_icon_order - The property to be checked, expected to be a string representation of a number.
+ * @returns {boolean} `true` if all `modal_icon_order` values are equal to 1 after parsing as integers, otherwise `false`.
+ */
+const allOrdersAreOne = sorted_child_entries.every(([_, obj]) => parseInt(obj.modal_icon_order) === 1);
+
+// Step 3: sort conditionally
+if (allOrdersAreOne) {
+    sorted_child_entries.sort((a, b) => {
+        const titleA = a[1].title?.toLowerCase() || '';
+        const titleB = b[1].title?.toLowerCase() || '';
+        return titleA.localeCompare(titleB);
+    });
+} else {
+    sorted_child_entries.sort((a, b) => {
+        return (a[1].modal_icon_order || 0) - (b[1].modal_icon_order || 0);
+    });
+}
+
+// Step 4: extract the objects (no keys) to match your original format
+const sorted_child_objs = sorted_child_entries.map(([_, val]) => val);
+
+// Step 5: build child_ids_helper for title-to-key mapping
+child_ids_helper = {};
+for (const [key, value] of sorted_child_entries) {
+    child_ids_helper[value.title] = key;
+}
+
+// Declare a variable to track if the current environment is mobile.
+// Initially set to false, assuming a non-mobile environment by default.
+let mobileBool = false;
+
+//Main Initialization of script
+document.addEventListener("DOMContentLoaded", () => {
+    init(); 
+    
+    handleHashNavigation();
+
+});
+
+
+
 /**
  * Debounces a function, delaying its execution until after a specified wait time
  * has elapsed since the last time it was invoked.
@@ -41,118 +161,6 @@ function hexToRgba(hex, opacity) {
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
-
-/**
- * Traps the focus within a specified modal element, ensuring that the user cannot tab out of it.
- *
- * This function ensures that accessibility keyboard navigation (specifically tabbing) is confined within the modal,
- * and if the user tries to tab past the last focusable element, focus will loop back to the first focusable element.
- * It also brings focus back to the modal if the user attempts to focus on an element outside of it.
- *
- * @param {HTMLElement} modalElement - The modal element within which focus should be trapped.
- * @returns {Function} cleanup - A function that removes the event listeners and deactivates the focus trap.
- */
-function trapFocus(modalElement) {
-    function getFocusableElements() {
-        return Array.from(modalElement.querySelectorAll(
-            'button, [href], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])'
-        )).filter(el => !el.hasAttribute('disabled') && el.offsetParent !== null);
-    }
-
-    function handleKeydown(e) {
-        const focusableElements = getFocusableElements();
-        const firstFocusableElement = focusableElements[0];
-        const lastFocusableElement = focusableElements[focusableElements.length - 1];
-
-        if (e.key === 'Tab' || e.keyCode === 9) {
-            if (e.shiftKey) { // shift + tab
-                if (document.activeElement === firstFocusableElement) {
-                    lastFocusableElement.focus();
-                    e.preventDefault();
-                }
-            } else { // tab
-                if (document.activeElement === lastFocusableElement) {
-                    firstFocusableElement.focus();
-                    e.preventDefault();
-                }
-            }
-        } 
-    }
-
-    function handleFocus(e) {
-        if (!modalElement.contains(e.target)) {
-            const focusableElements = getFocusableElements();
-            if (focusableElements.length > 0) {
-                focusableElements[0].focus();
-            }
-        }
-    }
-
-    document.addEventListener('keydown', handleKeydown);
-    document.addEventListener('focus', handleFocus, true);
-
-    const initialFocusableElement = getFocusableElements()[0];
-    if (initialFocusableElement) initialFocusableElement.focus();
-
-    return function cleanup() {
-        document.removeEventListener('keydown', handleKeydown);
-        document.removeEventListener('focus', handleFocus, true);
-    };
-}
-
-let child_obj = JSON.parse(JSON.stringify(child_ids));
-
-let url1 =(JSON.stringify(svg_url));
-url = url1.substring(2, url1.length - 2);
-
-
-let testData;
-let thisInstance;
-let thisScene;
-let sceneLoc;
-
-let sectionObj = {};
-
-let sectColors = {};
-
-if (!is_mobile()) {
-    // Create a new style element
-    const style = document.createElement('style');
-
-    style.innerHTML = `
-        @media (min-width: 512px) and (max-width: 768px) {
-            #toc-container{
-                margin-left: 0px !important;
-            }
-            #scene-row > div.col-md-9{
-                margin-left: 0px !important;
-            }
-            #title-container{
-                margin-left: 0px !important;
-            }
-            #title-container > div > div.col-md-2 > div{
-                max-width: 96% !important;
-            }
-            #top-button{
-                margin-bottom: 5px;
-                font-size: large;
-                z-index: 1;
-                margin-top: 2%;
-            }
-            #toggleButton{
-                margin-bottom: 0px;
-                font-size: large;
-                z-index: 1;
-            }
-            #toc-group{
-                padding-top: 2%;
-            }
-        }
-    `;
-    // Append the style to the head of the document
-    document.head.appendChild(style);
-}
-
 /**
  
  * This function pre-processes the `child_obj` dictionary to ensure that each element (scene icon) belongs to the 
@@ -183,48 +191,6 @@ function process_child_obj(){
     }
     //now sort by icon order
     // If you need it back as an object:
-}
-
-// The lines below from ~ 173 to ~ 213 are used for organizing child_obj(of modals) when it is fed into the toc as sorted_child_entries. 
-// If all modals are set to 1 then it now organized alphabetically. other wise it respects the modal order.
-process_child_obj();
-
-// Step 1: get [key, value] pairs
-let sorted_child_entries = Object.entries(child_obj);
-
-// Step 2: check if all modal_icon_order are 1 (or missing)
-/**
- * Checks if all objects in the `sorted_child_entries` array have their `modal_icon_order` property equal to 1.
- *
- * @constant {boolean} allOrdersAreOne - A boolean indicating whether all entries satisfy the condition.
- * @param {Array} sorted_child_entries - An array of entries where each entry is a tuple containing a key and an object.
- * @param {Array} sorted_child_entries[].0 - The key of the entry (not used in the condition).
- * @param {Object} sorted_child_entries[].1 - The object containing the `modal_icon_order` property.
- * @param {string} sorted_child_entries[].1.modal_icon_order - The property to be checked, expected to be a string representation of a number.
- * @returns {boolean} `true` if all `modal_icon_order` values are equal to 1 after parsing as integers, otherwise `false`.
- */
-const allOrdersAreOne = sorted_child_entries.every(([_, obj]) => parseInt(obj.modal_icon_order) === 1);
-
-// Step 3: sort conditionally
-if (allOrdersAreOne) {
-    sorted_child_entries.sort((a, b) => {
-        const titleA = a[1].title?.toLowerCase() || '';
-        const titleB = b[1].title?.toLowerCase() || '';
-        return titleA.localeCompare(titleB);
-    });
-} else {
-    sorted_child_entries.sort((a, b) => {
-        return (a[1].modal_icon_order || 0) - (b[1].modal_icon_order || 0);
-    });
-}
-
-// Step 4: extract the objects (no keys) to match your original format
-const sorted_child_objs = sorted_child_entries.map(([_, val]) => val);
-
-// Step 5: build child_ids_helper for title-to-key mapping
-child_ids_helper = {};
-for (const [key, value] of sorted_child_entries) {
-    child_ids_helper[value.title] = key;
 }
 
 /**
@@ -398,9 +364,6 @@ async function make_title() {
     }
 }
 
-let mobileBool = false;
-
-
 /**
  * Checks whether or not an icon has an associated mobile layer. Looks at mob_icons elementm
  * @returns {Boolean} `Boolean` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
@@ -461,958 +424,8 @@ function remove_outer_div(){
 
 }
 
-//helper function for creating mobile grid for loadSVG:
-/**
- * Creates a mobile grid layout for displaying icons in an SVG element.
- * 
- * This function removes the outer container (using `remove_outer_div`), clones icons from an SVG element, 
- * and organizes them into a responsive grid based on the screen's width and height. It adjusts the layout
- * when the window is resized, dynamically setting the number of columns and rows.
- * 
- * @param {SVGElement} svgElement - The main SVG element that contains the icons to be displayed.
- * @param {Array} iconsArr - An array of icon objects containing the icon IDs and their metadata.
- * @param {HTMLElement} mobile_icons - A DOM element containing specific mobile versions of icons, if available.
- * 
- * @returns {void}
- */
 
-function mobile_helper(svgElement, iconsArr, mobile_icons) {
-    // Clear any existing mobile layout DOM container
-    remove_outer_div();
 
-    // Grab the <defs> section of the SVG (symbol definitions, gradients, etc.)
-    let defs = svgElement.firstElementChild;
-    let scene_toc_style = scene_data.scene_toc_style;
-
-    function groupIconsBySection(iconsArr) {
-        
-        const grouped = {};
-        const sectionOrderMap = {};
-        iconsArr.forEach(iconId => {
-
-            if (scene_same_hover_color_sections !== "yes" && child_obj[iconId] !== "None") {
-                let section_num = child_obj[iconId].section_name;
-                let modal_icon_order = child_obj[iconId].modal_icon_order;
-                let modal_title = child_obj[iconId].title;
-                let this_scene_section = `scene_section${section_num}`;
-                let this_scene_section_title = `scene_section_title${section_num}`;
-                let this_color = `scene_section_hover_color${section_num}`;
-                let text_color = `scene_section_hover_text_color${section_num}`;
-                const hoverColor = scene_data[this_scene_section][this_color];
-                const sectionTitle = scene_data[this_scene_section][this_scene_section_title];
-                const hoverTextColor = scene_data[this_scene_section][text_color];
-                const groupTitle = sectionTitle || "Other";
-                
-                // Track section_num for sorting later
-                sectionOrderMap[groupTitle] = parseInt(section_num);
-
-                if (!grouped[groupTitle]) {
-                    grouped[groupTitle] = {
-                        sectionNum: parseInt(section_num),
-                        sectionColor: hoverColor,
-                        textColor: hoverTextColor,
-                        modal_titles: [],
-                        modal_orders: [],
-                        iconIds: []
-                    };
-                }
-                grouped[groupTitle].iconIds.push(iconId);
-                grouped[groupTitle].modal_titles.push(modal_title);
-                grouped[groupTitle].modal_orders.push(modal_icon_order);
-            }
-            if (scene_same_hover_color_sections == "yes") {
-                let section_num = child_obj[iconId].section_name;
-                let modal_icon_order = child_obj[iconId].modal_icon_order;
-                let modal_title = child_obj[iconId].title;
-                let this_scene_section = `scene_section${section_num}`;
-                let this_scene_section_title = `scene_section_title${section_num}`;
-                const hoverColor = scene_default_hover_color;
-                const sectionTitle = scene_data[this_scene_section][this_scene_section_title] ;
-                const hoverTextColor = scene_default_hover_text_color;
-                const groupTitle = sectionTitle || "Other";
-
-                // Track section_num for sorting later
-                sectionOrderMap[groupTitle] = parseInt(section_num);
-
-                if (!grouped[groupTitle]) {
-                    grouped[groupTitle] = {
-                        sectionNum: parseInt(section_num),
-                        sectionColor: hoverColor,
-                        textColor: hoverTextColor,
-                        modal_titles: [],
-                        modal_orders: [],
-                        iconIds: []
-                    };
-                }
-                grouped[groupTitle].iconIds.push(iconId);
-                grouped[groupTitle].modal_titles.push(modal_title);
-                grouped[groupTitle].modal_orders.push(modal_icon_order);
-            }
-        });
-
-        // Sort group titles by section_num
-        const sortedGroupTitles = Object.entries(sectionOrderMap)
-            .sort((a, b) => a[1] - b[1]) // sort by section_num
-            .map(entry => entry[0]);     // get groupTitle
-
-        // Rebuild grouped and hoverColors in sorted order
-        const groupedSorted = {};
-
-        sortedGroupTitles.forEach(groupTitle => {
-            const group = grouped[groupTitle];
-
-            // Combine icon data into sortable array
-            const combined = group.iconIds.map((iconId, i) => ({
-                iconId,
-                order: group.modal_orders[i] ?? 9999,  // fallback for undefined/null
-                title: group.modal_titles[i] ?? ""
-            }));
-
-            // Sort: first by modal_icon_order (numerically), then by title (alphabetically)
-            combined.sort((a, b) => {
-                const orderA = parseInt(a.order, 10);
-                const orderB = parseInt(b.order, 10);
-                if (orderA === orderB) {
-                    return a.title.localeCompare(b.title);
-                }
-                return orderA - orderB;
-            });
-
-            // Overwrite iconIds with sorted version
-            group.iconIds = combined.map(item => item.iconId);
-
-            // Clean up: no need to keep modal_titles/modal_orders unless needed later
-            delete group.modal_titles;
-            delete group.modal_orders;
-
-            groupedSorted[groupTitle] = group;
-        });
-
-        return groupedSorted;
-    }
-
-    function getSortedIconsArr(iconsArr) {
-        const sortable = iconsArr.map(iconId => {
-            return {
-                iconId,
-                modal_icon_order: parseFloat(child_obj[iconId]?.modal_icon_order) || 0,
-                modal_title: child_obj[iconId]?.title || ''
-            };
-        });
-
-        sortable.sort((a, b) => {
-            if (a.modal_icon_order !== b.modal_icon_order) {
-                return a.modal_icon_order - b.modal_icon_order;
-            }
-            return a.modal_title.localeCompare(b.modal_title);
-        });
-
-        const sortedIconArr = sortable.map(item => item.iconId);
-        return sortedIconArr;
-    }
-
-    async function buildAccordionLayout(groupedIcons, numCols, numRows) {
-        const outer_cont = document.querySelector("body > div.container-fluid");
-        outer_cont.innerHTML = '';
-
-        Object.entries(groupedIcons).forEach(([sectionTitle, sectionData], groupIndex) => {
-            const { sectionNum, sectionColor, textColor, iconIds } = sectionData;
-
-            let renderedIcons = 0;
-
-            const accordionWrapper = document.createElement("div");
-            accordionWrapper.classList.add("accordion-group");
-
-            const header = document.createElement("div");
-            header.classList.add("accordion-header");
-            header.textContent = sectionTitle;
-            header.style.cursor = "pointer";
-            header.style.padding = "10px";
-            header.style.backgroundColor = sectionColor; 
-            header.style.fontWeight = "bold";
-            header.style.color = textColor;
-            //header.style.border = "1px solid #ccc";
-            header.style.borderRadius = "10px";
-            header.style.marginBottom = "16px";
-            header.style.textAlign = "center";
-            header.innerHTML = `${sectionTitle} <i class="fas fa-chevron-down" style="float: right; padding-right: 12px; padding-top: 5px;"></i>`;
-            header.setAttribute("data-target", `accordion-body-${groupIndex}`);
-
-            accordionWrapper.appendChild(header);
-
-            const body = document.createElement("div");
-            body.classList.add("accordion-body");
-            body.setAttribute("id", `accordion-body-${groupIndex}`);
-            body.style.display = "none";
-            //body.style.padding = "10px";
-            body.style.border = "";
-
-            let idx = 0; // Index of current icon in iconsArr
-            // Create the grid rows
-            for (let i = 0; i < numRows; i++) {
-                let row_cont = document.createElement("div");
-                row_cont.classList.add("row", "flex-wrap", "justify-content-center");
-                row_cont.setAttribute("id", `row-${i}`);
-
-
-                // Create the columns in each row
-                for (let j = 0; j < numCols; j++) {
-                    if (idx < iconIds.length) {
-                        // Create a Bootstrap column container for each icon
-                        let cont = document.createElement("div");
-                        cont.classList.add("col-4");
-                        cont.style.paddingBottom = '10px';
-                        cont.style.paddingTop = '10px';
-                        cont.style.paddingLeft = '5px';
-                        cont.style.paddingRight = '5px';
-                        cont.style.fontWeight = 'bold'; 
-                        cont.style.border = '1px solid #000';
-                        cont.style.background = instance_color_settings["instance_mobile_tile_background_color"];
-                        cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
-                        cont.style.overflow = 'hidden';
-
-
-                        // Identify the current icon ID
-                        let currIcon = iconIds[idx];
-                        let key;
-
-                        if (child_obj[currIcon] && child_obj[currIcon].section_name == sectionNum) {
-
-                            // If there is no mobile layer, use the default icon layer
-                            if (!has_mobile_layer(mobile_icons, currIcon)) {
-                                key = svgElement.querySelector(`#${currIcon}`).cloneNode(true);
-                            } else {
-                                // Try to get the mobile-specific version of the icon
-                                const currIconMobile = currIcon + "-mobile";
-                                const mobileLayerElement = get_mobile_layer(mobile_icons, currIconMobile);
-
-                                if (mobileLayerElement) {
-                                    key = mobileLayerElement.cloneNode(true);
-                                } else {
-                                    console.warn(`Mobile layer for ${currIcon} expected but not found. Using default.`);
-                                    key = svgElement.querySelector(`#${currIcon}`).cloneNode(true);
-                                }
-                            }
-
-                            if (!key) {
-                                console.error(`Could not find SVG element for icon: ${currIcon}`);
-                                continue; // Skip rendering if the icon couldn't be found
-                            }
-                            // Set a unique ID for the container
-                            cont.setAttribute("id", `${currIcon}-container`);
-                            
-                            // Create a blank SVG container
-                            // Add shared <defs> and icon content to the new SVG
-                            let svgClone = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                            svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                            svgClone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-                            svgClone.append(defs.cloneNode(true));
-                            svgClone.append(key);
-                            cont.appendChild(svgClone);
-
-                            // Add a caption below the icon using child_obj data
-                            let caption = document.createElement("div");
-                            if (child_obj[currIcon]) {
-                                caption.innerText = child_obj[currIcon].title;
-                            } else {
-                                caption.innerText = "not in wp yet, have to add";
-                            }
-                            caption.style.paddingBottom = '10px';
-                            //caption.style.fontSize = "14px";
-                            //caption.style.fontSize = "3.15vw";
-                            caption.style.overflow = "hidden";
-
-                            const maxChars2 = 30;  // your character limit
-                            const maxChars3 = 40;  // your character limit
-                            const maxChars1 = 11;  // your character limit
-                        
-                            
-                            if (caption.textContent.length <= maxChars1) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '12px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            }
-                            if (caption.textContent.length > maxChars1 && caption.textContent.length <= maxChars2) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '11px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } 
-                            if (caption.textContent.length > maxChars3 && caption.textContent.length <= maxChars3) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '10.5px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } 
-                            if (caption.textContent.length > maxChars3) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '10px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } else {
-                            // Reset or apply default style
-                            caption.style.fontSize = '14px';
-                            caption.classList.remove('small-text');
-                            }
-                            
-                            // Set to last fitting size
-                            //caption.style.maxHeight = '10%'; // Add some space between icon and caption
-                            cont.appendChild(caption);
-
-                            // Append this icon container to the row
-                            row_cont.appendChild(cont);
-
-                            // Adjust the <svg>'s viewBox to fit the icon neatly
-                           
-                            body.style.display = "block"; // temporarily force visible
-                            requestAnimationFrame(() => {
-                                const bbox = key.getBBox();
-                                svgClone.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
-                                renderedIcons++;
-                                console.log(`Rendered icon: ${currIcon}, total rendered: ${renderedIcons}`);
-                                if (renderedIcons === iconIds.length) {
-                                    body.style.display = "none"; // only hide once ALL icons are done
-                                } 
-                            });
-
-                        }
-                    idx++; // Move to next icon
-                    }
-                }
-                // Apply margin fix for outer container and append the row
-                //body.style.marginLeft = '-1.5%';
-                body.appendChild(row_cont);
-            }       
-            
-            accordionWrapper.appendChild(body);
-            outer_cont.appendChild(accordionWrapper);
-            outer_cont.style.maxWidth = "95%";
-
-            header.addEventListener("click", () => {
-                const current = document.getElementById(header.getAttribute("data-target"));
-                const isVisible = current.style.display === "block";
-                current.style.display = isVisible ? "none" : "block";
-            });
-        });
-    }
-
-    /**
-     * Builds the responsive grid layout of icons using a Bootstrap-style grid.
-     * For each icon, clones the appropriate layer (standard or mobile), wraps it in a mini <svg>,
-     * and adds it to a <div> container with caption text.
-     */
-    function updateLayout(numCols, numRows) {
-
-        // Select and clear the container that will hold all icon rows
-        let outer_cont = document.querySelector("body > div.container-fluid");
-        outer_cont.innerHTML = '';
-
-        if (scene_toc_style === "accordion" || scene_toc_style === "sectioned_list") {
-            const groupedIcons = groupIconsBySection(iconsArr);
-            buildAccordionLayout(groupedIcons, numCols, numRows);
-            return;
-        }
-
-        if (scene_toc_style === "" || scene_toc_style === "list") {
-
-            orderedIcons = getSortedIconsArr(iconsArr);
-            let idx = 0; // Index of current icon in iconsArr
-            // Create the grid rows
-            for (let i = 0; i < numRows; i++) {
-                let row_cont = document.createElement("div");
-                row_cont.classList.add("row", "flex-wrap", "justify-content-center");
-                row_cont.setAttribute("id", `row-${i}`);
-
-                // Create the columns in each row
-                for (let j = 0; j < numCols; j++) {
-                    if (idx < orderedIcons.length) {
-                        // Create a Bootstrap column container for each icon
-                        let cont = document.createElement("div");
-                        cont.classList.add("col-4");
-                        cont.style.paddingBottom = '10px';
-                        cont.style.paddingTop = '20px';
-                        cont.style.fontWeight = 'bold'; 
-                        cont.style.border = '1px solid #000';
-                        cont.style.paddingLeft = '5px';
-                        cont.style.paddingRight = '5px';
-                        cont.style.background = instance_color_settings["instance_mobile_tile_background_color"]; 
-                        cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
-
-                        // Create a blank SVG container
-                        let svgClone = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                        svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                        svgClone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-                        cont.appendChild(svgClone);
-
-                        // Identify the current icon ID
-                        let currIcon = orderedIcons[idx];
-                        let key;
-
-                        // If there is no mobile layer, use the default icon layer
-                        if (!has_mobile_layer(mobile_icons, currIcon)) {
-                            key = svgElement.querySelector(`#${currIcon}`).cloneNode(true);
-                        } else {
-                            // Try to get the mobile-specific version of the icon
-                            const currIconMobile = currIcon + "-mobile";
-                            const mobileLayerElement = get_mobile_layer(mobile_icons, currIconMobile);
-
-                            if (mobileLayerElement) {
-                                key = mobileLayerElement.cloneNode(true);
-                            } else {
-                                console.warn(`Mobile layer for ${currIcon} expected but not found. Using default.`);
-                                key = svgElement.querySelector(`#${currIcon}`).cloneNode(true);
-                            }
-                        }
-
-                        if (!key) {
-                            console.error(`Could not find SVG element for icon: ${currIcon}`);
-                            continue; // Skip rendering if the icon couldn't be found
-                        }
-                        // Set a unique ID for the container
-                        cont.setAttribute("id", `${currIcon}-container`);
-
-                        // Add shared <defs> and icon content to the new SVG
-                        svgClone.append(defs.cloneNode(true));
-                        svgClone.append(key);
-
-
-                        // Add a caption below the icon using child_obj data
-                        let caption = document.createElement("div");
-                        if (child_obj[currIcon]) {
-                            caption.innerText = child_obj[currIcon].title;
-                        } else {
-                            caption.innerText = "not in wp yet, have to add";
-                        }
-                        caption.style.fontSize = "14px";
-                        caption.style.paddingBottom = '10px';
-                        cont.appendChild(caption);
-
-                        // Append this icon container to the row
-                        row_cont.appendChild(cont);
-
-                        // Adjust the <svg>'s viewBox to fit the icon neatly
-                        setTimeout(() => {
-                            let bbox = key.getBBox(); 
-                            svgClone.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
-                        }, 0);
-
-                        idx++; // Move to next icon
-                    }
-                }
-                // Apply margin fix for outer container and append the row
-                //outer_cont.style.marginLeft = '-1.5%';
-                outer_cont.appendChild(row_cont);
-            }
-        }
-    }
-
-    /**
-     * Dynamically sets the number of columns and rows depending on screen orientation.
-     * It also updates layout and adjusts styling for elements on landscape vs portrait.
-     */
-    function updateNumCols() {
-        console.log("updateNumCols fired (debounced)");
-
-        let numCols;
-        let numRows;
-
-        // Default style values for portrait
-        let ogMobViewImage = 'transform: scale(0.3); margin-right: 65%; margin-top: -70%; margin-bottom: -70%';
-        let ogSceneFluid = 'margin-top: 70%;'; //margin-left: -1.5%;
-        let colmd2 = document.querySelector("#title-container > div > div.col-md-2");
-        let ogColmd2 = colmd2.getAttribute("style", "");
-
-        // === LANDSCAPE MODE ===
-        if (window.innerWidth > window.innerHeight) {
-            numCols = 4;
-
-            document.querySelector("#mobile-view-image").setAttribute("style", "transform: scale(0.5); margin-right: 35%; margin-top: -23%");
-            document.querySelector("#scene-fluid").setAttribute("style", "margin-top: 25%; display: block"); //margin-left: -1.5%;
-            document.querySelector("#title-container > div > div.col-md-2").setAttribute("style", "width: 100%");
-            document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
-            document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
-
-        // === PORTRAIT MODE ===
-        } else {
-            numCols = 3;
-
-            const mobViewImage = document.querySelector("#mobile-view-image");
-            mobViewImage.setAttribute("style", ''); // Clear
-            mobViewImage.setAttribute("style", ogMobViewImage);
-
-            const sceneFluid = document.querySelector("#scene-fluid");
-            sceneFluid.setAttribute("style", '');
-            sceneFluid.setAttribute("style", ogSceneFluid);
-
-            colmd2.setAttribute("style", '');
-            colmd2.setAttribute("style", ogColmd2);
-
-            document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
-            document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
-        }
-
-        // Calculate the number of rows based on icon count
-        numRows = Math.ceil(iconsArr.length / numCols);
-
-        // Apply the layout update
-        updateLayout(numCols, numRows);
-        add_modal(); // Reattach modals (tooltip/dialog logic)
-    }
-
-    // === Initial Setup ===
-    updateNumCols(); // Build layout based on current orientation
-
-    // === Listen for window resizes (debounced) ===
-    const debouncedUpdateNumCols = debounce(updateNumCols, 250);
-    window.addEventListener("resize", debouncedUpdateNumCols);
-}
-
-
-
-/**
- * Handles the visibility and styling of icons within an SVG element based on their association with modals.
- * 
- * This function applies specific behaviors to "orphaned" icons (icons not associated with any modal)
- * based on the `scene_orphan_icon_action` and `scene_orphan_icon_color` properties from the `scene_data` object.
- * It also adds a tooltip to orphaned icons when hovered.
- * 
- * @param {SVGElement} svgElement - The SVG element containing the icons to be processed.
- * @param {string[]} visible_modals - An array of modal IDs associated with the icons.
- * 
- * Behavior:
- * - Resets styles for all top-level icons.
- * - Applies specific styles or behaviors to orphaned icons based on the `scene_orphan_icon_action`:
- *   - `"hide"`: Hides the icon by setting its opacity to 0 and disabling pointer events.
- *   - `"translucent"`: Makes the icon partially transparent by setting its opacity to 0.25.
- *   - `"color"`: Changes the fill color of the icon to the value specified in `scene_orphan_icon_color`.
- *   - Default: Logs a warning for unknown modes.
- * - Adds a tooltip to orphaned icons with the message "Not currently available" when hovered.
- * 
- * Notes:
- * - Only top-level icons (direct children of the `g#icons` group) are processed.
- * - The function assumes the presence of a global `scene_data` object with the required properties.
- * 
- * Example Usage:
- * ```javascript
- * const svgElement = document.querySelector('svg#mySvg');
- * const associatedModals = ['modal1', 'modal2'];
- * handleIconVisibility(svgElement, associatedModals);
- * ```
- */
-//original code is documented in issue #243 https://github.com/ioos/sanctuarywatch/issues/243
-function handleIconVisibility(svgElement, visible_modals) {
-    if (!svgElement || !Array.isArray(visible_modals)) return;
-
-    const modalSet = new Set(visible_modals);
-    const mode = scene_data['scene_orphan_icon_action'];
-    const fill_color = scene_data['scene_orphan_icon_color'];
-
-    // Inkscape-compatible: detect top-level icon groups (layers or <g id> inside #icons)
-    let topLevelIcons = [];
-
-    const iconGroup = svgElement.querySelector('g#icons');
-    if (iconGroup) {
-        topLevelIcons = Array.from(iconGroup.children)
-            .filter(el => el.tagName === 'g' && el.id)
-            .map(el => el.id);
-    } else {
-        // Fallback: treat all Inkscape layers as top-level icons
-        topLevelIcons = Array.from(svgElement.querySelectorAll('g[id]'))
-            .filter(el => el.getAttribute('inkscape:groupmode') === 'layer')
-            .map(el => el.id);
-    }
-
-    svgElement.querySelectorAll("g[id]").forEach(icon => {
-        const iconId = icon.id;
-        if (!topLevelIcons.includes(iconId)) return;
-
-        const isAssociated = modalSet.has(iconId);
-
-        // Reset styles
-        icon.style.opacity = "";
-        icon.style.display = "";
-        icon.style.pointerEvents = "";
-        icon.querySelectorAll("*").forEach(el => {
-            el.style.fill = "";
-        });
-
-        if (mode === "visible" || isAssociated) return;
-
-        // Apply orphan style
-        switch (mode) {
-            case "hide":
-                icon.style.opacity = "0";
-                icon.style.pointerEvents = "none";
-                break;
-            case "translucent":
-                icon.style.opacity = "0.25";
-                break;
-            case "color":
-                icon.querySelectorAll("*").forEach(el => {
-                    el.style.fill = fill_color;
-                });
-                break;
-            default:
-                console.warn("Unknown orphan icon mode:", mode);
-        }
-
-        // Tooltip listeners
-        if (!icon.dataset.tooltipBound) {
-            icon.addEventListener("mouseenter", function (e) {
-                const tooltip = document.createElement("div");
-                tooltip.className = "icon-tooltip";
-                tooltip.textContent = "Not currently available";
-                tooltip.style.position = "absolute";
-                tooltip.style.padding = "6px 10px";
-                tooltip.style.backgroundColor = "#333";
-                tooltip.style.color = "#fff";
-                tooltip.style.borderRadius = "4px";
-                tooltip.style.fontSize = "13px";
-                tooltip.style.pointerEvents = "none";
-                tooltip.style.zIndex = "9999";
-                tooltip.style.top = e.pageY + 10 + "px";
-                tooltip.style.left = e.pageX + 10 + "px";
-                tooltip.id = "orphanIconTooltip";
-                document.body.appendChild(tooltip);
-            });
-
-            icon.addEventListener("mousemove", function (e) {
-                const tooltip = document.getElementById("orphanIconTooltip");
-                if (tooltip) {
-                    tooltip.style.top = e.pageY + 10 + "px";
-                    tooltip.style.left = e.pageX + 10 + "px";
-                }
-            });
-
-            icon.addEventListener("mouseleave", function () {
-                const tooltip = document.getElementById("orphanIconTooltip");
-                if (tooltip) tooltip.remove();
-            });
-
-            // Mark as bound to avoid duplicate tooltips
-            icon.dataset.tooltipBound = "true";
-        }
-    });
-}
-
-
-// Below is the function that will be used to include SVGs within each scene
-
-/**
- * Accesses the SVG image for the scene, checks type of device, renders appropriate scene layout by calling other helper functions. 
- * all of the top-level helper functions that render different elements of the DOM are called within here. 
- * based on link_svg from infographiq.js
- *
- * @param {string} url - The URL of the SVG to be fetched, provided from the PHP backend.
- * @param {string} containerId - The ID of the DOM element to which the SVG will be appended.
- * @returns {void} `void` - Modifies the DOM but does not return any value.
- * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
- */
-async function loadSVG(url, containerId) {
-    try {
-        // Step 1: Fetch the SVG content
-        //console.log(url);
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-
-        // Step 2: Parse the SVG content
-        const svgText = await response.text();
-        let svgDoc;
-        let svgElement;
-        
-        // // Check if the SVG contains Inkscape-specific attributes
-        // if (svgText.includes("inkscape:label") || svgText.includes("inkscape:groupmode")) {
-        //     console.log("Inkscape is detected");
-
-        //     // 1) Remove inkscape:groupmode only (do not consume rest of the tag)
-        //     const applyRule1 = svgText.replace(/\s+inkscape:groupmode="layer"(?=\s|>)/g, "");
-
-        //     // 2) If id==label → keep id; else set id to label. Drop the label either way.
-        //     const applyRule2 = applyRule1.replace(
-        //         /id="([^"]+)"\s+inkscape:label="([^"]+)"/g,
-        //         (_, idValue, labelValue) => (idValue === labelValue ? `id="${idValue}"` : `id="${labelValue}"`)
-        //     );
-
-        //     const parser = new DOMParser();
-        //     svgDoc = parser.parseFromString(applyRule2, "image/svg+xml");
-        // } else {
-        //     const parser = new DOMParser();
-        //     svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-        // }
-
-        const parser = new DOMParser();
-        svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-
-        // Assign (don’t redeclare)
-        svgElement = svgDoc.documentElement;
-        svgElement.setAttribute("id", "svg-elem");
-
-        const container = document.getElementById(containerId);
-        container.appendChild(svgElement);
-      
-        // checking if user device is touchscreen
-        if (is_touchscreen()){
-            if (is_mobile() && (deviceDetector.device != 'tablet')){ //a phone and not a tablet; screen will be its own UI here
-
-                //smaller image preview here for mobile
-                let fullImgCont = document.querySelector("#mobile-view-image");
-                
-                let titleRowCont = document.querySelector("#title-container > div");
-                titleRowCont.style.display = "flex";
-                titleRowCont.style.justifyContent = "center";
-                titleRowCont.style.alignItems = "center";
-                
-                let sceneButton = document.createElement("button");
-                sceneButton.innerHTML = "<strong>View Full Scene</strong>";
-                sceneButton.setAttribute("style", "margin-top: 16px; max-width: 79%; border-radius: 10px; padding: 10px");
-                sceneButton.setAttribute("class", "btn ");
-                sceneButton.setAttribute("class", "ViewSceneButton");
-                sceneButton.setAttribute("data-toggle", "modal");
-
-                titleRowCont.appendChild(sceneButton);
-                let svgElementMobileDisplay = svgElement.cloneNode(true);
-                svgElementMobileDisplay.style.height = '10%';
-                svgElementMobileDisplay.style.width = '100%';
-
-              
-                let modal = document.getElementById("mobileModal");
-                let modalBody = document.querySelector("#mobileModal > div > div > div.modal-body")
-                modalBody.appendChild(svgElementMobileDisplay);
-
-                sceneButton.onclick = function() {
-                    modal.style.display = "block";
-                  }
-                  
-                  
-                  // When the user clicks anywhere outside of the modal, close it
-                window.onclick = function(event) {
-                    if (event.target == modal) {
-                      modal.style.display = "none";
-                      history.pushState("", document.title, window.location.pathname + window.location.search);
-                    }
-                  }
-                // let closeButton = document.querySelector("#mobileModal > div > div > div.modal-footer > button");
-                let closeButton = document.querySelector("#close1");
-                closeButton.onclick = function() {
-                      modal.style.display = "none";
-                      history.pushState("", document.title, window.location.pathname + window.location.search);
-                  }
-        
-                mobileBool = true;
-                const iconsElement = svgElement.getElementById("icons");
-                //fix here
-                let mobileIcons = null;
-                if (svgElement.getElementById("mobile")){
-                    mobileIcons = svgElement.getElementById("mobile").cloneNode(true);
-                } 
-
-                const iconsArr =  Object.keys(child_obj);
-                mobile_helper(svgElement, iconsArr, mobileIcons);
-                
-            } else{ //if it gets here, device is a tablet
-                //hide mobile icons
-                
-                // remove_outer_div();
-                window.addEventListener('load', function() {
-                    let mob_icons = document.querySelector("#mobile");
-                    if (mob_icons) {
-                        mob_icons.setAttribute("display", "none");
-                    }
-                });
-                
-                handleIconVisibility(svgElement, visible_modals);
-                container.appendChild(svgElement);
-                toggle_text();
-                full_screen_button('svg1');
-                if (scene_toc_style === "list"){
-                    list_toc();
-                } else {
-                    table_of_contents();
-                }               
-                add_modal();
-                flicker_highlight_icons();
-            }
-        }
-        else{ //device is a PC
-            //hide mobile icons
-            window.addEventListener('load', function() {
-                let mob_icons = document.querySelector("#mobile");
-                if (mob_icons) {
-                    mob_icons.setAttribute("display", "none");
-                }
-            });
-            try {
-                handleIconVisibility(svgElement, visible_modals);
-            }
-            catch (error) {
-                console.error('Error handling icon visibility:', error);
-            }
-            
-            container.appendChild(svgElement);
-            highlight_icons();
- 
-            toggle_text();
-            full_screen_button('svg1');
-            if (scene_toc_style === "list"){
-                list_toc();
-            } else {
-                table_of_contents();
-            }               
-            add_modal();
-        }
-
-    } catch (error) {
-        console.error('Error fetching or parsing the SVG:', error);
-    }
-}
-
-
-//highlight items on mouseover, remove highlight when off; 
-//CHANGE HERE FOR TABLET STUFF
-
-/**
- * Adds hover effects to SVG elements based on `child_obj` keys, meant for PC layout. 
- * Highlights the icon by changing its stroke color and width on mouseover, 
- * using section-specific colors if enabled, and resets the style on mouseout.
- *
- * @returns {void} - `void` Modifies DOM element styles in place.
- */
-function highlight_icons() {
-    for (let key in child_obj) {
-        let elem = document.querySelector('g[id="' + key + '"]');
-        elem.addEventListener('mouseover', function (e) {
-
-            let elemCollection = elem.querySelectorAll("*");
-            let hoverColor;
-            let hoverTextColor;   
-
-            elemCollection.forEach(subElem => {
-                if (scene_same_hover_color_sections !== "yes" && sectionObj[key] !== "None") {
-                    let section_name = child_obj[key].original_name;
-                    let section_num = child_obj[key].section_name;
-                    let this_scene_section = `scene_section${section_num}`;
-                    let this_color = `scene_section_hover_color${section_num}`;
-                    let text_color = `scene_section_hover_text_color${section_num}`;
-                    hoverColor = scene_data[this_scene_section][this_color];
-                    hoverTextColor = scene_data[this_scene_section][text_color];
-                    subElem.style.stroke = hoverColor;
-                } else {
-                    hoverColor = scene_default_hover_color;
-                    hoverTextColor = scene_default_hover_text_color;
-                    subElem.style.stroke = hoverColor;
-                }
-
-                subElem.style.strokeWidth = "3px";
-            });
-
-            // Create and show the tooltip box
-            const tooltip = document.createElement("div");
-            tooltip.className = "hover-key-box";
-            tooltip.textContent = child_obj[key].title;
-            tooltip.style.position = "absolute";
-            tooltip.style.padding = "5px 10px";
-            tooltip.style.backgroundColor = hoverColor;
-            tooltip.style.color = hoverTextColor;
-            tooltip.style.borderRadius = "4px";
-            tooltip.style.fontSize = "14px";
-            tooltip.style.pointerEvents = "none";
-            tooltip.style.zIndex = "9999";
-            tooltip.id = "hoverKeyTooltip";
-            document.body.appendChild(tooltip);
-
-            // Initial position
-            moveTooltip(e, elem, tooltip);
-        });
-
-        elem.addEventListener('mousemove', function (e) {
-            const tooltip = document.getElementById("hoverKeyTooltip");
-            if (tooltip) {
-                moveTooltip(e, elem, tooltip);
-            }
-        });
-
-        elem.addEventListener('mouseout', function () {
-            let elemCollection = elem.querySelectorAll("*");
-            elemCollection.forEach(subElem => {
-                subElem.style.stroke = "";
-                subElem.style.strokeWidth = "";
-            });
-
-            // Remove the tooltip
-            const tooltip = document.getElementById("hoverKeyTooltip");
-            if (tooltip) {
-                tooltip.remove();
-            }
-        });
-    }
-
-    function moveTooltip(e, elem, tooltip) {
-        const svg = elem.closest('svg');
-        if (!svg) return;
-
-        const svgRect = svg.getBoundingClientRect();
-        const svgMidX = svgRect.left + (svgRect.width / 2);
-
-        if (e.pageX > svgMidX) {
-            // On the right half: show tooltip to the left
-            tooltip.style.left = (e.pageX - tooltip.offsetWidth - 15) + "px";
-        } else {
-            // On the left half: show tooltip to the right
-            tooltip.style.left = (e.pageX + 15) + "px";
-        }
-        tooltip.style.top = (e.pageY + 10) + "px";
-    }
-}
-
-
-/**
- * Adds flicker effects to SVG elements based on `child_obj` keys, meant for tablet layout. 
- * Icons flicker their corresponding color on a short time interval
- * using section-specific colors if enabled
- * 
- * @returns {void} - `void` Modifies DOM element styles in place.
- */
-function flicker_highlight_icons() {
-    for (let key in child_obj) {
-        let elem = document.querySelector('g[id="' + key + '"]');
-        if (elem) {
-            // Add transition for smooth fading
-
-            elem.style.transition = 'stroke-opacity 1s ease-in-out';
-            
-            // Initial state
-            if (scene_same_hover_color_sections != "yes" && sectionObj[key]!="None"){ //this should be done on the SCENE side of things, will havet o bring this back
-                let section_name = sectionObj[key];
-                let section_num = section_name.substring(section_name.length - 1, section_name.length);
-
-                let this_color = `scene_section_hover_color${section_num}`;
-                let text_color = `scene_section_hover_text_color${section_num}`;
-                elem.style.stroke = scene_data[sectionObj[key]][this_color];
-                } else {
-                    elem.style.stroke = scene_default_hover_color;
-                }
-
-            elem.style.strokeWidth = "3";
-            elem.style.strokeOpacity = "0";
-
-            // Create flickering effect
-            let increasing = true;
-            setInterval(() => {
-                if (increasing) {
-                    elem.style.strokeOpacity = "0.5";
-                    increasing = false;
-                } else {
-                    elem.style.strokeOpacity = "0";
-                    increasing = true;
-                }
-            }, 1800); // Change every 1 second
-        }
-    }
-}
 
 /**
  * Checks if the device being used is touchscreen or not. 
@@ -1531,6 +544,7 @@ function createAccordionItem(accordionId, headerId, collapseId, buttonText, coll
 }
 
 
+
 /**
  * Waits for a DOM element matching the provided selector to become available.
  * 
@@ -1605,37 +619,37 @@ async function handleHashNavigation() {
 }
 
 
-
-/**
- * Fetches instance details from the WordPress REST API.
- *
- * This asynchronous function retrieves data from the WordPress REST API endpoint for instances (`/wp-json/wp/v2/instance`)
- * using the current protocol and host. The results are fetched in ascending order.
- * It handles network errors and returns the data as a JSON object.
- *
- * @returns {Promise<Object[]>} - A Promise that resolves to an array of instance objects retrieved from the API.
- * 
- * @throws {Error} - Throws an error if the fetch request fails or the response is not successful (i.e., not OK).
- * 
- * Usage: called in init function to set to global variable testData, which is used to get information about current instance, section/color information
- */
-async function load_instance_details() { //this should be done on the SCENE side of things; might not need this, may replace w scene postmeta call. keep for now
-    const protocol = window.location.protocol;
-    const host = window.location.host;
-    const fetchURL = `${protocol}//${host}/wp-json/wp/v2/instance?&order=asc`;
+// THIS IS POSSIBLY DEPRECATED NOW, MAYBE DELETE LATER
+// /**
+//  * Fetches instance details from the WordPress REST API.
+//  *
+//  * This asynchronous function retrieves data from the WordPress REST API endpoint for instances (`/wp-json/wp/v2/instance`)
+//  * using the current protocol and host. The results are fetched in ascending order.
+//  * It handles network errors and returns the data as a JSON object.
+//  *
+//  * @returns {Promise<Object[]>} - A Promise that resolves to an array of instance objects retrieved from the API.
+//  * 
+//  * @throws {Error} - Throws an error if the fetch request fails or the response is not successful (i.e., not OK).
+//  * 
+//  * Usage: called in init function to set to global variable testData, which is used to get information about current instance, section/color information
+//  */
+// async function load_instance_details() { //this should be done on the SCENE side of things; might not need this, may replace w scene postmeta call. keep for now
+//     const protocol = window.location.protocol;
+//     const host = window.location.host;
+//     const fetchURL = `${protocol}//${host}/wp-json/wp/v2/instance?&order=asc`;
   
-    try {
-        const response = await fetch(fetchURL);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error;
-    }
-}
+//     try {
+//         const response = await fetch(fetchURL);
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok');
+//         }
+//         const data = await response.json();
+//         return data;
+//     } catch (error) {
+//         console.error('Error fetching data:', error);
+//         throw error;
+//     }
+// }
 
 /**
  * Initializes the application by loading instance details, setting up the scene location, 
@@ -1669,10 +683,3 @@ async function init() {
         console.error('Error:', error);
     }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    init(); 
-    
-    handleHashNavigation();
-
-});

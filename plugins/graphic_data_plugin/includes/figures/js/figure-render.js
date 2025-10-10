@@ -578,9 +578,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
                     plotDiv.style.width = "100%";
                 } catch {};
             break;
-        case "Code":
-                img.setAttribute("style", "width: 100% !important; height: auto; display: flex; margin: 0; margin-top: 2%");
-             break;
+        // case "Code":
+        //         img.setAttribute("style", "width: 100% !important; height: auto; display: flex; margin: 0; margin-top: 2%");
+        //      break;
     }
 
 }
