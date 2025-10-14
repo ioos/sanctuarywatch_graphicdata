@@ -8,8 +8,8 @@
  * @link       https://www.noaa.gov
  * @since      1.0.0
  *
- * @package    Webcr
- * @subpackage Webcr/admin/partials
+ * @package    graphic_data_plugin
+ * @subpackage graphic_data_plugin/admin/partials
  */
 ?>
 

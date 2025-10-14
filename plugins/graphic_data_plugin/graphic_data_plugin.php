@@ -39,7 +39,7 @@ if (!defined('ABSPATH')) exit;
 define( 'WEBCR_VERSION', '0.2.0-beta' );
 
 // Include the GitHub Updater class
-require_once plugin_dir_path(__FILE__) . 'admin/class-webcr-github-updater.php';
+require_once plugin_dir_path(__FILE__) . 'admin/class-github-updater.php';
 
 // Initialize the GitHub Updater 
     new GitHub_Updater(

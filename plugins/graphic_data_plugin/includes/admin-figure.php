@@ -3,7 +3,7 @@
  * Register class that defines the Figure custom content type as well as associated Figure functions 
  * 
  */
-include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-utility.php';
+include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
 class Webcr_Figure {
 
@@ -50,7 +50,7 @@ class Webcr_Figure {
             $settings = get_option('webcr_settings');
             $default_interactive_line_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
             wp_localize_script(
-                'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
+                'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php
                 'argumentsDefaultsLine',           // global object name
                 ['interactive_line_arguments' => $default_interactive_line_arguments]
             );
@@ -58,7 +58,7 @@ class Webcr_Figure {
             $settings = get_option('webcr_settings');
             $default_interactive_bar_arguments = isset($settings['interactive_bar_arguments']) ? $settings['interactive_bar_arguments'] : '';
             wp_localize_script(
-                'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-webcr-admin.php
+                'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php
                 'argumentsDefaultsBar',           // global object name
                 ['interactive_bar_arguments' => $default_interactive_bar_arguments]
             );

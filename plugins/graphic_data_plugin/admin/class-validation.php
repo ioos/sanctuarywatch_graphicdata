@@ -4,7 +4,7 @@
  * The class that defines the validation methods for the fields of the custom content types
  */
 
-include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-utility.php';
+include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-graphic-data-SVGValidator.php';
 
 class webcr_validation {
