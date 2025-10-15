@@ -271,10 +271,12 @@ class Webcr {
 		$this->loader->add_action( 'manage_modal_posts_columns', $plugin_admin_modal, 'change_modal_columns' ); 
 		$this->loader->add_action( 'manage_modal_posts_custom_column', $plugin_admin_modal, 'custom_modal_column', 10, 2 ); 
 		$this->loader->add_action( 'init', $plugin_admin_modal, 'custom_content_type_modal' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_modal, 'enqueue_modal_admin_columns_css'); 
 		$this->loader->add_filter( 'bulk_actions-edit-modal', $plugin_admin_instance, 'remove_bulk_actions' ); 
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_modal, 'register_modal_rest_fields' );
 		$this->loader->add_filter( 'rest_modal_query', $plugin_admin_modal, 'filter_modal_by_modal_scene', 10, 2); 
 		$this->loader->add_filter( 'manage_edit-modal_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column'); 
+		$this->loader->add_action( 'admin_notices', $plugin_admin_modal, 'modal_warning_notice_tabs' ); 
 
 		// Load  class and functions associated with Figure custom content type
 		$plugin_admin_figure = new Webcr_Figure( $this->get_plugin_name());		

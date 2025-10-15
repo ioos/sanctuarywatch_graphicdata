@@ -107,14 +107,26 @@ class Webcr_Scene {
         return $actions;
     }
 
-    // enqueue the scene admin columns css, if we're on the admin columns page for the scene custom post type 
+    /**
+     * Enqueues custom CSS for scene admin columns on the post type edit screen.
+     *
+     * This function conditionally loads CSS styling for the admin columns display
+     * when viewing the list of 'scene' custom post type entries in the WordPress admin.
+     * The CSS is only enqueued when on the edit.php screen for the modal post type.
+     *
+     * @since 1.0.0
+     *
+     * @param string $hook The current admin page hook suffix.
+     *
+     * @return void
+     */
     function enqueue_scene_admin_columns_css($hook) {
         // Get the current screen object.
         $screen = get_current_screen();
     
         // Check if we are on the edit screen for the custom post type 'scene'.
         if ($screen->post_type === 'scene' && $screen->base === 'edit') {
-            // Enqueue your CSS file.
+            // Enqueue CSS file.
             wp_enqueue_style(
                 'scene-admin-columns-css', // Handle of the CSS file.
                 plugin_dir_url( __DIR__ ) . 'admin/css/scene-admin-columns.css');

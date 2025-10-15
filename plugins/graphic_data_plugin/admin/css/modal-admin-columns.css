@@ -1,0 +1,12 @@
+/**
+ * The CSS for the modal admin columns screen, which is currently just styling for the Tabs column.
+ */
+
+ .tab_name_list {
+    margin-left: 0;
+    padding-left: 1em;
+ }
+
+  .tab_warning_list {
+    margin-left: 0;
+ }
