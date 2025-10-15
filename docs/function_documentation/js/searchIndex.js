@@ -771,6 +771,11 @@ Search.appendIndex(
             "summary": "Check\u0020if\u0020stored\u0020filter\u0020values\u0020are\u0020still\u0020valid\u0020and\u0020retrieve\u0020them\u0020if\u0020they\u0020are.",
             "url": "classes/Webcr-Modal.html#method_get_modal_filter_value"
         },                {
+            "fqsen": "\\Webcr_Modal\u003A\u003Aenqueue_modal_admin_columns_css\u0028\u0029",
+            "name": "enqueue_modal_admin_columns_css",
+            "summary": "Enqueues\u0020custom\u0020CSS\u0020for\u0020modal\u0020admin\u0020columns\u0020on\u0020the\u0020post\u0020type\u0020edit\u0020screen.",
+            "url": "classes/Webcr-Modal.html#method_enqueue_modal_admin_columns_css"
+        },                {
             "fqsen": "\\Webcr_Modal\u003A\u003Amodal_filter_dropdowns\u0028\u0029",
             "name": "modal_filter_dropdowns",
             "summary": "Add\u0020filter\u0020dropdowns\u0020for\u0020the\u0020Modal\u0020admin\u0020screen\u0020with\u0020persistent\u0020selection\u0020support.",
@@ -785,6 +790,11 @@ Search.appendIndex(
             "name": "cleanup_expired_modal_filters",
             "summary": "Clean\u0020up\u0020expired\u0020modal\u0020filter\u0020values\u0020in\u0020user\u0020metadata.",
             "url": "classes/Webcr-Modal.html#method_cleanup_expired_modal_filters"
+        },                {
+            "fqsen": "\\Webcr_Modal\u003A\u003Amodal_warning_notice_tabs\u0028\u0029",
+            "name": "modal_warning_notice_tabs",
+            "summary": "",
+            "url": "classes/Webcr-Modal.html#method_modal_warning_notice_tabs"
         },                {
             "fqsen": "\\Webcr_Modal\u003A\u003Acustom_modal_column\u0028\u0029",
             "name": "custom_modal_column",
@@ -823,7 +833,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Webcr_Scene\u003A\u003Aenqueue_scene_admin_columns_css\u0028\u0029",
             "name": "enqueue_scene_admin_columns_css",
-            "summary": "",
+            "summary": "Enqueues\u0020custom\u0020CSS\u0020for\u0020scene\u0020admin\u0020columns\u0020on\u0020the\u0020post\u0020type\u0020edit\u0020screen.",
             "url": "classes/Webcr-Scene.html#method_enqueue_scene_admin_columns_css"
         },                {
             "fqsen": "\\Webcr_Scene\u003A\u003Astore_scene_filter_values\u0028\u0029",
