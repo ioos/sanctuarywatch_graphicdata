@@ -46,7 +46,7 @@ class Webcr_Figure {
             ]);
 
             
-            // default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/class-graphic-data-settings-page.php
+            // default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/admin-settings-page.php
             $settings = get_option('webcr_settings');
             $default_interactive_line_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
             wp_localize_script(

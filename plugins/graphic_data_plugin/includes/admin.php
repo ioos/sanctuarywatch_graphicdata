@@ -100,7 +100,7 @@ class Webcr {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-webcr-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-loader.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
@@ -150,7 +150,7 @@ class Webcr {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-graphic-data-support.php';
 
 		// The class that defines the settings page for the plugin
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-graphic-data-settings-page.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-settings-page.php';
 
 		// The class that defines general utility functions for the plugin
 		include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';

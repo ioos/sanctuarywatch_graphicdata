@@ -54,7 +54,7 @@ require_once plugin_dir_path(__FILE__) . 'admin/class-github-updater.php';
  * The core plugin class that is used to define
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-webcr.php';
+require plugin_dir_path( __FILE__ ) . 'includes/admin.php';
 
 /**
  * The data directory inside of wp-content
