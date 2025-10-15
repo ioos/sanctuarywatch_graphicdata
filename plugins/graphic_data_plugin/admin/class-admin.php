@@ -74,7 +74,7 @@ class Webcr_Admin {
 			}
 		}
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/webcr-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), $this->version, 'all' );
 
 		wp_enqueue_style(
 			'font-awesome-admin', $src =
@@ -110,12 +110,12 @@ class Webcr_Admin {
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post 
 		if ($current_post_type == "about" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "webcr-admin-about", plugin_dir_url( __FILE__ ) . 'js/webcr-admin-about.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-about", plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(  ), $this->version, array('strategy'  => 'defer') );
 		}
 
 		// Load Instance-specific Javascript only when editing/creating a Instance post 
 		if ($current_post_type == "instance" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "webcr-admin-instance", plugin_dir_url( __FILE__ ) . 'js/webcr-admin-instance.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-instance", plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(  ), $this->version, array('strategy'  => 'defer') );
 		}
 
 		// Load Scene-specific Javascript only when editing/creating a Scene post 

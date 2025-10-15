@@ -309,38 +309,101 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                 //Connects gaps in line where there is missing data
                 const connectGapsOpt = figureArguments[targetLineColumn + 'ConnectGaps'] === 'on';     
 
-                //Show Standard error bars
+                // //Show Standard error bars
+                // const showError = figureArguments[targetLineColumn + 'ErrorBars'];
+                // const showError_InputValuesOpt = figureArguments[targetLineColumn + 'ErrorBarsInputValues'];
+                // if (showError === 'on') {
+                //     //Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
+                //     if (showError_InputValuesOpt === 'auto') {
+                //         var errorBarY = {
+                //             type: 'data',
+                //             array: new Array(plotlyY.length).fill(stdDev),
+                //             visible: true,
+                //             color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+                //             thickness: 1.5,
+                //             width: 8
+                //         };   
+                //     }
+                //     //Error bars (values imported from spreadsheet per point in dataset)
+                //     //Do we want high and low bounds here?
+                //     if (showError_InputValuesOpt != 'auto') {
+                //         const showError_InputValue = dataToBePlotted[showError_InputValuesOpt].filter(item => item !== "");
+                //         var errorBarY = {
+                //             type: 'data',
+                //             array: showError_InputValue.map(val => parseFloat(val)), // Convert to number if needed
+                //             visible: true,
+                //             color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+                //             thickness: 1.5,
+                //             width: 8
+                //         }; 
+                //     }          
+                // }
+                // if (showError != 'on') {
+                //     var errorBarY = {};
+                // }
+                // Show Standard error bars
                 const showError = figureArguments[targetLineColumn + 'ErrorBars'];
                 const showError_InputValuesOpt = figureArguments[targetLineColumn + 'ErrorBarsInputValues'];
+
+                let errorBarY = {};
+
                 if (showError === 'on') {
-                    //Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
                     if (showError_InputValuesOpt === 'auto') {
-                        var errorBarY = {
+                        // Auto standard deviation — skip if Y is missing
+                        const errorArray = plotlyY.map(yVal =>
+                            (yVal !== "" && yVal !== null && !isNaN(yVal))
+                                ? stdDev
+                                : null
+                        );
+
+                        errorBarY = {
                             type: 'data',
-                            array: new Array(plotlyY.length).fill(stdDev),
+                            array: errorArray,
                             visible: true,
                             color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
                             thickness: 1.5,
                             width: 8
-                        };   
+                        };
+
+                    } else {
+                        // Imported error bars from spreadsheet (e.g. "south StdDev")
+                        const importedErrors = dataToBePlotted[showError_InputValuesOpt] || [];
+
+                        const errorArray = plotlyY.map((yVal, i) => {
+                            const errVal = importedErrors[i];
+
+                            // Define stricter checks for missing values
+                            const hasY = (yVal !== "" && yVal !== null && !isNaN(yVal));
+                            const hasErr = (
+                                errVal !== undefined &&
+                                errVal !== null &&
+                                errVal !== "" &&
+                                !(typeof errVal === "string" && errVal.trim() === "") &&
+                                !isNaN(errVal)
+                            );
+
+                            // ✅ Only return an error if BOTH y and stddev exist
+                            return (hasY && hasErr)
+                                ? parseFloat(errVal)
+                                : null; // Plotly will skip bar if null
+                        });
+
+                        errorBarY = {
+                            type: 'data',
+                            array: errorArray,
+                            visible: true,
+                            color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+                            thickness: 1.5,
+                            width: 8
+                        };
                     }
-                    //Error bars (values imported from spreadsheet per point in dataset)
-                    //Do we want high and low bounds here?
-                    if (showError_InputValuesOpt != 'auto') {
-                        const showError_InputValue = dataToBePlotted[showError_InputValuesOpt].filter(item => item !== "");
-                        var errorBarY = {
-                            type: 'data',
-                            array: showError_InputValue.map(val => parseFloat(val)), // Convert to number if needed
-                            visible: true,
-                            color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
-                            thickness: 1.5,
-                            width: 8
-                        }; 
-                    }          
+                } else {
+                    errorBarY = {};
                 }
-                if (showError != 'on') {
-                    var errorBarY = {};
-                }
+
+
+
+
 
                 // Main line with or w/o error bars
                 const singleLinePlotly = {

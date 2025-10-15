@@ -39,7 +39,7 @@ if (!defined('ABSPATH')) exit;
 define( 'WEBCR_VERSION', '0.2.0-beta' );
 
 // Include the GitHub Updater class
-require_once plugin_dir_path(__FILE__) . 'admin/class-webcr-github-updater.php';
+require_once plugin_dir_path(__FILE__) . 'admin/class-github-updater.php';
 
 // Initialize the GitHub Updater 
     new GitHub_Updater(
@@ -54,7 +54,7 @@ require_once plugin_dir_path(__FILE__) . 'admin/class-webcr-github-updater.php';
  * The core plugin class that is used to define
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-webcr.php';
+require plugin_dir_path( __FILE__ ) . 'includes/admin.php';
 
 /**
  * The data directory inside of wp-content

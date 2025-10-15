@@ -5,7 +5,7 @@
  */
 
  
-include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-utility.php';
+include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 class Webcr_Instance_Type {
 
     // code version for instance

@@ -5,7 +5,7 @@
  */
 
  
-include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-utility.php';
+include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 class Graphic_Data_Settings_Page {
 
     // Add menu item to WordPress admin
@@ -21,6 +21,11 @@ class Graphic_Data_Settings_Page {
 
     // Register settings-plotly-timeseries-line.js script to display the script.
     function enqueue_admin_interactive_default_line_styles() {
+
+        if (empty($_GET['page']) || $_GET['page'] !== 'theme_settings') {
+            return; // stop if not on our settings page
+        }
+
         wp_enqueue_script(
                 'load_default_line_styles', // Handle.
                 plugin_dir_url(__FILE__) . '../includes/figures/js/interactive/settings-plotly-timeseries-line.js',
@@ -31,7 +36,10 @@ class Graphic_Data_Settings_Page {
     }
 
     //Register settings-plotly-bar.js script to display the script.
-    function enqueue_admin_interactive_default_bar_styles() {     
+    function enqueue_admin_interactive_default_bar_styles() {
+        if (empty($_GET['page']) || $_GET['page'] !== 'theme_settings') {
+            return; // stop if not on our settings page
+        }
         wp_enqueue_script(
                 'load_default_bar_styles', // Handle.
                 plugin_dir_url(__FILE__) . '../includes/figures/js/interactive/settings-plotly-bar.js',

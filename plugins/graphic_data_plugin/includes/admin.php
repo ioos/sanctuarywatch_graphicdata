@@ -9,8 +9,8 @@
  * @link       https://www.noaa.gov
  * @since      1.0.0
  *
- * @package    Webcr
- * @subpackage Webcr/includes
+ * @package    graphic_data_plugin
+ * @subpackage graphic_data_plugin/includes
  */
 
 /**
@@ -23,8 +23,8 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    Webcr
- * @subpackage Webcr/includes
+ * @package    graphic_data_plugin
+ * @subpackage graphic_data_plugin/includes
  * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
 class Webcr {
@@ -100,12 +100,12 @@ class Webcr {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-webcr-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-loader.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -117,7 +117,7 @@ class Webcr {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/exopite-simple-options/exopite-simple-options-framework-class.php';
 
 		// The class that defines the functions used to alter the WordPress login screen
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-login.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-login.php';
 
 		// The class that defines the functions used for the Scene custom content type
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-scene.php';
@@ -129,31 +129,31 @@ class Webcr {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-figure.php';
 
 		// The class that defines the functions used for the Instance custom content type
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-webcr-instance.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-instance.php';
 
 		// The class that defines the functions used to define Instance Types
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-webcr-instance-type.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-instance-type.php';
 
 		// The class that defines the functions used for the About custom content type
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-webcr-about.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-about.php';
 
 		// The class that defines the functions used for the Export Figures Tool
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-export-figures.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-export-figures.php';
 
 		// The class that defines the validation methods used for the custom post types
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-validation.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-validation.php';
 
 		// The class that defines the validation methods used for the content editor user types
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-content-editor-role.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-content-editor-role.php';
 
 		// The class that defines the support page for the plugin
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-graphic-data-support.php';
 
 		// The class that defines the settings page for the plugin
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-graphic-data-settings-page.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/admin-settings-page.php';
 
 		// The class that defines general utility functions for the plugin
-		include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-utility.php';
+		include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
 		$this->loader = new Webcr_Loader();
 	}

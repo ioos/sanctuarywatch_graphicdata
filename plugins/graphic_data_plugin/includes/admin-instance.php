@@ -3,7 +3,7 @@
  * Register class that defines the Instance custom content type as well as associated Instance functions 
  * 
  */
-include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-webcr-utility.php';
+include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 class Webcr_Instance {
     
     /**

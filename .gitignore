@@ -23,4 +23,5 @@ debug.log
 /plugins/webcr/.DS_Store
 /plugins/webcr/admin/.DS_Store
 /plugins/debug-bar-actions-and-filters-addon
+data/
 
