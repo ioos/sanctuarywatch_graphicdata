@@ -1,3 +1,136 @@
+/**
+ * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
+ *
+ * This function modifies the provided Plotly layout and data by injecting overlays that visually represent
+ * special periods (e.g., evaluation periods) and event markers (vertical or horizontal lines) on the chart.
+ * Overlays are constructed based on the configuration in `figureArguments` and the data in `dataToBePlotted`.
+ * The function supports both shaded regions (for evaluation periods) and lines (for event markers on x or y axes).
+ * After constructing the overlays, the function calls `Plotly.react` to update the chart with the overlays and main data traces.
+ *
+ * @function injectOverlays
+ * @param {HTMLElement} plotDiv - The DOM element where the Plotly chart is rendered.
+ * @param {Object} layout - The Plotly layout object, which will be modified to include overlay settings.
+ * @param {Array} mainDataTraces - The main data traces to be plotted (typically lines).
+ * @param {Object} figureArguments - An object containing user-specified arguments for overlays, such as:
+ *   - 'EvaluationPeriod': 'on' to enable evaluation period overlay.
+ *   - 'EvaluationPeriodStartDate', 'EvaluationPeriodEndDate': Date strings for the evaluation period.
+ *   - 'EvaluationPeriodFillColor': Color for the evaluation period overlay.
+ *   - 'EvaluationPeriodText': Label for the evaluation period.
+ *   - 'EventMarkers': 'on' to enable event markers.
+ *   - 'EventMarkersField': Number of event markers.
+ *   - 'EventMarkersEventAxis{n}': 'x' or 'y' for each marker.
+ *   - 'EventMarkersEventText{n}': Label for each marker.
+ *   - 'EventMarkersEventColor{n}': Color for each marker.
+ *   - 'EventMarkersEventDate{n}': Date for x-axis marker.
+ *   - 'EventMarkersEventYValue{n}': Y value for y-axis marker.
+ * @param {Object} dataToBePlotted - The data object containing arrays for each column, used for plotting overlays.
+ *
+ * @description
+ * - If the evaluation period is enabled, a shaded region is added to the chart between the specified start and end dates.
+ * - If event markers are enabled, vertical or horizontal lines are added at specified positions, with labels and colors.
+ * - The function ensures overlays are drawn using the current y-axis range and x-axis data.
+ * - The overlays are combined with the main data traces and rendered using `Plotly.react`.
+ *
+ * @modifies
+ * - Modifies the `layout` object to ensure correct axis types.
+ * - Updates the chart in `plotDiv` by calling `Plotly.react`.
+ *
+ * @example
+ * injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted);
+ *
+ * @returns {void}
+ */
+function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted) {
+    if (!plotDiv || !layout || !layout.yaxis || !layout.yaxis.range) {
+        console.warn("[Overlay] Missing layout or y-axis range");
+        return;
+    }
+
+    const columnXHeader = figureArguments['XAxis'];
+    const plotlyX = dataToBePlotted[columnXHeader];
+
+    layout.xaxis = layout.xaxis || {};
+    layout.xaxis.type = 'date';
+
+    layout.yaxis = layout.yaxis || {};
+    layout.yaxis.type = 'linear';
+
+    const [yMin, yMax] = layout.yaxis.range || [0, 1];
+    const overlays = [];  
+
+    // === Evaluation Period ===
+    if (figureArguments['EvaluationPeriod'] === 'on') {
+        let start = figureArguments['EvaluationPeriodStartDate'];
+        let end = figureArguments['EvaluationPeriodEndDate'];
+        const startDate = new Date(start).toLocaleDateString();
+        const endDate = new Date(end).toLocaleDateString();     
+        const fillColor = (figureArguments['EvaluationPeriodFillColor'] || '#999') + '15';
+        const EvalDisplayText = figureArguments['EvaluationPeriodText'];
+
+        overlays.push({
+            x: [start, end, end, start],
+            y: [yMax, yMax, yMin, yMin],
+            fill: 'toself',
+            fillcolor: fillColor,
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: fillColor, width: 0 },
+            // hoverinfo: EvalDisplayText,
+            // hovertemplate:
+            // `${startDate}<br>` +
+            // `${endDate}<extra></extra>`,
+            name: EvalDisplayText,
+            showlegend: true,
+            yaxis: 'y',
+            xaxis: 'x'
+        });
+
+    }
+
+    for (let i = 0; i <= Number(figureArguments['EventMarkersField']); i++) {
+        // === Event Markers ===
+        if (figureArguments[`EventMarkers`] === 'on') {
+            let axisType = figureArguments[`EventMarkersEventAxis${i}`];
+            const label = figureArguments[`EventMarkersEventText${i}`];
+            const color = figureArguments[`EventMarkersEventColor${i}`] || '#000';
+
+            if (axisType === 'x') {
+                let date = figureArguments[`EventMarkersEventDate${i}`];
+                overlays.push({
+                    x: [date, date],
+                    y: [yMin, yMax],
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color, width: 2 },
+                    name: label,
+                    showlegend: true,
+                    yaxis: 'y',
+                    xaxis: 'x',
+                    hoverinfo: `x`,
+                });
+            }
+            if (axisType === 'y') {
+                let yValue = parseFloat(figureArguments[`EventMarkersEventYValue${i}`], 10);
+                const yArray = Array(plotlyX.length).fill(yValue);
+                overlays.push({
+                    x: plotlyX,
+                    y: yArray,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color, width: 2 },
+                    name: label,
+                    showlegend: true,
+                    yaxis: 'y',
+                    xaxis: 'x',
+                    hoverinfo: `${label} y`,
+                });
+            }
+        }
+        
+    }
+    Plotly.react(plotDiv, [...overlays, ...mainDataTraces], layout);
+    //Plotly.react(plotDiv, [...mainDataTraces, ...overlays], layout);
+}
 
 /**
  * Asynchronously generates a Plotly bar chart and appends it to a target HTML element.
@@ -460,7 +593,16 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                             
             // Create the plot with all lines
-            Plotly.newPlot(plotlyDivID, allBarsPlotly, layout, config);
+            //Plotly.newPlot(plotlyDivID, allBarsPlotly, layout, config);  
+
+                         
+            // Create the plot with all lines
+            await Plotly.newPlot(plotDiv, allBarsPlotly, layout, config).then(() => {
+                // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
+                // You need the specific values for the entire yaxis
+                injectOverlays(plotDiv, layout, allBarsPlotly, figureArguments, dataToBePlotted);
+            });
+            Plotly.Plots.resize(plotDiv)
 
         } else {}
     } catch (error) {
@@ -934,6 +1076,245 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
     if (numBars > 0) {
         let newDiv = document.createElement("div");
         newDiv.id = "assignColumnsToPlot";
+
+        //"EvaluationPeriod" & "EventMarkers"
+        const features = ["EvaluationPeriod", "EventMarkers"];
+        const featureNames = ["Evaluation Period", "Event Markers"];
+        for (let i = 0; i < features.length; i++) {
+            const feature = features[i];
+            const featureName = featureNames[i];
+
+            let newRow = document.createElement("div");
+            newRow.classList.add("row", "fieldPadding");
+
+            let newColumn1 = document.createElement("div");
+            newColumn1.classList.add("col-3");
+            let newColumn2 = document.createElement("div");
+            newColumn2.classList.add("col");
+
+            let label = document.createElement("label");
+            label.for = feature;
+            label.innerHTML = `${featureName}`;
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = feature;
+            checkbox.name = "plotFields";
+
+            let fieldValueSaved = fillFormFieldValues(checkbox.id, interactive_arguments);
+            checkbox.value = fieldValueSaved === 'on' ? 'on' : "";
+            checkbox.checked = fieldValueSaved === 'on';
+
+            newColumn1.appendChild(label);
+            newColumn2.appendChild(checkbox);
+            newRow.append(newColumn1, newColumn2);
+            newRow.style.marginTop = "20px";
+            newRow.style.marginBottom = "20px"
+            newDiv.append(newRow);
+            
+
+            // === Add dropdowns for feature-specific data ===
+            if (["EvaluationPeriod", "EventMarkers"].includes(feature)) {
+                const dropdownContainer = document.createElement("div");
+                dropdownContainer.classList.add("row", "fieldPadding");
+
+                const dropdownLabelCol = document.createElement("div");
+                dropdownLabelCol.classList.add("col-3");
+                const dropdownInputCol = document.createElement("div");
+                dropdownInputCol.classList.add("col");
+
+                function createDropdown(labelText, selectId) {
+                    const label = document.createElement("label");
+                    label.innerHTML = labelText;
+                    const select = document.createElement("select");
+                    select.id = selectId;
+                    select.name = "plotFields";
+
+                    if (feature === "EventMarkers") {
+
+                        for (let col of [1, 2, 3, 4, 5, 6]) {
+                            const opt = document.createElement("option");
+                            opt.value = col;
+                            opt.innerHTML = col;
+                            select.appendChild(opt);
+                        }
+
+                        const saved = fillFormFieldValues(select.id, interactive_arguments);
+                        if (saved) select.value = saved;
+
+                        select.addEventListener("change", logFormFieldValues);
+                        return { label, select };
+                    }
+                }
+
+                function createDatefield(labelText, inputId) {
+                    const label = document.createElement("label");
+                    label.textContent = labelText;
+                    label.htmlFor = inputId; // Link label to input
+
+                    const input = document.createElement("input"); // Correct element
+                    input.type = "date";
+                    input.id = inputId;
+                    input.name = "plotFields";
+
+                    const saved = fillFormFieldValues(input.id, interactive_arguments);
+                    if (saved) input.value = saved;
+
+                    input.addEventListener("change", logFormFieldValues);
+                    return { label, input };
+                }
+
+                function createTextfield(labelText, inputId) {
+                    const label = document.createElement("label");
+                    label.textContent = labelText;
+                    label.htmlFor = inputId; // Link label to input
+
+                    const input = document.createElement("input"); // Correct element
+                    input.type = "text";
+                    input.id = inputId;
+                    input.name = "plotFields";
+                    input.style.width = "200px";
+
+
+                    const saved = fillFormFieldValues(input.id, interactive_arguments);
+                    if (saved) input.value = saved;
+
+                    input.addEventListener("change", logFormFieldValues);
+                    return { label, input };
+                }
+
+                function createColorfield(labelText, inputId) {
+                    const label = document.createElement("label");
+                    label.textContent = labelText;
+                    label.htmlFor = inputId; // Link label to input
+
+                    const input = document.createElement("input"); // Correct element
+                    input.type = "color";
+                    input.id = inputId;
+                    input.name = "plotFields";
+
+                    const saved = fillFormFieldValues(input.id, interactive_arguments);
+                    if (saved) input.value = saved;
+
+                    input.addEventListener("change", logFormFieldValues);
+                    return { label, input };
+                }
+
+                const controls = [];
+
+                if (feature === "EvaluationPeriod") {
+                    const { label: labelStartDate, input: StartDateValues } = createDatefield(`Start Date`,  feature + "StartDate");
+                    const { label: labelEndDate, input: EndDateValues } = createDatefield('End Date', feature + "EndDate");
+                    const { label: labelColor, input: ColorValue } = createColorfield(`Fill Color`,  feature + "FillColor");
+                    const { label: textLabel, input: textInput }   = createTextfield(`Display Text`, feature + "Text");
+                    controls.push(labelStartDate, document.createElement('br'), StartDateValues, document.createElement('br'), document.createElement('br'), labelEndDate, document.createElement('br'), EndDateValues, document.createElement('br'), document.createElement('br'), labelColor, document.createElement('br'), ColorValue, document.createElement('br'), document.createElement('br'), textLabel, document.createElement('br'), textInput, document.createElement('br'));
+                }
+
+                if (feature === "EventMarkers") {
+                    const { label, select } = createDropdown("Number of Event Markers", feature + "Field");
+                    controls.push(label, select);
+    
+
+                    // A wrapper that we'll (re)fill with the N sets of fields
+                    const wrapper = document.createElement("div");
+                    wrapper.id = feature + "FieldsWrapper";
+                    controls.push(wrapper);
+
+                    const renderEventMarkerFields = (n) => {
+                    wrapper.innerHTML = ""; // Clear previous
+
+                    for (let i = 0; i < n; i++) {
+                        // === Axis Selector ===
+                        const axisLabel = document.createElement("label");
+                        axisLabel.textContent = `Event Marker Axis ${i + 1}`;
+                        const axisSelect = document.createElement("select");
+                        axisSelect.id = `${feature}EventAxis${i}`;
+                        axisSelect.name = "plotFields";
+
+                        ["x", "y"].forEach(axis => {
+                        const opt = document.createElement("option");
+                        opt.value = axis;
+                        opt.textContent = axis.toUpperCase() + " Axis";
+                        axisSelect.appendChild(opt);
+                        });
+                        fillFormFieldValues(axisSelect.id, interactive_arguments);
+
+                        // === Shared Inputs ===
+                        const { label: textLabel, input: textInput }   = createTextfield(`Display Text ${i + 1}`, `${feature}EventText${i}`);
+                        const { label: colorLabel, input: colorInput } = createColorfield(`Line Color ${i + 1}`,  `${feature}EventColor${i}`);
+                        fillFormFieldValues(textInput.id, interactive_arguments);
+                        fillFormFieldValues(colorInput.id, interactive_arguments);
+
+                        // === X-axis Fields ===
+                        const xWrapper = document.createElement("div");
+                        const { label: dateLabel, input: dateInput } = createDatefield(`Event Date ${i + 1} (X-Axis)`, `${feature}EventDate${i}`);
+                        fillFormFieldValues(dateInput.id, interactive_arguments);
+                        xWrapper.append(dateLabel, document.createElement("br"), dateInput, document.createElement("br"));
+
+                        // === Y-axis Fields ===
+                        const yWrapper = document.createElement("div");
+                        const { label: yLabel, input: yInput } = createTextfield(`Event Y Value ${i + 1}`, `${feature}EventYValue${i}`);
+                        fillFormFieldValues(yInput.id, interactive_arguments);
+                        yWrapper.append(yLabel, document.createElement("br"), yInput, document.createElement("br"));
+
+                        // === Container & Toggle Logic ===
+                        const block = document.createElement("div");
+                        block.append(
+                        document.createElement("hr"),
+                        axisLabel, document.createElement("br"), axisSelect, document.createElement("br"), document.createElement("br"),
+                        xWrapper, yWrapper, document.createElement("br"),
+                        textLabel, document.createElement("br"), textInput, document.createElement("br"),document.createElement("br"),
+                        colorLabel, document.createElement("br"), colorInput, document.createElement("br")
+                        );
+
+                        // Handle visibility
+                        const toggleAxisFields = (val) => {
+                        xWrapper.style.display = val === 'x' ? "block" : "none";
+                        yWrapper.style.display = val === 'y' ? "block" : "none";
+                        };
+                        toggleAxisFields(axisSelect.value); // Initial state
+                        axisSelect.addEventListener("change", (e) => {
+                        toggleAxisFields(e.target.value);
+                        logFormFieldValues();
+                        });
+
+                        wrapper.appendChild(block);
+                    }
+                    };
+
+                    // Initial render using saved or current value
+                    const initialN = parseInt(select.value, 10) || 0;
+                    renderEventMarkerFields(initialN);
+
+                    // Re-render on change
+                    select.addEventListener("change", (e) => {
+                        const n = parseInt(e.target.value, 10) || 0;
+                        renderEventMarkerFields(n);
+                    });
+                }
+
+                // Initially hide the dropdown container
+                dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
+
+                controls.forEach(control => dropdownInputCol.appendChild(control));
+                dropdownContainer.append(dropdownLabelCol, dropdownInputCol);
+                newDiv.append(dropdownContainer);
+
+                // Toggle visibility dynamically
+                checkbox.addEventListener('change', function () {
+                    checkbox.value = checkbox.checked ? 'on' : "";
+                    dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
+                    logFormFieldValues();
+                });
+            } else {
+                checkbox.addEventListener('change', function () {
+                    checkbox.value = checkbox.checked ? 'on' : "";
+                    logFormFieldValues();
+                });
+            }
+            }
+            let newHR = document.createElement("hr");
+            newHR.style = "margin-top:15px";
+            newDiv.append(newHR);
 
 
         // Add checkbox for StackedBarColumns
