@@ -386,8 +386,8 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                         return parseFloat(val);
                     });
                     const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSanitized.length;
-                    console.log('mean', mean);
-                    console.log('stdDev', stdDev);
+                    //console.log('mean', mean);
+                    //console.log('stdDev', stdDev);
                     const upperY = plotlyY.map(y => mean + stdDev);
                     const lowerY = plotlyY.map(y => mean - stdDev);
                     const filteredX = plotlyX.filter(item => item !== "");
@@ -435,7 +435,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                 //Do we want high and low bounds here?
                 if (showSD == 'on' && showSD_InputValuesOpt != 'auto') {
                     const stdSingleValue = dataToBePlotted[showSD_InputValuesOpt].filter(item => item !== "NA").reduce((a, b) => a + b, 0) / dataToBePlotted[showSD_InputValuesOpt].length;
-                    console.log('stdSingleValue', stdSingleValue);
+                    //console.log('stdSingleValue', stdSingleValue);
                     const plotlyYSanitized = plotlyY.map(val => {
                         if (
                             val === null ||

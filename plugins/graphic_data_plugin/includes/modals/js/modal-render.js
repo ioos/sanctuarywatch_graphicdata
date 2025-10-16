@@ -172,6 +172,45 @@ function render_modal(key){
                 trapFocus(mdialog);
               
             }
+
+            // // Select all buttons inside nav-item elements
+            // const navButtons = document.querySelectorAll('.nav-item button');
+
+            // console.log('navButtons', navButtons);
+
+            // let activeButtons = [];
+            // let inactiveButtons = [];
+
+            // // Check if any button is active (e.g., class 'active')
+            // const anyActiveButton = Array.from(navButtons).some(button => {
+            //     const isActiveClass = button.classList.contains('active');
+
+            //     if (!isActiveClass) {
+            //         inactiveButtons.push(button);
+            //     }
+
+            //     if (isActiveClass) {
+            //         let buttonExists = document.getElementById(button.id)
+            //         console.log('buttonExists', buttonExists);
+            //         if (buttonExists) {
+            //             activeButtons.push(button);
+            //         }
+            //     }
+
+            // });
+
+            // console.log('activeButtons', activeButtons);
+            // console.log('inactiveButtons', inactiveButtons);
+
+            // if (activeButtons.length == 0) {
+            //     // Activate the first one via Bootstrap API
+            //     if (inactiveButtons.length > 0) {
+            //         const firstButton = inactiveButtons[0];
+            //         const tabTrigger = new bootstrap.Tab(firstButton);
+            //         tabTrigger.show();  // ✅ Properly displays inside modal
+            //     }
+            // }
+
             // Google Tags
             modalWindowLoaded(title, modal_id, gaMeasurementID);
 
@@ -180,6 +219,43 @@ function render_modal(key){
     .catch(error => console.error('Error fetching data:', error));
     
 }
+
+//After removing tabs that do not contain content or do not contain published figures, we show only the tabs that have content and make the first one active
+function initTabButtons() {
+    // Select all buttons inside nav-item elements
+    const navButtons = document.querySelectorAll('.nav-item button');
+
+    let activeButtons = [];
+    let inactiveButtons = [];
+
+    // Check if any button is active (e.g., class 'active')
+    const anyActiveButton = Array.from(navButtons).some(button => {
+        const isActiveClass = button.classList.contains('active');
+
+        if (!isActiveClass) {
+            inactiveButtons.push(button);
+        }
+
+        if (isActiveClass) {
+            let buttonExists = document.getElementById(button.id)
+            //console.log('buttonExists', buttonExists);
+            if (buttonExists) {
+                activeButtons.push(button);
+            }
+        }
+
+    });
+
+    if (activeButtons.length == 0) {
+        // Activate the first one via Bootstrap API
+        if (inactiveButtons.length > 0) {
+            const firstButton = inactiveButtons[0];
+            const tabTrigger = new bootstrap.Tab(firstButton);
+            tabTrigger.show();  // ✅ Properly displays inside modal
+        }
+    }
+}
+
 
 /**
  * Traps the focus within a specified modal element, ensuring that the user cannot tab out of it.
@@ -265,7 +341,8 @@ function trapFocus(modalElement) {
  * Usage:
  * Called at the end of the create_tabs function
  */
- function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id){
+ function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
+
     const protocol = window.location.protocol;
     const host = window.location.host;
     const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + tab_id;
@@ -276,6 +353,29 @@ function trapFocus(modalElement) {
 
             all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
             all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id));
+
+            //filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
+            let total_published_figures = 0;
+            for (let idx = 0; idx < all_figure_data.length; idx++) {
+                const figure_data = all_figure_data[idx];
+                const figure_published = figure_data['figure_published'];
+                if (figure_published == "published") {
+                    total_published_figures += 1;
+                }
+            }
+            if (all_figure_data.length > 0 && total_published_figures > 0) {
+                const element = document.getElementById(buttonID);
+                if (element) {
+                    element.style.display = "block";
+                }
+            } else {
+                const element = document.getElementById(buttonID);
+                if (element.style.display == "none") {
+                    console.log('buttonID', buttonID);
+                    element.remove();
+                }
+            }
+
 
             // Third filter: If user is not logged in, only show published figures
            // const isUserLoggedIn = document.body.classList.contains('logged-in');
@@ -332,6 +432,7 @@ function trapFocus(modalElement) {
                         }
                 
                         const info_obj = {
+                            figure_published: figure_data['figure_published'],
                             postID: figure_data.id,
                             scienceLink: figure_data["figure_science_info"]["figure_science_link_url"],
                             scienceText: figure_data["figure_science_info"]["figure_science_link_text"],
@@ -351,6 +452,7 @@ function trapFocus(modalElement) {
                             await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
                             //await new Promise(resolve => setTimeout(resolve, 1000)); // Stagger each render
                             await render_interactive_plots(tabContentElement, info_obj);
+                            initTabButtons();
                         })();
                     }
                 })();
@@ -419,6 +521,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     button.setAttribute('role', 'tab');
     button.setAttribute('aria-controls', tab_controls);
     button.textContent = tab_label;
+    button.style.display = "none";
 
     navItem.appendChild(button);
     myTab.appendChild(navItem);
@@ -477,10 +580,9 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     
     //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
     (async () => {
-        await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
+        await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id);
     })();
 
-    
     //Google tags triggers
     modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID);
     setupModalMoreInfoLinkTracking(modal_id);

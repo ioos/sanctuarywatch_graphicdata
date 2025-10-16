@@ -31,6 +31,13 @@
  * await render_interactive_plots(tabContentElement, info_obj);
  */
 async function render_interactive_plots(tabContentElement, info_obj) {
+
+    //Lets control if the figure is published or not
+    let figure_published = info_obj['figure_published'];
+    if (figure_published != "published"){
+        return; // do not render if the figure is not published
+    }
+
     let postID = info_obj["postID"];
     let figureType = info_obj["figureType"];
     let title = info_obj['figureTitle'];
@@ -304,22 +311,24 @@ async function render_interactive_plots(tabContentElement, info_obj) {
  */
 async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
 
+    //Lets control if the figure is published or not
+    let figure_published = info_obj["figure_published"];
+    if (figure_published != "published"){
+        return; // do not render if the figure is not published
+    }
+
     let postID = info_obj["postID"];
     let title = info_obj['figureTitle'];
-
 
     // Create the table row div
     const tableRowDiv = document.createElement(`div`);
     tableRowDiv.style.display = 'table-row';
-
 
     //Create a separator to make this figure distinct from others
     const separator = document.createElement('div');
     separator.classList.add("separator");
     separator.innerHTML = '<hr style="border-bottom: 1px rgb(252, 252, 252);">';
     tableRowDiv.appendChild(separator);
-
-
 
     //CONSTRUCT THE MAIN DIV "FIGURE" WHERE THE CONTENT WILL GO
     //const figureDiv = document.createElement('div');
