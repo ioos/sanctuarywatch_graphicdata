@@ -220,6 +220,44 @@ function render_modal(key){
     
 }
 
+/**
+ * Ensures at least one tab button is active inside the modal after tabs have been created or filtered.
+ *
+ * This function inspects the set of tab buttons rendered under `.nav-item button` and determines
+ * whether any of them are currently active (contain the 'active' class and exist in the DOM).
+ * If none are active, it activates the first available (previously inactive) tab using the
+ * Bootstrap Tab API so that the modal displays content correctly.
+ *
+ * Behavior details:
+ * - Collects all tab buttons within `.nav-item` elements.
+ * - Separates buttons into `activeButtons` (buttons that currently have the 'active' class and exist)
+ *   and `inactiveButtons` (buttons without the 'active' class).
+ * - If no valid active button is present, shows the first inactive button by creating a
+ *   bootstrap.Tab instance for it and calling `.show()`.
+ *
+ * Side effects:
+ * - May change modal UI state by activating a tab (modifies element classes and visible tab pane).
+ * - Uses Bootstrap's JavaScript Tab API (expects bootstrap.Tab to be available).
+ *
+ * Variables used / created:
+ * - navButtons (NodeList): all buttons found via `document.querySelectorAll('.nav-item button')`.
+ * - activeButtons (Array<HTMLButtonElement>): buttons that have 'active' and are present in DOM.
+ * - inactiveButtons (Array<HTMLButtonElement>): buttons that do not have 'active'.
+ * - anyActiveButton (boolean): result of checking whether any nav button had 'active' class during iteration.
+ * - firstButton (HTMLButtonElement): the first button from `inactiveButtons` to activate when needed.
+ *
+ * Requirements / assumptions:
+ * - The modal's tab markup uses `.nav-item button` for tab triggers (Bootstrap convention).
+ * - The Bootstrap Tab class is available on the page (bootstrap.Tab).
+ * - Buttons may have been added/removed before this function runs; the function checks existence by id.
+ *
+ * Accessibility / UX:
+ * - Activating the first available tab prevents the modal from showing an empty content area.
+ *
+ * Example:
+ * // After creating or filtering tabs, call:
+ * initTabButtons();
+ */
 //After removing tabs that do not contain content or do not contain published figures, we show only the tabs that have content and make the first one active
 function initTabButtons() {
     // Select all buttons inside nav-item elements

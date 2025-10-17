@@ -403,7 +403,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                         name: legendGroupName,
                         legendgroup: legendGroupName,
                         line: {
-                            dash: 'dot',
+                            dash: 'dash',
                             color: figureArguments[targetLineColumn + 'StdDevColor']
                         },
                         hoverinfo: 'skip',
@@ -420,7 +420,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                         name: legendGroupName,      // same name, but hidden in legend
                         legendgroup: legendGroupName,
                         line: {
-                            dash: 'dot',
+                            dash: 'dash',
                             color: figureArguments[targetLineColumn + 'StdDevColor']
                         },
                         hoverinfo: 'skip',
@@ -464,7 +464,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                         name: legendGroupName,
                         legendgroup: legendGroupName,
                         line: {
-                            dash: 'dot',
+                            dash: 'dash',
                             color: figureArguments[targetLineColumn + 'StdDevColor']
                         },
                         hoverinfo: 'skip',
@@ -481,7 +481,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                         name: legendGroupName,      // same name, but hidden in legend
                         legendgroup: legendGroupName,
                         line: {
-                            dash: 'dot',
+                            dash: 'dash',
                             color: figureArguments[targetLineColumn + 'StdDevColor']
                         },
                         hoverinfo: 'skip',
@@ -541,7 +541,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                             x: [xMin, xMax],
                             y: [mean, mean],
                             mode: 'lines',
-                            line: { dash: 'dash', color: figureArguments[targetLineColumn + 'Color'] + '60'},
+                            line: { dash: 'solid', color: figureArguments[targetLineColumn + 'Color'] + '60'},
                             name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
                             type: 'scatter',
                             visible: true,
@@ -559,7 +559,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                             x: [xMin, xMax],
                             y: [mean, mean],
                             mode: 'lines',
-                            line: { dash: 'dash', color: figureArguments[targetLineColumn + 'Color'] + '60'},
+                            line: { dash: 'solid', color: figureArguments[targetLineColumn + 'Color'] + '60'},
                             name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
                             type: 'scatter',
                             visible: true,
