@@ -33,6 +33,7 @@ You can see a working example of a different file created using this method in a
     - [4.1.1 Layer organization](#411-layer-organization)
     - [4.1.2 Dealing with raster-based elements](#412-dealing-with-raster-based-elements#)
     - [4.1.3 Saving The Image](#413-saving-the-image)
+    - [4.1.4 Special considerations in Illustrator](#414-special-considerations-in-illustrator)
 - [4.2 Inkscape SVGs](#42-inkscape)
     - [4.2.1 Layer organization](#421-layer-organization)
     - [4.2.2 Editing The Layer's XML](#422-editing-the-layer-xml)
@@ -228,8 +229,14 @@ To be used by Graphic Data in "Scenes", the file must be exported in svg format.
 5. If your artwork is not displaying correctly or is running off the side of the page, try adjusting the "Decimal" setting to a higher number such as 3,4,5, or 6. The try hitting the globe button again to view the updated temp .svg in your browser. 
 6. The default for Illustrator is to add an “01” to your svg file name (so, “example.svg” becomes “example01.svg”). Change the file name back to your desired choice if needed.
 
-
+---
 &nbsp;
+### 4.1.4 Special considerations in Illustrator
+
+1. Due to what seems like a bug in Illustrator, free form gradients do not consistently export correctly to svg files. Radial or linear gradients (the other two gradient options) should be used instead of free form gradients. 
+
+2. Clipping masks should be avoided within clickable icons. The reason is that they cause layout problems for the associated icons in mobile view. Though the masks are invisible in the exported svg files, they are still present, causing the aforementioned layout problems. If clipping masks cannot be avoided, an alternative solution is to provide mask-free versions of the relevants icons within the mobile layer.
+
 ---
 &nbsp;
 ## 4.2 Inkscape

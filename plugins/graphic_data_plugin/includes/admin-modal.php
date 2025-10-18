@@ -507,7 +507,7 @@ class Webcr_Modal {
             'modal_icons' => 'Icon',	
             'icon_function' => 'Function',		
             'modal_tagline' => 'Tagline',			
-            'tabs' => 'Tabs > # of Figures<br><span style="font-weight:normal; font-size:0.9em; color:#666;">Blank tabs are in bold</span>',	
+            'tabs' => 'Tabs (# of Figures)<br><span style="font-weight:normal; font-size:0.9em; color:#666;"><a href="https://ioos.github.io/sanctuarywatch_graphicdata/figures/#status" target="_blank">Bold = no live figures</a></span>',	
             'status' => 'Status',
         );
         return $columns;
@@ -852,7 +852,7 @@ class Webcr_Modal {
 
             if (count($tab_name_array) > 0) {
                 global $wpdb;
-                $master_warning ="<p>Warning. The following tabs are currently not showing any content. If you just created this modal post, you can ignore this warning.</p><ul class='tab_warning_list'>";
+                $master_warning ="<p>Warning. The following tabs are currently not showing any content.</p><ul class='tab_warning_list'>";
                 foreach ($tab_name_array as $tab_name_individual) {
 
                     $results = $wpdb->get_results(
@@ -1022,9 +1022,9 @@ class Webcr_Modal {
                             }
                         }
                         if ($draft_figures_only) {
-                            $tab_list .= "<li style='font-weight:bold;'>" . esc_html($tab_name_individual['tab_name']) . " > " .  $fig_number . "</li>";
+                            $tab_list .= "<li style='font-weight:bold;'>" . esc_html($tab_name_individual['tab_name']) . " (" .  $fig_number . ")</li>";
                         } else {
-                            $tab_list .= "<li>" . esc_html($tab_name_individual['tab_name']) . " > " .  $fig_number . "</li>";
+                            $tab_list .= "<li>" . esc_html($tab_name_individual['tab_name']) . " (" .  $fig_number . ")</li>";
                         }
 
 
