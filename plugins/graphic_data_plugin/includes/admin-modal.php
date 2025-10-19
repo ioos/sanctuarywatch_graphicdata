@@ -835,6 +835,16 @@ class Webcr_Modal {
         if (!$post || !$post->ID) {
             return;
         }
+
+        // if we're on this page after a return from a new post (meaning the post has been just created), don't show the warning either
+        $user_id = get_current_user_id();
+        $transient_name = "modal_post_new_user_{$user_id}";
+        $transient_fields = get_transient($transient_name);
+        
+        if ($transient_fields !== false) {
+            delete_transient($transient_name);  
+            return;
+        }
         
         $post_id = $post->ID;   
 
