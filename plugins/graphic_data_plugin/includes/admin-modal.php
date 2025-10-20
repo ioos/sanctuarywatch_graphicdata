@@ -501,14 +501,13 @@ class Webcr_Modal {
 	 */
     function change_modal_columns( $columns ) {
         $columns = array (
-            //'cb' => $columns['cb'],
             'title' => 'Title',
             'modal_location' => 'Instance',
             'modal_scene' => 'Scene',		
             'modal_icons' => 'Icon',	
             'icon_function' => 'Function',		
             'modal_tagline' => 'Tagline',			
-            'tab_number' => 'Tab #',	
+            'tabs' => 'Tabs (# of Figures)<br><span style="font-weight:normal; font-size:0.9em; color:#666;"><a href="https://ioos.github.io/sanctuarywatch_graphicdata/figures/#status" target="_blank">Bold = no live figures</a></span>',	
             'status' => 'Status',
         );
         return $columns;
@@ -596,6 +595,32 @@ class Webcr_Modal {
         }
         
         return $value;
+    }
+
+    /**
+     * Enqueues custom CSS for modal admin columns on the post type edit screen.
+     *
+     * This function conditionally loads CSS styling for the admin columns display
+     * when viewing the list of 'modal' custom post type entries in the WordPress admin.
+     * The CSS is only enqueued when on the edit.php screen for the modal post type.
+     *
+     * @since 1.0.0
+     *
+     * @param string $hook The current admin page hook suffix.
+     *
+     * @return void
+     */
+    function enqueue_modal_admin_columns_css($hook) {
+        // Get the current screen object.
+        $screen = get_current_screen();
+    
+        // Check if we are on the edit screen for the custom post type 'scene'.
+        if ($screen->post_type === 'modal' && $screen->base === 'edit') {
+            // Enqueue CSS file.
+            wp_enqueue_style(
+                'modal-admin-columns-css', // Handle of the CSS file.
+                plugin_dir_url( __DIR__ ) . 'admin/css/modal-admin-columns.css');
+        }
     }
 
     /**
@@ -790,6 +815,110 @@ class Webcr_Modal {
         }
     }
 
+    // Display warning notices on the Modal edit screen if tabs lack content
+    function modal_warning_notice_tabs() {
+        // Get the current screen
+        $screen = get_current_screen();
+        
+        // Check if we're on the post edit screen
+        if (!$screen || $screen->base !== 'post') {
+            return;
+        }
+        
+        // Check if it's the 'modal' post type
+        if ($screen->post_type !== 'modal') {
+            return;
+        }
+        
+        // Check if we're editing an existing post (not creating a new one)
+        global $post;
+        if (!$post || !$post->ID) {
+            return;
+        }
+
+        // if we're on this page after a return from a new post (meaning the post has been just created), don't show the warning either
+        $user_id = get_current_user_id();
+        $transient_name = "modal_post_new_user_{$user_id}";
+        $transient_fields = get_transient($transient_name);
+        
+        if ($transient_fields !== false) {
+            delete_transient($transient_name);  
+            return;
+        }
+        
+        $post_id = $post->ID;   
+
+        $modal_tab_number = get_post_meta( $post_id, 'modal_tab_number', true );
+        if ($modal_tab_number !== '' && $modal_tab_number !== false) { //don't go further if the value is empty or doesn't exist
+            $show_warning = false;
+            $tab_name_array = [];
+            for ($i = 1; $i <= $modal_tab_number; $i++){
+                $search_field = "modal_tab_title" . $i;
+                $tab_name = get_post_meta( $post_id, $search_field, true ); 
+                if ($tab_name !== '' && $tab_name !== false){
+                    $tab_name_array [] = ['tab_number' => $i, 'tab_name' => $tab_name ];
+                }
+            }
+
+            if (count($tab_name_array) > 0) {
+                global $wpdb;
+                $master_warning ="<p>Warning. The following tabs are currently not showing any content.</p><ul class='tab_warning_list'>";
+                foreach ($tab_name_array as $tab_name_individual) {
+
+                    $results = $wpdb->get_results(
+                        $wpdb->prepare(
+                            "SELECT 
+                                pm1.post_id,
+                                pm3.meta_value AS figure_published
+                            FROM 
+                                {$wpdb->postmeta} pm1
+                            INNER JOIN 
+                                {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id
+                            INNER JOIN 
+                                {$wpdb->postmeta} pm3 ON pm1.post_id = pm3.post_id
+                            INNER JOIN
+                                {$wpdb->posts} p ON pm1.post_id = p.ID
+                            WHERE 
+                                pm1.meta_key = 'figure_modal' AND pm1.meta_value = %d
+                                AND pm2.meta_key = 'figure_tab' AND pm2.meta_value = %s
+                                AND pm3.meta_key = 'figure_published'
+                                AND p.post_type = 'figure'",
+                            $post_id,
+                            $tab_name_individual['tab_number']
+                        )
+                    );
+                    
+                    $warning = "";
+                    if (empty($results)) {
+                        $warning = "Tab " . $tab_name_individual['tab_number'] .  " - " . $tab_name_individual['tab_name'] . ". There are no figures associated with this tab.";
+                    } else {
+                        $draft_figures_only = true;
+                        foreach ($results as $row) {
+                            if ($row->figure_published == "published") {
+                                $draft_figures_only = false;
+                                break;
+                            } 
+                        }
+                        if ($draft_figures_only) {
+                            $warning = "Tab " . $tab_name_individual['tab_number'] .  " - " . $tab_name_individual['tab_name'] . ". There are no published figures associated with this tab.";
+                        }
+                    }
+
+                    if ($warning != ""){
+                        $show_warning = true;
+                        $master_warning .= "<li>" . esc_html($warning) . "</li>";
+                    }
+
+                }
+
+                if ($show_warning){
+                    $master_warning .= "</ul>";
+                    echo '<div class="notice notice-warning is-dismissible"><p>' . $master_warning . '</p></div>';
+                }   
+            }   
+        }
+    }
+
     /**
 	 * Populate custom fields for Modal content type in the admin screen.
 	 *
@@ -798,6 +927,8 @@ class Webcr_Modal {
 	 * @since    1.0.0
 	 */
     function custom_modal_column( $column, $post_id ) {  
+
+        global $wpdb; // used by Tabs column
 
         // maybe knock this next section out
         if (isset($_GET["field_length"])) {
@@ -847,16 +978,72 @@ class Webcr_Modal {
             }
         }
 
-        if ($column == 'tab_number'){
-            $tab_count = 0;
-            for ($i = 1; $i < 7; $i++){
-                $search_field = "modal_tab_title" . $i;
-                $database_value = get_post_meta( $post_id, $search_field, true ); 
-                if ($database_value != ""){
-                    $tab_count++;
+        if ($column == 'tabs'){
+
+            $modal_tab_number = get_post_meta( $post_id, 'modal_tab_number', true );
+            if ($modal_tab_number !== '' && $modal_tab_number !== false) { //don't go further if the value is empty or doesn't exist
+
+                $tab_name_array = [];
+
+                for ($i = 1; $i <= $modal_tab_number; $i++){
+                    $search_field = "modal_tab_title" . $i;
+                    $tab_name = get_post_meta( $post_id, $search_field, true ); 
+                    if ($tab_name !== '' && $tab_name !== false){
+                        $tab_name_array [] = ['tab_number' => $i, 'tab_name' => $tab_name ];
+                    }
                 }
+
+                if (count($tab_name_array) > 0) {
+                    $tab_list = "<ol class='tab_name_list'>";
+                    foreach ($tab_name_array as $tab_name_individual) {
+
+                        $results = $wpdb->get_results(
+                            $wpdb->prepare(
+                                "SELECT 
+                                    pm1.post_id,
+                                    pm3.meta_value AS figure_published
+                                FROM 
+                                    {$wpdb->postmeta} pm1
+                                INNER JOIN 
+                                    {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id
+                                INNER JOIN 
+                                    {$wpdb->postmeta} pm3 ON pm1.post_id = pm3.post_id
+                                INNER JOIN
+                                    {$wpdb->posts} p ON pm1.post_id = p.ID
+                                WHERE 
+                                    pm1.meta_key = 'figure_modal' AND pm1.meta_value = %d
+                                    AND pm2.meta_key = 'figure_tab' AND pm2.meta_value = %s
+                                    AND pm3.meta_key = 'figure_published'
+                                    AND p.post_type = 'figure'",
+                                $post_id,
+                                $tab_name_individual['tab_number']
+                            )
+                        );
+                        
+                        $fig_number = 0;
+                        $draft_figures_only = true;
+                        if (!empty($results)) {
+                            $fig_number = count($results);
+                            foreach ($results as $row) {
+                                if ($row->figure_published == "published") {
+                                    $draft_figures_only = false;
+                                    break;
+                                } 
+                            }
+                        }
+                        if ($draft_figures_only) {
+                            $tab_list .= "<li style='font-weight:bold;'>" . esc_html($tab_name_individual['tab_name']) . " (" .  $fig_number . ")</li>";
+                        } else {
+                            $tab_list .= "<li>" . esc_html($tab_name_individual['tab_name']) . " (" .  $fig_number . ")</li>";
+                        }
+
+
+                    }
+                    $tab_list .= "</ol>";
+
+                    echo $tab_list; 
+                }     
             }
-            echo $tab_count; 
         }
 
         if ($column === "status"){

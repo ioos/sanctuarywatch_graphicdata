@@ -815,6 +815,9 @@ button:focus,
 }
 @media (min-width: 769px) {  /* a bunch of new stuff here for updated formatting */
  
+  #title-container > h1 {
+        padding-bottom: 1%;
+  }
  #title-container .accordion-button {
   justify-content: left;
  }
