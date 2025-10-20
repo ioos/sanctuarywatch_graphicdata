@@ -57,10 +57,6 @@
                     <section class="phpdocumentor-sidebar__category -packages">
             <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="packages/Application.html" class="">Application</a>
-</h4>
-
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="packages/graphic.html" class="">graphic</a>
 </h4>
     <ul class="phpdocumentor-list">
@@ -79,10 +75,6 @@
                 
             </li>
                     <li>
-                <a href="packages/Webcr-Webcradminpartials.html" class="">Webcradminpartials</a>
-                
-            </li>
-                    <li>
                 <a href="packages/Webcr-Webcrincludes.html" class="">Webcrincludes</a>
                 
             </li>
@@ -95,6 +87,10 @@
                 
             </li>
             </ul>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Application.html" class="">Application</a>
+</h4>
 
                         </section>
             
@@ -238,6 +234,13 @@
 <dd>Populate custom fields for Modal content type in the admin screen.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Webcr-Modal.html#method_enqueue_modal_admin_columns_css">enqueue_modal_admin_columns_css()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Enqueues custom CSS for modal admin columns on the post type edit screen.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Webcr-Modal.html#method_filter_modal_by_modal_scene">filter_modal_by_modal_scene()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -264,6 +267,12 @@
                                 &nbsp;: void    </span>
 </dt>
 <dd>Filter the Modal admin screen results based on selected or stored filter values.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Webcr-Modal.html#method_modal_warning_notice_tabs">modal_warning_notice_tabs()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Webcr-Modal.html#method_register_modal_rest_fields">register_modal_rest_fields()</a>
@@ -582,7 +591,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-modal.php"><a href="files/plugins-graphic-data-plugin-includes-admin-modal.html"><abbr title="plugins/graphic_data_plugin/includes/admin-modal.php">admin-modal.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">758</span>
+    <span class="phpdocumentor-element-found-in__line">783</span>
 
     </aside>
 
@@ -758,7 +767,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-modal.php"><a href="files/plugins-graphic-data-plugin-includes-admin-modal.html"><abbr title="plugins/graphic_data_plugin/includes/admin-modal.php">admin-modal.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">800</span>
+    <span class="phpdocumentor-element-found-in__line">929</span>
 
     </aside>
 
@@ -798,6 +807,72 @@ from being applied.</p>
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
         <a href="classes/Webcr-Modal.html#method_custom_modal_column#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_enqueue_modal_admin_columns_css">
+        enqueue_modal_admin_columns_css()
+        <a href="classes/Webcr-Modal.html#method_enqueue_modal_admin_columns_css" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-modal.php"><a href="files/plugins-graphic-data-plugin-includes-admin-modal.html"><abbr title="plugins/graphic_data_plugin/includes/admin-modal.php">admin-modal.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">613</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Enqueues custom CSS for modal admin columns on the post type edit screen.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">enqueue_modal_admin_columns_css</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$hook</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>This function conditionally loads CSS styling for the admin columns display
+when viewing the list of 'modal' custom post type entries in the WordPress admin.
+The CSS is only enqueued when on the edit.php screen for the modal post type.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$hook</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The current admin page hook suffix.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Webcr-Modal.html#method_enqueue_modal_admin_columns_css#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -896,7 +971,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-modal.php"><a href="files/plugins-graphic-data-plugin-includes-admin-modal.html"><abbr title="plugins/graphic_data_plugin/includes/admin-modal.php">admin-modal.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">576</span>
+    <span class="phpdocumentor-element-found-in__line">575</span>
 
     </aside>
 
@@ -979,7 +1054,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-modal.php"><a href="files/plugins-graphic-data-plugin-includes-admin-modal.html"><abbr title="plugins/graphic_data_plugin/includes/admin-modal.php">admin-modal.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">614</span>
+    <span class="phpdocumentor-element-found-in__line">639</span>
 
     </aside>
 
@@ -1044,7 +1119,7 @@ for future use.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-modal.php"><a href="files/plugins-graphic-data-plugin-includes-admin-modal.html"><abbr title="plugins/graphic_data_plugin/includes/admin-modal.php">admin-modal.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">714</span>
+    <span class="phpdocumentor-element-found-in__line">739</span>
 
     </aside>
 
@@ -1101,6 +1176,40 @@ expired. This ensures filter persistence for 20 minutes across page loads.</p>
 
                                     </dd>
                                             </dl>
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_modal_warning_notice_tabs">
+        modal_warning_notice_tabs()
+        <a href="classes/Webcr-Modal.html#method_modal_warning_notice_tabs" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-modal.php"><a href="files/plugins-graphic-data-plugin-includes-admin-modal.html"><abbr title="plugins/graphic_data_plugin/includes/admin-modal.php">admin-modal.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">819</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">modal_warning_notice_tabs</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
 
     
 
@@ -1170,7 +1279,7 @@ expired. This ensures filter persistence for 20 minutes across page loads.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-modal.php"><a href="files/plugins-graphic-data-plugin-includes-admin-modal.html"><abbr title="plugins/graphic_data_plugin/includes/admin-modal.php">admin-modal.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">528</span>
+    <span class="phpdocumentor-element-found-in__line">527</span>
 
     </aside>
 
@@ -1348,10 +1457,12 @@ It only runs on the Modal post type admin screen and requires a logged-in user.<
                                             <li class=""><a href="classes/Webcr-Modal.html#method_create_modal_fields">create_modal_fields()</a></li>
                                             <li class=""><a href="classes/Webcr-Modal.html#method_custom_content_type_modal">custom_content_type_modal()</a></li>
                                             <li class=""><a href="classes/Webcr-Modal.html#method_custom_modal_column">custom_modal_column()</a></li>
+                                            <li class=""><a href="classes/Webcr-Modal.html#method_enqueue_modal_admin_columns_css">enqueue_modal_admin_columns_css()</a></li>
                                             <li class=""><a href="classes/Webcr-Modal.html#method_filter_modal_by_modal_scene">filter_modal_by_modal_scene()</a></li>
                                             <li class=""><a href="classes/Webcr-Modal.html#method_get_modal_filter_value">get_modal_filter_value()</a></li>
                                             <li class=""><a href="classes/Webcr-Modal.html#method_modal_filter_dropdowns">modal_filter_dropdowns()</a></li>
                                             <li class=""><a href="classes/Webcr-Modal.html#method_modal_location_filter_results">modal_location_filter_results()</a></li>
+                                            <li class=""><a href="classes/Webcr-Modal.html#method_modal_warning_notice_tabs">modal_warning_notice_tabs()</a></li>
                                             <li class=""><a href="classes/Webcr-Modal.html#method_register_modal_rest_fields">register_modal_rest_fields()</a></li>
                                             <li class=""><a href="classes/Webcr-Modal.html#method_store_modal_filter_values">store_modal_filter_values()</a></li>
                                     </ul>

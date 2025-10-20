@@ -376,6 +376,9 @@ class webcr_validation {
      * @global array $_POST Contains the submitted Modal post type field values.
      * @return bool True if all validation passes and post can be saved, false otherwise.
      *
+     * Transients set on new modal post:
+     * - 'modal_new_post': Set to "true"  (30 second expiration)
+     * 
      * Transients set on validation failure:
      * - 'modal_errors': Array of error messages (30 second expiration)
      * - 'modal_post_status': Set to "post_error" (30 second expiration)
@@ -594,6 +597,13 @@ class webcr_validation {
 
         } else {
             $function_utilities ->  fields_to_transient('modal_post_status', "post_good", 30);  
+        }
+
+        if (isset($_POST['_wp_http_referer'])) {
+            $http_referer = $_POST['_wp_http_referer'];
+            if (str_contains($http_referer, 'post-new.php')) {
+                $function_utilities ->  fields_to_transient('modal_post_new', "true", 30);  
+            }
         }
 
         return $save_modal_fields;
