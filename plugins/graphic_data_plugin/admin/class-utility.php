@@ -66,8 +66,6 @@ class Webcr_Utility {
         // Check if transient exists for this user
         $transient_name = $current_post_type . "_error_all_fields_user_{$user_id}";
 
-        $transient_list = $this->get_all_transients();
-
         $transient_data = get_transient($transient_name);
         
         if ($transient_data !== false) {
@@ -83,19 +81,6 @@ class Webcr_Utility {
         }
     }
 
-//temp function to get all transients
-function get_all_transients() {
-    global $wpdb;
-    
-    $transients = $wpdb->get_results(
-        "SELECT option_name AS name, option_value AS value 
-        FROM $wpdb->options 
-        WHERE option_name LIKE '_transient_%' 
-        OR option_name LIKE '_site_transient_%'"
-    );
-    
-    return $transients;
-}
 
     /**
      * Generalized function to write all field values from any custom content type to transients
@@ -384,6 +369,39 @@ function get_all_transients() {
     /**
      * Create Instance filter dropdown shown in the Scene, Modal, and Figure admin column screens.
      *
+     * Generates a dropdown filter for selecting instances with role-based access control.
+     * Content editors see only their assigned instances, while administrators and content managers see all published instances.
+     * The dropdown maintains the selected value across page loads via GET parameter or stored filter value.
+     *
+     * @since 1.0.0
+     *
+     * @global wpdb $wpdb WordPress database abstraction object.
+     *
+     * @param string $element_name The name and ID attribute for the select element.
+     *                             Used for form submission and DOM targeting.
+     *
+     * @return void Outputs the HTML select element directly to the buffer.
+     *
+     * @uses wp_get_current_user()     Retrieves the current user object.
+     * @uses current_user_can()        Checks user capabilities for role-based filtering.
+     * @uses get_user_meta()            Fetches assigned instances for content editors.
+     * @uses selected()                 WordPress helper for marking selected options.
+     * @uses esc_attr()                 Escapes attribute values for security.
+     * @uses esc_html()                 Escapes output text for security.
+     * @uses esc_html__()               Translates and escapes text.
+     * @uses $this->get_filter_value()  Retrieves stored filter value (custom method).
+     *
+     * @example
+     * // Display instance filter with custom element name
+     * $this->createInstanceDropDownFilter('scene_instance');
+     *
+     * @security
+     * - Sanitizes instance IDs using absint() before SQL queries
+     * - Escapes all output using esc_attr() and esc_html()
+     * - Validates user permissions before showing filtered results
+     * - Prepares SQL safely by using sanitized, imploded integer arrays
+     *
+     * @access public
      */
     public function createInstanceDropDownFilter ($element_name){
         global $wpdb;
@@ -391,9 +409,9 @@ function get_all_transients() {
 
         $current_user = wp_get_current_user();
 
-        // Check if user is content manager but not administrator
+        // Check if user is content editor but not administrator
         if (current_user_can('content_editor') && !current_user_can('administrator')) {
-            // Get assigned instances for the content manager
+            // Get assigned instances for the content editor
             $user_instances = get_user_meta($current_user->ID, 'webcr_assigned_instances', true);
 
             // Ensure user_instances is a non-empty array before querying
@@ -411,7 +429,7 @@ function get_all_transients() {
                     AND ID IN ({$instance_ids_sql})
                     ORDER BY post_title ASC");
             }
-            // If content manager has no assigned instances, $instances remains empty, so only "All Instances" shows.
+            // If content editor has no assigned instances, $instances remains empty, so only "All Instances" shows.
 
         } else {
             // Administrators or other roles see all instances
@@ -424,7 +442,7 @@ function get_all_transients() {
         }
 
         // Get selected instance from URL or from stored value
-        $current_selection = isset($_GET['scene_instance']) ? absint($_GET['scene_instance']) : $this->get_filter_value('webcr_scene_instance');
+        $current_selection = isset($_GET["{$element_name}"]) ? absint($_GET['{$element_name}']) : $this->get_filter_value("webcr_{$element_name}");
 
         // Generate the dropdown HTML
         echo '<select name="{$element_name}" id="{$element_name}">';
