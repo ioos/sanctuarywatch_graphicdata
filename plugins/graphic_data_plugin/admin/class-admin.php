@@ -339,55 +339,22 @@ class Webcr_Admin {
 	}
 
 	/**
-	 * Add Content Manager as a role
+	 * Edit what users with the Content Editor can see on the dashboard
 	 *
 	 * @since    1.0.0
 	 */
-	function add_content_manager_custom_role() {
-		//remove_role( 'webcr_content_manager');
-		$content_manager_role_exists = wp_roles()->is_role('webcr_content_manager');
-		if ($content_manager_role_exists == false) {
-			add_role('webcr_content_manager', __('Content Manager'),
-				get_role( 'editor' )->capabilities);
-		}
-	}
-
-	/**
-	 * Edit what the Content Manager can see on the dashboard
-	 *
-	 * @since    1.0.0
-	 */
-	function restrict_content_manager_admin_menu() {
-		if (current_user_can('webcr_content_manager')) {
-		//	remove_menu_page('index.php');                  // Dashboard
+	function restrict_content_editor_admin_menu() {
+		if (current_user_can('content_editor')) {
 			remove_menu_page('edit.php');                   // Posts
-		//	remove_menu_page('upload.php');                 // Media
 			remove_menu_page('edit.php?post_type=page');    // Pages
 			remove_menu_page('manage-instance-types'); //Manage Instance Types
 			remove_menu_page('edit.php?post_type=about');
 			remove_menu_page('edit.php?post_type=instance');
-		//	remove_menu_page('edit-comments.php');          // Comments
-		//	remove_menu_page('themes.php');                 // Appearance
-		//	remove_menu_page('plugins.php');                // Plugins
-		//	remove_menu_page('users.php');                  // Users
-		//	remove_menu_page('tools.php');                  // Tools
-		//	remove_menu_page('options-general.php');        // Settings
 
 		}
 	}
 
-	// Remove various post options from top row of admin bar with users of editor capacity or lower
-	function restrict_new_post_from_admin_bar($wp_admin_bar) {
-		// Check if the user has a role of editor or lower
-		if (!current_user_can('manage_options')) {
-			// Remove the "Post" item from the "New" dropdown
-			$wp_admin_bar->remove_node('new-post');
-			$wp_admin_bar->remove_node('new-page');
-			$wp_admin_bar->remove_node('new-about');
-			$wp_admin_bar->remove_node('new-instance');
 
-		}
-	}
 	// Function to add SVG support
 	function allow_svg_uploads($mimes) {
 		$mimes['svg'] = 'image/svg+xml';

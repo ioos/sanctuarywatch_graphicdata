@@ -11,43 +11,36 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class WEBCR_Custom_Roles {
+class Custom_Roles {
 
-    /**
-     * Initialize the class
-     */
-    public function __construct() {
-        // Create custom roles on plugin activation
-        add_action('init', array($this, 'create_custom_roles'));
+	/**
+	 * Edit what users with the Content Editor can see on the dashboard
+	 *
+	 * @since    1.0.0
+	 */
+	function restrict_content_editor_admin_menu() {
+		if (current_user_can('content_editor')) {
+			remove_menu_page('edit.php');                   // Posts
+			remove_menu_page('edit.php?post_type=page');    // Pages
+			remove_menu_page('manage-instance-types'); //Manage Instance Types
+			remove_menu_page('edit.php?post_type=about');
+			remove_menu_page('edit.php?post_type=instance');
 
-        // Add meta boxes to the user edit screen
-        add_action('show_user_profile', array($this, 'add_instance_selection_fields'));
-        add_action('edit_user_profile', array($this, 'add_instance_selection_fields'));
+		}
+	}
 
-        // Save the selected instances when the user is updated
-        add_action('personal_options_update', array($this, 'save_instance_selections'));
-        add_action('edit_user_profile_update', array($this, 'save_instance_selections'));
+	// Remove various post options from top row of admin bar with users of editor capacity or lower
+	function restrict_new_post_from_admin_bar($wp_admin_bar) {
+		// Check if the user has a role of editor or lower
+		if (!current_user_can('manage_options')) {
+			// Remove the "Post" item from the "New" dropdown
+			$wp_admin_bar->remove_node('new-post');
+			$wp_admin_bar->remove_node('new-page');
+			$wp_admin_bar->remove_node('new-about');
+			$wp_admin_bar->remove_node('new-instance');
 
-        // Filter the available roles in the dropdown
-        add_filter('editable_roles', array($this, 'filter_user_roles'));
-
-        // Direct manipulation of the role dropdown output
-        add_action('admin_footer-user-new.php', array($this, 'reorder_roles_js'));
-        add_action('admin_footer-profile.php', array($this, 'reorder_roles_js'));
-        //The line below was commented out because it was breaking the selected user role on the user_edit
-        //It would change it to a value != to the users actual role
-        //add_action('admin_footer-user-edit.php', array($this, 'reorder_roles_js'));
-
-
-        // Filter admin list queries for scenes
-        add_action('pre_get_posts', array($this, 'webcr_restrict_scene_listing'));
-
-        // --- ADDED --- Hook for displaying admin notices
-        add_action('admin_notices', array($this, 'display_admin_notices'));
-
-        // --- ADDED --- Hook to restrict editing access
-        add_action('current_screen', array($this, 'webcr_restrict_scene_editing'));
-    }
+		}
+	}
 
     // Filter admin list queries for scenes
     public function webcr_restrict_scene_listing($query) {
@@ -462,10 +455,9 @@ class WEBCR_Custom_Roles {
         }
     }
 
-} // End class WEBCR_Custom_Roles
+} // End class Custom_Roles
 
-// Initialize the class
-$webcr_custom_roles = new WEBCR_Custom_Roles();
+
 
 /**
  * Check if a user has access to a specific instance

@@ -143,8 +143,8 @@ class Webcr {
 		// The class that defines the validation methods used for the custom post types
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-validation.php';
 
-		// The class that defines the validation methods used for the content editor user types
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-content-editor-role.php';
+		// The class that defines the validation methods used for the new user roles
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-new-roles.php';
 
 		// The class that defines the support page for the plugin
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-graphic-data-support.php';
@@ -172,6 +172,22 @@ class Webcr {
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' ); 
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible',10 ); 
 
+		// Load class and functions associated with new user roles
+		$plugin_custom_roles = new Custom_Roles();
+		$this->loader->add_action( 'init', $plugin_custom_roles, 'create_custom_roles' ); // Create custom roles on plugin activation
+		$this->loader->add_action( 'show_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen
+		$this->loader->add_action( 'edit_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen
+		$this->loader->add_action( 'personal_options_update', $plugin_custom_roles, 'save_instance_selections' ); // Save the selected instances when the user is updated
+		$this->loader->add_action( 'edit_user_profile_update', $plugin_custom_roles, 'save_instance_selections' ); // Save the selected instances when the user is updated
+		$this->loader->add_filter( 'editable_roles', $plugin_custom_roles, 'filter_user_roles' ); // Filter the available roles in the dropdown
+		$this->loader->add_action( 'admin_footer-user-new.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output
+		$this->loader->add_action( 'admin_footer-profile.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output
+		$this->loader->add_action( 'pre_get_posts', $plugin_custom_roles, 'webcr_restrict_scene_listing' ); // Filter admin list queries for scenes
+		$this->loader->add_action( 'admin_notices', $plugin_custom_roles, 'display_admin_notices' ); // For displaying admin notices
+		$this->loader->add_action( 'current_screen', $plugin_custom_roles, 'webcr_restrict_scene_editing' ); // For restrict editing access
+		$this->loader->add_filter( 'admin_bar_menu', $plugin_custom_roles, 'restrict_new_post_from_admin_bar', 999); 
+		$this->loader->add_filter( 'admin_menu', $plugin_custom_roles, 'restrict_content_editor_admin_menu', 999); 
+
 		// Load class and functions to change overall look and function of admin screens
 		$plugin_admin = new Webcr_Admin( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10 );  
@@ -190,10 +206,8 @@ class Webcr {
 		$this->loader->add_filter( 'use_block_editor_for_post', $plugin_admin, 'remove_gutenberg');
 		$this->loader->add_filter( 'screen_options_show_screen', $plugin_admin, 'remove_screen_options'); 
 	//	$this->loader->add_filter( 'init', $plugin_admin, 'add_content_manager_custom_role'); 
-		$this->loader->add_filter( 'admin_menu', $plugin_admin, 'restrict_content_manager_admin_menu', 999); 
 		$this->loader->add_filter( 'upload_mimes', $plugin_admin, 'allow_svg_uploads'); 
 		$this->loader->add_filter( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_bootstrap_admin', 5); 
-		$this->loader->add_filter( 'admin_bar_menu', $plugin_admin, 'restrict_new_post_from_admin_bar', 999); 
 		$this->loader->add_filter( 'gettext', $plugin_admin, 'modify_publish_button_text', 10, 3); 
 		add_filter( 'xmlrpc_enabled', '__return_false' ); 		//Disable Xlmrpc.php file
 		add_filter('screen_options_show_screen', '__return_false'); //Disable Screen Options in admin screens

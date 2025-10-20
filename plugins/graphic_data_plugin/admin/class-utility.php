@@ -344,6 +344,105 @@ function get_all_transients() {
         }
     }
 
+    /**
+     * Check if stored filter values are still valid and retrieve them if they are.
+     *
+     * This function retrieves a stored filter value from user metadata and verifies
+     * if it has exceeded its expiration time. If the value has expired, it cleans up
+     * the metadata entries and returns false. Otherwise, it returns the stored value.
+     *
+     * @since    1.0.0
+     * @access   public
+     * @param    string  $meta_key  The meta key to check expiration for.
+     * @return   bool|string|int    False if expired or not found, the value if still valid.
+     */
+    public function get_filter_value($meta_key) {
+        $user_id = get_current_user_id();
+        if (!$user_id) {
+            return false;
+        }
+        
+        $value = get_user_meta($user_id, $meta_key, true);
+        if (empty($value)) {
+            return false;
+        }
+        
+        // Check if the value has expired
+        $expiration_time = get_user_meta($user_id, $meta_key . '_expiration', true);
+        $current_time = time();
+        
+        if ($current_time > $expiration_time) {
+            // Delete expired values
+            delete_user_meta($user_id, $meta_key);
+            delete_user_meta($user_id, $meta_key . '_expiration');
+            return false;
+        }
+        
+        return $value;
+    }
+
+    /**
+     * Create Instance filter dropdown shown in the Scene, Modal, and Figure admin column screens.
+     *
+     */
+    public function createInstanceDropDownFilter ($element_name){
+        global $wpdb;
+        $instances = array(); // Initialize as empty array
+
+        $current_user = wp_get_current_user();
+
+        // Check if user is content manager but not administrator
+        if (current_user_can('content_editor') && !current_user_can('administrator')) {
+            // Get assigned instances for the content manager
+            $user_instances = get_user_meta($current_user->ID, 'webcr_assigned_instances', true);
+
+            // Ensure user_instances is a non-empty array before querying
+            if (!empty($user_instances) && is_array($user_instances)) {
+                // Sanitize instance IDs
+                $instance_ids = array_map('absint', $user_instances);
+                $instance_ids_sql = implode(',', $instance_ids);
+
+                // Query only the assigned instances
+                $instances = $wpdb->get_results("
+                    SELECT ID, post_title
+                    FROM {$wpdb->posts}
+                    WHERE post_type = 'instance'
+                    AND post_status = 'publish'
+                    AND ID IN ({$instance_ids_sql})
+                    ORDER BY post_title ASC");
+            }
+            // If content manager has no assigned instances, $instances remains empty, so only "All Instances" shows.
+
+        } else {
+            // Administrators or other roles see all instances
+            $instances = $wpdb->get_results("
+                SELECT ID, post_title
+                FROM {$wpdb->posts}
+                WHERE post_type = 'instance'
+                AND post_status = 'publish'
+                ORDER BY post_title ASC");
+        }
+
+        // Get selected instance from URL or from stored value
+        $current_selection = isset($_GET['scene_instance']) ? absint($_GET['scene_instance']) : $this->get_filter_value('webcr_scene_instance');
+
+        // Generate the dropdown HTML
+        echo '<select name="{$element_name}" id="{$element_name}">';
+        echo '<option value="">' . esc_html__('All Instances', 'webcr') . '</option>'; // Use translation function
+
+        // Check if $instances is not null and is an array before looping
+        if (is_array($instances)) {
+            foreach ($instances as $instance) {
+                // Ensure $instance is an object with ID and post_title properties
+                if (is_object($instance) && isset($instance->ID) && isset($instance->post_title)) {
+                    $selected = selected($current_selection, $instance->ID, false); // Use selected() helper
+                    echo '<option value="' . esc_attr($instance->ID) . '" ' . $selected . '>' . esc_html($instance->post_title) . '</option>';
+                }
+            }
+        }
+        echo '</select>';
+    }
+
 
     /**
      * Get a list of all instances, filtered for 'content_editor' role.
