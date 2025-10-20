@@ -416,11 +416,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Webcr-Utility.html#method_output_transient_to_js"
         },                {
-            "fqsen": "\\Webcr_Utility\u003A\u003Aget_all_transients\u0028\u0029",
-            "name": "get_all_transients",
-            "summary": "",
-            "url": "classes/Webcr-Utility.html#method_get_all_transients"
-        },                {
             "fqsen": "\\Webcr_Utility\u003A\u003Afields_to_transient\u0028\u0029",
             "name": "fields_to_transient",
             "summary": "Generalized\u0020function\u0020to\u0020write\u0020all\u0020field\u0020values\u0020from\u0020any\u0020custom\u0020content\u0020type\u0020to\u0020transients",
