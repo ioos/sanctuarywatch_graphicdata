@@ -199,6 +199,13 @@
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Webcr-Utility.html#method_createInstanceDropDownFilter">createInstanceDropDownFilter()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Create Instance filter dropdown shown in the Scene, Modal, and Figure admin column screens.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Webcr-Utility.html#method_delete_fields_transient">delete_fields_transient()</a>
     <span>
                                 &nbsp;: bool    </span>
@@ -245,6 +252,13 @@
                                 &nbsp;: array&lt;string|int, mixed&gt;|false    </span>
 </dt>
 <dd>Helper function to retrieve field values from transients</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Webcr-Utility.html#method_get_filter_value">get_filter_value()</a>
+    <span>
+                                &nbsp;: bool|string|int    </span>
+</dt>
+<dd>Check if stored filter values are still valid and retrieve them if they are.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Webcr-Utility.html#method_get_user_transient_key">get_user_transient_key()</a>
@@ -374,6 +388,51 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_createInstanceDropDownFilter">
+        createInstanceDropDownFilter()
+        <a href="classes/Webcr-Utility.html#method_createInstanceDropDownFilter" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">388</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Create Instance filter dropdown shown in the Scene, Modal, and Figure admin column screens.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">createInstanceDropDownFilter</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$element_name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$element_name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_delete_fields_transient">
         delete_fields_transient()
         <a href="classes/Webcr-Utility.html#method_delete_fields_transient" class="headerlink"><i class="fas fa-link"></i></a>
@@ -437,7 +496,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">710</span>
+    <span class="phpdocumentor-element-found-in__line">809</span>
 
     </aside>
 
@@ -794,6 +853,89 @@ the user input is preserved.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_get_filter_value">
+        get_filter_value()
+        <a href="classes/Webcr-Utility.html#method_get_filter_value" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">359</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Check if stored filter values are still valid and retrieve them if they are.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">get_filter_value</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$meta_key</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool|string|int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>This function retrieves a stored filter value from user metadata and verifies
+if it has exceeded its expiration time. If the value has expired, it cleans up
+the metadata entries and returns false. Otherwise, it returns the stored value.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$meta_key</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The meta key to check expiration for.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Webcr-Utility.html#method_get_filter_value#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                                <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">access</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>public</p>
+</section>
+
+                                    </dd>
+                                            </dl>
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool|string|int</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>False if expired or not found, the value if still valid.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_get_user_transient_key">
         get_user_transient_key()
         <a href="classes/Webcr-Utility.html#method_get_user_transient_key" class="headerlink"><i class="fas fa-link"></i></a>
@@ -859,7 +1001,7 @@ the user input is preserved.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">692</span>
+    <span class="phpdocumentor-element-found-in__line">791</span>
 
     </aside>
 
@@ -997,7 +1139,7 @@ Notices are displayed only on the post type edit screen after a post has been up
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">678</span>
+    <span class="phpdocumentor-element-found-in__line">777</span>
 
     </aside>
 
@@ -1163,7 +1305,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">353</span>
+    <span class="phpdocumentor-element-found-in__line">452</span>
 
     </aside>
 
@@ -1206,7 +1348,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">638</span>
+    <span class="phpdocumentor-element-found-in__line">737</span>
 
     </aside>
 
@@ -1250,7 +1392,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">483</span>
+    <span class="phpdocumentor-element-found-in__line">582</span>
 
     </aside>
 
@@ -1294,7 +1436,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">411</span>
+    <span class="phpdocumentor-element-found-in__line">510</span>
 
     </aside>
 
@@ -1338,7 +1480,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">572</span>
+    <span class="phpdocumentor-element-found-in__line">671</span>
 
     </aside>
 
@@ -1382,7 +1524,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">622</span>
+    <span class="phpdocumentor-element-found-in__line">721</span>
 
     </aside>
 
@@ -1426,7 +1568,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">537</span>
+    <span class="phpdocumentor-element-found-in__line">636</span>
 
     </aside>
 
@@ -1470,7 +1612,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">591</span>
+    <span class="phpdocumentor-element-found-in__line">690</span>
 
     </aside>
 
@@ -1514,7 +1656,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">440</span>
+    <span class="phpdocumentor-element-found-in__line">539</span>
 
     </aside>
 
@@ -1745,6 +1887,7 @@ posts reloads after the save.</p>
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/Webcr-Utility.html#method_createInstanceDropDownFilter">createInstanceDropDownFilter()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_delete_fields_transient">delete_fields_transient()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_display_warning_message_if_new_post_impossible">display_warning_message_if_new_post_impossible()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_dummy_sanitize">dummy_sanitize()</a></li>
@@ -1752,6 +1895,7 @@ posts reloads after the save.</p>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_fields_to_transient">fields_to_transient()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_get_all_transients">get_all_transients()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_get_fields_from_transient">get_fields_from_transient()</a></li>
+                                            <li class=""><a href="classes/Webcr-Utility.html#method_get_filter_value">get_filter_value()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_get_user_transient_key">get_user_transient_key()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_meta_get_callback">meta_get_callback()</a></li>
                                             <li class=""><a href="classes/Webcr-Utility.html#method_output_transient_to_js">output_transient_to_js()</a></li>

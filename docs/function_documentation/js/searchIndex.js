@@ -86,20 +86,10 @@ Search.appendIndex(
             "summary": "Filters\u0020the\u0020text\u0020of\u0020the\u0020Publish\u0020and\u0020Update\u0020buttons\u0020to\u0020display\u0020\u0022Save\u0022\u0020instead.",
             "url": "classes/Webcr-Admin.html#method_modify_publish_button_text"
         },                {
-            "fqsen": "\\Webcr_Admin\u003A\u003Aadd_content_manager_custom_role\u0028\u0029",
-            "name": "add_content_manager_custom_role",
-            "summary": "Add\u0020Content\u0020Manager\u0020as\u0020a\u0020role",
-            "url": "classes/Webcr-Admin.html#method_add_content_manager_custom_role"
-        },                {
-            "fqsen": "\\Webcr_Admin\u003A\u003Arestrict_content_manager_admin_menu\u0028\u0029",
-            "name": "restrict_content_manager_admin_menu",
-            "summary": "Edit\u0020what\u0020the\u0020Content\u0020Manager\u0020can\u0020see\u0020on\u0020the\u0020dashboard",
-            "url": "classes/Webcr-Admin.html#method_restrict_content_manager_admin_menu"
-        },                {
-            "fqsen": "\\Webcr_Admin\u003A\u003Arestrict_new_post_from_admin_bar\u0028\u0029",
-            "name": "restrict_new_post_from_admin_bar",
-            "summary": "",
-            "url": "classes/Webcr-Admin.html#method_restrict_new_post_from_admin_bar"
+            "fqsen": "\\Webcr_Admin\u003A\u003Arestrict_content_editor_admin_menu\u0028\u0029",
+            "name": "restrict_content_editor_admin_menu",
+            "summary": "Edit\u0020what\u0020users\u0020with\u0020the\u0020Content\u0020Editor\u0020can\u0020see\u0020on\u0020the\u0020dashboard",
+            "url": "classes/Webcr-Admin.html#method_restrict_content_editor_admin_menu"
         },                {
             "fqsen": "\\Webcr_Admin\u003A\u003Aallow_svg_uploads\u0028\u0029",
             "name": "allow_svg_uploads",
@@ -135,61 +125,6 @@ Search.appendIndex(
             "name": "version",
             "summary": "The\u0020version\u0020of\u0020this\u0020plugin.",
             "url": "classes/Webcr-Admin.html#property_version"
-        },                {
-            "fqsen": "\\webcr_user_has_instance_access\u0028\u0029",
-            "name": "webcr_user_has_instance_access",
-            "summary": "Check\u0020if\u0020a\u0020user\u0020has\u0020access\u0020to\u0020a\u0020specific\u0020instance",
-            "url": "namespaces/default.html#function_webcr_user_has_instance_access"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles",
-            "name": "WEBCR_Custom_Roles",
-            "summary": "",
-            "url": "classes/WEBCR-Custom-Roles.html"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
-            "summary": "Initialize\u0020the\u0020class",
-            "url": "classes/WEBCR-Custom-Roles.html#method___construct"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003Awebcr_restrict_scene_listing\u0028\u0029",
-            "name": "webcr_restrict_scene_listing",
-            "summary": "",
-            "url": "classes/WEBCR-Custom-Roles.html#method_webcr_restrict_scene_listing"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003Acreate_custom_roles\u0028\u0029",
-            "name": "create_custom_roles",
-            "summary": "Create\u0020the\u0020custom\u0020roles\u0020if\u0020they\u0020don\u0027t\u0020exist",
-            "url": "classes/WEBCR-Custom-Roles.html#method_create_custom_roles"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003Afilter_user_roles\u0028\u0029",
-            "name": "filter_user_roles",
-            "summary": "Filter\u0020the\u0020available\u0020user\u0020roles",
-            "url": "classes/WEBCR-Custom-Roles.html#method_filter_user_roles"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003Areorder_roles_js\u0028\u0029",
-            "name": "reorder_roles_js",
-            "summary": "Add\u0020JavaScript\u0020to\u0020reorder\u0020the\u0020role\u0020dropdown\u0020directly\u0020in\u0020the\u0020DOM",
-            "url": "classes/WEBCR-Custom-Roles.html#method_reorder_roles_js"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003Aadd_instance_selection_fields\u0028\u0029",
-            "name": "add_instance_selection_fields",
-            "summary": "Add\u0020instance\u0020selection\u0020fields\u0020to\u0020the\u0020user\u0020edit\u0020screen",
-            "url": "classes/WEBCR-Custom-Roles.html#method_add_instance_selection_fields"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003Asave_instance_selections\u0028\u0029",
-            "name": "save_instance_selections",
-            "summary": "Save\u0020the\u0020selected\u0020instances\u0020when\u0020the\u0020user\u0020is\u0020updated",
-            "url": "classes/WEBCR-Custom-Roles.html#method_save_instance_selections"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003Awebcr_restrict_scene_editing\u0028\u0029",
-            "name": "webcr_restrict_scene_editing",
-            "summary": "Restricts\u0020access\u0020to\u0020the\u0020scene\u0020edit\u0020screen\u0020based\u0020on\u0020user\u0020role\u0020and\u0020assigned\u0020instances.",
-            "url": "classes/WEBCR-Custom-Roles.html#method_webcr_restrict_scene_editing"
-        },                {
-            "fqsen": "\\WEBCR_Custom_Roles\u003A\u003Adisplay_admin_notices\u0028\u0029",
-            "name": "display_admin_notices",
-            "summary": "Displays\u0020admin\u0020notices\u0020based\u0020on\u0020query\u0020parameters.",
-            "url": "classes/WEBCR-Custom-Roles.html#method_display_admin_notices"
         },                {
             "fqsen": "\\Webcr_Export_Figures",
             "name": "Webcr_Export_Figures",
@@ -406,6 +341,66 @@ Search.appendIndex(
             "summary": "Change\u0020WordPress\u0020login\u0020screen\u0020page\u0020title\u0020to\u0020Sanctuary\u0020Watch",
             "url": "classes/Webcr-Login.html#method_custom_login_title"
         },                {
+            "fqsen": "\\webcr_user_has_instance_access\u0028\u0029",
+            "name": "webcr_user_has_instance_access",
+            "summary": "Check\u0020if\u0020a\u0020user\u0020has\u0020access\u0020to\u0020a\u0020specific\u0020instance",
+            "url": "namespaces/default.html#function_webcr_user_has_instance_access"
+        },                {
+            "fqsen": "\\Custom_Roles",
+            "name": "Custom_Roles",
+            "summary": "",
+            "url": "classes/Custom-Roles.html"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Arestrict_content_editor_admin_menu\u0028\u0029",
+            "name": "restrict_content_editor_admin_menu",
+            "summary": "Edit\u0020what\u0020users\u0020with\u0020the\u0020Content\u0020Editor\u0020can\u0020see\u0020on\u0020the\u0020dashboard",
+            "url": "classes/Custom-Roles.html#method_restrict_content_editor_admin_menu"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Arestrict_new_post_from_admin_bar\u0028\u0029",
+            "name": "restrict_new_post_from_admin_bar",
+            "summary": "",
+            "url": "classes/Custom-Roles.html#method_restrict_new_post_from_admin_bar"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Awebcr_restrict_scene_listing\u0028\u0029",
+            "name": "webcr_restrict_scene_listing",
+            "summary": "",
+            "url": "classes/Custom-Roles.html#method_webcr_restrict_scene_listing"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Acreate_custom_roles\u0028\u0029",
+            "name": "create_custom_roles",
+            "summary": "Create\u0020the\u0020custom\u0020roles\u0020if\u0020they\u0020don\u0027t\u0020exist",
+            "url": "classes/Custom-Roles.html#method_create_custom_roles"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Afilter_user_roles\u0028\u0029",
+            "name": "filter_user_roles",
+            "summary": "Filter\u0020the\u0020available\u0020user\u0020roles",
+            "url": "classes/Custom-Roles.html#method_filter_user_roles"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Areorder_roles_js\u0028\u0029",
+            "name": "reorder_roles_js",
+            "summary": "Add\u0020JavaScript\u0020to\u0020reorder\u0020the\u0020role\u0020dropdown\u0020directly\u0020in\u0020the\u0020DOM",
+            "url": "classes/Custom-Roles.html#method_reorder_roles_js"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Aadd_instance_selection_fields\u0028\u0029",
+            "name": "add_instance_selection_fields",
+            "summary": "Add\u0020instance\u0020selection\u0020fields\u0020to\u0020the\u0020user\u0020edit\u0020screen",
+            "url": "classes/Custom-Roles.html#method_add_instance_selection_fields"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Asave_instance_selections\u0028\u0029",
+            "name": "save_instance_selections",
+            "summary": "Save\u0020the\u0020selected\u0020instances\u0020when\u0020the\u0020user\u0020is\u0020updated",
+            "url": "classes/Custom-Roles.html#method_save_instance_selections"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Awebcr_restrict_scene_editing\u0028\u0029",
+            "name": "webcr_restrict_scene_editing",
+            "summary": "Restricts\u0020access\u0020to\u0020the\u0020scene\u0020edit\u0020screen\u0020based\u0020on\u0020user\u0020role\u0020and\u0020assigned\u0020instances.",
+            "url": "classes/Custom-Roles.html#method_webcr_restrict_scene_editing"
+        },                {
+            "fqsen": "\\Custom_Roles\u003A\u003Adisplay_admin_notices\u0028\u0029",
+            "name": "display_admin_notices",
+            "summary": "Displays\u0020admin\u0020notices\u0020based\u0020on\u0020query\u0020parameters.",
+            "url": "classes/Custom-Roles.html#method_display_admin_notices"
+        },                {
             "fqsen": "\\Webcr_Utility",
             "name": "Webcr_Utility",
             "summary": "Utility\u0020functions\u0020used\u0020across\u0020the\u0020plugin",
@@ -470,6 +465,16 @@ Search.appendIndex(
             "name": "retrieve_post_errors_warnings",
             "summary": "Return\u0020data\u0020entry\u0020errors\u0020and\u0020warnings\u0020associated\u0020with\u0020custom\u0020posts.",
             "url": "classes/Webcr-Utility.html#method_retrieve_post_errors_warnings"
+        },                {
+            "fqsen": "\\Webcr_Utility\u003A\u003Aget_filter_value\u0028\u0029",
+            "name": "get_filter_value",
+            "summary": "Check\u0020if\u0020stored\u0020filter\u0020values\u0020are\u0020still\u0020valid\u0020and\u0020retrieve\u0020them\u0020if\u0020they\u0020are.",
+            "url": "classes/Webcr-Utility.html#method_get_filter_value"
+        },                {
+            "fqsen": "\\Webcr_Utility\u003A\u003AcreateInstanceDropDownFilter\u0028\u0029",
+            "name": "createInstanceDropDownFilter",
+            "summary": "Create\u0020Instance\u0020filter\u0020dropdown\u0020shown\u0020in\u0020the\u0020Scene,\u0020Modal,\u0020and\u0020Figure\u0020admin\u0020column\u0020screens.",
+            "url": "classes/Webcr-Utility.html#method_createInstanceDropDownFilter"
         },                {
             "fqsen": "\\Webcr_Utility\u003A\u003AreturnAllInstances\u0028\u0029",
             "name": "returnAllInstances",
