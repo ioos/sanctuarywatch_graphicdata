@@ -442,11 +442,11 @@ class Webcr_Utility {
         }
 
         // Get selected instance from URL or from stored value
-        $current_selection = isset($_GET["{$element_name}"]) ? absint($_GET['{$element_name}']) : $this->get_filter_value("webcr_{$element_name}");
+        $current_selection = isset($_GET[$element_name]) ? absint($_GET[$element_name]) : $this->get_filter_value("{$element_name}");
 
         // Generate the dropdown HTML
-        echo '<select name="{$element_name}" id="{$element_name}">';
-        echo '<option value="">' . esc_html__('All Instances', 'webcr') . '</option>'; // Use translation function
+        echo '<select name="' . $element_name . '" id="' . $element_name . '">';
+        echo '<option value="">All Instances</option>'; 
 
         // Check if $instances is not null and is an array before looping
         if (is_array($instances)) {

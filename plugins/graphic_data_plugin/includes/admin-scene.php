@@ -163,14 +163,14 @@ class Webcr_Scene {
         
         // Store field_length filter value if it exists
         if (isset($_GET['field_length']) && !empty($_GET['field_length'])) {
-            update_user_meta($user_id, 'webcr_scene_field_length', sanitize_key($_GET['field_length']));
-            update_user_meta($user_id, 'webcr_scene_field_length_expiration', $expiration_time);
+            update_user_meta($user_id, 'scene_field_length', sanitize_key($_GET['field_length']));
+            update_user_meta($user_id, 'scene_field_length_expiration', $expiration_time);
         }
         
         // Store scene_instance filter value if it exists
         if (isset($_GET['scene_instance']) && !empty($_GET['scene_instance'])) {
-            update_user_meta($user_id, 'webcr_scene_instance', absint($_GET['scene_instance']));
-            update_user_meta($user_id, 'webcr_scene_instance_expiration', $expiration_time);
+            update_user_meta($user_id, 'scene_instance', absint($_GET['scene_instance']));
+            update_user_meta($user_id, 'scene_instance_expiration', $expiration_time);
         }
     }
 
@@ -237,17 +237,17 @@ class Webcr_Scene {
         $current_time = time();
         
         // Check and clean up field_length
-        $expiration_time = get_user_meta($user_id, 'webcr_scene_field_length_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'scene_field_length_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_scene_field_length');
-            delete_user_meta($user_id, 'webcr_scene_field_length_expiration');
+            delete_user_meta($user_id, 'scene_field_length');
+            delete_user_meta($user_id, 'scene_field_length_expiration');
         }
         
         // Check and clean up scene_instance
-        $expiration_time = get_user_meta($user_id, 'webcr_scene_instance_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'scene_instance_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_scene_instance');
-            delete_user_meta($user_id, 'webcr_scene_instance_expiration');
+            delete_user_meta($user_id, 'scene_instance');
+            delete_user_meta($user_id, 'scene_instance_expiration');
         }
     }
 
@@ -283,7 +283,7 @@ class Webcr_Scene {
         );
 
         // Check for filter in URL first, then check for stored value
-        $field_length = isset($_GET["field_length"]) ? sanitize_key($_GET["field_length"]) : $this->get_scene_filter_value('webcr_scene_field_length');
+        $field_length = isset($_GET["field_length"]) ? sanitize_key($_GET["field_length"]) : $this->get_scene_filter_value('scene_field_length');
         
         if ($field_length) {
             switch ($field_length) {
@@ -307,8 +307,7 @@ class Webcr_Scene {
         }
         $field_length_dropdown .= '</select>';
 
-        echo $field_length_dropdown; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-
+        echo $field_length_dropdown; 
 
         $function_utilities = new Webcr_Utility();
         $function_utilities -> createInstanceDropDownFilter('scene_instance');
@@ -336,7 +335,7 @@ class Webcr_Scene {
         
         if ($pagenow == 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] == $type) {
             // Check URL params first, then check stored values
-            $instance = isset($_GET['scene_instance']) ? absint($_GET['scene_instance']) : $this->get_scene_filter_value('webcr_scene_instance');
+            $instance = isset($_GET['scene_instance']) ? absint($_GET['scene_instance']) : $this->get_scene_filter_value('scene_instance');
             
             if ($instance) {
                 $meta_query = array(
@@ -383,7 +382,7 @@ class Webcr_Scene {
         if (isset($_GET["field_length"])) {
             $field_length = sanitize_key($_GET["field_length"]);
         } else {
-            $stored_field_length = $this->get_scene_filter_value('webcr_scene_field_length');
+            $stored_field_length = $this->get_scene_filter_value('scene_field_length');
             $field_length = $stored_field_length ? $stored_field_length : "small"; // Default to "small" if no stored value or expired
         }
 
