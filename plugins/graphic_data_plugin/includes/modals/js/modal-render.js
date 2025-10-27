@@ -391,6 +391,44 @@ function trapFocus(modalElement) {
 
             all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
             all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id));
+            //console.log('all_figure_data1', all_figure_data);
+
+
+            // Third filter: If user is not logged in, only show published figures
+           // const isUserLoggedIn = document.body.classList.contains('logged-in');
+           // if (!isUserLoggedIn) {
+           //     all_figure_data = all_figure_data.filter(figure => figure.figure_published === "published");
+           // }
+
+            // Sort with the following priority:
+            // 1. figure_order (ascending; missing/invalid orders go last)
+            // 2. figure_title (alphabetically by first letter, for figures with the same order)
+            // 3. Maintain original order for figures with same order and title
+
+            all_figure_data.sort((a, b) => {
+                // Convert order values to numbers (NaN-safe)
+                const orderA = Number(a.figure_order);
+                const orderB = Number(b.figure_order);
+
+                const validA = !isNaN(orderA);
+                const validB = !isNaN(orderB);
+
+                // Normalize title strings
+                const titleA = (a.figure_title || '').trim().charAt(0).toLowerCase();
+                const titleB = (b.figure_title || '').trim().charAt(0).toLowerCase();
+
+                // Step 1: sort by figure_order (missing/invalid orders go last)
+                if (validA && validB && orderA !== orderB) {
+                    return orderA - orderB;
+                }
+                if (validA && !validB) return -1;
+                if (!validA && validB) return 1;
+
+                // Step 2: within the same order → sort alphabetically by first letter of title
+                return titleA.localeCompare(titleB);
+            });
+
+            //console.log('all_figure_data2', all_figure_data);
 
             //filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
             let total_published_figures = 0;
@@ -413,43 +451,6 @@ function trapFocus(modalElement) {
                     element.remove();
                 }
             }
-
-
-            // Third filter: If user is not logged in, only show published figures
-           // const isUserLoggedIn = document.body.classList.contains('logged-in');
-           // if (!isUserLoggedIn) {
-           //     all_figure_data = all_figure_data.filter(figure => figure.figure_published === "published");
-           // }
-
-            // Sort with the following priority:
-            // 1. figure_order == 1 → sorted by id
-            // 2. figure_order > 1 → sorted by id
-            // 3. missing or non-numeric figure_order → sorted by id
-            all_figure_data.sort((a, b) => {
-                const orderA = Number(a.figure_order);
-                const orderB = Number(b.figure_order);
-                const validA = !isNaN(orderA);
-                const validB = !isNaN(orderB);
-
-                const isOneA = validA && orderA === 1;
-                const isOneB = validB && orderB === 1;
-
-                const isGreaterA = validA && orderA > 1;
-                const isGreaterB = validB && orderB > 1;
-
-                if (isOneA && !isOneB) return -1;
-                if (!isOneA && isOneB) return 1;
-
-                if (isOneA && isOneB) return a.id - b.id;
-
-                if (isGreaterA && !isGreaterB) return -1;
-                if (!isGreaterA && isGreaterB) return 1;
-
-                if (isGreaterA && isGreaterB) return a.id - b.id;
-
-                // both are missing or invalid → sort by ID
-                return a.id - b.id;
-            });
 
             if (!all_figure_data){
                 //we don't create anything here...

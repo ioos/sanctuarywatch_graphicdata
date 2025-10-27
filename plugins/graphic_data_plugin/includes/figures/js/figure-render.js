@@ -435,7 +435,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
                 .catch((err) => {console.error(err)});
             }
             if (img.id  === `img_${postID}`) {
-                figureDiv.appendChild(img);
+                await figureDiv.appendChild(img);
             } else
             window.dataLayer = window.dataLayer || [];
 
@@ -453,7 +453,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
                 img.alt = '';
             }
             if (img.id  === `img_${postID}`) {
-                figureDiv.appendChild(img);
+                await figureDiv.appendChild(img);
             } else {}
 
             //Google Tags
