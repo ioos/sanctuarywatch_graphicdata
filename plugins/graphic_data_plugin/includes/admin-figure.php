@@ -1043,7 +1043,9 @@ class Webcr_Figure {
             update_post_meta($post_id, 'uploaded_path_csv', '');
             update_post_meta($post_id, 'uploaded_path_json', '');
             update_post_meta($post_id, 'uploaded_file', '');
-            update_post_meta($post_id, 'figure_interactive_arguments', '');
+            // update_post_meta($post_id, 'figure_interactive_arguments', '');
+            // error_log("file_path: " . $file_path);
+            // error_log("post_id: " . $post_id);
             update_post_meta($post_id, 'plotFields', '');
 
             wp_send_json_success([
