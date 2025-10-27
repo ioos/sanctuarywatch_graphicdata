@@ -266,7 +266,12 @@ function logFormFieldValues() {
  * const xAxisTitle = fillFormFieldValues('xAxisTitle'); // xAxisTitle will be set to "Date"
  */
 function fillFormFieldValues(elementID){
-    const interactiveFields = document.getElementsByName("figure_interactive_arguments")[0].value;
+    let interactiveFields = document.getElementsByName("figure_interactive_arguments")[0].value;
+
+    // CHECK FOR "\" AND REMOVE IF EXISTS, This is to fix escaping issues for existing figures
+    if (interactiveFields.includes('\\')) {
+        interactiveFields = interactiveFields.replace(/\\/g, '');
+    }
 
     if (interactiveFields != ""  && interactiveFields != null) {
         const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
