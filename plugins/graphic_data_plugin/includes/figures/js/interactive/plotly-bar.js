@@ -313,7 +313,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Individual Bar Column Stacking ===
                 if (isStacked === 'on' && columnXHeader !== 'None') {
-                    //console.log('// === CASE: Individual Bar Column Stacking ===');
+                    console.log('// === CASE: Individual Bar Column Stacking ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
@@ -345,7 +345,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Single Bar (no X axis) ===
                 else if (columnXHeader === 'None') {
-                    //console.log(' // === CASE: Single Bar (no X axis) ===');
+                    console.log(' // === CASE: Single Bar (no X axis) ===');
                     plotlyX = [figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`];
                     const sumY = dataToBePlotted[columnYHeader].map(val => parseFloat(val)).filter(val => !isNaN(val)).reduce((a, b) => a + b, 0);
                     plotlyY = [sumY];
@@ -366,7 +366,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Stacked across columns by X axis ===
                 else if (barStackedByX && columnXHeader !== 'None') {
-                    //console.log(' // === CASE: Stacked across columns by X axis ===');
+                    console.log(' // === CASE: Stacked across columns by X axis ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
@@ -378,23 +378,23 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                     plotlyX = Object.keys(groupMap);
                     plotlyY = Object.values(groupMap);
 
-                    allBarsPlotly.push({
-                        x: plotlyX,
-                        y: plotlyY,
-                        type: 'bar',
-                        name: `${figureArguments[targetBarColumn + 'Title']}`,
-                        showlegend: showLegendBool,
-                        marker: {
-                            color: figureArguments[targetBarColumn + 'Color'],
-                            pattern: { shape: fillType, size: 4, solidity: 0.5 }
-                        },
-                        hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
-                    });
+                    // allBarsPlotly.push({
+                    //     x: plotlyX,
+                    //     y: plotlyY,
+                    //     type: 'bar',
+                    //     name: `${figureArguments[targetBarColumn + 'Title']}`,
+                    //     showlegend: showLegendBool,
+                    //     marker: {
+                    //         color: figureArguments[targetBarColumn + 'Color'],
+                    //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
+                    //     },
+                    //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
+                    // });
                 }
 
                 // === CASE: Separate columns side-by-side per bar ===
                 else {
-                    //console.log('// === CASE: Separate columns side-by-side per bar ===');
+                    console.log('// === CASE: Separate columns side-by-side per bar ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
