@@ -140,8 +140,8 @@ class Customizer_Settings {
         
         // Add control for breadcrumb row enable/disable
         $wp_customize->add_control('breadcrumb_row_enable', array(
-            'label'       => __('Enable Breadcrumb Row', 'textdomain'),
-            'description' => __('Check to display a breadcrumb row above the navigation bar.', 'textdomain'),
+            'label'       => __('Enable Scene Logo & Site Name Row', 'textdomain'),
+            'description' => __('Check to display a row with the logo and site name (both linked) above the navigation bar on scenes.', 'textdomain'),
             'section'     => 'other_settings',
             'type'        => 'checkbox',
             'priority'    => 10,
@@ -169,7 +169,7 @@ class Customizer_Settings {
 
         // Add JavaScript for conditional control behavior
        // $wp_customize->add_panel( 'conditional_controls_js', array() );
-        add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_single_instance_scripts' ) );
+        //add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_single_instance_scripts' ) );
 
         // Add a new section for Theme Color settings
         $wp_customize->add_section( 'theme_color_settings', array(

@@ -26,13 +26,13 @@ body{
 
 #top-bar img {
   max-width: 100%;
-  height: 35px;
-  margin: 10px;
+  height: 30px;
+  margin: 5px;
 }
 
 #ioos-breadcrumb {
-  padding-top: 3px;
-  padding-bottom: 3px;
+  padding-top: 7px;
+  padding-bottom: 7px;
   text-align: center;
   align-items: center;
   min-height: 25.98px;
@@ -40,9 +40,12 @@ body{
 
 #header-margin a,
 #header-margin p {
-  display: inline;
+  display: inline-flex;            /* allow image + text on one line */
+  align-items: center;  
+  padding: 0;
   margin: 0;
   text-decoration: none;
+  vertical-align: middle;
 }
 
 .site-footer {
@@ -86,7 +89,10 @@ body{
 
 
 .navbar-emblem {
+  margin-right: 5px;
   size: 10%;
+  display: block;
+  height: auto;   
 }
 
     /* Styles for the header/branding section */
@@ -187,7 +193,7 @@ body > h1{
 /* Ensure the outer container takes full width */
 .container-fluid {
   width: 100%;
-  padding: 20px;
+  padding: 15px;
 }
 
 /* Apply flexbox layout only for PC/tablet views */
@@ -544,35 +550,64 @@ input:checked + .slider:before {
 }
 
 #header-margin > a {
-  text-decoration-line: underline;
+  text-decoration-line: none;
+  font-size: 1.5rem;
 }
 
 /* Mobile Navbar Adjustments */
 @media (max-width: 991.98px) { /* Using Bootstrap's lg breakpoint for consistency */
   body > nav > div > div { /* This targets .navbar-wrapper */
-    display: flex; /* Use flexbox to arrange brand and toggler */
-    justify-content: space-between; /* Pushes brand to left, toggler to right */
-    align-items: flex-start; /* Align items to the top of the flex line */
-    width: 100%; /* Ensure wrapper uses full available width in container-fluid */
-    margin-left: 0; /* Override the global 'margin-left: 7%' for mobile nav */
-    flex-wrap: wrap; /* Allow .navbar-collapse to wrap to the next line */
+    /* display: flex; */
+    /* Use flexbox to arrange brand and toggler */
+    /* justify-content: space-between;  */
+    /* Pushes brand to left, toggler to right */
+    /* align-items: flex-start;  */
+    /* Align items to the top of the flex line */
+    /* width: 100%;  */
+    /* Ensure wrapper uses full available width in container-fluid */
+    /* margin-left: 0;  */
+    /* Override the global 'margin-left: 7%' for mobile nav */
+    /* flex-wrap: wrap;  */
+    /* Allow .navbar-collapse to wrap to the next line */
+
+    display: grid;
+    grid-template-columns: 80% 20%;
+    grid-template-rows: auto auto;    /* two rows: top for brand/toggler, bottom for collapse */
+    align-items: center;
+    width: 100%;
+    padding: 0.25rem 0.25rem;
 
   }
 
   .navbar-brand {
-    white-space: normal;    /* Allows text to wrap, overriding Bootstrap's default 'nowrap'. */
-    word-break: break-word; /* Allows long words to break and wrap if they would otherwise overflow. */
+    display: inline-flex;        
+    /* keep logo + text inline */
+    align-items: center;         
+    /* vertically center both */
+    margin: 0;                   
+    /* adjust as needed for spacing */
+    padding: 0;
+    /* vertical-align: middle;  */
+    /* white-space: normal;     */
+    /* Allows text to wrap, overriding Bootstrap's default 'nowrap'. */
+    /* word-break: break-word;  */
+    /* Allows long words to break and wrap if they would otherwise overflow. */
     /* max-width: 75%; Remove or adjust this as flexbox will manage space. */
-    max-width: none; /* Allow flexbox to determine width */
-    margin-right: 1rem; /* Add a little space between brand and toggler if brand text is long */
-    display: inline-block;  /* Ensures 'max-width' is respected by an <a> tag and helps with vertical alignment.
-    display: inline-block;  /* Ensures 'max-width' is respected by an <a> tag and helps with vertical alignment.
-                               Bootstrap's .navbar-brand is often inline-block or block by default. */
-    vertical-align: middle; /* Helps to vertically align the brand text with the toggler icon,
-                               especially if the brand text wraps to multiple lines. */
+    /* flex: 0 0 100%;  */
+    /* max-width: none;  */
+    /* Allow flexbox to determine width */
+    /* margin-right: 1rem;  */
+    /* Add a little space between brand and toggler if brand text is long */
     /* Bootstrap's .navbar-brand usually has some 'margin-right'. If you need specific spacing
        to the right before the 75% max-width limit, you could add 'margin-right' here.
        e.g., margin-right: 10px; */
+    grid-column: 1 / 2;
+    grid-row: 1;
+    word-break: break-word;
+    white-space: normal;
+    font-weight: 400;
+    /* font-size: 1.1rem; */
+    line-height: 1.4;
   }
 }
 
@@ -606,7 +641,14 @@ input:checked + .slider:before {
   .navbar-wrapper .navbar-brand {
     /* The .navbar-brand is a direct child of .navbar-wrapper. */
     /* It will be centered horizontally due to .navbar-wrapper's 'align-items: center'. */
-    margin-bottom: 10px; /* Adds some space between the brand and the navigation links below it */
+    display: inline-flex;        /* keep logo + text inline */
+    align-items: center;         /* vertically center both */
+    margin: 0;                   /* adjust as needed for spacing */
+    padding: 0;
+    vertical-align: middle; 
+    margin-bottom: 10px; 
+    /* Adds some space between the brand and the navigation links below it */
+
   }
 
   /* Assuming .navbar-collapse is a direct child of .navbar-wrapper and contains .navbar-nav */

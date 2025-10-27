@@ -82,6 +82,7 @@ if ( get_header_textcolor() ) : ?>
 $customizer_header_row_enable = get_theme_mod('header_row_enable', '');
 
 $ioos_bar_replacement = true; 
+
 if (!empty($customizer_header_row_enable)) {
 	if ($customizer_header_row_enable == 1){
 		$ioos_bar_replacement = false;
@@ -147,23 +148,24 @@ if (!empty($customizer_breadcrumb_row_enable)) {
 			// Split the 'scene_location' string into an array based on spaces.
 			$sceneArr = explode(' ', $sceneLocation);
 			if (!empty($sceneLocation)){
-				// Loop through each word in the 'sceneLocation' array except the last one.
-				$scene_loc_webcr = '';
-				for($i = 0; $i < count($sceneArr)-1; $i++){
-					$scene_loc_webcr = $scene_loc_webcr.$sceneArr[$i].' ';
-				}
-				// Create the breadcrumb with the default links 
-				if (!empty($customizer_header_row_enable)) {
-					if ($customizer_header_row_enable == 1){
-					$customizer_header_row_breadcrumb_name = get_theme_mod('header_row_breadcrumb_name', '');
-					if ($customizer_header_row_breadcrumb_name == "" || empty($customizer_header_row_breadcrumb_name)){
-						$customizer_header_row_breadcrumb_name =  "IOOS";
-					}
-					echo '<a href="' . $customizer_header_row_image_link . '" target="_blank">' . $customizer_header_row_breadcrumb_name . '</a>';
-					echo '<p> > </p>';
-					}
-				}
-				echo '<a href="' . home_url() . '">' . get_bloginfo('name') . '</a>';
+				// // Loop through each word in the 'sceneLocation' array except the last one.
+				// $scene_loc_webcr = '';
+				// for($i = 0; $i < count($sceneArr)-1; $i++){
+				// 	$scene_loc_webcr = $scene_loc_webcr.$sceneArr[$i].' ';
+				// }
+				// // Create the breadcrumb with the default links 
+				// if (!empty($customizer_header_row_enable)) {
+				// 	if ($customizer_header_row_enable == 1){
+				// 	$customizer_header_row_breadcrumb_name = get_theme_mod('header_row_breadcrumb_name', '');
+				// 	if ($customizer_header_row_breadcrumb_name == "" || empty($customizer_header_row_breadcrumb_name)){
+				// 		$customizer_header_row_breadcrumb_name =  "IOOS";
+				// 	}
+				// 	echo '<a href="' . $customizer_header_row_image_link . '" target="_blank">' . $customizer_header_row_breadcrumb_name . '</a>';
+				// 	echo '<p> > </p>';
+				// 	}
+				// }
+				// echo '<a href="' . home_url() . '">' . get_bloginfo('name') . '</a>';
+				echo '<a class="navbar-brand" href="' . home_url() . '"><img class="navbar-emblem" width="55px" src="' . get_site_icon_url(512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png') . '" alt="Header Emblem">'. get_bloginfo('name'). '</a>';
 			}	
 		}
 		echo '	</span>';
