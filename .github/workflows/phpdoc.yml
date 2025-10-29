@@ -27,21 +27,28 @@ jobs:
           php-version: '8.1'
           tools: composer
 
-      - name: Install phpdoc-md
+      - name: Install phpDocumentor
         run: |
-          composer require --no-interaction --dev clean/phpdoc-md:^0.19
+          composer require --no-interaction --dev phpdocumentor/phpdocumentor:^3.2
 
       - name: Ensure output directory
         run: |
           mkdir -p docs/function_documentation
 
-      - name: Generate markdown documentation with phpdoc-md
+      - name: Generate HTML documentation with phpDocumentor
         run: |
-          # Generate markdown directly into docs/function_documentation
-          vendor/bin/phpdoc-md generate plugins/graphic_data_plugin \
-            --format github \
-            --output docs/function_documentation/api-reference.md \
-            --index docs/function_documentation/index.md || true
+          # Generate HTML documentation into docs/function_documentation
+          vendor/bin/phpdoc -d plugins/graphic_data_plugin -t docs/function_documentation || true
+
+      - name: Convert phpDocumentor HTML to Jekyll pages
+        run: |
+          # Convert the generated HTML files into Jekyll pages by extracting
+          # the <body> and prepending front matter so the site's layout is used.
+          if [ -d docs/function_documentation ]; then
+            python3 .github/scripts/convert_phpdoc_to_jekyll.py docs/function_documentation || true
+          else
+            echo "No phpDocumentor output found at docs/function_documentation"
+          fi
 
       - name: Add Jekyll front matter to generated pages
         run: |
