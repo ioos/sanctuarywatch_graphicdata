@@ -44,7 +44,6 @@ jobs:
           
           # Generate markdown from PHP files
           vendor/bin/phpdoc-md generate plugins/graphic_data_plugin \
-            --format github \
             --output docs/api/api-reference.md \
             --index docs/api/index.md
 
