@@ -299,24 +299,11 @@ class Webcr_Figure {
             $current_scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('webcr_figure_scene');
             $current_icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('webcr_figure_icon');
             
-            global $wpdb;
-            
             // Instances dropdown 
-            $instances = $wpdb->get_results("
-                SELECT ID, post_title 
-                FROM {$wpdb->posts} 
-                WHERE post_type = 'instance' 
-                AND post_status = 'publish' 
-                ORDER BY post_title ASC");
+            $function_utilities = new Webcr_Utility();
+            $function_utilities -> createInstanceDropDownFilter('figure_instance');
 
-            echo '<select name="figure_instance" id="figure_instance">';
-            echo '<option value="">' . esc_html__('All Instances', 'webcr') . '</option>';
-            foreach ($instances as $instance) {
-                $selected = $current_instance == $instance->ID ? 'selected="selected"' : '';
-                echo '<option value="' . esc_attr($instance->ID) . '" ' . $selected . '>' . esc_html($instance->post_title) . '</option>';
-            }
-            echo '</select>';
-
+            global $wpdb;
             // Scene dropdown
             echo '<select name="figure_scene" id="figure_scene">';
             echo '<option value="">' . esc_html__('All Scenes', 'webcr') . '</option>';

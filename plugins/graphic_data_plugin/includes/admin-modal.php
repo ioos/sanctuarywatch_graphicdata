@@ -673,25 +673,8 @@ class Webcr_Modal {
 
             echo $field_length_dropdown;
             
-            // Instances dropdown 
-            global $wpdb;
-            $instances = $wpdb->get_results("
-                SELECT ID, post_title 
-                FROM {$wpdb->posts} 
-                WHERE post_type = 'instance' 
-                AND post_status = 'publish' 
-                ORDER BY post_title ASC");
-            
-            // Get selected instance from URL or from stored value
-            $selected_instance = isset($_GET['modal_instance']) ? $_GET['modal_instance'] : $this->get_modal_filter_value('webcr_modal_instance');
-
-            echo '<select name="modal_instance" id="modal_instance">';
-            echo '<option value="">All Instances</option>';
-            foreach ($instances as $instance) {
-                $selected = ($selected_instance == $instance->ID) ? 'selected="selected"' : '';
-                echo '<option value="' . $instance->ID . '" ' . $selected . '>' . $instance->post_title . '</option>';
-            }
-            echo '</select>';
+            $function_utilities = new Webcr_Utility();
+            $function_utilities -> createInstanceDropDownFilter('scene_instance');
 
             // Scene dropdown
             echo '<select name="modal_scene" id="modal_scene">';
@@ -702,6 +685,7 @@ class Webcr_Modal {
             $selected_scene = isset($_GET['modal_scene']) ? $_GET['modal_scene'] : $this->get_modal_filter_value('webcr_modal_scene');
             
             if ($selected_instance) {
+                global $wpdb;
                 $scenes = $wpdb->get_results("
                     SELECT p.ID, p.post_title 
                     FROM $wpdb->posts p
