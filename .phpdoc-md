@@ -4,5 +4,12 @@
 // versions expect to access config properties (e.g. $config->format).
 $config = new stdClass();
 $config->format = 'github';
+// Provide additional keys phpdoc-md expects so it doesn't attempt to write to
+// an absolute path or assume missing properties.
+$config->rootNamespace = '';
+$config->classes = [];
+$config->packages = [];
+$config->destDirectory = 'docs';
+
 return $config;
 
