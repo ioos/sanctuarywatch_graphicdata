@@ -35,9 +35,15 @@ jobs:
 
       - name: Create default .phpdoc-md config
         run: |
-          # phpdoc-md expects a configuration file named .phpdoc-md in the repo root.
-          # Provide a minimal YAML config with a valid markdown format so the tool runs.
-          echo 'format: github' > .phpdoc-md
+          # phpdoc-md looks for a .phpdoc-md config file. It may accept PHP, JSON
+          # or YAML; some versions include the file with PHP. Create a PHP-backed
+          # config that returns an array. This avoids parsing ambiguity in CI.
+          cat > .phpdoc-md <<'PHP'
+<?php
+return [
+  'format' => 'github',
+];
+PHP
 
       - name: Generate Markdown documentation
         run: |
