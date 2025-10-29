@@ -1,5 +1,4 @@
 name: Generate API Documentation
-name: Generate API Documentation
 
 on:
   push:
