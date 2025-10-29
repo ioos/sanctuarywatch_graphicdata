@@ -1,6 +1,8 @@
 <?php
 // Minimal phpdoc-md config kept in the repository to avoid CI parsing issues.
-return [
-  // allowed values: 'github' or 'bitbucket'
-  'format' => 'github',
-];
+// Return an object (stdClass) rather than an array because some phpdoc-md
+// versions expect to access config properties (e.g. $config->format).
+$config = new stdClass();
+$config->format = 'github';
+return $config;
+
