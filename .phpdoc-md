@@ -1,0 +1,6 @@
+<?php
+// Minimal phpdoc-md config kept in the repository to avoid CI parsing issues.
+return [
+  // allowed values: 'github' or 'bitbucket'
+  'format' => 'github',
+];

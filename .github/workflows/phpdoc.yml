@@ -33,17 +33,9 @@ jobs:
           composer require --dev clean/phpdoc-md
           composer require --dev phpdocumentor/reflection-docblock
 
-      - name: Create default .phpdoc-md config
-        run: |
-          # phpdoc-md looks for a .phpdoc-md config file. It may accept PHP, JSON
-          # or YAML; some versions include the file with PHP. Create a PHP-backed
-          # config that returns an array. This avoids parsing ambiguity in CI.
-          cat > .phpdoc-md <<'PHP'
-<?php
-return [
-  'format' => 'github',
-];
-PHP
+      # .phpdoc-md is now committed to the repository to avoid runtime generation
+      # and parsing ambiguity in CI. If you need to change defaults, edit the
+      # `.phpdoc-md` file in the repository root.
 
       - name: Generate Markdown documentation
         run: |
