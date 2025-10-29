@@ -37,6 +37,8 @@ header_pages:
   - figures/interactive_figures.md
 
 
+  - api/index.md
+  - function_documentation/index.html
 # Exclude files from processing
 exclude:
   - training_images/
