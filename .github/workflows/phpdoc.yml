@@ -38,9 +38,7 @@ jobs:
           # phpdoc-md expects a configuration file named .phpdoc-md in the repo root.
           # Create a minimal config so the tool can load; CLI flags will still override
           # behavior used in the workflow.
-          cat > .phpdoc-md << 'EOF'
-{}
-EOF
+          echo '{}' > .phpdoc-md
 
       - name: Generate Markdown documentation
         run: |
