@@ -39,6 +39,7 @@ header_pages:
 
   - api/index.md
   - function_documentation/index.html
+  - function_documentation/index.md
 # Exclude files from processing
 exclude:
   - training_images/
