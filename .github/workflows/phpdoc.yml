@@ -46,15 +46,15 @@ jobs:
       - name: Add Jekyll front matter to generated pages
         run: |
           if [ -f docs/function_documentation/index.md ]; then
-            printf '%s
 ' '---' 'layout: page' 'title: Function Documentation' 'permalink: /function_documentation/' '---' > docs/function_documentation/index_temp.md
+            printf '%s\\n' '---' 'layout: page' 'title: Function Documentation' 'permalink: /function_documentation/' '---' > docs/function_documentation/index_temp.md
             cat docs/function_documentation/index.md >> docs/function_documentation/index_temp.md
             mv docs/function_documentation/index_temp.md docs/function_documentation/index.md
           fi
 
           if [ -f docs/function_documentation/api-reference.md ]; then
-            printf '%s
 ' '---' 'layout: page' 'title: Full API Reference' 'permalink: /function_documentation/reference/' '---' > docs/function_documentation/api-reference_temp.md
+            printf '%s\\n' '---' 'layout: page' 'title: Full API Reference' 'permalink: /function_documentation/reference/' '---' > docs/function_documentation/api-reference_temp.md
             cat docs/function_documentation/api-reference.md >> docs/function_documentation/api-reference_temp.md
             mv docs/function_documentation/api-reference_temp.md docs/function_documentation/api-reference.md
           fi
