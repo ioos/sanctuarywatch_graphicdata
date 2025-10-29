@@ -33,6 +33,15 @@ jobs:
           composer require --dev clean/phpdoc-md
           composer require --dev phpdocumentor/reflection-docblock
 
+      - name: Create default .phpdoc-md config
+        run: |
+          # phpdoc-md expects a configuration file named .phpdoc-md in the repo root.
+          # Create a minimal config so the tool can load; CLI flags will still override
+          # behavior used in the workflow.
+          cat > .phpdoc-md << 'EOF'
+{}
+EOF
+
       - name: Generate Markdown documentation
         run: |
           # Create output directory
