@@ -36,8 +36,8 @@ jobs:
       - name: Create default .phpdoc-md config
         run: |
           # phpdoc-md expects a configuration file named .phpdoc-md in the repo root.
-          # Provide a minimal config with a valid markdown format so the tool runs.
-          echo '{"format":"github"}' > .phpdoc-md
+          # Provide a minimal YAML config with a valid markdown format so the tool runs.
+          echo 'format: github' > .phpdoc-md
 
       - name: Generate Markdown documentation
         run: |
@@ -46,6 +46,7 @@ jobs:
           
           # Generate markdown from PHP files
           vendor/bin/phpdoc-md generate plugins/graphic_data_plugin \
+            --format github \
             --output docs/api/api-reference.md \
             --index docs/api/index.md
 
