@@ -1,11 +1,11 @@
 name: Generate API Documentation
+name: Generate API Documentation
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
     paths:
-      - 'plugins/graphic_data_plugin/**/*.php'
+      - 'plugins/graphic_data_plugin/**'
       - '.github/workflows/phpdoc.yml'
   workflow_dispatch:
 
@@ -14,124 +14,80 @@ permissions:
 
 jobs:
   generate-docs:
-    runs-on: ubuntu-latest 
-    
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup PHP
+      - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
           tools: composer
 
-      - name: Install dependencies
+      - name: Install phpdoc-md
         run: |
-          composer require --dev clean/phpdoc-md
-          composer require --dev phpdocumentor/reflection-docblock
+          composer require --no-interaction --dev clean/phpdoc-md:^0.19
 
-      # .phpdoc-md is now committed to the repository to avoid runtime generation
-      # and parsing ambiguity in CI. If you need to change defaults, edit the
-      # `.phpdoc-md` file in the repository root.
-
-      - name: Generate Markdown documentation
+      - name: Ensure output directory
         run: |
-          # Create output directory
-          mkdir -p docs/api
-          
-          # Generate markdown from PHP files
+          mkdir -p docs/function_documentation
+
+      - name: Generate markdown documentation with phpdoc-md
+        run: |
+          # Generate markdown directly into docs/function_documentation
           vendor/bin/phpdoc-md generate plugins/graphic_data_plugin \
             --format github \
-            --output docs/api/api-reference.md \
-            --index docs/api/index.md
+            --output docs/function_documentation/api-reference.md \
+            --index docs/function_documentation/index.md || true
 
-      - name: Add Jekyll front matter
+      - name: Add Jekyll front matter to generated pages
         run: |
-          # Add front matter to index
-          cat > docs/api/index_temp.md << 'EOF'
-          ---
-          layout: page
-          title: API Reference
-          permalink: /api/
-          ---
+          if [ -f docs/function_documentation/index.md ]; then
+            cat > docs/function_documentation/index_temp.md << 'EOF'
+---
+layout: page
+title: Function Documentation
+permalink: /function_documentation/
+---
 
-          # API Documentation
-
-          This documentation is automatically generated from the plugin source code.
-
-          EOF
-          
-          if [ -f docs/api/index.md ]; then
-            cat docs/api/index.md >> docs/api/index_temp.md
-            mv docs/api/index_temp.md docs/api/index.md
-          else
-            # If no index was created, use api-reference as index
-            cat > docs/api/index.md << 'EOF'
-          ---
-          layout: page
-          title: API Reference
-          permalink: /api/
-          ---
-
-          # API Documentation
-
-          This documentation is automatically generated from the plugin source code.
-
-          [View Full API Reference](api-reference.md)
-          EOF
-          fi
-          
-          # Add front matter to main API reference
-          if [ -f docs/api/api-reference.md ]; then
-            cat > docs/api/api-reference_temp.md << 'EOF'
-          ---
-          layout: page
-          title: Full API Reference
-          permalink: /api/reference/
-          ---
-
-          EOF
-            cat docs/api/api-reference.md >> docs/api/api-reference_temp.md
-            mv docs/api/api-reference_temp.md docs/api/api-reference.md
+EOF
+            cat docs/function_documentation/index.md >> docs/function_documentation/index_temp.md
+            mv docs/function_documentation/index_temp.md docs/function_documentation/index.md
           fi
 
-      - name: Update navigation in _config.yml
+          if [ -f docs/function_documentation/api-reference.md ]; then
+            cat > docs/function_documentation/api-reference_temp.md << 'EOF'
+---
+layout: page
+title: Full API Reference
+permalink: /function_documentation/reference/
+---
+
+EOF
+            cat docs/function_documentation/api-reference.md >> docs/function_documentation/api-reference_temp.md
+            mv docs/function_documentation/api-reference_temp.md docs/function_documentation/api-reference.md
+          fi
+
+      - name: Update navigation in docs/_config.yml
         run: |
-          # Check if api/index.md is already in header_pages
-          if ! grep -q "api/index.md" docs/_config.yml; then
-            # Add api/index.md to header_pages before the exclude section
-            sed -i '/^# Exclude files from processing/i\  - api/index.md' docs/_config.yml
-          fi
-          # Check if function_documentation/index.html is already in header_pages
-          if ! grep -q "function_documentation/index.html" docs/_config.yml; then
-            sed -i '/^# Exclude files from processing/i\  - function_documentation/index.html' docs/_config.yml
+          # Add function_documentation index to header_pages if missing
+          if ! grep -q "function_documentation/index.md" docs/_config.yml; then
+            sed -i "/^# Exclude files from processing/i\  - function_documentation/index.md" docs/_config.yml || true
           fi
 
-      - name: Convert phpDocumentor HTML to Jekyll pages
-        run: |
-          # If function_documentation exists, convert each generated HTML file
-          # into a Jekyll page by extracting the <body> and adding front matter.
-          if [ -d docs/function_documentation ]; then
-            python3 .github/scripts/convert_phpdoc_to_jekyll.py docs/function_documentation || true
-          else
-            echo "No phpDocumentor HTML output found at docs/function_documentation"
-          fi
-
-      - name: Commit and push changes
+      - name: Commit and push generated docs
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
-          git add docs/api/
-          git add docs/_config.yml
-          
-          # Only commit if there are changes
+          git add docs/function_documentation/ || true
+          git add docs/_config.yml || true
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "docs: Update API documentation [skip ci]"
+            git commit -m "docs: Update function documentation [skip ci]"
             git push
           fi
