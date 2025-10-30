@@ -136,7 +136,7 @@ $breadcrumb_row_replacement = true;
 if (!empty($customizer_breadcrumb_row_enable)) {
 	if ($customizer_breadcrumb_row_enable == 1){
 		$breadcrumb_row_replacement = false;
-		echo '<div id="ioos-breadcrumb">';
+		echo '<div id="site-name-logo-banner">';
 		echo '	<span id="header-margin">';
 		// Breadcrumbs are dynamically generated based on the current post's metadata to facilitate navigation and enhance SEO
 		// Fetch and store the post meta data and the scene location for the current post using its ID.
@@ -148,6 +148,8 @@ if (!empty($customizer_breadcrumb_row_enable)) {
 			// Split the 'scene_location' string into an array based on spaces.
 			$sceneArr = explode(' ', $sceneLocation);
 			if (!empty($sceneLocation)){
+
+				// OLD BREAD CRUMB LOGIC
 				// // Loop through each word in the 'sceneLocation' array except the last one.
 				// $scene_loc_webcr = '';
 				// for($i = 0; $i < count($sceneArr)-1; $i++){
@@ -165,12 +167,34 @@ if (!empty($customizer_breadcrumb_row_enable)) {
 				// 	}
 				// }
 				// echo '<a href="' . home_url() . '">' . get_bloginfo('name') . '</a>';
-				echo '<a class="navbar-brand" href="' . home_url() . '"><img class="navbar-emblem" width="55px" src="' . get_site_icon_url(512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png') . '" alt="Header Emblem">'. get_bloginfo('name'). '</a>';
+
 			}	
 		}
+		// NEW LOGO AND SITE NAME DISPLAY LOGIC
+		// echo '<a class="navbar-brand" href="' . home_url() . '"><img class="navbar-emblem" width="55px" src="' . get_site_icon_url(512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png') . '" alt="Header Emblem">'. get_bloginfo('name'). '</a>';
+		echo '<div class="site-name-logo-header">';
+		echo '  <a class="navbar-brand" href="' . home_url() . '">
+					<img class="navbar-emblem" width="55px"
+						src="' . get_site_icon_url(512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png') . '"
+						alt="Header Emblem">
+					' . get_bloginfo('name') . '
+				</a>';
+
+		echo '  <button class="navbar-toggler" type="button"
+						data-bs-toggle="collapse"
+						data-bs-target="#navbarColor01"
+						aria-controls="navbarColor01"
+						aria-expanded="false"
+						aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>';
+		echo '</div>';
+
 		echo '	</span>';
 		echo '</div>';
+		
 	}
+	
 }
 
 if ($breadcrumb_row_replacement == true){

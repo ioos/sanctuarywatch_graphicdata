@@ -164,7 +164,9 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
             header.classList.add("accordion-header");
             header.textContent = sectionTitle;
             header.style.cursor = "pointer";
-            header.style.padding = "10px";
+            header.style.padding = "12px";
+            header.style.marginRight = "7px";
+            header.style.marginLeft = "7px";
             header.style.backgroundColor = sectionColor; 
             header.style.fontWeight = "bold";
             header.style.color = textColor;

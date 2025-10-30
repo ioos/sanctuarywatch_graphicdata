@@ -111,6 +111,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				$example_json = 'example.json';
 				$example_geojson = 'example.geojson';
 
+				echo ' - Need help? See our help guide for interactive figures <a href="' . 'https://ioos.github.io/sanctuarywatch_graphicdata/figures-interactive/' . '" target="_blank">here</a><br><br>';
+
 				echo '<strong>Correct Formatting for .csv Files:</strong>';
 				echo '<br>';
 				echo ' - Be sure that every column header has a name and that none of your column header names, row data values, or metadata contain commas.<br>';

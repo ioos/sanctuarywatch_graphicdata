@@ -17,8 +17,15 @@ Version: 0.3.0-beta
 }
 
 body{
-  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  /* font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
 }
+@media (max-width: 767.98px) {
+  body{
+    /* font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
+  }
+}
+
+
 #top-bar {
   text-align: center;
   padding: 5px;
@@ -30,7 +37,35 @@ body{
   margin: 5px;
 }
 
-#ioos-breadcrumb {
+
+.site-name-logo-header {
+  /* display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;  */
+  display: grid;
+  grid-template-columns: 100% 0%;
+  grid-template-rows: auto auto;    
+  align-items: center;
+  width: 100%;
+  /* padding: 0.25rem 0.25rem; */
+  min-height: 3rem;
+}
+
+@media (max-width: 1200.98px) {
+  .site-name-logo-header {
+    display: grid;
+    grid-template-columns: 80% 20%;
+    grid-template-rows: auto auto;    
+    align-items: center;
+    width: 100%;
+    padding: 0.25rem 0.25rem;
+    min-height: 3rem;
+  }
+}
+
+
+#site-name-logo-banner {
   padding-top: 7px;
   padding-bottom: 7px;
   text-align: center;
@@ -46,6 +81,8 @@ body{
   margin: 0;
   text-decoration: none;
   vertical-align: middle;
+  font-size: 1.65rem;
+  justify-self: center;
 }
 
 .site-footer {
@@ -72,9 +109,10 @@ body{
 }
 
 /* Apply styles for mobile devices where .col-sm stacks (typically below 576px) */
-@media (max-width: 575.98px) {
+@media (max-width: 992.98px) {
   .footer-column {
       justify-content: flex-start; /* Left-justify the .footer-content-wrapper */
+      padding-bottom: 60%;
   }
 
 }
@@ -101,11 +139,11 @@ body{
       align-items: center; /* Vertically align items when side-by-side */
       gap: 15px; /* Space between logo and text block */
       justify-content: center; /* Center the whole block by default */
-      padding-bottom: 20px; /* Moved from inline style */
+      /* padding-bottom: 20px;  */
   }
 
   .image-center img {
-    width: 80px; /* Default logo size, can be adjusted */
+    width: 85px; /* Default logo size, can be adjusted */
     height: auto; /* Maintain aspect ratio */
   }
 
@@ -116,12 +154,12 @@ body{
   }
 
   .site-title-main {
-      font-size: 2.7vw; /* Default font size using viewport width */
+      font-size: 2vw; /* Default font size using viewport width */
       font-weight: bold;
   }
 
   .site-tagline-main {
-    font-size: 1.5vw; /* Default font size using viewport width */
+    font-size: 1vw; /* Default font size using viewport width */
     font-style: italic;
       font-weight: bold; /* Added to match later rule, ensure consistency */
 
@@ -194,6 +232,27 @@ body > h1{
 .container-fluid {
   width: 100%;
   padding: 15px;
+  /* padding-top: 13px;
+  padding-bottom: 13px;
+  padding-left:15px;
+  padding-right: 10%; */
+}
+
+.container-fluid-index{
+  width: 100%;
+  padding: 15px;
+}
+
+@media (max-width: 769px) {
+  .container-fluid-index{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left:10%;
+    padding-right: 10%;
+  }
 }
 
 /* Apply flexbox layout only for PC/tablet views */
@@ -302,6 +361,14 @@ body > h1{
   width: 100%;
 /*   padding: 20px; */
 }
+
+/* ✅ Center text on mobile screens (below 768px) */
+@media (max-width: 767.98px) {
+  .container-fluid {
+    /* text-align: center; */
+  }
+}
+
 
 /* Style each row */
 .row {
@@ -551,7 +618,7 @@ input:checked + .slider:before {
 
 #header-margin > a {
   text-decoration-line: none;
-  font-size: 1.5rem;
+  font-size: 1.65rem;
 }
 
 /* Mobile Navbar Adjustments */
@@ -571,18 +638,20 @@ input:checked + .slider:before {
     /* Allow .navbar-collapse to wrap to the next line */
 
     display: grid;
-    grid-template-columns: 80% 20%;
-    grid-template-rows: auto auto;    /* two rows: top for brand/toggler, bottom for collapse */
+    grid-template-columns: 100% 0%;
+    grid-template-rows: auto auto;    
     align-items: center;
     width: 100%;
-    padding: 0.25rem 0.25rem;
+    /* padding: 0.25rem 0.25rem; */
+    /* min-height: 3rem; */
+    
 
   }
 
   .navbar-brand {
     display: inline-flex;        
     /* keep logo + text inline */
-    align-items: center;         
+    /* align-items: center;          */
     /* vertically center both */
     margin: 0;                   
     /* adjust as needed for spacing */
@@ -608,6 +677,7 @@ input:checked + .slider:before {
     font-weight: 400;
     /* font-size: 1.1rem; */
     line-height: 1.4;
+    justify-self: center; /* Center horizontally in its grid cell */
   }
 }
 
@@ -629,7 +699,7 @@ input:checked + .slider:before {
   }
 
   .navbar-expand-lg > .container-fluid {
-    padding-top: 10px;
+    padding-top: 5px;
     padding-bottom: 0;
   }
 
@@ -646,7 +716,7 @@ input:checked + .slider:before {
     margin: 0;                   /* adjust as needed for spacing */
     padding: 0;
     vertical-align: middle; 
-    margin-bottom: 10px; 
+    /* margin-bottom: 10px;  */
     /* Adds some space between the brand and the navigation links below it */
 
   }
@@ -658,17 +728,20 @@ input:checked + .slider:before {
     display: flex; /* Use flexbox to control the alignment of .navbar-nav within it. */
     justify-content: center; /* Horizontally center .navbar-nav (the list of links). */
     width: 100%; /* Ensure .navbar-collapse takes available width to allow centering of its content. */
+    /* margin-top: 0.5rem; */
+    margin-top: 0.35rem;
   }
 
   .navbar-nav {
       flex-direction: row;
+      
       /* The .navbar-nav items will remain in a row. */
       /* The .navbar-nav block itself is centered by its parent, .navbar-collapse. */
   }
 }
 
 body > nav > div > div{
-  margin-left: 7%;
+  /* margin-left: 7%; */
 }
 
 
@@ -858,7 +931,7 @@ button:focus,
 @media (min-width: 769px) {  /* a bunch of new stuff here for updated formatting */
  
   #title-container > h1 {
-        padding-bottom: 1%;
+        padding-bottom: 0%;
   }
  #title-container .accordion-button {
   justify-content: left;
@@ -902,7 +975,7 @@ button:focus,
   #toc-container{
  /*     margin-left: -22% !important;
     padding-right: 0% !important; */
-    padding-left: 3.4%;
+    padding-left: 2%;
   }
 
  /*   #toc-group{
