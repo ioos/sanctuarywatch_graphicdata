@@ -113,9 +113,23 @@ function waitForElementById(id, timeout = 1000) {
 function computeStandardDeviation(arr) {
     if (!Array.isArray(arr) || arr.length === 0) return 0;
 
-    const n = arr.length;
-    const mean = arr.reduce((a, b) => a + b, 0) / n;
-    const variance = arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+    // Filter out invalid or "NA" values
+    const numericValues = arr
+        .filter(val => 
+            val !== null &&
+            val !== undefined &&
+            val !== "" &&
+            !(typeof val === "string" && val.trim().toUpperCase() === "NA") &&
+            !isNaN(val)
+        )
+        .map(val => parseFloat(val));
+
+    if (numericValues.length === 0) return 0;
+
+    const n = numericValues.length;
+    const mean = numericValues.reduce((a, b) => a + b, 0) / n;
+    const variance = numericValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+
     return Math.sqrt(variance);
 }
 
@@ -252,7 +266,12 @@ function logFormFieldValues() {
  * const xAxisTitle = fillFormFieldValues('xAxisTitle'); // xAxisTitle will be set to "Date"
  */
 function fillFormFieldValues(elementID){
-    const interactiveFields = document.getElementsByName("figure_interactive_arguments")[0].value;
+    let interactiveFields = document.getElementsByName("figure_interactive_arguments")[0].value;
+
+    // CHECK FOR "\" AND REMOVE IF EXISTS, This is to fix escaping issues for existing figures
+    if (interactiveFields.includes('\\')) {
+        interactiveFields = interactiveFields.replace(/\\/g, '');
+    }
 
     if (interactiveFields != ""  && interactiveFields != null) {
         const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));

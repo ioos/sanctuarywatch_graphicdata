@@ -17,8 +17,15 @@ Version: 0.3.0-beta
 }
 
 body{
-  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  /* font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
 }
+@media (max-width: 767.98px) {
+  body{
+    /* font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
+  }
+}
+
+
 #top-bar {
   text-align: center;
   padding: 5px;
@@ -26,13 +33,41 @@ body{
 
 #top-bar img {
   max-width: 100%;
-  height: 35px;
-  margin: 10px;
+  height: 30px;
+  margin: 5px;
 }
 
-#ioos-breadcrumb {
-  padding-top: 3px;
-  padding-bottom: 3px;
+
+.site-name-logo-header {
+  /* display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;  */
+  display: grid;
+  grid-template-columns: 100% 0%;
+  grid-template-rows: auto auto;    
+  align-items: center;
+  width: 100%;
+  /* padding: 0.25rem 0.25rem; */
+  min-height: 3rem;
+}
+
+@media (max-width: 1200.98px) {
+  .site-name-logo-header {
+    display: grid;
+    grid-template-columns: 80% 20%;
+    grid-template-rows: auto auto;    
+    align-items: center;
+    width: 100%;
+    padding: 0.25rem 0.25rem;
+    min-height: 3rem;
+  }
+}
+
+
+#site-name-logo-banner {
+  padding-top: 7px;
+  padding-bottom: 7px;
   text-align: center;
   align-items: center;
   min-height: 25.98px;
@@ -40,9 +75,14 @@ body{
 
 #header-margin a,
 #header-margin p {
-  display: inline;
+  display: inline-flex;            /* allow image + text on one line */
+  align-items: center;  
+  padding: 0;
   margin: 0;
   text-decoration: none;
+  vertical-align: middle;
+  font-size: 1.65rem;
+  justify-self: center;
 }
 
 .site-footer {
@@ -69,9 +109,10 @@ body{
 }
 
 /* Apply styles for mobile devices where .col-sm stacks (typically below 576px) */
-@media (max-width: 575.98px) {
+@media (max-width: 992.98px) {
   .footer-column {
       justify-content: flex-start; /* Left-justify the .footer-content-wrapper */
+      padding-bottom: 60%;
   }
 
 }
@@ -86,7 +127,10 @@ body{
 
 
 .navbar-emblem {
+  margin-right: 5px;
   size: 10%;
+  display: block;
+  height: auto;   
 }
 
     /* Styles for the header/branding section */
@@ -95,11 +139,11 @@ body{
       align-items: center; /* Vertically align items when side-by-side */
       gap: 15px; /* Space between logo and text block */
       justify-content: center; /* Center the whole block by default */
-      padding-bottom: 20px; /* Moved from inline style */
+      /* padding-bottom: 20px;  */
   }
 
   .image-center img {
-    width: 80px; /* Default logo size, can be adjusted */
+    width: 85px; /* Default logo size, can be adjusted */
     height: auto; /* Maintain aspect ratio */
   }
 
@@ -110,12 +154,12 @@ body{
   }
 
   .site-title-main {
-      font-size: 2.7vw; /* Default font size using viewport width */
+      font-size: 2vw; /* Default font size using viewport width */
       font-weight: bold;
   }
 
   .site-tagline-main {
-    font-size: 1.5vw; /* Default font size using viewport width */
+    font-size: 1vw; /* Default font size using viewport width */
     font-style: italic;
       font-weight: bold; /* Added to match later rule, ensure consistency */
 
@@ -187,7 +231,28 @@ body > h1{
 /* Ensure the outer container takes full width */
 .container-fluid {
   width: 100%;
-  padding: 20px;
+  padding: 15px;
+  /* padding-top: 13px;
+  padding-bottom: 13px;
+  padding-left:15px;
+  padding-right: 10%; */
+}
+
+.container-fluid-index{
+  width: 100%;
+  padding: 15px;
+}
+
+@media (max-width: 769px) {
+  .container-fluid-index{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left:10%;
+    padding-right: 10%;
+  }
 }
 
 /* Apply flexbox layout only for PC/tablet views */
@@ -296,6 +361,14 @@ body > h1{
   width: 100%;
 /*   padding: 20px; */
 }
+
+/* ✅ Center text on mobile screens (below 768px) */
+@media (max-width: 767.98px) {
+  .container-fluid {
+    /* text-align: center; */
+  }
+}
+
 
 /* Style each row */
 .row {
@@ -544,35 +617,67 @@ input:checked + .slider:before {
 }
 
 #header-margin > a {
-  text-decoration-line: underline;
+  text-decoration-line: none;
+  font-size: 1.65rem;
 }
 
 /* Mobile Navbar Adjustments */
 @media (max-width: 991.98px) { /* Using Bootstrap's lg breakpoint for consistency */
   body > nav > div > div { /* This targets .navbar-wrapper */
-    display: flex; /* Use flexbox to arrange brand and toggler */
-    justify-content: space-between; /* Pushes brand to left, toggler to right */
-    align-items: flex-start; /* Align items to the top of the flex line */
-    width: 100%; /* Ensure wrapper uses full available width in container-fluid */
-    margin-left: 0; /* Override the global 'margin-left: 7%' for mobile nav */
-    flex-wrap: wrap; /* Allow .navbar-collapse to wrap to the next line */
+    /* display: flex; */
+    /* Use flexbox to arrange brand and toggler */
+    /* justify-content: space-between;  */
+    /* Pushes brand to left, toggler to right */
+    /* align-items: flex-start;  */
+    /* Align items to the top of the flex line */
+    /* width: 100%;  */
+    /* Ensure wrapper uses full available width in container-fluid */
+    /* margin-left: 0;  */
+    /* Override the global 'margin-left: 7%' for mobile nav */
+    /* flex-wrap: wrap;  */
+    /* Allow .navbar-collapse to wrap to the next line */
+
+    display: grid;
+    grid-template-columns: 100% 0%;
+    grid-template-rows: auto auto;    
+    align-items: center;
+    width: 100%;
+    /* padding: 0.25rem 0.25rem; */
+    /* min-height: 3rem; */
+    
 
   }
 
   .navbar-brand {
-    white-space: normal;    /* Allows text to wrap, overriding Bootstrap's default 'nowrap'. */
-    word-break: break-word; /* Allows long words to break and wrap if they would otherwise overflow. */
+    display: inline-flex;        
+    /* keep logo + text inline */
+    /* align-items: center;          */
+    /* vertically center both */
+    margin: 0;                   
+    /* adjust as needed for spacing */
+    padding: 0;
+    /* vertical-align: middle;  */
+    /* white-space: normal;     */
+    /* Allows text to wrap, overriding Bootstrap's default 'nowrap'. */
+    /* word-break: break-word;  */
+    /* Allows long words to break and wrap if they would otherwise overflow. */
     /* max-width: 75%; Remove or adjust this as flexbox will manage space. */
-    max-width: none; /* Allow flexbox to determine width */
-    margin-right: 1rem; /* Add a little space between brand and toggler if brand text is long */
-    display: inline-block;  /* Ensures 'max-width' is respected by an <a> tag and helps with vertical alignment.
-    display: inline-block;  /* Ensures 'max-width' is respected by an <a> tag and helps with vertical alignment.
-                               Bootstrap's .navbar-brand is often inline-block or block by default. */
-    vertical-align: middle; /* Helps to vertically align the brand text with the toggler icon,
-                               especially if the brand text wraps to multiple lines. */
+    /* flex: 0 0 100%;  */
+    /* max-width: none;  */
+    /* Allow flexbox to determine width */
+    /* margin-right: 1rem;  */
+    /* Add a little space between brand and toggler if brand text is long */
     /* Bootstrap's .navbar-brand usually has some 'margin-right'. If you need specific spacing
        to the right before the 75% max-width limit, you could add 'margin-right' here.
        e.g., margin-right: 10px; */
+    grid-column: 1 / 2;
+    grid-row: 1;
+    word-break: break-word;
+    white-space: normal;
+    font-weight: 400;
+    /* font-size: 1.1rem; */
+    line-height: 1.4;
+    justify-self: center; /* Center horizontally in its grid cell */
   }
 }
 
@@ -594,7 +699,7 @@ input:checked + .slider:before {
   }
 
   .navbar-expand-lg > .container-fluid {
-    padding-top: 10px;
+    padding-top: 5px;
     padding-bottom: 0;
   }
 
@@ -606,7 +711,14 @@ input:checked + .slider:before {
   .navbar-wrapper .navbar-brand {
     /* The .navbar-brand is a direct child of .navbar-wrapper. */
     /* It will be centered horizontally due to .navbar-wrapper's 'align-items: center'. */
-    margin-bottom: 10px; /* Adds some space between the brand and the navigation links below it */
+    display: inline-flex;        /* keep logo + text inline */
+    align-items: center;         /* vertically center both */
+    margin: 0;                   /* adjust as needed for spacing */
+    padding: 0;
+    vertical-align: middle; 
+    /* margin-bottom: 10px;  */
+    /* Adds some space between the brand and the navigation links below it */
+
   }
 
   /* Assuming .navbar-collapse is a direct child of .navbar-wrapper and contains .navbar-nav */
@@ -616,17 +728,20 @@ input:checked + .slider:before {
     display: flex; /* Use flexbox to control the alignment of .navbar-nav within it. */
     justify-content: center; /* Horizontally center .navbar-nav (the list of links). */
     width: 100%; /* Ensure .navbar-collapse takes available width to allow centering of its content. */
+    /* margin-top: 0.5rem; */
+    margin-top: 0.35rem;
   }
 
   .navbar-nav {
       flex-direction: row;
+      
       /* The .navbar-nav items will remain in a row. */
       /* The .navbar-nav block itself is centered by its parent, .navbar-collapse. */
   }
 }
 
 body > nav > div > div{
-  margin-left: 7%;
+  /* margin-left: 7%; */
 }
 
 
@@ -816,7 +931,7 @@ button:focus,
 @media (min-width: 769px) {  /* a bunch of new stuff here for updated formatting */
  
   #title-container > h1 {
-        padding-bottom: 1%;
+        padding-bottom: 0%;
   }
  #title-container .accordion-button {
   justify-content: left;
@@ -860,7 +975,7 @@ button:focus,
   #toc-container{
  /*     margin-left: -22% !important;
     padding-right: 0% !important; */
-    padding-left: 3.4%;
+    padding-left: 2%;
   }
 
  /*   #toc-group{

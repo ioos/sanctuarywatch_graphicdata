@@ -72,8 +72,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 <div id="entire_thing"> 
-<div class="container-fluid">
+<div class="container-fluid-index">
 <!-- <i class="fa fa-clipboard-list" role="presentation" aria-label="clipboard-list icon"></i> -->
+
+
+
 <div class="image-center">
         <span class="site-branding-logo">
             <?php 
@@ -104,7 +107,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             if ($front_page_intro == false) {
                 $front_page_intro = "None";
             }
-            echo "<div class='container-fluid main-container' style='margin-top: 0px;'><h4 style='color:black'>{$front_page_intro}</h3></div>";
+            echo "<div class='container-fluid-index main-container' style='margin-top: 0px;'><h4 style='color:black'>{$front_page_intro}</h3></div>";
 
 $terms = get_terms([
     'taxonomy'   => 'instance_type',
@@ -137,8 +140,9 @@ foreach ($terms_array as $term){
     ?>
 
     <?php 
-    echo "<div class='container-fluid main-container'><h2 class ='instance_type_title' style='margin-right: auto;'>{$term['name']}</h2></div>";
-    echo "<div class='container-fluid main-container' style='margin-top: -30px; display: block'>{$term['description']}</div>";
+    echo "<hr class='mobile-separator'>";
+    echo "<div class='container-fluid-index main-container'><h2 class ='instance_type_title' style='margin-right: auto;'>{$term['name']}</h2></div>";
+    echo "<div class='container-fluid-index main-container' style='margin-top: -30px; display: block'>{$term['description']}</div>";
     echo "<div class='container main-container'>";
 
     $args = array(

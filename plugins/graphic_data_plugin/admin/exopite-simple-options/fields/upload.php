@@ -111,6 +111,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				$example_json = 'example.json';
 				$example_geojson = 'example.geojson';
 
+				echo ' - Need help? See our help guide for interactive figures <a href="' . 'https://ioos.github.io/sanctuarywatch_graphicdata/figures-interactive/' . '" target="_blank">here</a><br><br>';
+
 				echo '<strong>Correct Formatting for .csv Files:</strong>';
 				echo '<br>';
 				echo ' - Be sure that every column header has a name and that none of your column header names, row data values, or metadata contain commas.<br>';
@@ -180,27 +182,25 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 					headers.forEach((header, index) => {
 						let parsedValue = values[index] !== undefined ? values[index] : "";
 
-						// if (value.includes('"')) {
-						// 	parsedValue = parsedValue.replace(/"/g, '');
-						// }
+						// Remove stray quotes
+						// if (parsedValue.includes('"')) parsedValue = parsedValue.replace(/"/g, '');
 
-						// Convert numeric values to integers or floats, assign null for missing numerical values, and keep non-numeric as strings
-						const columnValues = result[header].filter(val => val !== "" && val !== null);
-						//const isNumericColumn = columnValues.every(val => !isNaN(val));
-						const isNumericColumn = columnValues.every(val => typeof val === "number");
-
-						if (parsedValue === "") {
-							// Use "" also for missing numeric values and "" for categorical data in Plotly.js
-							if (isNumericColumn == false) {
-								parsedValue = "";	
-							}
-							if (isNumericColumn == true) {
-								parsedValue === null;	
-								//parsedValue.push(null);
-							}
+						// Normalize missing / invalid values
+						if (
+							parsedValue === "" ||           // blank cell
+							parsedValue === null ||         // null
+							parsedValue.toUpperCase?.() === "NA" || // string "NA"
+							parsedValue.toUpperCase?.() === "NAN" || // string "NaN"
+							parsedValue === undefined ||
+							parsedValue === "null"
+						) {
+							parsedValue = "NA";
 						} else if (!isNaN(parsedValue)) {
-							parsedValue = parsedValue.includes('.') ? parseFloat(parsedValue) : parseInt(parsedValue, 10);
-						}					
+							// Convert numeric strings to numbers (keep others as-is)
+							parsedValue = parsedValue.includes(".")
+								? parseFloat(parsedValue)
+								: parseInt(parsedValue, 10);
+						}
 
 						// Push the parsed value into the respective header array
 						result[header].push(parsedValue);

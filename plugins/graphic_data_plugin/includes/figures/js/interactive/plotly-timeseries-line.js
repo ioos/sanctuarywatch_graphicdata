@@ -309,101 +309,38 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                 //Connects gaps in line where there is missing data
                 const connectGapsOpt = figureArguments[targetLineColumn + 'ConnectGaps'] === 'on';     
 
-                // //Show Standard error bars
-                // const showError = figureArguments[targetLineColumn + 'ErrorBars'];
-                // const showError_InputValuesOpt = figureArguments[targetLineColumn + 'ErrorBarsInputValues'];
-                // if (showError === 'on') {
-                //     //Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
-                //     if (showError_InputValuesOpt === 'auto') {
-                //         var errorBarY = {
-                //             type: 'data',
-                //             array: new Array(plotlyY.length).fill(stdDev),
-                //             visible: true,
-                //             color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
-                //             thickness: 1.5,
-                //             width: 8
-                //         };   
-                //     }
-                //     //Error bars (values imported from spreadsheet per point in dataset)
-                //     //Do we want high and low bounds here?
-                //     if (showError_InputValuesOpt != 'auto') {
-                //         const showError_InputValue = dataToBePlotted[showError_InputValuesOpt].filter(item => item !== "");
-                //         var errorBarY = {
-                //             type: 'data',
-                //             array: showError_InputValue.map(val => parseFloat(val)), // Convert to number if needed
-                //             visible: true,
-                //             color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
-                //             thickness: 1.5,
-                //             width: 8
-                //         }; 
-                //     }          
-                // }
-                // if (showError != 'on') {
-                //     var errorBarY = {};
-                // }
-                // Show Standard error bars
+                //Show Standard error bars
                 const showError = figureArguments[targetLineColumn + 'ErrorBars'];
                 const showError_InputValuesOpt = figureArguments[targetLineColumn + 'ErrorBarsInputValues'];
-
-                let errorBarY = {};
-
                 if (showError === 'on') {
+                    //Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
                     if (showError_InputValuesOpt === 'auto') {
-                        // Auto standard deviation — skip if Y is missing
-                        const errorArray = plotlyY.map(yVal =>
-                            (yVal !== "" && yVal !== null && !isNaN(yVal))
-                                ? stdDev
-                                : null
-                        );
-
-                        errorBarY = {
+                        var errorBarY = {
                             type: 'data',
-                            array: errorArray,
+                            array: new Array(plotlyY.length).fill(stdDev),
                             visible: true,
                             color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
                             thickness: 1.5,
                             width: 8
-                        };
-
-                    } else {
-                        // Imported error bars from spreadsheet (e.g. "south StdDev")
-                        const importedErrors = dataToBePlotted[showError_InputValuesOpt] || [];
-
-                        const errorArray = plotlyY.map((yVal, i) => {
-                            const errVal = importedErrors[i];
-
-                            // Define stricter checks for missing values
-                            const hasY = (yVal !== "" && yVal !== null && !isNaN(yVal));
-                            const hasErr = (
-                                errVal !== undefined &&
-                                errVal !== null &&
-                                errVal !== "" &&
-                                !(typeof errVal === "string" && errVal.trim() === "") &&
-                                !isNaN(errVal)
-                            );
-
-                            // ✅ Only return an error if BOTH y and stddev exist
-                            return (hasY && hasErr)
-                                ? parseFloat(errVal)
-                                : null; // Plotly will skip bar if null
-                        });
-
-                        errorBarY = {
-                            type: 'data',
-                            array: errorArray,
-                            visible: true,
-                            color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
-                            thickness: 1.5,
-                            width: 8
-                        };
+                        };   
                     }
-                } else {
-                    errorBarY = {};
+                    //Error bars (values imported from spreadsheet per point in dataset)
+                    //Do we want high and low bounds here?
+                    if (showError_InputValuesOpt != 'auto') {
+                        const showError_InputValue = dataToBePlotted[showError_InputValuesOpt].filter(item => item !== "");
+                        var errorBarY = {
+                            type: 'data',
+                            array: showError_InputValue.map(val => parseFloat(val)), // Convert to number if needed
+                            visible: true,
+                            color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+                            thickness: 1.5,
+                            width: 8
+                        }; 
+                    }          
                 }
-
-
-
-
+                if (showError != 'on') {
+                    var errorBarY = {};
+                }
 
                 // Main line with or w/o error bars
                 const singleLinePlotly = {
@@ -431,60 +368,129 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                 allLinesPlotly.push(singleLinePlotly);
 
 
-                //Show Standard Deviation Filled/Shaded Area
+                //Show Standard Deviation Lines
                 const showSD = figureArguments[targetLineColumn + 'StdDev'];
                 const showSD_InputValuesOpt = figureArguments[targetLineColumn + 'StdDevInputValues'];
                 //Standard Deviation of dataset based on dataset Y-axis values (AutoCalculated)
                 if (showSD == 'on' && showSD_InputValuesOpt === 'auto') {
-                    const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
-                    const upperY = plotlyY.filter(item => item !== "").map(y => mean + stdDev);
-                    const lowerY = plotlyY.filter(item => item !== "").map(y => mean - stdDev);
+                    const plotlyYSanitized = plotlyY.map(val => {
+                        if (
+                            val === null ||
+                            val === undefined ||
+                            val === "" ||
+                            (typeof val === "string" && val.trim().toUpperCase() === "NA") ||
+                            isNaN(val)
+                        ) {
+                            return 0;
+                        }
+                        return parseFloat(val);
+                    });
+                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSanitized.length;
+                    //console.log('mean', mean);
+                    //console.log('stdDev', stdDev);
+                    const upperY = plotlyY.map(y => mean + stdDev);
+                    const lowerY = plotlyY.map(y => mean - stdDev);
                     const filteredX = plotlyX.filter(item => item !== "");
-                    const stdFill = {
-                        x: [...filteredX, ...filteredX.slice().reverse()],
-                        y: [...upperY, ...lowerY.slice().reverse()],
-                        fill: 'toself',
-                        fillcolor: figureArguments[targetLineColumn + 'StdDevColor'] + '27',
-                        line: { color: 'transparent' },
-                        name: `${figureArguments[targetLineColumn + 'Title']} Mean ±1 SD`,
+                    // Shared legend group name
+                    const legendGroupName = `${figureArguments[targetLineColumn + 'Title']} ±1 SD`;
+
+                    // Upper SD line
+                    const stdUpperLine = {
+                        x: filteredX,
+                        y: upperY,
                         type: 'scatter',
-                        //hoverinfo: `${figureArguments[targetLineColumn + 'Title']} Mean ±1 SD`, //String(upperY-mean),
-                        hoverinfo: `skip`, //String(upperY-mean),
-                        // hovertemplate:
-                        // 'X: %{x}<br>' +
-                        // 'Y: %{y}<br>' +
-                        // '<extra></extra>',
-                        showlegend: showLegendBool,
+                        mode: 'lines',
+                        name: legendGroupName,
+                        legendgroup: legendGroupName,
+                        line: {
+                            dash: 'dash',
+                            color: figureArguments[targetLineColumn + 'StdDevColor']
+                        },
+                        hoverinfo: 'skip',
+                        showlegend: showLegendBool, // only the first one shows in legend
                         visible: true
                     };
-                    allLinesPlotly.push(stdFill);
+
+                    // Lower SD line
+                    const stdLowerLine = {
+                        x: filteredX,
+                        y: lowerY,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: legendGroupName,      // same name, but hidden in legend
+                        legendgroup: legendGroupName,
+                        line: {
+                            dash: 'dash',
+                            color: figureArguments[targetLineColumn + 'StdDevColor']
+                        },
+                        hoverinfo: 'skip',
+                        showlegend: false,          // hides duplicate legend entry
+                        visible: true
+                    };
+
+                    // Push both to plot
+                    allLinesPlotly.push(stdUpperLine, stdLowerLine);
                 }
                 //Standard Deviation (values imported from spreadsheet per point in dataset)
                 //Do we want high and low bounds here?
                 if (showSD == 'on' && showSD_InputValuesOpt != 'auto') {
-                    const stdSingleValue = dataToBePlotted[showSD_InputValuesOpt].filter(item => item !== "").reduce((a, b) => a + b, 0) / dataToBePlotted[showSD_InputValuesOpt].length;
-                    const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
-                    const upperY = plotlyY.filter(item => item !== "").map(y => mean + stdSingleValue);
-                    const lowerY = plotlyY.filter(item => item !== "").map(y => mean - stdSingleValue);
+                    const stdSingleValue = dataToBePlotted[showSD_InputValuesOpt].filter(item => item !== "NA").reduce((a, b) => a + b, 0) / dataToBePlotted[showSD_InputValuesOpt].length;
+                    //console.log('stdSingleValue', stdSingleValue);
+                    const plotlyYSanitized = plotlyY.map(val => {
+                        if (
+                            val === null ||
+                            val === undefined ||
+                            val === "" ||
+                            (typeof val === "string" && val.trim().toUpperCase() === "NA") ||
+                            isNaN(val)
+                        ) {
+                            return 0;
+                        }
+                        return parseFloat(val);
+                    });
+                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyY.length;
+                    const upperY = plotlyY.map(y => mean + stdSingleValue);
+                    const lowerY = plotlyY.map(y => mean - stdSingleValue);
                     const filteredX = plotlyX.filter(item => item !== "");
-                    const stdFill = {
-                        x: [...filteredX, ...filteredX.slice().reverse()],
-                        y: [...upperY.filter(item => item !== ""), ...lowerY.filter(item => item !== "").slice().reverse()],
-                        fill: 'toself',
-                        fillcolor: figureArguments[targetLineColumn + 'StdDevColor'] + '27',
-                        line: { color: 'transparent' },
-                        name: `${figureArguments[targetLineColumn + 'Title']} Mean ±1 SD`,
+                    // Shared legend group name
+                    const legendGroupName = `${figureArguments[targetLineColumn + 'Title']} ±1 SD`;
+
+                    // Upper SD line
+                    const stdUpperLine = {
+                        x: filteredX,
+                        y: upperY,
                         type: 'scatter',
-                        hoverinfo: `skip`,
-                        //hoverinfo: `${figureArguments[targetLineColumn + 'Title']} Mean ±1 SD`,//String(stdSingleValue),
-                        // hovertemplate:
-                        // 'X: %{x}<br>' +
-                        // 'Y: %{y}<br>' +
-                        // '<extra></extra>',
-                        showlegend: showLegendBool,
+                        mode: 'lines',
+                        name: legendGroupName,
+                        legendgroup: legendGroupName,
+                        line: {
+                            dash: 'dash',
+                            color: figureArguments[targetLineColumn + 'StdDevColor']
+                        },
+                        hoverinfo: 'skip',
+                        showlegend: showLegendBool, // only the first one shows in legend
                         visible: true
                     };
-                    allLinesPlotly.push(stdFill);
+
+                    // Lower SD line
+                    const stdLowerLine = {
+                        x: filteredX,
+                        y: lowerY,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: legendGroupName,      // same name, but hidden in legend
+                        legendgroup: legendGroupName,
+                        line: {
+                            dash: 'dash',
+                            color: figureArguments[targetLineColumn + 'StdDevColor']
+                        },
+                        hoverinfo: 'skip',
+                        showlegend: false,          // hides duplicate legend entry
+                        visible: true
+                    };
+
+                    // Push both to plot
+                    allLinesPlotly.push(stdUpperLine, stdLowerLine);
                 }
                 
                 //Percentiles and Mean lines
@@ -535,7 +541,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                             x: [xMin, xMax],
                             y: [mean, mean],
                             mode: 'lines',
-                            line: { dash: 'dash', color: figureArguments[targetLineColumn + 'Color'] + '60'},
+                            line: { dash: 'solid', color: figureArguments[targetLineColumn + 'Color'] + '60'},
                             name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
                             type: 'scatter',
                             visible: true,
@@ -553,7 +559,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                             x: [xMin, xMax],
                             y: [mean, mean],
                             mode: 'lines',
-                            line: { dash: 'dash', color: figureArguments[targetLineColumn + 'Color'] + '60'},
+                            line: { dash: 'solid', color: figureArguments[targetLineColumn + 'Color'] + '60'},
                             name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
                             type: 'scatter',
                             visible: true,

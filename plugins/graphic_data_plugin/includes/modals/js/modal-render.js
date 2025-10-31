@@ -1,4 +1,301 @@
 /**
+ * Renders a modal dialog for corresponding icon with data fetched from a WordPress REST API endpoint.
+ * The modal displays a title, tagline, and two sections of content (more info and images) 
+ * using accordions, along with dynamic tab content based on the modal's data.
+ *
+ * @param {string} key - The key used to access specific child data in the `child_obj` object,
+ *                       which contains modal configuration and content details.
+ *
+ * This function performs the following steps:
+ * 1. Constructs the URL to fetch modal data based on the `modal_id` associated with the provided `key`.
+ * 2. Fetches modal data from the WordPress REST API.
+ * 3. Updates the modal title and tagline based on the fetched data.
+ * 4. Generates two accordion sections:
+ *    - A "More Info" section containing a list of items linked to URLs.
+ *    - An "Images" section containing a list of image links.
+ * 5. Dynamically creates tabs based on the number of tabs specified in the modal data.
+ * 6. Adjusts layout and classes for mobile and desktop views.
+ * 7. Traps focus within the modal dialog to improve accessibility.
+ *
+ * Usage:
+ * Called in add_modal and table_of_contents; those functions iterate through keys of child_obj(which has all the icons in a scene )
+ */
+function render_modal(key){
+
+    let id = child_obj[key]['modal_id'];
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const fetchURL  =  protocol + "//" + host  + `/wp-json/wp/v2/modal/${id}`;
+    fetch(fetchURL)
+        .then(response => response.json())
+        .then(data => {
+
+            let modal_data = data; //.find(modal => modal.id === id);
+
+            //title stuff:
+            let title = child_obj[key]['title'];  //importat! pass as argument
+            let modal_title = document.getElementById("modal-title");
+            
+            modal_title.innerHTML = title;
+
+            //tagline container
+            let tagline_container = document.getElementById('tagline-container');
+            //add stuff for formatting here...
+
+            let modal_tagline = modal_data["modal_tagline"];
+            if (!is_mobile()){
+                tagline_container.innerHTML =  "<em>" + modal_tagline + "<em>";
+            }
+
+            //generate accordion
+            // Select the container where the accordion will be appended
+            let accordion_container = document.getElementById('accordion-container');
+            //add stuff for formatting here...
+
+            // Create the accordion element
+            let acc = document.createElement("div");
+            acc.classList.add("accordion");
+
+            let modal_info_entries = modal_data["modal_info_entries"];
+            let modal_photo_entries = modal_data["modal_photo_entries"];
+
+            if (is_mobile()){
+
+                accordion_container.setAttribute("class", "");
+
+            } else{
+                tagline_container.setAttribute("class", "");
+                accordion_container.setAttribute("class", "");
+                
+                if (modal_info_entries != 0 || modal_photo_entries != 0) {
+                    tagline_container.classList.add("col-9");
+                    accordion_container.classList.add("col-3");
+                } else {
+                    tagline_container.classList.add("col-12");
+                    accordion_container.classList.add("d-none");
+                }
+            }
+
+            //for more info
+
+            if (modal_info_entries != 0){
+
+                let collapseListHTML = '<div><ul>';
+                for (let i = 1; i < 7; i++){
+                    let info_field = "modal_info" + i;
+                    let info_text = "modal_info_text" + i;
+                    let info_url = "modal_info_url" + i;
+
+                    let modal_info_text = modal_data[info_field][info_text];
+                    let modal_info_url = modal_data[info_field][info_url];
+                    if ((modal_info_text == '') && (modal_info_url == '')){
+                        continue;
+                    }
+
+                    let listItem = document.createElement('li');
+                    let anchor = document.createElement('a');
+                    anchor.setAttribute('href', modal_info_url); 
+                    anchor.textContent = modal_info_text;
+
+                    listItem.appendChild(anchor);
+
+                    collapseListHTML += `<li> <a href="${modal_info_url}" target="_blank">${modal_info_text}</a> </li>`;
+
+                }
+                collapseListHTML += '</ul></div>';
+                let accordionItem1 = createAccordionItem("accordion-item-1", "accordion-header-1", "accordion-collapse-1", "More Info", collapseListHTML);
+                acc.appendChild(accordionItem1);
+            }
+
+            //for photos:
+
+            let modal_id = modal_data.id;
+            let collapsePhotoHTML = '<div><ul>';
+    
+            //Show the "Images" accordion item if the number of image entries is greater than 0 in the admin slider for modals.
+            if (modal_photo_entries != 0){
+                for (let i = 1; i < 7; i++){
+                    let info_field = "modal_photo" + i;
+                    let info_text = "modal_photo_text" + i;
+    
+                    let info_url;
+                    let loc = "modal_photo_location" + i;
+                    if (modal_data[info_field][loc] === "External"){
+                        info_url = "modal_photo_url" + i;
+                    } else {
+                        info_url = "modal_photo_internal" + i;
+                    }
+    
+                    let modal_info_text = modal_data[info_field][info_text];
+                    let modal_info_url = modal_data[info_field][info_url];
+                    if ((modal_info_text == '') && (modal_info_url == '')){
+                        continue;
+                    }
+    
+                    let listItem = document.createElement('li');
+                    let anchor = document.createElement('a');
+                    anchor.setAttribute('href', modal_info_url); 
+                    anchor.textContent = modal_info_text;
+    
+                    listItem.appendChild(anchor);
+    
+                    collapsePhotoHTML += `<li> <a href="${modal_info_url}" target="_blank">${modal_info_text}</a> </li>`;
+                    collapsePhotoHTML += '</ul></div>';
+                }
+
+                let accordionItem2 = createAccordionItem("accordion-item-2", "accordion-header-2", "accordion-collapse-2", "Images", collapsePhotoHTML);
+                acc.appendChild(accordionItem2);
+            } 
+            
+            if (is_mobile()){
+                let accordionItem3 = createAccordionItem("accordion-item-3", "accordion-header-3", "accordion-collapse-3", "Tagline", modal_tagline);
+                acc.prepend(accordionItem3);
+
+            }
+
+            accordion_container.appendChild(acc);
+            
+            let num_tabs = Number(modal_data["modal_tab_number"]);
+
+            for (let i =1; i <= num_tabs; i++){
+                let tab_key = "modal_tab_title" + i;
+                let tab_title = modal_data[tab_key];
+
+                create_tabs(i, tab_key, tab_title, title, modal_id);
+
+                if (i === num_tabs){
+                    break;
+                }
+
+                let mdialog = document.querySelector("#myModal > div"); //document.querySelector("#myModal");
+
+                trapFocus(mdialog);
+              
+            }
+
+            // // Select all buttons inside nav-item elements
+            // const navButtons = document.querySelectorAll('.nav-item button');
+
+            // console.log('navButtons', navButtons);
+
+            // let activeButtons = [];
+            // let inactiveButtons = [];
+
+            // // Check if any button is active (e.g., class 'active')
+            // const anyActiveButton = Array.from(navButtons).some(button => {
+            //     const isActiveClass = button.classList.contains('active');
+
+            //     if (!isActiveClass) {
+            //         inactiveButtons.push(button);
+            //     }
+
+            //     if (isActiveClass) {
+            //         let buttonExists = document.getElementById(button.id)
+            //         console.log('buttonExists', buttonExists);
+            //         if (buttonExists) {
+            //             activeButtons.push(button);
+            //         }
+            //     }
+
+            // });
+
+            // console.log('activeButtons', activeButtons);
+            // console.log('inactiveButtons', inactiveButtons);
+
+            // if (activeButtons.length == 0) {
+            //     // Activate the first one via Bootstrap API
+            //     if (inactiveButtons.length > 0) {
+            //         const firstButton = inactiveButtons[0];
+            //         const tabTrigger = new bootstrap.Tab(firstButton);
+            //         tabTrigger.show();  // ✅ Properly displays inside modal
+            //     }
+            // }
+
+            // Google Tags
+            modalWindowLoaded(title, modal_id, gaMeasurementID);
+
+            
+        })
+    .catch(error => console.error('Error fetching data:', error));
+    
+}
+
+/**
+ * Ensures at least one tab button is active inside the modal after tabs have been created or filtered.
+ *
+ * This function inspects the set of tab buttons rendered under `.nav-item button` and determines
+ * whether any of them are currently active (contain the 'active' class and exist in the DOM).
+ * If none are active, it activates the first available (previously inactive) tab using the
+ * Bootstrap Tab API so that the modal displays content correctly.
+ *
+ * Behavior details:
+ * - Collects all tab buttons within `.nav-item` elements.
+ * - Separates buttons into `activeButtons` (buttons that currently have the 'active' class and exist)
+ *   and `inactiveButtons` (buttons without the 'active' class).
+ * - If no valid active button is present, shows the first inactive button by creating a
+ *   bootstrap.Tab instance for it and calling `.show()`.
+ *
+ * Side effects:
+ * - May change modal UI state by activating a tab (modifies element classes and visible tab pane).
+ * - Uses Bootstrap's JavaScript Tab API (expects bootstrap.Tab to be available).
+ *
+ * Variables used / created:
+ * - navButtons (NodeList): all buttons found via `document.querySelectorAll('.nav-item button')`.
+ * - activeButtons (Array<HTMLButtonElement>): buttons that have 'active' and are present in DOM.
+ * - inactiveButtons (Array<HTMLButtonElement>): buttons that do not have 'active'.
+ * - anyActiveButton (boolean): result of checking whether any nav button had 'active' class during iteration.
+ * - firstButton (HTMLButtonElement): the first button from `inactiveButtons` to activate when needed.
+ *
+ * Requirements / assumptions:
+ * - The modal's tab markup uses `.nav-item button` for tab triggers (Bootstrap convention).
+ * - The Bootstrap Tab class is available on the page (bootstrap.Tab).
+ * - Buttons may have been added/removed before this function runs; the function checks existence by id.
+ *
+ * Accessibility / UX:
+ * - Activating the first available tab prevents the modal from showing an empty content area.
+ *
+ * Example:
+ * // After creating or filtering tabs, call:
+ * initTabButtons();
+ */
+//After removing tabs that do not contain content or do not contain published figures, we show only the tabs that have content and make the first one active
+function initTabButtons() {
+    // Select all buttons inside nav-item elements
+    const navButtons = document.querySelectorAll('.nav-item button');
+
+    let activeButtons = [];
+    let inactiveButtons = [];
+
+    // Check if any button is active (e.g., class 'active')
+    const anyActiveButton = Array.from(navButtons).some(button => {
+        const isActiveClass = button.classList.contains('active');
+
+        if (!isActiveClass) {
+            inactiveButtons.push(button);
+        }
+
+        if (isActiveClass) {
+            let buttonExists = document.getElementById(button.id)
+            //console.log('buttonExists', buttonExists);
+            if (buttonExists) {
+                activeButtons.push(button);
+            }
+        }
+
+    });
+
+    if (activeButtons.length == 0) {
+        // Activate the first one via Bootstrap API
+        if (inactiveButtons.length > 0) {
+            const firstButton = inactiveButtons[0];
+            const tabTrigger = new bootstrap.Tab(firstButton);
+            tabTrigger.show();  // ✅ Properly displays inside modal
+        }
+    }
+}
+
+
+/**
  * Traps the focus within a specified modal element, ensuring that the user cannot tab out of it.
  *
  * This function ensures that accessibility keyboard navigation (specifically tabbing) is confined within the modal,
@@ -82,7 +379,8 @@ function trapFocus(modalElement) {
  * Usage:
  * Called at the end of the create_tabs function
  */
- function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id){
+ function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
+
     const protocol = window.location.protocol;
     const host = window.location.host;
     const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + tab_id;
@@ -93,6 +391,8 @@ function trapFocus(modalElement) {
 
             all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
             all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id));
+            //console.log('all_figure_data1', all_figure_data);
+
 
             // Third filter: If user is not logged in, only show published figures
            // const isUserLoggedIn = document.body.classList.contains('logged-in');
@@ -101,34 +401,56 @@ function trapFocus(modalElement) {
            // }
 
             // Sort with the following priority:
-            // 1. figure_order == 1 → sorted by id
-            // 2. figure_order > 1 → sorted by id
-            // 3. missing or non-numeric figure_order → sorted by id
+            // 1. figure_order (ascending; missing/invalid orders go last)
+            // 2. figure_title (alphabetically by first letter, for figures with the same order)
+            // 3. Maintain original order for figures with same order and title
+
             all_figure_data.sort((a, b) => {
+                // Convert order values to numbers (NaN-safe)
                 const orderA = Number(a.figure_order);
                 const orderB = Number(b.figure_order);
+
                 const validA = !isNaN(orderA);
                 const validB = !isNaN(orderB);
 
-                const isOneA = validA && orderA === 1;
-                const isOneB = validB && orderB === 1;
+                // Normalize title strings
+                const titleA = (a.figure_title || '').trim().charAt(0).toLowerCase();
+                const titleB = (b.figure_title || '').trim().charAt(0).toLowerCase();
 
-                const isGreaterA = validA && orderA > 1;
-                const isGreaterB = validB && orderB > 1;
+                // Step 1: sort by figure_order (missing/invalid orders go last)
+                if (validA && validB && orderA !== orderB) {
+                    return orderA - orderB;
+                }
+                if (validA && !validB) return -1;
+                if (!validA && validB) return 1;
 
-                if (isOneA && !isOneB) return -1;
-                if (!isOneA && isOneB) return 1;
-
-                if (isOneA && isOneB) return a.id - b.id;
-
-                if (isGreaterA && !isGreaterB) return -1;
-                if (!isGreaterA && isGreaterB) return 1;
-
-                if (isGreaterA && isGreaterB) return a.id - b.id;
-
-                // both are missing or invalid → sort by ID
-                return a.id - b.id;
+                // Step 2: within the same order → sort alphabetically by first letter of title
+                return titleA.localeCompare(titleB);
             });
+
+            //console.log('all_figure_data2', all_figure_data);
+
+            //filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
+            let total_published_figures = 0;
+            for (let idx = 0; idx < all_figure_data.length; idx++) {
+                const figure_data = all_figure_data[idx];
+                const figure_published = figure_data['figure_published'];
+                if (figure_published == "published") {
+                    total_published_figures += 1;
+                }
+            }
+            if (all_figure_data.length > 0 && total_published_figures > 0) {
+                const element = document.getElementById(buttonID);
+                if (element) {
+                    element.style.display = "block";
+                }
+            } else {
+                const element = document.getElementById(buttonID);
+                if (element.style.display == "none") {
+                    console.log('buttonID', buttonID);
+                    element.remove();
+                }
+            }
 
             if (!all_figure_data){
                 //we don't create anything here...
@@ -149,6 +471,7 @@ function trapFocus(modalElement) {
                         }
                 
                         const info_obj = {
+                            figure_published: figure_data['figure_published'],
                             postID: figure_data.id,
                             scienceLink: figure_data["figure_science_info"]["figure_science_link_url"],
                             scienceText: figure_data["figure_science_info"]["figure_science_link_text"],
@@ -168,6 +491,7 @@ function trapFocus(modalElement) {
                             await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
                             //await new Promise(resolve => setTimeout(resolve, 1000)); // Stagger each render
                             await render_interactive_plots(tabContentElement, info_obj);
+                            initTabButtons();
                         })();
                     }
                 })();
@@ -236,6 +560,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     button.setAttribute('role', 'tab');
     button.setAttribute('aria-controls', tab_controls);
     button.textContent = tab_label;
+    button.style.display = "none";
 
     navItem.appendChild(button);
     myTab.appendChild(navItem);
@@ -294,10 +619,9 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     
     //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
     (async () => {
-        await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
+        await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id);
     })();
 
-    
     //Google tags triggers
     modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID);
     setupModalMoreInfoLinkTracking(modal_id);

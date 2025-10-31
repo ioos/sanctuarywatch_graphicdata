@@ -179,6 +179,11 @@ async function loadJson(targetContainer) {
                         //Admin is able to call to the interactive_arguments using document.getElementsByName("figure_interactive_arguments")[0].value;
                         //interactive_arguments is for the theme side, it is blank here because it is a place holder variable
                         let interactive_arguments = document.getElementsByName("figure_interactive_arguments")[0].value;
+
+                        // CHECK FOR "\" AND REMOVE IF EXISTS, This is to fix escaping issues for existing figures
+                        if (interactive_arguments.includes('\\')) {
+                            interactive_arguments = interactive_arguments.replace(/\\/g, '');
+                        }
                         fieldValueSaved = fillFormFieldValues(selectGraphType.id);
 
                         // Add event listeners to handle changes in the dropdown selection
