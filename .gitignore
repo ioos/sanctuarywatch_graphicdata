@@ -2,6 +2,7 @@
 **/*.DS_Store
 db.php
 debug.log
+/vendor/
 /data/
 /upgrade/
 /upgrade-temp-backup/

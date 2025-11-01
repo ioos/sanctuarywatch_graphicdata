@@ -674,7 +674,7 @@ class Webcr_Modal {
             echo $field_length_dropdown;
             
             $function_utilities = new Webcr_Utility();
-            $function_utilities -> createInstanceDropDownFilter('scene_instance');
+            $function_utilities -> createInstanceDropDownFilter('modal_instance');
 
             // Scene dropdown
             echo '<select name="modal_scene" id="modal_scene">';
