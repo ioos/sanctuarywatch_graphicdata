@@ -9,7 +9,6 @@
  * that starts the plugin.
  *
  * @link              https://www.noaa.gov
- * @package           Webcr
  *
  * @wordpress-plugin
  * Plugin Name:       Graphic Data Plugin

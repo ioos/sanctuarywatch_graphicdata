@@ -2,14 +2,14 @@
 /**
  * Register class that has the functions used to modify the login WordPress scene
  */
-class Webcr_Login {
+class Login {
 
      /**
 	 * Change the WordPress default logo at the admin login screen to the Sanctuary Watch logo.
 	 *
 	 * @since    1.0.0
 	 */
-    public function webcr_login_logo() { 
+    public function login_logo() { 
         if (!has_site_icon()) {
             $site_logo = plugin_dir_url( __FILE__ ) . 'images/onms-logo-800.png';
         } else {
@@ -34,7 +34,7 @@ class Webcr_Login {
 	 *
 	 * @since    1.0.0
 	 */
-    public function webcr_logo_url() {
+    public function logo_url() {
         return home_url();
     }
 
@@ -43,7 +43,7 @@ class Webcr_Login {
 	 *
 	 * @since    1.0.0
 	 */
-    public function webcr_logo_url_title() {
+    public function logo_url_title() {
         return 'Sanctuary Watch';
     }
 

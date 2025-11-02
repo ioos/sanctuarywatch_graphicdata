@@ -1,9 +1,9 @@
 
 <?php
 /**
- * Primary Page Template for Sanctuary Watch
+ * Primary Page Template for Graphic Data Theme
  *
- * This template is designed to display the main content area of the 'Sanctuary Watch' page within a WordPress theme.
+ * This template is designed to display the main content area of the Graphic Data Theme front page within a WordPress theme.
  * It integrates the site header and footer and provides a central container that features an image and detailed text
  * components styled directly within the template. The key elements include:
  *
@@ -12,7 +12,7 @@
  *   includes both visual and textual elements to engage users:
  *     - An emblem image (logo) for Sanctuary Watch is displayed alongside the site title and a descriptive tagline,
  *       both formatted with specific styles for prominence and readability.
- *     - A detailed description under a styled heading that introduces the WebCRs platform, explaining its purpose
+ *     - A detailed description under a styled heading that introduces the Graphic Data platform, explaining its purpose
  *       and functionality in tracking ecosystem conditions through interactive tools.
  * - **Footer Inclusion**: Implements `get_footer()` to attach the standard site-wide footer.
  *

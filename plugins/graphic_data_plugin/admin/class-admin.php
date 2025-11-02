@@ -7,7 +7,6 @@
  * @since      0.2.0-beta
  *
  * @package    graphic_data_plugin
- * @subpackage graphic_data_plugin/admin
  */
 
 /**
@@ -16,11 +15,8 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Webcr
- * @subpackage Webcr/admin
- * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
-class Webcr_Admin {
+class Admin {
 
 	/**
 	 * The ID of this plugin.
@@ -105,7 +101,7 @@ class Webcr_Admin {
 		 */
 
 		// Enqueue utlity javascript functions used across javascript files on the admin side
-		 wp_enqueue_script( "webcr-utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), $this->version, array('strategy'  => 'defer') );
+		 wp_enqueue_script( "utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), $this->version, array('strategy'  => 'defer') );
 
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post 
@@ -415,7 +411,7 @@ class Webcr_Admin {
 		
 		if ($current_theme->get('Name') !== $required_theme && $current_theme->get('Template') !== $required_theme) {
 			$message = sprintf(
-				__('Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.', 'your-plugin-textdomain'));
+				'Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.', 'your-plugin-textdomain');
 			
 			echo '<div class="notice notice-warning is-dismissible"><p>' . $message . '</p></div>';
 		}

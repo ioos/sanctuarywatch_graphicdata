@@ -22,7 +22,6 @@
  * @link       https://www.noaa.gov
  * @since      1.0.0
  *
- * @package    Webcr
  */
 
 // If uninstall not called from WordPress, then exit.

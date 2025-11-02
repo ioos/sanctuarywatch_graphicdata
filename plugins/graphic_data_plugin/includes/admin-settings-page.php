@@ -9,7 +9,7 @@ include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 class Graphic_Data_Settings_Page {
 
     // Add menu item to WordPress admin
-    function webcr_add_admin_menu() {
+    function add_admin_menu() {
         add_menu_page(
             'Graphic Data Settings', // Page title
             'Graphic Data Settings', // Menu title
@@ -88,7 +88,7 @@ class Graphic_Data_Settings_Page {
 
         // Google Analytics/Tags section
         add_settings_section(
-            'webcr_google_settings_section',
+            'google_settings_section',
             'Google Analytics/Tags',
             null,
             'theme_settings'
@@ -99,7 +99,7 @@ class Graphic_Data_Settings_Page {
             'Google Analytics Measurement ID',
             [$this, 'google_analytics_measurement_id_field_callback'],
             'theme_settings',
-            'webcr_google_settings_section'
+            'google_settings_section'
         );
 
         add_settings_field(
@@ -107,7 +107,7 @@ class Graphic_Data_Settings_Page {
             'Google Tags Container ID',
             [$this, 'google_tags_container_id_field_callback'],
             'theme_settings',
-            'webcr_google_settings_section'
+            'google_settings_section'
         );
 
 

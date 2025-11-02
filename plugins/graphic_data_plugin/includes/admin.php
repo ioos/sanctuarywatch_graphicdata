@@ -9,8 +9,6 @@
  * @link       https://www.noaa.gov
  * @since      1.0.0
  *
- * @package    graphic_data_plugin
- * @subpackage graphic_data_plugin/includes
  */
 
 /**
@@ -23,9 +21,6 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    graphic_data_plugin
- * @subpackage graphic_data_plugin/includes
- * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
 class Webcr {
 
@@ -85,7 +80,7 @@ class Webcr {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - Webcr_Loader. Orchestrates the hooks of the plugin.
-	 * - Webcr_Admin. Defines all hooks for the admin area.
+	 * - Admin. Defines all hooks for the admin area.
 	 * - Webcr_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
@@ -167,7 +162,7 @@ class Webcr {
 	 */
 	public function define_admin_hooks() { 
 		// Load class and functions of utility functions
-		$plugin_utility = new Webcr_Utility();
+		$plugin_utility = new Utility();
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'post_admin_notice' ); 
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' ); 
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible',10 ); 
@@ -182,14 +177,14 @@ class Webcr {
 		$this->loader->add_filter( 'editable_roles', $plugin_custom_roles, 'filter_user_roles' ); // Filter the available roles in the dropdown
 		$this->loader->add_action( 'admin_footer-user-new.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output
 		$this->loader->add_action( 'admin_footer-profile.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output
-		$this->loader->add_action( 'pre_get_posts', $plugin_custom_roles, 'webcr_restrict_scene_listing' ); // Filter admin list queries for scenes
+		$this->loader->add_action( 'pre_get_posts', $plugin_custom_roles, 'restrict_scene_listing' ); // Filter admin list queries for scenes
 		$this->loader->add_action( 'admin_notices', $plugin_custom_roles, 'display_admin_notices' ); // For displaying admin notices
 		$this->loader->add_action( 'current_screen', $plugin_custom_roles, 'webcr_restrict_scene_editing' ); // For restrict editing access
 		$this->loader->add_filter( 'admin_bar_menu', $plugin_custom_roles, 'restrict_new_post_from_admin_bar', 999); 
 		$this->loader->add_filter( 'admin_menu', $plugin_custom_roles, 'restrict_content_editor_admin_menu', 999); 
 
 		// Load class and functions to change overall look and function of admin screens
-		$plugin_admin = new Webcr_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Admin( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10 );  
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10 ); 
 		$this->loader->add_action( 'login_head', $plugin_admin, 'add_favicon' ); 
@@ -217,7 +212,7 @@ class Webcr {
 		$this->loader->add_action( 'admin_footer-post-new.php', $plugin_admin, 'adjust_admin_post_time_display', 10); 
 
 		// Load  class and functions associated with About custom content type
-		$plugin_admin_about = new Webcr_About ( $this->get_plugin_name(), $this->get_version() );		
+		$plugin_admin_about = new About ( $this->get_plugin_name(), $this->get_version() );		
 		$this->loader->add_action( 'init', $plugin_admin_about, 'custom_content_type_about' ); 
 		$this->loader->add_action( 'admin_menu', $plugin_admin_about, 'create_about_fields', 1 );
 		$this->loader->add_action( 'admin_head-edit.php', $plugin_admin_about, 'modify_about_add_new_button' ); // New Claude function for restricting number of about posts
@@ -227,7 +222,7 @@ class Webcr {
 		$this->loader->add_filter( 'post_type_link', $plugin_admin_about, 'custom_about_permalink', 10, 2 ); // Claude function for forcing About permalink structure
 
 		// Load  class and functions associated with Instance custom content type
-		$plugin_admin_instance = new Webcr_Instance ( $this->get_plugin_name(), $this->get_version() );		
+		$plugin_admin_instance = new Instance ( $this->get_plugin_name(), $this->get_version() );		
 		$this->loader->add_action( 'init', $plugin_admin_instance, 'custom_content_type_instance' ); 
 		$this->loader->add_action( 'admin_menu', $plugin_admin_instance, 'create_instance_fields', 1 );
 		$this->loader->add_action( 'manage_instance_posts_columns', $plugin_admin_instance, 'change_instance_columns' ); 
@@ -239,7 +234,7 @@ class Webcr {
 
 		// Load class and functions associated with the Settings Page
 		$plugin_admin_settings_page = new Graphic_Data_Settings_Page ( $this->get_plugin_name(), $this->get_version() );		
-		$this->loader->add_action( 'admin_menu', $plugin_admin_settings_page, 'webcr_add_admin_menu' ); 
+		$this->loader->add_action( 'admin_menu', $plugin_admin_settings_page, 'add_admin_menu' ); 
 		$this->loader->add_action( 'admin_init', $plugin_admin_settings_page, 'webcr_settings_init' ); 
         $plugin = plugin_basename(__FILE__); //Used in the next line
         $this->loader->add_filter("plugin_action_links_$plugin", $plugin_admin_settings_page, 'add_settings_link');
@@ -248,7 +243,8 @@ class Webcr {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_bar_styles');
 
 		// Load class and functions associated with Instance Types
-		$plugin_admin_instance_type = new Webcr_Instance_Type ( $this->get_plugin_name(), $this->get_version() );		
+		$plugin_admin_instance_type = new Instance_Type
+ ( $this->get_plugin_name(), $this->get_version() );		
 		$this->loader->add_action( 'admin_init', $plugin_admin_instance_type, 'instance_settings_init' ); 
 		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_taxonomy', 0); // Priority 0 to run early
 		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_order_meta'); 
@@ -256,7 +252,7 @@ class Webcr {
 		$this->loader->add_action( 'admin_menu', $plugin_admin_instance_type, 'add_instance_type_admin_menu'); 
 
 		// Load  class and functions associated with Scene custom content type
-		$plugin_admin_scene = new Webcr_Scene( $this->get_plugin_name(), $this->get_version() );		
+		$plugin_admin_scene = new Scene( $this->get_plugin_name(), $this->get_version() );		
 		$this->loader->add_action( 'restrict_manage_posts', $plugin_admin_scene, 'scene_filter_dropdowns' ); 
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_scene, 'scene_location_filter_results' ); 
 		$this->loader->add_action( 'current_screen', $plugin_admin_scene, 'cleanup_expired_scene_filters' ); 
@@ -277,7 +273,7 @@ class Webcr {
         $this->loader->add_action( 'admin_notices', $plugin_admin_scene, 'display_overview_scene_notice' ); 
 
 		// Load  class and functions associated with Modal custom content type
-		$plugin_admin_modal = new Webcr_Modal ($this->get_plugin_name(), $this->get_version() );	
+		$plugin_admin_modal = new Modal ($this->get_plugin_name(), $this->get_version() );	
 		$this->loader->add_action( 'restrict_manage_posts', $plugin_admin_modal, 'modal_filter_dropdowns' ); 
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_modal, 'modal_location_filter_results' ); 
 		$this->loader->add_action( 'current_screen', $plugin_admin_modal, 'cleanup_expired_modal_filters' ); 
@@ -293,7 +289,7 @@ class Webcr {
 		$this->loader->add_action( 'admin_notices', $plugin_admin_modal, 'modal_warning_notice_tabs' ); 
 
 		// Load  class and functions associated with Figure custom content type
-		$plugin_admin_figure = new Webcr_Figure( $this->get_plugin_name());		
+		$plugin_admin_figure = new Figure( $this->get_plugin_name());		
 		$this->loader->add_action( 'init', $plugin_admin_figure, 'custom_content_type_figure' ); 
 		$this->loader->add_action( 'admin_menu', $plugin_admin_figure, 'create_figure_fields', 1 );
 		$this->loader->add_action( 'manage_figure_posts_columns', $plugin_admin_figure, 'change_figure_columns' ); 
@@ -311,11 +307,11 @@ class Webcr {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script');
 
 		// Load class and functions connected to login screen customization
-		$plugin_admin_logo = new Webcr_Login( $this->get_plugin_name(), $this->get_version() );
-		$this->loader->add_action( 'login_enqueue_scripts', $plugin_admin_logo, 'webcr_login_logo' ); 
+		$plugin_admin_logo = new Login( $this->get_plugin_name(), $this->get_version() );
+		$this->loader->add_action( 'login_enqueue_scripts', $plugin_admin_logo, 'login_logo' ); 
 
 		// Load class and functions connected with Export Figures Tool
-		$plugin_admin_export_figures = new Webcr_Export_Figures( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin_export_figures = new Export_Figures( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_export_figures, 'add_export_figures_menu' ); 	
 
 		// Load class and functions connected with Support page

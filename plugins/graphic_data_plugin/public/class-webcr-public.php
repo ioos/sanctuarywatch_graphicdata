@@ -6,8 +6,6 @@
  * @link       https://www.noaa.gov
  * @since      1.0.0
  *
- * @package    Webcr
- * @subpackage Webcr/public
  */
 
 /**
@@ -16,9 +14,6 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the public-facing stylesheet and JavaScript.
  *
- * @package    Webcr
- * @subpackage Webcr/public
- * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
 class Webcr_Public {
 

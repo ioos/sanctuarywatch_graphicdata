@@ -6,7 +6,7 @@
 
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
-class Webcr_Scene {
+class Scene {
 
 	/**
 	 * The ID of this plugin.
@@ -309,7 +309,7 @@ class Webcr_Scene {
 
         echo $field_length_dropdown; 
 
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $function_utilities -> createInstanceDropDownFilter('scene_instance');
         
         // Store the filter values after displaying the dropdowns
@@ -573,7 +573,7 @@ class Webcr_Scene {
             'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
         );
 
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $instances = $function_utilities ->  returnAllInstances();
 
         $fields = array(
@@ -927,7 +927,7 @@ class Webcr_Scene {
         for ($i = 1; $i < 7; $i++){
             array_push($scene_rest_fields,'scene_info' . $i, 'scene_photo' . $i, 'scene_photo_internal' . $i, 'scene_section' . $i);
         }
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $function_utilities -> register_custom_rest_fields("scene", $scene_rest_fields);
     }
 

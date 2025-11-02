@@ -4,7 +4,7 @@
  * 
  */
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
-class Webcr_Modal {
+class Modal {
 	/**
 	 * The ID of this plugin.
 	 *
@@ -115,7 +115,7 @@ class Webcr_Modal {
         );
 
         // get list of locations
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $locations = $function_utilities -> returnAllInstances();
 
         $transient_fields_exist = false;
@@ -463,7 +463,7 @@ class Webcr_Modal {
             for ($i = 1; $i < 7; $i++){
                 array_push($modal_rest_fields,'modal_info' . $i, 'modal_photo' . $i, 'modal_tab_title' . $i );
             }
-            $function_utilities = new Webcr_Utility();
+            $function_utilities = new Utility();
             $function_utilities -> register_custom_rest_fields("modal", $modal_rest_fields);
     }
 
@@ -543,20 +543,20 @@ class Webcr_Modal {
         
         // Store field_length filter value if it exists
         if (isset($_GET['field_length']) && !empty($_GET['field_length'])) {
-            update_user_meta($user_id, 'webcr_modal_field_length', $_GET['field_length']);
-            update_user_meta($user_id, 'webcr_modal_field_length_expiration', $expiration_time);
+            update_user_meta($user_id, 'modal_field_length', $_GET['field_length']); //come back here
+            update_user_meta($user_id, 'modal_field_length_expiration', $expiration_time);
         }
         
         // Store modal_instance filter value if it exists
         if (isset($_GET['modal_instance']) && !empty($_GET['modal_instance'])) {
-            update_user_meta($user_id, 'webcr_modal_instance', $_GET['modal_instance']);
-            update_user_meta($user_id, 'webcr_modal_instance_expiration', $expiration_time);
+            update_user_meta($user_id, 'modal_instance', $_GET['modal_instance']);
+            update_user_meta($user_id, 'modal_instance_expiration', $expiration_time);
         }
         
         // Store modal_scene filter value if it exists
         if (isset($_GET['modal_scene']) && !empty($_GET['modal_scene'])) {
-            update_user_meta($user_id, 'webcr_modal_scene', $_GET['modal_scene']);
-            update_user_meta($user_id, 'webcr_modal_scene_expiration', $expiration_time);
+            update_user_meta($user_id, 'modal_scene', $_GET['modal_scene']);
+            update_user_meta($user_id, 'modal_scene_expiration', $expiration_time);
         }
     }
 
@@ -647,7 +647,7 @@ class Webcr_Modal {
             );
 
             // Check for filter in URL first, then check for stored value
-            $field_length = isset($_GET["field_length"]) ? $_GET["field_length"] : $this->get_modal_filter_value('webcr_modal_field_length');
+            $field_length = isset($_GET["field_length"]) ? $_GET["field_length"] : $this->get_modal_filter_value('modal_field_length');
             
             if ($field_length) {
                 switch ($field_length) {
@@ -673,7 +673,7 @@ class Webcr_Modal {
 
             echo $field_length_dropdown;
             
-            $function_utilities = new Webcr_Utility();
+            $function_utilities = new Utility();
             $function_utilities -> createInstanceDropDownFilter('modal_instance');
 
             // Scene dropdown
@@ -681,8 +681,8 @@ class Webcr_Modal {
             echo '<option value="">All Scenes</option>';
             
             // Get selected scene from URL or from stored value
-            $selected_instance = isset($_GET['modal_instance']) ? $_GET['modal_instance'] : $this->get_modal_filter_value('webcr_modal_instance');
-            $selected_scene = isset($_GET['modal_scene']) ? $_GET['modal_scene'] : $this->get_modal_filter_value('webcr_modal_scene');
+            $selected_instance = isset($_GET['modal_instance']) ? $_GET['modal_instance'] : $this->get_modal_filter_value('modal_instance');
+            $selected_scene = isset($_GET['modal_scene']) ? $_GET['modal_scene'] : $this->get_modal_filter_value('modal_scene');
             
             if ($selected_instance) {
                 global $wpdb;
@@ -726,8 +726,8 @@ class Webcr_Modal {
         
         if ($pagenow == 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] == $type) {
             // Check URL params first, then check stored values
-            $instance = isset($_GET['modal_instance']) ? $_GET['modal_instance'] : $this->get_modal_filter_value('webcr_modal_instance');
-            $scene = isset($_GET['modal_scene']) ? $_GET['modal_scene'] : $this->get_modal_filter_value('webcr_modal_scene');
+            $instance = isset($_GET['modal_instance']) ? $_GET['modal_instance'] : $this->get_modal_filter_value('modal_instance');
+            $scene = isset($_GET['modal_scene']) ? $_GET['modal_scene'] : $this->get_modal_filter_value('modal_scene');
             
             if ($instance) {
                 if ($scene) {
@@ -778,24 +778,24 @@ class Webcr_Modal {
         $current_time = time();
         
         // Check and clean up field_length
-        $expiration_time = get_user_meta($user_id, 'webcr_modal_field_length_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'modal_field_length_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_modal_field_length');
-            delete_user_meta($user_id, 'webcr_modal_field_length_expiration');
+            delete_user_meta($user_id, 'modal_field_length');
+            delete_user_meta($user_id, 'modal_field_length_expiration');
         }
         
         // Check and clean up modal_instance
-        $expiration_time = get_user_meta($user_id, 'webcr_modal_instance_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'modal_instance_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_modal_instance');
-            delete_user_meta($user_id, 'webcr_modal_instance_expiration');
+            delete_user_meta($user_id, 'modal_instance');
+            delete_user_meta($user_id, 'modal_instance_expiration');
         }
         
         // Check and clean up modal_scene
-        $expiration_time = get_user_meta($user_id, 'webcr_modal_scene_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'modal_scene_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_modal_scene');
-            delete_user_meta($user_id, 'webcr_modal_scene_expiration');
+            delete_user_meta($user_id, 'modal_scene');
+            delete_user_meta($user_id, 'modal_scene_expiration');
         }
     }
 
@@ -918,7 +918,7 @@ class Webcr_Modal {
         if (isset($_GET["field_length"])) {
             $field_length = sanitize_key($_GET["field_length"]);
         } else {
-            $stored_field_length = $this->get_modal_filter_value('webcr_modal_field_length');
+            $stored_field_length = $this->get_modal_filter_value('modal_field_length');
             $field_length = $stored_field_length ? $stored_field_length : "small"; // Default to "small" if no stored value or expired
         }
 
@@ -950,7 +950,7 @@ class Webcr_Modal {
                     echo $modal_tagline;
                     break;
                 case "medium":
-                    $medium_tagline = new Webcr_Utility();
+                    $medium_tagline = new Utility();
                     $final_tagline = $medium_tagline -> stringTruncate($modal_tagline, 75);
                     echo $final_tagline;
                     break;

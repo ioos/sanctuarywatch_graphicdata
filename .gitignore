@@ -8,7 +8,7 @@ debug.log
 /upgrade-temp-backup/
 /uploads/
 /plugins/.DS_Store
-/plugins/webcr/.DS_Store
+/plugins/graphic_data_plugin/.DS_Store
 /plugins/debug-bar/
 /plugins/query-monitor/
 /plugins/svg-support/
@@ -21,8 +21,8 @@ themes/twentytwentytwo/
 themes/developry-lite/
 debug.log
 /plugins/.DS_Store
-/plugins/webcr/.DS_Store
-/plugins/webcr/admin/.DS_Store
+/plugins/graphic_data_plugin/.DS_Store
+/plugins/graphic_data_plugin/admin/.DS_Store
 /plugins/debug-bar-actions-and-filters-addon
 data/
 

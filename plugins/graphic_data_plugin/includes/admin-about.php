@@ -4,7 +4,7 @@
  * 
  */
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
-class Webcr_About {
+class About {
 
     /**
      * The plugin name

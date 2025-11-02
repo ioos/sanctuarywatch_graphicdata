@@ -5,7 +5,7 @@
  */
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
-class Webcr_Figure {
+class Figure {
 
     /**
      * The plugin name
@@ -14,7 +14,7 @@ class Webcr_Figure {
     private $plugin_name;
     
     /**
-     * Class constructor for the WebCR Figure class.
+     * Class constructor for the Figure class.
      * Initializes the class with the plugin name and registers AJAX actions for file upload and deletion.
      *
      * @param string $plugin_name The name of the plugin.
@@ -173,20 +173,20 @@ class Webcr_Figure {
         
         // Store figure_instance filter value if it exists
         if (isset($_GET['figure_instance']) && !empty($_GET['figure_instance'])) {
-            update_user_meta($user_id, 'webcr_figure_instance', absint($_GET['figure_instance']));
-            update_user_meta($user_id, 'webcr_figure_instance_expiration', $expiration_time);
+            update_user_meta($user_id, 'figure_instance', absint($_GET['figure_instance']));
+            update_user_meta($user_id, 'figure_instance_expiration', $expiration_time);
         }
         
         // Store figure_scene filter value if it exists
         if (isset($_GET['figure_scene']) && !empty($_GET['figure_scene'])) {
-            update_user_meta($user_id, 'webcr_figure_scene', absint($_GET['figure_scene']));
-            update_user_meta($user_id, 'webcr_figure_scene_expiration', $expiration_time);
+            update_user_meta($user_id, 'figure_scene', absint($_GET['figure_scene']));
+            update_user_meta($user_id, 'figure_scene_expiration', $expiration_time);
         }
         
         // Store figure_icon filter value if it exists
         if (isset($_GET['figure_icon']) && !empty($_GET['figure_icon'])) {
-            update_user_meta($user_id, 'webcr_figure_icon', absint($_GET['figure_icon']));
-            update_user_meta($user_id, 'webcr_figure_icon_expiration', $expiration_time);
+            update_user_meta($user_id, 'figure_icon', absint($_GET['figure_icon']));
+            update_user_meta($user_id, 'figure_icon_expiration', $expiration_time);
         }
     }
 
@@ -253,24 +253,24 @@ class Webcr_Figure {
         $current_time = time();
         
         // Check and clean up figure_instance
-        $expiration_time = get_user_meta($user_id, 'webcr_figure_instance_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'figure_instance_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_figure_instance');
-            delete_user_meta($user_id, 'webcr_figure_instance_expiration');
+            delete_user_meta($user_id, 'figure_instance');
+            delete_user_meta($user_id, 'figure_instance_expiration');
         }
         
         // Check and clean up figure_scene
-        $expiration_time = get_user_meta($user_id, 'webcr_figure_scene_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'figure_scene_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_figure_scene');
-            delete_user_meta($user_id, 'webcr_figure_scene_expiration');
+            delete_user_meta($user_id, 'figure_scene');
+            delete_user_meta($user_id, 'figure_scene_expiration');
         }
         
         // Check and clean up figure_icon
-        $expiration_time = get_user_meta($user_id, 'webcr_figure_icon_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'figure_icon_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_figure_icon');
-            delete_user_meta($user_id, 'webcr_figure_icon_expiration');
+            delete_user_meta($user_id, 'figure_icon');
+            delete_user_meta($user_id, 'figure_icon_expiration');
         }
     }
 
@@ -295,18 +295,18 @@ class Webcr_Figure {
             $this->cleanup_expired_figure_filters();
             
             // Get current filter values from URL or stored metadata
-            $current_instance = isset($_GET['figure_instance']) ? absint($_GET['figure_instance']) : $this->get_figure_filter_value('webcr_figure_instance');
-            $current_scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('webcr_figure_scene');
-            $current_icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('webcr_figure_icon');
+            $current_instance = isset($_GET['figure_instance']) ? absint($_GET['figure_instance']) : $this->get_figure_filter_value('figure_instance');
+            $current_scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('figure_scene');
+            $current_icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('figure_icon');
             
             // Instances dropdown 
-            $function_utilities = new Webcr_Utility();
+            $function_utilities = new Utility();
             $function_utilities -> createInstanceDropDownFilter('figure_instance');
 
             global $wpdb;
             // Scene dropdown
             echo '<select name="figure_scene" id="figure_scene">';
-            echo '<option value="">' . esc_html__('All Scenes', 'webcr') . '</option>';
+            echo '<option value="">All Scenes</option>';
             
             // If we have an instance selected (either from URL or stored value)
             if ($current_instance) {
@@ -329,7 +329,7 @@ class Webcr_Figure {
 
             // Icon dropdown
             echo '<select name="figure_icon" id="figure_icon">';
-            echo '<option value="">' . esc_html__('All Icons', 'webcr') . '</option>';
+            echo '<option value="">All Icons</option>';
             
             // If we have a scene selected (either from URL or stored value)
             if ($current_scene) {
@@ -377,9 +377,9 @@ class Webcr_Figure {
         
         if ($pagenow == 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] == $type) {
             // Get current filter values from URL or stored metadata
-            $instance = isset($_GET['figure_instance']) ? absint($_GET['figure_instance']) : $this->get_figure_filter_value('webcr_figure_instance');
-            $scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('webcr_figure_scene');
-            $icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('webcr_figure_icon');
+            $instance = isset($_GET['figure_instance']) ? absint($_GET['figure_instance']) : $this->get_figure_filter_value('figure_instance');
+            $scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('figure_scene');
+            $icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('figure_icon');
             
             if ($instance) {
                 if ($icon) {
@@ -491,7 +491,7 @@ class Webcr_Figure {
         );
 
         // get list of locations
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $locations = $function_utilities -> returnAllInstances();
 
         $transient_fields_exist = false;
@@ -823,7 +823,7 @@ class Webcr_Figure {
 	 */
     function register_figure_rest_fields() {
         $figure_rest_fields = array('figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt',  'figure_code', 'figure_upload_file','figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments','uploaded_path_json','figure_title'); //figure_temp_filepath
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $function_utilities -> register_custom_rest_fields("figure", $figure_rest_fields);
     }
 

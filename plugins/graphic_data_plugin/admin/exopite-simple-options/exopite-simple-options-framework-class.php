@@ -453,7 +453,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 			// JAI - add validation to (potentially) saving metaboxes
 
 			if ( isset($_POST["post_type"]) ){
-				$check_fields = new webcr_validation();
+				$check_fields = new Validation();
 				$custom_post_type = $_POST["post_type"];
 				$fields_good = $check_fields->master_validate($custom_post_type);
 				if ($fields_good == True) {

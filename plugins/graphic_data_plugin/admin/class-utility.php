@@ -5,18 +5,14 @@
  * @link       https://www.noaa.gov
  * @since      1.0.0
  *
- * @package    Webcr
- * @subpackage Webcr/admin
  */
 
 /**
  * Utility functions used across the plugin
  *
- * @package    Webcr
- * @subpackage Webcr/admin
  * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
-class Webcr_Utility {
+class Utility {
 
     /**
 	 * Shorten string without cutting words midword.
@@ -626,7 +622,7 @@ class Webcr_Utility {
         $icons_element = $xpath->query($query)->item(0);
             
             if ($icons_element === null) {
-                error_log("Webcr_Utility::returnIcons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path);
+                error_log("Utility::returnIcons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path);
                 return $modal_icons; // Element not found
             }
             

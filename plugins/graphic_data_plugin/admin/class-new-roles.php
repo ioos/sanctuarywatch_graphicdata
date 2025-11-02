@@ -43,7 +43,7 @@ class Custom_Roles {
 	}
 
     // Filter admin list queries for scenes
-    public function webcr_restrict_scene_listing($query) {
+    public function restrict_scene_listing($query) {
         // Ensure this is the main query in the admin area for the 'scene' post type list table.
         if (!is_admin() || !$query->is_main_query() || $query->get('post_type') !== 'scene') {
             return;
@@ -91,7 +91,7 @@ class Custom_Roles {
         if (!get_role('content_editor')) {
             add_role(
                 'content_editor',
-                __('Content Editor', 'webcr'),
+                'Content Editor',
                 $editor_capabilities
             );
         }
@@ -116,11 +116,7 @@ class Custom_Roles {
                 }
             }
 
-            add_role(
-                'content_manager',
-                __('Content Manager', 'webcr'),
-                $manager_capabilities
-            );
+            add_role( 'content_manager', 'Content Manager', $manager_capabilities);
         }
 
         // Remove default WordPress roles
@@ -256,14 +252,14 @@ class Custom_Roles {
 
         // Display the fields
         ?>
-        <h3><?php _e('Instance Assignments', 'webcr'); ?></h3>
+        <h3>Instance Assignments</h3>
         <table class="form-table">
             <tr>
-                <th><label><?php _e('Assigned Instances', 'webcr'); ?></label></th>
+                <th><label>Assigned Instances</label></th>
                 <td>
                     <?php if (!empty($instances)) : ?>
                         <fieldset>
-                            <legend class="screen-reader-text"><?php _e('Assigned Instances', 'webcr'); ?></legend>
+                            <legend class="screen-reader-text">Assigned Instances</legend>
                             <?php foreach ($instances as $instance) : ?>
                                 <label>
                                     <input type="checkbox"
@@ -274,9 +270,9 @@ class Custom_Roles {
                                 </label><br>
                             <?php endforeach; ?>
                         </fieldset>
-                        <p class="description"><?php _e('Select the instances this content editor can manage.', 'webcr'); ?></p>
+                        <p class="description">Select the instances this content editor can manage.</p>
                     <?php else : ?>
-                        <p><?php _e('No instances found.', 'webcr'); ?></p>
+                        <p>No instances found.</p>
                     <?php endif; ?>
                     
 
@@ -437,10 +433,10 @@ class Custom_Roles {
 
             switch ($error_code) {
                 case 'no_instances':
-                    $message = __('You do not have permission to edit any scenes because no Instances are assigned to you.', 'webcr');
+                    $message = 'You do not have permission to edit any scenes because no Instances are assigned to you.';
                     break;
                 case 'scene_permission':
-                    $message = __('You do not have permission to edit the requested scene.', 'webcr');
+                    $message = 'You do not have permission to edit the requested scene.';
                     break;
                 // Add more cases here if needed for other errors
             }
