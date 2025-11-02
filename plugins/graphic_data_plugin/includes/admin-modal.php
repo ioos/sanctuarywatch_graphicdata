@@ -220,7 +220,7 @@ class Modal {
                 'id'             => 'icon_function',
                 'type'           => 'select',
                 'title'          => 'Icon Action*',
-                'options'        => array("External URL" => "External URL", "Modal" => "Modal", "Scene" => "Scene"),
+                'options'        => array("External URL" => "Link to External URL", "Scene" => "Link to Scene", "Modal" => "Open Modal"),
                 'description'    => 'What should happen when the user clicks on the icon?',
                 'default'        =>  'Modal',
             ),
