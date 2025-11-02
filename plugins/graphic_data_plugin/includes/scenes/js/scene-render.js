@@ -1033,11 +1033,8 @@ function full_screen_button(svgId) {
                 svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
                 if (elem.requestFullscreen) {
-                    console.log("requesting non webkit fullscreen 3");
-
                     elem.requestFullscreen();
                 } else if (elem.webkitRequestFullscreen) {
-                    console.log("requesting webkit fullscreen");
                     elem.webkitRequestFullscreen();
                 }
                 text.textContent = "Exit";
