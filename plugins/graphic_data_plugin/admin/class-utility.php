@@ -408,7 +408,7 @@ class Utility {
         // Check if user is content editor but not administrator
         if (current_user_can('content_editor') && !current_user_can('administrator')) {
             // Get assigned instances for the content editor
-            $user_instances = get_user_meta($current_user->ID, 'webcr_assigned_instances', true);
+            $user_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
 
             // Ensure user_instances is a non-empty array before querying
             if (!empty($user_instances) && is_array($user_instances)) {
@@ -488,7 +488,7 @@ class Utility {
         // Check if the current user is a 'content_editor' BUT NOT an 'administrator'
         if ( user_can($current_user, 'content_editor') && !user_can($current_user, 'administrator') ) {
             // Get the instances assigned to this content editor
-            $user_assigned_instances = get_user_meta($current_user->ID, 'webcr_assigned_instances', true);
+            $user_assigned_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
 
             // Ensure it's a non-empty array
             if (!empty($user_assigned_instances) && is_array($user_assigned_instances)) {

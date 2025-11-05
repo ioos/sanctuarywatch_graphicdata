@@ -63,7 +63,7 @@ if ($instances_query->have_posts()) {
 
 <!-- // Google Tags Container ID call from wp_options  index.php-->
 <?php
-$settings = get_option('webcr_settings');
+$settings = get_option('graphic_data_settings');
 $google_tags_container_id = isset($settings['google_tags_container_id']) ? esc_js($settings['google_tags_container_id']) : '';
 ?>
 <!-- Google Tag Manager (noscript) -->
@@ -103,7 +103,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <?php 
 
 
-            $front_page_intro = get_option('webcr_settings')['intro_text'];
+            $front_page_intro = get_option('graphic_data_settings')['intro_text'];
             if ($front_page_intro == false) {
                 $front_page_intro = "None";
             }
@@ -240,6 +240,10 @@ foreach ($terms_array as $term){
 ?>
 
 </div>
+<?php
+ get_footer();
+?>
+
 </body>
 
 
@@ -250,6 +254,3 @@ foreach ($terms_array as $term){
 
 
 </script>
-<?php
-// get_footer();
-?>

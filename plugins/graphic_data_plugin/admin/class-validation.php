@@ -14,9 +14,7 @@ class Validation {
 	 *
 	 * @since    1.0.0
 	 * @access   public
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
 	 */
-	public $plugin_name = 'webcr';
 
 	/**
 	 * The current version of the plugin.
@@ -78,7 +76,7 @@ class Validation {
             $function_utilities ->  fields_to_transient('about_post_status', "post_error", 30);
 
             // Instantiate the about class - we need this to get the current custom fields list for the content type
-            $about_class = new About( $this->plugin_name, $this->version ); 
+            $about_class = new About( ); 
             
             // Get the list of custom fields for the content type
             $fields_config = $this->get_fields_config('about', $about_class);
@@ -217,7 +215,7 @@ class Validation {
             $function_utilities ->  fields_to_transient('instance_post_status', "post_error", 30);  
 
             // Instantiate the modal class - we need this to get the current custom fields list for the content type
-            $instance_class = new Instance( $this->plugin_name, $this->version ); 
+            $instance_class = new Instance(); 
             
             // Get the list of custom fields for the content type
             $fields_config = $this->get_fields_config('instance', $instance_class);
@@ -350,7 +348,7 @@ class Validation {
             $function_utilities ->  fields_to_transient('figure_post_status', "post_error", 30);  
 
             // Instantiate the figure class - we need this to get the current custom fields list for the content type
-            $figure_class = new Figure( $this->plugin_name, $this->version ); 
+            $figure_class = new Figure(); 
             
             // Get the list of custom fields for the content type
             $fields_config = $this->get_fields_config('figure', $figure_class);
@@ -587,7 +585,7 @@ class Validation {
             $function_utilities ->  fields_to_transient('modal_post_status', "post_error", 30);  
 
             // Instantiate the modal class - we need this to get the current custom fields list for the content type
-            $modal_class = new Modal( $this->plugin_name, $this->version ); 
+            $modal_class = new Modal( ); 
             
             // Get the custom fields list for the content type
             $fields_config = $this->get_fields_config('modal', $modal_class);
@@ -726,7 +724,7 @@ class Validation {
             $function_utilities ->  fields_to_transient('scene_post_status', "post_error", 30);  
 
             // Instantiate the scene class - we need this to get the current custom fields list for the content type
-            $scene_class = new Scene( $this->plugin_name, $this->version ); 
+            $scene_class = new Scene( ); 
             
             // Get the custom fields list for the content type
             $fields_config = $this->get_fields_config('scene', $scene_class);

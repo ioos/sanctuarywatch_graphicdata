@@ -32,11 +32,6 @@ if ( ! defined( 'WPINC' ) ) {
 // Prevent direct access
 if (!defined('ABSPATH')) exit;
 
-/**
- * Currently plugin version.
- */
-define( 'WEBCR_VERSION', '0.2.0-beta' );
-
 // Include the GitHub Updater class
 require_once plugin_dir_path(__FILE__) . 'admin/class-github-updater.php';
 
@@ -180,10 +175,10 @@ function my_transform_svg_inkscape(string $svg): string {
  *
  * @since    0.2.0-beta
  */
-function run_webcr() {
+function run_graphic_data_plugin() {
 
-	$plugin = new Webcr();
+	$plugin = new Graphic_Data_Plugin();
 	$plugin->run();
 
 }
-run_webcr();
+run_graphic_data_plugin();

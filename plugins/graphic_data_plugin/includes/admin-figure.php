@@ -7,23 +7,6 @@ include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
 class Figure {
 
-    /**
-     * The plugin name
-     * @var string
-     */
-    private $plugin_name;
-    
-    /**
-     * Class constructor for the Figure class.
-     * Initializes the class with the plugin name and registers AJAX actions for file upload and deletion.
-     *
-     * @param string $plugin_name The name of the plugin.
-     */
-    public function __construct( $plugin_name ) {
-		// Assign the plugin name to the class property
-        $this->plugin_name = $plugin_name;
-
-    }
 
     // Register AJAX action for handling interactive graph data retrieval
     // Register default_interactive_arguments from the plugin settings page
@@ -47,7 +30,7 @@ class Figure {
 
             
             // default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/admin-settings-page.php
-            $settings = get_option('webcr_settings');
+            $settings = get_option('graphic_data_settings');
             $default_interactive_line_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
             wp_localize_script(
                 'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php
@@ -55,7 +38,7 @@ class Figure {
                 ['interactive_line_arguments' => $default_interactive_line_arguments]
             );
             
-            $settings = get_option('webcr_settings');
+            $settings = get_option('graphic_data_settings');
             $default_interactive_bar_arguments = isset($settings['interactive_bar_arguments']) ? $settings['interactive_bar_arguments'] : '';
             wp_localize_script(
                 'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php
@@ -480,7 +463,7 @@ class Figure {
             * METABOX
             */
             'type'              => 'metabox',                       // Required, menu or metabox
-            'id'                => $this->plugin_name,              // Required, meta box id, unique, for saving meta: id[field-id]
+            'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
             'post_types'        => array( 'figure' ),                 // Post types to display meta box
             'context'           => 'advanced',                      // 	The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
             'priority'          => 'default',                       // 	The priority within the context where the boxes should show ('high', 'low').
@@ -1050,7 +1033,7 @@ class Figure {
 	 */
 	public function register_get_alt_text_by_url_route() {
 		register_rest_route(
-			'webcr/v1', // Your plugin's namespace
+			'graphic_data/v1', // Your plugin's namespace
 			'/media/alt-text-by-url', // The route
 			array(
 				'methods'             => WP_REST_Server::READABLE, // This will be a GET request

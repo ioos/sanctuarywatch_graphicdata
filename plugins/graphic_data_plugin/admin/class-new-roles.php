@@ -58,7 +58,7 @@ class Custom_Roles {
             $current_user = wp_get_current_user();
 
             // Get instances associated with this content editor
-            $user_instances = get_user_meta($current_user->ID, 'webcr_assigned_instances', true);
+            $user_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
 
             // If we have associated instances and it's a non-empty array
             if (!empty($user_instances) && is_array($user_instances)) {
@@ -245,7 +245,7 @@ class Custom_Roles {
         ));
 
         // Get the currently selected instances for this user
-        $selected_instances = get_user_meta($user->ID, 'webcr_assigned_instances', true);
+        $selected_instances = get_user_meta($user->ID, 'assigned_instances', true);
         if (!is_array($selected_instances)) {
             $selected_instances = array();
         }
@@ -263,7 +263,7 @@ class Custom_Roles {
                             <?php foreach ($instances as $instance) : ?>
                                 <label>
                                     <input type="checkbox"
-                                           name="webcr_assigned_instances[]"
+                                           name="assigned_instances[]"
                                            value="<?php echo esc_attr($instance->ID); ?>"
                                            <?php checked(in_array($instance->ID, $selected_instances)); ?>>
                                     <?php echo esc_html($instance->post_title); ?>
@@ -345,13 +345,13 @@ class Custom_Roles {
         // Only save instance selections if the user is a content editor
         if (in_array('content_editor', $user->roles)) {
             // Get the selected instances
-            $selected_instances = isset($_POST['webcr_assigned_instances']) ? $_POST['webcr_assigned_instances'] : array();
+            $selected_instances = isset($_POST['assigned_instances']) ? $_POST['assigned_instances'] : array();
 
             // Sanitize each ID
             $selected_instances = array_map('absint', $selected_instances);
 
             // Save the selected instances
-            update_user_meta($user_id, 'webcr_assigned_instances', $selected_instances);
+            update_user_meta($user_id, 'assigned_instances', $selected_instances);
         }
     }
 
@@ -359,7 +359,7 @@ class Custom_Roles {
      * Restricts access to the scene edit screen based on user role and assigned instances.
      * Redirects with an error message if access is denied.
      */
-    public function webcr_restrict_scene_editing() {
+    public function restrict_scene_editing() {
         global $pagenow;
 
         // Only on post editing screens
@@ -393,13 +393,13 @@ class Custom_Roles {
         // If editing an existing scene post
         if ($pagenow === 'post.php' && $post_id > 0 && $current_post_type === 'scene') {
             $current_user = wp_get_current_user();
-            $user_instances = get_user_meta($current_user->ID, 'webcr_assigned_instances', true);
+            $user_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
             $redirect_url = admin_url('edit.php?post_type=scene');
 
             // No instances assigned at all
             if (empty($user_instances) || !is_array($user_instances)) {
                 // --- MODIFIED --- Redirect instead of wp_die
-                wp_safe_redirect(add_query_arg('webcr_error', 'no_instances', $redirect_url));
+                wp_safe_redirect(add_query_arg('graphic_data_error', 'no_instances', $redirect_url));
                 exit;
             }
 
@@ -409,7 +409,7 @@ class Custom_Roles {
             // Check if user can edit this specific scene's instance
             if (!in_array($scene_instance, $user_instances)) {
                 // --- MODIFIED --- Redirect instead of wp_die
-                wp_safe_redirect(add_query_arg('webcr_error', 'scene_permission', $redirect_url));
+                wp_safe_redirect(add_query_arg('graphic_data_error', 'scene_permission', $redirect_url));
                 exit;
             }
         }
@@ -427,8 +427,8 @@ class Custom_Roles {
         }
 
         // Check if our error query parameter is set
-        if (isset($_GET['webcr_error'])) {
-            $error_code = sanitize_key($_GET['webcr_error']);
+        if (isset($_GET['graphic_data_error'])) {
+            $error_code = sanitize_key($_GET['graphic_data_error']);
             $message = '';
 
             switch ($error_code) {
@@ -452,39 +452,3 @@ class Custom_Roles {
     }
 
 } // End class Custom_Roles
-
-
-
-/**
- * Check if a user has access to a specific instance
- *
- * @param int $user_id The user ID to check
- * @param int $instance_id The instance ID to check access for
- * @return bool Whether the user has access to the instance
- */
-function webcr_user_has_instance_access($user_id, $instance_id) {
-    // ... (rest of the function remains the same) ...
-    // Get the user
-    $user = get_userdata($user_id);
-
-    // Administrators and Content Managers have access to everything
-    if (in_array('administrator', $user->roles) || in_array('content_manager', $user->roles)) {
-        return true;
-    }
-
-    // Check if the user is a content editor
-    if (in_array('content_editor', $user->roles)) {
-        // Get the user's assigned instances
-        $assigned_instances = get_user_meta($user_id, 'webcr_assigned_instances', true);
-
-        // Check if the instance is in the assigned instances
-        if (is_array($assigned_instances) && in_array($instance_id, $assigned_instances)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-// --- REMOVED --- Hook registration moved to __construct
-// add_action('current_screen', 'webcr_restrict_scene_editing');

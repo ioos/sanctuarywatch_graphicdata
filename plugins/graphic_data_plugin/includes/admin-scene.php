@@ -8,38 +8,6 @@ include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
 class Scene {
 
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	public function __construct( $plugin_name, $version ) {
-
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
-	}
-
     /**
      * Display an admin notice if the current scene is the overview scene for its instance.
      *
@@ -563,7 +531,7 @@ class Scene {
         $config_metabox = array(
 
             'type'              => 'metabox',                       // Required, menu or metabox
-            'id'                => $this->plugin_name,              // Required, meta box id, unique, for saving meta: id[field-id]
+            'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
             'post_types'        => array( 'scene' ),                 // Post types to display meta box
             'context'           => 'advanced',                      // 	The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
             'priority'          => 'default',                       // 	The priority within the context where the boxes should show ('high', 'low').

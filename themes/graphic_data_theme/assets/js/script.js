@@ -5,6 +5,7 @@ let child_obj = JSON.parse(JSON.stringify(child_ids));
 
 // Convert the svg_url variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
 // This is likely done to strip extra quotes or escape characters from the serialized string.
+
 let url1 =(JSON.stringify(svg_url));
 url = url1.substring(2, url1.length - 2);
 
@@ -64,6 +65,7 @@ if (!is_mobile()) {
 
 // The lines below from step 1 through step 3 are used for organizing child_obj(of modals) when it is fed into the toc as sorted_child_entries. 
 // If all modals are set to 1 then it now organized alphabetically. other wise it respects the modal order.
+
 process_child_obj();
 
 // Step 1: get [key, value] pairs
@@ -104,6 +106,7 @@ for (const [key, value] of sorted_child_entries) {
     child_ids_helper[value.title] = key;
 }
 
+
 // Declare a variable to track if the current environment is mobile.
 // Initially set to false, assuming a non-mobile environment by default.
 let mobileBool = false;
@@ -115,7 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
     handleHashNavigation();
 
 });
-
 
 
 /**
@@ -672,6 +674,7 @@ async function handleHashNavigation() {
  * Usage: right below; this is essentially the driver function for the entire file, as it pretty much calls every other function inside here. 
  */
 async function init() {
+
     try {
 
         sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
@@ -682,4 +685,5 @@ async function init() {
     } catch (error) {
         console.error('Error:', error);
     }
+
 }

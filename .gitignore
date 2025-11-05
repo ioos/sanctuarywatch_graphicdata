@@ -10,6 +10,7 @@ debug.log
 /plugins/.DS_Store
 /plugins/graphic_data_plugin/.DS_Store
 /plugins/debug-bar/
+plugins/maintenance/
 /plugins/query-monitor/
 /plugins/svg-support/
 plugins/contact-form-7/

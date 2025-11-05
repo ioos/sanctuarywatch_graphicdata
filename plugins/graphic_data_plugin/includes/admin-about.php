@@ -7,16 +7,6 @@ include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 class About {
 
     /**
-     * The plugin name
-     * @var string
-     */
-    private $plugin_name;
-
-    public function __construct( $plugin_name ) {
-		$this->plugin_name = $plugin_name;
-	}
-
-    /**
 	 * Create About custom content type.
 	 *
 	 * @since    1.0.0
@@ -83,7 +73,7 @@ class About {
             * METABOX
             */
             'type'              => 'metabox',                       // Required, menu or metabox
-            'id'                => $this->plugin_name,              // Required, meta box id, unique, for saving meta: id[field-id]
+            'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
             'post_types'        => array( 'about' ),                 // Post types to display meta box
             'context'           => 'advanced',                      // 	The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
             'priority'          => 'default',                       // 	The priority within the context where the boxes should show ('high', 'low').

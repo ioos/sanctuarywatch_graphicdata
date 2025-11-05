@@ -2,8 +2,7 @@
 /**
  * Navigation Dropdowns Template
  *
- * This section of the navigation bar template provides dropdown menus for quick access to various parts of the site, 
- * specifically focusing on 'WebCRs' (Web-enabled Condition Reporting Systems) for different locations and 'Conservation Issues'.
+ * This section of the navigation bar template provides dropdown menus for quick access to various parts of the site.
  * These dropdowns are designed to improve user navigation efficiency by categorizing content under common themes.
  * This implementation is essential for a user-friendly navigation setup that allows visitors to find relevant information
  * quickly and efficiently, categorized under intuitive groupings. 

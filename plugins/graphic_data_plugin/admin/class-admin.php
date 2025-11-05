@@ -19,38 +19,6 @@
 class Admin {
 
 	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    0.2.0-beta
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    0.2.0-beta
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    0.2.0-beta
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	public function __construct( $plugin_name, $version ) {
-
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
-	}
-
-	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    0.2.0-beta
@@ -70,7 +38,7 @@ class Admin {
 			}
 		}
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'graphic_data_plugin', plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), null, 'all' );
 
 		wp_enqueue_style(
 			'font-awesome-admin', $src =
@@ -92,31 +60,31 @@ class Admin {
 		 * This function is provided for demonstration purposes only.  
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Webcr_Loader as all of the hooks are defined
+		 * defined in Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Webcr_Loader will then create the relationship
+		 * The Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
 		// Enqueue utlity javascript functions used across javascript files on the admin side
-		 wp_enqueue_script( "utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), $this->version, array('strategy'  => 'defer') );
+		 wp_enqueue_script( "utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), null, array('strategy'  => 'defer') );
 
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post 
 		if ($current_post_type == "about" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-about", plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-about", plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(  ), null, array('strategy'  => 'defer') );
 		}
 
 		// Load Instance-specific Javascript only when editing/creating a Instance post 
 		if ($current_post_type == "instance" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-instance", plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-instance", plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(  ), null, array('strategy'  => 'defer') );
 		}
 
 		// Load Scene-specific Javascript only when editing/creating a Scene post 
 		if ($current_post_type == "scene" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), null, array('strategy'  => 'defer') );
 
 			// Enqueue scene-render.js
 			wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
@@ -124,7 +92,7 @@ class Admin {
 
 		// Load Modal-specific Javascript only when editing/creating a Modal post 
 		if ($current_post_type == "modal" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-modal", plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array( ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-modal", plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array( ), null, array('strategy'  => 'defer') );
 
 			// Enqueue modal-render.js
 			wp_enqueue_script('modal-render', dirname(plugin_dir_url(__FILE__)) . '/includes/modals/js/modal-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
@@ -155,24 +123,24 @@ class Admin {
 			wp_enqueue_script('figure-code', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/code/figure-code.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
 
 			// Enqueue admin-figure.js
-			wp_enqueue_script( "admin-figure", plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array( ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure", plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array( ), null, array('strategy'  => 'defer') );
 
 		}
 
 		// Load Modal-specific Javascript only for admin columns screen 
 		if ($current_post_type == "modal" && $hook_suffix == "edit.php" ){
-			wp_enqueue_script( "admin-modal_columns", plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-modal_columns", plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js', array(  ), null, array('strategy'  => 'defer') );
 		}
 
 		// Load Figure-specific Javascript only for admin columns screen 
 		if ($current_post_type == "figure" && $hook_suffix == "edit.php" ){
-			wp_enqueue_script( "admin-figure_columns", plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js', array( ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure_columns", plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js', array( ), null, array('strategy'  => 'defer') );
 		}
 
 		// Load Figure Export Javascript, but only when on Figure Export Tool page 
 		$current_screen = get_current_screen();
 		if ($current_screen-> base == "tools_page_export-figures"){
-			wp_enqueue_script( "admin-figure_export", plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure_export", plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js', array(  ), null, array('strategy'  => 'defer') );
 			// Enqueue Bootstrap JavaScript
 			wp_enqueue_script('PptxGenJS', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js', array(), '3.12.0', true);
 

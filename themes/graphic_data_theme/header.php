@@ -18,14 +18,14 @@ defined( 'ABSPATH' ) || exit;
 
 <!-- // Google Tags/Analytics Measurement ID call from wp_options index.php -->
 <?php
-$settings = get_option('webcr_settings');
+$settings = get_option('graphic_data_settings');
 $google_analytics_measurement_id = isset($settings['google_analytics_measurement_id']) ? esc_js($settings['google_analytics_measurement_id']) : '';
 $google_tags_container_id = isset($settings['google_tags_container_id']) ? esc_js($settings['google_tags_container_id']) : '';
 ?>
 
 <!-- // Google Tags/Analytics Measurement ID variable for access in JS for googletags.js-->
 <script>
-  window.webcrSettings = {
+  window.graphicDataSettings = {
     googleAnalyticsMeasurementId: "<?php echo $google_analytics_measurement_id; ?>"
   };
 </script>
@@ -147,28 +147,7 @@ if (!empty($customizer_breadcrumb_row_enable)) {
 
 			// Split the 'scene_location' string into an array based on spaces.
 			$sceneArr = explode(' ', $sceneLocation);
-			if (!empty($sceneLocation)){
 
-				// OLD BREAD CRUMB LOGIC
-				// // Loop through each word in the 'sceneLocation' array except the last one.
-				// $scene_loc_webcr = '';
-				// for($i = 0; $i < count($sceneArr)-1; $i++){
-				// 	$scene_loc_webcr = $scene_loc_webcr.$sceneArr[$i].' ';
-				// }
-				// // Create the breadcrumb with the default links 
-				// if (!empty($customizer_header_row_enable)) {
-				// 	if ($customizer_header_row_enable == 1){
-				// 	$customizer_header_row_breadcrumb_name = get_theme_mod('header_row_breadcrumb_name', '');
-				// 	if ($customizer_header_row_breadcrumb_name == "" || empty($customizer_header_row_breadcrumb_name)){
-				// 		$customizer_header_row_breadcrumb_name =  "IOOS";
-				// 	}
-				// 	echo '<a href="' . $customizer_header_row_image_link . '" target="_blank">' . $customizer_header_row_breadcrumb_name . '</a>';
-				// 	echo '<p> > </p>';
-				// 	}
-				// }
-				// echo '<a href="' . home_url() . '">' . get_bloginfo('name') . '</a>';
-
-			}	
 		}
 		// NEW LOGO AND SITE NAME DISPLAY LOGIC
 		// echo '<a class="navbar-brand" href="' . home_url() . '"><img class="navbar-emblem" width="55px" src="' . get_site_icon_url(512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png') . '" alt="Header Emblem">'. get_bloginfo('name'). '</a>';

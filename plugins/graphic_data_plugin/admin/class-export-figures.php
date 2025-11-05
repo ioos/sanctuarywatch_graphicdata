@@ -5,16 +5,6 @@
  */
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 class Export_Figures {
-    
-    /**
-     * The plugin name
-     * @var string
-     */
-    private $plugin_name;
-
-    public function __construct( $plugin_name ) {
-		$this->plugin_name = $plugin_name;
-	}
 
     /**
 	 * Function to add the "Export Figures" submenu under Tools
