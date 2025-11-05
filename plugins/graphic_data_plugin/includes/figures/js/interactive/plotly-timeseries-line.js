@@ -138,9 +138,6 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     x1: date,
                     y0: 0,           // bottom edge of the plotting area
                     y1: 1,           // top edge of the plotting area
-                    name: label,
-                    showlegend: true,
-                    hovertemplate: `${label}<br>Value: <b>%{x}</b><extra></extra>`,
                     line: {
                         color: color,
                         width: 2,
@@ -160,9 +157,6 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     x1: 1,          // end at right edge of plot
                     y0: yValue,
                     y1: yValue,
-                    name: label,
-                    showlegend: true,
-                    hovertemplate: `${label}<br>Value: <b>%{y}</b><extra></extra>`,
                     line: {
                         color: color,
                         width: 2
