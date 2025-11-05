@@ -94,38 +94,38 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
             const label = figureArguments[`EventMarkersEventText${i}`];
             const color = figureArguments[`EventMarkersEventColor${i}`] || '#000';
 
-            // if (axisType === 'x') {
-            //     let date = figureArguments[`EventMarkersEventDate${i}`];
-            //     overlays.push({
-            //         x: [date, date],
-            //         y: [yMin, yMax],
-            //         type: 'scatter',
-            //         mode: 'lines',
-            //         line: { color, width: 2 },
-            //         name: label,
-            //         showlegend: true,
-            //         yaxis: 'y',
-            //         xaxis: 'x',
-            //         hoverinfo: `x`,
-            //     });
-            // }
-            // if (axisType === 'y') {
-            //     let yValue = parseFloat(figureArguments[`EventMarkersEventYValue${i}`], 10);
-            //     const yArray = Array(plotlyX.length).fill(yValue);
+            if (axisType === 'x') {
+                let date = figureArguments[`EventMarkersEventDate${i}`];
+                overlays.push({
+                    x: [date, date],
+                    y: [yMin, yMax],
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color, width: 2 },
+                    name: label,
+                    showlegend: true,
+                    yaxis: 'y',
+                    xaxis: 'x',
+                    hoverinfo: `x`,
+                });
+            }
+            if (axisType === 'y') {
+                let yValue = parseFloat(figureArguments[`EventMarkersEventYValue${i}`], 10);
+                const yArray = Array(plotlyX.length).fill(yValue);
 
-            //     overlays.push({
-            //         x: plotlyX,
-            //         y: yArray,
-            //         type: 'scatter',
-            //         mode: 'lines',
-            //         line: { color, width: 2 },
-            //         name: label,
-            //         showlegend: true,
-            //         yaxis: 'y',
-            //         xaxis: 'x',
-            //         hoverinfo: `${label} y`,
-            //     });
-            // }
+                overlays.push({
+                    x: plotlyX,
+                    y: yArray,
+                    type: 'scatter',
+                    mode: 'lines',
+                    line: { color, width: 2 },
+                    name: label,
+                    showlegend: true,
+                    yaxis: 'y',
+                    xaxis: 'x',
+                    hoverinfo: `${label} y`,
+                });
+            }
 
             if (axisType === 'x') {
                 let date = figureArguments[`EventMarkersEventDate${i}`];
@@ -140,7 +140,6 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     y1: 1,           // top edge of the plotting area
                     name: label,
                     showlegend: true,
-                    hovertemplate: `${label}<br>Value: <b>%{x}</b><extra></extra>`,
                     line: {
                         color: color,
                         width: 2,
@@ -162,7 +161,6 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     y1: yValue,
                     name: label,
                     showlegend: true,
-                    hovertemplate: `${label}<br>Value: <b>%{y}</b><extra></extra>`,
                     line: {
                         color: color,
                         width: 2
