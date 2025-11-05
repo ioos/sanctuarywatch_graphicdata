@@ -96,35 +96,77 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
             const label = figureArguments[`EventMarkersEventText${i}`];
             const color = figureArguments[`EventMarkersEventColor${i}`] || '#000';
 
+            // if (axisType === 'x') {
+            //     let date = figureArguments[`EventMarkersEventDate${i}`];
+            //     overlays.push({
+            //         x: [date, date],
+            //         y: [yMin, yMax],
+            //         type: 'scatter',
+            //         mode: 'lines',
+            //         line: { color, width: 2 },
+            //         name: label,
+            //         showlegend: true,
+            //         yaxis: 'y',
+            //         xaxis: 'x',
+            //         hoverinfo: `x`,
+            //     });
+            // }
+            // if (axisType === 'y') {
+            //     let yValue = parseFloat(figureArguments[`EventMarkersEventYValue${i}`], 10);
+            //     const yArray = Array(plotlyX.length).fill(yValue);
+            //     overlays.push({
+            //         x: plotlyX,
+            //         y: yArray,
+            //         type: 'scatter',
+            //         mode: 'lines',
+            //         line: { color, width: 2 },
+            //         name: label,
+            //         showlegend: true,
+            //         yaxis: 'y',
+            //         xaxis: 'x',
+            //         hoverinfo: `${label} y`,
+            //     });
+            // }
             if (axisType === 'x') {
                 let date = figureArguments[`EventMarkersEventDate${i}`];
-                overlays.push({
-                    x: [date, date],
-                    y: [yMin, yMax],
-                    type: 'scatter',
-                    mode: 'lines',
-                    line: { color, width: 2 },
+                layout.shapes = layout.shapes || [];
+                layout.shapes.push({
+                    type: 'line',
+                    xref: 'x',
+                    yref: 'paper',   // "paper" makes it stretch top-to-bottom
+                    x0: date,
+                    x1: date,
+                    y0: 0,           // bottom edge of the plotting area
+                    y1: 1,           // top edge of the plotting area
                     name: label,
                     showlegend: true,
-                    yaxis: 'y',
-                    xaxis: 'x',
-                    hoverinfo: `x`,
+                    hovertemplate: `${label}<br>Value: <b>%{x}</b><extra></extra>`,
+                    line: {
+                        color: color,
+                        width: 2,
+                        dash: 'solid'
+                    }
                 });
             }
             if (axisType === 'y') {
                 let yValue = parseFloat(figureArguments[`EventMarkersEventYValue${i}`], 10);
-                const yArray = Array(plotlyX.length).fill(yValue);
-                overlays.push({
-                    x: plotlyX,
-                    y: yArray,
-                    type: 'scatter',
-                    mode: 'lines',
-                    line: { color, width: 2 },
+                // const yArray = Array(plotlyX.length).fill(yValue);
+                layout.shapes = layout.shapes || [];
+                layout.shapes.push({
+                    type: 'line',
+                    xref: 'paper',  // "paper" means 0–1 relative to full width
+                    yref: 'y',
+                    x0: 0,          // start at left edge of plot
+                    x1: 1,          // end at right edge of plot
+                    y0: yValue,
+                    y1: yValue,
                     name: label,
                     showlegend: true,
-                    yaxis: 'y',
-                    xaxis: 'x',
-                    hoverinfo: `${label} y`,
+                    hovertemplate: `${label}<br>Value: <b>%{y}</b><extra></extra>`,
+                    line: {
+                        color: color,
+                        width: 2
+                    }
                 });
             }
         }
@@ -1614,7 +1656,7 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
 
             //Add checkboxes for error bars, standard deviation, mean, and percentiles
             const features = ["Legend", "ConnectGaps", "Mean", "StdDev", "ErrorBars", "Percentiles"];
-            const featureNames = ["Add Line to Legend", "Connect Missing Data Gaps","Mean Line", "+-1 Std Dev Fill ", "Symmetric Error Bars", "90th & 10th Percentile Lines"];
+            const featureNames = ["Add Line to Legend", "Connect Missing Data Gaps","Mean Line", "+-1 Std Dev Lines ", "Symmetric Error Bars", "90th & 10th Percentile Lines"];
             for (let i = 0; i < features.length; i++) {
                 const feature = features[i];
                 const featureName = featureNames[i];
