@@ -5,25 +5,8 @@
  */
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
-class Webcr_Figure {
+class Figure {
 
-    /**
-     * The plugin name
-     * @var string
-     */
-    private $plugin_name;
-    
-    /**
-     * Class constructor for the WebCR Figure class.
-     * Initializes the class with the plugin name and registers AJAX actions for file upload and deletion.
-     *
-     * @param string $plugin_name The name of the plugin.
-     */
-    public function __construct( $plugin_name ) {
-		// Assign the plugin name to the class property
-        $this->plugin_name = $plugin_name;
-
-    }
 
     // Register AJAX action for handling interactive graph data retrieval
     // Register default_interactive_arguments from the plugin settings page
@@ -47,7 +30,7 @@ class Webcr_Figure {
 
             
             // default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/admin-settings-page.php
-            $settings = get_option('webcr_settings');
+            $settings = get_option('graphic_data_settings');
             $default_interactive_line_arguments = isset($settings['interactive_line_arguments']) ? $settings['interactive_line_arguments'] : '';
             wp_localize_script(
                 'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php
@@ -55,7 +38,7 @@ class Webcr_Figure {
                 ['interactive_line_arguments' => $default_interactive_line_arguments]
             );
             
-            $settings = get_option('webcr_settings');
+            $settings = get_option('graphic_data_settings');
             $default_interactive_bar_arguments = isset($settings['interactive_bar_arguments']) ? $settings['interactive_bar_arguments'] : '';
             wp_localize_script(
                 'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php
@@ -173,20 +156,20 @@ class Webcr_Figure {
         
         // Store figure_instance filter value if it exists
         if (isset($_GET['figure_instance']) && !empty($_GET['figure_instance'])) {
-            update_user_meta($user_id, 'webcr_figure_instance', absint($_GET['figure_instance']));
-            update_user_meta($user_id, 'webcr_figure_instance_expiration', $expiration_time);
+            update_user_meta($user_id, 'figure_instance', absint($_GET['figure_instance']));
+            update_user_meta($user_id, 'figure_instance_expiration', $expiration_time);
         }
         
         // Store figure_scene filter value if it exists
         if (isset($_GET['figure_scene']) && !empty($_GET['figure_scene'])) {
-            update_user_meta($user_id, 'webcr_figure_scene', absint($_GET['figure_scene']));
-            update_user_meta($user_id, 'webcr_figure_scene_expiration', $expiration_time);
+            update_user_meta($user_id, 'figure_scene', absint($_GET['figure_scene']));
+            update_user_meta($user_id, 'figure_scene_expiration', $expiration_time);
         }
         
         // Store figure_icon filter value if it exists
         if (isset($_GET['figure_icon']) && !empty($_GET['figure_icon'])) {
-            update_user_meta($user_id, 'webcr_figure_icon', absint($_GET['figure_icon']));
-            update_user_meta($user_id, 'webcr_figure_icon_expiration', $expiration_time);
+            update_user_meta($user_id, 'figure_icon', absint($_GET['figure_icon']));
+            update_user_meta($user_id, 'figure_icon_expiration', $expiration_time);
         }
     }
 
@@ -253,24 +236,24 @@ class Webcr_Figure {
         $current_time = time();
         
         // Check and clean up figure_instance
-        $expiration_time = get_user_meta($user_id, 'webcr_figure_instance_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'figure_instance_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_figure_instance');
-            delete_user_meta($user_id, 'webcr_figure_instance_expiration');
+            delete_user_meta($user_id, 'figure_instance');
+            delete_user_meta($user_id, 'figure_instance_expiration');
         }
         
         // Check and clean up figure_scene
-        $expiration_time = get_user_meta($user_id, 'webcr_figure_scene_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'figure_scene_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_figure_scene');
-            delete_user_meta($user_id, 'webcr_figure_scene_expiration');
+            delete_user_meta($user_id, 'figure_scene');
+            delete_user_meta($user_id, 'figure_scene_expiration');
         }
         
         // Check and clean up figure_icon
-        $expiration_time = get_user_meta($user_id, 'webcr_figure_icon_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'figure_icon_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_figure_icon');
-            delete_user_meta($user_id, 'webcr_figure_icon_expiration');
+            delete_user_meta($user_id, 'figure_icon');
+            delete_user_meta($user_id, 'figure_icon_expiration');
         }
     }
 
@@ -295,31 +278,18 @@ class Webcr_Figure {
             $this->cleanup_expired_figure_filters();
             
             // Get current filter values from URL or stored metadata
-            $current_instance = isset($_GET['figure_instance']) ? absint($_GET['figure_instance']) : $this->get_figure_filter_value('webcr_figure_instance');
-            $current_scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('webcr_figure_scene');
-            $current_icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('webcr_figure_icon');
-            
-            global $wpdb;
+            $current_instance = isset($_GET['figure_instance']) ? absint($_GET['figure_instance']) : $this->get_figure_filter_value('figure_instance');
+            $current_scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('figure_scene');
+            $current_icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('figure_icon');
             
             // Instances dropdown 
-            $instances = $wpdb->get_results("
-                SELECT ID, post_title 
-                FROM {$wpdb->posts} 
-                WHERE post_type = 'instance' 
-                AND post_status = 'publish' 
-                ORDER BY post_title ASC");
+            $function_utilities = new Utility();
+            $function_utilities -> createInstanceDropDownFilter('figure_instance');
 
-            echo '<select name="figure_instance" id="figure_instance">';
-            echo '<option value="">' . esc_html__('All Instances', 'webcr') . '</option>';
-            foreach ($instances as $instance) {
-                $selected = $current_instance == $instance->ID ? 'selected="selected"' : '';
-                echo '<option value="' . esc_attr($instance->ID) . '" ' . $selected . '>' . esc_html($instance->post_title) . '</option>';
-            }
-            echo '</select>';
-
+            global $wpdb;
             // Scene dropdown
             echo '<select name="figure_scene" id="figure_scene">';
-            echo '<option value="">' . esc_html__('All Scenes', 'webcr') . '</option>';
+            echo '<option value="">All Scenes</option>';
             
             // If we have an instance selected (either from URL or stored value)
             if ($current_instance) {
@@ -342,7 +312,7 @@ class Webcr_Figure {
 
             // Icon dropdown
             echo '<select name="figure_icon" id="figure_icon">';
-            echo '<option value="">' . esc_html__('All Icons', 'webcr') . '</option>';
+            echo '<option value="">All Icons</option>';
             
             // If we have a scene selected (either from URL or stored value)
             if ($current_scene) {
@@ -390,9 +360,9 @@ class Webcr_Figure {
         
         if ($pagenow == 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] == $type) {
             // Get current filter values from URL or stored metadata
-            $instance = isset($_GET['figure_instance']) ? absint($_GET['figure_instance']) : $this->get_figure_filter_value('webcr_figure_instance');
-            $scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('webcr_figure_scene');
-            $icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('webcr_figure_icon');
+            $instance = isset($_GET['figure_instance']) ? absint($_GET['figure_instance']) : $this->get_figure_filter_value('figure_instance');
+            $scene = isset($_GET['figure_scene']) ? absint($_GET['figure_scene']) : $this->get_figure_filter_value('figure_scene');
+            $icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('figure_icon');
             
             if ($instance) {
                 if ($icon) {
@@ -493,7 +463,7 @@ class Webcr_Figure {
             * METABOX
             */
             'type'              => 'metabox',                       // Required, menu or metabox
-            'id'                => $this->plugin_name,              // Required, meta box id, unique, for saving meta: id[field-id]
+            'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
             'post_types'        => array( 'figure' ),                 // Post types to display meta box
             'context'           => 'advanced',                      // 	The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
             'priority'          => 'default',                       // 	The priority within the context where the boxes should show ('high', 'low').
@@ -504,7 +474,7 @@ class Webcr_Figure {
         );
 
         // get list of locations
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $locations = $function_utilities -> returnAllInstances();
 
         $transient_fields_exist = false;
@@ -836,7 +806,7 @@ class Webcr_Figure {
 	 */
     function register_figure_rest_fields() {
         $figure_rest_fields = array('figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt',  'figure_code', 'figure_upload_file','figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments','uploaded_path_json','figure_title'); //figure_temp_filepath
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $function_utilities -> register_custom_rest_fields("figure", $figure_rest_fields);
     }
 
@@ -1063,7 +1033,7 @@ class Webcr_Figure {
 	 */
 	public function register_get_alt_text_by_url_route() {
 		register_rest_route(
-			'webcr/v1', // Your plugin's namespace
+			'graphic_data/v1', // Your plugin's namespace
 			'/media/alt-text-by-url', // The route
 			array(
 				'methods'             => WP_REST_Server::READABLE, // This will be a GET request

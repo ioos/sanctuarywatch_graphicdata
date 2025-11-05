@@ -7,7 +7,6 @@
  * @since      0.2.0-beta
  *
  * @package    graphic_data_plugin
- * @subpackage graphic_data_plugin/admin
  */
 
 /**
@@ -16,43 +15,8 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Webcr
- * @subpackage Webcr/admin
- * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
-class Webcr_Admin {
-
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    0.2.0-beta
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    0.2.0-beta
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    0.2.0-beta
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	public function __construct( $plugin_name, $version ) {
-
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
-	}
+class Admin {
 
 	/**
 	 * Register the stylesheets for the admin area.
@@ -74,7 +38,7 @@ class Webcr_Admin {
 			}
 		}
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'graphic_data_plugin', plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), null, 'all' );
 
 		wp_enqueue_style(
 			'font-awesome-admin', $src =
@@ -96,31 +60,31 @@ class Webcr_Admin {
 		 * This function is provided for demonstration purposes only.  
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Webcr_Loader as all of the hooks are defined
+		 * defined in Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Webcr_Loader will then create the relationship
+		 * The Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
 
 		// Enqueue utlity javascript functions used across javascript files on the admin side
-		 wp_enqueue_script( "webcr-utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), $this->version, array('strategy'  => 'defer') );
+		 wp_enqueue_script( "utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), null, array('strategy'  => 'defer') );
 
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post 
 		if ($current_post_type == "about" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-about", plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-about", plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(  ), null, array('strategy'  => 'defer') );
 		}
 
 		// Load Instance-specific Javascript only when editing/creating a Instance post 
 		if ($current_post_type == "instance" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-instance", plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-instance", plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(  ), null, array('strategy'  => 'defer') );
 		}
 
 		// Load Scene-specific Javascript only when editing/creating a Scene post 
 		if ($current_post_type == "scene" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), null, array('strategy'  => 'defer') );
 
 			// Enqueue scene-render.js
 			wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
@@ -128,7 +92,7 @@ class Webcr_Admin {
 
 		// Load Modal-specific Javascript only when editing/creating a Modal post 
 		if ($current_post_type == "modal" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-modal", plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array( ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-modal", plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array( ), null, array('strategy'  => 'defer') );
 
 			// Enqueue modal-render.js
 			wp_enqueue_script('modal-render', dirname(plugin_dir_url(__FILE__)) . '/includes/modals/js/modal-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
@@ -159,24 +123,24 @@ class Webcr_Admin {
 			wp_enqueue_script('figure-code', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/code/figure-code.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
 
 			// Enqueue admin-figure.js
-			wp_enqueue_script( "admin-figure", plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array( ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure", plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array( ), null, array('strategy'  => 'defer') );
 
 		}
 
 		// Load Modal-specific Javascript only for admin columns screen 
 		if ($current_post_type == "modal" && $hook_suffix == "edit.php" ){
-			wp_enqueue_script( "admin-modal_columns", plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-modal_columns", plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js', array(  ), null, array('strategy'  => 'defer') );
 		}
 
 		// Load Figure-specific Javascript only for admin columns screen 
 		if ($current_post_type == "figure" && $hook_suffix == "edit.php" ){
-			wp_enqueue_script( "admin-figure_columns", plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js', array( ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure_columns", plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js', array( ), null, array('strategy'  => 'defer') );
 		}
 
 		// Load Figure Export Javascript, but only when on Figure Export Tool page 
 		$current_screen = get_current_screen();
 		if ($current_screen-> base == "tools_page_export-figures"){
-			wp_enqueue_script( "admin-figure_export", plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js', array(  ), $this->version, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure_export", plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js', array(  ), null, array('strategy'  => 'defer') );
 			// Enqueue Bootstrap JavaScript
 			wp_enqueue_script('PptxGenJS', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js', array(), '3.12.0', true);
 
@@ -339,55 +303,22 @@ class Webcr_Admin {
 	}
 
 	/**
-	 * Add Content Manager as a role
+	 * Edit what users with the Content Editor can see on the dashboard
 	 *
 	 * @since    1.0.0
 	 */
-	function add_content_manager_custom_role() {
-		//remove_role( 'webcr_content_manager');
-		$content_manager_role_exists = wp_roles()->is_role('webcr_content_manager');
-		if ($content_manager_role_exists == false) {
-			add_role('webcr_content_manager', __('Content Manager'),
-				get_role( 'editor' )->capabilities);
-		}
-	}
-
-	/**
-	 * Edit what the Content Manager can see on the dashboard
-	 *
-	 * @since    1.0.0
-	 */
-	function restrict_content_manager_admin_menu() {
-		if (current_user_can('webcr_content_manager')) {
-		//	remove_menu_page('index.php');                  // Dashboard
+	function restrict_content_editor_admin_menu() {
+		if (current_user_can('content_editor')) {
 			remove_menu_page('edit.php');                   // Posts
-		//	remove_menu_page('upload.php');                 // Media
 			remove_menu_page('edit.php?post_type=page');    // Pages
 			remove_menu_page('manage-instance-types'); //Manage Instance Types
 			remove_menu_page('edit.php?post_type=about');
 			remove_menu_page('edit.php?post_type=instance');
-		//	remove_menu_page('edit-comments.php');          // Comments
-		//	remove_menu_page('themes.php');                 // Appearance
-		//	remove_menu_page('plugins.php');                // Plugins
-		//	remove_menu_page('users.php');                  // Users
-		//	remove_menu_page('tools.php');                  // Tools
-		//	remove_menu_page('options-general.php');        // Settings
 
 		}
 	}
 
-	// Remove various post options from top row of admin bar with users of editor capacity or lower
-	function restrict_new_post_from_admin_bar($wp_admin_bar) {
-		// Check if the user has a role of editor or lower
-		if (!current_user_can('manage_options')) {
-			// Remove the "Post" item from the "New" dropdown
-			$wp_admin_bar->remove_node('new-post');
-			$wp_admin_bar->remove_node('new-page');
-			$wp_admin_bar->remove_node('new-about');
-			$wp_admin_bar->remove_node('new-instance');
 
-		}
-	}
 	// Function to add SVG support
 	function allow_svg_uploads($mimes) {
 		$mimes['svg'] = 'image/svg+xml';
@@ -448,7 +379,7 @@ class Webcr_Admin {
 		
 		if ($current_theme->get('Name') !== $required_theme && $current_theme->get('Template') !== $required_theme) {
 			$message = sprintf(
-				__('Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.', 'your-plugin-textdomain'));
+				'Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.', 'your-plugin-textdomain');
 			
 			echo '<div class="notice notice-warning is-dismissible"><p>' . $message . '</p></div>';
 		}

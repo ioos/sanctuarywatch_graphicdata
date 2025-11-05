@@ -420,7 +420,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             } else {
                 const protocol = window.location.protocol; // Get the current protocol (e.g., http or https)
                 const host = window.location.host;// Get the current host (e.g., domain name)
-                const restURL = protocol + "//" + host  + "/wp-json/webcr/v1/media/alt-text-by-url?image_url=" + encodeURI(img.src); 
+                const restURL = protocol + "//" + host  + "/wp-json/graphics_data/v1/media/alt-text-by-url?image_url=" + encodeURI(img.src); 
                 console.log(restURL);
                 fetch(restURL)                
                 .then(response => response.json())

@@ -4,18 +4,8 @@
  * 
  */
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
-class Webcr_Instance {
+class Instance {
     
-    /**
-     * The plugin name
-     * @var string
-     */
-    private $plugin_name;
-
-    public function __construct( $plugin_name ) {
-		$this->plugin_name = $plugin_name;
-	}
-
     /**
 	 * Create Instance custom content type.
 	 *
@@ -84,7 +74,7 @@ class Webcr_Instance {
             * METABOX
             */
             'type'              => 'metabox',                       // Required, menu or metabox
-            'id'                => $this->plugin_name,              // Required, meta box id, unique, for saving meta: id[field-id]
+            'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
             'post_types'        => array( 'instance' ),                 // Post types to display meta box
             'context'           => 'advanced',                      // 	The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
             'priority'          => 'default',                       // 	The priority within the context where the boxes should show ('high', 'low').
@@ -96,7 +86,7 @@ class Webcr_Instance {
 
 
         // get list of locations, which is saved as a taxonomy
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
 
         $scene_titles = array("" => "Scenes");
 
@@ -321,7 +311,7 @@ class Webcr_Instance {
             'instance_type', 'instance_status', 'instance_tile', 'instance_overview_scene', 'instance_footer_columns', 
             'instance_mobile_tile_background_color', 'instance_mobile_tile_text_color', 'instance_footer_column1', 
             'instance_footer_column2', 'instance_footer_column3');
-            $function_utilities = new Webcr_Utility();
+            $function_utilities = new Utility();
             $function_utilities -> register_custom_rest_fields("instance", $instance_rest_fields);
     }
 

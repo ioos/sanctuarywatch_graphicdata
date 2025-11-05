@@ -6,39 +6,7 @@
 
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
-class Webcr_Scene {
-
-	/**
-	 * The ID of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
-	 */
-	private $plugin_name;
-
-	/**
-	 * The version of this plugin.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
-	 */
-	private $version;
-
-	/**
-	 * Initialize the class and set its properties.
-	 *
-	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
-	 */
-	public function __construct( $plugin_name, $version ) {
-
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
-	}
+class Scene {
 
     /**
      * Display an admin notice if the current scene is the overview scene for its instance.
@@ -163,14 +131,14 @@ class Webcr_Scene {
         
         // Store field_length filter value if it exists
         if (isset($_GET['field_length']) && !empty($_GET['field_length'])) {
-            update_user_meta($user_id, 'webcr_scene_field_length', sanitize_key($_GET['field_length']));
-            update_user_meta($user_id, 'webcr_scene_field_length_expiration', $expiration_time);
+            update_user_meta($user_id, 'scene_field_length', sanitize_key($_GET['field_length']));
+            update_user_meta($user_id, 'scene_field_length_expiration', $expiration_time);
         }
         
         // Store scene_instance filter value if it exists
         if (isset($_GET['scene_instance']) && !empty($_GET['scene_instance'])) {
-            update_user_meta($user_id, 'webcr_scene_instance', absint($_GET['scene_instance']));
-            update_user_meta($user_id, 'webcr_scene_instance_expiration', $expiration_time);
+            update_user_meta($user_id, 'scene_instance', absint($_GET['scene_instance']));
+            update_user_meta($user_id, 'scene_instance_expiration', $expiration_time);
         }
     }
 
@@ -237,17 +205,17 @@ class Webcr_Scene {
         $current_time = time();
         
         // Check and clean up field_length
-        $expiration_time = get_user_meta($user_id, 'webcr_scene_field_length_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'scene_field_length_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_scene_field_length');
-            delete_user_meta($user_id, 'webcr_scene_field_length_expiration');
+            delete_user_meta($user_id, 'scene_field_length');
+            delete_user_meta($user_id, 'scene_field_length_expiration');
         }
         
         // Check and clean up scene_instance
-        $expiration_time = get_user_meta($user_id, 'webcr_scene_instance_expiration', true);
+        $expiration_time = get_user_meta($user_id, 'scene_instance_expiration', true);
         if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'webcr_scene_instance');
-            delete_user_meta($user_id, 'webcr_scene_instance_expiration');
+            delete_user_meta($user_id, 'scene_instance');
+            delete_user_meta($user_id, 'scene_instance_expiration');
         }
     }
 
@@ -283,7 +251,7 @@ class Webcr_Scene {
         );
 
         // Check for filter in URL first, then check for stored value
-        $field_length = isset($_GET["field_length"]) ? sanitize_key($_GET["field_length"]) : $this->get_scene_filter_value('webcr_scene_field_length');
+        $field_length = isset($_GET["field_length"]) ? sanitize_key($_GET["field_length"]) : $this->get_scene_filter_value('scene_field_length');
         
         if ($field_length) {
             switch ($field_length) {
@@ -307,64 +275,10 @@ class Webcr_Scene {
         }
         $field_length_dropdown .= '</select>';
 
-        echo $field_length_dropdown; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo $field_length_dropdown; 
 
-        // --- Instances Dropdown (Modified Logic) ---
-        global $wpdb;
-        $instances = array(); // Initialize as empty array
-
-        $current_user = wp_get_current_user();
-
-        // Check if user is content manager but not administrator
-        if (current_user_can('content_editor') && !current_user_can('administrator')) {
-            // Get assigned instances for the content manager
-            $user_instances = get_user_meta($current_user->ID, 'webcr_assigned_instances', true);
-
-            // Ensure user_instances is a non-empty array before querying
-            if (!empty($user_instances) && is_array($user_instances)) {
-                // Sanitize instance IDs
-                $instance_ids = array_map('absint', $user_instances);
-                $instance_ids_sql = implode(',', $instance_ids);
-
-                // Query only the assigned instances
-                $instances = $wpdb->get_results("
-                    SELECT ID, post_title
-                    FROM {$wpdb->posts}
-                    WHERE post_type = 'instance'
-                    AND post_status = 'publish'
-                    AND ID IN ({$instance_ids_sql})
-                    ORDER BY post_title ASC");
-            }
-            // If content manager has no assigned instances, $instances remains empty, so only "All Instances" shows.
-
-        } else {
-            // Administrators or other roles see all instances
-            $instances = $wpdb->get_results("
-                SELECT ID, post_title
-                FROM {$wpdb->posts}
-                WHERE post_type = 'instance'
-                AND post_status = 'publish'
-                ORDER BY post_title ASC");
-        }
-
-        // Get selected instance from URL or from stored value
-        $current_selection = isset($_GET['scene_instance']) ? absint($_GET['scene_instance']) : $this->get_scene_filter_value('webcr_scene_instance');
-
-        // Generate the dropdown HTML
-        echo '<select name="scene_instance" id="scene_instance">';
-        echo '<option value="">' . esc_html__('All Instances', 'webcr') . '</option>'; // Use translation function
-
-        // Check if $instances is not null and is an array before looping
-        if (is_array($instances)) {
-            foreach ($instances as $instance) {
-                // Ensure $instance is an object with ID and post_title properties
-                if (is_object($instance) && isset($instance->ID) && isset($instance->post_title)) {
-                    $selected = selected($current_selection, $instance->ID, false); // Use selected() helper
-                    echo '<option value="' . esc_attr($instance->ID) . '" ' . $selected . '>' . esc_html($instance->post_title) . '</option>';
-                }
-            }
-        }
-        echo '</select>';
+        $function_utilities = new Utility();
+        $function_utilities -> createInstanceDropDownFilter('scene_instance');
         
         // Store the filter values after displaying the dropdowns
         $this->store_scene_filter_values();
@@ -389,7 +303,7 @@ class Webcr_Scene {
         
         if ($pagenow == 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] == $type) {
             // Check URL params first, then check stored values
-            $instance = isset($_GET['scene_instance']) ? absint($_GET['scene_instance']) : $this->get_scene_filter_value('webcr_scene_instance');
+            $instance = isset($_GET['scene_instance']) ? absint($_GET['scene_instance']) : $this->get_scene_filter_value('scene_instance');
             
             if ($instance) {
                 $meta_query = array(
@@ -436,7 +350,7 @@ class Webcr_Scene {
         if (isset($_GET["field_length"])) {
             $field_length = sanitize_key($_GET["field_length"]);
         } else {
-            $stored_field_length = $this->get_scene_filter_value('webcr_scene_field_length');
+            $stored_field_length = $this->get_scene_filter_value('scene_field_length');
             $field_length = $stored_field_length ? $stored_field_length : "small"; // Default to "small" if no stored value or expired
         }
 
@@ -617,7 +531,7 @@ class Webcr_Scene {
         $config_metabox = array(
 
             'type'              => 'metabox',                       // Required, menu or metabox
-            'id'                => $this->plugin_name,              // Required, meta box id, unique, for saving meta: id[field-id]
+            'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
             'post_types'        => array( 'scene' ),                 // Post types to display meta box
             'context'           => 'advanced',                      // 	The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
             'priority'          => 'default',                       // 	The priority within the context where the boxes should show ('high', 'low').
@@ -627,7 +541,7 @@ class Webcr_Scene {
             'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
         );
 
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $instances = $function_utilities ->  returnAllInstances();
 
         $fields = array(
@@ -981,7 +895,7 @@ class Webcr_Scene {
         for ($i = 1; $i < 7; $i++){
             array_push($scene_rest_fields,'scene_info' . $i, 'scene_photo' . $i, 'scene_photo_internal' . $i, 'scene_section' . $i);
         }
-        $function_utilities = new Webcr_Utility();
+        $function_utilities = new Utility();
         $function_utilities -> register_custom_rest_fields("scene", $scene_rest_fields);
     }
 

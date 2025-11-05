@@ -436,7 +436,7 @@ class GitHub_Updater {
     /**
      * Gets the download URL for the plugin or theme.
      *
-     * Prioritizes specific release assets (webcr.zip or Sanctuary_Watch.zip),
+     * Prioritizes specific release assets (graphic_data_plugin.zip or graphic_data_theme.zip),
      * then the release's zipball_url, then a direct archive link to the default branch.
      *
      * @return string The download URL.

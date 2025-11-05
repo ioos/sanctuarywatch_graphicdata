@@ -6,8 +6,6 @@
  * @link       https://www.noaa.gov
  * @since      1.0.0
  *
- * @package    Webcr
- * @subpackage Webcr/includes
  */
 
 /**
@@ -17,11 +15,8 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Webcr
- * @subpackage Webcr/includes
- * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
-class Webcr_Loader {
+class Loader {
 
 	/**
 	 * The array of actions registered with WordPress.

@@ -9,13 +9,13 @@ include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 class Graphic_Data_Settings_Page {
 
     // Add menu item to WordPress admin
-    function webcr_add_admin_menu() {
+    function add_admin_menu() {
         add_menu_page(
             'Graphic Data Settings', // Page title
             'Graphic Data Settings', // Menu title
             'manage_options', // Capability required
             'theme_settings', // Menu slug
-            [$this, 'webcr_settings_page'] // Function to display the page
+            [$this, 'settings_page'] // Function to display the page
         );
     }
 
@@ -49,13 +49,13 @@ class Graphic_Data_Settings_Page {
             );
     }
 
-    function webcr_settings_init() {
+    function settings_init() {
         // Register a new settings group
-        register_setting('theme_settings_group', 'webcr_settings');
+        register_setting('theme_settings_group', 'graphic_data_settings');
 
         // Theme Display section
         add_settings_section(
-            'webcr_settings_section',
+            'settings_section',
             'Theme Display',
             null,
             'theme_settings'
@@ -66,7 +66,7 @@ class Graphic_Data_Settings_Page {
             'Front Page Introduction',
             [$this, 'intro_text_field_callback'],
             'theme_settings',
-            'webcr_settings_section'
+            'settings_section'
         );
 
         add_settings_field(
@@ -74,7 +74,7 @@ class Graphic_Data_Settings_Page {
             'Site-wide footer title',
             [$this, 'sitewide_footer_title_field_callback'],
             'theme_settings',
-            'webcr_settings_section'
+            'settings_section'
         );
 
         add_settings_field(
@@ -82,13 +82,13 @@ class Graphic_Data_Settings_Page {
             'Site-wide footer',
             [$this, 'sitewide_footer_field_callback'],
             'theme_settings',
-            'webcr_settings_section'
+            'settings_section'
         );
 
 
         // Google Analytics/Tags section
         add_settings_section(
-            'webcr_google_settings_section',
+            'google_settings_section',
             'Google Analytics/Tags',
             null,
             'theme_settings'
@@ -99,7 +99,7 @@ class Graphic_Data_Settings_Page {
             'Google Analytics Measurement ID',
             [$this, 'google_analytics_measurement_id_field_callback'],
             'theme_settings',
-            'webcr_google_settings_section'
+            'google_settings_section'
         );
 
         add_settings_field(
@@ -107,7 +107,7 @@ class Graphic_Data_Settings_Page {
             'Google Tags Container ID',
             [$this, 'google_tags_container_id_field_callback'],
             'theme_settings',
-            'webcr_google_settings_section'
+            'google_settings_section'
         );
 
 
@@ -152,7 +152,7 @@ class Graphic_Data_Settings_Page {
         );
 
         // Register settings for REST API access (read-only)
-        register_setting('theme_settings_group', 'webcr_sitewide_footer_title', [
+        register_setting('theme_settings_group', 'sitewide_footer_title', [
             'show_in_rest' => [
                 'name' => 'sitewide_footer_title',
                 'schema' => [
@@ -165,7 +165,7 @@ class Graphic_Data_Settings_Page {
             'sanitize_callback' => 'sanitize_text_field'
         ]);
 
-        register_setting('theme_settings_group', 'webcr_sitewide_footer', [
+        register_setting('theme_settings_group', 'sitewide_footer', [
             'show_in_rest' => [
                 'name' => 'sitewide_footer',
                 'schema' => [
@@ -179,19 +179,19 @@ class Graphic_Data_Settings_Page {
         ]);
     }
 
-    function webcr_register_rest_settings() {
+    function register_rest_settings() {
         // Register custom REST route for read-only access
-        register_rest_route('webcr/v1', '/footer-settings', [
+        register_rest_route('graphic_data/v1', '/footer-settings', [
             'methods' => 'GET',
-            'callback' => [$this, 'webcr_get_footer_settings'],
-        'webcr_get_footer_settings',
+            'callback' => [$this, 'get_footer_settings'],
+        'get_footer_settings',
             'permission_callback' => '__return_true', // Public access
             'args' => []
         ]);
     }
 
-    function webcr_get_footer_settings($request) {
-        $settings = get_option('webcr_settings', []);
+    function get_footer_settings($request) {
+        $settings = get_option('graphic_data_settings', []);
         
         return rest_ensure_response([
             'sitewide_footer_title' => isset($settings['sitewide_footer_title']) ? $settings['sitewide_footer_title'] : '',
@@ -206,11 +206,11 @@ class Graphic_Data_Settings_Page {
      * @return void
      */
     function sitewide_footer_title_field_callback() {
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         // Ensure the correct option key is used, assuming it's 'sitewide_footer_title'
         $value = isset($options['sitewide_footer_title']) ? $options['sitewide_footer_title'] : '';
         ?>
-        <input type="text" name="webcr_settings[sitewide_footer_title]" value="<?php echo esc_attr($value); ?>" class="regular-text">
+        <input type="text" name="graphic_data_settings[sitewide_footer_title]" value="<?php echo esc_attr($value); ?>" class="regular-text">
 
 
         <p class="description">Enter the title for the site-wide footer. This will appear as the heading for the first column in the footer across all pages. If you don't want a site-wide footer, leave this field blank.</p>
@@ -224,11 +224,11 @@ class Graphic_Data_Settings_Page {
      * @return void
      */
     function sitewide_footer_field_callback() {
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         $value = isset($options['site_footer']) ? $options['site_footer'] : '';
-        $editor_id = 'webcr_site_footer_editor'; // Unique ID for the editor
+        $editor_id = 'site_footer_editor'; // Unique ID for the editor
         $settings = array(
-            'textarea_name' => 'webcr_settings[site_footer]', // Important for saving
+            'textarea_name' => 'graphic_data_settings[site_footer]', // Important for saving
             'media_buttons' => true, // Set to false if you don't want media buttons
             'textarea_rows' => 10, // Number of rows
             'tinymce'       => true, // Use TinyMCE
@@ -247,11 +247,11 @@ class Graphic_Data_Settings_Page {
      * @return void
      */
     function intro_text_field_callback() {
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         $value = isset($options['intro_text']) ? $options['intro_text'] : '';
         $editor_id = 'graphic_data_intro_text_editor'; // Unique ID for the editor
         $settings = array(
-            'textarea_name' => 'webcr_settings[intro_text]', // Important for saving
+            'textarea_name' => 'graphic_data_settings[intro_text]', // Important for saving
             'media_buttons' => true, // Set to false if you don't want media buttons
             'textarea_rows' => 10, // Number of rows
             'tinymce'       => true, // Use TinyMCE
@@ -264,10 +264,10 @@ class Graphic_Data_Settings_Page {
     }
    
     function google_analytics_measurement_id_field_callback() {
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         $value = isset($options['google_analytics_measurement_id']) ? $options['google_analytics_measurement_id'] : '';
         ?>
-        <input type="text" name="webcr_settings[google_analytics_measurement_id]" value="<?php echo esc_attr($value); ?>" class="regular-text" placeholder="G-XXXXXXXXXXXX">
+        <input type="text" name="graphic_data_settings[google_analytics_measurement_id]" value="<?php echo esc_attr($value); ?>" class="regular-text" placeholder="G-XXXXXXXXXXXX">
         <p class="description">
             Enter the Google Analytics Measurement ID for your site.
             <br>
@@ -278,11 +278,11 @@ class Graphic_Data_Settings_Page {
 
 
     public function interactive_line_arguments_callback() {
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         $value = isset($options['interactive_line_arguments']) ? $options['interactive_line_arguments'] : '';
         $editor_id = 'interactive_line_arguments_editor'; // Unique ID for the editor
         $settings = array(
-            'textarea_name' => 'webcr_settings[interactive_line_arguments]', // Important for saving
+            'textarea_name' => 'graphic_data_settings[interactive_line_arguments]', // Important for saving
             'media_buttons' => false, // Set to false if you don't want media buttons
             'textarea_rows' => 10, // Number of rows
             'tinymce'       => false, // Use TinyMCE
@@ -293,7 +293,7 @@ class Graphic_Data_Settings_Page {
 
 
     function interactive_line_defaults_callback() {
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         $interactive_line_arguments_value = isset($options['interactive_line_arguments']) ? $options['interactive_line_arguments'] : '';
         $value   = isset($options['interactive_line_defaults']) ? $options['interactive_line_defaults'] : '';
         ?>
@@ -309,11 +309,11 @@ class Graphic_Data_Settings_Page {
     }
 
     public function interactive_bar_arguments_callback() {
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         $value = isset($options['interactive_bar_arguments']) ? $options['interactive_bar_arguments'] : '';
         $editor_id = 'interactive_bar_arguments_editor'; // Unique ID for the editor
         $settings = array(
-            'textarea_name' => 'webcr_settings[interactive_bar_arguments]', // Important for saving
+            'textarea_name' => 'graphic_data_settings[interactive_bar_arguments]', // Important for saving
             'media_buttons' => false, // Set to false if you don't want media buttons
             'textarea_rows' => 10, // Number of rows
             'tinymce'       => false, // Use TinyMCE
@@ -324,7 +324,7 @@ class Graphic_Data_Settings_Page {
 
 
     function interactive_bar_defaults_callback() {
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         $interactive_bar_arguments_value = isset($options['interactive_bar_arguments']) ? $options['interactive_bar_arguments'] : '';
         $value   = isset($options['interactive_bar_defaults']) ? $options['interactive_bar_defaults'] : '';
         ?>
@@ -359,7 +359,7 @@ class Graphic_Data_Settings_Page {
      */
     function google_tags_container_id_field_callback() {
         // Retrieve the plugin settings from the WordPress options table.
-        $options = get_option('webcr_settings');
+        $options = get_option('graphic_data_settings');
         // Get the Google Tags Container ID from the settings, or set a default empty value.
         $value = isset($options['google_tags_container_id']) ? $options['google_tags_container_id'] : '';
         // Get the Google Analytics Measurement ID from the settings, or set a default empty value.
@@ -371,7 +371,7 @@ class Graphic_Data_Settings_Page {
         $filedownload =  esc_url($example_folder . $example_container_json)
 
         ?>
-        <input type="text" name="webcr_settings[google_tags_container_id]" value="<?php echo esc_attr($value); ?>" class="regular-text" placeholder="GTM-XXXXXXXX">
+        <input type="text" name="graphic_data_settings[google_tags_container_id]" value="<?php echo esc_attr($value); ?>" class="regular-text" placeholder="GTM-XXXXXXXX">
         <p class="description">
             Enter the Google Tags Container ID for your site.
             <br>
@@ -413,7 +413,7 @@ class Graphic_Data_Settings_Page {
 
                 // Fetch the GTM container JSON from the local server
                 const rootURL = window.location.origin;
-                const figureRestCall = `${rootURL}/wp-content/plugins/webcr/example_files/example_google_container_tags.json`;
+                const figureRestCall = `${rootURL}/wp-content/plugins/graphic_data_plugin/example_files/example_google_container_tags.json`;
                 fetch(figureRestCall)  // Update with the correct path
                     .then(response => response.json())  // Parse JSON
                     .then(jsonData => {
@@ -465,7 +465,7 @@ class Graphic_Data_Settings_Page {
 
     
    // Create the settings page
-   function webcr_settings_page() {
+   function settings_page() {
        // Check user capabilities
        if (!current_user_can('manage_options')) {
            return;

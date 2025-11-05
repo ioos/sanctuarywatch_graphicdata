@@ -4,17 +4,7 @@
  * 
  */
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
-class Webcr_Export_Figures {
-    
-    /**
-     * The plugin name
-     * @var string
-     */
-    private $plugin_name;
-
-    public function __construct( $plugin_name ) {
-		$this->plugin_name = $plugin_name;
-	}
+class Export_Figures {
 
     /**
 	 * Function to add the "Export Figures" submenu under Tools
@@ -41,7 +31,7 @@ class Webcr_Export_Figures {
             <p>
             <?php
                 // get list of locations
-                $function_utilities = new Webcr_Utility();
+                $function_utilities = new Utility();
                 $locations = $function_utilities -> returnAllInstances();
 
                 echo '<select id="location" name="location">'; // Opening the <select> tag

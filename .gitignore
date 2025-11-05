@@ -2,13 +2,15 @@
 **/*.DS_Store
 db.php
 debug.log
+/vendor/
 /data/
 /upgrade/
 /upgrade-temp-backup/
 /uploads/
 /plugins/.DS_Store
-/plugins/webcr/.DS_Store
+/plugins/graphic_data_plugin/.DS_Store
 /plugins/debug-bar/
+plugins/maintenance/
 /plugins/query-monitor/
 /plugins/svg-support/
 plugins/contact-form-7/
@@ -20,8 +22,8 @@ themes/twentytwentytwo/
 themes/developry-lite/
 debug.log
 /plugins/.DS_Store
-/plugins/webcr/.DS_Store
-/plugins/webcr/admin/.DS_Store
+/plugins/graphic_data_plugin/.DS_Store
+/plugins/graphic_data_plugin/admin/.DS_Store
 /plugins/debug-bar-actions-and-filters-addon
 data/
 

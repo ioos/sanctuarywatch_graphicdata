@@ -1,5 +1,5 @@
 window.dataLayer = window.dataLayer || [];
-const gaMeasurementID = window.webcrSettings.googleAnalyticsMeasurementId;
+const gaMeasurementID = window.graphicDataSettings.googleAnalyticsMeasurementId;
 
 //FIGURE TRACKING AND ANALYSIS_______________________________________________________________
 /**

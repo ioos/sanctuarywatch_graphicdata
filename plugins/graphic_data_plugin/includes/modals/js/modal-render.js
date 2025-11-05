@@ -140,13 +140,12 @@ function render_modal(key){
                     listItem.appendChild(anchor);
     
                     collapsePhotoHTML += `<li> <a href="${modal_info_url}" target="_blank">${modal_info_text}</a> </li>`;
-                    collapsePhotoHTML += '</ul></div>';
                 }
 
                 let accordionItem2 = createAccordionItem("accordion-item-2", "accordion-header-2", "accordion-collapse-2", "Images", collapsePhotoHTML);
                 acc.appendChild(accordionItem2);
             } 
-            
+            collapsePhotoHTML += '</ul></div>';
             if (is_mobile()){
                 let accordionItem3 = createAccordionItem("accordion-item-3", "accordion-header-3", "accordion-collapse-3", "Tagline", modal_tagline);
                 acc.prepend(accordionItem3);

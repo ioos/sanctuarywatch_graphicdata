@@ -24,13 +24,16 @@ function figure_instance_change(){
                     optionScene.text = targetRow['title']['rendered'];
                     figure_scene.appendChild(optionScene);
             });
-            figure_scene_change();
+
         })
         .catch((err) => {console.error(err)});
     }
+    figure_scene_change();
 }
 
+// change contents of Icons dropdown filter based on scene
 function figure_scene_change(){
+
     const figure_scene_value = document.getElementById("figure_scene").value;
     let figure_icon = document.getElementById("figure_icon");
     figure_icon.innerHTML=null;

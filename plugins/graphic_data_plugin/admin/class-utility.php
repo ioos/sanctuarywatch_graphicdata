@@ -5,18 +5,14 @@
  * @link       https://www.noaa.gov
  * @since      1.0.0
  *
- * @package    Webcr
- * @subpackage Webcr/admin
  */
 
 /**
  * Utility functions used across the plugin
  *
- * @package    Webcr
- * @subpackage Webcr/admin
  * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
-class Webcr_Utility {
+class Utility {
 
     /**
 	 * Shorten string without cutting words midword.
@@ -66,8 +62,6 @@ class Webcr_Utility {
         // Check if transient exists for this user
         $transient_name = $current_post_type . "_error_all_fields_user_{$user_id}";
 
-        $transient_list = $this->get_all_transients();
-
         $transient_data = get_transient($transient_name);
         
         if ($transient_data !== false) {
@@ -83,19 +77,6 @@ class Webcr_Utility {
         }
     }
 
-//temp function to get all transients
-function get_all_transients() {
-    global $wpdb;
-    
-    $transients = $wpdb->get_results(
-        "SELECT option_name AS name, option_value AS value 
-        FROM $wpdb->options 
-        WHERE option_name LIKE '_transient_%' 
-        OR option_name LIKE '_site_transient_%'"
-    );
-    
-    return $transients;
-}
 
     /**
      * Generalized function to write all field values from any custom content type to transients
@@ -344,6 +325,138 @@ function get_all_transients() {
         }
     }
 
+    /**
+     * Check if stored filter values are still valid and retrieve them if they are.
+     *
+     * This function retrieves a stored filter value from user metadata and verifies
+     * if it has exceeded its expiration time. If the value has expired, it cleans up
+     * the metadata entries and returns false. Otherwise, it returns the stored value.
+     *
+     * @since    1.0.0
+     * @access   public
+     * @param    string  $meta_key  The meta key to check expiration for.
+     * @return   bool|string|int    False if expired or not found, the value if still valid.
+     */
+    public function get_filter_value($meta_key) {
+        $user_id = get_current_user_id();
+        if (!$user_id) {
+            return false;
+        }
+        
+        $value = get_user_meta($user_id, $meta_key, true);
+        if (empty($value)) {
+            return false;
+        }
+        
+        // Check if the value has expired
+        $expiration_time = get_user_meta($user_id, $meta_key . '_expiration', true);
+        $current_time = time();
+        
+        if ($current_time > $expiration_time) {
+            // Delete expired values
+            delete_user_meta($user_id, $meta_key);
+            delete_user_meta($user_id, $meta_key . '_expiration');
+            return false;
+        }
+        
+        return $value;
+    }
+
+    /**
+     * Create Instance filter dropdown shown in the Scene, Modal, and Figure admin column screens.
+     *
+     * Generates a dropdown filter for selecting instances with role-based access control.
+     * Content editors see only their assigned instances, while administrators and content managers see all published instances.
+     * The dropdown maintains the selected value across page loads via GET parameter or stored filter value.
+     *
+     * @since 1.0.0
+     *
+     * @global wpdb $wpdb WordPress database abstraction object.
+     *
+     * @param string $element_name The name and ID attribute for the select element.
+     *                             Used for form submission and DOM targeting.
+     *
+     * @return void Outputs the HTML select element directly to the buffer.
+     *
+     * @uses wp_get_current_user()     Retrieves the current user object.
+     * @uses current_user_can()        Checks user capabilities for role-based filtering.
+     * @uses get_user_meta()            Fetches assigned instances for content editors.
+     * @uses selected()                 WordPress helper for marking selected options.
+     * @uses esc_attr()                 Escapes attribute values for security.
+     * @uses esc_html()                 Escapes output text for security.
+     * @uses esc_html__()               Translates and escapes text.
+     * @uses $this->get_filter_value()  Retrieves stored filter value (custom method).
+     *
+     * @example
+     * // Display instance filter with custom element name
+     * $this->createInstanceDropDownFilter('scene_instance');
+     *
+     * @security
+     * - Sanitizes instance IDs using absint() before SQL queries
+     * - Escapes all output using esc_attr() and esc_html()
+     * - Validates user permissions before showing filtered results
+     * - Prepares SQL safely by using sanitized, imploded integer arrays
+     *
+     * @access public
+     */
+    public function createInstanceDropDownFilter ($element_name){
+        global $wpdb;
+        $instances = array(); // Initialize as empty array
+
+        $current_user = wp_get_current_user();
+
+        // Check if user is content editor but not administrator
+        if (current_user_can('content_editor') && !current_user_can('administrator')) {
+            // Get assigned instances for the content editor
+            $user_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
+
+            // Ensure user_instances is a non-empty array before querying
+            if (!empty($user_instances) && is_array($user_instances)) {
+                // Sanitize instance IDs
+                $instance_ids = array_map('absint', $user_instances);
+                $instance_ids_sql = implode(',', $instance_ids);
+
+                // Query only the assigned instances
+                $instances = $wpdb->get_results("
+                    SELECT ID, post_title
+                    FROM {$wpdb->posts}
+                    WHERE post_type = 'instance'
+                    AND post_status = 'publish'
+                    AND ID IN ({$instance_ids_sql})
+                    ORDER BY post_title ASC");
+            }
+            // If content editor has no assigned instances, $instances remains empty, so only "All Instances" shows.
+
+        } else {
+            // Administrators or other roles see all instances
+            $instances = $wpdb->get_results("
+                SELECT ID, post_title
+                FROM {$wpdb->posts}
+                WHERE post_type = 'instance'
+                AND post_status = 'publish'
+                ORDER BY post_title ASC");
+        }
+
+        // Get selected instance from URL or from stored value
+        $current_selection = isset($_GET[$element_name]) ? absint($_GET[$element_name]) : $this->get_filter_value("{$element_name}");
+
+        // Generate the dropdown HTML
+        echo '<select name="' . $element_name . '" id="' . $element_name . '">';
+        echo '<option value="">All Instances</option>'; 
+
+        // Check if $instances is not null and is an array before looping
+        if (is_array($instances)) {
+            foreach ($instances as $instance) {
+                // Ensure $instance is an object with ID and post_title properties
+                if (is_object($instance) && isset($instance->ID) && isset($instance->post_title)) {
+                    $selected = selected($current_selection, $instance->ID, false); // Use selected() helper
+                    echo '<option value="' . esc_attr($instance->ID) . '" ' . $selected . '>' . esc_html($instance->post_title) . '</option>';
+                }
+            }
+        }
+        echo '</select>';
+    }
+
 
     /**
      * Get a list of all instances, filtered for 'content_editor' role.
@@ -375,7 +488,7 @@ function get_all_transients() {
         // Check if the current user is a 'content_editor' BUT NOT an 'administrator'
         if ( user_can($current_user, 'content_editor') && !user_can($current_user, 'administrator') ) {
             // Get the instances assigned to this content editor
-            $user_assigned_instances = get_user_meta($current_user->ID, 'webcr_assigned_instances', true);
+            $user_assigned_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
 
             // Ensure it's a non-empty array
             if (!empty($user_assigned_instances) && is_array($user_assigned_instances)) {
@@ -509,7 +622,7 @@ function get_all_transients() {
         $icons_element = $xpath->query($query)->item(0);
             
             if ($icons_element === null) {
-                error_log("Webcr_Utility::returnIcons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path);
+                error_log("Utility::returnIcons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path);
                 return $modal_icons; // Element not found
             }
             

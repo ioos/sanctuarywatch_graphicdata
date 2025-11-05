@@ -1002,18 +1002,36 @@ function full_screen_button(svgId) {
         
         var webkitElem = document.getElementById(svgId);
         webkitElem.addEventListener('webkitfullscreenchange', (event) => {
+
             if (document.webkitFullscreenElement) {
+
+                
                 webkitElem.style.width = (window.innerWidth) + 'px';
-                webkitElem.style.height = (window.innerHeight) + 'px';
+                webkitElem.style.height =  (window.innerHeight) + 'px';
             } else {
-                webkitElem.style.width = width;
+                webkitElem.style.width =  width;
                 webkitElem.style.height = height;
             }
         });
         
         function toggleFullScreen() {
             var elem = document.getElementById(svgId);
+            var svg = elem.querySelector('svg');
+
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                // Apply styles for fullscreen with aspect ratio preservation
+                elem.style.backgroundColor = 'black';
+                elem.style.display = 'flex';
+                elem.style.alignItems = 'center';
+                elem.style.justifyContent = 'center';
+
+                // Set SVG to use full viewport with aspect ratio preserved
+                svg.style.width = '100%';
+                svg.style.height = '100%';
+                svg.style.maxWidth = '100vw';
+                svg.style.maxHeight = '100vh';
+                svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
                 if (elem.requestFullscreen) {
                     elem.requestFullscreen();
                 } else if (elem.webkitRequestFullscreen) {
@@ -1024,6 +1042,18 @@ function full_screen_button(svgId) {
                 let modal = document.getElementById("myModal");
                 elem.prepend(modal);
             } else {
+                // Remove fullscreen styles
+                elem.style.backgroundColor = '';
+                elem.style.display = '';
+                elem.style.alignItems = '';
+                elem.style.justifyContent = '';
+
+                svg.style.width = '';
+                svg.style.height = '';
+                svg.style.maxWidth = '';
+                svg.style.maxHeight = '';
+                svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 } else if (document.webkitExitFullscreen) {

@@ -1,0 +1,11 @@
+<?php
+// Minimal phpdoc-md config kept in the repository so CI and local runs
+// have a consistent configuration. phpdoc-md accepts PHP files that
+// return a config object.
+$config = new stdClass();
+$config->format = 'github';
+$config->destDirectory = 'docs/function_documentation';
+$config->rootNamespace = '';
+$config->classes = [];
+$config->packages = [];
+return $config;

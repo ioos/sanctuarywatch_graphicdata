@@ -8,7 +8,7 @@ if ($singleInstance != false) {
 }
 
 $instance_footer = intval(get_post_meta($instance_num, 'instance_footer_columns', true));
-$settings = get_option('webcr_settings', []);
+$settings = get_option('graphic_data_settings', []);
 $sitewide_footer_title = (!empty($settings['sitewide_footer_title'] ?? '')) ? $settings['sitewide_footer_title'] : '';
 
 $sitewide_footer = (!empty($settings['site_footer'] ?? '')) ? $settings['site_footer'] : '';

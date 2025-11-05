@@ -56,7 +56,7 @@ $overview = get_post_meta($instance, 'instance_overview_scene', true);
 
   <!-- // Google Tags Container ID call from wp_options single-scene.php-->
   <?php
-  $settings = get_option('webcr_settings');
+  $settings = get_option('graphic_data_settings');
   $google_tags_container_id = isset($settings['google_tags_container_id']) ? esc_js($settings['google_tags_container_id']) : '';
   ?>
   <!-- Google Tag Manager (noscript) -->

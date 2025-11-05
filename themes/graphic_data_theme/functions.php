@@ -622,6 +622,11 @@ add_action('after_setup_theme', 'set_theme_default_site_icon');
 
   //enqueue javascript 
   function enqueue_info_scripts() {
+        global $template;
+    // Don't run on the main index page or on the about page
+    if (is_home() || is_front_page() || get_post_type() === 'about') {
+        return;
+    }
     wp_enqueue_script(
         'script-js',
         get_template_directory_uri() . '/assets/js/script.js',
@@ -633,13 +638,6 @@ add_action('after_setup_theme', 'set_theme_default_site_icon');
     // Get the SVG URL (replace this with how you're getting it)
     $child_ids = get_post_meta( get_the_ID(), 'scene_child_ids', true ); // Get child_ids from post meta
     $svg_url = get_post_meta( get_the_ID(), 'scene_svg_url', true ); // Example: from post meta
-  
-    // Localize the script, passing the SVG URL and child_ids
-//    wp_localize_script( 'script-js', 'my_script_vars', array( // Correct handle
-//        'child_ids' => $child_ids,
-//        'svg_url' => $svg_url,
-//    ) );
-
 
 }
 add_action('wp_enqueue_scripts', 'enqueue_info_scripts');

@@ -6,7 +6,8 @@
 
  
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
-class Webcr_Instance_Type {
+class Instance_Type
+ {
 
     // code version for instance
     function instance_settings_init() {
