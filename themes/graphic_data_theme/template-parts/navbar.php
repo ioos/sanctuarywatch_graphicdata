@@ -134,9 +134,7 @@
                         get_template_part( 'parts/navbar-dropdown' );
                     }
                     ?>
-                    <!-- <li class='nav-item'>
-                        <a class='nav-link' href="https://marinebon.org/sanctuaries/" target="_blank">About</a>
-                    </li> -->
+                
                 </ul>
             </div>
         </div>

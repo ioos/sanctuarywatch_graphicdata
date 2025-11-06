@@ -207,11 +207,9 @@ foreach ($terms_array as $term){
                     $instance_overview_scene = get_post_meta($instance["id"], 'instance_overview_scene', true); 
                     $instance_post_name = get_post($instance_overview_scene)->post_name;
                     $instance_link = $instance_slug . "/" . $instance_post_name;
-
                 } else {
                     $instance_link = $instance["instance_legacy_content_url"]; 
                 }
-        
                 echo '<div class="col-12 col-sm-6 col-md-4 d-flex">';
                 echo '<div class="card w-100" >';
                 if ($instance["instance_status"] =="Published") { 
@@ -251,6 +249,4 @@ foreach ($terms_array as $term){
    // let post_id =  <?php echo $post_id; ?>;
     // let is_logged_in = <?php echo is_user_logged_in(); ?>;
    // let is_logged_in = <?php echo json_encode(is_user_logged_in()); ?>;
-
-
 </script>

@@ -111,14 +111,14 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				$example_json = 'example.json';
 				$example_geojson = 'example.geojson';
 
-				echo ' - Need help? See our help guide for interactive figures <a href="' . 'https://ioos.github.io/sanctuarywatch_graphicdata/figures-interactive/' . '" target="_blank">here</a><br><br>';
+				echo ' <a href="' . 'https://ioos.github.io/sanctuarywatch_graphicdata/figures-interactive/' . '" target="_blank">HELP GUIDE</a> | Click to open the help guide for interactive figures.<br><br>';
 
 				echo '<strong>Correct Formatting for .csv Files:</strong>';
 				echo '<br>';
 				echo ' - Be sure that every column header has a name and that none of your column header names, row data values, or metadata contain commas.<br>';
-				echo ' - No values should be contained in quotes or double quote. (Examples - Correct: value, Incorrect: "value") .<br>';
+				echo ' - No values or headers should be contained in quotes or double quote. (Correct: value, Incorrect: "value") .<br>';
 				echo ' - Please see the date examples in the example files for accepted date formats and no data handling. <br>';
-				echo ' - The date formats are best viewed in Notepad or a similar text editor, MS Excel may automatically change date formats. <br>';
+				echo ' - MS Excel may automatically hide or change date formats or quotes in data. Data is best viewed in Notepad or a similar text editor. <br>';
 				echo '<br>';
 				echo '<strong>Correctly Formatted Example Files:</strong><br>';
 				echo 'Please format your .csv or .json file as shown in the examples below. If they are not formatted properly, your file will be rejected.<br>';
