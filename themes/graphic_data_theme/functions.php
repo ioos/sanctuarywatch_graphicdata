@@ -643,12 +643,17 @@ add_action('after_setup_theme', 'set_theme_default_site_icon');
 add_action('wp_enqueue_scripts', 'enqueue_info_scripts');
 
 function enqueue_info_scripts2() {
+  // Don't run on the about page
+  if (get_post_type() === 'about') {
+      return;
+  }
+
   wp_enqueue_script(
       'index-js',
       get_template_directory_uri() . '/assets/js/index.js',
       array(),
       null,
-      array('strategy' => 'defer') 
+      array('strategy' => 'defer')
   );
 }
 add_action('wp_enqueue_scripts', 'enqueue_info_scripts2');

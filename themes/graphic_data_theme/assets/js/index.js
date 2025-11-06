@@ -22,7 +22,6 @@ async function getInstanceInfo() {
     try {
       testDataIndex = await getInstanceInfo();
 
-      let elem = document.querySelector("#webcrs---ecosystem-tracking-tools-for-condition-reporting > div");
       let list = document.createElement("div");
       list.classList.add("row");
     for (let idx in testDataIndex) {
