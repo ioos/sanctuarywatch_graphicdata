@@ -38,7 +38,7 @@ class Admin {
 			}
 		}
 
-		wp_enqueue_style( 'graphic_data_plugin', plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), null, 'all' );
+		wp_enqueue_style( 'graphic_data_plugin', plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), GRAPHIC_DATA_PLUGIN_VERSION, 'all' );
 
 		wp_enqueue_style(
 			'font-awesome-admin', $src =
@@ -70,88 +70,93 @@ class Admin {
 
 
 		// Enqueue utlity javascript functions used across javascript files on the admin side
-		 wp_enqueue_script( "utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), null, array('strategy'  => 'defer') );
-		 wp_enqueue_script( "theme_script", get_template_directory_uri( __FILE__ ) . '/assets/js/script.js', array(  ), null, array('strategy'  => 'defer') );
+
+		 wp_enqueue_script( "utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
+
+		 wp_enqueue_script( "theme_script", get_template_directory_uri( __FILE__ ) . '/assets/js/script.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
+
 
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post 
 		if ($current_post_type == "about" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-about", plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(  ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-about", plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 		}
 
 		// Load Instance-specific Javascript only when editing/creating a Instance post 
 		if ($current_post_type == "instance" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-instance", plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(  ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-instance", plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 		}
 
 		// Load Scene-specific Javascript only when editing/creating a Scene post 
 		if ($current_post_type == "scene" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
 			// Enqueue scene-render.js
-			wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 		}
 
 		// Load Modal-specific Javascript only when editing/creating a Modal post 
 		if ($current_post_type == "modal" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
-			wp_enqueue_script( "admin-modal", plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array( ), null, array('strategy'  => 'defer') );
-			
+
+			wp_enqueue_script( "admin-modal", plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array( ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
+
 			// Enqueue admin-preview-buttons.js
-			wp_enqueue_script( "admin-preview-buttons", plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array( ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-preview-buttons", plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array( ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
+
 
 			// Enqueue modal-render.js
-			wp_enqueue_script('modal-render', dirname(plugin_dir_url(__FILE__)) . '/includes/modals/js/modal-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			wp_enqueue_script('modal-render', dirname(plugin_dir_url(__FILE__)) . '/includes/modals/js/modal-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 		}
 
 		// Load Figure -specific Javascript only when editing/creating a Figure post 
 		if ($current_post_type == "figure" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
 
 			// Enqueue figure-render.js
-			wp_enqueue_script('figure-render', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/figure-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			wp_enqueue_script('figure-render', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/figure-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 
 			// Enqueue utility.js
-			wp_enqueue_script('figure-utility', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/interactive/plotly-utility.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			wp_enqueue_script('figure-utility', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/interactive/plotly-utility.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 		
 			// Enqueue plotly-timeseries-line.js
-			wp_enqueue_script('plotly-timeseries-line', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-timeseries-line.js', array(), '1.0.0', array('strategy'  => 'defer'));
+			wp_enqueue_script('plotly-timeseries-line', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-timeseries-line.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 
 			// Enqueue plotly-bar.js
-			wp_enqueue_script('plotly-bar', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-bar.js', array(), '1.0.0', array('strategy'  => 'defer'));
+			wp_enqueue_script('plotly-bar', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-bar.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 
 			// Enqueue plotly-map.js
-			wp_enqueue_script('plotly-map', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-map.js', array(), '1.0.0', array('strategy'  => 'defer'));
+			wp_enqueue_script('plotly-map', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/plotly-map.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 
 			// Enqueue file-upload.js
-			wp_enqueue_script('file-upload', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/file-upload.js', array(), '1.0.0', array('strategy'  => 'defer'));
+			wp_enqueue_script('file-upload', dirname(plugin_dir_url(__FILE__)) .  '/includes/figures/js/interactive/file-upload.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 
 			// Enqueue figure-code.js
-			wp_enqueue_script('figure-code', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/code/figure-code.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			wp_enqueue_script('figure-code', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/code/figure-code.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 
 			// Enqueue admin-figure.js
-			wp_enqueue_script( "admin-figure", plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array( ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure", plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array( ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
 			// Enqueue modal-render.js
-			wp_enqueue_script('modal-render', dirname(plugin_dir_url(__FILE__)) . '/includes/modals/js/modal-render.js',array(), '0.2.0-beta', array('strategy'  => 'defer'));
+			wp_enqueue_script('modal-render', dirname(plugin_dir_url(__FILE__)) . '/includes/modals/js/modal-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 			
 			// Enqueue admin-preview-buttons.js
-			wp_enqueue_script( "admin-preview-buttons", plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array( ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-preview-buttons", plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array( ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
 		}
 
 		// Load Modal-specific Javascript only for admin columns screen 
 		if ($current_post_type == "modal" && $hook_suffix == "edit.php" ){
-			wp_enqueue_script( "admin-modal_columns", plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js', array(  ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-modal_columns", plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 		}
 
 		// Load Figure-specific Javascript only for admin columns screen 
 		if ($current_post_type == "figure" && $hook_suffix == "edit.php" ){
-			wp_enqueue_script( "admin-figure_columns", plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js', array( ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure_columns", plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js', array( ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 		}
 
 		// Load Figure Export Javascript, but only when on Figure Export Tool page 
 		$current_screen = get_current_screen();
 		if ($current_screen-> base == "tools_page_export-figures"){
-			wp_enqueue_script( "admin-figure_export", plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js', array(  ), null, array('strategy'  => 'defer') );
+			wp_enqueue_script( "admin-figure_export", plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 			// Enqueue Bootstrap JavaScript
 			wp_enqueue_script('PptxGenJS', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js', array(), '3.12.0', true);
 

@@ -97,7 +97,10 @@ class Scene {
             // Enqueue CSS file.
             wp_enqueue_style(
                 'scene-admin-columns-css', // Handle of the CSS file.
-                plugin_dir_url( __DIR__ ) . 'admin/css/scene-admin-columns.css');
+                plugin_dir_url( __DIR__ ) . 'admin/css/scene-admin-columns.css',
+                array(), 
+                GRAPHIC_DATA_PLUGIN_VERSION
+            );
         }
     }
 

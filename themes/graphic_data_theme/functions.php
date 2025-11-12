@@ -9,6 +9,21 @@
    * aiming to extend the functionality of WordPress themes without modifying core files.
    */
 
+  /**
+   * Get the current theme version number from style.css
+   *
+   * Retrieves the version string from the theme's style.css header.
+   * Used for cache-busting enqueued styles and scripts.
+   *
+   * @since 1.0.0
+   *
+   * @return string The theme version number (e.g., '1.0.0')
+   */
+  function get_theme_asset_version() {
+      $theme = wp_get_theme();
+      return $theme->get('Version');
+  }
+
   // Customizer functions - first let's load the customizer class
   include_once get_template_directory(). '/customizer.php';
   $customizer_settings = new Customizer_Settings();
@@ -155,9 +170,9 @@ add_action('wp_enqueue_scripts', 'enqueue_font_awesome');
    * @return void
    */
   function files() {
-    wp_enqueue_style( 'style', get_stylesheet_uri() );
+    wp_enqueue_style( 'style', get_stylesheet_uri(), array(), get_theme_asset_version() ); //ADD NEW VERSION NUMBER
   } 
-  add_action( 'wp_enqueue_scripts', 'files' );
+  add_action( 'wp_enqueue_scripts', 'files' );  
 
   /**
    * Enqueues Bootstrap's JavaScript library with dependency management.
@@ -631,7 +646,7 @@ add_action('after_setup_theme', 'set_theme_default_site_icon');
         'script-js',
         get_template_directory_uri() . '/assets/js/script.js',
         array(),
-        null,
+        get_theme_asset_version(), //ADD NEW VERSION NUMBER
         array('strategy' => 'defer') 
     );
 
@@ -652,7 +667,7 @@ function enqueue_info_scripts2() {
       'index-js',
       get_template_directory_uri() . '/assets/js/index.js',
       array(),
-      null,
+      get_theme_asset_version(), //ADD NEW VERSION NUMBER
       array('strategy' => 'defer')
   );
 }
@@ -663,7 +678,8 @@ function enqueue_scene_render_script() {
   wp_enqueue_script(
     'scene-render', 
     content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js', 
-    array(), '1.0.0', 
+    array(), 
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
     array('strategy'  => 'defer')
   );
 }
@@ -674,7 +690,8 @@ function enqueue_modal_render_script() {
   wp_enqueue_script(
     'modal-render', 
     content_url() . '/plugins/graphic_data_plugin/includes/modals/js/modal-render.js', 
-    array(), '1.0.0', 
+    array(), 
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
     array('strategy'  => 'defer')
   );
 }
@@ -685,7 +702,8 @@ function enqueue_figure_render_script() {
   wp_enqueue_script(
     'figure-render', 
     content_url() . '/plugins/graphic_data_plugin/includes/figures/js/figure-render.js', 
-    array(), '1.0.0', 
+    array(), 
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
     array('strategy'  => 'defer')
   );
 }
@@ -696,7 +714,8 @@ function enqueue_figure_code_script() {
   wp_enqueue_script(
     'figure-code', 
     content_url() . '/plugins/graphic_data_plugin/includes/figures/js/code/figure-code.js', 
-    array(), '1.0.0', 
+    array(), 
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
     array('strategy'  => 'defer')
   );
 }
@@ -707,7 +726,8 @@ function enqueue_plotly_utility_script() {
   wp_enqueue_script(
     'utility', 
     content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-utility.js', 
-    array(), '1.0.0', 
+    array(), 
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
     array('strategy'  => 'defer')
   );
 }
@@ -719,7 +739,8 @@ function enqueue_plotly_line_script() {
   wp_enqueue_script(
     'plotly-timeseries-line', 
     content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-line.js', 
-    array(), '1.0.0', 
+    array(), 
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
     array('strategy'  => 'defer')
   );
 }
@@ -730,7 +751,8 @@ function enqueue_plotly_bar_script() {
   wp_enqueue_script(
     'plotly-bar', 
     content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-bar.js', 
-    array(), '1.0.0', 
+    array(), 
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
     array('strategy'  => 'defer')
   );
 }
@@ -741,7 +763,8 @@ function enqueue_plotly_map_script() {
   wp_enqueue_script(
     'plotly-map', 
     content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-map.js', 
-    array(), '1.0.0', 
+    array(), 
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
     array('strategy'  => 'defer')
   );
 }
@@ -753,7 +776,7 @@ function enqueue_google_tags_scripts() {
       'googletags',
       get_template_directory_uri() . '/assets/js/googletags.js',
       array(),
-      null,
+    get_theme_asset_version(), //ADD NEW VERSION NUMBER
       array('strategy' => 'defer') 
   );
 }

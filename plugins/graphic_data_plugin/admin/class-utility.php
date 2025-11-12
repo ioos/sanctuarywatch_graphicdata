@@ -207,6 +207,72 @@ class Utility {
     }
 
     /**
+     * Checks if a scene is the overview scene for an instance and - if so - if the scene has been set to draft (hint: it shouldn't be) 
+     * 
+     * The overview scene for an instance should not be in draft status, unless the instance is itself not published. 
+     * The reason is that the front page tile for the instance will just redirect back to the front page of the site 
+     * (if the the overview scene is set to draft). If the overview scene is set to draft then an admin notice is posted
+     * in the edit screen for the relevant scene and instance. 
+     *
+     * @return void Outputs the appropriate admin notice if necessary.
+     */
+    public function check_draft_overview_scene(){
+
+        if (function_exists('get_current_screen')) {
+            $current_screen = get_current_screen();
+            if ($current_screen){
+                $post_type = $current_screen->post_type; 
+                if ($current_screen->base == "post" && $current_screen->id == $post_type && !($current_screen->action =="add") ) { 
+                    if ($post_type == "scene" || $post_type == "instance"){
+                        if ($post_type == "scene"){
+                            $current_scene_id = get_the_ID();
+                            $instance_id = get_post_meta( $current_scene_id, 'scene_location', true );
+                            if ($instance_id == ""){
+                                return;
+                            } 
+                        } else {
+                            $instance_id = get_the_ID();
+                        }
+
+                        $instance_overview_scene = get_post_meta( $instance_id, 'instance_overview_scene', true );
+
+                        if ($instance_overview_scene == ""){
+                            return;
+                        } 
+
+                        $instance_overview_scene_status = get_post_meta( $instance_overview_scene, 'scene_published', true   );
+
+                        if ($instance_overview_scene_status != "draft"){
+                            return;
+                        }
+
+                        if ($post_type == "scene" && ($current_scene_id != $instance_overview_scene)){
+                            return;
+                        }
+
+                        if ($post_type == "scene"){
+                            $warning_message ="Warning: this scene has a scene status of 'Draft'. This will cause the front page tile for the instance to not work.";
+                        } else {
+                            $warning_message ="Warning: the overview scene for this instance has a scene status of 'Draft'. This will cause the front page tile for the instance to not work.";
+                        }
+
+
+                        wp_admin_notice($warning_message,
+                            array(
+                                'type'               => 'warning',
+                                'additional_classes' => array( 'updated' ),
+                                'dismissible'        => true,
+                            )
+                        );
+                        
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Displays admin notices for the following kind of custom content posts: about, instance, scene, modal, and figure.
      * 
      * Shows informational, error, or warning messages based on the status of the post.
