@@ -28,7 +28,6 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
             return;
         }
 
-
         // --- INJECT MODAL HTML MARKUP to wpcontent---
         const markup = `
             <body>
@@ -198,7 +197,7 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
         if (hasFigurePreview !== null && hasFigurePreview.length > 0) {
 
             let iconSelected = "ExampleKey";
-            let modal_data = {"id":0,"slug":"Example Modal Title","type":"modal","title":{"rendered":"Example Modal Title"},"modal_tagline":"Example Tagline","modal_info_entries":1,"modal_photo_entries":1,"modal_tab_number":1,"icon_function":"Modal","modal_icon_order":"1","icon_toc_section":"1","modal_published":"published","modal_scene":"","class_list":[],"_links":{},"modal_info1":{"modal_info_text1":"Example Information Link","modal_info_url1":"https://google.com/"},"modal_photo1":{"modal_photo_location1":"External","modal_photo_text1":"Example Photo Link","modal_photo_url1":"https://www.google.com/","modal_photo_internal1":""},"modal_info2":{"modal_info_text2":"","modal_info_url2":""},"modal_photo2":{"modal_photo_location2":"External","modal_photo_text2":"","modal_photo_url2":"","modal_photo_internal2":""},"modal_info3":{"modal_info_text3":"","modal_info_url3":""},"modal_photo3":{"modal_photo_location3":"External","modal_photo_text3":"","modal_photo_url3":"","modal_photo_internal3":""},"modal_info4":{"modal_info_text4":"","modal_info_url4":""},"modal_photo4":{"modal_photo_location4":"External","modal_photo_text4":"","modal_photo_url4":"","modal_photo_internal4":""},"modal_info5":{"modal_info_text5":"","modal_info_url5":""},"modal_photo5":{"modal_photo_location5":"External","modal_photo_text5":"","modal_photo_url5":"","modal_photo_internal5":""},"modal_info6":{"modal_info_text6":"","modal_info_url6":""},"modal_photo6":{"modal_photo_location6":"External","modal_photo_text6":"","modal_photo_url6":"","modal_photo_internal6":""},"modal_tab_title1":"Example Modal Tab"};
+            let modal_data = {"id":0,"slug":"Example Modal Title","type":"modal","title":{"rendered":"Example Modal Title"},"modal_tagline":"Example Tagline","modal_info_entries":1,"modal_photo_entries":1,"modal_tab_number":1,"icon_function":"Modal","modal_icon_order":"1","icon_toc_section":"1","modal_published":"published","modal_scene":"","class_list":[],"_links":{},"modal_info1":{"modal_info_text1":"Example Information Link","modal_info_url1":""},"modal_photo1":{"modal_photo_location1":"External","modal_photo_text1":"Example Photo Link","modal_photo_url1":"","modal_photo_internal1":""},"modal_info2":{"modal_info_text2":"","modal_info_url2":""},"modal_photo2":{"modal_photo_location2":"External","modal_photo_text2":"","modal_photo_url2":"","modal_photo_internal2":""},"modal_info3":{"modal_info_text3":"","modal_info_url3":""},"modal_photo3":{"modal_photo_location3":"External","modal_photo_text3":"","modal_photo_url3":"","modal_photo_internal3":""},"modal_info4":{"modal_info_text4":"","modal_info_url4":""},"modal_photo4":{"modal_photo_location4":"External","modal_photo_text4":"","modal_photo_url4":"","modal_photo_internal4":""},"modal_info5":{"modal_info_text5":"","modal_info_url5":""},"modal_photo5":{"modal_photo_location5":"External","modal_photo_text5":"","modal_photo_url5":"","modal_photo_internal5":""},"modal_info6":{"modal_info_text6":"","modal_info_url6":""},"modal_photo6":{"modal_photo_location6":"External","modal_photo_text6":"","modal_photo_url6":"","modal_photo_internal6":""},"modal_tab_title1":"Example Modal Tab"};
 
             let child_obj = {
                 [iconSelected]: {
@@ -378,6 +377,42 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
         }
 
     });
+});
+
+//INJECT CSS FOR THE THEME WHEN MODAL OR FIGURE PREVIEW IS CLICKED
+document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="figure_preview"]').forEach(el => {
+  el.addEventListener('click', function() {
+    // Only inject CSS if not already loaded
+    if (!document.getElementById('theme-css1') && !document.getElementById('theme-css2')) {
+      const css1 = document.createElement('link');
+      css1.id = 'theme-css1';
+      css1.rel = 'stylesheet';
+      css1.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.css`;
+      document.head.appendChild(css1);
+
+      const css2 = document.createElement('link');
+      css2.id = 'theme-css2';
+      css2.rel = 'stylesheet';
+      css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
+      document.head.appendChild(css2);
+
+      console.log('🎨 Theme CSS injected');
+    } else {
+      console.log('🎨 Theme CSS already loaded');
+    }
+  });
+});
+
+
+// When the modal close button is clicked, remove both CSS files
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'close') {
+        const css1 = document.getElementById('theme-css1');
+        const css2 = document.getElementById('theme-css2');
+        if (css1) css1.remove();
+        if (css2) css2.remove();
+        console.log('🧹 Theme CSS removed from head.');
+    }
 });
 
 
