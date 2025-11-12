@@ -127,7 +127,7 @@ class Instance {
             array(
                 'id'             => 'instance_type',
                 'type'           => 'select',
-                'title'          => 'Instance Type*',
+                'title'          => 'Instance type*',
                 'options'        => $instance_type_array, 
                 'description' => 'What is the instance type?',
             ),
@@ -159,7 +159,7 @@ class Instance {
                 'title'          => 'Legacy content',
                 'options'        => array("no" => "No", "yes" => "Yes"),
                 'default' => 'no',
-                'description' => 'Should the Instance tile point to legacy content?',
+                'description' => 'Should the instance tile point to legacy content?',
             ),
             array(
                 'id'          => 'instance_legacy_content_url',
@@ -187,7 +187,7 @@ class Instance {
             array(
                 'id'      => 'instance_footer_columns',
                 'type'    => 'range',
-                'title'   => 'Number of Instance Footer Columns',
+                'title'   => 'Number of instance footer columns',
                 'description' => 'How many instance-specific columns should there be in the footer?',
                 'min'     => 0,     
                 'max'     => 3,         
@@ -414,53 +414,6 @@ class Instance {
             unset($actions['inline hide-if-no-js']);
         }
         return $actions;
-    }
-
-    public function instance_admin_notice() {
-        // First let's determine where we are. We only want to show admin notices in the right places. Namely in one of our custom 
-        // posts after it has been updated. The if statement is looking for three things: 1. instance post type? 2. An individual post (as opposed to the scene
-        // admin screen)? 3. A new post
-
-        if (function_exists('get_current_screen')) {
-            $current_screen = get_current_screen();
-            if ($current_screen){
-                if ($current_screen->base == "post" && $current_screen->id =="instance" && !($current_screen->action =="add") ) { 
-                    if( isset( $_COOKIE["instance_post_status"] ) ) {
-                        $instance_post_status =  $_COOKIE["instance_post_status"];
-                        if ($instance_post_status == "post_good") {
-                            echo '<div class="notice notice-info is-dismissible"><p>Instance created or updated.</p></div>';
-                        } 
-                        else {
-                            if (isset($_COOKIE["instance_errors"])) {
-                                $error_message = "<p>Error or errors in instance</p>";
-                                $error_list_coded = stripslashes($_COOKIE["instance_errors"]);
-                                $error_list_array = json_decode($error_list_coded);
-                                $error_array_length = count($error_list_array);
-                                $error_message = $error_message . '<p><ul>';
-                                for ($i = 0; $i < $error_array_length; $i++){
-                                    $error_message = $error_message . '<li>' . $error_list_array[$i] . '</li>';
-                                }
-                                $error_message = $error_message . '</ul></p>';
-                            }
-                            echo '<div class="notice notice-error is-dismissible">' . $error_message . '</div>'; 
-                        }
-                    //   setcookie("scene_post_status", "", time() - 300, "/");
-                    }
-                    if (isset($_COOKIE["instance_warnings"])){
-                        $warning_message = "<p>Warning or warnings in instance</p>";
-                        $warning_list_coded = stripslashes($_COOKIE["instance_warnings"]);
-                        $warning_list_array = json_decode($warning_list_coded);
-                        $warning_array_length = count($warning_list_array);
-                        $warning_message = $warning_message . '<p><ul>';
-                        for ($i = 0; $i < $warning_array_length; $i++){
-                            $warning_message = $warning_message . '<li>' . $warning_list_array[$i] . '</li>';
-                        }
-                        $warning_message = $warning_message . '</ul></p>';
-                        echo '<div class="notice notice-warning is-dismissible">' . $warning_message . '</div>'; 
-                    }
-                }
-            }
-        }
     }
 
 }

@@ -153,6 +153,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'post_admin_notice' ); 
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' ); 
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible',10 ); 
+		$this->loader->add_action( 'admin_notices', $plugin_utility, 'check_draft_overview_scene',40 ); 
 
 		// Load class and functions associated with new user roles
 		$plugin_custom_roles = new Custom_Roles();
@@ -164,9 +165,8 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'editable_roles', $plugin_custom_roles, 'filter_user_roles' ); // Filter the available roles in the dropdown
 		$this->loader->add_action( 'admin_footer-user-new.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output
 		$this->loader->add_action( 'admin_footer-profile.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output
-		$this->loader->add_action( 'pre_get_posts', $plugin_custom_roles, 'restrict_scene_listing' ); // Filter admin list queries for scenes
-		$this->loader->add_action( 'admin_notices', $plugin_custom_roles, 'display_admin_notices' ); // For displaying admin notices
-		$this->loader->add_action( 'current_screen', $plugin_custom_roles, 'restrict_scene_editing' ); // For restrict editing access
+		$this->loader->add_action( 'pre_get_posts', $plugin_custom_roles, 'restrict_listing' ); // Filter admin list queries for custom content types
+		$this->loader->add_action( 'current_screen', $plugin_custom_roles, 'restrict_editing' ); // For restrict editing access
 		$this->loader->add_filter( 'admin_bar_menu', $plugin_custom_roles, 'restrict_new_post_from_admin_bar', 999); 
 		$this->loader->add_filter( 'admin_menu', $plugin_custom_roles, 'restrict_content_editor_admin_menu', 999); 
 
@@ -217,7 +217,6 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'bulk_actions-edit-instance', $plugin_admin_instance, 'remove_bulk_actions' ); 
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin_instance, 'custom_content_remove_quick_edit_link', 10, 2 ); 
 		$this->loader->add_filter( 'rest_api_init', $plugin_admin_instance, 'register_instance_rest_fields' ); 
-		$this->loader->add_action( 'admin_notices', $plugin_admin_instance, 'instance_admin_notice',20 ); 
 
 		// Load class and functions associated with the Settings Page
 		$plugin_admin_settings_page = new Graphic_Data_Settings_Page ();		

@@ -20,7 +20,7 @@ class Figure {
                 'admin-figure',
                 plugin_dir_url(__FILE__) . '../admin/js/admin-figure.js',
                 [], // <-- no jquery needed
-                null,
+                GRAPHIC_DATA_PLUGIN_VERSION,
                 true
             );
             wp_localize_script('admin-figure', 'wpApiSettings', [

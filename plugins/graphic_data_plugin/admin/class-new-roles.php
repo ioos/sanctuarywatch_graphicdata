@@ -42,14 +42,20 @@ class Custom_Roles {
 		}
 	}
 
-    // Filter admin list queries for scenes
-    public function restrict_scene_listing($query) {
-        // Ensure this is the main query in the admin area for the 'scene' post type list table.
-        if (!is_admin() || !$query->is_main_query() || $query->get('post_type') !== 'scene') {
+    // Filter admin list queries for custom content types based on user role and assigned instances
+    public function restrict_listing($query) {
+        global $pagenow;
+
+        // Ensure this is the main query in the admin area 
+        if (!is_admin() || !$query->is_main_query()) {
             return;
         }
 
-        global $pagenow;
+        // Ensure that we are dealing with the scene, modal, or figure post types (the only ones where the content editor restructions come to bear)
+        $current_post_type = $query->get('post_type');
+        if ( $current_post_type != 'scene' && $current_post_type != 'modal' && $current_post_type != 'figure' ) {
+            return;
+        }
 
         // Only filter when viewing the scene list table ('edit.php') and for content editors (excluding administrators).
         if ($pagenow === 'edit.php' && current_user_can('content_editor') && !current_user_can('administrator')) {
@@ -62,17 +68,24 @@ class Custom_Roles {
 
             // If we have associated instances and it's a non-empty array
             if (!empty($user_instances) && is_array($user_instances)) {
-                // Set up meta query to only show scenes from these instances
+
+                if ($current_post_type == "figure"){
+                    $target_field = "location";
+                } else {
+                    $target_field = $current_post_type . "_location"; // e.g., 'scene_location', 'modal_location'
+                }
+
+                // Set up meta query to only show post associated with these instances
                 $meta_query = $query->get('meta_query') ?: array(); // Get existing meta query or initialize if needed
                 $meta_query[] = array(
-                    'key'     => 'scene_location', // Make sure this is the correct meta key
+                    'key'     => $target_field , // Make sure this is the correct meta key
                     'value'   => $user_instances,
                     'compare' => 'IN',
                 );
                 $query->set('meta_query', $meta_query);
 
             } else {
-                // If no instances are associated, show no scenes (safer than showing all)
+                // If no instances are associated, show no posts (safer than showing all)
                 $query->set('post__in', array(0)); // This ensures no posts will be found
             }
         }
@@ -356,10 +369,10 @@ class Custom_Roles {
     }
 
     /**
-     * Restricts access to the scene edit screen based on user role and assigned instances.
+     * Restricts access to the scene, modal, and figure edit screens based on user role and assigned instances.
      * Redirects with an error message if access is denied.
      */
-    public function restrict_scene_editing() {
+    public function restrict_editing() {
         global $pagenow;
 
         // Only on post editing screens
@@ -367,7 +380,6 @@ class Custom_Roles {
             return;
         }
 
-        // Check if we're editing a scene
         $post_type = isset($_GET['post_type']) ? $_GET['post_type'] : (isset($_POST['post_type']) ? $_POST['post_type'] : '');
         $post_id = isset($_GET['post']) ? intval($_GET['post']) : (isset($_POST['post_ID']) ? intval($_POST['post_ID']) : 0);
 
@@ -380,73 +392,47 @@ class Custom_Roles {
             $current_post_type = '';
         }
 
-        // Only apply restrictions to 'scene' post type for 'content_editor' role
-        if ($current_post_type !== 'scene' || !current_user_can('content_editor') || current_user_can('administrator')) {
+        // Only apply restrictions to 'content_editor' role
+        if (!current_user_can('content_editor') || current_user_can('administrator')) {
+            return;
+        }
+
+        // Only apply restrictions to scene, modal, and figure post types 
+        if ($current_post_type !== 'scene' &&   $current_post_type !== 'modal' && $current_post_type !== 'figure') {
             return;
         }
 
         // For new posts, don't need to check anything yet (they'll be restricted at save time if needed)
-        if ($pagenow === 'post-new.php' && $current_post_type === 'scene') {
+        if ($pagenow === 'post-new.php') {
             return;
         }
 
-        // If editing an existing scene post
-        if ($pagenow === 'post.php' && $post_id > 0 && $current_post_type === 'scene') {
+        // If editing an existing post
+        if ($pagenow === 'post.php' && $post_id > 0 ) {
             $current_user = wp_get_current_user();
             $user_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
-            $redirect_url = admin_url('edit.php?post_type=scene');
+            $redirect_url = admin_url('edit.php?post_type=' . $current_post_type);
 
             // No instances assigned at all
             if (empty($user_instances) || !is_array($user_instances)) {
-                // --- MODIFIED --- Redirect instead of wp_die
-                wp_safe_redirect(add_query_arg('graphic_data_error', 'no_instances', $redirect_url));
+                wp_safe_redirect($redirect_url);
                 exit;
             }
 
-            // Get the instance ID for this scene
-            $scene_instance = get_post_meta($post_id, 'scene_location', true); // Ensure 'scene_location' is correct meta key
+            if ($current_post_type == "figure"){
+                $target_field = "location";
+            } else {
+                $target_field = $current_post_type . "_location"; // e.g., 'scene_location', 'modal_location'
+            }
+   
+
+            // Get the instance ID associated with this custom post type
+            $target_instance = get_post_meta($post_id, $target_field, true);
 
             // Check if user can edit this specific scene's instance
-            if (!in_array($scene_instance, $user_instances)) {
-                // --- MODIFIED --- Redirect instead of wp_die
-                wp_safe_redirect(add_query_arg('graphic_data_error', 'scene_permission', $redirect_url));
+            if (!in_array($target_instance, $user_instances)) {
+                wp_safe_redirect( $redirect_url);
                 exit;
-            }
-        }
-    }
-
-    /**
-     * Displays admin notices based on query parameters.
-     * Hooked into 'admin_notices'.
-     */
-    public function display_admin_notices() {
-        // Check if we are on the correct admin page (Scene list table)
-        $screen = get_current_screen();
-        if (!$screen || $screen->id !== 'edit-scene') {
-            return;
-        }
-
-        // Check if our error query parameter is set
-        if (isset($_GET['graphic_data_error'])) {
-            $error_code = sanitize_key($_GET['graphic_data_error']);
-            $message = '';
-
-            switch ($error_code) {
-                case 'no_instances':
-                    $message = 'You do not have permission to edit any scenes because no Instances are assigned to you.';
-                    break;
-                case 'scene_permission':
-                    $message = 'You do not have permission to edit the requested scene.';
-                    break;
-                // Add more cases here if needed for other errors
-            }
-
-            if ($message) {
-                ?>
-                <div class="notice notice-error is-dismissible">
-                    <p><?php echo esc_html($message); ?></p>
-                </div>
-                <?php
             }
         }
     }

@@ -585,10 +585,13 @@ class Modal {
     
         // Check if we are on the edit screen for the custom post type 'scene'.
         if ($screen->post_type === 'modal' && $screen->base === 'edit') {
-            // Enqueue CSS file.
-            wp_enqueue_style(
-                'modal-admin-columns-css', // Handle of the CSS file.
-                plugin_dir_url( __DIR__ ) . 'admin/css/modal-admin-columns.css');
+
+        // Enqueue CSS file.
+        wp_enqueue_style(
+            'modal-admin-columns-css', // Handle of the CSS file.
+            plugin_dir_url( __DIR__ ) . 'admin/css/modal-admin-columns.css',
+            array(), 
+            GRAPHIC_DATA_PLUGIN_VERSION);
         }
     }
 

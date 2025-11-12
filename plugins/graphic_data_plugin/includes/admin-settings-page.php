@@ -30,7 +30,7 @@ class Graphic_Data_Settings_Page {
                 'load_default_line_styles', // Handle.
                 plugin_dir_url(__FILE__) . '../includes/figures/js/interactive/settings-plotly-timeseries-line.js',
                 [], // Dependencies (e.g., array('jquery')).
-                null, // Version.
+                GRAPHIC_DATA_PLUGIN_VERSION, // Version.
                 true // Load in footer.
             );
     }
@@ -44,7 +44,7 @@ class Graphic_Data_Settings_Page {
                 'load_default_bar_styles', // Handle.
                 plugin_dir_url(__FILE__) . '../includes/figures/js/interactive/settings-plotly-bar.js',
                 [], // Dependencies (e.g., array('jquery')).
-                null, // Version.
+                GRAPHIC_DATA_PLUGIN_VERSION, // Version.
                 true // Load in footer.
             );
     }
