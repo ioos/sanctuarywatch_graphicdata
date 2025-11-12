@@ -1,13 +1,29 @@
 // Deep clone the child_ids object to create child_obj, ensuring that modifications to child_obj do not affect the original child_ids.
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
-let child_obj = JSON.parse(JSON.stringify(child_ids));
+let child_obj = {};
 
+//Allows for declaration of child_obj variable for theme and for admin side preview mode
+if (window.location.href.includes('post.php')) {
+    child_obj = undefined;
+} else { 
+    child_obj = JSON.parse(JSON.stringify(child_ids));
+}
 
 // Convert the svg_url variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
 // This is likely done to strip extra quotes or escape characters from the serialized string.
 
-let url1 =(JSON.stringify(svg_url));
-url = url1.substring(2, url1.length - 2);
+// let url1 =(JSON.stringify(svg_url));
+// url = url1.substring(2, url1.length - 2);
+
+let url1 = {};
+
+//Allows for declaration of url1 variable for theme and for admin side preview mode
+if (window.location.href.includes('post.php')) {
+    url1 = undefined;
+} else { 
+    let url1 =(JSON.stringify(svg_url));
+    url = url1.substring(2, url1.length - 2);
+}
 
 
 // Declare variables to hold data and state throughout the script.
@@ -69,7 +85,17 @@ if (!is_mobile()) {
 process_child_obj();
 
 // Step 1: get [key, value] pairs
-let sorted_child_entries = Object.entries(child_obj);
+// let sorted_child_entries = Object.entries(child_obj);
+
+
+let sorted_child_entries = {};
+
+//Allows for declaration of url1 variable for theme and for admin side preview mode
+if (window.location.href.includes('post.php')) {
+    sorted_child_entries = null;
+} else { 
+    sorted_child_entries = Object.entries(child_obj);
+}
 
 // Step 2: check if all modal_icon_order are 1 (or missing)
 /**
@@ -82,8 +108,9 @@ let sorted_child_entries = Object.entries(child_obj);
  * @param {string} sorted_child_entries[].1.modal_icon_order - The property to be checked, expected to be a string representation of a number.
  * @returns {boolean} `true` if all `modal_icon_order` values are equal to 1 after parsing as integers, otherwise `false`.
  */
-const allOrdersAreOne = sorted_child_entries.every(([_, obj]) => parseInt(obj.modal_icon_order) === 1);
 
+
+const allOrdersAreOne = sorted_child_entries.every(([_, obj]) => parseInt(obj.modal_icon_order) === 1);
 // Step 3: sort conditionally
 if (allOrdersAreOne) {
     sorted_child_entries.sort((a, b) => {
@@ -105,6 +132,9 @@ child_ids_helper = {};
 for (const [key, value] of sorted_child_entries) {
     child_ids_helper[value.title] = key;
 }
+
+
+
 
 
 // Declare a variable to track if the current environment is mobile.
@@ -362,7 +392,9 @@ async function make_title() {
         return scene_data;
 
     } catch (error) {
-        console.error('If this fires you really screwed something up', error);
+        if (!window.location.href.includes('post.php')) {
+            console.error('If this fires you really screwed something up', error);
+        }
     }
 }
 
@@ -683,7 +715,9 @@ async function init() {
         loadSVG(url, "svg1"); // Call load_svg with the fetched data
 
     } catch (error) {
-        console.error('Error:', error);
+        if (!window.location.href.includes('post.php')) {
+            console.error('Error:', error);
+        }
     }
 
 }

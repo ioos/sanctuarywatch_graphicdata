@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Register class that defines the Modal custom content type as well as associated Modal functions 
  * 
