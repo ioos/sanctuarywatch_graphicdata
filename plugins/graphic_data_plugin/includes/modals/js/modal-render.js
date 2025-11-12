@@ -20,203 +20,169 @@
  * Usage:
  * Called in add_modal and table_of_contents; those functions iterate through keys of child_obj(which has all the icons in a scene )
  */
-function render_modal(key){
+function render_modal(key, obj, modal_obj){
+
+    // Allow passing in a specific child_obj from preview mode in admin-modal.js
+    if (typeof child_obj === 'undefined') {
+        child_obj = obj;
+    }
+
+    console.log('Rendering modal for key:', key, 'with child_obj:', child_obj);
 
     let id = child_obj[key]['modal_id'];
-    const protocol = window.location.protocol;
-    const host = window.location.host;
-    const fetchURL  =  protocol + "//" + host  + `/wp-json/wp/v2/modal/${id}`;
-    fetch(fetchURL)
-        .then(response => response.json())
-        .then(data => {
 
-            let modal_data = data; //.find(modal => modal.id === id);
+    //function for rendering the modal content after fetching data
+    function populateModalContent(modal_data, child_obj, key) {
+        // --- Title ---
+        let title = child_obj[key]['title'];  // or could be modal_data.title
+        let modal_title = document.getElementById("modal-title");
+        modal_title.innerHTML = title;
 
-            //title stuff:
-            let title = child_obj[key]['title'];  //importat! pass as argument
-            let modal_title = document.getElementById("modal-title");
-            
-            modal_title.innerHTML = title;
+        // --- Tagline container ---
+        let tagline_container = document.getElementById('tagline-container');
+        let modal_tagline = modal_data["modal_tagline"];
 
-            //tagline container
-            let tagline_container = document.getElementById('tagline-container');
-            //add stuff for formatting here...
 
-            let modal_tagline = modal_data["modal_tagline"];
-            if (!is_mobile()){
-                tagline_container.innerHTML =  "<em>" + modal_tagline + "<em>";
+        if (!is_mobile()) {
+            tagline_container.innerHTML = `<em>${modal_tagline}</em>`;
+        }
+
+        // --- Accordion container setup ---
+        let accordion_container = document.getElementById('accordion-container');
+        let acc = document.createElement("div");
+        acc.classList.add("accordion");
+
+        let modal_info_entries = modal_data["modal_info_entries"];
+        let modal_photo_entries = modal_data["modal_photo_entries"];
+
+        if (is_mobile()) {
+            accordion_container.setAttribute("class", "");
+        } else {
+            tagline_container.setAttribute("class", "");
+            accordion_container.setAttribute("class", "");
+
+            if (modal_info_entries != 0 || modal_photo_entries != 0) {
+                tagline_container.classList.add("col-9");
+                accordion_container.classList.add("col-3");
+            } else {
+                tagline_container.classList.add("col-12");
+                accordion_container.classList.add("d-none");
+            }
+        }
+
+        // --- Info Section ---
+        if (modal_info_entries != 0) {
+            let collapseListHTML = '<div><ul>';
+            for (let i = 1; i < 7; i++) {
+                let info_field = `modal_info${i}`;
+                let info_text = `modal_info_text${i}`;
+                let info_url = `modal_info_url${i}`;
+
+                let modal_info_text = modal_data[info_field]?.[info_text] || '';
+                let modal_info_url = modal_data[info_field]?.[info_url] || '';
+
+                if (!modal_info_text && !modal_info_url) continue;
+
+                collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
+            }
+            collapseListHTML += '</ul></div>';
+
+            let accordionItem1 = createAccordionItem(
+                "accordion-item-1", 
+                "accordion-header-1", 
+                "accordion-collapse-1", 
+                "More Info", 
+                collapseListHTML
+            );
+            acc.appendChild(accordionItem1);
+        }
+
+        // --- Photo Section ---
+        let modal_id = modal_data.id;
+        let collapsePhotoHTML = '<div><ul>';
+
+        if (modal_photo_entries != 0) {
+            for (let i = 1; i < 7; i++) {
+                let info_field = `modal_photo${i}`;
+                let info_text = `modal_photo_text${i}`;
+                let loc = `modal_photo_location${i}`;
+
+                let urlField = modal_data[info_field]?.[loc] === "External" 
+                    ? `modal_photo_url${i}` 
+                    : `modal_photo_internal${i}`;
+
+                let modal_info_text = modal_data[info_field]?.[info_text] || '';
+                let modal_info_url = modal_data[info_field]?.[urlField] || '';
+
+                if (!modal_info_text && !modal_info_url) continue;
+
+                collapsePhotoHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
             }
 
-            //generate accordion
-            // Select the container where the accordion will be appended
-            let accordion_container = document.getElementById('accordion-container');
-            //add stuff for formatting here...
-
-            // Create the accordion element
-            let acc = document.createElement("div");
-            acc.classList.add("accordion");
-
-            let modal_info_entries = modal_data["modal_info_entries"];
-            let modal_photo_entries = modal_data["modal_photo_entries"];
-
-            if (is_mobile()){
-
-                accordion_container.setAttribute("class", "");
-
-            } else{
-                tagline_container.setAttribute("class", "");
-                accordion_container.setAttribute("class", "");
-                
-                if (modal_info_entries != 0 || modal_photo_entries != 0) {
-                    tagline_container.classList.add("col-9");
-                    accordion_container.classList.add("col-3");
-                } else {
-                    tagline_container.classList.add("col-12");
-                    accordion_container.classList.add("d-none");
-                }
-            }
-
-            //for more info
-
-            if (modal_info_entries != 0){
-
-                let collapseListHTML = '<div><ul>';
-                for (let i = 1; i < 7; i++){
-                    let info_field = "modal_info" + i;
-                    let info_text = "modal_info_text" + i;
-                    let info_url = "modal_info_url" + i;
-
-                    let modal_info_text = modal_data[info_field][info_text];
-                    let modal_info_url = modal_data[info_field][info_url];
-                    if ((modal_info_text == '') && (modal_info_url == '')){
-                        continue;
-                    }
-
-                    let listItem = document.createElement('li');
-                    let anchor = document.createElement('a');
-                    anchor.setAttribute('href', modal_info_url); 
-                    anchor.textContent = modal_info_text;
-
-                    listItem.appendChild(anchor);
-
-                    collapseListHTML += `<li> <a href="${modal_info_url}" target="_blank">${modal_info_text}</a> </li>`;
-
-                }
-                collapseListHTML += '</ul></div>';
-                let accordionItem1 = createAccordionItem("accordion-item-1", "accordion-header-1", "accordion-collapse-1", "More Info", collapseListHTML);
-                acc.appendChild(accordionItem1);
-            }
-
-            //for photos:
-
-            let modal_id = modal_data.id;
-            let collapsePhotoHTML = '<div><ul>';
-    
-            //Show the "Images" accordion item if the number of image entries is greater than 0 in the admin slider for modals.
-            if (modal_photo_entries != 0){
-                for (let i = 1; i < 7; i++){
-                    let info_field = "modal_photo" + i;
-                    let info_text = "modal_photo_text" + i;
-    
-                    let info_url;
-                    let loc = "modal_photo_location" + i;
-                    if (modal_data[info_field][loc] === "External"){
-                        info_url = "modal_photo_url" + i;
-                    } else {
-                        info_url = "modal_photo_internal" + i;
-                    }
-    
-                    let modal_info_text = modal_data[info_field][info_text];
-                    let modal_info_url = modal_data[info_field][info_url];
-                    if ((modal_info_text == '') && (modal_info_url == '')){
-                        continue;
-                    }
-    
-                    let listItem = document.createElement('li');
-                    let anchor = document.createElement('a');
-                    anchor.setAttribute('href', modal_info_url); 
-                    anchor.textContent = modal_info_text;
-    
-                    listItem.appendChild(anchor);
-    
-                    collapsePhotoHTML += `<li> <a href="${modal_info_url}" target="_blank">${modal_info_text}</a> </li>`;
-                }
-
-                let accordionItem2 = createAccordionItem("accordion-item-2", "accordion-header-2", "accordion-collapse-2", "Images", collapsePhotoHTML);
-                acc.appendChild(accordionItem2);
-            } 
             collapsePhotoHTML += '</ul></div>';
-            if (is_mobile()){
-                let accordionItem3 = createAccordionItem("accordion-item-3", "accordion-header-3", "accordion-collapse-3", "Tagline", modal_tagline);
-                acc.prepend(accordionItem3);
 
-            }
+            let accordionItem2 = createAccordionItem(
+                "accordion-item-2",
+                "accordion-header-2",
+                "accordion-collapse-2",
+                "Images",
+                collapsePhotoHTML
+            );
+            acc.appendChild(accordionItem2);
+        }
 
-            accordion_container.appendChild(acc);
-            
-            let num_tabs = Number(modal_data["modal_tab_number"]);
+        // --- Tagline accordion for mobile ---
+        if (is_mobile()) {
+            let accordionItem3 = createAccordionItem(
+                "accordion-item-3",
+                "accordion-header-3",
+                "accordion-collapse-3",
+                "Tagline",
+                modal_tagline
+            );
+            acc.prepend(accordionItem3);
+        }
 
-            for (let i =1; i <= num_tabs; i++){
-                let tab_key = "modal_tab_title" + i;
-                let tab_title = modal_data[tab_key];
+        // Append accordion
+        accordion_container.appendChild(acc);
 
-                create_tabs(i, tab_key, tab_title, title, modal_id);
+        // --- Tabs ---
+        let num_tabs = Number(modal_data["modal_tab_number"]);
+        for (let i = 1; i <= num_tabs; i++) {
+            let tab_key = `modal_tab_title${i}`;
+            let tab_title = modal_data[tab_key];
 
-                if (i === num_tabs){
-                    break;
-                }
+            create_tabs(i, tab_key, tab_title, title, modal_id);
 
-                let mdialog = document.querySelector("#myModal > div"); //document.querySelector("#myModal");
-
+            if (i === num_tabs) {
+                let mdialog = document.querySelector("#myModal > div");
                 trapFocus(mdialog);
-              
             }
+        }
+        // Google Tags
+        // modalWindowLoaded(title, modal_id, gaMeasurementID);
+    }
 
-            // // Select all buttons inside nav-item elements
-            // const navButtons = document.querySelectorAll('.nav-item button');
+    // Fetch modal data and populate content PREVIEW MODE vs FRONTEND MODE
+    if (window.location.href.includes("post.php")) {
+        let modal_data = modal_obj;
+        populateModalContent(modal_data, child_obj, key);  
+    } 
 
-            // console.log('navButtons', navButtons);
-
-            // let activeButtons = [];
-            // let inactiveButtons = [];
-
-            // // Check if any button is active (e.g., class 'active')
-            // const anyActiveButton = Array.from(navButtons).some(button => {
-            //     const isActiveClass = button.classList.contains('active');
-
-            //     if (!isActiveClass) {
-            //         inactiveButtons.push(button);
-            //     }
-
-            //     if (isActiveClass) {
-            //         let buttonExists = document.getElementById(button.id)
-            //         console.log('buttonExists', buttonExists);
-            //         if (buttonExists) {
-            //             activeButtons.push(button);
-            //         }
-            //     }
-
-            // });
-
-            // console.log('activeButtons', activeButtons);
-            // console.log('inactiveButtons', inactiveButtons);
-
-            // if (activeButtons.length == 0) {
-            //     // Activate the first one via Bootstrap API
-            //     if (inactiveButtons.length > 0) {
-            //         const firstButton = inactiveButtons[0];
-            //         const tabTrigger = new bootstrap.Tab(firstButton);
-            //         tabTrigger.show();  // ✅ Properly displays inside modal
-            //     }
-            // }
-
-            // Google Tags
-            modalWindowLoaded(title, modal_id, gaMeasurementID);
-
-            
-        })
-    .catch(error => console.error('Error fetching data:', error));
-    
+    // Fetch modal data and populate content FRONTEND MODE
+    if (!window.location.href.includes("post.php")) {
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+        const fetchURL  =  protocol + "//" + host  + `/wp-json/wp/v2/modal/${id}`;
+        fetch(fetchURL)
+            .then(response => response.json())
+            .then(data => {
+                let modal_data = data; //.find(modal => modal.id === id);
+                console.log('modal_data:', modal_data);
+                populateModalContent(modal_data, child_obj, key);
+            })  
+        .catch(error => console.error('Error fetching data:', error));
+    }   
 }
 
 /**
@@ -559,7 +525,12 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     button.setAttribute('role', 'tab');
     button.setAttribute('aria-controls', tab_controls);
     button.textContent = tab_label;
-    button.style.display = "none";
+
+    if (window.location.href.includes('post.php')) {
+        button.style.display = "block";
+    } else {
+        button.style.display = "none";   //hide all tabs initially, will show only those that have published figures in fetch_tab_info
+    }
 
     navItem.appendChild(button);
     myTab.appendChild(navItem);
@@ -615,16 +586,28 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
             alert('Failed to copy link. Please try again.');
         }
     }
-    
-    //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
-    (async () => {
-        await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id);
-    })();
+
+    // Fetch tab info and render content is not in preview mode from admin side
+    // if (!window.location.href.includes('post.php')) {
+        //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
+    try {
+        (async () => {
+            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id);
+        })();
+    } catch (error) {
+    }
+
 
     //Google tags triggers
-    modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID);
-    setupModalMoreInfoLinkTracking(modal_id);
-    setupModalImagesLinkTracking(modal_id);
+    try {
+        modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID);
+        setupModalMoreInfoLinkTracking(modal_id);
+        setupModalImagesLinkTracking(modal_id);
+    } catch (error) {
+    }
+    
+    
+
 }
 
 
