@@ -52,7 +52,7 @@ body{
   min-height: 3rem;
 }
 
-@media (max-width: 1200.98px) {
+@media (max-width: 992px) {
   .site-name-logo-header {
     display: grid;
     grid-template-columns: 80% 20%;
@@ -683,7 +683,7 @@ input:checked + .slider:before {
 }
 
 /* Navigation bar stuff */
-@media (min-width: 1000px) {
+@media (min-width: 992px) {
   .navbar-wrapper {
       display: flex;
       flex-direction: column; /* Stack brand and nav items vertically */
