@@ -122,6 +122,9 @@ class Graphic_Data_Plugin {
 		// The class that defines the functions used for the Export Figures Tool
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-export-figures.php';
 
+		// The class that defines the functions used for the Create SVG Tool
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-create-svg.php';
+
 		// The class that defines the validation methods used for the custom post types
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-validation.php';
 
@@ -298,6 +301,10 @@ class Graphic_Data_Plugin {
 		// Load class and functions connected with Export Figures Tool
 		$plugin_admin_export_figures = new Export_Figures( );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_export_figures, 'add_export_figures_menu' ); 	
+
+		// Load class and functions connected with Create SVG Tool
+		$plugin_admin_create_svg = new Create_SVG( );
+		$this->loader->add_action( 'admin_menu', $plugin_admin_create_svg, 'add_create_svg_menu' ); 	
 
 		// Load class and functions connected with Support page
 		$plugin_admin_support = new Graphic_Data_Support( );
