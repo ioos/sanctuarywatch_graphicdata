@@ -1314,7 +1314,8 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
                     opt.textContent = axis.toUpperCase() + " Axis";
                     axisSelect.appendChild(opt);
                     });
-                    fillFormFieldValues(axisSelect.id, interactive_arguments);
+                    let savedAxis = fillFormFieldValues(axisSelect.id, interactive_arguments);
+                    if (savedAxis) axisSelect.value = savedAxis;
 
                     // === Shared Inputs ===
                     const { label: textLabel, input: textInput }   = createTextfield(`Display Text ${i + 1}`, `${feature}EventText${i}`);
