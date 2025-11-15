@@ -305,6 +305,7 @@ class Graphic_Data_Plugin {
 		// Load class and functions connected with Create SVG Tool
 		$plugin_admin_create_svg = new Create_SVG( );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_create_svg, 'add_create_svg_menu' ); 	
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_create_svg, 'enqueue_admin_svg_script');
 
 		// Load class and functions connected with Support page
 		$plugin_admin_support = new Graphic_Data_Support( );
