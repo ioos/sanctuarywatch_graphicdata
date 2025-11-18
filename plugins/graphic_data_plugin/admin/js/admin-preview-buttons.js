@@ -2,6 +2,9 @@
 
 
 //PREVIEW BUTTON LOGIC FOR MODALS AND FIGURES
+
+
+
 /**
  * Handles the click event for the modal preview button, generating a live preview of the modal.
  *
@@ -16,24 +19,19 @@
 document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="figure_preview"]').forEach(el => {
     el.addEventListener('click', function() {
 
-
-        // Prevent duplicate injection
+        // Prevent duplicate injection, remove existing to make way for new. 
         if (document.getElementById('myModal') || document.getElementById('mobileModal')) {
             //console.log('Modals already exist — showing modal.');
             const modalEl = document.getElementById('myModal');
-            if (modalEl && typeof bootstrap !== 'undefined') {
-            const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-            modalInstance.show();
-            }
-            return;
+            const mobileModal = document.getElementById('mobileModal');
+            if (modalEl) modalEl.remove();
+            if (mobileModal) mobileModal.remove();
         }
 
         // --- INJECT MODAL HTML MARKUP to wpcontent---
         const markup = `
             <body>
                 <!-- for the mobile image stuff -->
-                <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-                <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
                 <div class="modal" id="mobileModal" style="z-index: 9999; background-color: rgba(0,0,0,0.8);">
                 <div class="modal-dialog modal-lg" style="z-index: 9999;margin-top: 5%; max-width: 95%;">
                     <div class="modal-content">
@@ -411,7 +409,7 @@ document.addEventListener('click', function(e) {
         const css2 = document.getElementById('theme-css2');
         if (css1) css1.remove();
         if (css2) css2.remove();
-        console.log('🧹 Theme CSS removed from head.');
+        // console.log('🧹 Theme CSS removed from head.');
     }
 });
 

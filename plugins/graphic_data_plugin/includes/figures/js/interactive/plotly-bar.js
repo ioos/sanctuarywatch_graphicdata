@@ -512,7 +512,9 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                     //Calculate mean (Auto Calculated) based on dataset Y-axis values
                     if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
-                        const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
+                        // const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
+                        let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
+                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyY.length;
                         const filteredX = plotlyX.filter(item => item !== "");
                         const xMin = Math.min(...filteredX);
                         const xMax = Math.max(...filteredX);
