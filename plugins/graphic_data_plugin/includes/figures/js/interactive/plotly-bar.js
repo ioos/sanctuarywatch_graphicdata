@@ -1521,9 +1521,9 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
                     selectColumn.addEventListener('change', function() {
                         DropdownValueSaved = selectColumn.value;
                         if (DropdownValueSaved != 'None' && fieldValueSaved === undefined) {
-                            console.log('fieldValueSaved2', fieldValueSaved);
+                            //console.log('fieldValueSaved2', fieldValueSaved);
                             inputTitle.value = DropdownValueSaved;
-                            console.log('DropdownValueSaved2', DropdownValueSaved);
+                            //console.log('DropdownValueSaved2', DropdownValueSaved);
                         } 
                     });
                   }
