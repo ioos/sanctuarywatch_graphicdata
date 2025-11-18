@@ -1514,6 +1514,20 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
                 if (fieldValueSaved != undefined){
                     inputTitle.value = fieldValueSaved;
                 }
+                if (fieldValueSaved === undefined){
+                 // Make each line's default title set to the name of the column name that is selected for that line. Only if the line title is not already set.
+                  //const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
+                  if (fieldLabel[0].includes("Bar")){
+                    selectColumn.addEventListener('change', function() {
+                        DropdownValueSaved = selectColumn.value;
+                        if (DropdownValueSaved != 'None' && fieldValueSaved === undefined) {
+                            console.log('fieldValueSaved2', fieldValueSaved);
+                            inputTitle.value = DropdownValueSaved;
+                            console.log('DropdownValueSaved2', DropdownValueSaved);
+                        } 
+                    });
+                  }
+              }
 
                 newColumn1.appendChild(labelInputTitle);
                 newColumn2.appendChild(inputTitle);
