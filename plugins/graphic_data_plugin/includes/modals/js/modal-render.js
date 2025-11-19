@@ -345,7 +345,7 @@ function trapFocus(modalElement) {
  * Called at the end of the create_tabs function
  */
  function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
-
+    
     const protocol = window.location.protocol;
     const host = window.location.host;
     const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + tab_id;

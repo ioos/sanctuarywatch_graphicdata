@@ -89,22 +89,16 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
 
         const hasModalPreview = document.querySelectorAll('[data-depend-id="modal_preview"]');
         const hasFigurePreview = document.querySelectorAll('[data-depend-id="figure_preview"]');
-
         //console.log('hasModalPreview:', hasModalPreview);
         //console.log('hasFigurePreview:', hasFigurePreview);
 
-        // --- GATHER MODAL DATA FROM FORM FIELDS ---
+        // --- GATHER MODAL DATA FROM FORM FIELDS AND PRODUCE A MODAL PREVIEW---
         if (hasModalPreview !== null && hasModalPreview.length > 0) {
             // --- ICON + TITLE ---
             let iconSelected = document.getElementsByName('modal_icons')[0]?.value || 'no_icon_selected';
             let modalTitle = document.getElementById("title").value || '';
             let modalTagline = document.getElementsByName('modal_tagline')[0]?.value || '';
             let modalTabNumber = Number(document.getElementsByName("modal_tab_number")[0]?.value || 0);
-
-            //console.log('iconSelected:', iconSelected);
-            //console.log('modalTitle:', modalTitle);
-            //console.log('modalTagline:', modalTagline);
-            //console.log('modalTabNumber:', modalTabNumber);
 
             // --- COUNT INFO + PHOTO ENTRIES ---
             let modal_info_entries = 0;
@@ -194,6 +188,7 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
         // --- GATHER FIGURE DATA FROM FORM FIELDS ---
         if (hasFigurePreview !== null && hasFigurePreview.length > 0) {
 
+            //MODAL PREVIEW LOGIC
             let iconSelected = "ExampleKey";
             let modal_data = {"id":0,"slug":"Example Modal Title","type":"modal","title":{"rendered":"Example Modal Title"},"modal_tagline":"Example Tagline","modal_info_entries":1,"modal_photo_entries":1,"modal_tab_number":1,"icon_function":"Modal","modal_icon_order":"1","icon_toc_section":"1","modal_published":"published","modal_scene":"","class_list":[],"_links":{},"modal_info1":{"modal_info_text1":"Example Information Link","modal_info_url1":""},"modal_photo1":{"modal_photo_location1":"External","modal_photo_text1":"Example Photo Link","modal_photo_url1":"","modal_photo_internal1":""},"modal_info2":{"modal_info_text2":"","modal_info_url2":""},"modal_photo2":{"modal_photo_location2":"External","modal_photo_text2":"","modal_photo_url2":"","modal_photo_internal2":""},"modal_info3":{"modal_info_text3":"","modal_info_url3":""},"modal_photo3":{"modal_photo_location3":"External","modal_photo_text3":"","modal_photo_url3":"","modal_photo_internal3":""},"modal_info4":{"modal_info_text4":"","modal_info_url4":""},"modal_photo4":{"modal_photo_location4":"External","modal_photo_text4":"","modal_photo_url4":"","modal_photo_internal4":""},"modal_info5":{"modal_info_text5":"","modal_info_url5":""},"modal_photo5":{"modal_photo_location5":"External","modal_photo_text5":"","modal_photo_url5":"","modal_photo_internal5":""},"modal_info6":{"modal_info_text6":"","modal_info_url6":""},"modal_photo6":{"modal_photo_location6":"External","modal_photo_text6":"","modal_photo_url6":"","modal_photo_internal6":""},"modal_tab_title1":"Example Modal Tab"};
 
@@ -210,168 +205,204 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
             //console.log('modal_data', modal_data);
             render_modal(iconSelected, child_obj, modal_data);
 
-            
-            // Find element
-            const firstFigurePreview = document.getElementById('myTabContent');
-                   
+            //FIGURE PREVIEW LOGIC
+            const info_obj = {
+                figure_published: document.getElementsByName("figure_published")[0]?.value,
+                postID: document.getElementsByName("post_ID")[0]?.value,
 
-            // Create a new div element
-            let newDiv = document.createElement('div');
-            newDiv.id = "preview_window";
-            newDiv.style.width = "100%";
+                scienceLink: document.getElementsByName("figure_science_info[figure_science_link_url]")[0]?.value,
+                scienceText: document.getElementsByName("figure_science_info[figure_science_link_text]")[0]?.value,
+
+                dataLink: document.getElementsByName("figure_data_info[figure_data_link_url]")[0]?.value,
+                dataText: document.getElementsByName("figure_data_info[figure_data_link_text]")[0]?.value,
+
+                imageLink: (function() {
+                    const type = document.getElementsByName("figure_path")[0]?.value;
+                    if (type === "Internal") return document.getElementsByName("figure_image")[0]?.value;
+                    if (type === "External") return document.getElementsByName("figure_external_url")[0]?.value;
+                    return ""; // no image for Interactive/Code
+                })(),
+
+                code: document.getElementsByName("figure_code")[0]?.value,
+
+                externalAlt: document.getElementsByName("figure_external_alt")[0]?.value ?? "",
+
+                shortCaption: document.getElementById("figure_caption_short")?.value,
+                longCaption: document.getElementById("figure_caption_long")?.value,
+
+                figureType: document.getElementsByName("figure_path")[0]?.value,
+                figureTitle: document.getElementsByName("figure_title")[0]?.value,
+
+                figure_interactive_arguments: document.getElementsByName("figure_interactive_arguments")[0]?.value
+            };
+
+
+            const tabContentContainer = document.getElementById('myTabContent');
+            const tabContentElement = document.getElementById('Example_Modal_Title-1-pane');
+            const idx = 0; // Since we are only rendering one figure here, index is 0
+            (async () => {
+                await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
+                await render_interactive_plots(tabContentElement, info_obj);
+            })();
+
+            
+            // // Find element
+            // 
+            // // Create a new div element
+            // let newDiv = document.createElement('div');
+            // newDiv.id = "preview_window";
+            // newDiv.style.width = "100%";
         
-            // Add science and data URLs if available
-            const scienceUrl = document.getElementsByName("figure_science_info[figure_science_link_url]")[0].value;
-            const dataUrl = document.getElementsByName("figure_data_info[figure_data_link_url]")[0].value;
+            // // Add science and data URLs if available
+            // const scienceUrl = document.getElementsByName("figure_science_info[figure_science_link_url]")[0].value;
+            // const dataUrl = document.getElementsByName("figure_data_info[figure_data_link_url]")[0].value;
 
-            if (scienceUrl !="" || dataUrl != ""){
-                let firstRow = document.createElement("div");
-                firstRow.classList.add("grayFigureRow");
+            // if (scienceUrl !="" || dataUrl != ""){
+            //     let firstRow = document.createElement("div");
+            //     firstRow.classList.add("grayFigureRow");
 
-                if (scienceUrl !=""){
-                    let scienceA = document.createElement("a");
-                    scienceA.classList.add("grayFigureRowLinks");
-                    scienceA.href = document.getElementsByName("figure_science_info[figure_science_link_url]")[0].value;
-                    scienceA.target="_blank";
-                    let dataIcon = document.createElement("i");
-                    dataIcon.classList.add("fa-solid", "fa-clipboard-list", "grayFigureRowIcon");
-                    let urlText = document.createElement("span");
-                    urlText.classList.add("grayFigureRowText");
-                    urlText.innerHTML = document.getElementsByName("figure_science_info[figure_science_link_text]")[0].value;
-                    scienceA.appendChild(dataIcon);
-                    scienceA.appendChild(urlText);
-                    firstRow.appendChild(scienceA);
-                // firstRow.appendChild(urlText);
-                }
+            //     if (scienceUrl !=""){
+            //         let scienceA = document.createElement("a");
+            //         scienceA.classList.add("grayFigureRowLinks");
+            //         scienceA.href = document.getElementsByName("figure_science_info[figure_science_link_url]")[0].value;
+            //         scienceA.target="_blank";
+            //         let dataIcon = document.createElement("i");
+            //         dataIcon.classList.add("fa-solid", "fa-clipboard-list", "grayFigureRowIcon");
+            //         let urlText = document.createElement("span");
+            //         urlText.classList.add("grayFigureRowText");
+            //         urlText.innerHTML = document.getElementsByName("figure_science_info[figure_science_link_text]")[0].value;
+            //         scienceA.appendChild(dataIcon);
+            //         scienceA.appendChild(urlText);
+            //         firstRow.appendChild(scienceA);
+            //     // firstRow.appendChild(urlText);
+            //     }
 
-                if (dataUrl !=""){
-                    let dataA = document.createElement("a");
-                    dataA.classList.add("grayFigureRowLinks");//, "grayFigureRowRightLink");
-                    dataA.href = document.getElementsByName("figure_data_info[figure_data_link_url]")[0].value;
-                    dataA.target="_blank";
-                    let dataIcon = document.createElement("i");
-                    dataIcon.classList.add("fa-solid", "fa-database", "grayFigureRowIcon");
-                    let urlText = document.createElement("span");
-                    urlText.classList.add("grayFigureRowText");
-                    urlText.innerHTML = document.getElementsByName("figure_data_info[figure_data_link_text]")[0].value;
-                    dataA.appendChild(dataIcon);
-                    dataA.appendChild(urlText);
-                    firstRow.appendChild(dataA);
-                }
+            //     if (dataUrl !=""){
+            //         let dataA = document.createElement("a");
+            //         dataA.classList.add("grayFigureRowLinks");//, "grayFigureRowRightLink");
+            //         dataA.href = document.getElementsByName("figure_data_info[figure_data_link_url]")[0].value;
+            //         dataA.target="_blank";
+            //         let dataIcon = document.createElement("i");
+            //         dataIcon.classList.add("fa-solid", "fa-database", "grayFigureRowIcon");
+            //         let urlText = document.createElement("span");
+            //         urlText.classList.add("grayFigureRowText");
+            //         urlText.innerHTML = document.getElementsByName("figure_data_info[figure_data_link_text]")[0].value;
+            //         dataA.appendChild(dataIcon);
+            //         dataA.appendChild(urlText);
+            //         firstRow.appendChild(dataA);
+            //     }
 
-                newDiv.appendChild(firstRow);
-            } 
+            //     newDiv.appendChild(firstRow);
+            // } 
 
-            //Figure title options
-            const figure_title = document.getElementsByName("figure_title")[0].value;
-            let figureTitle = document.createElement("div");
-            figureTitle.innerHTML = figure_title;
-            figureTitle.classList.add("figureTitle");
-            figureTitle.style.textAlign = "center";
-            newDiv.appendChild(figureTitle); //Append the figure title
+            // //Figure title options
+            // const figure_title = document.getElementsByName("figure_title")[0].value;
+            // let figureTitle = document.createElement("div");
+            // figureTitle.innerHTML = figure_title;
+            // figureTitle.classList.add("figureTitle");
+            // figureTitle.style.textAlign = "center";
+            // newDiv.appendChild(figureTitle); //Append the figure title
 
-            // Add the figure image or interactive/code preview
-            let imageRow = document.createElement("div");
-            imageRow.classList.add("imageRow");
-            let figureImage = document.createElement("img");
-            figureImage.classList.add("figureImage");
+            // // Add the figure image or interactive/code preview
+            // let imageRow = document.createElement("div");
+            // imageRow.classList.add("imageRow");
+            // let figureImage = document.createElement("img");
+            // figureImage.classList.add("figureImage");
 
-            const figurePath = document.getElementsByName("figure_path")[0].value;
-            let figureSrc;
+            // const figurePath = document.getElementsByName("figure_path")[0].value;
+            // let figureSrc;
 
-            let interactiveImage = false;
-            switch(figurePath){
-                case "Internal":
-                    figureSrc = document.getElementsByName("figure_image")[0].value;
-                    if (figureSrc != ""){
-                        figureImage.src = figureSrc;
-                    } else {
-                        imageRow.textContent = "No figure image."}
-                    break;
-                case "External":
-                    figureSrc = document.getElementsByName("figure_external_url")[0].value;
-                    if (figureSrc != ""){
-                        figureImage.src = figureSrc;
-                    } else {
-                        imageRow.textContent = "No figure image."}
-                    break;         
-                case "Interactive":
-                    const figureID = document.getElementsByName("post_ID")[0].value;
-                    imageRow.id = `javascript_figure_target_${figureID}`
-                    interactiveImage = true;
-                    break;
-                case "Code":
-                    imageRow.id = "code_preview_window"
-                    break;
-            }
+            // let interactiveImage = false;
+            // switch(figurePath){
+            //     case "Internal":
+            //         figureSrc = document.getElementsByName("figure_image")[0].value;
+            //         if (figureSrc != ""){
+            //             figureImage.src = figureSrc;
+            //         } else {
+            //             imageRow.textContent = "No figure image."}
+            //         break;
+            //     case "External":
+            //         figureSrc = document.getElementsByName("figure_external_url")[0].value;
+            //         if (figureSrc != ""){
+            //             figureImage.src = figureSrc;
+            //         } else {
+            //             imageRow.textContent = "No figure image."}
+            //         break;         
+            //     case "Interactive":
+            //         const figureID = document.getElementsByName("post_ID")[0].value;
+            //         imageRow.id = `javascript_figure_target_${figureID}`
+            //         interactiveImage = true;
+            //         break;
+            //     case "Code":
+            //         imageRow.id = "code_preview_window"
+            //         break;
+            // }
             
-            const containerWidth = document.querySelector('[data-depend-id="figure_preview"]').parentElement.parentElement.parentElement.clientWidth;
+            // const containerWidth = document.querySelector('[data-depend-id="figure_preview"]').parentElement.parentElement.parentElement.clientWidth;
 
-            if (containerWidth < 800){
-                figureImage.style.width = (containerWidth-88) + "px";
-            }
+            // if (containerWidth < 800){
+            //     figureImage.style.width = (containerWidth-88) + "px";
+            // }
 
-            imageRow.appendChild(figureImage);
-            newDiv.appendChild(imageRow);
+            // imageRow.appendChild(figureImage);
+            // newDiv.appendChild(imageRow);
 
-            // Add the figure captions
-            let captionRow = document.createElement("div");
-            captionRow.classList.add("captionRow");
+            // // Add the figure captions
+            // let captionRow = document.createElement("div");
+            // captionRow.classList.add("captionRow");
 
-            // Get the short caption
-            let shortCaption = document.getElementById('figure_caption_short').value;  
+            // // Get the short caption
+            // let shortCaption = document.getElementById('figure_caption_short').value;  
             
-            // Get the long caption
-            let longCaption = document.getElementById('figure_caption_long').value;  
-            let shortCaptionElementContent = document.createElement("p");
-            shortCaptionElementContent.innerHTML = shortCaption;
-            shortCaptionElementContent.classList.add("captionOptions");
-            captionRow.appendChild(shortCaptionElementContent);
-            let longCaptionElement = document.createElement("details");
-            let longCaptionElementSummary = document.createElement("summary");
+            // // Get the long caption
+            // let longCaption = document.getElementById('figure_caption_long').value;  
+            // let shortCaptionElementContent = document.createElement("p");
+            // shortCaptionElementContent.innerHTML = shortCaption;
+            // shortCaptionElementContent.classList.add("captionOptions");
+            // captionRow.appendChild(shortCaptionElementContent);
+            // let longCaptionElement = document.createElement("details");
+            // let longCaptionElementSummary = document.createElement("summary");
 
-            longCaptionElementSummary.textContent = "Click here for more details.";
-            let longCaptionElementContent = document.createElement("p");
-            longCaptionElementContent.classList.add("captionOptions");
-            longCaptionElementContent.innerHTML = longCaption;
-            longCaptionElement.appendChild(longCaptionElementSummary);
-            longCaptionElement.appendChild(longCaptionElementContent);
-            captionRow.appendChild(longCaptionElement);
-            newDiv.appendChild(captionRow);
+            // longCaptionElementSummary.textContent = "Click here for more details.";
+            // let longCaptionElementContent = document.createElement("p");
+            // longCaptionElementContent.classList.add("captionOptions");
+            // longCaptionElementContent.innerHTML = longCaption;
+            // longCaptionElement.appendChild(longCaptionElementSummary);
+            // longCaptionElement.appendChild(longCaptionElementContent);
+            // captionRow.appendChild(longCaptionElement);
+            // newDiv.appendChild(captionRow);
 
-            // Append the preview window to the parent container
-            firstFigurePreview.appendChild(newDiv);
+            // // Append the preview window to the parent container
+            // firstFigurePreview.appendChild(newDiv);
 
-            //For code and interactive figures, these are when the physical code that create the figures is launched
-            if (interactiveImage == true){
-                try {
-                    //Admin is able to call to the interactive_arguments using document.getElementsByName("figure_interactive_arguments")[0].value;
-                    //interactive_arguments is for the theme side, it is blank here because it is a place holder variable
-                    let interactive_arguments = document.getElementsByName("figure_interactive_arguments")[0].value;
-                    const figureID = document.getElementsByName("post_ID")[0].value;
-                    const figure_arguments = Object.fromEntries(JSON.parse(interactive_arguments));
-                    const graphType = figure_arguments["graphType"];
+            // //For code and interactive figures, these are when the physical code that create the figures is launched
+            // if (interactiveImage == true){
+            //     try {
+            //         //Admin is able to call to the interactive_arguments using document.getElementsByName("figure_interactive_arguments")[0].value;
+            //         //interactive_arguments is for the theme side, it is blank here because it is a place holder variable
+            //         let interactive_arguments = document.getElementsByName("figure_interactive_arguments")[0].value;
+            //         const figureID = document.getElementsByName("post_ID")[0].value;
+            //         const figure_arguments = Object.fromEntries(JSON.parse(interactive_arguments));
+            //         const graphType = figure_arguments["graphType"];
 
-                    if (graphType === "Plotly bar graph") {
-                        producePlotlyBarFigure(`javascript_figure_target_${figureID}`, interactive_arguments, null);
-                    }
-                    if (graphType === "Plotly map") {
-                        //////console.log(`javascript_figure_target_${figureID}`);
-                        producePlotlyMap(`javascript_figure_target_${figureID}`, interactive_arguments, null);
-                    }
-                    if (graphType === "Plotly line graph (time series)") {
-                        producePlotlyLineFigure(`javascript_figure_target_${figureID}`, interactive_arguments, null);
-                    }
+            //         if (graphType === "Plotly bar graph") {
+            //             producePlotlyBarFigure(`javascript_figure_target_${figureID}`, interactive_arguments, null);
+            //         }
+            //         if (graphType === "Plotly map") {
+            //             //////console.log(`javascript_figure_target_${figureID}`);
+            //             producePlotlyMap(`javascript_figure_target_${figureID}`, interactive_arguments, null);
+            //         }
+            //         if (graphType === "Plotly line graph (time series)") {
+            //             producePlotlyLineFigure(`javascript_figure_target_${figureID}`, interactive_arguments, null);
+            //         }
 
-                } catch (error) {
-                    alert('Please upload a a valid file before generating a graph.')
-                }
-            }
-            if (figurePath == 'Code') {
-                displayCode();        
-            }
-        
-
+            //     } catch (error) {
+            //         alert('Please upload a a valid file before generating a graph.')
+            //     }
+            // }
+            // if (figurePath == 'Code') {
+            //     displayCode();        
+            // }
         }
 
     });

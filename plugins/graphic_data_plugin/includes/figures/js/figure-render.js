@@ -266,7 +266,10 @@ async function render_interactive_plots(tabContentElement, info_obj) {
                 }
             }
             
-            figureTimeseriesGraphLoaded(title, postID, gaMeasurementID);
+            //Google Tags
+            if (!window.location.href.includes('post.php')) {
+                figureTimeseriesGraphLoaded(title, postID, gaMeasurementID);
+            }
 
         break;
     }
@@ -310,6 +313,9 @@ async function render_interactive_plots(tabContentElement, info_obj) {
  * This function is called for each tab, populating one or more figures (and other corresponding info)
  */
 async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
+
+    console.log('tabContentElement', tabContentElement);
+    console.log('tabContentContainer', tabContentContainer);
 
     //Lets control if the figure is published or not
     let figure_published = info_obj["figure_published"];
@@ -440,7 +446,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             window.dataLayer = window.dataLayer || [];
 
             //Google Tags
-            figureInternalImageLoaded(title, postID, gaMeasurementID); 
+            if (!window.location.href.includes('post.php')) {
+                figureInternalImageLoaded(title, postID, gaMeasurementID);
+            }
         break;
 
         case "External":
@@ -457,7 +465,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             } else {}
 
             //Google Tags
-            figureExternalImageLoaded(title, postID, gaMeasurementID);    
+            if (!window.location.href.includes('post.php')) {
+                figureExternalImageLoaded(title, postID, gaMeasurementID);
+            }
         break;
 
         case "Interactive":
@@ -507,7 +517,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             codeDiv.innerHTML = tempDiv.innerHTML;
 
             //Google Tags
-            figureCodeDisplayLoaded(title, postID, gaMeasurementID);  
+            if (!window.location.href.includes('post.php')) {
+                figureCodeDisplayLoaded(title, postID, gaMeasurementID);
+            }
         break;
 
     }
@@ -566,10 +578,15 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
     //Google Tags registration for figure science and data links
     if (info_obj['scienceText']!=''){
-        setupFigureScienceLinkTracking(postID);
+        if (!window.location.href.includes('post.php')) {
+            setupFigureScienceLinkTracking(postID);
+        }
     }
     if (info_obj['dataLink']!=''){
-        setupFigureDataLinkTracking(postID);
+        if (!window.location.href.includes('post.php')) {
+            setupFigureDataLinkTracking(postID);
+        }
+
     }
     //Finish the containers and give them the correct properties.
     switch (figureType) {
