@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fieldDiv.appendChild(lineBreak2);
 
             const label3 = document.createElement('label');
-            label3.textContent = `Icon ${i} separate mobile view? `;
+            label3.textContent = `Icon ${i} will look different in mobile view? `;
             label3.style.fontWeight = 'bold';
 
             const inputMobile = document.createElement('input');
