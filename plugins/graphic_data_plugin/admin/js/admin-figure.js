@@ -222,10 +222,13 @@ function run_admin_figures() {
                     figure_interactive_settings.style.display = "none";
                 }
 
+
                 document.getElementsByName("figure_external_alt")[0].parentElement.parentElement.style.display = "none";
                 document.getElementsByName("figure_external_alt")[0].value = "";
                 document.getElementsByName("figure_external_url")[0].parentElement.parentElement.style.display = "none";
                 document.getElementsByName("figure_external_url")[0].value = "";
+
+                document.querySelectorAll('[data-depend-id="figure_preview"]')[0].parentElement.parentElement.style.display = "block";
                 break;
 
             case "External":
@@ -244,6 +247,8 @@ function run_admin_figures() {
                 }
                 document.getElementsByName("figure_image")[0].parentElement.parentElement.parentElement.style.display = "none";
                 document.getElementsByName("figure_image")[0].value = "";
+
+                document.querySelectorAll('[data-depend-id="figure_preview"]')[0].parentElement.parentElement.style.display = "block";
                 break;               
 
             case "Interactive":
@@ -261,6 +266,8 @@ function run_admin_figures() {
                 //figure_image_field.style.display = "none";
                 document.getElementsByName("figure_image")[0].parentElement.parentElement.parentElement.style.display = "none";
                 document.getElementsByName("figure_image")[0].value = "";
+
+                document.querySelectorAll('[data-depend-id="figure_preview"]')[0].parentElement.parentElement.style.display = "block";
                 break;
 
             case "Code":
@@ -275,6 +282,8 @@ function run_admin_figures() {
                 document.getElementsByName("figure_image")[0].parentElement.parentElement.parentElement.style.display = "none";
                 document.getElementsByName("figure_external_url")[0].parentElement.parentElement.style.display = "none";
                 document.getElementsByName("figure_external_alt")[0].parentElement.parentElement.style.display = "none";
+
+                document.querySelectorAll('[data-depend-id="figure_preview"]')[0].parentElement.parentElement.style.display = "block";
 
                 //figure_image_field.style.display = "none";
                 // document.getElementsByName("figure_image")[0].parentElement.parentElement.parentElement.style.display = "none";

@@ -1,3 +1,4 @@
+
 /**
  * Renders interactive plots (e.g., Plotly graphs) within a specified tab content element.
  * Handles dynamic loading, resizing for mobile, and tab switching behavior.
@@ -45,6 +46,10 @@ async function render_interactive_plots(tabContentElement, info_obj) {
     let plotlyDivID = `plotlyFigure${postID}`;
     let interactive_arguments = info_obj["figure_interactive_arguments"];
     //console.log('interactive_arguments', interactive_arguments);
+
+
+    //Preview error message in admin
+    errorPreviewHandler(tabContentElement, figureType);
 
     async function waitForElementByIdPolling(id, timeout = 10000, interval = 100) {
         const start = Date.now();
@@ -314,9 +319,6 @@ async function render_interactive_plots(tabContentElement, info_obj) {
  */
 async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
 
-    console.log('tabContentElement', tabContentElement);
-    console.log('tabContentContainer', tabContentContainer);
-
     //Lets control if the figure is published or not
     let figure_published = info_obj["figure_published"];
     if (figure_published != "published"){
@@ -415,12 +417,16 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     let figureType = info_obj["figureType"];
 
     switch (figureType) {
-        case "Internal":
-
-            
+        case "Internal":           
             img = document.createElement(`img`);
             img.id = `img_${postID}`;
             img.src = info_obj['imageLink'];
+
+            //Error in admin preview for handling for missing image
+            if (!img.src || img.src === ''){
+                errorPreviewHandler(tabContentElement, figureType);
+            }
+
             if (info_obj['externalAlt']){
                 img.alt = info_obj['externalAlt'];
             } else {
@@ -455,6 +461,12 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             img = document.createElement('img');
             img.id = `img_${postID}`;
             img.src = info_obj['imageLink'];
+
+            //Error in admin preview for handling for missing image
+            if (!img.src || img.src === ''){
+                errorPreviewHandler(tabContentElement, figureType);
+            }
+
             if (info_obj['externalAlt']){
                 img.alt = info_obj['externalAlt'];
             } else {
@@ -496,6 +508,12 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             //Append the codeDiv to the figureDiv
             await figureDiv.appendChild(codeDiv);
             embedCode = info_obj['code'];
+
+            //Error in admin preview for handling for missing image
+            if (!embedCode || embedCode === ''){
+                errorPreviewHandler(tabContentElement, figureType);
+            }
+
             // Parse the embed code and extract <script> tags
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = embedCode;

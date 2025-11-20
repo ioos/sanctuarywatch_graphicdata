@@ -1,10 +1,49 @@
+// Admin error handling for missing figure data in preview mode. Operates in figure-render.js
+function errorPreviewHandler(divID, figureType){
+    if (figureType === "Interactive"){
+        //Preview error message in admin
+        const fileInputElement = document.getElementById('existing-file-name');
+        const existingFile = fileInputElement && fileInputElement.files && fileInputElement.files.length > 0;
+        if (window.location.href.includes('post.php') && !existingFile) {
+            const errorMessageSummary = document.createElement("div");
+            errorMessageSummary.style.textAlign = "center";
+            errorMessageSummary.style.color = "red";
+            errorMessageSummary.style.fontWeight = "bold";
+            errorMessageSummary.style.margin = "5%";
+            // Clear any previous error messages if necessary
+            errorMessageSummary.textContent = "Please upload a file, choose a graph type, and make data selections to preview an interactive graph.";
 
+            // Avoid appending multiple error messages repeatedly
+            if (!divID.contains(errorMessageSummary)) {
+                divID.appendChild(errorMessageSummary);
+            }
+            return;
+        }
+    } else {
+        if (window.location.href.includes('post.php')) {
+            const errorMessageSummary = document.createElement("div");
+            errorMessageSummary.style.textAlign = "center";
+            errorMessageSummary.style.color = "red";
+            errorMessageSummary.style.fontWeight = "bold";
+            errorMessageSummary.style.margin = "5%";
+            // Clear any previous error messages if necessary
+            errorMessageSummary.textContent = "Please make an image selection or input code to preview your figure.";
+            // Avoid appending multiple error messages repeatedly
+            if (!divID.contains(errorMessageSummary)) {
+                divID.appendChild(errorMessageSummary);
+            }
+            if (figureType === "Code"){
+                codeDiv = document.getElementById("code_display_window");
+                codeDiv.remove();   
+            }
+            return;  
+        }
+    }
+    return;
+}
 
 
 //PREVIEW BUTTON LOGIC FOR MODALS AND FIGURES
-
-
-
 /**
  * Handles the click event for the modal preview button, generating a live preview of the modal.
  *
@@ -244,165 +283,6 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
                 await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
                 await render_interactive_plots(tabContentElement, info_obj);
             })();
-
-            
-            // // Find element
-            // 
-            // // Create a new div element
-            // let newDiv = document.createElement('div');
-            // newDiv.id = "preview_window";
-            // newDiv.style.width = "100%";
-        
-            // // Add science and data URLs if available
-            // const scienceUrl = document.getElementsByName("figure_science_info[figure_science_link_url]")[0].value;
-            // const dataUrl = document.getElementsByName("figure_data_info[figure_data_link_url]")[0].value;
-
-            // if (scienceUrl !="" || dataUrl != ""){
-            //     let firstRow = document.createElement("div");
-            //     firstRow.classList.add("grayFigureRow");
-
-            //     if (scienceUrl !=""){
-            //         let scienceA = document.createElement("a");
-            //         scienceA.classList.add("grayFigureRowLinks");
-            //         scienceA.href = document.getElementsByName("figure_science_info[figure_science_link_url]")[0].value;
-            //         scienceA.target="_blank";
-            //         let dataIcon = document.createElement("i");
-            //         dataIcon.classList.add("fa-solid", "fa-clipboard-list", "grayFigureRowIcon");
-            //         let urlText = document.createElement("span");
-            //         urlText.classList.add("grayFigureRowText");
-            //         urlText.innerHTML = document.getElementsByName("figure_science_info[figure_science_link_text]")[0].value;
-            //         scienceA.appendChild(dataIcon);
-            //         scienceA.appendChild(urlText);
-            //         firstRow.appendChild(scienceA);
-            //     // firstRow.appendChild(urlText);
-            //     }
-
-            //     if (dataUrl !=""){
-            //         let dataA = document.createElement("a");
-            //         dataA.classList.add("grayFigureRowLinks");//, "grayFigureRowRightLink");
-            //         dataA.href = document.getElementsByName("figure_data_info[figure_data_link_url]")[0].value;
-            //         dataA.target="_blank";
-            //         let dataIcon = document.createElement("i");
-            //         dataIcon.classList.add("fa-solid", "fa-database", "grayFigureRowIcon");
-            //         let urlText = document.createElement("span");
-            //         urlText.classList.add("grayFigureRowText");
-            //         urlText.innerHTML = document.getElementsByName("figure_data_info[figure_data_link_text]")[0].value;
-            //         dataA.appendChild(dataIcon);
-            //         dataA.appendChild(urlText);
-            //         firstRow.appendChild(dataA);
-            //     }
-
-            //     newDiv.appendChild(firstRow);
-            // } 
-
-            // //Figure title options
-            // const figure_title = document.getElementsByName("figure_title")[0].value;
-            // let figureTitle = document.createElement("div");
-            // figureTitle.innerHTML = figure_title;
-            // figureTitle.classList.add("figureTitle");
-            // figureTitle.style.textAlign = "center";
-            // newDiv.appendChild(figureTitle); //Append the figure title
-
-            // // Add the figure image or interactive/code preview
-            // let imageRow = document.createElement("div");
-            // imageRow.classList.add("imageRow");
-            // let figureImage = document.createElement("img");
-            // figureImage.classList.add("figureImage");
-
-            // const figurePath = document.getElementsByName("figure_path")[0].value;
-            // let figureSrc;
-
-            // let interactiveImage = false;
-            // switch(figurePath){
-            //     case "Internal":
-            //         figureSrc = document.getElementsByName("figure_image")[0].value;
-            //         if (figureSrc != ""){
-            //             figureImage.src = figureSrc;
-            //         } else {
-            //             imageRow.textContent = "No figure image."}
-            //         break;
-            //     case "External":
-            //         figureSrc = document.getElementsByName("figure_external_url")[0].value;
-            //         if (figureSrc != ""){
-            //             figureImage.src = figureSrc;
-            //         } else {
-            //             imageRow.textContent = "No figure image."}
-            //         break;         
-            //     case "Interactive":
-            //         const figureID = document.getElementsByName("post_ID")[0].value;
-            //         imageRow.id = `javascript_figure_target_${figureID}`
-            //         interactiveImage = true;
-            //         break;
-            //     case "Code":
-            //         imageRow.id = "code_preview_window"
-            //         break;
-            // }
-            
-            // const containerWidth = document.querySelector('[data-depend-id="figure_preview"]').parentElement.parentElement.parentElement.clientWidth;
-
-            // if (containerWidth < 800){
-            //     figureImage.style.width = (containerWidth-88) + "px";
-            // }
-
-            // imageRow.appendChild(figureImage);
-            // newDiv.appendChild(imageRow);
-
-            // // Add the figure captions
-            // let captionRow = document.createElement("div");
-            // captionRow.classList.add("captionRow");
-
-            // // Get the short caption
-            // let shortCaption = document.getElementById('figure_caption_short').value;  
-            
-            // // Get the long caption
-            // let longCaption = document.getElementById('figure_caption_long').value;  
-            // let shortCaptionElementContent = document.createElement("p");
-            // shortCaptionElementContent.innerHTML = shortCaption;
-            // shortCaptionElementContent.classList.add("captionOptions");
-            // captionRow.appendChild(shortCaptionElementContent);
-            // let longCaptionElement = document.createElement("details");
-            // let longCaptionElementSummary = document.createElement("summary");
-
-            // longCaptionElementSummary.textContent = "Click here for more details.";
-            // let longCaptionElementContent = document.createElement("p");
-            // longCaptionElementContent.classList.add("captionOptions");
-            // longCaptionElementContent.innerHTML = longCaption;
-            // longCaptionElement.appendChild(longCaptionElementSummary);
-            // longCaptionElement.appendChild(longCaptionElementContent);
-            // captionRow.appendChild(longCaptionElement);
-            // newDiv.appendChild(captionRow);
-
-            // // Append the preview window to the parent container
-            // firstFigurePreview.appendChild(newDiv);
-
-            // //For code and interactive figures, these are when the physical code that create the figures is launched
-            // if (interactiveImage == true){
-            //     try {
-            //         //Admin is able to call to the interactive_arguments using document.getElementsByName("figure_interactive_arguments")[0].value;
-            //         //interactive_arguments is for the theme side, it is blank here because it is a place holder variable
-            //         let interactive_arguments = document.getElementsByName("figure_interactive_arguments")[0].value;
-            //         const figureID = document.getElementsByName("post_ID")[0].value;
-            //         const figure_arguments = Object.fromEntries(JSON.parse(interactive_arguments));
-            //         const graphType = figure_arguments["graphType"];
-
-            //         if (graphType === "Plotly bar graph") {
-            //             producePlotlyBarFigure(`javascript_figure_target_${figureID}`, interactive_arguments, null);
-            //         }
-            //         if (graphType === "Plotly map") {
-            //             //////console.log(`javascript_figure_target_${figureID}`);
-            //             producePlotlyMap(`javascript_figure_target_${figureID}`, interactive_arguments, null);
-            //         }
-            //         if (graphType === "Plotly line graph (time series)") {
-            //             producePlotlyLineFigure(`javascript_figure_target_${figureID}`, interactive_arguments, null);
-            //         }
-
-            //     } catch (error) {
-            //         alert('Please upload a a valid file before generating a graph.')
-            //     }
-            // }
-            // if (figurePath == 'Code') {
-            //     displayCode();        
-            // }
         }
 
     });
