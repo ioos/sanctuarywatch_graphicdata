@@ -466,11 +466,6 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             img.id = `img_${postID}`;
             img.src = info_obj['imageLink'];
 
-            //Error in admin preview for handling for missing image
-            if (window.location.href.includes('post.php')){
-                errorPreviewHandler(tabContentElement, figureType);
-            }
-
             if (info_obj['externalAlt']){
                 img.alt = info_obj['externalAlt'];
             } else {
@@ -478,6 +473,14 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             }
             if (img.id  === `img_${postID}`) {
                 await figureDiv.appendChild(img);
+
+                //Error in admin preview for handling for missing image
+                if (window.location.href.includes('post.php')) {
+                    if (img.src.includes('post.php')) {
+                        errorPreviewHandler(tabContentElement, figureType);
+                    } 
+                }
+                
             } else {}
 
             //Google Tags
