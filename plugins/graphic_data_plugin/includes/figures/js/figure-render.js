@@ -49,9 +49,11 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
 
     //Preview error message in admin
-    errorPreviewHandler(tabContentElement, figureType);
+    if (window.location.href.includes('post.php') && figureType === 'Interactive') {
+        errorPreviewHandler(tabContentElement, figureType);
+    }
 
-    async function waitForElementByIdPolling(id, timeout = 10000, interval = 100) {
+    async function waitForElementByIdPolling(id, timeout = 15000, interval = 100) {
         const start = Date.now();
         return new Promise((resolve, reject) => {
             (function poll() {
@@ -85,7 +87,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly line graph (time series)") {
 
-                async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 300) {
+                async function waitForPlotlyDiv(plotlyDivID, retries = 100, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -97,7 +99,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 10000);
+                    await waitForElementByIdPolling(targetId, 15000);
                     await producePlotlyLineFigure(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
@@ -148,7 +150,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly bar graph") {
 
-                 async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 300) {
+                 async function waitForPlotlyDiv(plotlyDivID, retries = 100, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -160,7 +162,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 10000);
+                    await waitForElementByIdPolling(targetId, 15000);
                     await producePlotlyBarFigure(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
@@ -211,7 +213,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly map") {
 
-                 async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 250) {
+                 async function waitForPlotlyDiv(plotlyDivID, retries = 100, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -223,7 +225,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 10000);
+                    await waitForElementByIdPolling(targetId, 15000);
                     await producePlotlyMap(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
@@ -422,11 +424,6 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             img.id = `img_${postID}`;
             img.src = info_obj['imageLink'];
 
-            //Error in admin preview for handling for missing image
-            if (!img.src || img.src === ''){
-                errorPreviewHandler(tabContentElement, figureType);
-            }
-
             if (info_obj['externalAlt']){
                 img.alt = info_obj['externalAlt'];
             } else {
@@ -448,6 +445,13 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             }
             if (img.id  === `img_${postID}`) {
                 await figureDiv.appendChild(img);
+
+                //Error in admin preview for handling for missing image
+                if (window.location.href.includes('post.php')) {
+                    if (img.src.includes('post.php')) {
+                        errorPreviewHandler(tabContentElement, figureType);
+                    } 
+                }
             } else
             window.dataLayer = window.dataLayer || [];
 
@@ -463,7 +467,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             img.src = info_obj['imageLink'];
 
             //Error in admin preview for handling for missing image
-            if (!img.src || img.src === ''){
+            if (window.location.href.includes('post.php')){
                 errorPreviewHandler(tabContentElement, figureType);
             }
 
@@ -511,7 +515,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
             //Error in admin preview for handling for missing image
             if (!embedCode || embedCode === ''){
-                errorPreviewHandler(tabContentElement, figureType);
+                if (window.location.href.includes('post.php')) {
+                    errorPreviewHandler(tabContentElement, figureType);
+                }
             }
 
             // Parse the embed code and extract <script> tags

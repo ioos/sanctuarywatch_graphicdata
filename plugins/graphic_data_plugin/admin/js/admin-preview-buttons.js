@@ -1,17 +1,39 @@
-// Admin error handling for missing figure data in preview mode. Operates in figure-render.js
+// FIGURES Admin error handling for missing figure data in preview mode. Operates in figure-render.js
 function errorPreviewHandler(divID, figureType){
     if (figureType === "Interactive"){
         //Preview error message in admin
-        const fileInputElement = document.getElementById('existing-file-name');
-        const existingFile = fileInputElement && fileInputElement.files && fileInputElement.files.length > 0;
-        if (window.location.href.includes('post.php') && !existingFile) {
+
+        let fileInputElement;
+        let graphTypeInputElement;
+        let lineTypeInputElement;
+        let barTypeInputElement;
+        let existingFileInputElement;
+
+        try {
+            fileInputElement = document.getElementById('file-label').value;
+        } catch {}
+        try {
+            existingFileInputElement = document.getElementById('existing-file-name').value;
+            console.log('existingFileInputElement:', existingFileInputElement);
+        } catch {}
+        try {
+            graphTypeInputElement = document.getElementById('graphType').value;
+        } catch {}
+        try {
+            lineTypeInputElement = document.getElementById('Line1').value;
+         } catch {}
+        try {
+            barTypeInputElement = document.getElementById('Bar1').value;
+        } catch {}
+
+        if (window.location.href.includes('post.php') && (fileInputElement === '' || graphTypeInputElement === 'None') || lineTypeInputElement === 'None' || barTypeInputElement === 'None' || existingFileInputElement === '') {
             const errorMessageSummary = document.createElement("div");
             errorMessageSummary.style.textAlign = "center";
             errorMessageSummary.style.color = "red";
             errorMessageSummary.style.fontWeight = "bold";
             errorMessageSummary.style.margin = "5%";
             // Clear any previous error messages if necessary
-            errorMessageSummary.textContent = "Please upload a file, choose a graph type, and make data selections to preview an interactive graph.";
+            errorMessageSummary.textContent = "Please upload a file, choose a graph type, and make data selections to preview an interactive figure. Be sure to check all options.";
 
             // Avoid appending multiple error messages repeatedly
             if (!divID.contains(errorMessageSummary)) {
@@ -27,7 +49,7 @@ function errorPreviewHandler(divID, figureType){
             errorMessageSummary.style.fontWeight = "bold";
             errorMessageSummary.style.margin = "5%";
             // Clear any previous error messages if necessary
-            errorMessageSummary.textContent = "Please make an image selection or input code to preview your figure.";
+            errorMessageSummary.textContent = "Please make an image selection or input code to preview your figure.  Be sure to check all options.";
             // Avoid appending multiple error messages repeatedly
             if (!divID.contains(errorMessageSummary)) {
                 divID.appendChild(errorMessageSummary);
@@ -37,10 +59,13 @@ function errorPreviewHandler(divID, figureType){
                 codeDiv.remove();   
             }
             return;  
+            
         }
     }
     return;
 }
+
+
 
 
 //PREVIEW BUTTON LOGIC FOR MODALS AND FIGURES
@@ -222,6 +247,8 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
             //console.log('modal_data', modal_data);
 
             render_modal(iconSelected, child_obj, modal_data);
+            modal_data.remove();
+            child_obj.remove();
         }
 
         // --- GATHER FIGURE DATA FROM FORM FIELDS ---
