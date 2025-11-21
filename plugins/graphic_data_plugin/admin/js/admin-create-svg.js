@@ -89,6 +89,36 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('generateSVG').addEventListener('click', function() {
+        // Check if SVG Title field is blank
+        var svgTitle = document.getElementById('svgTitle');
+        if (!svgTitle || svgTitle.value.trim() === '') {
+            // Remove any existing error messages
+            var existingError = document.getElementById('svgTitleError');
+            if (existingError) {
+                existingError.remove();
+            }
+
+            // Create error message
+            var errorDiv = document.createElement('div');
+            errorDiv.id = 'svgTitleError';
+            errorDiv.className = 'notice notice-error is-dismissible';
+            errorDiv.innerHTML = '<p><strong>Error:</strong> SVG Title cannot be blank. Please enter a title before generating the SVG.</p>';
+
+            // Insert error message at the top of the wrap div
+            var wrapDiv = document.querySelector('.wrap');
+            if (wrapDiv) {
+                wrapDiv.insertBefore(errorDiv, wrapDiv.firstChild);
+            }
+
+            // Scroll to top to show the error
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Focus on the svgTitle field
+            svgTitle.focus();
+
+            return;
+        }
+
         // Prompt user for filename with timestamp as default
         var timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
         var defaultFilename = 'location-' + timestamp;
