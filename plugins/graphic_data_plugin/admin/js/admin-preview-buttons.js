@@ -43,6 +43,14 @@ function errorPreviewHandler(divID, figureType){
         }
     } else {
         if (window.location.href.includes('post.php')) {
+
+
+            setTimeout(() => {
+                const figure = document.querySelector('#myTabContent .figure');
+                console.log("FOUND FIGURE:", figure);
+                figure.remove();
+            }, 50);
+
             const errorMessageSummary = document.createElement("div");
             errorMessageSummary.style.textAlign = "center";
             errorMessageSummary.style.color = "red";
