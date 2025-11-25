@@ -47,7 +47,7 @@ function errorPreviewHandler(divID, figureType){
 
             setTimeout(() => {
                 const figure = document.querySelector('#myTabContent .figure');
-                console.log("FOUND FIGURE:", figure);
+                //.console.log("FOUND FIGURE:", figure);
                 figure.remove();
             }, 50);
 
@@ -109,7 +109,7 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
                     <div class="modal-content">
                     <div class="modal-header">
                         <h4 id="modal-title1" class="modal-title"> Full Scene Image</h4>
-                        <button id="close1" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button id="close" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body"></div>
                     </div>
@@ -323,8 +323,8 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
     });
 });
 
-//INJECT CSS FOR THE THEME WHEN MODAL OR FIGURE PREVIEW IS CLICKED
-document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="figure_preview"]').forEach(el => {
+//INJECT CSS FOR THE THEME WHEN SCENE, MODAL, or FIGURE PREVIEW IS CLICKED
+document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="figure_preview"], [data-depend-id="scene_preview"]').forEach(el => {
   el.addEventListener('click', function() {
     // Only inject CSS if not already loaded
     if (!document.getElementById('theme-css1') && !document.getElementById('theme-css2')) {
@@ -351,12 +351,420 @@ document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="fi
 // When the modal close button is clicked, remove both CSS files
 document.addEventListener('click', function(e) {
     if (e.target && e.target.id === 'close') {
+
         const css1 = document.getElementById('theme-css1');
         const css2 = document.getElementById('theme-css2');
         if (css1) css1.remove();
         if (css2) css2.remove();
-        // console.log('🧹 Theme CSS removed from head.');
+
+        try {
+            // Safety cleanup for dynamically-added content    
+            const modalEl = document.getElementById('sceneModal');
+            modalEl.remove();
+        } catch {}
+
     }
 });
+
+
+//LOGIC FOR SCENE PREVIEW MODE
+function openSceneInModal() {
+    // // Load PHP page into modal body
+    // document.getElementById("entire_thing").innerHTML = html;
+    // const modal = new bootstrap.Modal(document.getElementById('entire_thing'));
+    // modal.show();
+
+    // // Prevent duplicate injection, remove existing to make way for new. 
+    // if (document.getElementById('sceneModal')) {
+    //     //console.log('Modals already exist — showing modal.');
+    //     const modalEl = document.getElementById('sceneModal');
+    //     if (modalEl) modalEl.remove();
+    // }
+
+    // --- INJECT MODAL HTML MARKUP to sceneModalBody---
+    const markup = `
+        <body>
+            <div id="entire_thing">  
+            <div id="title-container" ></div>
+            <div id="mobile-view-image"></div>
+            <div class="container-fluid" id="scene-fluid">
+            <div class="row" id="scene-row">
+                <div class="col-md-10" >
+                <div id="svg1" class="responsive-image-container">
+                    <?php
+                    $svg_url = get_post_meta($post_id, 'scene_infographic', true); 
+                    $num_sections = get_post_meta($post_id, 'scene_section_number', true); 
+                    $scene_sections = [];
+                    for ($i = 1; $i <= $num_sections; $i++) {
+                        $curr = 'scene_section' . $i;
+                        $curr_section = get_post_meta($post_id, $curr, true); 
+                        $hov_color = 'scene_section_hover_color' . $i;
+                        $scene_title = 'scene_section_title' . $i;
+
+                        $scene_sections[$curr_section[$scene_title]] = $curr_section[$hov_color];
+                    }
+                    
+                    //a bunch of scene meta fields:
+                    $scene_default_hover_color = get_post_meta($post_id, 'scene_hover_color', true);
+                    $scene_default_hover_text_color = get_post_meta($post_id, 'scene_hover_text_color', true); 
+                    $scene_text_toggle = get_post_meta($post_id, 'scene_text_toggle', true); 
+                    $scene_toc_style = get_post_meta($post_id, 'scene_toc_style', true); 
+                    $scene_full_screen_button = get_post_meta($post_id, 'scene_full_screen_button', true); 
+                    $scene_same_hover_color_sections	= get_post_meta($post_id, 'scene_same_hover_color_sections', true); 
+
+                    $child_ids = get_modal_array($svg_url);
+                    
+                    ?>
+                </div>
+                </div>
+
+                <div class="col-md-2" id="toc-container" >
+
+                    <!-- TABLE OF CONTENTS WILL GO HERE -->
+
+                </div>
+            </div>
+            </div>
+            </div>           
+        </body>`;
+
+    const sceneModalBody = document.getElementById('sceneModalBody');
+    if (!sceneModalBody) {
+        console.warn('#sceneModalBody not found.');
+        return;
+    }
+
+    // Inject as the first child of #wpcontent
+    sceneModalBody.insertAdjacentHTML('afterbegin', markup);
+    //console.log('✅ Modals injected into #wpcontent');
+
+    // Wait for DOM update, then show the modal (Bootstrap 5 API)
+    setTimeout(() => {
+        const modalEl = document.getElementById('sceneModalBody');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+        const modalInstance = new bootstrap.Modal(modalEl);
+        modalInstance.show();
+        } else {
+        console.warn('Bootstrap not found — modal injected but not activated.');
+        }
+    }, 100);
+            
+
+            
+}
+
+
+
+/**
+ * Handles the click event for the "Scene preview" button, generating a live preview of the scene.
+ *
+ * This event listener dynamically creates a scene preview window that displays the scene title, tagline,
+ * info and photo accordions, and a preview of the SVG infographic with highlighted icons. It ensures that
+ * any previous preview is removed before generating a new one. The preview includes:
+ * - Scene title (from the "title" field)
+ * - Tagline (from the "scene_tagline" field)
+ * - Accordions for info and photo links if any are present
+ * - SVG infographic preview (if a valid SVG path is provided), with clickable icons highlighted using the scene's hover color
+ * - A table of contents (TOC) listing the IDs of the SVG's icon layers, if present
+ *
+ * @event scene_preview_click
+ *
+ * @description
+ * - Removes any existing preview window.
+ * - Collects info and photo entries with both text and URL fields populated.
+ * - Builds and appends accordions for info and photo links if present.
+ * - Displays the tagline and scene title.
+ * - Loads and displays the SVG infographic, highlights icon layers, and lists their IDs in a TOC.
+ * - Handles errors in fetching or processing the SVG.
+ *
+ * @modifies
+ * - The DOM by removing and creating the scene preview window, and by updating the SVG preview and TOC.
+ *
+ * @example
+ * // This code is typically run on page load to enable scene preview functionality:
+ * document.querySelector('[data-depend-id="scene_preview"]').addEventListener('click', ...);
+ *
+ * @global
+ * - Assumes the existence of form fields named "title", "scene_tagline", "scene_info{n}[scene_info_text{n}]", "scene_info{n}[scene_info_url{n}]",
+ *   "scene_photo{n}[scene_photo_text{n}]", "scene_photo{n}[scene_photo_url{n}]", "scene_infographic", "scene_hover_color", and "scene_location" in the DOM.
+ * - Assumes the existence of the helper functions createAccordion and resizeSvg.
+ * - Requires the SVG to have a group with id="icons" for icon highlighting and TOC generation.
+ */
+// Create scene preview from clicking on the "Scene preview button"
+document.querySelector('[data-depend-id="scene_preview"]').addEventListener('click', function() {
+
+
+    // Prevent duplicate injection, remove existing to make way for new. 
+    if (document.getElementById('sceneModal')) {
+        //console.log('Modals already exist — showing modal.');
+        const modalEl = document.getElementById('sceneModal');
+        if (modalEl) modalEl.remove();
+    }
+
+    // --- INJECT MODAL HTML MARKUP to wpcontent---
+    const markup = `
+        <body>
+            <div class="modal fade" id="sceneModal" tabindex="-1">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title1"></h5>
+                    <button id="close" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body" id="sceneModalBody">
+                    <button id="close" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <!-- single-scene.php will be loaded here -->
+                </div>
+
+                </div>
+            </div>
+            </div>
+        </body>`;
+
+    const wpcontent = document.getElementById('wpwrap');
+    if (!wpcontent) {
+        console.warn('#wpwrap not found.');
+        return;
+    }
+
+    // Inject as the first child of #wpcontent
+    wpcontent.insertAdjacentHTML('afterbegin', markup);
+    //console.log('✅ Modals injected into #wpcontent');
+
+    // Wait for DOM update, then show the modal (Bootstrap 5 API)
+    setTimeout(() => {
+        const modalEl = document.getElementById('sceneModal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+        const modalInstance = new bootstrap.Modal(modalEl);
+        modalInstance.show();
+        } else {
+        console.warn('Bootstrap not found — modal injected but not activated.');
+        }
+    }, 100);
+
+
+    // openSceneInModal();
+
+    // let url = 'https://noaaswlocal.local/wp-content/uploads/2024/12/1.Overview-CINMS-2024-v4.svg'
+    // loadSVG(url, "svg1");
+        
+
+    // Find the second parent element
+    //const secondParent = firstScenePreview.parentElement.parentElement;
+    const secondParent = document.getElementById('sceneModalBody');
+    secondParent.innerHTML = ""; // Clear previous content
+
+    // Create an h1 element
+    let h1 = document.createElement('h1');
+    // Set the text content of the h1 element to "Hello World"
+    h1.textContent = document.getElementById("title").value
+    // Append the h1 element to the new div
+    secondParent.appendChild(h1);
+    let secondRow = document.createElement("div");
+    secondRow.classList.add("row");
+
+
+    secondRow.classList.add("row", "align-items-start");
+
+    // Detect whether we have accordions
+    let scene_info_elements = [];
+    let scene_photo_elements = [];
+    let haveAccordions = false;
+
+    // Collect valid accordion items
+    for (let i = 1; i < 7; i++) {
+        let text_field = `scene_photo${i}[scene_photo_text${i}]`;
+        let url_field  = `scene_photo${i}[scene_photo_url${i}]`;
+
+        if (
+            document.getElementsByName(text_field)[0].value !== "" &&
+            document.getElementsByName(url_field)[0].value !== ""
+        ) {
+            scene_photo_elements.push(i);
+        }
+
+        text_field = `scene_info${i}[scene_info_text${i}]`;
+        url_field  = `scene_info${i}[scene_info_url${i}]`;
+
+        if (
+            document.getElementsByName(text_field)[0].value !== "" &&
+            document.getElementsByName(url_field)[0].value !== ""
+        ) {
+            scene_info_elements.push(i);
+        }
+    }
+
+    // Mark whether any accordion sections exist
+    haveAccordions = (scene_info_elements.length > 0 || scene_photo_elements.length > 0);
+
+
+    // ----------------------------------------------------
+    // Create ACCORDION COLUMN (right side)
+    // ----------------------------------------------------
+    let accordionColumn = null;
+
+    if (haveAccordions) {
+        accordionColumn = document.createElement("div");
+        accordionColumn.classList.add("col-2");
+        accordionColumn.id = "allAccordions";
+
+        let accordionWrapper = document.createElement("div");
+        accordionWrapper.classList.add("accordion");
+
+        // Populate accordions
+        if (scene_info_elements.length > 0) {
+            createAccordion("info", accordionWrapper, scene_info_elements);
+        }
+        if (scene_photo_elements.length > 0) {
+            createAccordion("photo", accordionWrapper, scene_photo_elements);
+        }
+
+        accordionColumn.appendChild(accordionWrapper);
+    }
+
+
+    // ----------------------------------------------------
+    // Create TAGLINE COLUMN (left side)
+    // ----------------------------------------------------
+    let taglineColumn = document.createElement("div");
+
+    // If we have accordions → tagline = col-10
+    // If not → tagline = col-12
+    taglineColumn.classList.add(haveAccordions ? "col-10" : "col-12");
+
+    taglineColumn.classList.add("sceneTagline");
+    taglineColumn.textContent = document.getElementsByName('scene_tagline')[0].value;
+
+    // Append columns in the correct left→right order
+    secondRow.appendChild(taglineColumn);
+
+    if (accordionColumn) {
+        secondRow.appendChild(accordionColumn);
+    }
+
+    // Insert this row into your wrapper container
+    secondParent.appendChild(secondRow);  
+
+    // add row 
+    let thirdRow = document.createElement("div");
+    thirdRow.classList.add("row", "thirdPreviewRow");
+    let imageColumn = document.createElement("div");
+    imageColumn.classList.add("col-9");
+
+    
+    let svgPath = document.getElementsByName("scene_infographic")[0].value;
+    let hoverSceneColor = document.getElementsByName("scene_hover_color")[0].value;
+    let hoverSceneTextColor = document.getElementsByName("scene_hover_text_color")[0].value;
+    if (svgPath == ""){
+        imageColumn.innerText = "No image.";
+        thirdRow.append(imageColumn);
+    } else {
+        let imageExtension = svgPath.split('.').pop().toLowerCase();
+        if (imageExtension != "svg"){
+            imageColumn.innerText = "Image is not a svg.";
+            thirdRow.append(imageColumn);
+        } else {
+
+            const protocol = window.location.protocol;
+            const host = window.location.host;
+            const sceneInstance = document.getElementsByName("scene_location")[0].value;
+            const restHoverColor = protocol + "//" + host  + "/wp-json/wp/v2/instance/" + sceneInstance;
+
+            fetch(restHoverColor)
+                .then(response => response.json())
+                .then(data => {
+                    let hoverColor = "yellow"; 
+                    const rawHoverColorString = data['instance_hover_color'];
+
+                    if (rawHoverColorString) {
+                        hoverColor = rawHoverColorString;
+                        const commaIndex = hoverColor.indexOf(',');
+                        if (commaIndex !== -1) {
+                            hoverColor = hoverColor.substring(0, commaIndex);
+                        }
+                    }
+                    return fetch(svgPath);
+                })
+            .then(response => response.text())
+            .then(svgContent => {
+
+                // Create a temporary div to hold the SVG content
+                imageColumn.innerHTML = svgContent;
+                imageColumn.id = "previewSvgContainer";
+
+                thirdRow.append(imageColumn);
+                document.getElementById("previewSvgContainer").children[0].id = "previewSvg";
+
+                //document.getElementById("previewSvgContainer").children[0].removeAttribute("height");
+                previewSvgContainer = document.getElementById("previewSvgContainer");
+
+                const svg = document.getElementById('previewSvg');
+                svg.style.width = "100%";
+                svg.style.height = "auto";
+                svg.style.maxWidth = "100%";
+                svg.style.display = "block";
+
+
+
+
+                // Find the "icons" layer
+                let iconsLayer = document.getElementById("previewSvg").querySelector('g[id="icons"]');
+
+                if (iconsLayer) {
+
+                    // Initialize an array to hold the sublayers
+                    let sublayers = [];
+
+                    // Iterate over the child elements of the "icons" layer
+                    iconsLayer.childNodes.forEach(node => {
+                        // Check if the node is an element and push its id to the sublayers array
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                        sublayers.push(node.id);
+                        }
+                    });
+                    sublayers = sublayers.sort();
+
+                    let tocColumn = document.createElement("div");
+                    tocColumn.classList.add("col-3", "previewSceneTOC");
+                    let tocList = document.createElement("ul");
+                    sublayers.forEach (listElement => {
+                        let tocElement = document.createElement("li");
+                        tocElement.innerText = listElement;
+                        tocList.appendChild(tocElement);
+                    })
+                    tocColumn.append(tocList);
+                    thirdRow.append(tocColumn);
+
+                    //let's highlight the clickable elements of the svg
+                    const targetSvg = document.getElementById("previewSvg");
+                    sublayers.forEach (listElement => {
+                        let iconLayer = targetSvg.getElementById(listElement);
+
+                        // Select all child elements 
+                        let subElements = iconLayer.querySelectorAll("*");
+                    
+                        // Loop through each sub-element and update its stroke-width and color
+                        subElements.forEach(element => {
+                            element.style.strokeWidth = "2";
+                            element.style.stroke = hoverSceneColor;
+                        });
+                    })
+
+                } else {
+                    imageColumn.innerText = 'No "icons" layer found in the SVG.';
+                    thirdRow.append(imageColumn);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching or processing SVG:', error);
+            });
+
+        }
+    }
+    secondParent.appendChild(thirdRow);
+});
+
 
 

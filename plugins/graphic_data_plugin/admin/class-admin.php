@@ -94,7 +94,10 @@ class Admin {
 			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
 			// Enqueue scene-render.js
-			wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
+			//wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
+
+			// Enqueue admin-preview-buttons.js
+			wp_enqueue_script( "admin-preview-buttons", plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array( ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 		}
 
 		// Load Modal-specific Javascript only when editing/creating a Modal post 
