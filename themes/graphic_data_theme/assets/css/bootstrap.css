@@ -5836,6 +5836,9 @@ textarea.form-control-lg {
     --bs-modal-margin: 1.75rem;
     --bs-modal-box-shadow: var(--bs-box-shadow);
   }
+  #sceneModal.modal {
+      --bs-modal-margin: 0 !important;
+  }
   .modal-dialog {
     max-width: var(--bs-modal-width);
     margin-right: auto;

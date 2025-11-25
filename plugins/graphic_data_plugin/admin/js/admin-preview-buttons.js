@@ -761,6 +761,9 @@ document.querySelector('[data-depend-id="scene_preview"]').addEventListener('cli
                 console.error('Error fetching or processing SVG:', error);
             });
 
+            const sceneModal = document.getElementById('sceneModal');
+            sceneModal.style.setProperty('--bs-modal-margin', '0', 'important');
+
         }
     }
     secondParent.appendChild(thirdRow);
