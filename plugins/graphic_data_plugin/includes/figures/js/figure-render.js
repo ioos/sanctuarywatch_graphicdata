@@ -87,7 +87,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly line graph (time series)") {
 
-                async function waitForPlotlyDiv(plotlyDivID, retries = 100, interval = 300) {
+                async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -150,7 +150,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly bar graph") {
 
-                 async function waitForPlotlyDiv(plotlyDivID, retries = 100, interval = 300) {
+                 async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -213,7 +213,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly map") {
 
-                 async function waitForPlotlyDiv(plotlyDivID, retries = 100, interval = 300) {
+                 async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
