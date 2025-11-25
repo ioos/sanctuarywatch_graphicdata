@@ -90,7 +90,7 @@ class Create_SVG {
                     <div class="form-field">
                         <label for="svgIconNumber">Number of clickable icons:</label>
                         <div class="range-control">
-                            <input type="range" id="svgIconNumber" name="svgIconNumber" min="0" max="15" value="0">
+                            <input type="range" id="svgIconNumber" name="svgIconNumber" min="0" max="12" value="0">
                             <span class="range-value" id="svgIconNumberValue">0</span>
                         </div>
                     </div>

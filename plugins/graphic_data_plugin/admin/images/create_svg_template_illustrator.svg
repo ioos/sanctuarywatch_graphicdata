@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 792 612">
+  <!-- Generator: Adobe Illustrator 30.0.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 123)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #000f42;
+        font-size: 24.48px;
+      }
+
+      .st0, .st1 {
+        font-family: Arial-BoldMT, Arial;
+        font-weight: 700;
+      }
+
+      .st0, .st1, .st2, .st3 {
+        isolation: isolate;
+      }
+
+      .st4 {
+        fill-rule: evenodd;
+      }
+
+      .st4, .st1, .st2, .st3 {
+        fill: #fff;
+      }
+
+      .st5 {
+        fill: url(#linear-gradient);
+      }
+
+      .st1 {
+        font-size: 18px;
+      }
+
+      .st6 {
+        fill: none;
+        stroke: #fff;
+        stroke-miterlimit: 10;
+        stroke-width: 1.5px;
+      }
+
+      .st2 {
+        opacity: .75;
+      }
+
+      .st3 {
+        opacity: .25;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="395.89" y1="339.28" x2="395.89" y2="-461.45" gradientTransform="translate(0 148) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6aa8c4"/>
+      <stop offset="1" stop-color="#aed4e5"/>
+    </linearGradient>
+  </defs>
+  <g id="mobile">
+    <g id="icon12-mobile">
+      <text id="icon12-mobile-text" class="st1" transform="translate(600.62 567.1)"><tspan x="0" y="0">Example Twelve </tspan></text>
+      <circle id="circle7-1-2" class="st3" cx="659.68" cy="506.14" r="36"/>
+      <circle id="circle8-9-2" class="st6" cx="659.68" cy="506.14" r="36"/>
+    </g>
+    <g id="icon11-mobile">
+      <text id="icon11-mobile-text" class="st1" transform="translate(333.72 567.1)"><tspan x="0" y="0">Example Eleven</tspan></text>
+      <circle id="circle26-2" class="st3" cx="395.76" cy="506.14" r="36"/>
+      <circle id="circle27-2" class="st6" cx="395.76" cy="506.14" r="36"/>
+    </g>
+    <g id="icon10-mobile">
+      <text id="icon10-mobile-text" class="st1" transform="translate(65.78 567.1)"><tspan x="0" y="0">Example Ten </tspan></text>
+      <circle id="circle4-2" class="st3" cx="131.83" cy="506.13" r="36"/>
+      <circle id="circle5-2" class="st6" cx="131.83" cy="506.13" r="36"/>
+    </g>
+    <g id="icon9-mobile">
+      <text id="icon9-mobile-text" class="st1" transform="translate(597.26 434.84)"><tspan x="0" y="0">Example Nine</tspan></text>
+      <circle id="circle7-2" class="st3" cx="656.32" cy="373.88" r="36"/>
+      <circle id="circle8-2" class="st6" cx="656.32" cy="373.88" r="36"/>
+    </g>
+    <g id="icon8-mobile">
+      <text id="icon8-mobile-text" class="st1" transform="translate(330.36 434.84)"><tspan x="0" y="0">Example Eight</tspan></text>
+      <circle id="circle9-2" class="st3" cx="392.39" cy="373.88" r="36"/>
+      <circle id="circle10-2" class="st6" cx="392.39" cy="373.88" r="36"/>
+    </g>
+    <g id="icon7-mobile">
+      <text id="icon7-mobile-text" class="st1" transform="translate(62.42 434.84)"><tspan x="0" y="0">Example Seven</tspan></text>
+      <circle id="circle11-2" class="st3" cx="128.47" cy="373.87" r="36"/>
+      <circle id="circle12-2" class="st6" cx="128.47" cy="373.87" r="36"/>
+    </g>
+    <g id="icon6-mobile">
+      <text id="icon6-mobile-text" class="st1" transform="translate(603.26 298.91)"><tspan x="0" y="0">Example Six</tspan></text>
+      <circle id="circle13-2" class="st3" cx="656.3" cy="237.95" r="36"/>
+      <circle id="circle14-2" class="st6" cx="656.3" cy="237.95" r="36"/>
+    </g>
+    <g id="icon5-mobile">
+      <text id="icon5-mobile-text" class="st1" transform="translate(334.84 298.91)"><tspan x="0" y="0">Example Five</tspan></text>
+      <circle id="circle15-2" class="st3" cx="392.39" cy="237.95" r="36"/>
+      <circle id="circle16-2" class="st6" cx="392.39" cy="237.95" r="36"/>
+    </g>
+    <g id="icon4-mobile">
+      <text id="icon4-mobile-text" class="st1" transform="translate(68.94 298.91)"><tspan x="0" y="0">Example Four</tspan></text>
+      <circle id="circle17-2" class="st3" cx="128.46" cy="237.94" r="36"/>
+      <circle id="circle18-2" class="st6" cx="128.46" cy="237.94" r="36"/>
+    </g>
+    <g id="icon3-mobile">
+      <text id="icon3-mobile-text" class="st1" transform="translate(592.26 164.37)"><tspan x="0" y="0">Example Three</tspan></text>
+      <circle id="circle19-2" class="st3" cx="656.31" cy="103.4" r="36"/>
+      <circle id="circle20-2" class="st6" cx="656.31" cy="103.4" r="36"/>
+    </g>
+    <g id="icon2-mobile">
+      <text id="icon2-mobile-text" class="st1" transform="translate(335.52 164.37)"><tspan x="0" y="0">Example Two</tspan></text>
+      <circle id="circle21-2" class="st3" cx="392.39" cy="103.4" r="36"/>
+      <circle id="circle22-2" class="st6" cx="392.39" cy="103.4" r="36"/>
+    </g>
+    <g id="icon1-mobile">
+      <text id="icon1-mobile-text" class="st1" transform="translate(71.43 164.37)"><tspan x="0" y="0">Example One</tspan></text>
+      <circle id="circle23-2" class="st3" cx="128.46" cy="103.39" r="36"/>
+      <circle id="circle24-2" class="st6" cx="128.46" cy="103.39" r="36"/>
+    </g>
+  </g>
+  <g id="background">
+    <rect id="background_color" class="st5" x="-.11" y="-.5" width="792" height="612"/>
+    <g id="title">
+      <rect id="title_x5F_text_x5F_background" class="st2" x="1.58" y="13.39" width="241.2" height="36"/>
+      <text id="title_x5F_text" class="st0" transform="translate(45.3 40.2)"><tspan x="0" y="0">Example</tspan></text>
+    </g>
+    <g id="logo">
+      <path id="path1" class="st4" d="M775.87,61.62l-.24.48-.12.6-.24.36-.12.6-.48.96-.12.6-.24.36-.12.6-.48.96-.12.6-.24.36-.12.6-.24.36-.12.6-.48.96-.12.6-.48.96-.12.6-.24.36h3.11l.36-.72.24-.96.24-.36h4.19l.24.24v.24l.24.36v.24l.12.12v.24l.12.12.12.48h3.11l-.24-.48-.12-.6-.24-.36v-.24l-.24-.36-.12-.6-.24-.36-.12-.6-.24-.36-.12-.6-.48-.96-.12-.6-.48-.96v-.24l-.36-.72-.12-.6-.24-.36-.12-.6-.48-.96v-.24l-.12-.12-.12-.48-.12-.12h-3.23.02ZM777.55,64.96l.12.12v.24l.12.12.24.96.24.36v.24l.12.12v.24l.12.12v.24l.12.12.24.96-.12.12h-2.51l-.12-.24.12-.12.24-.96.24-.36v-.24l.12-.12v-.24l.12-.12v-.24l.12-.12.24-.96.24-.24h0Z"/>
+      <path id="path2-6" class="st4" d="M763.67,61.62v2.39h2.39l.12.12v8.97h2.99v-8.97l.12-.12h2.39v-2.39s-8.01,0-8.01,0Z"/>
+      <path id="path3-1" class="st4" d="M756.14,61.62v.24l-.24.36-.12.6-.48.96-.12.6-.24.36-.12.6-.48.96-.12.6-.24.36-.12.6-.24.36-.12.6-.48.96-.12.6-.24.36-.12.6-.24.36v.24l-.24.36v.24l-.12.12-.12.48h3.11v-.24l.36-.72.12-.6.36-.48h4.07l.36.48v.24l.24.36.24.96h3.11v-.24l-.24-.36v-.24l-.24-.36-.12-.6-.48-.96-.12-.6-.24-.36-.12-.6-.48-.96-.12-.6-.24-.36-.12-.6-.24-.36-.12-.6-.48-.96-.12-.6-.24-.36v-.24l-.36-.72v-.24l-.24-.36v-.24h-3.35.02ZM757.81,64.96l.24.36v.24l.12.12.24.96.24.36v.24l.12.12v.24l.12.12v.24l.12.12v.24l.24.48-.12.12h-2.63l-.12-.12.12-.12v-.24l.12-.12v-.24l.12-.12.24-.96.24-.36v-.24l.12-.12.24-.96.24-.36h0Z"/>
+      <path id="path4-1" class="st4" d="M741.19,61.62v11.48h5.5l.12-.12.72-.12.96-.48.72-.6h.12l.96-1.08.6-1.08v-.24l.24-.48v-.36l.12-.12v-.84l.12-.12v-.24l-.12-.12v-.96l-.12-.12-.24-.96-.6-1.08-.48-.48v-.12l-.96-.84-1.67-.84h-.48l-.12-.12h-5.38v.04ZM744.18,64.01h1.2l.12.12h.48l.96.48.96,1.08.12.48.12.12v.36l.12.12v1.2l-.12.12v.36l-.12.12v.24l-.24.48-.96.96-.48.24h-.24l-.12.12h-.36l-.12.12h-1.32l-.12-.12v-6.46l.12-.12v-.02Z"/>
+      <path id="path5-5" class="st4" d="M769.77,46.79v11.6h2.87v-11.6h-2.87Z"/>
+      <path id="path6-6" class="st4" d="M756.86,46.79v11.6h2.87v-4.66l.12-.12h4.3l.12.12v4.66h2.87v-11.6h-2.87v4.42l-.12.12h-4.3l-.12-.12v-4.42h-2.87Z"/>
+      <path id="path7" class="st4" d="M746.34,46.79v11.6h2.87v-3.71l.12-.12h2.39l.12-.12h.6l.12-.12.6-.12.48-.36h.12l.72-.72.48-.96v-.36l.12-.12v-1.91l-.12-.12-.12-.72-.48-.84-.6-.6-.96-.48h-.36l-.12-.12h-.96l-.12-.12h-4.9v.02ZM749.21,49.3l.12-.12h1.55l.12.12.48.12.36.36.12.48.12.12v.6l-.12.12-.12.48-.36.36-.48.24h-1.67l-.12-.12v-2.75h0Z"/>
+      <path id="path8" class="st4" d="M737.25,46.79l-.48.96-.12.6-.24.36v.24l-.36.72-.12.6-.24.36v.24l-.24.36-.12.6-.48.96-.12.6-.24.36-.12.6-.48.96-.12.6-.24.36v.24l-.36.72v.24l-.36.72v.24h3.11v-.24l.12-.12v-.24l.12-.12.24-.96.24-.36h4.3l.12.12.24.96.24.36.12.6h3.11l-.12-.48-.12-.12v-.24l-.24-.36-.12-.6-.48-.96-.12-.6-.48-.96-.12-.6-.24-.36-.12-.6-.24-.36-.12-.6-.24-.36v-.24l-.24-.36-.12-.6-.24-.36-.12-.6-.48-.96v-.24l-.36-.72v-.24l-.12-.12h-3.11.03ZM738.8,50.26l.24.36v.24l.12.12v.24l.12.12.24.96.24.36v.24l.12.12v.24l.12.12v.24l.24.48-.12.12h-2.63l-.12-.12.24-.48v-.24l.12-.12v-.24l.12-.12v-.24l.12-.12.24-.96.24-.36.12-.6.24-.36h0Z"/>
+      <path id="path9" class="st4" d="M722.9,46.79v11.6h2.87v-4.3l.12-.12.24.48,1.2,1.67.12.36.96,1.32.12.36.24.24h3.59l-.48-.6v-.12l-.36-.36v-.12l-.36-.36v-.12l-.48-.48v-.12l-.36-.36v-.12l-.36-.36v-.12l-.48-.48v-.12l-.72-.84.72-.36h.24l.24-.24.48-.24.48-.6.12-.48.12-.12v-.24l.12-.12v-1.79l-.12-.12v-.36l-.36-.72-.36-.36v-.12l-.6-.48-.48-.24-.6-.12-.12-.12h-.84l-.12-.12h-4.78v.02ZM725.89,49.06h1.08l.12.12h.36l.24.12.48.48.12.24v1.08l-.12.24-.48.48-.48.12-.12.12h-1.2l-.12-.12v-2.75l.12-.12h0Z"/>
+      <path id="path10" class="st4" d="M779.82,46.55l-.12.12-.84.12-.36.24-.48.12-.24.24-.72.36-1.08,1.08v.12l-.48.6-.36.72v.24l-.24.48v.36l-.12.12v2.27l.12.12v.36l.12.12.12.6.48.96.72.84v.12l.96.84,1.67.84.96.12.12.12h1.55l.12-.12.96-.12.12-.12h.24l.48-.24v-3.35l-.84.72-.48.24h-.24l-.12.12h-1.67l-.36-.24h-.24l-.24-.24h-.12l-.84-.84v-.12l-.24-.24-.12-.48-.12-.12v-.36l-.12-.12v-.96l.12-.12v-.48l.6-1.08.84-.72.48-.24h.24l.12-.12h.36l.12-.12h.72l.12.12h.48l.96.48.6.6.12-.24-.12-.12v-3.11h-.24l-.12-.12h-.24l-.48-.24h-.48l-.12-.12h-2.03Z"/>
+      <path id="path11" class="st4" d="M712.61,46.79l-1.67.84-1.2,1.2-.72,1.32-.12.72-.12.12v.48l-.12.12v2.03l.12.12v.6l.12.12.12.6.24.36v.24l.24.24.36.72.96.96.72.36.24.24h.24l.36.24h.24l.48.24h.6l.12.12h1.79l.12-.12h.6l.12-.12.96-.24.72-.36.72-.6h.12l.84-.96.12-.36.24-.24.12-.48.12-.12v-.24l.12-.12v-.24l.12-.12v-.6l.12-.12v-1.67h-5.86v2.15h2.39l.12.24-.12.12v.24l-.24.48-.6.6-.48.24h-.36l-.12.12h-1.32l-.12-.12h-.36l-.48-.24-.36-.36h-.12l-.48-.6-.36-.72v-.24l-.12-.12v-.6l-.12-.12v-.84l.12-.12v-.6l.12-.12.12-.6.36-.48v-.12l.72-.72.96-.48h1.43l.12.12h.24l.48.24.72.72.36.72.6-.36h.24l.36-.24h.24l.6-.36h.24l.48-.24-.24-.48-.48-.6v-.12l-.72-.72h-.12l-.36-.36-.96-.48h-.24l-.48-.24h-.48l-.12-.12h-2.27l-.12.12-.96.12h0Z"/>
+      <path id="path12" class="st4" d="M752.43,37.34l-.12.24v3.11l.24.48h4.3l.24-.36v-3.35l-.12-.24-.24-.12h-4.07l-.24.24h.01Z"/>
+      <path id="path13" class="st4" d="M759.97,34.83l-.12.12v6.1l.12.12h4.19l.24-.24v-5.98l-.48-.24h-3.59l-.12.12s-.24,0-.24,0Z"/>
+      <path id="path14" class="st4" d="M767.5,32.92l-.24.12v.72l-.12.12v6.82l.12.12v.24l.12.12h4.07l.24-.24v-7.65l-.24-.36h-3.95Z"/>
+      <path id="path15" class="st4" d="M774.91,27.66l-.48.24v13.03l.24.24h4.07l.24-.24v-12.91l-.12-.24-.24-.12h-3.71Z"/>
+      <path id="path16" class="st4" d="M778.5,20.12l-.24-.48-.36-.36-.48-.24h-.24l-.12-.12h-.48l-.12.12h-.24l-.48.24-.6.84v.48l-.12.12.12.12v.6l-5.14,5.26-.24.12h-.48l-.12.12h-.6l-.12.12h-.36l-.72-.36-.24-.24-.84-.36-.24-.24-.6-.24-.24-.24-1.2-.6-.48-.48-.24-.96-.6-.6-.48-.12-.12-.12h-.72l-.12.12h-.24l-.24.12-.48.48-.24.48v1.32l-.72.72h-.12l-.96.96h-.12l-.96.96h-.12l-.96.96h-.12l-1.2,1.08-.24.12h-1.32l-.48.24-.48.48-.12.48-.12.12v.72l.12.12v.24l.12.24.6.6.48.12.12.12h.72l.12-.12.48-.12.36-.36.24-.48v-.84l.24-.24v-.12l1.43-1.43h.12l.96-.96h.12l2.63-2.39.24-.12h1.08l.48-.24h.48l.24.24.84.36.24.24.6.24.24.24.6.24.24.24.96.48.48.48v.36l.36.72.24.24.72.36h.72l.12-.12h.24l.24-.12.48-.48.24-.48v-1.32l.6-.6v-.12l4.54-4.54h.84l.12-.12h.36l.48-.24.36-.36v-.12l.24-.24v-.36l.12-.12v-.48l-.12-.12v-.24l.02-.02Z"/>
+      <path id="path17" class="st4" d="M779.34,11.51l-.36.36-.12.6.36.6.24.12h.72l.48-.6v-.6l-.12-.24-.36-.24h-.24l-.12-.12-.48.12Z"/>
+      <path id="path18" class="st4" d="M775.87,11.51l-.36.36v.84l.12.24.36.24h.72l.24-.12.36-.72-.12-.12v-.36l-.36-.36h-.24l-.12-.12-.6.12Z"/>
+      <path id="path19" class="st4" d="M772.4,11.51l-.36.36v.24l-.12.12v.24l.24.48.36.24h.72l.24-.12.24-.36v-.84l-.36-.36h-.36l-.12-.12s-.48.12-.48.12Z"/>
+      <path id="path20" class="st4" d="M747.05,9.12v.12l-.36.36-.12.48-.12.12v.24l-.12.12v32.41l.48.6.24.12h.72v-3.59l.12-.12v-1.79l-.12-.12v-3.71l.12-.12v-1.79l-.12-.12v-16.02l.12-.12h34.56l.12.12v27.38h.84l.48-.36.12-.48.12-.12V11.03l-.12-.12-.12-.96-.72-.96h-.12l-.6-.48h-.24l-.12-.12h-.48l-.12-.12h-32.65l-.12.12-.72.12-.48.24-.36.36h-.12,0ZM747.77,10.91l.24-.48.48-.48.24-.12h33l.24.12.48.48.12.24v3.83l-.12.12h-34.44l-.24-.24v-3.47h0Z"/>
+    </g>
+  </g>
+  <g id="icons">
+    <g id="icon12">
+      <text id="icon12-text" class="st1" transform="translate(600.62 567.1)"><tspan x="0" y="0">Example Twelve </tspan></text>
+      <circle id="circle7-1-21" data-name="circle7-1-2" class="st3" cx="659.68" cy="506.14" r="36"/>
+      <circle id="circle8-9-21" data-name="circle8-9-2" class="st6" cx="659.68" cy="506.14" r="36"/>
+    </g>
+    <g id="icon11">
+      <text id="icon11-text" class="st1" transform="translate(333.72 567.1)"><tspan x="0" y="0">Example Eleven</tspan></text>
+      <circle id="circle26-21" data-name="circle26-2" class="st3" cx="395.76" cy="506.14" r="36"/>
+      <circle id="circle27-21" data-name="circle27-2" class="st6" cx="395.76" cy="506.14" r="36"/>
+    </g>
+    <g id="icon10">
+      <text id="icon10-text" class="st1" transform="translate(65.78 567.1)"><tspan x="0" y="0">Example Ten </tspan></text>
+      <circle id="circle4-21" data-name="circle4-2" class="st3" cx="131.83" cy="506.13" r="36"/>
+      <circle id="circle5-21" data-name="circle5-2" class="st6" cx="131.83" cy="506.13" r="36"/>
+    </g>
+    <g id="icon9">
+      <text id="icon9-text" class="st1" transform="translate(597.26 434.84)"><tspan x="0" y="0">Example Nine</tspan></text>
+      <circle id="circle7-21" data-name="circle7-2" class="st3" cx="656.32" cy="373.88" r="36"/>
+      <circle id="circle8-21" data-name="circle8-2" class="st6" cx="656.32" cy="373.88" r="36"/>
+    </g>
+    <g id="icon8">
+      <text id="icon8-text" class="st1" transform="translate(330.36 434.84)"><tspan x="0" y="0">Example Eight</tspan></text>
+      <circle id="circle9-21" data-name="circle9-2" class="st3" cx="392.39" cy="373.88" r="36"/>
+      <circle id="circle10-21" data-name="circle10-2" class="st6" cx="392.39" cy="373.88" r="36"/>
+    </g>
+    <g id="icon7">
+      <text id="icon7-text" class="st1" transform="translate(62.42 434.84)"><tspan x="0" y="0">Example Seven</tspan></text>
+      <circle id="circle11-21" data-name="circle11-2" class="st3" cx="128.47" cy="373.87" r="36"/>
+      <circle id="circle12-21" data-name="circle12-2" class="st6" cx="128.47" cy="373.87" r="36"/>
+    </g>
+    <g id="icon6">
+      <text id="icon6-text" class="st1" transform="translate(603.26 298.91)"><tspan x="0" y="0">Example Six</tspan></text>
+      <circle id="circle13-21" data-name="circle13-2" class="st3" cx="656.3" cy="237.95" r="36"/>
+      <circle id="circle14-21" data-name="circle14-2" class="st6" cx="656.3" cy="237.95" r="36"/>
+    </g>
+    <g id="icon5">
+      <text id="icon5-text" class="st1" transform="translate(334.84 298.91)"><tspan x="0" y="0">Example Five</tspan></text>
+      <circle id="circle15-21" data-name="circle15-2" class="st3" cx="392.39" cy="237.95" r="36"/>
+      <circle id="circle16-21" data-name="circle16-2" class="st6" cx="392.39" cy="237.95" r="36"/>
+    </g>
+    <g id="icon4">
+      <text id="icon4-text" class="st1" transform="translate(68.94 298.91)"><tspan x="0" y="0">Example Four</tspan></text>
+      <circle id="circle17-21" data-name="circle17-2" class="st3" cx="128.46" cy="237.94" r="36"/>
+      <circle id="circle18-21" data-name="circle18-2" class="st6" cx="128.46" cy="237.94" r="36"/>
+    </g>
+    <g id="icon3">
+      <text id="icon3-text" class="st1" transform="translate(592.26 164.37)"><tspan x="0" y="0">Example Three</tspan></text>
+      <circle id="circle19-21" data-name="circle19-2" class="st3" cx="656.31" cy="103.4" r="36"/>
+      <circle id="circle20-21" data-name="circle20-2" class="st6" cx="656.31" cy="103.4" r="36"/>
+    </g>
+    <g id="icon2">
+      <text id="icon2-text" class="st1" transform="translate(335.52 164.37)"><tspan x="0" y="0">Example Two</tspan></text>
+      <circle id="circle21-21" data-name="circle21-2" class="st3" cx="392.39" cy="103.4" r="36"/>
+      <circle id="circle22-21" data-name="circle22-2" class="st6" cx="392.39" cy="103.4" r="36"/>
+    </g>
+    <g id="icon1">
+      <text id="icon1-text" class="st1" transform="translate(71.43 164.37)"><tspan x="0" y="0">Example One</tspan></text>
+      <circle id="circle23-21" data-name="circle23-2" class="st3" cx="128.46" cy="103.39" r="36"/>
+      <circle id="circle24-21" data-name="circle24-2" class="st6" cx="128.46" cy="103.39" r="36"/>
+    </g>
+  </g>
+  <g id="text">
+    <text id="example_x5F_text" class="st1" transform="translate(403.49 35.61)"><tspan x="0" y="0">Example text for text layer</tspan></text>
+  </g>
+</svg>
