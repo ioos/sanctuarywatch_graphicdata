@@ -4,7 +4,6 @@
  * The admin-specific functionality of the plugin.
  *
  * @link       https://www.noaa.gov
- * @since      0.2.0-beta
  *
  * @package    graphic_data_plugin
  */
@@ -20,8 +19,6 @@ class Admin {
 
 	/**
 	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    0.2.0-beta
 	 */
 	public function enqueue_styles() {
 
@@ -51,8 +48,6 @@ class Admin {
 
 	/**
 	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    0.2.0-beta
 	 */
 	public function enqueue_scripts($hook_suffix) {
 
