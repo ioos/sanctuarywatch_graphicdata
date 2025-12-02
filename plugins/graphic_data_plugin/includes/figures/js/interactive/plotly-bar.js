@@ -49,8 +49,15 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
     const columnXHeader = figureArguments['XAxis'];
     const plotlyX = dataToBePlotted[columnXHeader];
 
-    layout.xaxis = layout.xaxis || {};
-    layout.xaxis.type = 'date';
+    //Allow for cases where no X axis is selected
+    if (columnXHeader === 'None') {
+        layout.xaxis = layout.xaxis || {};
+        layout.xaxis.type = 'category';
+    } else {
+        layout.xaxis = layout.xaxis || {};
+        layout.xaxis.type = 'date';
+    }
+
 
     layout.yaxis = layout.yaxis || {};
     layout.yaxis.type = 'linear';
@@ -351,7 +358,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Individual Bar Column Stacking ===
                 if (isStacked === 'on' && columnXHeader !== 'None') {
-                    // console.log('// === CASE: Individual Bar Column Stacking ===');
+                    console.log('// === CASE: Individual Bar Column Stacking ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
@@ -383,28 +390,32 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Single Bar (no X axis) ===
                 else if (columnXHeader === 'None') {
-                    // console.log(' // === CASE: Single Bar (no X axis) ===');
+                    console.log(' // === CASE: Single Bar (no X axis) ===');
                     plotlyX = [figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`];
-                    const sumY = dataToBePlotted[columnYHeader].map(val => parseFloat(val)).filter(val => !isNaN(val)).reduce((a, b) => a + b, 0);
+                    let sumY = dataToBePlotted[columnYHeader].map(val => parseFloat(val)).filter(val => !isNaN(val)).reduce((a, b) => a + b, 0);
                     plotlyY = [sumY];
+                    
+                    console.log('plotlyX:', plotlyX);
+                    console.log('plotlyY:', plotlyY);
 
-                    allBarsPlotly.push({
-                        x: plotlyX,
-                        y: plotlyY,
-                        type: 'bar',
-                        name: `${figureArguments[targetBarColumn + 'Title']}`,
-                        showlegend: showLegendBool,
-                        marker: {
-                            color: figureArguments[targetBarColumn + 'Color'],
-                            pattern: { shape: fillType, size: 4, solidity: 0.5 }
-                        },
-                        hovertemplate: `${figureArguments['YAxisTitle']}: %{y}`
-                    });
+                    // allBarsPlotly.push({
+                    //     x: plotlyX,
+                    //     y: plotlyY,
+                    //     type: 'bar',
+                    //     name: `${figureArguments[targetBarColumn + 'Title']}`,
+                    //     showlegend: showLegendBool,
+                    //     marker: {
+                    //         color: figureArguments[targetBarColumn + 'Color'],
+                    //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
+                    //     },
+                    //     hovertemplate: `${figureArguments['YAxisTitle']}: %{y}`
+                    // });
                 }
+
 
                 // === CASE: Stacked across columns by X axis ===
                 else if (barStackedByX && columnXHeader !== 'None') {
-                    // console.log(' // === CASE: Stacked across columns by X axis ===');
+                    console.log(' // === CASE: Stacked across columns by X axis ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
@@ -432,7 +443,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                 // === CASE: Separate columns side-by-side per bar ===
                 else {
-                    // console.log('// === CASE: Separate columns side-by-side per bar ===');
+                    console.log('// === CASE: Separate columns side-by-side per bar ===');
                     const categories = dataToBePlotted[columnXHeader];
                     const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
                     const groupMap = {};
@@ -501,7 +512,9 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
                     //Calculate mean (Auto Calculated) based on dataset Y-axis values
                     if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
-                        const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
+                        // const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
+                        let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
+                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyY.length;
                         const filteredX = plotlyX.filter(item => item !== "");
                         const xMin = Math.min(...filteredX);
                         const xMax = Math.max(...filteredX);
@@ -632,6 +645,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                             
             // Create the plot with all lines
             //Plotly.newPlot(plotlyDivID, allBarsPlotly, layout, config);  
+
 
                          
             // Create the plot with all lines
@@ -1021,7 +1035,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
       logFormFieldValues();
   });
 
-  const dateFormats =["YYYY", "YYYY-MM-DD"];
+  const dateFormats =["None", "YYYY", "YYYY-MM-DD"];
 
   dateFormats.forEach((dateFormat) => {
       let selectXAxisFormatOption = document.createElement("option");
@@ -1274,7 +1288,11 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
                         opt.textContent = axis.toUpperCase() + " Axis";
                         axisSelect.appendChild(opt);
                         });
-                        fillFormFieldValues(axisSelect.id, interactive_arguments);
+                        let savedAxis = fillFormFieldValues(axisSelect.id, interactive_arguments);
+                        if (savedAxis) axisSelect.value = savedAxis;
+                        
+                        
+                        
 
                         // === Shared Inputs ===
                         const { label: textLabel, input: textInput }   = createTextfield(`Display Text ${i + 1}`, `${feature}EventText${i}`);
@@ -1349,10 +1367,10 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
                     logFormFieldValues();
                 });
             }
-            }
-            let newHR = document.createElement("hr");
-            newHR.style = "margin-top:15px";
-            newDiv.append(newHR);
+        }
+        let newHR = document.createElement("hr");
+        newHR.style = "margin-top:15px";
+        newDiv.append(newHR);
 
 
         // Add checkbox for StackedBarColumns
@@ -1496,6 +1514,20 @@ function displayBarFields (numBars, jsonColumns, interactive_arguments) {
                 if (fieldValueSaved != undefined){
                     inputTitle.value = fieldValueSaved;
                 }
+                if (fieldValueSaved === undefined){
+                 // Make each line's default title set to the name of the column name that is selected for that line. Only if the line title is not already set.
+                  //const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
+                  if (fieldLabel[0].includes("Bar")){
+                    selectColumn.addEventListener('change', function() {
+                        DropdownValueSaved = selectColumn.value;
+                        if (DropdownValueSaved != 'None' && fieldValueSaved === undefined) {
+                            //console.log('fieldValueSaved2', fieldValueSaved);
+                            inputTitle.value = DropdownValueSaved;
+                            //console.log('DropdownValueSaved2', DropdownValueSaved);
+                        } 
+                    });
+                  }
+              }
 
                 newColumn1.appendChild(labelInputTitle);
                 newColumn2.appendChild(inputTitle);

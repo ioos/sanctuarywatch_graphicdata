@@ -91,14 +91,22 @@ class Admin {
 
 		// Load Scene-specific Javascript only when editing/creating a Scene post 
 		if ($current_post_type == "scene" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
+
+			wp_enqueue_script( "theme_script", get_template_directory_uri( __FILE__ ) . '/assets/js/script.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
+			
 			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
 			// Enqueue scene-render.js
-			wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
+			//wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
+
+			// Enqueue admin-preview-buttons.js
+			wp_enqueue_script( "admin-preview-buttons", plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array( ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 		}
 
 		// Load Modal-specific Javascript only when editing/creating a Modal post 
 		if ($current_post_type == "modal" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
+
+			wp_enqueue_script( "theme_script", get_template_directory_uri( __FILE__ ) . '/assets/js/script.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
 			wp_enqueue_script( "admin-modal", plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array( ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
@@ -112,6 +120,8 @@ class Admin {
 
 		// Load Figure -specific Javascript only when editing/creating a Figure post 
 		if ($current_post_type == "figure" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
+
+			wp_enqueue_script( "theme_script", get_template_directory_uri( __FILE__ ) . '/assets/js/script.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
 			// Enqueue figure-render.js
 			wp_enqueue_script('figure-render', dirname(plugin_dir_url(__FILE__)) . '/includes/figures/js/figure-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));

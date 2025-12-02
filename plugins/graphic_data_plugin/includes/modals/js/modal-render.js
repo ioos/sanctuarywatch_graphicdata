@@ -30,13 +30,30 @@ function render_modal(key, obj, modal_obj){
     console.log('Rendering modal for key:', key, 'with child_obj:', child_obj);
 
     let id = child_obj[key]['modal_id'];
+    console.log('id', id);
 
     //function for rendering the modal content after fetching data
     function populateModalContent(modal_data, child_obj, key) {
         // --- Title ---
         let title = child_obj[key]['title'];  // or could be modal_data.title
         let modal_title = document.getElementById("modal-title");
-        modal_title.innerHTML = title;
+
+        // PREVIEW MODE: if title is empty, set to "No Modal Title Set"
+        if (window.location.href.includes('post.php')) {
+            let title_test = document.getElementById("title").value;
+            console.log('title_test', title_test);
+            if (title_test === '' || title_test === null || title_test === undefined) {
+                modal_title.innerHTML = "No Modal Title Set";
+                modal_title.style.fontWeight = "bold";
+            } else {
+                modal_title.innerHTML = title;
+            }
+        }
+        // FRONTEND MODE: set title normally
+        if (!window.location.href.includes('post.php')) {
+            modal_title.innerHTML = title;
+        }
+   
 
         // --- Tagline container ---
         let tagline_container = document.getElementById('tagline-container');
@@ -151,6 +168,10 @@ function render_modal(key, obj, modal_obj){
         for (let i = 1; i <= num_tabs; i++) {
             let tab_key = `modal_tab_title${i}`;
             let tab_title = modal_data[tab_key];
+
+            if (window.location.href.includes('post.php') && (tab_title === '' || tab_title === null || tab_title === undefined)) {
+                tab_title = "No Tab Title Set";
+            }   
 
             create_tabs(i, tab_key, tab_title, title, modal_id);
 
@@ -345,7 +366,7 @@ function trapFocus(modalElement) {
  * Called at the end of the create_tabs function
  */
  function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
-
+    
     const protocol = window.location.protocol;
     const host = window.location.host;
     const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + tab_id;

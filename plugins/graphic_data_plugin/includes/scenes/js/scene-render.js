@@ -649,7 +649,7 @@ function handleIconVisibility(svgElement, visible_modals) {
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  */
 async function loadSVG(url, containerId) {
-    try {
+    // try {
         // Step 1: Fetch the SVG content
         //console.log(url);
         const response = await fetch(url);
@@ -689,8 +689,10 @@ async function loadSVG(url, containerId) {
         // Assign (don’t redeclare)
         svgElement = svgDoc.documentElement;
         svgElement.setAttribute("id", "svg-elem");
+        console.log('svgElement', svgElement);
 
         const container = document.getElementById(containerId);
+        console.log('container', container);
         container.appendChild(svgElement);
       
         // checking if user device is touchscreen
@@ -804,9 +806,9 @@ async function loadSVG(url, containerId) {
             add_modal();
         }
 
-    } catch (error) {
-        console.error('Error fetching or parsing the SVG:', error);
-    }
+    // } catch (error) {
+    //     console.error('Error fetching or parsing the SVG:', error);
+    // }
 }
 
 

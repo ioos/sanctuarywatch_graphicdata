@@ -3,7 +3,7 @@
 let child_obj = {};
 
 //Allows for declaration of child_obj variable for theme and for admin side preview mode
-if (window.location.href.includes('post.php')) {
+if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
     child_obj = undefined;
 } else { 
     child_obj = JSON.parse(JSON.stringify(child_ids));
@@ -18,7 +18,7 @@ if (window.location.href.includes('post.php')) {
 let url1 = {};
 
 //Allows for declaration of url1 variable for theme and for admin side preview mode
-if (window.location.href.includes('post.php')) {
+if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
     url1 = undefined;
 } else { 
     let url1 =(JSON.stringify(svg_url));
@@ -91,7 +91,7 @@ process_child_obj();
 let sorted_child_entries = {};
 
 //Allows for declaration of url1 variable for theme and for admin side preview mode
-if (window.location.href.includes('post.php')) {
+if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
     sorted_child_entries = null;
 } else { 
     sorted_child_entries = Object.entries(child_obj);
@@ -109,32 +109,43 @@ if (window.location.href.includes('post.php')) {
  * @returns {boolean} `true` if all `modal_icon_order` values are equal to 1 after parsing as integers, otherwise `false`.
  */
 
+let allOrdersAreOne = null;
 
-const allOrdersAreOne = sorted_child_entries.every(([_, obj]) => parseInt(obj.modal_icon_order) === 1);
-// Step 3: sort conditionally
-if (allOrdersAreOne) {
-    sorted_child_entries.sort((a, b) => {
-        const titleA = a[1].title?.toLowerCase() || '';
-        const titleB = b[1].title?.toLowerCase() || '';
-        return titleA.localeCompare(titleB);
-    });
-} else {
-    sorted_child_entries.sort((a, b) => {
-        return (a[1].modal_icon_order || 0) - (b[1].modal_icon_order || 0);
-    });
+if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+    allOrdersAreOne = sorted_child_entries.every(([_, obj]) => parseInt(obj.modal_icon_order) === 1);
 }
+    // Step 3: sort conditionally
+
+try {
+    if (allOrdersAreOne) {
+        sorted_child_entries.sort((a, b) => {
+            const titleA = a[1].title?.toLowerCase() || '';
+            const titleB = b[1].title?.toLowerCase() || '';
+            return titleA.localeCompare(titleB);
+        });
+    } else {
+        sorted_child_entries.sort((a, b) => {
+            return (a[1].modal_icon_order || 0) - (b[1].modal_icon_order || 0);
+        });
+    }
+} catch {}
+
 
 // Step 4: extract the objects (no keys) to match your original format
-const sorted_child_objs = sorted_child_entries.map(([_, val]) => val);
+
+let sorted_child_objs = null;
+if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+    sorted_child_objs = sorted_child_entries.map(([_, val]) => val);
+}
+
 
 // Step 5: build child_ids_helper for title-to-key mapping
 child_ids_helper = {};
-for (const [key, value] of sorted_child_entries) {
-    child_ids_helper[value.title] = key;
+if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+    for (const [key, value] of sorted_child_entries) {
+        child_ids_helper[value.title] = key;
+    }
 }
-
-
-
 
 
 // Declare a variable to track if the current environment is mobile.

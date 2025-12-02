@@ -135,6 +135,7 @@ function tableOfContentsFieldOptions () {
  */
 // function to display Scene Section fields
 function displaySceneEntries (entry_number){
+	console.log("displaySceneEntries");
 	let target_title_element = "";
 	let target_color_element = "";
 	let target_color_text_element = "";
@@ -187,6 +188,7 @@ function displaySceneEntries (entry_number){
  */
 // Function to display either URL or image under scene image link
 function displayPhotoPath (fieldNumber){
+	console.log("displayPhotoPath");
 	const targetElement = "scene_photo" + fieldNumber + "[scene_photo_location" + fieldNumber + "]";
 	const targetLocation = document.getElementsByName(targetElement)[0];
 	const imageElement = '[data-depend-id="scene_photo_internal' + fieldNumber + '"]';
@@ -234,6 +236,7 @@ function displayPhotoPath (fieldNumber){
  */
 // Function to resize the SVG
 function resizeSvg() {
+	console.log("resizeSvg");
 	// Get the SVG element
 	const svg = document.getElementById('previewSvg');
 
@@ -274,7 +277,7 @@ function resizeSvg() {
  * - Assumes the existence of scene form fields named "scene_{type}{n}[scene_{type}_text{n}]" and "scene_{type}{n}[scene_{type}_url{n}]" in the DOM.
  */
 function createAccordion(accordionType, parentDiv, listElements){
-
+	console.log("createAccordion");
 	let accordionItem = document.createElement("div");
 	accordionItem.classList.add("accordion-item");
 
@@ -329,239 +332,7 @@ function createAccordion(accordionType, parentDiv, listElements){
 	
 }
 
-/**
- * Handles the click event for the "Scene preview" button, generating a live preview of the scene.
- *
- * This event listener dynamically creates a scene preview window that displays the scene title, tagline,
- * info and photo accordions, and a preview of the SVG infographic with highlighted icons. It ensures that
- * any previous preview is removed before generating a new one. The preview includes:
- * - Scene title (from the "title" field)
- * - Tagline (from the "scene_tagline" field)
- * - Accordions for info and photo links if any are present
- * - SVG infographic preview (if a valid SVG path is provided), with clickable icons highlighted using the scene's hover color
- * - A table of contents (TOC) listing the IDs of the SVG's icon layers, if present
- *
- * @event scene_preview_click
- *
- * @description
- * - Removes any existing preview window.
- * - Collects info and photo entries with both text and URL fields populated.
- * - Builds and appends accordions for info and photo links if present.
- * - Displays the tagline and scene title.
- * - Loads and displays the SVG infographic, highlights icon layers, and lists their IDs in a TOC.
- * - Handles errors in fetching or processing the SVG.
- *
- * @modifies
- * - The DOM by removing and creating the scene preview window, and by updating the SVG preview and TOC.
- *
- * @example
- * // This code is typically run on page load to enable scene preview functionality:
- * document.querySelector('[data-depend-id="scene_preview"]').addEventListener('click', ...);
- *
- * @global
- * - Assumes the existence of form fields named "title", "scene_tagline", "scene_info{n}[scene_info_text{n}]", "scene_info{n}[scene_info_url{n}]",
- *   "scene_photo{n}[scene_photo_text{n}]", "scene_photo{n}[scene_photo_url{n}]", "scene_infographic", "scene_hover_color", and "scene_location" in the DOM.
- * - Assumes the existence of the helper functions createAccordion and resizeSvg.
- * - Requires the SVG to have a group with id="icons" for icon highlighting and TOC generation.
- */
-// Create scene preview from clicking on the "Scene preview button"
-document.querySelector('[data-depend-id="scene_preview"]').addEventListener('click', function() {
-
-	// Let's remove the preview window if it already exists
-	var previewWindow = document.getElementById('preview_window');
-	// If the element exists
-	if (previewWindow) {
-		// Remove the scene window
-		previewWindow.parentNode.removeChild(previewWindow);
-	}
-		
-	// Find element
-	const firstScenePreview = document.querySelector('.scene_preview');
-
-	// Find the second parent element
-	const secondParent = firstScenePreview.parentElement.parentElement;
-
-	// Create a new div element
-	let newDiv = document.createElement('div');
-	newDiv.id = "preview_window";
-	newDiv.classList.add("container");
-
-	// Create an h1 element
-	let h1 = document.createElement('h1');
-	// Set the text content of the h1 element to "Hello World"
-	h1.textContent = document.getElementById("title").value
-	// Append the h1 element to the new div
-	newDiv.appendChild(h1);
-
-	let secondRow = document.createElement("div");
-	secondRow.classList.add("row");
-
-	// check to see if any photo link and info link fields are not empty
-
-	let scene_info_elements = [];
-	let scene_photo_elements = [];
-	let text_field;
-	let url_field;
-	let haveAccordions = false;
-	for (let i = 1; i < 7; i++){
-		text_field = "scene_photo" + i + "[scene_photo_text" + i + "]";
-		url_field = "scene_photo" + i + "[scene_photo_url" + i + "]";
-		if (document.getElementsByName(text_field)[0].value != "" && document.getElementsByName(url_field)[0].value != ""){
-			scene_photo_elements.push(i);
-		}
-		text_field = "scene_info" + i + "[scene_info_text" + i + "]";
-		url_field = "scene_info" + i + "[scene_info_url" + i + "]";
-		if (document.getElementsByName(text_field)[0].value != "" && document.getElementsByName(url_field)[0].value != ""){
-			scene_info_elements.push(i);
-		}
-	}
-
-	if (scene_info_elements.length > 0 || scene_photo_elements.length > 0) {
-		haveAccordions = true;
-	}
-
-	if (haveAccordions === true){
-		let firstColumn = document.createElement("div");
-		firstColumn.classList.add("col-2", "accordion");
-		firstColumn.id = "allAccordions";
-		
-		if (scene_info_elements.length > 0) {
-			createAccordion("info", firstColumn, scene_info_elements);
-		}
-	
-		if (scene_photo_elements.length > 0) {
-			createAccordion("photo", firstColumn, scene_photo_elements);
-		}
-		
-		secondRow.appendChild(firstColumn);
-
-	}
-	let secondColumn = document.createElement("div");
-	if (haveAccordions == true){
-		secondColumn.classList.add("col-10");
-	} else {
-		secondColumn.classList.add("col-12");
-	}
-	secondColumn.textContent = document.getElementsByName('scene_tagline')[0].value;
-	secondColumn.classList.add("sceneTagline");
-	secondRow.appendChild(secondColumn);
-
-	newDiv.appendChild(secondRow);
-
-	// add row 
-	let thirdRow = document.createElement("div");
-	thirdRow.classList.add("row", "thirdPreviewRow");
-	
-	let imageColumn = document.createElement("div");
-	imageColumn.classList.add("col-9");
-//	imageColumn.id = "previewSvgContainer";
-	
-	let svgPath = document.getElementsByName("scene_infographic")[0].value;
-	let hoverSceneColor = document.getElementsByName("scene_hover_color")[0].value;
-	let hoverSceneTextColor = document.getElementsByName("scene_hover_text_color")[0].value;
-	if (svgPath == ""){
-		imageColumn.innerText = "No image.";
-		thirdRow.append(imageColumn);
-	} else {
-		let imageExtension = svgPath.split('.').pop().toLowerCase();
-		if (imageExtension != "svg"){
-			imageColumn.innerText = "Image is not a svg.";
-			thirdRow.append(imageColumn);
-		} else {
-
-			const protocol = window.location.protocol;
-			const host = window.location.host;
-			const sceneInstance = document.getElementsByName("scene_location")[0].value;
-			const restHoverColor = protocol + "//" + host  + "/wp-json/wp/v2/instance/" + sceneInstance;
-
-			fetch(restHoverColor)
-				.then(response => response.json())
-				.then(data => {
-					let hoverColor = "yellow"; 
-					const rawHoverColorString = data['instance_hover_color'];
-
-					if (rawHoverColorString) {
-						hoverColor = rawHoverColorString;
-						const commaIndex = hoverColor.indexOf(',');
-						if (commaIndex !== -1) {
-							hoverColor = hoverColor.substring(0, commaIndex);
-						}
-					}
-					return fetch(svgPath);
-				})
-			.then(response => response.text())
-			.then(svgContent => {
-				// Create a temporary div to hold the SVG content
-				imageColumn.innerHTML = svgContent;
-				imageColumn.id = "previewSvgContainer";
-
-				thirdRow.append(imageColumn);
-				document.getElementById("previewSvgContainer").children[0].id = "previewSvg";
-
-				//document.getElementById("previewSvgContainer").children[0].classList.add("previewSvg");
-				document.getElementById("previewSvgContainer").children[0].removeAttribute("height");
-				resizeSvg();
-
-				// Find the "icons" layer
-				let iconsLayer = document.getElementById("previewSvg").querySelector('g[id="icons"]');
-
-				if (iconsLayer) {
-
-					// Initialize an array to hold the sublayers
-					let sublayers = [];
-
-					// Iterate over the child elements of the "icons" layer
-					iconsLayer.childNodes.forEach(node => {
-						// Check if the node is an element and push its id to the sublayers array
-						if (node.nodeType === Node.ELEMENT_NODE) {
-						sublayers.push(node.id);
-						}
-					});
-					sublayers = sublayers.sort();
-
-					let tocColumn = document.createElement("div");
-					tocColumn.classList.add("col-3", "previewSceneTOC");
-					let tocList = document.createElement("ul");
-					sublayers.forEach (listElement => {
-						let tocElement = document.createElement("li");
-						tocElement.innerText = listElement;
-						tocList.appendChild(tocElement);
-					})
-					tocColumn.append(tocList);
-					thirdRow.append(tocColumn);
-
-					//let's highlight the clickable elements of the svg
-					const targetSvg = document.getElementById("previewSvg");
-					sublayers.forEach (listElement => {
-						let iconLayer = targetSvg.getElementById(listElement);
-
-						// Select all child elements 
-						let subElements = iconLayer.querySelectorAll("*");
-					
-						// Loop through each sub-element and update its stroke-width and color
-						subElements.forEach(element => {
-							element.style.strokeWidth = "2";
-							element.style.stroke = hoverSceneColor;
-						});
-					})
-
-				} else {
-					imageColumn.innerText = 'No "icons" layer found in the SVG.';
-					thirdRow.append(imageColumn);
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching or processing SVG:', error);
-			});
-
-		}
-	}
-
-	newDiv.appendChild(thirdRow);
-	// Append the new div to the second parent element
-	secondParent.appendChild(newDiv);
-});
-
+//initialize entries display for info and photo entries on page load
 let opening_scene_info_entries = document.querySelector(".range[data-depend-id='scene_info_entries']").value;
 displayEntries(opening_scene_info_entries, ".text-class[data-depend-id='scene_info_");
 let opening_scene_photo_entries = document.querySelector(".range[data-depend-id='scene_photo_entries']").value;

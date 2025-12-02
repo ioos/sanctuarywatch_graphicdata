@@ -1,3 +1,4 @@
+
 /**
  * Renders interactive plots (e.g., Plotly graphs) within a specified tab content element.
  * Handles dynamic loading, resizing for mobile, and tab switching behavior.
@@ -46,7 +47,13 @@ async function render_interactive_plots(tabContentElement, info_obj) {
     let interactive_arguments = info_obj["figure_interactive_arguments"];
     //console.log('interactive_arguments', interactive_arguments);
 
-    async function waitForElementByIdPolling(id, timeout = 10000, interval = 100) {
+
+    //Preview error message in admin
+    if (window.location.href.includes('post.php') && figureType === 'Interactive') {
+        errorPreviewHandler(tabContentElement, figureType);
+    }
+
+    async function waitForElementByIdPolling(id, timeout = 15000, interval = 100) {
         const start = Date.now();
         return new Promise((resolve, reject) => {
             (function poll() {
@@ -80,7 +87,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly line graph (time series)") {
 
-                async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 300) {
+                async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -92,7 +99,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 10000);
+                    await waitForElementByIdPolling(targetId, 15000);
                     await producePlotlyLineFigure(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
@@ -143,7 +150,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly bar graph") {
 
-                 async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 300) {
+                 async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -155,7 +162,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 10000);
+                    await waitForElementByIdPolling(targetId, 15000);
                     await producePlotlyBarFigure(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
@@ -206,7 +213,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
             if (graphType === "Plotly map") {
 
-                 async function waitForPlotlyDiv(plotlyDivID, retries = 40, interval = 250) {
+                 async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
                     for (let i = 0; i < retries; i++) {
                         const el = document.getElementById(plotlyDivID);
                         if (el) return el;
@@ -218,7 +225,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
                 try {
 
-                    await waitForElementByIdPolling(targetId, 10000);
+                    await waitForElementByIdPolling(targetId, 15000);
                     await producePlotlyMap(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
@@ -266,7 +273,10 @@ async function render_interactive_plots(tabContentElement, info_obj) {
                 }
             }
             
-            figureTimeseriesGraphLoaded(title, postID, gaMeasurementID);
+            //Google Tags
+            if (!window.location.href.includes('post.php')) {
+                figureTimeseriesGraphLoaded(title, postID, gaMeasurementID);
+            }
 
         break;
     }
@@ -409,12 +419,11 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     let figureType = info_obj["figureType"];
 
     switch (figureType) {
-        case "Internal":
-
-            
+        case "Internal":           
             img = document.createElement(`img`);
             img.id = `img_${postID}`;
             img.src = info_obj['imageLink'];
+
             if (info_obj['externalAlt']){
                 img.alt = info_obj['externalAlt'];
             } else {
@@ -436,17 +445,27 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             }
             if (img.id  === `img_${postID}`) {
                 await figureDiv.appendChild(img);
+
+                //Error in admin preview for handling for missing image
+                if (window.location.href.includes('post.php')) {
+                    if (img.src.includes('post.php')) {
+                        errorPreviewHandler(tabContentElement, figureType);
+                    } 
+                }
             } else
             window.dataLayer = window.dataLayer || [];
 
             //Google Tags
-            figureInternalImageLoaded(title, postID, gaMeasurementID); 
+            if (!window.location.href.includes('post.php')) {
+                figureInternalImageLoaded(title, postID, gaMeasurementID);
+            }
         break;
 
         case "External":
             img = document.createElement('img');
             img.id = `img_${postID}`;
             img.src = info_obj['imageLink'];
+
             if (info_obj['externalAlt']){
                 img.alt = info_obj['externalAlt'];
             } else {
@@ -454,10 +473,20 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             }
             if (img.id  === `img_${postID}`) {
                 await figureDiv.appendChild(img);
+
+                //Error in admin preview for handling for missing image
+                if (window.location.href.includes('post.php')) {
+                    if (img.src.includes('post.php')) {
+                        errorPreviewHandler(tabContentElement, figureType);
+                    } 
+                }
+                
             } else {}
 
             //Google Tags
-            figureExternalImageLoaded(title, postID, gaMeasurementID);    
+            if (!window.location.href.includes('post.php')) {
+                figureExternalImageLoaded(title, postID, gaMeasurementID);
+            }
         break;
 
         case "Interactive":
@@ -486,6 +515,14 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             //Append the codeDiv to the figureDiv
             await figureDiv.appendChild(codeDiv);
             embedCode = info_obj['code'];
+
+            //Error in admin preview for handling for missing image
+            if (!embedCode || embedCode === ''){
+                if (window.location.href.includes('post.php')) {
+                    errorPreviewHandler(tabContentElement, figureType);
+                }
+            }
+
             // Parse the embed code and extract <script> tags
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = embedCode;
@@ -507,7 +544,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             codeDiv.innerHTML = tempDiv.innerHTML;
 
             //Google Tags
-            figureCodeDisplayLoaded(title, postID, gaMeasurementID);  
+            if (!window.location.href.includes('post.php')) {
+                figureCodeDisplayLoaded(title, postID, gaMeasurementID);
+            }
         break;
 
     }
@@ -566,10 +605,15 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
     //Google Tags registration for figure science and data links
     if (info_obj['scienceText']!=''){
-        setupFigureScienceLinkTracking(postID);
+        if (!window.location.href.includes('post.php')) {
+            setupFigureScienceLinkTracking(postID);
+        }
     }
     if (info_obj['dataLink']!=''){
-        setupFigureDataLinkTracking(postID);
+        if (!window.location.href.includes('post.php')) {
+            setupFigureDataLinkTracking(postID);
+        }
+
     }
     //Finish the containers and give them the correct properties.
     switch (figureType) {

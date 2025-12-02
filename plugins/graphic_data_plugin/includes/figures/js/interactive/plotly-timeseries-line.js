@@ -569,7 +569,10 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
 
                     //Calculate mean (Auto Calculated) based on dataset Y-axis values
                     if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
-                        const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
+                        let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
+                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyY.length;
+                        // console.log('mean', mean);
+                        // console.log('plotlyY', plotlyY);
                         const filteredX = plotlyX.filter(item => item !== "");
                         const xMin = Math.min(...filteredX);
                         const xMax = Math.max(...filteredX);
@@ -1314,7 +1317,8 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
                     opt.textContent = axis.toUpperCase() + " Axis";
                     axisSelect.appendChild(opt);
                     });
-                    fillFormFieldValues(axisSelect.id, interactive_arguments);
+                    let savedAxis = fillFormFieldValues(axisSelect.id, interactive_arguments);
+                    if (savedAxis) axisSelect.value = savedAxis;
 
                     // === Shared Inputs ===
                     const { label: textLabel, input: textInput }   = createTextfield(`Display Text ${i + 1}`, `${feature}EventText${i}`);
@@ -1452,6 +1456,7 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
               selectColumnOption.innerHTML = jsonColumnsValue; 
               selectColumn.appendChild(selectColumnOption);
           });
+          
           fieldValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
           if (fieldValueSaved != undefined){
               selectColumn.value = fieldValueSaved;
@@ -1501,12 +1506,28 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
               inputTitle.id = fieldLabel[0] + "Title";
               inputTitle.size = "70";
               inputTitle.name = "plotFields";
+              
+              
               inputTitle.addEventListener('change', function() {
                   logFormFieldValues();
               });
               fieldValueSaved = fillFormFieldValues(inputTitle.id, interactive_arguments);
-              if (fieldValueSaved != undefined){
-                  inputTitle.value = fieldValueSaved;
+              if (fieldValueSaved != undefined){ 
+                inputTitle.value = fieldValueSaved;    
+              }
+              if (fieldValueSaved === undefined){
+                 // Make each line's default title set to the name of the column name that is selected for that line. Only if the line title is not already set.
+                  //const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
+                  if (fieldLabel[0].includes("Line")){
+                    selectColumn.addEventListener('change', function() {
+                        DropdownValueSaved = selectColumn.value;
+                        if (DropdownValueSaved != 'None' && fieldValueSaved === undefined) {
+                            //console.log('fieldValueSaved2', fieldValueSaved);
+                            inputTitle.value = DropdownValueSaved;
+                            //console.log('DropdownValueSaved2', DropdownValueSaved);
+                        } 
+                    });
+                  }
               }
 
               newColumn1.appendChild(labelInputTitle);
@@ -1637,6 +1658,8 @@ function displayLineFields (numLines, jsonColumns, interactive_arguments) {
               opt.innerHTML = size + ' px';
               markerSizeSelect.appendChild(opt);
               });
+
+              markerSizeSelect.value = 10;
 
               const markerSizeSaved = fillFormFieldValues(markerSizeSelect.id, interactive_arguments);
               if (markerSizeSaved) markerSizeSelect.value = markerSizeSaved;
