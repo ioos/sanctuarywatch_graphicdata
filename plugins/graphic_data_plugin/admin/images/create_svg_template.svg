@@ -118,8 +118,8 @@
   <g id="background">
     <rect id="background_color" class="st5" x="-.11" y="-.5" width="792" height="612"/>
     <g id="title">
-      <rect id="title-text-background" class="st2" x="1.58" y="13.39" width="241.2" height="36"/>
-      <text id="title-text" class="st0" transform="translate(45.3 40.2)"><tspan x="0" y="0">Example Text</tspan></text>
+      <rect id="title_x5F_text_x5F_background" class="st2" x="1.58" y="13.39" width="241.2" height="36"/>
+      <text id="title_x5F_text" class="st0" transform="translate(45.3 40.2)"><tspan x="0" y="0">Example</tspan></text>
     </g>
     <g id="logo">
       <path id="path1" class="st4" d="M775.87,61.62l-.24.48-.12.6-.24.36-.12.6-.48.96-.12.6-.24.36-.12.6-.48.96-.12.6-.24.36-.12.6-.24.36-.12.6-.48.96-.12.6-.48.96-.12.6-.24.36h3.11l.36-.72.24-.96.24-.36h4.19l.24.24v.24l.24.36v.24l.12.12v.24l.12.12.12.48h3.11l-.24-.48-.12-.6-.24-.36v-.24l-.24-.36-.12-.6-.24-.36-.12-.6-.24-.36-.12-.6-.48-.96-.12-.6-.48-.96v-.24l-.36-.72-.12-.6-.24-.36-.12-.6-.48-.96v-.24l-.12-.12-.12-.48-.12-.12h-3.23.02ZM777.55,64.96l.12.12v.24l.12.12.24.96.24.36v.24l.12.12v.24l.12.12v.24l.12.12.24.96-.12.12h-2.51l-.12-.24.12-.12.24-.96.24-.36v-.24l.12-.12v-.24l.12-.12v-.24l.12-.12.24-.96.24-.24h0Z"/>
