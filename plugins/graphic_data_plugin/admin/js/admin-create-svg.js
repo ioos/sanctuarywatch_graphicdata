@@ -81,11 +81,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Helper function to show errors
         function showError(message) {
-            var errorDiv = document.createElement('div');
+            let errorDiv = document.createElement('div');
             errorDiv.className = 'svgValidationError notice notice-error is-dismissible';
             errorDiv.innerHTML = '<p><strong>Error:</strong><br>' + message + '</p>';
 
-            var wrapDiv = document.querySelector('.wrap');
+            let wrapDiv = document.querySelector('.wrap');
             if (wrapDiv) {
                 wrapDiv.insertBefore(errorDiv, wrapDiv.firstChild);
             }
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Check if SVG Title field is blank
-        var svgTitle = document.getElementById('svgTitle');
+        const svgTitle = document.getElementById('svgTitle');
         if (!svgTitle || svgTitle.value.trim() === '') {
             showError('The field SVG Title cannot be blank.');
             svgTitle.focus();
@@ -102,19 +102,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Validate iconLabel fields
-        var iconNumber = parseInt(document.getElementById('svgIconNumber').value);
+        const iconNumber = parseInt(document.getElementById('svgIconNumber').value);
         if (iconNumber > 0) {
-            var iconLabels = [];
-            var validationErrors = [];
+            let iconLabels = [];
+            let validationErrors = [];
 
-            for (var i = 1; i <= iconNumber; i++) {
-                var iconLabelField = document.getElementById('iconLabel' + i);
+            for (let i = 1; i <= iconNumber; i++) {
+                let iconLabelField = document.getElementById('iconLabel' + i);
 
                 if (!iconLabelField) {
                     continue;
                 }
 
-                var labelValue = iconLabelField.value.trim();
+                let labelValue = iconLabelField.value.trim();
 
                 // Validation 1: No blanks
                 if (labelValue === '') {
@@ -140,15 +140,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Validation 4: No duplicates
-            var labelValues = iconLabels.map(function(item) { return item.value; });
-            var uniqueLabels = new Set(labelValues);
+            let labelValues = iconLabels.map(function(item) { return item.value; });
+            let uniqueLabels = new Set(labelValues);
 
             if (uniqueLabels.size !== labelValues.length) {
                 // Find duplicates
-                var duplicates = labelValues.filter(function(value, index, array) {
+                let duplicates = labelValues.filter(function(value, index, array) {
                     return array.indexOf(value) !== index;
                 });
-                var uniqueDuplicates = Array.from(new Set(duplicates));
+                let uniqueDuplicates = Array.from(new Set(duplicates));
 
                 validationErrors.push('Duplicate icon labels found: ' + uniqueDuplicates.join(', '));
             }
@@ -165,9 +165,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Prompt user for filename with timestamp as default
-        var timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        var defaultFilename = 'location-' + timestamp;
-        var filename = prompt('Enter filename for SVG (without extension):', defaultFilename);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+        const defaultFilename = 'location-' + timestamp;
+        let filename = prompt('Enter filename for SVG (without extension):', defaultFilename);
 
         // If user cancels, exit
         if (filename === null || filename.trim() === '') {
@@ -178,23 +178,21 @@ document.addEventListener('DOMContentLoaded', function() {
         filename = filename.trim().replace(/[^a-z0-9_-]/gi, '_');
 
         // Load SVG template file
-        var svgContent = '';
-
-        const templateSVG = document.querySelector('input[name="svgType"]:checked').value;;
+        let svgContent = '';
 
         // Fetch the SVG template
-        fetch(ajaxurl.replace('admin-ajax.php', '') + '../wp-content/plugins/graphic_data_plugin/admin/images/create_svg_template_' + templateSVG + '.svg')
+        fetch(ajaxurl.replace('admin-ajax.php', '') + '../wp-content/plugins/graphic_data_plugin/admin/images/create_svg_template_illustrator.svg')
             .then(response => response.text())
             .then(templateContent => {
                 // Parse the SVG template as DOM
-                var parser = new DOMParser();
-                var svgDoc = parser.parseFromString(templateContent, 'image/svg+xml');
+                let parser = new DOMParser();
+                let svgDoc = parser.parseFromString(templateContent, 'image/svg+xml');
 
                 // Get the title group and update its text content
-                var titleGroup = svgDoc.getElementById('title');
+                let titleGroup = svgDoc.getElementById('title');
                 if (titleGroup) {
-                    var textElement = titleGroup.querySelector('#title_text');
-                    var rectElement = titleGroup.querySelector('#title_background');
+                    var textElement = titleGroup.querySelector('#title-text');
+                    var rectElement = titleGroup.querySelector('#title-text-background');
 
                     if (textElement) {
                         // Get the SVG title from the input field
@@ -221,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Check if svgText checkbox is unchecked, and if so, delete the text group
-                var svgTextCheckbox = document.getElementById('svgText');
+                const svgTextCheckbox = document.getElementById('svgText');
                 if (svgTextCheckbox && !svgTextCheckbox.checked) {
                     var textGroup = svgDoc.getElementById('text');
                     if (textGroup && textGroup.parentNode) {
@@ -231,8 +229,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Get the svgIconNumber value and remove icons that exceed this number
                 const svgIconNumber = parseInt(document.getElementById('svgIconNumber').value);
+
+                
                 if (!isNaN(svgIconNumber)) {
                     // Find all g elements
+
+                    var textElement = titleGroup.querySelector('#title-text');
+
                     var allGroups = svgDoc.getElementsByTagName('g');
 
                     // Convert to array to safely iterate while removing elements
