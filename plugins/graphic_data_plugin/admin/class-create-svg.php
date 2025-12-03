@@ -62,20 +62,6 @@ class Create_SVG {
 
                 <div class="form-section">
                     <div class="form-field">
-                        <label>SVG Type:</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="radio" name="svgType" value="illustrator" checked>
-                                Illustrator
-                            </label>
-                            <label>
-                                <input type="radio" name="svgType" value="inkscape">
-                                Inkscape
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-field">
                         <label for="svgTitle">SVG Title:</label><br>
                         <input type="text" id="svgTitle" name="svgTitle" value="" placeholder="Enter SVG title" style="width: 100%; max-width: 400px;">
                     </div>
