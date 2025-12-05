@@ -4021,14 +4021,15 @@ textarea.form-control-lg {
   background-color: var(--bs-nav-tabs-link-active-bg);
   /* border-color: var(--bs-nav-tabs-link-active-border-color); */
   border-color: var(--bs-gray-400);
+  font-weight: bolder; 
 }
 /* Dot character on active tab title */
 .nav-tabs .nav-link.active::before,
 .nav-tabs .nav-item.show .nav-link::after {
   content: '►';          /* or '.' if you prefer */
-  font-size: .8em;
-  margin-right: 0.25rem; 
-
+  font-size: .6em;
+  vertical-align: middle;
+  margin-right: 0.25rem;
 }
 .nav-tabs .dropdown-menu {
   margin-top: calc(-1 * var(--bs-nav-tabs-border-width));
