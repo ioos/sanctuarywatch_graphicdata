@@ -948,7 +948,7 @@ class Scene {
             return $post_link;
         }
     
-        return home_url('/' . $web_slug . '/' . $post->sanitize_title(post_title) . '/');
+        return home_url('/' . $web_slug . '/' . sanitize_title($post->post_title) . '/');
     }
 
 	// Rewrite rule for scenes - new Claude code
