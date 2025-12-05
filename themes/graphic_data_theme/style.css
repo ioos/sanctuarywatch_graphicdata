@@ -310,6 +310,8 @@ body > h1{
   .nav-tabs .nav-link {
     padding-right: 20px;
     padding-left: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
   }
   
 
@@ -696,7 +698,7 @@ input:checked + .slider:before {
   }
 
   .nav-link {
-    text-decoration-line: underline;
+    text-decoration-line: none;
   }
 
   .navbar-expand-lg > .container-fluid {
@@ -705,7 +707,7 @@ input:checked + .slider:before {
   }
 
   .nav-link {
-    padding-top: 0;
+    padding-top: 5px;
     padding-bottom: 8px;
   }
 

@@ -3944,10 +3944,10 @@ textarea.form-control-lg {
 /* ✅ Show bullet only on mobile screens */
 @media (max-width: 767.98px) {
   .nav-link::before {
-    content: "∙   ";
-    color: #fff;             /* white bullet — adjust color as needed */
+    /* content: "∙   "; */
+    /* color: #fff;              */
     /* font-weight: bold; */
-    margin-right: 0.5rem;    /* spacing between bullet and text */
+    /* margin-right: 0.5rem;    */
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -4004,7 +4004,8 @@ textarea.form-control-lg {
   border-top-left-radius: var(--bs-nav-tabs-border-radius);
   border-top-right-radius: var(--bs-nav-tabs-border-radius);
   color: var(--bs-nav-tabs-link-active-color);
-  background-color: var(--bs-nav-tabs-link-active-bg);
+  /* background-color: var(--bs-nav-tabs-link-active-bg); */
+  background-color: var(--bs-nav-tabs-link-active-bg2);
   border-color: var(--bs-nav-tabs-link-active-border-color);
   border-bottom: var(--bs-nav-tabs-border-width) solid var(--bs-nav-tabs-border-color);
 }
@@ -4016,8 +4017,19 @@ textarea.form-control-lg {
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
   color: var(--bs-nav-tabs-link-active-color);
-  background-color: var(--bs-nav-tabs-link-active-bg2);
-  border-color: var(--bs-nav-tabs-link-active-border-color);
+  /* background-color: var(--bs-nav-tabs-link-active-bg2); */
+  background-color: var(--bs-nav-tabs-link-active-bg);
+  /* border-color: var(--bs-nav-tabs-link-active-border-color); */
+  border-color: var(--bs-gray-400);
+  font-weight: bolder;
+}
+/* Dot character on active tab title */
+.nav-tabs .nav-link.active::before,
+.nav-tabs .nav-item.show .nav-link::after {
+  content: '•';          /* or '.' if you prefer */
+  font-size: 1em;
+  /* vertical-align: middle; */
+  margin-right: 0.25rem;
 }
 .nav-tabs .dropdown-menu {
   margin-top: calc(-1 * var(--bs-nav-tabs-border-width));
