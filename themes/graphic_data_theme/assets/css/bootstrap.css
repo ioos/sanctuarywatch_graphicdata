@@ -4021,7 +4021,7 @@ textarea.form-control-lg {
   background-color: var(--bs-nav-tabs-link-active-bg);
   /* border-color: var(--bs-nav-tabs-link-active-border-color); */
   border-color: var(--bs-gray-400);
-  font-weight: bolder; 
+  font-weight: bolder;
 }
 /* Dot character on active tab title */
 .nav-tabs .nav-link.active::before,
