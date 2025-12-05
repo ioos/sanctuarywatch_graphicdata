@@ -232,9 +232,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 
                 if (!isNaN(svgIconNumber)) {
-                    // Find all g elements
+
 
                     var textElement = titleGroup.querySelector('#title-text');
+
+                    for (let q = 12; q < svgIconNumber; q--) {
+
+                    }
 
                     var allGroups = svgDoc.getElementsByTagName('g');
 
