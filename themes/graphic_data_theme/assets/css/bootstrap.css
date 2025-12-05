@@ -4026,9 +4026,9 @@ textarea.form-control-lg {
 /* Dot character on active tab title */
 .nav-tabs .nav-link.active::before,
 .nav-tabs .nav-item.show .nav-link::after {
-  content: '►';          /* or '.' if you prefer */
-  font-size: .6em;
-  vertical-align: middle;
+  content: '•';          /* or '.' if you prefer */
+  font-size: 1em;
+  /* vertical-align: middle; */
   margin-right: 0.25rem;
 }
 .nav-tabs .dropdown-menu {
