@@ -348,32 +348,6 @@ class Admin {
 		return $mimes;
 	}
 
-	// Custom permalink structure for Scene and About custom content types - new Claude code
-	function custom_permalink($permalink, $post) {
-		if ($post->post_type === 'scene') {
-			// Get the instance ID from scene_location
-			$instance_id = get_post_meta($post->ID, 'scene_location', true);
-			if (!$instance_id) {
-				return $permalink;
-			}
-
-			// Get the instance slug
-			$instance_slug = get_post_meta($instance_id, 'instance_slug', true);
-			if (!$instance_slug) {
-				return $permalink;
-			}
-
-			// Build the custom permalink
-			return home_url('/' . $instance_slug . '/' . $post->post_name);
-		}
-		elseif ($post->post_type === 'about') {
-			// Always return /about regardless of post slug
-			return home_url('/about');
-		}
-
-		return $permalink;
-	}
-
 	/**
 	 * Remove "view" link from admin screen for instance, modal, and figure posts.
 	 *
