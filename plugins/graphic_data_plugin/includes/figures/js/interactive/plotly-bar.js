@@ -516,8 +516,16 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                         let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
                         const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyY.length;
                         const filteredX = plotlyX.filter(item => item !== "");
-                        const xMin = Math.min(...filteredX);
-                        const xMax = Math.max(...filteredX);
+                        
+                        let xMin;
+                        let xMax;
+                        xMin = Math.min(...filteredX);
+                        xMax = Math.max(...filteredX);
+                        if (isNaN(xMin) || isNaN(xMax)) {
+                            xMin = new Date(filteredX[0]);
+                            xMax = new Date(filteredX[filteredX.length - 1]);
+                        }
+
                         allBarsPlotly.push({
                             x: [xMin, xMax],
                             y: [mean, mean],
@@ -534,8 +542,16 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                         const ExistingMeanValue = dataToBePlotted[showMean_ValuesOpt].filter(item => item !== "");
                         const mean = ExistingMeanValue.reduce((a, b) => a + b, 0) / ExistingMeanValue.length;
                         const filteredX = plotlyX.filter(item => item !== "");
-                        const xMin = Math.min(...filteredX);
-                        const xMax = Math.max(...filteredX);
+                        
+                        let xMin;
+                        let xMax;
+                        xMin = Math.min(...filteredX);
+                        xMax = Math.max(...filteredX);
+                        if (isNaN(xMin) || isNaN(xMax)) {
+                            xMin = new Date(filteredX[0]);
+                            xMax = new Date(filteredX[filteredX.length - 1]);
+                        }
+                        
                         allBarsPlotly.push({
                             x: [xMin, xMax],
                             y: [mean, mean],
