@@ -951,23 +951,72 @@ class Scene {
         return home_url('/' . $web_slug . '/' . sanitize_title($post->post_title) . '/');
     }
 
-	// Rewrite rule for scenes - new Claude code
-    function add_custom_rewrite_rules() {
+    /**
+     * Add rewrite rule to handle custom scene URLs
+     *
+     * @since    1.0.0
+     */
+    function add_scene_rewrite_rule() {
         add_rewrite_rule(
-            '([^/]+)/([^/]+)/?$',
-            'index.php?post_type=scene&scene=$matches[2]&instance_slug=$matches[1]',
+            '^([^/]+)/([^/]+)/?$',
+            'index.php?scene_instance_slug=$matches[1]&scene_name=$matches[2]',
             'top'
         );
-    
-        // Add query var for instance_slug
-        add_filter('query_vars', function($vars) {
-            $vars[] = 'instance_slug';
-            return $vars;
-        });
+    }
+
+    /**
+     * Register custom query vars for scene URL handling
+     *
+     * @since    1.0.0
+     */
+    function add_scene_query_vars($vars) {
+        $vars[] = 'scene_instance_slug';
+        $vars[] = 'scene_name';
+        return $vars;
+    }
+
+    /**
+     * Parse custom scene URL and set up the correct query
+     *
+     * @since    1.0.0
+     */
+    function parse_scene_request($query) {
+        if (!$query->is_main_query() || is_admin()) {
+            return;
+        }
+
+        $instance_slug = get_query_var('scene_instance_slug');
+        $scene_name = get_query_var('scene_name');
+
+        if ($instance_slug && $scene_name) {
+            // Find the instance by slug
+            $instances = get_posts(array(
+                'post_type' => 'instance',
+                'meta_key' => 'instance_slug',
+                'meta_value' => $instance_slug,
+                'posts_per_page' => 1,
+                'post_status' => 'publish'
+            ));
+
+            if (!empty($instances)) {
+                $instance_id = $instances[0]->ID;
+
+                // Set up query to find the scene
+                $query->set('post_type', 'scene');
+                $query->set('name', $scene_name);
+                $query->set('meta_query', array(
+                    array(
+                        'key' => 'scene_location',
+                        'value' => $instance_id,
+                        'compare' => '='
+                    )
+                ));
+            }
+        }
     }
 
     function scene_preview() {
-      
+
         header("Location: ".$_SERVER["HTTP_REFERER"]);
       //  echo "hello";
         wp_die();
