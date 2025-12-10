@@ -68,11 +68,6 @@ class Admin {
 
 		 wp_enqueue_script( "utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 
-		 // Enqueue theme_script.js on all admin pages except the Create SVG page
-		 if ( $hook_suffix != "tools_page_create-svg" ) {
-		 	wp_enqueue_script( "theme_script", get_template_directory_uri( __FILE__ ) . '/assets/js/script.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
-		 }
-
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post 
 		if ($current_post_type == "about" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){

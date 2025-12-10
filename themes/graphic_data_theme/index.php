@@ -103,11 +103,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <?php 
 
 
-            $front_page_intro = get_option('graphic_data_settings')['intro_text'];
-            if ($front_page_intro == false) {
-                $front_page_intro = "None";
-            }
-            echo "<div class='container-fluid-index main-container' style='margin-top: 0px;'><h4 style='color:black'>{$front_page_intro}</h3></div>";
+        $front_page_intro = "None";
+        $graphic_data_settings = get_option('graphic_data_settings');
+        if ($graphic_data_settings && isset($graphic_data_settings['intro_text']) && !empty($graphic_data_settings['intro_text'])) {
+            $front_page_intro = $$graphic_data_settings['intro_text'];
+        } 
+        echo "<div class='container-fluid-index main-container' style='margin-top: 0px;'><h4 style='color:black'>{$front_page_intro}</h3></div>";
 
 $terms = get_terms([
     'taxonomy'   => 'instance_type',
@@ -205,8 +206,8 @@ foreach ($terms_array as $term){
                 if ($instance["instance_legacy_content"] == "no") {
                     $instance_slug = get_post_meta($instance["id"], "instance_slug")[0];
                     $instance_overview_scene = get_post_meta($instance["id"], 'instance_overview_scene', true); 
-                    $instance_post_title = get_post($instance_overview_scene)->post_title;
-                    $instance_link = $instance_slug . "/" . sanitize_title($instance_post_title);
+                    $instance_post_name = get_post($instance_overview_scene)->post_name;
+                    $instance_link = $instance_slug . "/" . $instance_post_name;
                 } else {
                     $instance_link = $instance["instance_legacy_content_url"]; 
                 }

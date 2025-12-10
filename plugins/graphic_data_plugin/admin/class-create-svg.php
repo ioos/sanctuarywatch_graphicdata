@@ -31,7 +31,12 @@ class Create_SVG {
      *
      * @since    1.0.0
      */
-    public function enqueue_admin_svg_script(){
+    public function enqueue_admin_svg_script($hook){
+        // Only load on the create-svg page (tools.php?page=create-svg)
+        if ($hook !== 'tools_page_create-svg') {
+            return;
+        }
+
         wp_enqueue_script(
             'admin-create-svg',
             plugin_dir_url( __FILE__ ) . 'js/admin-create-svg.js',
