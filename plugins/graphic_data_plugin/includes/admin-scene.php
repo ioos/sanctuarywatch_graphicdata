@@ -67,14 +67,14 @@ class Scene {
                 // Modify the link text to "Edit Scene Name".
                 $actions['inline hide-if-no-js'] = str_replace(
                     __('Quick&nbsp;Edit'), // The original "Quick Edit" text.
-                    __('Edit Scene Slug'), // The new text.
+                    __('Edit Scene Title or URL'), // The new text.
                     $actions['inline hide-if-no-js'] // The existing action link.
                 );
             }
         }
         return $actions;
     }
-
+    
     /**
      * Enqueues custom CSS for scene admin columns on the post type edit screen.
      *
@@ -949,21 +949,6 @@ class Scene {
         }
     
         return home_url('/' . $web_slug . '/' . $post->post_name . '/');
-    }
-
-	// Rewrite rule for scenes - new Claude code
-    function add_custom_rewrite_rules() {
-        add_rewrite_rule(
-            '([^/]+)/([^/]+)/?$',
-            'index.php?post_type=scene&scene=$matches[2]&instance_slug=$matches[1]',
-            'top'
-        );
-    
-        // Add query var for instance_slug
-        add_filter('query_vars', function($vars) {
-            $vars[] = 'instance_slug';
-            return $vars;
-        });
     }
 
     function scene_preview() {

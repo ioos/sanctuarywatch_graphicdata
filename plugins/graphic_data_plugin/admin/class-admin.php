@@ -4,7 +4,6 @@
  * The admin-specific functionality of the plugin.
  *
  * @link       https://www.noaa.gov
- * @since      0.2.0-beta
  *
  * @package    graphic_data_plugin
  */
@@ -20,8 +19,6 @@ class Admin {
 
 	/**
 	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    0.2.0-beta
 	 */
 	public function enqueue_styles() {
 
@@ -51,8 +48,6 @@ class Admin {
 
 	/**
 	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    0.2.0-beta
 	 */
 	public function enqueue_scripts($hook_suffix) {
 
@@ -72,8 +67,6 @@ class Admin {
 		// Enqueue utlity javascript functions used across javascript files on the admin side
 
 		 wp_enqueue_script( "utility", plugin_dir_url( __FILE__ ) . 'js/utility.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
-
-
 
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post 
@@ -348,32 +341,6 @@ class Admin {
 	function allow_svg_uploads($mimes) {
 		$mimes['svg'] = 'image/svg+xml';
 		return $mimes;
-	}
-
-	// Custom permalink structure for Scene and About custom content types - new Claude code
-	function custom_permalink($permalink, $post) {
-		if ($post->post_type === 'scene') {
-			// Get the instance ID from scene_location
-			$instance_id = get_post_meta($post->ID, 'scene_location', true);
-			if (!$instance_id) {
-				return $permalink;
-			}
-
-			// Get the instance slug
-			$instance_slug = get_post_meta($instance_id, 'instance_slug', true);
-			if (!$instance_slug) {
-				return $permalink;
-			}
-
-			// Build the custom permalink
-			return home_url('/' . $instance_slug . '/' . $post->post_name);
-		}
-		elseif ($post->post_type === 'about') {
-			// Always return /about regardless of post slug
-			return home_url('/about');
-		}
-
-		return $permalink;
 	}
 
 	/**

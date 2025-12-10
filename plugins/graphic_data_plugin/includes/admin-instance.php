@@ -401,7 +401,7 @@ class Instance {
     }
 
     /**
-	 * Remove Quick Edit links from all custom content admin screens.
+	 * Remove Quick Edit links from most custom content admin screens.
 	 *
      * @param string[] $actions An array of row action links.
      * @param int $post The database id of the post.
@@ -412,6 +412,19 @@ class Instance {
         $current_post_type = $current_screen->post_type;
         if ($current_post_type  == 'instance' || $current_post_type  == 'figure' ||$current_post_type  == 'modal') {
             unset($actions['inline hide-if-no-js']);
+        }
+        if ($current_post_type  == 'scene') {
+            $remove_quick_edit = true;
+            $current_user = wp_get_current_user();
+            if (gettype($current_user) == "object" && property_exists($current_user, 'roles')){
+                $current_user_role = $current_user->roles[0];
+                if ($current_user_role == 'administrator' || $current_user_role == 'content_manager'){
+                    $remove_quick_edit = false;
+                }
+            }
+            if ($remove_quick_edit){
+                unset($actions['inline hide-if-no-js']);
+            }
         }
         return $actions;
     }

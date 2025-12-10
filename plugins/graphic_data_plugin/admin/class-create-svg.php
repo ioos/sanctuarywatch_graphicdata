@@ -31,7 +31,12 @@ class Create_SVG {
      *
      * @since    1.0.0
      */
-    public function enqueue_admin_svg_script(){
+    public function enqueue_admin_svg_script($hook){
+        // Only load on the create-svg page (tools.php?page=create-svg)
+        if ($hook !== 'tools_page_create-svg') {
+            return;
+        }
+
         wp_enqueue_script(
             'admin-create-svg',
             plugin_dir_url( __FILE__ ) . 'js/admin-create-svg.js',
@@ -62,20 +67,6 @@ class Create_SVG {
 
                 <div class="form-section">
                     <div class="form-field">
-                        <label>SVG Type:</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="radio" name="svgType" value="illustrator" checked>
-                                Illustrator
-                            </label>
-                            <label>
-                                <input type="radio" name="svgType" value="inkscape">
-                                Inkscape
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-field">
                         <label for="svgTitle">SVG Title:</label><br>
                         <input type="text" id="svgTitle" name="svgTitle" value="" placeholder="Enter SVG title" style="width: 100%; max-width: 400px;">
                     </div>
@@ -90,7 +81,7 @@ class Create_SVG {
                     <div class="form-field">
                         <label for="svgIconNumber">Number of clickable icons:</label>
                         <div class="range-control">
-                            <input type="range" id="svgIconNumber" name="svgIconNumber" min="0" max="15" value="0">
+                            <input type="range" id="svgIconNumber" name="svgIconNumber" min="0" max="12" value="0">
                             <span class="range-value" id="svgIconNumberValue">0</span>
                         </div>
                     </div>

@@ -103,11 +103,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <?php 
 
 
-            $front_page_intro = get_option('graphic_data_settings')['intro_text'];
-            if ($front_page_intro == false) {
-                $front_page_intro = "None";
-            }
-            echo "<div class='container-fluid-index main-container' style='margin-top: 0px;'><h4 style='color:black'>{$front_page_intro}</h3></div>";
+        $front_page_intro = "None";
+        $graphic_data_settings = get_option('graphic_data_settings');
+        if ($graphic_data_settings && isset($graphic_data_settings['intro_text']) && !empty($graphic_data_settings['intro_text'])) {
+            $front_page_intro = $$graphic_data_settings['intro_text'];
+        } 
+        echo "<div class='container-fluid-index main-container' style='margin-top: 0px;'><h4 style='color:black'>{$front_page_intro}</h3></div>";
 
 $terms = get_terms([
     'taxonomy'   => 'instance_type',

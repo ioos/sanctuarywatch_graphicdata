@@ -250,7 +250,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'init', $plugin_admin_scene, 'custom_content_type_scene' ); 
 		$this->loader->add_filter( 'bulk_actions-edit-scene', $plugin_admin_instance, 'remove_bulk_actions' ); 
 		$this->loader->add_action( 'wp_ajax_scene_preview', $plugin_admin_scene, 'scene_preview' ); 
-		$this->loader->add_action( 'post_row_actions', $plugin_admin_scene, 'modify_scene_quick_edit_link', 10, 2 ); 
+	//	$this->loader->add_action( 'post_row_actions', $plugin_admin_scene, 'modify_scene_quick_edit_link', 10, 2 ); 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_scene, 'enqueue_scene_admin_columns_css'); 
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_scene, 'register_scene_rest_fields'); 
 		$this->loader->add_filter( 'rest_scene_query', $plugin_admin_scene, 'filter_scene_by_scene_location', 10, 2); 
