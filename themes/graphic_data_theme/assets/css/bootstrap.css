@@ -4024,12 +4024,12 @@ textarea.form-control-lg {
   font-weight: bolder;
 }
 /* Dot character on active tab title */
-.nav-tabs .nav-link.active::before,
+.nav-tabs .nav-link.active::after,
 .nav-tabs .nav-item.show .nav-link::after {
-  content: '•';          /* or '.' if you prefer */
-  font-size: 1em;
+  content: '▼';          /* or '.' if you prefer */
+  font-size: .9em;
   /* vertical-align: middle; */
-  margin-right: 0.25rem;
+  margin-left: 0.3rem;
 }
 .nav-tabs .dropdown-menu {
   margin-top: calc(-1 * var(--bs-nav-tabs-border-width));
