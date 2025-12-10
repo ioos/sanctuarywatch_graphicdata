@@ -418,7 +418,7 @@ class Instance {
             $current_user = wp_get_current_user();
             if (gettype($current_user) == "object" && property_exists($current_user, 'roles')){
                 $current_user_role = $current_user->roles[0];
-                if ($current_user_role == 'administrator' || $current_user_role == 'content_editor'){
+                if ($current_user_role == 'administrator' || $current_user_role == 'content_manager'){
                     $remove_quick_edit = false;
                 }
             }
