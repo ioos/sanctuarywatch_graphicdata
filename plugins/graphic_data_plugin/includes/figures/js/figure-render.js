@@ -36,7 +36,11 @@ async function render_interactive_plots(tabContentElement, info_obj) {
     //Lets control if the figure is published or not
     let figure_published = info_obj['figure_published'];
     if (figure_published != "published"){
-        return; // do not render if the figure is not published
+        if (window.location.href.includes('post.php')) {
+            figure_published = "published";
+        } else {
+            return; // do not render if the figure is not published
+        }
     }
 
     let postID = info_obj["postID"];
@@ -103,7 +107,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
                     await producePlotlyLineFigure(targetId, interactive_arguments, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID);
-                    //console.log('RIP - PLOT1', postID);
+                    console.log('RIP - PLOT1', postID);
                     
 
                     // Manually trigger for initially active tab
@@ -324,7 +328,11 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     //Lets control if the figure is published or not
     let figure_published = info_obj["figure_published"];
     if (figure_published != "published"){
-        return; // do not render if the figure is not published
+        if (window.location.href.includes('post.php')) {
+            figure_published = "published";
+        } else {
+            return; // do not render if the figure is not published
+        }
     }
 
     let postID = info_obj["postID"];
