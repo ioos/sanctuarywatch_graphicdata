@@ -111,7 +111,7 @@ if (window.location.href.includes('post.php') || window.location.href.includes('
 
 let allOrdersAreOne = null;
 
-if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+if (!window.location.href.includes('post.php')) {
     allOrdersAreOne = sorted_child_entries.every(([_, obj]) => parseInt(obj.modal_icon_order) === 1);
 }
     // Step 3: sort conditionally
@@ -134,14 +134,14 @@ try {
 // Step 4: extract the objects (no keys) to match your original format
 
 let sorted_child_objs = null;
-if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+if (!window.location.href.includes('post.php')) {
     sorted_child_objs = sorted_child_entries.map(([_, val]) => val);
 }
 
 
 // Step 5: build child_ids_helper for title-to-key mapping
 child_ids_helper = {};
-if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+if (!window.location.href.includes('post.php')) {
     for (const [key, value] of sorted_child_entries) {
         child_ids_helper[value.title] = key;
     }
