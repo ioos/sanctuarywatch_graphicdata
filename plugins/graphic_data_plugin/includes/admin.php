@@ -157,6 +157,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' ); 
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible',10 ); 
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'check_draft_overview_scene',40 ); 
+		$this->loader->add_action( 'save_post', $plugin_utility, 'track_last_modifier',10, 2 ); 
 
 		// Load class and functions associated with new user roles
 		$plugin_custom_roles = new Custom_Roles();

@@ -36,6 +36,48 @@ class Utility {
         return implode(array_slice($parts, 0, $last_part));
     }
 
+    /**
+     * Track the last user to modify a post
+     *
+     * Hooks into the save_post action to store the ID of the user who last modified
+     * a post in post meta. This provides a reliable way to track post modifications
+    * independently of WordPress revisions.
+    *
+    * The last modifier ID is stored in the '_last_modified_by' meta key (prefixed
+    * with underscore to hide from custom fields UI).
+    *
+    * @param int     $post_id The post ID being saved.
+    * @param WP_Post $post    The post object being saved.
+    *
+    * @return void
+    *
+    * @example
+    * // Retrieve the last modifier user ID
+    * $last_modified_user_id = get_post_meta($post_id, '_last_modified_by', true);
+    * 
+    * // Get the user object
+    * $last_modifier = get_userdata($last_modified_user_id);
+    * if ($last_modifier) {
+    *     echo 'Last modified by: ' . $last_modifier->display_name;
+    * }
+    */
+    function track_last_modifier($post_id, $post) {
+        // Skip autosaves and revisions
+        if (wp_is_post_autosave($post_id)) {
+            return;
+        }
+        
+        // Only track for specific custom post types
+        $allowed_post_types = array('instance', 'scene', 'modal', 'figure');
+        if (!in_array($post->post_type, $allowed_post_types, true)) {
+            return;
+        }
+        
+        // Store the current user as last modifier
+        update_post_meta($post_id, '_last_modified_by', get_current_user_id());
+    }
+
+
     // used for field validation
     function output_transient_to_js() {
         // Only run on edit post pages for certain custom content post types
