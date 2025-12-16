@@ -259,6 +259,8 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'manage_edit-scene_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column'); 
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_scene, 'orderby_status_column'); //This action orders by the status column for scene, modal, and figure content types 
         $this->loader->add_action( 'admin_notices', $plugin_admin_scene, 'display_overview_scene_notice' ); 
+        $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_scene, 'scene_enqueue_quick_edit_validation' ); // new AI
+        $this->loader->add_action( 'wp_ajax_scene_validate_slug', $plugin_admin_scene, 'scene_validate_slug_ajax' ); // new AI
 
 		// Load  class and functions associated with Modal custom content type
 		$plugin_admin_modal = new Modal ( );	
