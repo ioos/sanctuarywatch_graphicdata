@@ -143,6 +143,12 @@ If you don't see "Layers", use this access path: *Top Navigation Bar > Windows >
 
     This is an optional layer that contains all non-responsive elements of the image. This layer can be called anything (other than “text” or the name of a clickable sub-layer). It is ignored by the Graphic Data Javascript. We recommend calling it "background" though.
 
+    If you encounter issues where, when exporting your Adobe Illustrator file as a. svg file, the background overflows the bounds of the art board more than expected. 
+
+    1. Select all elements in the background using the select tool, then group them together (right click + group)
+    2. Then, using rectangle tool, create a rectangle to contain your background and place it exactly over the bounds of the art board (This works best when the rectangle is transparent with no fill color).  
+    3. Select the rectangle and the grouped items together, then create a clipping mask. (right click + create clipping mask).
+
 4. **mobile**: 
      - This layer is optional. However, when viewing the same webpage on your desktop (or laptop) computer compared to a mobile device, you may have noticed that the area and orientation of the screen shifts from landscape (like your TV) to portrait (like your mobile device). This shift causes the icons from your .svg "Scene" to be displayed in rows that are 3 across from top left to bottom right in with each of the graphics form the "icons" layer displayed inside of a grey rectangular button. 
 

@@ -14,7 +14,7 @@ function errorPreviewHandler(divID, figureType){
         } catch {}
         try {
             existingFileInputElement = document.getElementById('existing-file-name').value;
-            console.log('existingFileInputElement:', existingFileInputElement);
+            //console.log('existingFileInputElement:', existingFileInputElement);
         } catch {}
         try {
             graphTypeInputElement = document.getElementById('graphType').value;
@@ -331,7 +331,7 @@ if (previewFigureOrModalElements.length > 0) {
     });
 };
 
-//INJECT CSS FOR THE THEME WHEN SCENE, MODAL, or FIGURE PREVIEW IS CLICKED
+//INJECT CSS FOR THE THEME WHEN MODAL, or FIGURE PREVIEW IS CLICKED
 if (previewFigureOrModalElements.length > 0) {
         previewFigureOrModalElements.forEach(el => {
             el.addEventListener('click', function() {
@@ -349,33 +349,16 @@ if (previewFigureOrModalElements.length > 0) {
                 css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
                 document.head.appendChild(css2);
 
-                console.log('🎨 Theme CSS injected');
+                //console.log('🎨 Theme CSS injected');
                 } else {
-                console.log('🎨 Theme CSS already loaded');
+                //console.log('🎨 Theme CSS already loaded');
                 }
             });
     });
 };
 
 
-// When the modal close button is clicked, remove both CSS files
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.id === 'close') {
-
-        const css1 = document.getElementById('theme-css1');
-        const css2 = document.getElementById('theme-css2');
-        if (css1) css1.remove();
-        if (css2) css2.remove();
-
-        try {
-            // Safety cleanup for dynamically-added content    
-            const modalEl = document.getElementById('sceneModal');
-            modalEl.remove();
-        } catch {}
-
-    }
-});
-
+//_________________________________________________________________________________________________________________
 
 //LOGIC FOR SCENE PREVIEW MODE
 function openSceneInModal() {
@@ -384,7 +367,7 @@ function openSceneInModal() {
     // const modal = new bootstrap.Modal(document.getElementById('entire_thing'));
     // modal.show();
 
-    // // Prevent duplicate injection, remove existing to make way for new. 
+    // Prevent duplicate injection, remove existing to make way for new. 
     // if (document.getElementById('sceneModal')) {
     //     //console.log('Modals already exist — showing modal.');
     //     const modalEl = document.getElementById('sceneModal');
@@ -401,30 +384,7 @@ function openSceneInModal() {
             <div class="row" id="scene-row">
                 <div class="col-md-10" >
                 <div id="svg1" class="responsive-image-container">
-                    <?php
-                    $svg_url = get_post_meta($post_id, 'scene_infographic', true); 
-                    $num_sections = get_post_meta($post_id, 'scene_section_number', true); 
-                    $scene_sections = [];
-                    for ($i = 1; $i <= $num_sections; $i++) {
-                        $curr = 'scene_section' . $i;
-                        $curr_section = get_post_meta($post_id, $curr, true); 
-                        $hov_color = 'scene_section_hover_color' . $i;
-                        $scene_title = 'scene_section_title' . $i;
-
-                        $scene_sections[$curr_section[$scene_title]] = $curr_section[$hov_color];
-                    }
                     
-                    //a bunch of scene meta fields:
-                    $scene_default_hover_color = get_post_meta($post_id, 'scene_hover_color', true);
-                    $scene_default_hover_text_color = get_post_meta($post_id, 'scene_hover_text_color', true); 
-                    $scene_text_toggle = get_post_meta($post_id, 'scene_text_toggle', true); 
-                    $scene_toc_style = get_post_meta($post_id, 'scene_toc_style', true); 
-                    $scene_full_screen_button = get_post_meta($post_id, 'scene_full_screen_button', true); 
-                    $scene_same_hover_color_sections	= get_post_meta($post_id, 'scene_same_hover_color_sections', true); 
-
-                    $child_ids = get_modal_array($svg_url);
-                    
-                    ?>
                 </div>
                 </div>
 
@@ -449,18 +409,83 @@ function openSceneInModal() {
     //console.log('✅ Modals injected into #wpcontent');
 
     // Wait for DOM update, then show the modal (Bootstrap 5 API)
-    setTimeout(() => {
-        const modalEl = document.getElementById('sceneModalBody');
-        if (modalEl && typeof bootstrap !== 'undefined') {
-        const modalInstance = new bootstrap.Modal(modalEl);
-        modalInstance.show();
-        } else {
-        console.warn('Bootstrap not found — modal injected but not activated.');
-        }
-    }, 100);
-            
+    // setTimeout(() => {
+    //     const modalEl = document.getElementById('sceneModalBody');
+    //     if (modalEl && typeof bootstrap !== 'undefined') {
+    //     const modalInstance = new bootstrap.Modal(modalEl);
+    //     modalInstance.show();
+    //     } else {
+    //     console.warn('Bootstrap not found — modal injected but not activated.');
+    //     }
+    // }, 100);           
+}
 
-            
+
+
+
+function buildScenePayloadFromForm() {
+    // Helpers
+    const byIdVal = (id) => (document.getElementById(id)?.value ?? "");
+    //console.log('byIdVal("title")', byIdVal("title"));
+    const byNameVal = (name) => (document.getElementsByName(name)?.[0]?.value ?? "");
+
+    const payload = {};
+
+    // --- Top-level scene fields from your snippet ---
+    payload.post_title = byIdVal("title"); // your h1 uses #title
+    payload.scene_tagline = byNameVal("scene_tagline");
+    payload.scene_location = byNameVal("scene_location");
+    payload.scene_infographic = byNameVal("scene_infographic");
+    payload.scene_hover_color = byNameVal("scene_hover_color");
+    payload.scene_hover_text_color = byNameVal("scene_hover_text_color");
+    payload.scene_text_toggle = byNameVal("scene_text_toggle");
+    payload.scene_full_screen_button = byNameVal("scene_full_screen_button");
+
+    // --- scene_info_entries + scene_info1..6 (nested objects) ---
+    let infoCount = 0;
+    for (let i = 1; i < 7; i++) {
+    const textName = `scene_info${i}[scene_info_text${i}]`;
+    const urlName  = `scene_info${i}[scene_info_url${i}]`;
+
+    const textVal = byNameVal(textName);
+    const urlVal  = byNameVal(urlName);
+
+    // Match your example shape exactly
+    payload[`scene_info${i}`] = {
+        [`scene_info_text${i}`]: textVal,
+        [`scene_info_url${i}`]: urlVal
+    };
+
+    // Count "valid" entries the same way your accordion detection does
+    if (textVal !== "" && urlVal !== "") infoCount++;
+    }
+    payload.scene_info_entries = String(infoCount);
+
+    // --- scene_photo_entries + scene_photo1..6 (nested objects) ---
+    let photoCount = 0;
+    for (let i = 1; i < 7; i++) {
+    const locName      = `scene_photo${i}[scene_photo_location${i}]`;
+    const textName     = `scene_photo${i}[scene_photo_text${i}]`;
+    const urlName      = `scene_photo${i}[scene_photo_url${i}]`;
+    const internalName = `scene_photo${i}[scene_photo_internal${i}]`;
+
+    const locVal      = byNameVal(locName) || "External"; // your example defaults to External
+    const textVal     = byNameVal(textName);
+    const urlVal      = byNameVal(urlName);
+    const internalVal = byNameVal(internalName);
+
+    payload[`scene_photo${i}`] = {
+        [`scene_photo_location${i}`]: locVal,
+        [`scene_photo_text${i}`]: textVal,
+        [`scene_photo_url${i}`]: urlVal,
+        [`scene_photo_internal${i}`]: internalVal
+    };
+
+    if (textVal !== "" && urlVal !== "") photoCount++;
+    }
+    payload.scene_photo_entries = String(photoCount);
+
+    return payload;
 }
 
 
@@ -513,7 +538,6 @@ if (previewSceneElements.length > 0) {
     previewSceneElements.forEach(el => {
         el.addEventListener('click', function() {
 
-
             // Prevent duplicate injection, remove existing to make way for new. 
             if (document.getElementById('sceneModal')) {
                 //console.log('Modals already exist — showing modal.');
@@ -534,7 +558,6 @@ if (previewSceneElements.length > 0) {
                         </div>
 
                         <div class="modal-body" id="sceneModalBody">
-                            <button id="close" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             <!-- single-scene.php will be loaded here -->
                         </div>
 
@@ -565,230 +588,306 @@ if (previewSceneElements.length > 0) {
             }, 100);
 
 
-            // openSceneInModal();
+            //_____________________________________________________________________________________________________
 
-            // let url = 'https://noaaswlocal.local/wp-content/uploads/2024/12/1.Overview-CINMS-2024-v4.svg'
-            // loadSVG(url, "svg1");
-                
-
-            // Find the second parent element
-            //const secondParent = firstScenePreview.parentElement.parentElement;
-            const secondParent = document.getElementById('sceneModalBody');
-            secondParent.innerHTML = ""; // Clear previous content
-
-            // Create an h1 element
-            let h1 = document.createElement('h1');
-            // Set the text content of the h1 element to "Hello World"
-            h1.textContent = document.getElementById("title").value
-            // Append the h1 element to the new div
-            secondParent.appendChild(h1);
-            let secondRow = document.createElement("div");
-            secondRow.classList.add("row");
-
-
-            secondRow.classList.add("row", "align-items-start");
-
-            // Detect whether we have accordions
-            let scene_info_elements = [];
-            let scene_photo_elements = [];
-            let haveAccordions = false;
-
-            // Collect valid accordion items
-            for (let i = 1; i < 7; i++) {
-                let text_field = `scene_photo${i}[scene_photo_text${i}]`;
-                let url_field  = `scene_photo${i}[scene_photo_url${i}]`;
-
-                if (
-                    document.getElementsByName(text_field)[0].value !== "" &&
-                    document.getElementsByName(url_field)[0].value !== ""
-                ) {
-                    scene_photo_elements.push(i);
+            let url;
+            try {
+                openSceneInModal();
+                title_arr = buildScenePayloadFromForm();
+                // console.log('title_arr', title_arr);
+                if (title_arr['post_title'] == '') {
+                    title_arr['post_title'] = "No Scene Title Entered.";
                 }
+                sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
+                thisInstance = sceneLoc;
+                url = title_arr['scene_infographic'];
 
-                text_field = `scene_info${i}[scene_info_text${i}]`;
-                url_field  = `scene_info${i}[scene_info_url${i}]`;
+            } catch {}
 
-                if (
-                    document.getElementsByName(text_field)[0].value !== "" &&
-                    document.getElementsByName(url_field)[0].value !== ""
-                ) {
-                    scene_info_elements.push(i);
-                }
+            if (url != '') {
+                loadSVG(url, "svg1");
             }
+            if (url === '') {
+                const svgContainer = document.getElementById('svg1');
+                svgContainer.innerText = "Please select/up an SVG image in the 'Infographic' field to preview the scene.";
+                svgContainer.style.textAlign = "center";
+                svgContainer.style.margin = "5%";
+                svgContainer.style.fontWeight = "bold";
+                svgContainer.style.color = "red";
+            } 
 
-            // Mark whether any accordion sections exist
-            haveAccordions = (scene_info_elements.length > 0 || scene_photo_elements.length > 0);
+            //_____________________________________________________________________________________________________
 
+            // // Find the second parent element
+            // //const secondParent = firstScenePreview.parentElement.parentElement;
+            // const secondParent = document.getElementById('sceneModalBody');
+            // secondParent.innerHTML = ""; // Clear previous content
 
-            // ----------------------------------------------------
-            // Create ACCORDION COLUMN (right side)
-            // ----------------------------------------------------
-            let accordionColumn = null;
-
-            if (haveAccordions) {
-                accordionColumn = document.createElement("div");
-                accordionColumn.classList.add("col-2");
-                accordionColumn.id = "allAccordions";
-
-                let accordionWrapper = document.createElement("div");
-                accordionWrapper.classList.add("accordion");
-
-                // Populate accordions
-                if (scene_info_elements.length > 0) {
-                    createAccordion("info", accordionWrapper, scene_info_elements);
-                }
-                if (scene_photo_elements.length > 0) {
-                    createAccordion("photo", accordionWrapper, scene_photo_elements);
-                }
-
-                accordionColumn.appendChild(accordionWrapper);
-            }
+            // // Create an h1 element
+            // let h1 = document.createElement('h1');
+            // // Set the text content of the h1 element to "Hello World"
+            // h1.textContent = document.getElementById("title").value
+            // // Append the h1 element to the new div
+            // secondParent.appendChild(h1);
+            // let secondRow = document.createElement("div");
+            // secondRow.classList.add("row");
 
 
-            // ----------------------------------------------------
-            // Create TAGLINE COLUMN (left side)
-            // ----------------------------------------------------
-            let taglineColumn = document.createElement("div");
+            // secondRow.classList.add("row", "align-items-start");
 
-            // If we have accordions → tagline = col-10
-            // If not → tagline = col-12
-            taglineColumn.classList.add(haveAccordions ? "col-10" : "col-12");
+            // // Detect whether we have accordions
+            // let scene_info_elements = [];
+            // let scene_photo_elements = [];
+            // let haveAccordions = false;
 
-            taglineColumn.classList.add("sceneTagline");
-            taglineColumn.textContent = document.getElementsByName('scene_tagline')[0].value;
+            // // Collect valid accordion items
+            // for (let i = 1; i < 7; i++) {
+            //     let text_field = `scene_photo${i}[scene_photo_text${i}]`;
+            //     let url_field  = `scene_photo${i}[scene_photo_url${i}]`;
 
-            // Append columns in the correct left→right order
-            secondRow.appendChild(taglineColumn);
+            //     if (
+            //         document.getElementsByName(text_field)[0].value !== "" &&
+            //         document.getElementsByName(url_field)[0].value !== ""
+            //     ) {
+            //         scene_photo_elements.push(i);
+            //     }
 
-            if (accordionColumn) {
-                secondRow.appendChild(accordionColumn);
-            }
+            //     text_field = `scene_info${i}[scene_info_text${i}]`;
+            //     url_field  = `scene_info${i}[scene_info_url${i}]`;
 
-            // Insert this row into your wrapper container
-            secondParent.appendChild(secondRow);  
+            //     if (
+            //         document.getElementsByName(text_field)[0].value !== "" &&
+            //         document.getElementsByName(url_field)[0].value !== ""
+            //     ) {
+            //         scene_info_elements.push(i);
+            //     }
+            // }
 
-            // add row 
-            let thirdRow = document.createElement("div");
-            thirdRow.classList.add("row", "thirdPreviewRow");
-            let imageColumn = document.createElement("div");
-            imageColumn.classList.add("col-9");
+            // // Mark whether any accordion sections exist
+            // haveAccordions = (scene_info_elements.length > 0 || scene_photo_elements.length > 0);
+
+
+            // // ----------------------------------------------------
+            // // Create ACCORDION COLUMN (right side)
+            // // ----------------------------------------------------
+            // let accordionColumn = null;
+
+            // if (haveAccordions) {
+            //     accordionColumn = document.createElement("div");
+            //     accordionColumn.classList.add("col-2");
+            //     accordionColumn.id = "allAccordions";
+
+            //     let accordionWrapper = document.createElement("div");
+            //     accordionWrapper.classList.add("accordion");
+
+            //     // Populate accordions
+            //     if (scene_info_elements.length > 0) {
+            //         createAccordion("info", accordionWrapper, scene_info_elements);
+            //     }
+            //     if (scene_photo_elements.length > 0) {
+            //         createAccordion("photo", accordionWrapper, scene_photo_elements);
+            //     }
+
+            //     accordionColumn.appendChild(accordionWrapper);
+            // }
+
+
+            // // ----------------------------------------------------
+            // // Create TAGLINE COLUMN (left side)
+            // // ----------------------------------------------------
+            // let taglineColumn = document.createElement("div");
+
+            // // If we have accordions → tagline = col-10
+            // // If not → tagline = col-12
+            // taglineColumn.classList.add(haveAccordions ? "col-10" : "col-12");
+
+            // taglineColumn.classList.add("sceneTagline");
+            // taglineColumn.textContent = document.getElementsByName('scene_tagline')[0].value;
+
+            // // Append columns in the correct left→right order
+            // secondRow.appendChild(taglineColumn);
+
+            // if (accordionColumn) {
+            //     secondRow.appendChild(accordionColumn);
+            // }
+
+            // // Insert this row into your wrapper container
+            // secondParent.appendChild(secondRow);  
+
+            // // add row 
+            // let thirdRow = document.createElement("div");
+            // thirdRow.classList.add("row", "thirdPreviewRow");
+            // let imageColumn = document.createElement("div");
+            // imageColumn.classList.add("col-9");
 
             
-            let svgPath = document.getElementsByName("scene_infographic")[0].value;
-            let hoverSceneColor = document.getElementsByName("scene_hover_color")[0].value;
-            let hoverSceneTextColor = document.getElementsByName("scene_hover_text_color")[0].value;
-            if (svgPath == ""){
-                imageColumn.innerText = "No image.";
-                thirdRow.append(imageColumn);
-            } else {
-                let imageExtension = svgPath.split('.').pop().toLowerCase();
-                if (imageExtension != "svg"){
-                    imageColumn.innerText = "Image is not a svg.";
-                    thirdRow.append(imageColumn);
-                } else {
+            // let svgPath = document.getElementsByName("scene_infographic")[0].value;
+            // let hoverSceneColor = document.getElementsByName("scene_hover_color")[0].value;
+            // let hoverSceneTextColor = document.getElementsByName("scene_hover_text_color")[0].value;
+            // if (svgPath == ""){
+            //     imageColumn.innerText = "No image.";
+            //     thirdRow.append(imageColumn);
+            // } else {
+            //     let imageExtension = svgPath.split('.').pop().toLowerCase();
+            //     if (imageExtension != "svg"){
+            //         imageColumn.innerText = "Image is not a svg.";
+            //         thirdRow.append(imageColumn);
+            //     } else {
 
-                    const protocol = window.location.protocol;
-                    const host = window.location.host;
-                    const sceneInstance = document.getElementsByName("scene_location")[0].value;
-                    const restHoverColor = protocol + "//" + host  + "/wp-json/wp/v2/instance/" + sceneInstance;
+            //         const protocol = window.location.protocol;
+            //         const host = window.location.host;
+            //         const sceneInstance = document.getElementsByName("scene_location")[0].value;
+            //         const restHoverColor = protocol + "//" + host  + "/wp-json/wp/v2/instance/" + sceneInstance;
 
-                    fetch(restHoverColor)
-                        .then(response => response.json())
-                        .then(data => {
-                            let hoverColor = "yellow"; 
-                            const rawHoverColorString = data['instance_hover_color'];
+            //         fetch(restHoverColor)
+            //             .then(response => response.json())
+            //             .then(data => {
+            //                 let hoverColor = "yellow"; 
+            //                 const rawHoverColorString = data['instance_hover_color'];
 
-                            if (rawHoverColorString) {
-                                hoverColor = rawHoverColorString;
-                                const commaIndex = hoverColor.indexOf(',');
-                                if (commaIndex !== -1) {
-                                    hoverColor = hoverColor.substring(0, commaIndex);
-                                }
-                            }
-                            return fetch(svgPath);
-                        })
-                    .then(response => response.text())
-                    .then(svgContent => {
+            //                 if (rawHoverColorString) {
+            //                     hoverColor = rawHoverColorString;
+            //                     const commaIndex = hoverColor.indexOf(',');
+            //                     if (commaIndex !== -1) {
+            //                         hoverColor = hoverColor.substring(0, commaIndex);
+            //                     }
+            //                 }
+            //                 return fetch(svgPath);
+            //             })
+            //         .then(response => response.text())
+            //         .then(svgContent => {
 
-                        // Create a temporary div to hold the SVG content
-                        imageColumn.innerHTML = svgContent;
-                        imageColumn.id = "previewSvgContainer";
+            //             // Create a temporary div to hold the SVG content
+            //             imageColumn.innerHTML = svgContent;
+            //             imageColumn.id = "previewSvgContainer";
 
-                        thirdRow.append(imageColumn);
-                        document.getElementById("previewSvgContainer").children[0].id = "previewSvg";
+            //             thirdRow.append(imageColumn);
+            //             document.getElementById("previewSvgContainer").children[0].id = "previewSvg";
 
-                        //document.getElementById("previewSvgContainer").children[0].removeAttribute("height");
-                        previewSvgContainer = document.getElementById("previewSvgContainer");
+            //             //document.getElementById("previewSvgContainer").children[0].removeAttribute("height");
+            //             previewSvgContainer = document.getElementById("previewSvgContainer");
 
-                        const svg = document.getElementById('previewSvg');
-                        svg.style.width = "100%";
-                        svg.style.height = "auto";
-                        svg.style.maxWidth = "100%";
-                        svg.style.display = "block";
-
-
+            //             const svg = document.getElementById('previewSvg');
+            //             svg.style.width = "100%";
+            //             svg.style.height = "auto";
+            //             svg.style.maxWidth = "100%";
+            //             svg.style.display = "block";
 
 
-                        // Find the "icons" layer
-                        let iconsLayer = document.getElementById("previewSvg").querySelector('g[id="icons"]');
 
-                        if (iconsLayer) {
 
-                            // Initialize an array to hold the sublayers
-                            let sublayers = [];
+            //             // Find the "icons" layer
+            //             let iconsLayer = document.getElementById("previewSvg").querySelector('g[id="icons"]');
 
-                            // Iterate over the child elements of the "icons" layer
-                            iconsLayer.childNodes.forEach(node => {
-                                // Check if the node is an element and push its id to the sublayers array
-                                if (node.nodeType === Node.ELEMENT_NODE) {
-                                sublayers.push(node.id);
-                                }
-                            });
-                            sublayers = sublayers.sort();
+            //             if (iconsLayer) {
 
-                            let tocColumn = document.createElement("div");
-                            tocColumn.classList.add("col-3", "previewSceneTOC");
-                            let tocList = document.createElement("ul");
-                            sublayers.forEach (listElement => {
-                                let tocElement = document.createElement("li");
-                                tocElement.innerText = listElement;
-                                tocList.appendChild(tocElement);
-                            })
-                            tocColumn.append(tocList);
-                            thirdRow.append(tocColumn);
+            //                 // Initialize an array to hold the sublayers
+            //                 let sublayers = [];
 
-                            //let's highlight the clickable elements of the svg
-                            const targetSvg = document.getElementById("previewSvg");
-                            sublayers.forEach (listElement => {
-                                let iconLayer = targetSvg.getElementById(listElement);
+            //                 // Iterate over the child elements of the "icons" layer
+            //                 iconsLayer.childNodes.forEach(node => {
+            //                     // Check if the node is an element and push its id to the sublayers array
+            //                     if (node.nodeType === Node.ELEMENT_NODE) {
+            //                     sublayers.push(node.id);
+            //                     }
+            //                 });
+            //                 sublayers = sublayers.sort();
 
-                                // Select all child elements 
-                                let subElements = iconLayer.querySelectorAll("*");
+            //                 let tocColumn = document.createElement("div");
+            //                 tocColumn.classList.add("col-3", "previewSceneTOC");
+            //                 let tocList = document.createElement("ul");
+            //                 sublayers.forEach (listElement => {
+            //                     let tocElement = document.createElement("li");
+            //                     tocElement.innerText = listElement;
+            //                     tocList.appendChild(tocElement);
+            //                 })
+            //                 tocColumn.append(tocList);
+            //                 thirdRow.append(tocColumn);
+
+            //                 //let's highlight the clickable elements of the svg
+            //                 const targetSvg = document.getElementById("previewSvg");
+            //                 sublayers.forEach (listElement => {
+            //                     let iconLayer = targetSvg.getElementById(listElement);
+
+            //                     // Select all child elements 
+            //                     let subElements = iconLayer.querySelectorAll("*");
                             
-                                // Loop through each sub-element and update its stroke-width and color
-                                subElements.forEach(element => {
-                                    element.style.strokeWidth = "2";
-                                    element.style.stroke = hoverSceneColor;
-                                });
-                            })
+            //                     // Loop through each sub-element and update its stroke-width and color
+            //                     subElements.forEach(element => {
+            //                         element.style.strokeWidth = "2";
+            //                         element.style.stroke = hoverSceneColor;
+            //                     });
+            //                 })
 
-                        } else {
-                            imageColumn.innerText = 'No "icons" layer found in the SVG.';
-                            thirdRow.append(imageColumn);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching or processing SVG:', error);
-                    });
+            //             } else {
+            //                 imageColumn.innerText = 'No "icons" layer found in the SVG.';
+            //                 thirdRow.append(imageColumn);
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.error('Error fetching or processing SVG:', error);
+            //         });
 
-                    const sceneModal = document.getElementById('sceneModal');
-                    sceneModal.style.setProperty('--bs-modal-margin', '0', 'important');
+            //         const sceneModal = document.getElementById('sceneModal');
+            //         sceneModal.style.setProperty('--bs-modal-margin', '0', 'important');
 
-                }
-            }
-            secondParent.appendChild(thirdRow);
+            //     }
+            // }
+            // secondParent.appendChild(thirdRow);
+
+
+
         });
     });
+    
 };
+
+
+//INJECT CSS FOR THE THEME WHEN SCENE IS CLICKED
+if (previewSceneElements.length > 0) {
+        previewSceneElements.forEach(el => {
+            el.addEventListener('click', function() {
+                // Only inject CSS if not already loaded
+                if (!document.getElementById('theme-css1') && !document.getElementById('theme-css2')) {
+                const css1 = document.createElement('link');
+                css1.id = 'theme-css1';
+                css1.rel = 'stylesheet';
+                css1.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.css`;
+                document.head.appendChild(css1);
+
+                const css2 = document.createElement('link');
+                css2.id = 'theme-css2';
+                css2.rel = 'stylesheet';
+                css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
+                document.head.appendChild(css2);
+
+                //console.log('🎨 Theme CSS injected');
+                } else {
+                //console.log('🎨 Theme CSS already loaded');
+                }
+            });
+    });
+};
+
+
+
+// When the modal close button is clicked, remove both CSS files
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'close') {
+
+        const css1 = document.getElementById('theme-css1');
+        const css2 = document.getElementById('theme-css2');
+        if (css1) css1.remove();
+        if (css2) css2.remove();
+
+        try {
+            // Safety cleanup for dynamically-added content    
+            const modalEl = document.getElementById('sceneModal');
+            modalEl.remove();
+        } catch {}
+
+    }
+});
+
 
 
