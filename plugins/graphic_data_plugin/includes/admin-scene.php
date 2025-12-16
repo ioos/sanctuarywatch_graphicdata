@@ -58,6 +58,77 @@ class Scene {
         }
     }
 
+    /// BEGIN AI CODE
+
+    // Enqueue JavaScript for Quick Edit slug validation
+    function scene_enqueue_quick_edit_validation($hook) {
+        // Only load on the scene post type edit screen
+        if ($hook !== 'edit.php' || !isset($_GET['post_type']) || $_GET['post_type'] !== 'scene') {
+            return;
+        }
+        
+        wp_enqueue_script(
+            'scene-quick-edit-validation',
+            plugin_dir_url( __DIR__ ) . 'admin/js/scene-quick-edit-validation.js',
+            array('inline-edit-post'),
+            GRAPHIC_DATA_PLUGIN_VERSION,
+            true
+        );
+        
+        wp_localize_script('scene-quick-edit-validation', 'sceneQuickEdit', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('scene_validate_slug_nonce'),
+            'messages' => array(
+                'slug_exists' => __('Warning: A post with this slug already exists. WordPress will automatically modify it to make it unique.', 'your-text-domain'),
+                'checking' => __('Checking slug...', 'your-text-domain')
+            )
+        ));
+    }
+
+    // AJAX handler to check if slug exists
+    function scene_validate_slug_ajax() {
+        check_ajax_referer('scene_validate_slug_nonce', 'nonce');
+        
+        $slug = isset($_POST['slug']) ? sanitize_title($_POST['slug']) : '';
+        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        
+        if (empty($slug)) {
+            wp_send_json_error(array('message' => 'Invalid slug'));
+        }
+        
+        // Check if a post with this slug exists (excluding the current post)
+        global $wpdb;
+        $existing = $wpdb->get_var($wpdb->prepare(
+            "SELECT ID FROM {$wpdb->posts} 
+            WHERE post_name = %s 
+            AND post_type = 'scene' 
+            AND ID != %d 
+            AND post_status != 'trash'",
+            $slug,
+            $post_id
+        ));
+        
+        if ($existing) {
+            // Get the post title
+            $existing_post = get_post($existing);
+            $post_title = $existing_post ? $existing_post->post_title : __('Unknown', 'your-text-domain');
+            
+            wp_send_json_success(array(
+                'exists' => true,
+                'message' => sprintf(
+                    'A scene with slug "%s" already exists (Post ID: %d, Scene Title: "%s").',
+                    $slug,
+                    $existing,
+                    $post_title
+                )
+            ));
+        } else {
+            wp_send_json_success(array('exists' => false));
+        }
+    }
+
+    /// END AI CODE
+
     //change Quick Edit link name in admin columns for Scene post type
     function modify_scene_quick_edit_link($actions, $post) {
         // Check if the post type is 'scene'.
