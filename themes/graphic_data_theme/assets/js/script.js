@@ -2,6 +2,15 @@
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
 let child_obj = {};
 
+
+//Checking the page title to see if we are in admin edit mode for a scene
+let adminEditTitle;
+try {
+    adminEditTitle = document.querySelector('h1.wp-heading-inline')?.textContent.trim();
+} catch {
+    adminEditTitle = 'none';
+}
+
 //Allows for declaration of child_obj variable for theme and for admin side preview mode
 if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
     child_obj = undefined;
@@ -18,9 +27,13 @@ if (window.location.href.includes('post.php') || window.location.href.includes('
 let url1 = {};
 
 //Allows for declaration of url1 variable for theme and for admin side preview mode
-if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
+if ((window.location.href.includes('post.php') || window.location.href.includes('edit.php')) && (adminEditTitle != 'Edit Scene')){
     url1 = undefined;
-} else { 
+}
+if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene'){
+    url = document.getElementsByName('scene_infographic')[0].value;
+}
+else { 
     let url1 =(JSON.stringify(svg_url));
     url = url1.substring(2, url1.length - 2);
 }
@@ -85,13 +98,11 @@ if (!is_mobile()) {
 process_child_obj();
 
 // Step 1: get [key, value] pairs
-// let sorted_child_entries = Object.entries(child_obj);
-
 
 let sorted_child_entries = {};
 
 //Allows for declaration of url1 variable for theme and for admin side preview mode
-if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
+if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')){
     sorted_child_entries = null;
 } else { 
     sorted_child_entries = Object.entries(child_obj);
@@ -111,7 +122,7 @@ if (window.location.href.includes('post.php') || window.location.href.includes('
 
 let allOrdersAreOne = null;
 
-if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+if (!window.location.href.includes('post.php')) {
     allOrdersAreOne = sorted_child_entries.every(([_, obj]) => parseInt(obj.modal_icon_order) === 1);
 }
     // Step 3: sort conditionally
@@ -134,14 +145,14 @@ try {
 // Step 4: extract the objects (no keys) to match your original format
 
 let sorted_child_objs = null;
-if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+if (!window.location.href.includes('post.php')) {
     sorted_child_objs = sorted_child_entries.map(([_, val]) => val);
 }
 
 
 // Step 5: build child_ids_helper for title-to-key mapping
 child_ids_helper = {};
-if (!window.location.href.includes('post.php') || !window.location.href.includes('edit.php')) {
+if (!window.location.href.includes('post.php')) {
     for (const [key, value] of sorted_child_entries) {
         child_ids_helper[value.title] = key;
     }
@@ -236,200 +247,6 @@ function process_child_obj(){
     // If you need it back as an object:
 }
 
-/**
- * Creates HTML elements that represent collapsible sections with links to additional scene information.
- * This function generates a list of scene information items (like text and URLs) and wraps them in an accordion component.
- * 
- * @param {string} info - The base name of the field in `scene_data` representing scene information. 
- *                        This value will be concatenated with a number (1 to 6) to create the full field name.
- * @param {string} iText - The base name of the field in `scene_data` representing the text information for the scene. 
- *                         This will be concatenated with a number (1 to 6) to fetch the corresponding text.
- * @param {string} iUrl - The base name of the field in `scene_data` representing the URL information for the scene. 
- *                        This will be concatenated with a number (1 to 6) to fetch the corresponding URL.
- * @param {object} scene_data - The dataset containing information about the scene, which includes fields for text and URL.
- * @param {string} type - The type identifier, used to generate unique HTML element IDs.
- * @param {string} name - The display name for the accordion section header.
- * 
- * @returns {HTMLElement} - Returns an accordion item element (generated via `createAccordionItem`) containing the list of scene links.
- *
- * This function is typically used in `make_title` to generate the "More Info" and "Images" sections for each scene. It iterates through 
- * a predefined set of numbered fields (from 1 to 6) in the `scene_data`, checking for non-empty text and URLs. If valid data is found, 
- * it creates a collapsible accordion section with the relevant links and displays them.
- */
-function make_scene_elements(info, iText, iUrl, scene_data, type, name){
-    let collapseListHTML = '<div><ul>';
-    for (let i = 1; i < 7; i++){
-                let info_field = info + i;
-                let info_text = iText + i;
-                let info_url = iUrl + i;
-
-                let scene_info_url;
-
-                if (iUrl == "scene_photo_url"){
-                    let photoLoc = "scene_photo_location" + i;
-                    if (scene_data[info_field][photoLoc] == "External"){
-                        scene_info_url = scene_data[info_field][info_url];
-                    } else {
-                        let internal = "scene_photo_internal" + i;
-                        scene_info_url = scene_data[info_field][internal];
-                    }
-                } else {
-                    scene_info_url = scene_data[info_field][info_url];
-                }
-
-                let scene_info_text = scene_data[info_field][info_text];
-                
-
-                if ((scene_info_text == '') && (scene_info_url == '')){
-                    continue;
-                }
-
-                let listItem = document.createElement('li');
-                let anchor = document.createElement('a');
-                anchor.setAttribute('href', 'test'); 
-                anchor.textContent = 'test';
-
-                listItem.appendChild(anchor);
-
-                collapseListHTML += `<li> <a href="${scene_info_url}" target="_blank">${scene_info_text}</a> </li>`;
-
-    }
-    collapseListHTML += '</ul></div>';
-    let acc = createAccordionItem(`${type}-item-1`, `${type}-header-1`, `${type}-collapse-1`, name, collapseListHTML);
-
-    return acc;
-}
-
-/**
- * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
- * @returns {String} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
- * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
- *  @throws {Error} - Throws an error if scene data not found or error fetching data
- */
-async function make_title() {
-    const protocol = window.location.protocol;
-    const host = window.location.host;
-
-    try {
-        scene_data = title_arr;
-
-        let scene_location = scene_data["scene_location"];
-        let title = scene_data['post_title'];
-
-        let titleDom = document.getElementById("title-container");
-        let titleh1 = document.createElement("h1");
-        titleh1.innerHTML = title;
-        titleDom.appendChild(titleh1);
-
-        if (is_mobile()) {
-            titleh1.setAttribute("style", "margin-top: 16px; justify-content: center;; align-content: center; display: flex;");
-        } else {}
-
-        let accgroup = document.createElement("div");
-
-    //     if (!is_mobile()) {
-    //   //      accgroup.setAttribute("style", "margin-top: 2%");
-    //     } else {
-    //         accgroup.setAttribute("style", "margin-top: 16px"); //max-width: 85%
-    //     }
-
-        accgroup.classList.add("accordion");
-
-        if (scene_data["scene_info_entries"]!=0){
-            let acc = make_scene_elements("scene_info", "scene_info_text", "scene_info_url", scene_data, "more-info", "More Info");
-            accgroup.appendChild(acc);
-        }
-        if (scene_data["scene_photo_entries"] != 0){
-            let acc1 = make_scene_elements("scene_photo", "scene_photo_text", "scene_photo_url", scene_data, "images", "Images");
-            accgroup.appendChild(acc1); 
-        }
-   
-        let row = document.createElement("div");
-        row.classList.add("row");
-
-        let col1 = document.createElement("div");
-        col1.appendChild(accgroup);
-
-        let col2 = document.createElement("div");
-
-        if (!is_mobile()) {
-
-
-            col1.classList.add("col-md-2");
-            col2.classList.add("col-md-10");
-
-            function adjustTitleContainerMargin() {
-                if (window.innerWidth < 512) {
-                    document.querySelector("#title-container").style.marginLeft = '0%';
-                } 
-            }
-            adjustTitleContainerMargin();
-            window.addEventListener('resize', adjustTitleContainerMargin);
-
-        } else {
-            col1.classList.add("col-md-2");
-            col2.classList.add("col-md-10");
-        }
-
-        if (is_mobile()){
-            col1.setAttribute("style", "max-width: 85%;");
-            col2.setAttribute("style", "padding-top: 5%; align-content: center; margin-left: 7%;");
-        }
-
-        let titleTagline = document.createElement("p");
-        titleTagline.innerHTML = scene_data.scene_tagline;
-        titleTagline.style.fontStyle = 'italic';
-        if (is_mobile()){
-            let item = createAccordionItem("taglineAccId", "taglineHeaderId", "taglineCollapseId", "Tagline", scene_data.scene_tagline);
-            accgroup.prepend(item);
-
-        } else {
-            col2.appendChild(titleTagline);
-        }
-        row.appendChild(col2);
-        row.appendChild(col1);
-
-        titleDom.append(row);
- 
-        let instance_overview_scene = scene_data['instance_overview_scene'];
-        if (instance_overview_scene == null){
-            instance_overview_scene = 'None';
-        }
-        // Google Tags
-        sceneLoaded(title, scene_data['post_ID'], instance_overview_scene, gaMeasurementID);
-        setupSceneMoreInfoLinkTracking(title, scene_data['post_ID']);
-        setupSceneImagesLinkTracking(title, scene_data['post_ID']);
-
-        return scene_data;
-
-    } catch (error) {
-        if (!window.location.href.includes('post.php')) {
-            console.error('If this fires you really screwed something up', error);
-        }
-    }
-}
-
-/**
- * Checks whether or not an icon has an associated mobile layer. Looks at mob_icons elementm
- * @returns {Boolean} `Boolean` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
- * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
- * * @throws {Error} - Throws an error if scene data not found or error fetching data
- */
-function has_mobile_layer(mob_icons, elemname){
-    if (mob_icons == null){
-        return false;
-    }
-    for (let i = 0; i < mob_icons.children.length; i++) {
-        let child = mob_icons.children[i];
-        let label = child.getAttribute('id');
-        let mobileElemName = elemname + "-mobile";
-        if (label === mobileElemName){
-            return true;
-        }             
-    }
-    return false;
-}
-
 //returns DOM elements for mobile layer
 /**
  * Retrieves the DOM element corresponding to a specific layer in a mobile SVG structure based on its label.
@@ -468,8 +285,6 @@ function remove_outer_div(){
     container.remove();
 
 }
-
-
 
 
 /**
@@ -719,6 +534,11 @@ async function handleHashNavigation() {
 async function init() {
 
     try {
+
+        // scene_data = title_arr;
+        // console.log('scene_data', scene_data);
+
+        console.log('visible_modals', visible_modals);
 
         sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
         thisInstance = sceneLoc;

@@ -83,6 +83,9 @@ class Admin {
 		if ($current_post_type == "scene" && ($hook_suffix == "post.php" || $hook_suffix == "post-new.php")){
 
 			wp_enqueue_script( "theme_script", get_template_directory_uri( __FILE__ ) . '/assets/js/script.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
+
+			// Enqueue figure-render.js
+			wp_enqueue_script('scene-render', dirname(plugin_dir_url(__FILE__)) . '/includes/scenes/js/scene-render.js',array(), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer'));
 			
 			wp_enqueue_script( "admin-scene", plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(  ), GRAPHIC_DATA_PLUGIN_VERSION, array('strategy'  => 'defer') );
 

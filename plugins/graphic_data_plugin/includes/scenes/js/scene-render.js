@@ -1,3 +1,113 @@
+/**
+ * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
+ * @returns {String} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
+ * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
+ *  @throws {Error} - Throws an error if scene data not found or error fetching data
+ */
+async function make_title() {
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+
+    try {
+        scene_data = title_arr;
+
+        let scene_location = scene_data["scene_location"];
+        let title = scene_data['post_title'];
+
+        let titleDom = document.getElementById("title-container");
+        let titleh1 = document.createElement("h1");
+        titleh1.innerHTML = title;
+        titleDom.appendChild(titleh1);
+
+        if (is_mobile()) {
+            titleh1.setAttribute("style", "margin-top: 16px; justify-content: center;; align-content: center; display: flex;");
+        } else {}
+
+        let accgroup = document.createElement("div");
+
+    //     if (!is_mobile()) {
+    //   //      accgroup.setAttribute("style", "margin-top: 2%");
+    //     } else {
+    //         accgroup.setAttribute("style", "margin-top: 16px"); //max-width: 85%
+    //     }
+
+        accgroup.classList.add("accordion");
+
+        if (scene_data["scene_info_entries"]!=0){
+            let acc = make_scene_elements("scene_info", "scene_info_text", "scene_info_url", scene_data, "more-info", "More Info");
+            accgroup.appendChild(acc);
+        }
+        if (scene_data["scene_photo_entries"] != 0){
+            let acc1 = make_scene_elements("scene_photo", "scene_photo_text", "scene_photo_url", scene_data, "images", "Images");
+            accgroup.appendChild(acc1); 
+        }
+   
+        let row = document.createElement("div");
+        row.classList.add("row");
+
+        let col1 = document.createElement("div");
+        col1.appendChild(accgroup);
+
+        let col2 = document.createElement("div");
+
+        if (!is_mobile()) {
+
+
+            col1.classList.add("col-md-2");
+            col2.classList.add("col-md-10");
+
+            function adjustTitleContainerMargin() {
+                if (window.innerWidth < 512) {
+                    document.querySelector("#title-container").style.marginLeft = '0%';
+                } 
+            }
+            adjustTitleContainerMargin();
+            window.addEventListener('resize', adjustTitleContainerMargin);
+
+        } else {
+            col1.classList.add("col-md-2");
+            col2.classList.add("col-md-10");
+        }
+
+        if (is_mobile()){
+            col1.setAttribute("style", "max-width: 85%;");
+            col2.setAttribute("style", "padding-top: 5%; align-content: center; margin-left: 7%;");
+        }
+
+        let titleTagline = document.createElement("p");
+        titleTagline.innerHTML = scene_data.scene_tagline;
+        titleTagline.style.fontStyle = 'italic';
+        if (is_mobile()){
+            let item = createAccordionItem("taglineAccId", "taglineHeaderId", "taglineCollapseId", "Tagline", scene_data.scene_tagline);
+            accgroup.prepend(item);
+
+        } else {
+            col2.appendChild(titleTagline);
+        }
+        row.appendChild(col2);
+        row.appendChild(col1);
+
+        titleDom.append(row);
+ 
+        let instance_overview_scene = scene_data['instance_overview_scene'];
+        if (instance_overview_scene == null){
+            instance_overview_scene = 'None';
+        }
+        // Google Tags
+        sceneLoaded(title, scene_data['post_ID'], instance_overview_scene, gaMeasurementID);
+        setupSceneMoreInfoLinkTracking(title, scene_data['post_ID']);
+        setupSceneImagesLinkTracking(title, scene_data['post_ID']);
+
+        return scene_data;
+
+    } catch (error) {
+        if (!window.location.href.includes('post.php')) {
+            console.error('If this fires you really screwed something up', error);
+        }
+    }
+}
+
+
 //helper function for creating mobile grid for loadSVG:
 /**
  * Creates a mobile grid layout for displaying icons in an SVG element.
@@ -635,9 +745,93 @@ function handleIconVisibility(svgElement, visible_modals) {
     });
 }
 
+/**
+ * Creates HTML elements that represent collapsible sections with links to additional scene information.
+ * This function generates a list of scene information items (like text and URLs) and wraps them in an accordion component.
+ * 
+ * @param {string} info - The base name of the field in `scene_data` representing scene information. 
+ *                        This value will be concatenated with a number (1 to 6) to create the full field name.
+ * @param {string} iText - The base name of the field in `scene_data` representing the text information for the scene. 
+ *                         This will be concatenated with a number (1 to 6) to fetch the corresponding text.
+ * @param {string} iUrl - The base name of the field in `scene_data` representing the URL information for the scene. 
+ *                        This will be concatenated with a number (1 to 6) to fetch the corresponding URL.
+ * @param {object} scene_data - The dataset containing information about the scene, which includes fields for text and URL.
+ * @param {string} type - The type identifier, used to generate unique HTML element IDs.
+ * @param {string} name - The display name for the accordion section header.
+ * 
+ * @returns {HTMLElement} - Returns an accordion item element (generated via `createAccordionItem`) containing the list of scene links.
+ *
+ * This function is typically used in `make_title` to generate the "More Info" and "Images" sections for each scene. It iterates through 
+ * a predefined set of numbered fields (from 1 to 6) in the `scene_data`, checking for non-empty text and URLs. If valid data is found, 
+ * it creates a collapsible accordion section with the relevant links and displays them.
+ */
+function make_scene_elements(info, iText, iUrl, scene_data, type, name){
+    let collapseListHTML = '<div><ul>';
+    for (let i = 1; i < 7; i++){
+                let info_field = info + i;
+                let info_text = iText + i;
+                let info_url = iUrl + i;
+
+                let scene_info_url;
+
+                if (iUrl == "scene_photo_url"){
+                    let photoLoc = "scene_photo_location" + i;
+                    if (scene_data[info_field][photoLoc] == "External"){
+                        scene_info_url = scene_data[info_field][info_url];
+                    } else {
+                        let internal = "scene_photo_internal" + i;
+                        scene_info_url = scene_data[info_field][internal];
+                    }
+                } else {
+                    scene_info_url = scene_data[info_field][info_url];
+                }
+
+                let scene_info_text = scene_data[info_field][info_text];
+                
+
+                if ((scene_info_text == '') && (scene_info_url == '')){
+                    continue;
+                }
+
+                let listItem = document.createElement('li');
+                let anchor = document.createElement('a');
+                anchor.setAttribute('href', 'test'); 
+                anchor.textContent = 'test';
+
+                listItem.appendChild(anchor);
+
+                collapseListHTML += `<li> <a href="${scene_info_url}" target="_blank">${scene_info_text}</a> </li>`;
+
+    }
+    collapseListHTML += '</ul></div>';
+    let acc = createAccordionItem(`${type}-item-1`, `${type}-header-1`, `${type}-collapse-1`, name, collapseListHTML);
+
+    return acc;
+}
+
+/**
+ * Checks whether or not an icon has an associated mobile layer. Looks at mob_icons elementm
+ * @returns {Boolean} `Boolean` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
+ * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
+ * * @throws {Error} - Throws an error if scene data not found or error fetching data
+ */
+function has_mobile_layer(mob_icons, elemname){
+    if (mob_icons == null){
+        return false;
+    }
+    for (let i = 0; i < mob_icons.children.length; i++) {
+        let child = mob_icons.children[i];
+        let label = child.getAttribute('id');
+        let mobileElemName = elemname + "-mobile";
+        if (label === mobileElemName){
+            return true;
+        }             
+    }
+    return false;
+}
+
 
 // Below is the function that will be used to include SVGs within each scene
-
 /**
  * Accesses the SVG image for the scene, checks type of device, renders appropriate scene layout by calling other helper functions. 
  * all of the top-level helper functions that render different elements of the DOM are called within here. 
@@ -689,16 +883,153 @@ async function loadSVG(url, containerId) {
         // Assign (don’t redeclare)
         svgElement = svgDoc.documentElement;
         svgElement.setAttribute("id", "svg-elem");
-        console.log('svgElement', svgElement);
+        //console.log('svgElement', svgElement);
 
         const container = document.getElementById(containerId);
-        console.log('container', container);
+        //console.log('container', container);
         container.appendChild(svgElement);
+
+
+        //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
+        if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene') {
+
+            const modalHeader = document.querySelector('.modal-header');
+            if (modalHeader) {
+                const textNode = document.createElement('span');
+                textNode.textContent = 'This preview is intended to help validate that the SVG and the icons inside of it are formatted correctly. It is not intended to be a full replication of the way a scene functions when published.';
+                textNode.style.fontSize = '.65rem';
+                textNode.style.textAlign = 'center';
+                textNode.style.color = "red";
+                textNode.style.paddingLeft = "5%";
+                modalHeader.prepend(textNode); // or append()
+            }
+            modalHeader.style.borderBottom = "none";
+
+
+            const modalWindow = document.querySelector('.modal-dialog.modal-xl.modal-dialog-scrollable');
+            modalWindow.style.paddingTop = "2%";
+
+
+            const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
+            visible_modals = iconsLayer
+            ? Array.from(iconsLayer.children)
+                .filter(el => el.tagName.toLowerCase() === "g")
+                .map(el => el.id)
+            : [];
+
+
+            svgElement = document.getElementById("svg-elem");
+            svgElement.style.width = "100%";
+            svgElement.style.height = "auto";
+
+
+            sceneRow = document.getElementById("scene-row");
+            sceneRow.style.marginTop = "20px";
+
+
+            scene_text_toggle = title_arr['scene_text_toggle']; //"toggle_on";
+            scene_full_screen_button = title_arr['scene_full_screen_button'];//"yes";
+            scene_toc_style = "list";
+
+
+            scene_default_hover_color = title_arr['scene_hover_color'];
+            scene_hover_text_color = title_arr['scene_hover_text_color']; 
+            //scene_default_hover_color = "#FFFF00"; // Gold
+
+
+            function toWpDateTimeLocal(d = new Date()) {
+                const pad = (n) => String(n).padStart(2, "0");
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            }
+
+            function buildVisibleModalsObject(visible_modals, opts = {}) {
+                const now = new Date();
+                const nowStr = toWpDateTimeLocal(now);
+
+                const sceneId = opts.sceneId ?? 0;
+                const postAuthor = String(opts.postAuthor ?? "1");
+
+                // Optional: if you want GMT strings too (WP-style)
+                const nowGmtStr = opts.useGmt
+                    ? toWpDateTimeLocal(new Date(now.getTime() + now.getTimezoneOffset() * 60000))
+                    : nowStr;
+
+                return (visible_modals || []).map((name, idx) => ({
+                    title: name,
+                    modal_id: 0,
+                    external_url: "",
+                    modal: true,
+                    scene: {
+                    ID: sceneId,
+                    post_author: postAuthor,
+                    post_date: nowStr,
+                    post_date_gmt: nowGmtStr,
+                    post_content: "",
+                    post_title: "",
+                    post_excerpt: "",
+                    post_status: "publish",
+                    comment_status: "closed",
+                    ping_status: "closed",
+                    post_password: "",
+                    post_name: "",
+                    to_ping: "",
+                    pinged: "",
+                    post_modified: nowStr,
+                    post_modified_gmt: nowGmtStr,
+                    post_content_filtered: "",
+                    post_parent: 0,
+                    guid: "",
+                    menu_order: 0,
+                    post_type: "scene",
+                    post_mime_type: "",
+                    comment_count: "0",
+                    filter: "raw",
+                    },
+                    section_name: "1",
+                    original_name: name,
+                    modal_icon_order: idx + 1, // sequential order
+                }));
+            }
+
+            sorted_child_objs = buildVisibleModalsObject(visible_modals, {
+                sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
+                postAuthor: "1",
+                useGmt: true, // set false if you want local time for both
+            });
+
+
+            // Initialize an array to hold the sublayers
+            let sublayers = [];
+            // Iterate over the child elements of the "icons" layer
+            iconsLayer.childNodes.forEach(node => {
+                // Check if the node is an element and push its id to the sublayers array
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                sublayers.push(node.id);
+                }
+            });
+            sublayers = sublayers.sort();
+
+            // Define hover colors
+            sublayers.forEach (listElement => {
+                let iconLayer = svgElement.getElementById(listElement);
+
+                // Select all child elements 
+                let subElements = iconLayer.querySelectorAll("*");
+            
+                // Loop through each sub-element and update its stroke-width and color
+                subElements.forEach(element => {
+                    element.style.strokeWidth = "2";
+                    element.style.stroke = scene_default_hover_color;
+                });
+            })
+
+        }
+        //console.log('sorted_child_objs', sorted_child_objs);
       
         // checking if user device is touchscreen
         if (is_touchscreen()){
             if (is_mobile() && (deviceDetector.device != 'tablet')){ //a phone and not a tablet; screen will be its own UI here
-
+                //console.log('Mobile device detected');
                 //smaller image preview here for mobile
                 let fullImgCont = document.querySelector("#mobile-view-image");
                 
@@ -780,6 +1111,7 @@ async function loadSVG(url, containerId) {
         }
         else{ //device is a PC
             //hide mobile icons
+            //console.log('PC detected');
             window.addEventListener('load', function() {
                 let mob_icons = document.querySelector("#mobile");
                 if (mob_icons) {
@@ -794,7 +1126,10 @@ async function loadSVG(url, containerId) {
             }
             
             container.appendChild(svgElement);
-            highlight_icons();
+
+            if (!window.location.href.includes('post.php') ) {
+                highlight_icons();
+            }
  
             toggle_text();
             full_screen_button('svg1');
@@ -1573,6 +1908,7 @@ function list_toc(){
         let link = document.createElement("a");
         let modal = obj['modal'];
         let title_formatted = title.replace(/\s+/g, '_')
+        
     
         if (modal) {
             link.setAttribute("href", `#`); //just added
@@ -1588,14 +1924,17 @@ function list_toc(){
                     render_modal(key);
                 };
             })(key));
-    
-            let closeButton = document.getElementById("close");
-            closeButton.addEventListener('click', function() {
-                let modal = document.getElementById("myModal");
+            
+            //only allow the modal close button event listener if the user is on theme. 
+            if (!window.location.href.includes('post.php')) {
+                let closeButton = document.getElementById("close");
+                closeButton.addEventListener('click', function() {
+                    let modal = document.getElementById("myModal");
 
-                modal.style.display = "none";
-                history.pushState("", document.title, window.location.pathname + window.location.search);
-            });
+                    modal.style.display = "none";
+                    history.pushState("", document.title, window.location.pathname + window.location.search);
+                });
+            }
             window.onclick = function(event) {
                 if (event.target === modal) { 
                     modal.style.display = "none";
@@ -1608,30 +1947,32 @@ function list_toc(){
             link.innerHTML = title;
             item.appendChild(link);
         }
-    
-        item.addEventListener('mouseover', ((key) => {
-            return function() {
-                let svg_elem = document.querySelector('g[id="' + key + '"]');
+        
+        if (!window.location.href.includes('post.php')) {
+            item.addEventListener('mouseover', ((key) => {
+                return function() {
+                    let svg_elem = document.querySelector('g[id="' + key + '"]');
 
-                let subElements = svg_elem.querySelectorAll("*");
-                subElements.forEach(subElement => {
-                    subElement.style.stroke = scene_default_hover_color;
-                    subElement.style.strokeWidth = "3";
-                });
-            };
-        })(key));
+                    let subElements = svg_elem.querySelectorAll("*");
+                    subElements.forEach(subElement => {
+                        subElement.style.stroke = scene_default_hover_color;
+                        subElement.style.strokeWidth = "3";
+                    });
+                };
+            })(key));
 
-        item.addEventListener('mouseout', ((key) => {
-            return function() {
-                let svg_elem = document.querySelector('g[id="' + key + '"]');
+            item.addEventListener('mouseout', ((key) => {
+                return function() {
+                    let svg_elem = document.querySelector('g[id="' + key + '"]');
 
-                let subElements = svg_elem.querySelectorAll("*");
-                subElements.forEach(subElement => {
-                    subElement.style.stroke = "";
-                    subElement.style.strokeWidth = "";
-                });
-            };
-        })(key));
+                    let subElements = svg_elem.querySelectorAll("*");
+                    subElements.forEach(subElement => {
+                        subElement.style.stroke = "";
+                        subElement.style.strokeWidth = "";
+                    });
+                };
+            })(key));
+        }
 
         toc_group.appendChild(item);
     }
