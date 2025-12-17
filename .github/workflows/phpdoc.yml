@@ -29,7 +29,7 @@ jobs:
 
       - name: Install phpDocumentor
         run: |
-          composer require --no-interaction --dev phpdocumentor/phpdocumentor:^3.2
+          composer require --no-interaction --dev phpdocumentor/phpdocumentor:3.3.1
 
       - name: Ensure output directory
         run: |
