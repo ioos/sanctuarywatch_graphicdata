@@ -14,8 +14,8 @@
  * Plugin Name:       Graphic Data Plugin
  * Plugin URI:        hhttps://github.com/ioos/sanctuarywatch_graphicdata
  * Description:       This plugin customizes a Wordpress installation for the requirements of the Graphic Data framework.
- * Version:           1.1.8
- * Author:            Sanctuary Watch Team
+ * Version:           1.2.0
+ * Author:            Graphic Data Team
  * Author URI:        https://www.noaa.gov
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
