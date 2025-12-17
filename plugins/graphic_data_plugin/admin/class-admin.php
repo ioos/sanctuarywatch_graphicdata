@@ -414,7 +414,7 @@ class Admin {
 		// Get the post and convert time to local timezone
 		if ($post && $post->post_date) {
 			// Convert to 12-hour format with AM/PM
-			$local_time = get_date_from_gmt($post->post_date, 'F j, Y @ g:i A');
+			$local_time = get_post_time('F j, Y @ g:i A', false, $post);
 			
 			// Get the user who published the post
 			$author = get_userdata($post->post_author);
@@ -446,7 +446,7 @@ class Admin {
 			
 			$is_post_updated = get_post_modified_time('U', false, $post->ID) > get_post_time('U', false, $post->ID);
 
-			$last_modified_user_id = get_post_meta($post->ID, '_last_modified_by', true);
+			$last_modified_user_id = get_post_meta($post->ID, '_edit_last', true);
 			if ($last_modified_user_id == '' || $last_modified_user_id == false) {
 				$is_post_updated = false;
 			}

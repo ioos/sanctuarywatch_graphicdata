@@ -1014,7 +1014,7 @@ class Modal {
             $last_modified_user = get_userdata($last_modified_user_id);
             $last_modified_name = $last_modified_user -> first_name . " " . $last_modified_user -> last_name; 
 
-            echo "Last updated at " . $last_modified_time . " Pacific Time on " . $last_modified_date . " by " . $last_modified_name;
+            echo "Last updated at " . $last_modified_time . " on " . $last_modified_date . " by " . $last_modified_name;
         }
     }
 
