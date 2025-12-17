@@ -62,7 +62,11 @@ class Create_SVG {
 
             <div class="create-svg-container">
                 <div class="create-svg-intro">
-                    <p style="font-size:larger">Introductory text to be added later.</p>
+                    <p style="font-size:larger">This tool allows you to create a SVG that is formatted correctly to work within Graphic Data as a clickable image within a Scene. There are several tricky steps involved in creating a Graphic-Data-compliant SVG and the point of this tool is to remove the key pain points in SVG generation. The full details of how SVGs must be formatted for Graphic Data can be found in our <a target="_blank" href="https://ioos.github.io/sanctuarywatch_graphicdata/creating_svg_files/">documentation</a>.</p>
+
+                    <p style="font-size:larger">The basic idea of how to use this tool is as follows.<ol style="font-size:larger"><li>Use the controls below to create and download a SVG which has the icon structure that you want. You can control the number and names of the icons, as well as whether the icons each have separate mobile versions. This SVG will have the correct layer organization to work with Graphic Data.</li><li>Import the SVG into a vector graphics editor. SVGs created by this tool have been tested to work with two editors: Illustrator and Inkscape.</li><li>In the editor, keep the layer organization of the SVG, but swap out all artwork elements with whatever you would like.</li></ol></p>
+
+                    <p style="font-size:larger">There are a few rules that you will need to follow to use this tool.<ol style="font-size:larger"><li>The SVG Title cannot be left blank.</li><li>Icon labels cannot be left blank.</li><li>Icon labels cannot contain spaces or special characters, except for dashes (-) and underscores(_).</li><li>Within a single SVG, icon labels must be unique.</li></ol></p>
                 </div>
 
                 <div class="form-section">

@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const rangeInput = document.getElementById('svgIconNumber');
     const rangeValue = document.getElementById('svgIconNumberValue');
     const rangeIconNumber = document.getElementById('svgIconNumber');
-
+    console.log("hello");
     rangeIconNumber.addEventListener('change', function() {
         // delete existing field container if it exists
         let fieldsContainer = document.getElementById('fieldsContainer');
@@ -70,7 +70,22 @@ document.addEventListener('DOMContentLoaded', function() {
         rangeValue.textContent = this.value;
     });
 
-    document.getElementById('generateSVG').addEventListener('click', function() {
+    // Helper function to show errors
+    function showError(message) {
+        let errorDiv = document.createElement('div');
+        errorDiv.className = 'svgValidationError notice notice-error is-dismissible';
+        errorDiv.innerHTML = '<p><strong>Error:</strong><br>' + message + '</p>';
+
+        let wrapDiv = document.querySelector('.wrap');
+        if (wrapDiv) {
+            wrapDiv.insertBefore(errorDiv, wrapDiv.firstChild);
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Form validation
+    function validateForm() {
         // Remove any existing error messages
         const existingError = document.getElementsByClassName('svgValidationError');
         if (existingError.length > 0) {
@@ -78,20 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         let fieldError = false;
-
-        // Helper function to show errors
-        function showError(message) {
-            let errorDiv = document.createElement('div');
-            errorDiv.className = 'svgValidationError notice notice-error is-dismissible';
-            errorDiv.innerHTML = '<p><strong>Error:</strong><br>' + message + '</p>';
-
-            let wrapDiv = document.querySelector('.wrap');
-            if (wrapDiv) {
-                wrapDiv.insertBefore(errorDiv, wrapDiv.firstChild);
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
 
         // Check if SVG Title field is blank
         const svgTitle = document.getElementById('svgTitle');
@@ -103,18 +104,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validate iconLabel fields
         const iconNumber = parseInt(document.getElementById('svgIconNumber').value);
+        let iconLabelField = null;
+        let labelValue = null;
         if (iconNumber > 0) {
             let iconLabels = [];
             let validationErrors = [];
 
             for (let i = 1; i <= iconNumber; i++) {
-                let iconLabelField = document.getElementById('iconLabel' + i);
+                iconLabelField = document.getElementById('iconLabel' + i);
 
                 if (!iconLabelField) {
                     continue;
                 }
 
-                let labelValue = iconLabelField.value.trim();
+                labelValue = iconLabelField.value.trim();
 
                 // Validation 1: No blanks
                 if (labelValue === '') {
@@ -159,26 +162,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 fieldError = true;
             }
         }
+        return fieldError;
+    }
+ 
+    document.getElementById('generateSVG').addEventListener('click', function() {
 
+        const fieldError = validateForm();
         if (fieldError == true){
             return;
         }
-
-        // Prompt user for filename with timestamp as default
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        const defaultFilename = 'location-' + timestamp;
-        let filename = prompt('Enter filename for SVG (without extension):', defaultFilename);
-
-        // If user cancels, exit
-        if (filename === null || filename.trim() === '') {
-            return;
-        }
-
-        // Clean filename (remove invalid characters)
-        filename = filename.trim().replace(/[^a-z0-9_-]/gi, '_');
-
-        // Load SVG template file
-        let svgContent = '';
 
         // Fetch the SVG template
         fetch(ajaxurl.replace('admin-ajax.php', '') + '../wp-content/plugins/graphic_data_plugin/admin/images/create_svg_template_illustrator.svg')
@@ -221,171 +213,91 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Check if svgText checkbox is unchecked, and if so, delete the text group
                 const svgTextCheckbox = document.getElementById('svgText');
                 if (svgTextCheckbox && !svgTextCheckbox.checked) {
-                    var textGroup = svgDoc.getElementById('text');
-                    if (textGroup && textGroup.parentNode) {
-                        textGroup.parentNode.removeChild(textGroup);
-                    }
+                    const textGroup = svgDoc.getElementById('text');
+                    textGroup.parentNode.removeChild(textGroup);
                 }
 
-                // Get the svgIconNumber value and remove icons that exceed this number
+                // Get the svgIconNumber value and remove icons (regular and mobile) that exceed this number
                 const svgIconNumber = parseInt(document.getElementById('svgIconNumber').value);
 
-                
-                if (!isNaN(svgIconNumber)) {
-
-
-                    var textElement = titleGroup.querySelector('#title-text');
-
-                    for (let q = 12; q < svgIconNumber; q--) {
-
-                    }
-
-                    var allGroups = svgDoc.getElementsByTagName('g');
-
-                    // Convert to array to safely iterate while removing elements
-                    var groupsArray = Array.from(allGroups);
-
-                    groupsArray.forEach(function(group) {
-                        // Try both standard and namespaced attribute access
-                        var label = group.getAttribute('inkscape:label') ||
-                                   group.getAttributeNS('http://www.inkscape.org/namespaces/inkscape', 'label');
-
-                        if (label) {
-                            // Check if label matches the pattern icon{number} or icon{number}-mobile
-                            var match = label.match(/^icon(\d+)(?:-mobile)?$/);
-                            if (match) {
-                                var iconNumber = parseInt(match[1]);
-
-                                // Remove the group if its number exceeds svgIconNumber
-                                if (iconNumber > svgIconNumber) {
-                                    if (group.parentNode) {
-                                        group.parentNode.removeChild(group);
-                                    }
-                                }
-                            }
+                let targetID = "";
+                let targetElement = null;
+                for (let q = 12; q > svgIconNumber; q--) {
+                    for (let k = 0; k < 2; k++) {
+                        targetID = "icon" + q;
+                        if (k == 1) {
+                            targetID = targetID + "-mobile";
                         }
-                    });
+                        targetElement = svgDoc.getElementById(targetID);
+                        targetElement.parentNode.removeChild(targetElement);
+                    }
                 }
-        
-                for (let i = 1; i <= svgIconNumber; i++) {
 
-                    let includeIconMobile = document.getElementById('iconMobile' + i).checked;
+                // Remove any additional mobile icons, based on user selection, that are not needed
+                for (let q = 1; q <= svgIconNumber; q++) {
+                    let includeIconMobile = document.getElementById('iconMobile' + q).checked;
                     if (includeIconMobile == false) {
-                        // Find the mobile layer
-                        var mobileLayer = svgDoc.getElementById('mobile');
-                        if (mobileLayer) {
-                            // Find all g elements within the mobile layer
-                            var mobileGroups = mobileLayer.getElementsByTagName('g');
-                            var mobileGroupsArray = Array.from(mobileGroups);
+                        targetID = "icon" + q + "-mobile";
+                        targetElement = svgDoc.getElementById(targetID);
+                        targetElement.parentNode.removeChild(targetElement);
+                    }
+                }
 
-                            mobileGroupsArray.forEach(function(group) {
-                                // Check both standard and namespaced attribute access
-                                var label = group.getAttribute('inkscape:label') ||
-                                           group.getAttributeNS('http://www.inkscape.org/namespaces/inkscape', 'label');
+                // Update labels and IDs for icons in both regular and mobile layers
+                let tspanElements = null;
+                let targetElementLabel = null;
+                let newLabelValue = null;
+                for (let q = 1; q <= svgIconNumber; q++) {
+                    for (let k = 0; k < 2; k++) {
+                        targetID = "icon" + q;
+                        if (k == 1) {
+                            targetID = targetID + "-mobile";
+                        }
+                        iconLabelField = document.getElementById('iconLabel' + q);
+                        labelValue = iconLabelField.value.trim();
+                        targetElement = svgDoc.getElementById(targetID);
 
-                                // If label matches icon{i}-mobile, remove it
-                                if (label === 'icon' + i + '-mobile') {
-                                    if (group.parentNode) {
-                                        group.parentNode.removeChild(group);
-                                    }
-                                }
+                        // we need this if statement as some mobile icons may have been removed already
+                        if (targetElement) {
+                            targetElement.setAttribute('id', labelValue);
+
+                            targetID = "icon" + q + "-text";
+                            if (k == 1) {
+                                targetID = "icon" + q + "-mobile-text";
+                            }
+                            targetElementLabel = svgDoc.getElementById(targetID);
+                            newLabelValue = labelValue + "-text";
+                            if (k==1) {
+                                newLabelValue = labelValue + "-mobile-text";
+                            }
+                            targetElementLabel.setAttribute('id', newLabelValue);
+                            tspanElements = targetElementLabel.getElementsByTagName('tspan');
+                            Array.from(tspanElements).forEach(function(tspanElement) {
+                                tspanElement.textContent = labelValue;
                             });
                         }
                     }
                 }
 
-                // Update inkscape:label values for icons in both icons and mobile layers
-                for (let i = 1; i <= svgIconNumber; i++) {
-                    const iconLabelField = document.getElementById('iconLabel' + i);
-                    if (!iconLabelField) {
-                        continue;
-                    }
+                // Prompt user for filename with timestamp as default
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                const defaultFilename = 'location-' + timestamp;
+                let filename = prompt('Enter filename for SVG (without extension):', defaultFilename);
 
-                    const newLabel = iconLabelField.value.trim();
-                    if (newLabel === '') {
-                        continue;
-                    }
-
-                    // Update labels in both icons and mobile layers
-                    const layerIds = ['icons', 'mobile'];
-                    layerIds.forEach(function(layerId) {
-                        const layer = svgDoc.getElementById(layerId);
-                        if (!layer) {
-                            return;
-                        }
-
-                        // Determine the target label pattern based on layer
-                        const targetLabel = layerId === 'mobile' ? 'icon' + i + '-mobile' : 'icon' + i;
-
-                        // Find all g elements within this layer
-                        const groups = layer.getElementsByTagName('g');
-                        const groupsArray = Array.from(groups);
-
-                        groupsArray.forEach(function(group) {
-                            // Check both standard and namespaced attribute access
-                            const label = group.getAttribute('inkscape:label') ||
-                                         group.getAttributeNS('http://www.inkscape.org/namespaces/inkscape', 'label');
-
-                            // If label matches the target label, update it
-                            if (label === targetLabel) {
-                                // Update using both methods to ensure compatibility
-                                group.setAttribute('inkscape:label', newLabel);
-                                group.setAttributeNS('http://www.inkscape.org/namespaces/inkscape', 'label', newLabel);
-
-                                // Update the id attribute to match the new label
-                                group.setAttribute('id', newLabel);
-
-                                // Find and update the text sublayer within this group
-                                const subGroups = group.getElementsByTagName('g');
-                                const subGroupsArray = Array.from(subGroups);
-
-                                subGroupsArray.forEach(function(subGroup) {
-                                    const subLabel = subGroup.getAttribute('inkscape:label') ||
-                                                    subGroup.getAttributeNS('http://www.inkscape.org/namespaces/inkscape', 'label');
-
-                                    // If this is the text sublayer, update its text content
-                                    if (subLabel === 'text') {
-                                        // Find all text elements within this sublayer and update their content
-                                        const textElements = subGroup.getElementsByTagName('text');
-                                        Array.from(textElements).forEach(function(textElement) {
-                                            textElement.textContent = newLabel;
-                                        });
-
-                                        // Also update tspan elements if they exist
-                                        const tspanElements = subGroup.getElementsByTagName('tspan');
-                                        Array.from(tspanElements).forEach(function(tspanElement) {
-                                            tspanElement.textContent = newLabel;
-                                        });
-                                    }
-                                });
-
-                                // Also check for direct text elements with inkscape:label="text"
-                                const textElements = group.getElementsByTagName('text');
-                                Array.from(textElements).forEach(function(textElement) {
-                                    const textLabel = textElement.getAttribute('inkscape:label') ||
-                                                     textElement.getAttributeNS('http://www.inkscape.org/namespaces/inkscape', 'label');
-
-                                    if (textLabel === 'text') {
-                                        textElement.textContent = newLabel;
-
-                                        // Also update tspan elements within this text element
-                                        const tspanElements = textElement.getElementsByTagName('tspan');
-                                        Array.from(tspanElements).forEach(function(tspanElement) {
-                                            tspanElement.textContent = newLabel;
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    });
+                // If user cancels, exit
+                if (filename === null || filename.trim() === '') {
+                    return;
                 }
 
+                // Clean filename (remove invalid characters)
+                filename = filename.trim().replace(/[^a-z0-9_-]/gi, '_');
+
                 // Serialize the modified SVG back to string
-                var serializer = new XMLSerializer();
-                svgContent = serializer.serializeToString(svgDoc);
+                let serializer = new XMLSerializer();
+                const svgContent = serializer.serializeToString(svgDoc);
 
                 // Create a Blob from the SVG content
-                var blob = new Blob([svgContent], { type: 'image/svg+xml' });
+                let blob = new Blob([svgContent], { type: 'image/svg+xml' });
 
                 // Create a download link
                 var url = URL.createObjectURL(blob);
@@ -407,4 +319,133 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
     });
+
+    document.getElementById('previewSVG').addEventListener('click', function() {
+        
+        const previewElement = document.getElementById('preview');
+        previewElement.innerHTML = ''; // Clear previous preview
+        
+        const fieldError = validateForm();
+        if (fieldError == true){
+            return;
+        }
+
+        // Fetch the SVG template
+        fetch(ajaxurl.replace('admin-ajax.php', '') + '../wp-content/plugins/graphic_data_plugin/admin/images/create_svg_template_illustrator.svg')
+            .then(response => response.text())
+            .then(templateContent => {
+                // Parse the SVG template as DOM
+                let parser = new DOMParser();
+                let svgDoc = parser.parseFromString(templateContent, 'image/svg+xml');
+
+                // Get the title group and update its text content
+                let titleGroup = svgDoc.getElementById('title');
+                if (titleGroup) {
+                    var textElement = titleGroup.querySelector('#title-text');
+                    var rectElement = titleGroup.querySelector('#title-text-background');
+
+                    if (textElement) {
+                        // Get the SVG title from the input field
+                        var titleText = document.getElementById('svgTitle').value;
+                        // Replace the text content while preserving tspan structure if needed
+                        textElement.textContent = titleText;
+
+                        // Calculate text width (approximate)
+                        // Using rough estimate: each character is about 14.5px at font-size 24.48px
+                        var fontSize = 24.48;
+                        var charWidth = fontSize * 0.6; // Approximate character width for bold Arial
+                        var textWidth = titleText.length * charWidth;
+
+                        // Add padding on both sides
+                        var padding = 40;
+                        var newRectWidth = textWidth + (padding * 2);
+
+                        // Update rect width if the new width is larger than current width
+                        var currentWidth = parseFloat(rectElement.getAttribute('width'));
+                        if (newRectWidth > currentWidth) {
+                            rectElement.setAttribute('width', newRectWidth);
+                        }
+                    }
+                }
+
+                // Check if svgText checkbox is unchecked, and if so, delete the text group
+                const svgTextCheckbox = document.getElementById('svgText');
+                if (svgTextCheckbox && !svgTextCheckbox.checked) {
+                    const textGroup = svgDoc.getElementById('text');
+                    textGroup.parentNode.removeChild(textGroup);
+                }
+
+                // Get the svgIconNumber value and remove icons (regular and mobile) that exceed this number
+                const svgIconNumber = parseInt(document.getElementById('svgIconNumber').value);
+
+                let targetID = "";
+                let targetElement = null;
+                for (let q = 12; q > svgIconNumber; q--) {
+                    for (let k = 0; k < 2; k++) {
+                        targetID = "icon" + q;
+                        if (k == 1) {
+                            targetID = targetID + "-mobile";
+                        }
+                        targetElement = svgDoc.getElementById(targetID);
+                        targetElement.parentNode.removeChild(targetElement);
+                    }
+                }
+
+                // Remove any additional mobile icons, based on user selection, that are not needed
+                for (let q = 1; q <= svgIconNumber; q++) {
+                    let includeIconMobile = document.getElementById('iconMobile' + q).checked;
+                    if (includeIconMobile == false) {
+                        targetID = "icon" + q + "-mobile";
+                        targetElement = svgDoc.getElementById(targetID);
+                        targetElement.parentNode.removeChild(targetElement);
+                    }
+                }
+
+                // Update labels and IDs for icons in both regular and mobile layers
+                let tspanElements = null;
+                let targetElementLabel = null;
+                let newLabelValue = null;
+                for (let q = 1; q <= svgIconNumber; q++) {
+                    for (let k = 0; k < 2; k++) {
+                        targetID = "icon" + q;
+                        if (k == 1) {
+                            targetID = targetID + "-mobile";
+                        }
+                        iconLabelField = document.getElementById('iconLabel' + q);
+                        labelValue = iconLabelField.value.trim();
+                        targetElement = svgDoc.getElementById(targetID);
+
+                        // we need this if statement as some mobile icons may have been removed already
+                        if (targetElement) {
+                            targetElement.setAttribute('id', labelValue);
+
+                            targetID = "icon" + q + "-text";
+                            if (k == 1) {
+                                targetID = "icon" + q + "-mobile-text";
+                            }
+                            targetElementLabel = svgDoc.getElementById(targetID);
+                            newLabelValue = labelValue + "-text";
+                            if (k==1) {
+                                newLabelValue = labelValue + "-mobile-text";
+                            }
+                            targetElementLabel.setAttribute('id', newLabelValue);
+                            tspanElements = targetElementLabel.getElementsByTagName('tspan');
+                            Array.from(tspanElements).forEach(function(tspanElement) {
+                                tspanElement.textContent = labelValue;
+                            });
+                        }
+                    }
+                }
+
+
+                previewElement.appendChild(svgDoc.documentElement);
+            
+            })
+            .catch(error => {
+                console.error('Error loading SVG template:', error);
+                alert('Error loading SVG template. Please check the console for details.');
+            });
+
+    });
+
 });
