@@ -737,13 +737,19 @@ class Customizer_Settings {
 
             /* STILL THEME COLOR 2: Override arrow with inline SVG  */
             .accordion-button::after {
-                content: "";
-                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='<?php echo $color2_encoded; ?>' d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E") !important;
+                content: "▼"; 
+                font-size: 1rem; 
+                /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='<?php echo $color2_encoded; ?>' d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E") !important;
                 background-repeat: no-repeat;
-                background-size: 1.25rem;
+                background-size: 1.25rem; */
                 width: 1.25rem;
                 height: 1.25rem;
                 margin-left: auto;
+            }
+
+            /* Only when text is exactly “More Info” */
+            button.accordion-button[data-text!="More Info"]::after {
+                /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E"); */
             }
 
             .accordion-button:not(.collapsed)::after {

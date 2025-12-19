@@ -1654,13 +1654,11 @@ function toc_sections() {
         button.setAttribute("aria-controls", `toccollapse${i}`);
 
 
-        const title_test = scene_data?.[`scene_section${sections[i]}`]?.[`scene_section_title${i + 1}`];
-        if (title_test) {
-            console.log("Title found:", title_test);
-        } else {
-            const title_test = "None";
+        let title_test = scene_data?.[`scene_section${sections[i]}`]?.[`scene_section_title${i + 1}`];
+        if (!title_test) {
+            title_test = "None";
             console.log("Title not found:", title_test);
-        }
+        } 
 
 
         if (sections[i]!="None" && title_test != "None"){
@@ -1677,48 +1675,52 @@ function toc_sections() {
                 button.innerHTML = scene_section_title;
                 let color =  scene_default_hover_color;
                 button.style.backgroundColor = hexToRgba(color, 0.2);
-            } else {}
+            } else {
+            }
         }
 
-        if (sectionNoneCount > 1 && sections[i]=="None" || title_test == "None"){
+        if (sectionNoneCount > 1 && (sections[i]=="None" || title_test == "None")){
             button.innerHTML = 'No Section';
             let color = scene_default_hover_color;
             button.style.backgroundColor = hexToRgba(color, 0.2);
-
         } else {
-
+            console.log('Test 2');
         }
+
+
+        if (title_test != "None"){
         
-        let arrowSpan = document.createElement("span");
-        arrowSpan.classList.add("arrow");
-        button.appendChild(arrowSpan);
-     
-        if (sections[i].length > 20){
-            arrowSpan.style.marginRight = '15%';
-        } else {
-            arrowSpan.style.marginRight = '63%';
+            let arrowSpan = document.createElement("span");
+            arrowSpan.classList.add("arrow");
+            button.appendChild(arrowSpan);
+        
+            if (sections[i].length > 20){
+                arrowSpan.style.marginRight = '15%';
+            } else {
+                arrowSpan.style.marginRight = '63%';
+            }
+            
+
+            heading.appendChild(button);
+            sect.appendChild(heading);
+
+            let tocCollapse = document.createElement("div");
+            tocCollapse.setAttribute("id", `toccollapse${i}`);
+            tocCollapse.classList.add("accordion-collapse", "collapse");
+            tocCollapse.setAttribute("aria-labelledby", `heading${i}`);
+
+            let tocbody = document.createElement("div");
+            tocbody.classList.add("accordion-body");
+
+            let sectlist = document.createElement("ul");
+            sectlist.setAttribute("id", sections[i]);
+            tocbody.appendChild(sectlist);
+            tocCollapse.appendChild(tocbody);
+
+            sect.appendChild(tocCollapse);
+
+            toc_group.appendChild(sect); //original options creakes blank boxes
         }
-        
-
-        heading.appendChild(button);
-        sect.appendChild(heading);
-
-        let tocCollapse = document.createElement("div");
-        tocCollapse.setAttribute("id", `toccollapse${i}`);
-        tocCollapse.classList.add("accordion-collapse", "collapse");
-        tocCollapse.setAttribute("aria-labelledby", `heading${i}`);
-
-        let tocbody = document.createElement("div");
-        tocbody.classList.add("accordion-body");
-
-        let sectlist = document.createElement("ul");
-        sectlist.setAttribute("id", sections[i]);
-        tocbody.appendChild(sectlist);
-        tocCollapse.appendChild(tocbody);
-
-        sect.appendChild(tocCollapse);
-
-        toc_group.appendChild(sect); //original options creakes blank boxes
     }
     toc_container.appendChild(toc_group);
 }

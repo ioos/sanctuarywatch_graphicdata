@@ -511,6 +511,8 @@ async function handleHashNavigation() {
 //     }
 // }
 
+
+
 /**
  * Initializes the application by loading instance details, setting up the scene location, 
  * defining instance-specific settings, and rendering the SVG element.
