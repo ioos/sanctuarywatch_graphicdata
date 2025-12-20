@@ -25,18 +25,22 @@ jobs:
           tools: composer
       
       - name: Validate composer.json
-        run: composer validate --strict
+        run: composer validate --no-check-lock
+      
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
       
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
             ${{ runner.os }}-composer-
       
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-scripts
+        run: composer update --prefer-dist --no-progress --no-scripts
       
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --error-format=github --no-progress

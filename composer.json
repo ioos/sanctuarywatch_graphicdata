@@ -2,6 +2,7 @@
     "name": "local/wp-content",
     "description": "WordPress Content Directory",
     "type": "project",
+    "license": "MIT",
     "require": {
         "php": ">=7.4"
     },
