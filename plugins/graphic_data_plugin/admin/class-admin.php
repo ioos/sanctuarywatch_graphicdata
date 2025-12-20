@@ -374,7 +374,7 @@ class Admin {
 		
 		if ($current_theme->get('Name') !== $required_theme && $current_theme->get('Template') !== $required_theme) {
 			$message = sprintf(
-				'Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.', 'your-plugin-textdomain');
+				'Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.');
 			
 			echo '<div class="notice notice-warning is-dismissible"><p>' . $message . '</p></div>';
 		}
