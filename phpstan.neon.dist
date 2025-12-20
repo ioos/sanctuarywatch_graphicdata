@@ -9,13 +9,20 @@ parameters:
         # Exclude vendor directories
         - vendor/
         - node_modules/
+        - '*/vendor/*'
+        - '*/node_modules/*'
         
-        # Exclude the specified admin directory
+        # Exclude the specified admin directory and its usage
         - plugins/graphic_data_plugin/admin/exopite-simple-options/
+        - plugins/graphic_data_plugin/admin/exopite-simple-options/*
         
         # Common WordPress exclusions
         - '*/tests/*'
         - '*/Test/*'
+    
+    # Scan files to load class definitions
+    scanDirectories:
+        - plugins/graphic_data_plugin/admin/exopite-simple-options/
     
     # Bootstrap file if your plugin/theme has one that defines constants
     # Uncomment and adjust the path if needed:
@@ -28,10 +35,17 @@ parameters:
     # Report unmatched ignored errors
     reportUnmatchedIgnoredErrors: false
     
-    # Ignore common WordPress-related issues at level 0
+    # Ignore specific error patterns
     ignoreErrors:
+        # Ignore errors related to Exopite_Simple_Options_Framework (excluded directory)
+        - '#Instantiated class Exopite_Simple_Options_Framework not found#'
+        - '#Class Exopite_Simple_Options_Framework not found#'
+        
         # Allow dynamic properties (common in WordPress)
         - '#Access to an undefined property#'
         
         # WordPress uses global variables extensively
         - '#Variable \$[a-zA-Z_]+ might not be defined#'
+        
+        # Common WordPress false positive
+        - '#is_wp_error\(int<0, max>\) will always evaluate to false#'
