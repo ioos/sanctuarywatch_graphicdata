@@ -30,6 +30,22 @@
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
     </rule>
 
+    <!-- WordPress Documentation Standards (PHPDoc checking) -->
+    <rule ref="WordPress-Docs"/>
+
+    <!-- Additional documentation checking -->
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <!-- Allow comments to not end with a period -->
+        <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
+        <exclude name="Squiz.Commenting.FunctionComment.ThrowsNoFullStop"/>
+    </rule>
+    
+    <rule ref="Squiz.Commenting.ClassComment"/>
+    <rule ref="Squiz.Commenting.FileComment">
+        <!-- Don't require file comments for every file (too strict) -->
+        <exclude name="Squiz.Commenting.FileComment.Missing"/>
+    </rule>
+
     <!-- Check for PHP cross-version compatibility -->
     <config name="testVersion" value="7.4-"/>
 
