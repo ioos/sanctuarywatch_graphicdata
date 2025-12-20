@@ -1,4 +1,4 @@
-name: PHPStan Static Analysis
+name: PHP Code Quality
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  phpstan:
-    name: PHPStan Analysis
+  code-quality:
+    name: PHPStan & PHPCS Analysis
     runs-on: ubuntu-latest
     
     steps:
@@ -22,7 +22,7 @@ jobs:
         with:
           php-version: '8.2'
           coverage: none
-          tools: composer
+          tools: composer, cs2pr
       
       - name: Validate composer.json
         run: composer validate --no-check-lock
@@ -59,4 +59,29 @@ jobs:
         with:
           name: phpstan-report
           path: phpstan-report.txt
+          retention-days: 30
+      
+      - name: Run PHPCS
+        if: always()
+        run: vendor/bin/phpcs --report=checkstyle | cs2pr
+        continue-on-error: true
+      
+      - name: Generate PHPCS report
+        if: always()
+        run: |
+          echo "Generating detailed PHPCS report..."
+          vendor/bin/phpcs --report=full > phpcs-report.txt 2>&1 || true
+          echo ""
+          echo "PHPCS Summary:"
+          vendor/bin/phpcs --report=summary 2>&1 || true
+          echo ""
+          echo "Full report saved to phpcs-report.txt"
+          cat phpcs-report.txt
+      
+      - name: Upload PHPCS report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpcs-report
+          path: phpcs-report.txt
           retention-days: 30
