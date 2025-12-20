@@ -2,7 +2,25 @@
     "name": "local/wp-content",
     "description": "WordPress Content Directory",
     "type": "project",
+    "require": {
+        "php": ">=7.4"
+    },
     "require-dev": {
-        "phpdocumentor/phpdocumentor": "^3.8"
+        "phpdocumentor/phpdocumentor": "^3.8",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/extension-installer": "^1.4",
+        "szepeviktor/phpstan-wordpress": "^1.3"
+    },
+    "scripts": {
+        "phpstan": "phpstan analyse --memory-limit=2048M",
+        "phpstan:baseline": "phpstan analyse --generate-baseline --allow-empty-baseline",
+        "phpstan:ci": "phpstan analyse --error-format=github --no-progress"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        },
+        "sort-packages": true,
+        "optimize-autoloader": true
     }
 }
