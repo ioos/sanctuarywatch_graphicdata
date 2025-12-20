@@ -27,3 +27,10 @@ debug.log
 /plugins/debug-bar-actions-and-filters-addon
 data/
 
+# Composer
+vendor/
+composer.lock  # Some projects track this, some don't - your choice
+
+# PHPStan cache and temporary files
+.phpstan.cache/
+phpstan-report.txt

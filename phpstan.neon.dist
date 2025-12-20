@@ -1,0 +1,40 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 0
+    
+    paths:
+        - plugins/
+        - themes/
+    
+    excludePaths:
+        # Exclude vendor directories
+        - vendor/
+        - node_modules/
+        
+        # Exclude the specified admin directory
+        - plugins/graphic_data_plugin/admin/exopite-simple-options/
+        
+        # Common WordPress exclusions
+        - '*/tests/*'
+        - '*/Test/*'
+    
+    # Bootstrap file if your plugin/theme has one that defines constants
+    # Uncomment and adjust the path if needed:
+    # bootstrapFiles:
+    #     - plugins/graphic_data_plugin/graphic_data_plugin.php
+    
+    # Treat PHP more strictly in some cases
+    treatPhpDocTypesAsCertain: false
+    
+    # Report unmatched ignored errors
+    reportUnmatchedIgnoredErrors: false
+    
+    # Ignore common WordPress-related issues at level 0
+    ignoreErrors:
+        # Allow dynamic properties (common in WordPress)
+        - '#Access to an undefined property#'
+        
+        # WordPress uses global variables extensively
+        - '#Variable \$[a-zA-Z_]+ might not be defined#'
