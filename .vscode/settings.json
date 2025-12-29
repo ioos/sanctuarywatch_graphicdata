@@ -1,0 +1,19 @@
+{
+    // Settings for obliviousharmony.vscode-php-codesniffer extension
+    // These paths are relative to the workspace root (wp-content/)
+
+    "phpCodeSniffer.standard": "Custom",
+    "phpCodeSniffer.standardCustom": "${workspaceFolder}/phpcs.xml.dist",
+
+    // Use the locally installed phpcs from vendor/bin
+    "phpCodeSniffer.exec.linux": "${workspaceFolder}/vendor/bin/phpcs",
+    "phpCodeSniffer.exec.osx": "${workspaceFolder}/vendor/bin/phpcs",
+    "phpCodeSniffer.exec.windows": "${workspaceFolder}/vendor/bin/phpcs.bat",
+
+    // WordPress coding standards require tabs for indentation
+    "[php]": {
+        "editor.insertSpaces": false,
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false
+    }
+}
