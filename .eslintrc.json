@@ -26,10 +26,11 @@
     "build/",
     "dist/"
   ],
+  "plugins": ["@progfay/php-markup"],
   "overrides": [
     {
       "files": ["*.php"],
-      "processor": "@wordpress/eslint-plugin/php"
+      "processor": "@progfay/php-markup/php-markup"
     }
   ],
   "rules": {
