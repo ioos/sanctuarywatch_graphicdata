@@ -30,18 +30,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run ESLint
+      - name: Run ESLint on JavaScript files
         run: npm run lint:js
+        continue-on-error: true
+
+      - name: Run ESLint on PHP files (embedded JS)
+        run: npm run lint:php-js
         continue-on-error: true
 
       - name: Generate ESLint JSON report
         if: always()
         run: |
           echo "Generating detailed ESLint report..."
-          npx eslint --ext .js,.php plugins/ themes/ \
-            --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' \
-            --format json \
-            --output-file eslint-report.json || true
+          npm run lint:js:report
           echo "ESLint analysis completed"
 
       - name: Generate ESLint text report
@@ -53,14 +54,18 @@ jobs:
           echo "Branch: ${{ github.ref_name }}" >> eslint-report.txt
           echo "Commit: ${{ github.sha }}" >> eslint-report.txt
           echo "" >> eslint-report.txt
-          echo "=== Detailed Results ===" >> eslint-report.txt
+          echo "=== JavaScript Files (.js) ===" >> eslint-report.txt
           echo "" >> eslint-report.txt
-          npx eslint --ext .js,.php plugins/ themes/ \
+          npx eslint --ext .js plugins/ themes/ \
             --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' \
             --format stylish >> eslint-report.txt 2>&1 || true
           echo "" >> eslint-report.txt
+          echo "=== PHP Files (embedded JavaScript) ===" >> eslint-report.txt
+          echo "" >> eslint-report.txt
+          node lint-php-js.js >> eslint-report.txt 2>&1 || true
+          echo "" >> eslint-report.txt
           echo "=== Summary ===" >> eslint-report.txt
-          npx eslint --ext .js,.php plugins/ themes/ \
+          npx eslint --ext .js plugins/ themes/ \
             --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' \
             --format compact >> eslint-report.txt 2>&1 || true
           cat eslint-report.txt

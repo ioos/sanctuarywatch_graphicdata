@@ -26,13 +26,6 @@
     "build/",
     "dist/"
   ],
-  "plugins": ["@progfay/php-markup"],
-  "overrides": [
-    {
-      "files": ["*.php"],
-      "processor": "@progfay/php-markup/php-markup"
-    }
-  ],
   "rules": {
     "no-console": "off",
     "jsdoc/require-jsdoc": "off",
