@@ -12,7 +12,7 @@
  *
  * @author     Jai Ranganathan <jai.ranganathan@noaa.gov>
  */
-class Utility {
+class Utility { 
 
     /**
 	 * Shorten string without cutting words midword.

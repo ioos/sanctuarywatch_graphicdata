@@ -6,7 +6,7 @@
 
 include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 
-class Scene {
+class Scene { 
 
     /**
      * Display an admin notice if the current scene is the overview scene for its instance.
