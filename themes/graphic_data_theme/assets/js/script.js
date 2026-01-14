@@ -536,7 +536,13 @@ async function handleHashNavigation() {
 
         let modalButton = await waitForElement(`#${modName}`);
 
-        modalButton.click();
+        // Sometimes a <g tag is sent insteast of an <a tag. This break the way the modal loads. This is a good work around
+        // if <g then change method of waiting for click, if not then proceed as normal
+        if (modalButton.tagName.toLowerCase() === 'g') {
+            modalButton.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+        } else {
+            modalButton.click();
+        }
 
         let tabButton = await waitForElement(`#${tabId}`);
         tabButton.click();
