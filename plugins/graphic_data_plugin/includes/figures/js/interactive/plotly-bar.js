@@ -58,6 +58,24 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
         layout.xaxis.type = 'date';
     }
 
+    const dateFormat = figureArguments['XAxisFormat'];
+    let xHoverFormat = '';
+
+    switch (dateFormat) {
+    case 'YYYY':
+        xHoverFormat = '%Y';
+        break;
+    case 'YYYY-MM':
+        xHoverFormat = '%Y-%m';
+        break;
+    case 'YYYY-MM-DD':
+        xHoverFormat = '%Y-%m-%d';
+        break;
+    default:
+        xHoverFormat = ''; // fallback to raw
+    }
+    const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
+
 
     layout.yaxis = layout.yaxis || {};
     layout.yaxis.type = 'linear';
@@ -113,7 +131,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     showlegend: true,
                     yaxis: 'y',
                     xaxis: 'x',
-                    hoverinfo: `x`,
+                    hovertemplate: `${label}: ${xHoverValue}<extra></extra>`,
+                    //hoverinfo: `x`,
                 });
             }
             if (axisType === 'y') {
@@ -130,7 +149,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     showlegend: true,
                     yaxis: 'y',
                     xaxis: 'x',
-                    hoverinfo: `${label} y`,
+                    //hoverinfo: `${label} y`,
+                    hovertemplate: `${label}: %{y}<extra></extra>`,
                 });
             }
 
@@ -346,6 +366,25 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                 const showLegendBool = showLegend === 'on';
                 const fillType = figureArguments[targetBarColumn + 'FillType'];
 
+
+                const dateFormat = figureArguments['XAxisFormat'];
+                let xHoverFormat = '';
+
+                switch (dateFormat) {
+                case 'YYYY':
+                    xHoverFormat = '%Y';
+                    break;
+                case 'YYYY-MM':
+                    xHoverFormat = '%Y-%m';
+                    break;
+                case 'YYYY-MM-DD':
+                    xHoverFormat = '%Y-%m-%d';
+                    break;
+                default:
+                    xHoverFormat = ''; // fallback to raw
+                }
+                const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
+
                 //console.log('fillType', fillType);
 
                 function lightenColor(hex, factor = 0.2) {
@@ -383,7 +422,9 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                                 },
                                 pattern: { shape: fillType, size: 4, solidity: 0.5 }
                             },
-                            hovertemplate: `${columnXHeader}: ${stackCategory}`
+                            //hovertemplate: `${columnXHeader}: ${stackCategory}`
+                            hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`
+
                         });
                     });
                 }
@@ -591,7 +632,8 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                             color: figureArguments[targetBarColumn + 'Color'],
                             pattern: { shape: fillType, size: 4, solidity: 0.5 }
                         },
-                        hovertemplate: `${figureArguments['XAxisTitle'] || ''}: %{x}<br>${figureArguments['YAxisTitle'] || ''}: %{y}`,
+                        //hovertemplate: `${figureArguments['XAxisTitle'] || ''}: %{x}<br>${figureArguments['YAxisTitle'] || ''}: %{y}`,
+                        hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`,
                         ...(error_y ? { error_y } : {})
                     };
                     allBarsPlotly.push(trace);
@@ -1051,7 +1093,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
       logFormFieldValues();
   });
 
-  const dateFormats =["None", "YYYY", "YYYY-MM-DD"];
+  const dateFormats =["None", "YYYY", "YYYY-MM","YYYY-MM-DD"];
 
   dateFormats.forEach((dateFormat) => {
       let selectXAxisFormatOption = document.createElement("option");
