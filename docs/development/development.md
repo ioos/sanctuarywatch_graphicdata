@@ -15,21 +15,21 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
    2. Delete the debug-related code in the wp-config.php file, which at the time of writing is located on lines 90-92 and consists of the following:
 
 ```
-if ( ! defined( 'WP_DEBUG' ) ) {
-    define( 'WP_DEBUG', false );
-}
+    if ( ! defined( 'WP_DEBUG' ) ) {
+        define( 'WP_DEBUG', false );
+    }
 ```
 
 8. Replace the deleted lines above with the following lines, which come from the [Wordpress Developer’s Guide](https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/), and then save the wp-config file:
 
 ```
-// Enable WP_DEBUG mode
-define( 'WP_DEBUG', true );
-// Enable Debug logging to /wp-content/debug.log file
-define( 'WP_DEBUG_LOG', true );
-// Disable display of errors and warnings
-define( 'WP_DEBUG_DISPLAY', false );
-@ini_set( 'display_errors', 0 );
+    // Enable WP_DEBUG mode
+    define( 'WP_DEBUG', true );
+    // Enable Debug logging to /wp-content/debug.log file
+    define( 'WP_DEBUG_LOG', true );
+    // Disable display of errors and warnings
+    define( 'WP_DEBUG_DISPLAY', false );
+    @ini_set( 'display_errors', 0 );
 ```
 
 9. In your Wordpress installation, delete all themes other than the current theme. At the time of writing, the current default theme is Twenty Twenty Five.  
