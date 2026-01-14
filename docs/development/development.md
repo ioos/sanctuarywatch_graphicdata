@@ -41,6 +41,7 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
 15. Get Xdebug configured properly in this Wordpress installation, by doing the following. In Visual Studio Code open the Wordpress installation's php.ini.hbs file. This file is located under your site's conf/php/ directory. In our example, it can be found at: `C:\\Users\\jai\\Local Sites\\may26\\conf\\php\\`
     1. Delete the Xdebug-related lines in the file, which at the time of writing consisted of the following at lines 227-241:
 
+        {% raw %}
         ```
         [xdebug]
         {{#if os.windows}}
@@ -58,7 +59,10 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
         xdebug.start_with_request=yes
         xdebug.discover_client_host=yes
         ```
+        {% endraw %}
 16. Replace the deleted lines, with the following, which comes from [this resource](https://webdevstudios.com/2022/10/06/debugging-wordpress/):
+
+    {% raw %}
     ```
     [xdebug]
     {{#if os.windows}}
@@ -77,6 +81,7 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
     ; xdebug.start_with_request=yes
     xdebug.discover_client_host=yes
     ```
+    {% endraw %}
 17. Navigate to the WordPress admin interface of your new site.  
 18. The new Graphic Data plugin depends on the [Svg Support](https://wordpress.org/plugins/svg-support/) plugin being installed before it can be activated. You can install and activate Svg Support by clicking the associated link in the Wordpress Admin Plugins window (see image below). Note that, in the window that opens when you click the link, the *Install* and *Activate* buttons are in the lower right (and easy to miss).   
     ![WordPress Plugins admin screen](images/svg-support.png)  
