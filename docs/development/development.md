@@ -46,21 +46,21 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
     1. Delete the Xdebug-related lines in the file, which at the time of writing consisted of the following at lines 227-241:
 
 ```
-[xdebug]
-{{#if os.windows}}
-zend_extension = php_xdebug.dll
-{{else}}
-zend_extension = {{extensionsDir}}/xdebug.so
-{{/if}}
+    [xdebug]
+    {{#if os.windows}}
+    zend_extension = php_xdebug.dll
+    {{else}}
+    zend_extension = {{extensionsDir}}/xdebug.so
+    {{/if}}
 
-{{#if xdebugEnabled}}
-xdebug.mode=debug,develop
-{{else}}
-xdebug.mode=off
-{{/if}}
-xdebug.client_port=9000
-xdebug.start_with_request=yes
-xdebug.discover_client_host=yes
+    {{#if xdebugEnabled}}
+    xdebug.mode=debug,develop
+    {{else}}
+    xdebug.mode=off
+    {{/if}}
+    xdebug.client_port=9000
+    xdebug.start_with_request=yes
+    xdebug.discover_client_host=yes
 ```
 
 16. Replace the deleted lines, with the following, which comes from [this resource](https://webdevstudios.com/2022/10/06/debugging-wordpress/):
