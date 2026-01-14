@@ -1,3 +1,4 @@
+
 // Deep clone the child_ids object to create child_obj, ensuring that modifications to child_obj do not affect the original child_ids.
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
 let child_obj = {};
@@ -15,6 +16,7 @@ try {
 if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
     child_obj = undefined;
 } else { 
+    console.log('child_ids', child_ids);
     child_obj = JSON.parse(JSON.stringify(child_ids));
 }
 
@@ -158,10 +160,56 @@ if (!window.location.href.includes('post.php')) {
     }
 }
 
-
 // Declare a variable to track if the current environment is mobile.
 // Initially set to false, assuming a non-mobile environment by default.
 let mobileBool = false;
+
+
+// persistent flag (must live outside the function)
+window.mobileBool = window.mobileBool || false;
+
+function admin_preview_condition_checker() {
+    const admin_preview_mobile = document.querySelectorAll(
+        '[data-depend-id="scene_preview_mobile"]'
+    );
+
+    const admin_preview_desktop = document.querySelectorAll(
+        '[data-depend-id="scene_preview"]'
+    );
+
+    // Ensure the global exists
+    if (typeof window.mobileBool === 'undefined') {
+        window.mobileBool = false;
+    }
+
+    // Bind mobile preview -> sets true
+    if (admin_preview_mobile.length > 0) {
+        admin_preview_mobile.forEach(el => {
+            if (el.dataset.previewMobileBound === '1') return;
+            el.dataset.previewMobileBound = '1';
+
+            el.addEventListener('click', () => {
+                window.mobileBool = true;
+            });
+        });
+    }
+
+    // Bind desktop preview -> resets false
+    if (admin_preview_desktop.length > 0) {
+        admin_preview_desktop.forEach(el => {
+            if (el.dataset.previewDesktopBound === '1') return;
+            el.dataset.previewDesktopBound = '1';
+
+            el.addEventListener('click', () => {
+                window.mobileBool = false;
+            });
+        });
+    }
+
+    // Return the current state *now*
+    return !!window.mobileBool;
+}
+
 
 //Main Initialization of script
 document.addEventListener("DOMContentLoaded", () => {
@@ -292,10 +340,15 @@ function remove_outer_div(){
  * @returns {boolean} `True` if touchscreen else `False`.
  */
 function is_touchscreen(){
-    //check multiple things here: type of device, screen width, 
-    return ( 'ontouchstart' in window ) || 
-           ( navigator.maxTouchPoints > 0 ) || 
-           ( navigator.msMaxTouchPoints > 0 );
+
+    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
+        return true;
+    } else {
+        //check multiple things here: type of device, screen width, 
+        return ( 'ontouchstart' in window ) || 
+            ( navigator.maxTouchPoints > 0 ) || 
+            ( navigator.msMaxTouchPoints > 0 );
+    }
     
 }
 
@@ -305,9 +358,19 @@ function is_touchscreen(){
  * @returns {boolean} `True` if mobile else `False`.
  */
 function is_mobile() {
-    return (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) 
+
+    // Admin preview mobile functionality to allow for is_mobile() to return true
+    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
+        console.log('admin_preview_condition_checker');
+        return true;
+    }
+    // Everything else that isnt admin preview related uses this
+    else {
+        return (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) 
            && (window.innerWidth < 512 || window.innerHeight < 512);
            //(window.innerWidth <= 512 && 'ontouchstart' in window);
+    }
+    
 }
 
 /**
@@ -327,6 +390,10 @@ var deviceDetector = (function ()
   var ua = navigator.userAgent.toLowerCase();
   var detect = (function(s)
   {
+    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
+        return 'phone';
+    }
+
     if(s===undefined)s=ua;
     else ua = s.toLowerCase();
     if(/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(ua))

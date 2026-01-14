@@ -762,8 +762,20 @@ class Scene {
             array(
                 'id'          => 'scene_preview',
                 'type'        => 'button',
-                'title'       => 'Preview scene',
+                'title'       => 'Preview scene (Desktop Mode)',
                 'class'        => 'scene_preview',
+                'options'     => array(
+                    'href'  =>  '#nowhere',
+                    'target' => '_self',
+                    'value' => 'Preview',
+                    'btn-class' => 'exopite-sof-btn'
+                ),
+            ),
+            array(
+                'id'          => 'scene_preview_mobile',
+                'type'        => 'button',
+                'title'       => 'Preview scene (Mobile Mode)',
+                'class'        => 'scene_preview_mobile',
                 'options'     => array(
                     'href'  =>  '#nowhere',
                     'target' => '_self',

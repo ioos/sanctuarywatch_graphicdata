@@ -125,8 +125,11 @@ async function make_title() {
 
 function mobile_helper(svgElement, iconsArr, mobile_icons) {
     // Clear any existing mobile layout DOM container
-    remove_outer_div();
-
+    
+    if (!window.location.href.includes('post.php')) {
+        remove_outer_div();
+    }
+    
     // Grab the <defs> section of the SVG (symbol definitions, gradients, etc.)
     let defs = svgElement.firstElementChild;
     let scene_toc_style = scene_data.scene_toc_style;
@@ -454,8 +457,15 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
     function updateLayout(numCols, numRows) {
 
         // Select and clear the container that will hold all icon rows
-        let outer_cont = document.querySelector("body > div.container-fluid");
-        outer_cont.innerHTML = '';
+
+        let outer_cont;
+        if (window.location.href.includes('post.php')) {
+            outer_cont = document.querySelectorAll(".container-fluid")[0];
+            outer_cont.innerHTML = '';
+        } else {
+            outer_cont = document.querySelector("body > div.container-fluid");
+            outer_cont.innerHTML = '';
+        }
 
         if (scene_toc_style === "accordion" || scene_toc_style === "sectioned_list") {
             const groupedIcons = groupIconsBySection(iconsArr);
@@ -465,7 +475,12 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
 
         if (scene_toc_style === "" || scene_toc_style === "list") {
 
-            orderedIcons = getSortedIconsArr(iconsArr);
+            if (window.location.href.includes('post.php')) {
+                orderedIcons = iconsArr;
+            } else {
+                orderedIcons = getSortedIconsArr(iconsArr);
+            }
+
             let idx = 0; // Index of current icon in iconsArr
             // Create the grid rows
             for (let i = 0; i < numRows; i++) {
@@ -485,8 +500,14 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                         cont.style.border = '1px solid #000';
                         cont.style.paddingLeft = '5px';
                         cont.style.paddingRight = '5px';
-                        cont.style.background = instance_color_settings["instance_mobile_tile_background_color"]; 
-                        cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
+
+                        if (window.location.href.includes('post.php')) {
+                            cont.style.background = '#f0f0f0';
+                            cont.style.color = 'inherit';
+                        } else {
+                            cont.style.background = instance_color_settings["instance_mobile_tile_background_color"]; 
+                            cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
+                        }
 
                         // Create a blank SVG container
                         let svgClone = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -525,6 +546,30 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                         svgClone.append(defs.cloneNode(true));
                         svgClone.append(key);
 
+                        // Mobile admin preview functionality
+                        if (window.location.href.includes('post.php')) {
+                            function buildChildIdsFromTitles(titles) {
+                                const child_ids = {};
+                            
+                                if (!Array.isArray(titles)) return child_ids;
+                            
+                                titles.forEach(title => {
+                                    if (!title) return;
+                            
+                                    child_ids[title] = {
+                                        modal: false,
+                                        modal_icon_order: 1,
+                                        modal_id: 0,
+                                        original_name: title,
+                                        section_name: "1",
+                                        title: title
+                                    };
+                                });
+                            
+                                return child_ids;
+                            }
+                            child_obj = buildChildIdsFromTitles(iconsArr);
+                        }  
 
                         // Add a caption below the icon using child_obj data
                         let caption = document.createElement("div");
@@ -544,7 +589,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                         setTimeout(() => {
                             let bbox = key.getBBox(); 
                             svgClone.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
-                        }, 0);
+                        }, 300);
 
                         idx++; // Move to next icon
                     }
@@ -561,8 +606,6 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
      * It also updates layout and adjusts styling for elements on landscape vs portrait.
      */
     function updateNumCols() {
-        console.log("updateNumCols fired (debounced)");
-
         let numCols;
         let numRows;
 
@@ -573,7 +616,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
         let ogColmd2 = colmd2.getAttribute("style", "");
 
         // === LANDSCAPE MODE ===
-        if (window.innerWidth > window.innerHeight) {
+        if (window.innerWidth > window.innerHeight && !window.location.href.includes('post.php')) {
             numCols = 4;
 
             document.querySelector("#mobile-view-image").setAttribute("style", "transform: scale(0.5); margin-right: 35%; margin-top: -23%");
@@ -586,21 +629,33 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
         } else {
             numCols = 3;
 
-            const mobViewImage = document.querySelector("#mobile-view-image");
-            mobViewImage.setAttribute("style", ''); // Clear
-            mobViewImage.setAttribute("style", ogMobViewImage);
+            if (!window.location.href.includes('post.php')) {
 
-            const sceneFluid = document.querySelector("#scene-fluid");
-            sceneFluid.setAttribute("style", '');
-            sceneFluid.setAttribute("style", ogSceneFluid);
+                const mobViewImage = document.querySelector("#mobile-view-image");
+                mobViewImage.setAttribute("style", ''); // Clear
+                mobViewImage.setAttribute("style", ogMobViewImage);
 
-            colmd2.setAttribute("style", '');
-            colmd2.setAttribute("style", ogColmd2);
+                const sceneFluid = document.querySelector("#scene-fluid");
+                sceneFluid.setAttribute("style", '');
+                sceneFluid.setAttribute("style", ogSceneFluid);
 
-            document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
-            document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+                colmd2.setAttribute("style", '');
+                colmd2.setAttribute("style", ogColmd2);
+
+                document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+                document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+            }
+            if (window.location.href.includes('post.php')) {
+                titleContainer = document.querySelector("#title-container > div > div.col-md-2");
+                titleContainer.style.width = '87%';
+                titleContainer.style.paddingLeft = '0%';
+                document.querySelector("#mobile-view-image").setAttribute("style", "width: 100%; margin-right: 0%; margin-top: 0%; margin-bottom: -70%");
+                // const sceneFluid = document.querySelector("#scene-fluid");
+                // sceneFluid.setAttribute("style", '');
+                document.querySelector("#scene-fluid").setAttribute("style", "width: 88%; margin-top: 70%; display: block"); 
+                document.querySelector("#entire_thing").setAttribute("style", "z-index: 9999;max-width: 100%;");
+            }
         }
-
         // Calculate the number of rows based on icon count
         numRows = Math.ceil(iconsArr.length / numCols);
 
@@ -843,14 +898,12 @@ function has_mobile_layer(mob_icons, elemname){
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  */
 async function loadSVG(url, containerId) {
-    // try {
+    try {
         // Step 1: Fetch the SVG content
-        //console.log(url);
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-
 
         // Step 2: Parse the SVG content
         const svgText = await response.text();
@@ -883,59 +936,41 @@ async function loadSVG(url, containerId) {
         // Assign (don’t redeclare)
         svgElement = svgDoc.documentElement;
         svgElement.setAttribute("id", "svg-elem");
-        //console.log('svgElement', svgElement);
 
         const container = document.getElementById(containerId);
-        //console.log('container', container);
         container.appendChild(svgElement);
-
 
         //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
         if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene') {
 
             const modalHeader = document.querySelector('.modal-header');
+            modalHeader.style.display = 'flex';
+            modalHeader.style.flexDirection = 'column';
+            modalHeader.style.alignItems = 'center';
+            modalHeader.style.justifyContent = 'center';
+            modalHeader.style.textAlign = 'center';
+
             if (modalHeader) {
-                const textNode = document.createElement('span');
-                textNode.textContent = 'This preview is intended to help validate that the SVG and the icons inside of it are formatted correctly. It is not intended to be a full replication of the way a scene functions when published.';
-                textNode.style.fontSize = '.65rem';
-                textNode.style.textAlign = 'center';
-                textNode.style.color = "red";
-                textNode.style.paddingLeft = "5%";
-                modalHeader.prepend(textNode); // or append()
+                const textNode2 = document.createElement('span');
+                textNode2.textContent = 'It does not replicate all scene functions.';
+                textNode2.style.fontSize = '.8rem';
+                textNode2.style.textAlign = 'center';
+                textNode2.style.color = "red";
+                textNode2.style.paddingLeft = "5%";
+                modalHeader.prepend(textNode2); // or append()
+
+                const textNode1 = document.createElement('span');
+                textNode1.textContent = 'This preview is to validate SVG formatting.';
+                textNode1.style.fontSize = '.8rem';
+                textNode1.style.textAlign = 'center';
+                textNode1.style.color = "red";
+                textNode1.style.paddingLeft = "5%";
+                modalHeader.prepend(textNode1); // or append()
             }
             modalHeader.style.borderBottom = "none";
 
-
             const modalWindow = document.querySelector('.modal-dialog.modal-xl.modal-dialog-scrollable');
             modalWindow.style.paddingTop = "2%";
-
-
-            const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
-            visible_modals = iconsLayer
-            ? Array.from(iconsLayer.children)
-                .filter(el => el.tagName.toLowerCase() === "g")
-                .map(el => el.id)
-            : [];
-
-
-            svgElement = document.getElementById("svg-elem");
-            svgElement.style.width = "100%";
-            svgElement.style.height = "auto";
-
-
-            sceneRow = document.getElementById("scene-row");
-            sceneRow.style.marginTop = "20px";
-
-
-            scene_text_toggle = title_arr['scene_text_toggle']; //"toggle_on";
-            scene_full_screen_button = title_arr['scene_full_screen_button'];//"yes";
-            scene_toc_style = "list";
-
-
-            scene_default_hover_color = title_arr['scene_hover_color'];
-            scene_hover_text_color = title_arr['scene_hover_text_color']; 
-            //scene_default_hover_color = "#FFFF00"; // Gold
-
 
             function toWpDateTimeLocal(d = new Date()) {
                 const pad = (n) => String(n).padStart(2, "0");
@@ -991,40 +1026,8 @@ async function loadSVG(url, containerId) {
                 }));
             }
 
-            sorted_child_objs = buildVisibleModalsObject(visible_modals, {
-                sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
-                postAuthor: "1",
-                useGmt: true, // set false if you want local time for both
-            });
-
-
-            // Initialize an array to hold the sublayers
-            let sublayers = [];
-            // Iterate over the child elements of the "icons" layer
-            iconsLayer.childNodes.forEach(node => {
-                // Check if the node is an element and push its id to the sublayers array
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                sublayers.push(node.id);
-                }
-            });
-            sublayers = sublayers.sort();
-
-            // Define hover colors
-            sublayers.forEach (listElement => {
-                let iconLayer = svgElement.getElementById(listElement);
-
-                // Select all child elements 
-                let subElements = iconLayer.querySelectorAll("*");
             
-                // Loop through each sub-element and update its stroke-width and color
-                subElements.forEach(element => {
-                    element.style.strokeWidth = "2";
-                    element.style.stroke = scene_default_hover_color;
-                });
-            })
-
         }
-        //console.log('sorted_child_objs', sorted_child_objs);
       
         // checking if user device is touchscreen
         if (is_touchscreen()){
@@ -1040,7 +1043,11 @@ async function loadSVG(url, containerId) {
                 
                 let sceneButton = document.createElement("button");
                 sceneButton.innerHTML = "<strong>View Full Scene</strong>";
-                sceneButton.setAttribute("style", "margin-top: 16px; max-width: 79%; border-radius: 10px; padding: 10px");
+                if (window.location.href.includes('post.php')) {
+                    sceneButton.setAttribute("style", "margin-top: 16px; max-width: 82%; border-radius: 10px; padding: 10px; margin-left: -.9rem");
+                } else {
+                    sceneButton.setAttribute("style", "margin-top: 16px; max-width: 79%; border-radius: 10px; padding: 10px");
+                }
                 sceneButton.setAttribute("class", "btn ");
                 sceneButton.setAttribute("class", "ViewSceneButton");
                 sceneButton.setAttribute("data-toggle", "modal");
@@ -1050,16 +1057,20 @@ async function loadSVG(url, containerId) {
                 svgElementMobileDisplay.style.height = '10%';
                 svgElementMobileDisplay.style.width = '100%';
 
-              
-                let modal = document.getElementById("mobileModal");
-                let modalBody = document.querySelector("#mobileModal > div > div > div.modal-body")
-                modalBody.appendChild(svgElementMobileDisplay);
+                let modal;
+                if (window.location.href.includes('post.php')) {
+                    modal = document.getElementById("entire_thing");
+                    modal.appendChild(svgElementMobileDisplay);
+                } else {
+                    modal = document.getElementById("mobileModal");
+                    let modalBody = document.querySelector("#mobileModal > div > div > div.modal-body")
+                    modalBody.appendChild(svgElementMobileDisplay);
+                }
 
                 sceneButton.onclick = function() {
                     modal.style.display = "block";
                   }
-                  
-                  
+                        
                   // When the user clicks anywhere outside of the modal, close it
                 window.onclick = function(event) {
                     if (event.target == modal) {
@@ -1082,8 +1093,28 @@ async function loadSVG(url, containerId) {
                     mobileIcons = svgElement.getElementById("mobile").cloneNode(true);
                 } 
 
-                const iconsArr =  Object.keys(child_obj);
+                let iconsArr;
+
+                // Logic for admin preview for mobile
+                if (window.location.href.includes('post.php')) {
+                    const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
+                    visible_modals = iconsLayer
+                        ? Array.from(iconsLayer.children)
+                            .filter(el => el.tagName.toLowerCase() === "g")
+                            .map(el => el.id)
+                            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+                        : [];
+                    iconsArr =  visible_modals;
+                } else {
+                    iconsArr =  Object.keys(child_obj);
+                }
+                // console.log('iconsArr',iconsArr);
+                // console.log('mobileIcons',mobileIcons);
                 mobile_helper(svgElement, iconsArr, mobileIcons);
+
+                if (window.location.href.includes('post.php')) {
+                    document.getElementById('svg-elem').remove()
+                }
                 
             } else{ //if it gets here, device is a tablet
                 //hide mobile icons
@@ -1115,11 +1146,67 @@ async function loadSVG(url, containerId) {
             window.addEventListener('load', function() {
                 let mob_icons = document.querySelector("#mobile");
                 if (mob_icons) {
-                    mob_icons.setAttribute("display", "none");
+                    mob_icons.setAttribte("display", "none");
                 }
             });
             try {
-                handleIconVisibility(svgElement, visible_modals);
+                //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
+                if (window.location.href.includes('post.php')) {
+                    const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
+                    visible_modals = iconsLayer
+                        ? Array.from(iconsLayer.children)
+                            .filter(el => el.tagName.toLowerCase() === "g")
+                            .map(el => el.id)
+                            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+                        : [];
+                    
+                    svgElement = document.getElementById("svg-elem");
+                    svgElement.style.width = "100%";
+                    svgElement.style.height = "auto";
+
+                    sceneRow = document.getElementById("scene-row");
+                    sceneRow.style.marginTop = "20px";
+
+                    scene_text_toggle = title_arr['scene_text_toggle']; //"toggle_on";
+                    scene_full_screen_button = title_arr['scene_full_screen_button'];//"yes";
+                    scene_toc_style = "list";
+                    scene_default_hover_color = title_arr['scene_hover_color'];
+                    scene_hover_text_color = title_arr['scene_hover_text_color']; 
+
+                    sorted_child_objs = buildVisibleModalsObject(visible_modals, {
+                        sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
+                        postAuthor: "1",
+                        useGmt: true, // set false if you want local time for both
+                    });
+
+                    // Initialize an array to hold the sublayers
+                    let sublayers = [];
+                    // Iterate over the child elements of the "icons" layer
+                    iconsLayer.childNodes.forEach(node => {
+                        // Check if the node is an element and push its id to the sublayers array
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                        sublayers.push(node.id);
+                        }
+                    });
+                    sublayers = sublayers.sort();
+
+                    // Define hover colors
+                    sublayers.forEach (listElement => {
+                        let iconLayer = svgElement.getElementById(listElement);
+                        // Select all child elements 
+                        let subElements = iconLayer.querySelectorAll("*");          
+                        // Loop through each sub-element and update its stroke-width and color
+                        subElements.forEach(element => {
+                            element.style.strokeWidth = "2";
+                            element.style.stroke = scene_default_hover_color;
+                        });
+                    })
+                    
+                    handleIconVisibility(svgElement, visible_modals);
+
+                } else {
+                    handleIconVisibility(svgElement, visible_modals);
+                }
             }
             catch (error) {
                 console.error('Error handling icon visibility:', error);
@@ -1127,10 +1214,7 @@ async function loadSVG(url, containerId) {
             
             container.appendChild(svgElement);
 
-            if (!window.location.href.includes('post.php') ) {
-                highlight_icons();
-            }
- 
+            highlight_icons();
             toggle_text();
             full_screen_button('svg1');
             if (scene_toc_style === "list"){
@@ -1140,10 +1224,9 @@ async function loadSVG(url, containerId) {
             }               
             add_modal();
         }
-
-    // } catch (error) {
-    //     console.error('Error fetching or parsing the SVG:', error);
-    // }
+    } catch (error) {
+        console.error('Error fetching or parsing the SVG:', error);
+    }
 }
 
 
@@ -1664,7 +1747,7 @@ function toc_sections() {
         if (sections[i]!="None" && title_test != "None"){
 
             let scene_section_title = scene_data[`scene_section${sections[i]}`][`scene_section_title${i+1}`];
-            console.log('scene_section_title', scene_section_title);
+            //console.log('scene_section_title', scene_section_title);
             if (scene_data['scene_same_hover_color_sections'] == "no" && scene_section_title != ""){
                 button.innerHTML = scene_section_title;
 
@@ -2054,15 +2137,19 @@ function add_modal(){
             };
     
         } else {
-            elem.addEventListener('click', function(event) {    
-                let link =  child_obj[key]['external_url'];
-                window.location.href = link;
+            elem.addEventListener('click', function(event) {   
+                if (!window.location.href.includes('post.php')) { 
+                    let link =  child_obj[key]['external_url'];
+                    window.location.href = link;
+                }
             });
             if (mobileBool){
                 let itemContainer = document.querySelector(`#${key}-container`);
                 itemContainer.addEventListener('click', function() {
-                    let link =  child_obj[key]['external_url'];
-                    window.location.href = link;
+                    if (!window.location.href.includes('post.php')) {
+                        let link =  child_obj[key]['external_url'];
+                        window.location.href = link;
+                    }
                 });
             }
         }
