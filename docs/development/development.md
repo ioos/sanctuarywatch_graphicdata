@@ -40,6 +40,7 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
 14. Delete the "old wp content" folder.  
 15. Get Xdebug configured properly in this Wordpress installation, by doing the following. In Visual Studio Code open the Wordpress installation's php.ini.hbs file. This file is located under your site's conf/php/ directory. In our example, it can be found at: `C:\\Users\\jai\\Local Sites\\may26\\conf\\php\\`
     1. Delete the Xdebug-related lines in the file, which at the time of writing consisted of the following at lines 227-241:
+
         ```
         [xdebug]
         {{#if os.windows}}
