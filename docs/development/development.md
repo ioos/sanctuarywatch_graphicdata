@@ -13,16 +13,13 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
 7. Turn on the debug log for your Wordpress installation, by doing the following.   
    1. In Visual Studio Code, open the file wp-config.php, which is located in the root directory for the wordpress installation. In this example’s case, the directory where wp-config.php is located is: `C:\\Users\\jai\\Local Sites\\may26\\app\\public`
    2. Delete the debug-related code in the wp-config.php file, which at the time of writing is located on lines 90-92 and consists of the following:
-
-```
+    ```
     if ( ! defined( 'WP_DEBUG' ) ) {
         define( 'WP_DEBUG', false );
-    }
-```
-
+        }
+    ```
 8. Replace the deleted lines above with the following lines, which come from the [Wordpress Developer’s Guide](https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/), and then save the wp-config file:
-
-```
+    ```
     // Enable WP_DEBUG mode
     define( 'WP_DEBUG', true );
     // Enable Debug logging to /wp-content/debug.log file
@@ -30,8 +27,7 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
     // Disable display of errors and warnings
     define( 'WP_DEBUG_DISPLAY', false );
     @ini_set( 'display_errors', 0 );
-```
-
+    ```
 9. In your Wordpress installation, delete all themes other than the current theme. At the time of writing, the current default theme is Twenty Twenty Five.  
 10. Create a new folder called “old wp content”  somewhere other than the Wordpress locations. In “old wp content”, copy over the contents of the Wordpress wp-content directory. In this example’s case, the location of that directory is: `C:\\Users\\jai\\Local Sites\\may26\\app\\public\\wp-content`
 11. Delete the contents of the wp-content directory, but don’t delete the directory itself.   
@@ -44,8 +40,7 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
 14. Delete the “old wp content” folder.  
 15. Get Xdebug configured properly in this Wordpress installation, by doing the following. In Visual Studio Code open the Wordpress installation’s php.ini.hbs file. This file is located under your site’s conf/php/ directory. In our example, it can be found at: `C:\\Users\\jai\\Local Sites\\may26\\conf\\php\\`
     1. Delete the Xdebug-related lines in the file, which at the time of writing consisted of the following at lines 227-241:
-
-```
+    ```
     [xdebug]
     {{#if os.windows}}
     zend_extension = php_xdebug.dll
@@ -61,28 +56,26 @@ This guide is written assuming that Local, Visual Studio Code, and GitHub Deskto
     xdebug.client_port=9000
     xdebug.start_with_request=yes
     xdebug.discover_client_host=yes
-```
-
+    ```
 16. Replace the deleted lines, with the following, which comes from [this resource](https://webdevstudios.com/2022/10/06/debugging-wordpress/):
+    ```
+    [xdebug]
+    {{#if os.windows}}
+    zend_extension = php_xdebug.dll
+    {{else}}
+    zend_extension = {{extensionsDir}}/xdebug.so
+    {{/if}}
 
-```
-[xdebug]
-{{#if os.windows}}
-zend_extension = php_xdebug.dll
-{{else}}
-zend_extension = {{extensionsDir}}/xdebug.so
-{{/if}}
-
-{{#if xdebugEnabled}}
-xdebug.mode=debug
-; xdebug.mode=debug,develop
-{{else}}
-xdebug.mode=off
-{{/if}}
-xdebug.client_port="9000"
-; xdebug.start_with_request=yes
-xdebug.discover_client_host=yes
-```
+    {{#if xdebugEnabled}}
+    xdebug.mode=debug
+    ; xdebug.mode=debug,develop
+    {{else}}
+    xdebug.mode=off
+    {{/if}}
+    xdebug.client_port="9000"
+    ; xdebug.start_with_request=yes
+    xdebug.discover_client_host=yes
+    ```
 17. Navigate to the WordPress admin interface of your new site.  
 18. The new Graphic Data plugin depends on the [Svg Support](https://wordpress.org/plugins/svg-support/) plugin being installed before it can be activated. You can install and activate Svg Support by clicking the associated link in the Wordpress Admin Plugins window (see image below). Note that, in the window that opens when you click the link, the *Install* and *Activate* buttons are in the lower right (and easy to miss).   
     ![WordPress Plugins admin screen](images/svg-support.png)  
