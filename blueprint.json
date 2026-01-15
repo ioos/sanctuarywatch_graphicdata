@@ -1,0 +1,44 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/wp-admin/",
+  "preferredVersions": {
+    "php": "8.0",
+    "wp": "latest"
+  },
+  "steps": [
+    {
+      "step": "login",
+      "username": "admin"
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "wordpress.org/plugins",
+        "slug": "svg-support"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "url",
+        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.2.0/graphic_data_plugin.zip"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "installTheme",
+      "themeData": {
+        "resource": "url",
+        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.2.0/graphic_data_theme.zip"
+      },
+      "options": {
+        "activate": true
+      }
+    }
+  ]
+}
