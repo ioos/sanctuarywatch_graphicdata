@@ -2333,37 +2333,37 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page",
             "name": "Graphic_Data_Settings_Page",
-            "summary": "",
+            "summary": "Handles\u0020the\u0020admin\u0020settings\u0020page\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
             "url": "classes/Graphic-Data-Settings-Page.html"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aadd_admin_menu\u0028\u0029",
             "name": "add_admin_menu",
-            "summary": "",
+            "summary": "Adds\u0020the\u0020Graphic\u0020Data\u0020Settings\u0020page\u0020to\u0020the\u0020WordPress\u0020admin\u0020menu.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_add_admin_menu"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aenqueue_admin_interactive_default_line_styles\u0028\u0029",
             "name": "enqueue_admin_interactive_default_line_styles",
-            "summary": "",
+            "summary": "Enqueues\u0020the\u0020Plotly\u0020time\u0020series\u0020line\u0020chart\u0020settings\u0020script.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_enqueue_admin_interactive_default_line_styles"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aenqueue_admin_interactive_default_bar_styles\u0028\u0029",
             "name": "enqueue_admin_interactive_default_bar_styles",
-            "summary": "",
+            "summary": "Enqueues\u0020the\u0020Plotly\u0020bar\u0020chart\u0020settings\u0020script.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_enqueue_admin_interactive_default_bar_styles"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Asettings_init\u0028\u0029",
             "name": "settings_init",
-            "summary": "",
+            "summary": "Initializes\u0020the\u0020plugin\u0020settings,\u0020sections,\u0020and\u0020fields.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_settings_init"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aregister_rest_settings\u0028\u0029",
             "name": "register_rest_settings",
-            "summary": "",
+            "summary": "Registers\u0020custom\u0020REST\u0020API\u0020routes\u0020for\u0020plugin\u0020settings.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_register_rest_settings"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aget_footer_settings\u0028\u0029",
             "name": "get_footer_settings",
-            "summary": "",
+            "summary": "Retrieves\u0020footer\u0020settings\u0020for\u0020the\u0020REST\u0020API\u0020endpoint.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_get_footer_settings"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Asitewide_footer_title_field_callback\u0028\u0029",
@@ -2383,27 +2383,27 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Agoogle_analytics_measurement_id_field_callback\u0028\u0029",
             "name": "google_analytics_measurement_id_field_callback",
-            "summary": "",
+            "summary": "Callback\u0020function\u0020for\u0020rendering\u0020the\u0020Google\u0020Analytics\u0020Measurement\u0020ID\u0020field\u0020in\u0020the\u0020settings\u0020page.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_google_analytics_measurement_id_field_callback"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Ainteractive_line_arguments_callback\u0028\u0029",
             "name": "interactive_line_arguments_callback",
-            "summary": "",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020line\u0020graph\u0020arguments\u0020text\u0020editor\u0020field.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_interactive_line_arguments_callback"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Ainteractive_line_defaults_callback\u0028\u0029",
             "name": "interactive_line_defaults_callback",
-            "summary": "",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020line\u0020graph\u0020custom\u0020style\u0020settings\u0020field.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_interactive_line_defaults_callback"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Ainteractive_bar_arguments_callback\u0028\u0029",
             "name": "interactive_bar_arguments_callback",
-            "summary": "",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020bar\u0020chart\u0020arguments\u0020text\u0020editor\u0020field.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_interactive_bar_arguments_callback"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Ainteractive_bar_defaults_callback\u0028\u0029",
             "name": "interactive_bar_defaults_callback",
-            "summary": "",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020bar\u0020chart\u0020custom\u0020style\u0020settings\u0020field.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_interactive_bar_defaults_callback"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Agoogle_tags_container_id_field_callback\u0028\u0029",
@@ -2413,7 +2413,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Asettings_page\u0028\u0029",
             "name": "settings_page",
-            "summary": "",
+            "summary": "Renders\u0020the\u0020plugin\u0020settings\u0020page\u0020in\u0020the\u0020WordPress\u0020admin.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_settings_page"
         },                {
             "fqsen": "\\Graphic_Data_Plugin",
