@@ -2,13 +2,19 @@
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "landingPage": "/wp-admin/",
   "preferredVersions": {
-    "php": "8.0",
+    "php": "8.3",
     "wp": "latest"
   },
   "steps": [
     {
       "step": "login",
       "username": "admin"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "Graphic Data demo"
+      }
     },
     {
       "step": "installPlugin",
