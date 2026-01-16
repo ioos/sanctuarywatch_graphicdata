@@ -1,0 +1,101 @@
+name: JavaScript Code Quality
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  eslint:
+    name: ESLint Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint on JavaScript files
+        run: npm run lint:js
+        continue-on-error: true
+
+      - name: Run ESLint on PHP files (embedded JS)
+        run: npm run lint:php-js
+        continue-on-error: true
+
+      - name: Generate ESLint JSON report
+        if: always()
+        run: |
+          echo "Generating detailed ESLint report..."
+          npm run lint:js:report
+          echo "ESLint analysis completed"
+
+      - name: Generate ESLint text report
+        if: always()
+        run: |
+          echo "=== ESLint Report ===" > eslint-report.txt
+          echo "" >> eslint-report.txt
+          echo "Analysis Date: $(date)" >> eslint-report.txt
+          echo "Branch: ${{ github.ref_name }}" >> eslint-report.txt
+          echo "Commit: ${{ github.sha }}" >> eslint-report.txt
+          echo "" >> eslint-report.txt
+          echo "=== JavaScript Files (.js) ===" >> eslint-report.txt
+          echo "" >> eslint-report.txt
+          npx eslint --ext .js plugins/ themes/ \
+            --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' \
+            --format stylish >> eslint-report.txt 2>&1 || true
+          echo "" >> eslint-report.txt
+          echo "=== PHP Files (embedded JavaScript) ===" >> eslint-report.txt
+          echo "" >> eslint-report.txt
+          node lint-php-js.js >> eslint-report.txt 2>&1 || true
+          echo "" >> eslint-report.txt
+          echo "=== Summary ===" >> eslint-report.txt
+          npx eslint --ext .js plugins/ themes/ \
+            --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' \
+            --format compact >> eslint-report.txt 2>&1 || true
+          cat eslint-report.txt
+
+      - name: Upload ESLint JSON report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-json-report
+          path: eslint-report.json
+          retention-days: 30
+
+      - name: Upload ESLint text report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-text-report
+          path: eslint-report.txt
+          retention-days: 30
+
+      - name: Check ESLint results
+        if: always()
+        run: |
+          # Count errors and warnings from JSON report
+          if [ -f eslint-report.json ]; then
+            ERROR_COUNT=$(jq '[.[] | .errorCount] | add // 0' eslint-report.json)
+            WARNING_COUNT=$(jq '[.[] | .warningCount] | add // 0' eslint-report.json)
+            echo "ESLint found $ERROR_COUNT error(s) and $WARNING_COUNT warning(s)"
+
+            if [ "$ERROR_COUNT" -gt 0 ]; then
+              echo "::warning::ESLint found $ERROR_COUNT error(s). Please review the uploaded reports."
+            fi
+          fi

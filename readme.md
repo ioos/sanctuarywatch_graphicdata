@@ -14,6 +14,45 @@ Check out our [guide](https://ioos.github.io/sanctuarywatch_graphicdata/)!
 The general approach taken by Graphic Data is based upon [Infographiq](https://github.com/marinebon/infographiq), created by [Ben Best](https://ecoquants.com/).
 The plugin is based upon the structure provided by Joe Sz's [Wordpress Plugin Boilerplate Tutorial](https://github.com/JoeSz/WordPress-Plugin-Boilerplate-Tutorial) - which is itself based upon the structure provided by Devin Vinson's [Wordpress Plugin Boilerplate](https://github.com/DevinVinson/WordPress-Plugin-Boilerplate). 
 
+## Development Setup
+
+### PHP Code Quality Tools
+
+This repository uses PHP_CodeSniffer with WordPress Coding Standards to maintain code quality.
+
+#### Setup Instructions:
+
+1. **Install dependencies:**
+   ```bash
+   composer install
+   ```
+
+2. **VS Code Setup:**
+   - Install the [PHP_CodeSniffer extension](https://marketplace.visualstudio.com/items?itemName=obliviousharmony.vscode-php-codesniffer)
+   - Open the **wp-content** folder as your workspace root in VS Code (not a subfolder)
+   - The extension will automatically use the configuration in `.vscode/settings.json`
+
+3. **Verify it's working:**
+   - Open any PHP file in the `plugins/` or `themes/` directories
+   - You should see linting errors/warnings highlighted in the editor
+
+#### Manual Code Checking:
+
+You can also run phpcs manually from the command line:
+
+```bash
+# Check all files
+vendor/bin/phpcs
+
+# Check a specific file
+vendor/bin/phpcs plugins/graphic_data_plugin/graphic_data_plugin.php
+
+# Auto-fix some issues
+vendor/bin/phpcbf plugins/graphic_data_plugin/graphic_data_plugin.php
+```
+
+The coding standards configuration is in `phpcs.xml.dist`.
+
 ## Questions?
 Please contact Jai Ranganathan at jai.ranganathan@noaa.gov with any questions you may have.
 

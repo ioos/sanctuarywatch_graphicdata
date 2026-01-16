@@ -1,0 +1,53 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/wp-admin/",
+  "preferredVersions": {
+    "php": "8.3",
+    "wp": "latest"
+  },
+  "steps": [
+    {
+      "step": "login",
+      "username": "admin"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "Graphic Data demo"
+      }
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "wordpress.org/plugins",
+        "slug": "svg-support"
+      }
+    },
+    {
+      "step": "activatePlugin",
+      "pluginPath": "svg-support/svg-support.php"
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "url",
+        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.2.0/graphic_data_plugin.zip"
+      }
+    },
+    {
+      "step": "activatePlugin",
+      "pluginPath": "graphic_data_plugin/graphic_data_plugin.php"
+    },
+    {
+      "step": "installTheme",
+      "themeData": {
+        "resource": "url",
+        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.2.0/graphic_data_theme.zip"
+      }
+    },
+    {
+      "step": "activateTheme",
+      "themeFolderName": "graphic_data_theme"
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 **/*.DS_Store
 db.php
 debug.log
+.vscode/
 /vendor/
 /data/
 /upgrade/
@@ -27,3 +28,17 @@ debug.log
 /plugins/debug-bar-actions-and-filters-addon
 data/
 
+# Composer
+vendor/
+composer.lock  # Some projects track this, some don't - your choice
+
+# PHPStan cache and temporary files
+.phpstan.cache/
+phpstan-report.txt
+
+# ESLint temporary files and reports
+.eslint-temp/
+eslint-report.json
+eslint-report.txt
+node_modules/
+package-lock.json

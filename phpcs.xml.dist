@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<ruleset name="Sanctuary Watch Graphic Data">
+    <description>WordPress Coding Standards for Graphic Data plugin and theme</description>
+
+    <!-- What to scan -->
+    <file>plugins/</file>
+    <file>themes/</file>
+
+    <!-- Exclude paths -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+    <exclude-pattern>*/Test/*</exclude-pattern>
+    <exclude-pattern>plugins/graphic_data_plugin/admin/exopite-simple-options/</exclude-pattern>
+
+    <!-- Show progress and use colors -->
+    <arg value="ps"/>
+    <arg name="colors"/>
+    
+    <!-- Show sniff codes in all reports -->
+    <arg value="ns"/>
+
+    <!-- Use WordPress Coding Standards -->
+    <rule ref="WordPress">
+        <!-- Allow array short syntax [] instead of array() -->
+        <exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+        
+        <!-- Relax some strict WordPress rules for existing codebase -->
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+    </rule>
+
+    <!-- WordPress Documentation Standards (PHPDoc checking) -->
+    <rule ref="WordPress-Docs"/>
+
+    <!-- Additional documentation checking -->
+    <rule ref="Squiz.Commenting.FunctionComment">
+        <!-- Allow comments to not end with a period -->
+        <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop"/>
+        <exclude name="Squiz.Commenting.FunctionComment.ThrowsNoFullStop"/>
+    </rule>
+    
+    <rule ref="Squiz.Commenting.ClassComment"/>
+    <rule ref="Squiz.Commenting.FileComment">
+        <!-- Don't require file comments for every file (too strict) -->
+        <exclude name="Squiz.Commenting.FileComment.Missing"/>
+    </rule>
+
+    <!-- Check for PHP cross-version compatibility -->
+    <config name="testVersion" value="7.4-"/>
+
+    <!-- WordPress internationalization -->
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="graphic-data"/>
+                <element value="your-plugin-textdomain"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Verify prefix usage -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <properties>
+            <property name="prefixes" type="array">
+                <element value="graphic_data"/>
+                <element value="GRAPHIC_DATA"/>
+                <element value="Graphic_Data"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Set minimum supported WordPress version -->
+    <config name="minimum_supported_wp_version" value="5.8"/>
+</ruleset>

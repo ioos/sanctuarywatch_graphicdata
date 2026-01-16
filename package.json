@@ -1,0 +1,26 @@
+{
+  "name": "wp-content-eslint",
+  "version": "1.0.0",
+  "description": "ESLint configuration for WordPress plugins and themes",
+  "private": true,
+  "scripts": {
+    "lint:js": "eslint --ext .js plugins/ themes/ --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' --format stylish",
+    "lint:php-js": "node lint-php-js.js",
+    "lint:all": "npm run lint:js && npm run lint:php-js",
+    "lint:js:report": "eslint --ext .js plugins/ themes/ --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' --format json --output-file eslint-report.json || true"
+  },
+  "devDependencies": {
+    "@wordpress/eslint-plugin": "^21.4.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-jsdoc": "^50.6.2",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "glob": "^10.3.10"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}
