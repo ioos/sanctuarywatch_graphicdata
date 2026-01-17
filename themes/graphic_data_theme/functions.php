@@ -236,12 +236,12 @@ add_action('after_setup_theme', 'set_theme_default_site_icon');
    //  Include the GitHub Updater class if not already included by the plugin
     if ( is_plugin_active( 'graphic_data_plugin/graphic_data_plugin.php' ) ) {
       // Include the GitHub Updater class if not already included by the plugin
-      if (!class_exists('GitHub_Updater')) {
+      if (!class_exists('Graphic_Data_GitHub_Updater')) {
         require_once get_template_directory() . '/admin/class-github-updater.php';
       }
     
       // Initialize the theme updater (only if not in development environment)
-      new GitHub_Updater(
+      new Graphic_Data_GitHub_Updater(
           get_template_directory() . '/style.css',
           'ioos', // GitHub username
           'sanctuarywatch_graphicdata', //  repository name

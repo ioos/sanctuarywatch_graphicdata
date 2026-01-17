@@ -656,7 +656,7 @@ class Validation {
             $path_url = $parsed_url['path'];
             $content_path = rtrim(get_home_path(), '/') . $path_url;
 
-            $infographic_svg_validate = new SVG_Validator();
+            $infographic_svg_validate = new Graphic_Data_SVG_Validator();
             $svg_analyze =  $infographic_svg_validate->validate_svg_file($content_path);
           
             if ($svg_analyze['valid'] == false) {

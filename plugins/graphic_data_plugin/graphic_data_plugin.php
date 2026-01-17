@@ -44,7 +44,7 @@ if ( ! defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) ) {
 require_once plugin_dir_path( __FILE__ ) . 'admin/class-github-updater.php';
 
 // Initialize the GitHub Updater.
-	new GitHub_Updater(
+	new Graphic_Data_GitHub_Updater(
 		__FILE__,
 		'ioos', // the GitHub username
 		'sanctuarywatch_graphicdata', // the repository name

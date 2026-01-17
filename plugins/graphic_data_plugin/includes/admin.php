@@ -174,7 +174,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'admin_menu', $plugin_custom_roles, 'restrict_content_editor_admin_menu', 999); 
 
 		// Load class and functions to change overall look and function of admin screens
-		$plugin_admin = new Admin();
+		$plugin_admin = new Graphic_Data_Admin();
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10 );  
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10 ); 
 		$this->loader->add_action( 'login_head', $plugin_admin, 'add_favicon' ); 
