@@ -1,18 +1,30 @@
----
-layout: page
-title: "Documentation"
-permalink: /classes/GitHub-Updater/
----
-
-
----
-layout: page
-title: "Documentation"
-permalink: /classes/GitHub-Updater/
----
-
-
-<header class="phpdocumentor-header phpdocumentor-section">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+            <title>Documentation</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="../">
+    <link rel="icon" href="images/favicon.ico"/>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/base.css">
+            <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/template.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0=" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism-okaidia.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.css">
+                <script src="https://cdn.jsdelivr.net/npm/fuse.js@3.4.6"></script>
+        <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script>
+        <script src="js/template.js"></script>
+        <script src="js/search.js"></script>
+        <script defer src="js/searchIndex.js"></script>
+    </head>
+<body id="top">
+    <header class="phpdocumentor-header phpdocumentor-section">
     <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">Documentation</a></h1>
     <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
     <label class="phpdocumentor-header__menu-icon" for="menu-button">
@@ -91,7 +103,7 @@ permalink: /classes/GitHub-Updater/
 
     <article class="phpdocumentor-element -class">
         <h2 class="phpdocumentor-content__title">
-    GitHub_Updater
+    Graphic_Data_GitHub_Updater
 
     
             <div class="phpdocumentor-element__package">
@@ -129,7 +141,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     
 <h3 id="toc">
     Table of Contents
-    <a href="classes/GitHub-Updater.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/Graphic-Data-GitHub-Updater.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h3>
 
@@ -143,75 +155,75 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 
 <h4 id="toc-properties">
     Properties
-    <a href="classes/GitHub-Updater.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/Graphic-Data-GitHub-Updater.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_cache_duration">$cache_duration</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_cache_duration">$cache_duration</a>
     <span>
                         &nbsp;: int            </span>
 </dt>
 <dd>Cache duration in seconds (24 hours by default)</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_github_response">$github_response</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_github_response">$github_response</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;|null            </span>
 </dt>
 <dd>Stores the response from the GitHub API (latest release or commit data).</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_is_theme">$is_theme</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_is_theme">$is_theme</a>
     <span>
                         &nbsp;: bool            </span>
 </dt>
 <dd>Flag indicating if the current instance is for a theme.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_plugin_data">$plugin_data</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_data">$plugin_data</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;|null            </span>
 </dt>
 <dd>Stores plugin or theme data retrieved from WordPress.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_plugin_file">$plugin_file</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_file">$plugin_file</a>
     <span>
                         &nbsp;: string|null            </span>
 </dt>
 <dd>The main plugin file path. Only used if $is_theme is false.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_repository">$repository</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_repository">$repository</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
 <dd>The GitHub repository name.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_slug">$slug</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_slug">$slug</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
 <dd>The slug of the plugin or theme.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_subdir_path">$subdir_path</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_subdir_path">$subdir_path</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
 <dd>The path to the plugin/theme within the GitHub repository, if it&#039;s in a subdirectory.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_update_checked">$update_checked</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_update_checked">$update_checked</a>
     <span>
                         &nbsp;: bool            </span>
 </dt>
 <dd>Flag to track if we&#039;ve already checked for updates in this request</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/GitHub-Updater.html#property_username">$username</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_username">$username</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
@@ -221,96 +233,96 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 
 <h4 id="toc-methods">
     Methods
-    <a href="classes/GitHub-Updater.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/Graphic-Data-GitHub-Updater.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method___construct">__construct()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method___construct">__construct()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
 <dd>Constructor.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method_after_install">after_install()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_after_install">after_install()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
 <dd>Post-installation hook for plugins.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method_after_theme_install">after_theme_install()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_after_theme_install">after_theme_install()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
 <dd>Post-installation hook for themes.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method_clear_update_cache">clear_update_cache()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_clear_update_cache">clear_update_cache()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
-<dd>Clear update cache when plugin/theme is updated</dd>
+<dd>Clears the update cache when plugin/theme is updated.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method_plugin_info">plugin_info()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_plugin_info">plugin_info()</a>
     <span>
                                 &nbsp;: false|object    </span>
 </dt>
 <dd>Provides plugin information for the &quot;View details&quot; popup.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method_rate_limit_notice">rate_limit_notice()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_rate_limit_notice">rate_limit_notice()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
 <dd>Display admin notice when rate limited</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method_set_plugin_properties">set_plugin_properties()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_set_plugin_properties">set_plugin_properties()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
 <dd>Sets plugin or theme properties using WordPress functions.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method_theme_update_state">theme_update_state()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_theme_update_state">theme_update_state()</a>
     <span>
                                 &nbsp;: object    </span>
 </dt>
 <dd>Alias for theme updates to use the same update_state logic.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/GitHub-Updater.html#method_update_state">update_state()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_update_state">update_state()</a>
     <span>
                                 &nbsp;: object    </span>
 </dt>
 <dd>Checks for updates and modifies the update transient.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/GitHub-Updater.html#method_get_download_url">get_download_url()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_get_download_url">get_download_url()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
 <dd>Gets the download URL for the plugin or theme.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/GitHub-Updater.html#method_get_repository_info">get_repository_info()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_get_repository_info">get_repository_info()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
 <dd>Retrieves repository information from GitHub API with enhanced caching.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/GitHub-Updater.html#method_recursive_copy">recursive_copy()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_copy">recursive_copy()</a>
     <span>
                                 &nbsp;: bool    </span>
 </dt>
 <dd>Helper function to recursively copy directories using WP_Filesystem.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/GitHub-Updater.html#method_recursive_remove_directory">recursive_remove_directory()</a>
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_remove_directory">recursive_remove_directory()</a>
     <span>
                                 &nbsp;: bool    </span>
 </dt>
@@ -326,7 +338,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <section class="phpdocumentor-properties">
         <h3 class="phpdocumentor-elements__header" id="properties">
             Properties
-            <a href="classes/GitHub-Updater.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="classes/Graphic-Data-GitHub-Updater.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article
@@ -338,7 +350,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_cache_duration">
         $cache_duration
-        <a href="classes/GitHub-Updater.html#property_cache_duration" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_cache_duration" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -346,7 +358,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
@@ -376,7 +388,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_github_response">
         $github_response
-        <a href="classes/GitHub-Updater.html#property_github_response" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_github_response" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -384,7 +396,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">34</span>
+    <span class="phpdocumentor-element-found-in__line">39</span>
 
     </aside>
 
@@ -414,7 +426,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_is_theme">
         $is_theme
-        <a href="classes/GitHub-Updater.html#property_is_theme" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_is_theme" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -422,7 +434,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">44</span>
+    <span class="phpdocumentor-element-found-in__line">51</span>
 
     </aside>
 
@@ -452,7 +464,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_plugin_data">
         $plugin_data
-        <a href="classes/GitHub-Updater.html#property_plugin_data" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_data" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -460,7 +472,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">19</span>
+    <span class="phpdocumentor-element-found-in__line">21</span>
 
     </aside>
 
@@ -490,7 +502,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_plugin_file">
         $plugin_file
-        <a href="classes/GitHub-Updater.html#property_plugin_file" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_file" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -498,7 +510,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">39</span>
+    <span class="phpdocumentor-element-found-in__line">45</span>
 
     </aside>
 
@@ -528,7 +540,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_repository">
         $repository
-        <a href="classes/GitHub-Updater.html#property_repository" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_repository" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -536,7 +548,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">29</span>
+    <span class="phpdocumentor-element-found-in__line">33</span>
 
     </aside>
 
@@ -566,7 +578,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_slug">
         $slug
-        <a href="classes/GitHub-Updater.html#property_slug" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_slug" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -574,7 +586,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">14</span>
+    <span class="phpdocumentor-element-found-in__line">15</span>
 
     </aside>
 
@@ -606,7 +618,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_subdir_path">
         $subdir_path
-        <a href="classes/GitHub-Updater.html#property_subdir_path" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_subdir_path" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -614,7 +626,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">49</span>
+    <span class="phpdocumentor-element-found-in__line">57</span>
 
     </aside>
 
@@ -644,7 +656,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_update_checked">
         $update_checked
-        <a href="classes/GitHub-Updater.html#property_update_checked" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_update_checked" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -652,7 +664,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">61</span>
+    <span class="phpdocumentor-element-found-in__line">71</span>
 
     </aside>
 
@@ -682,7 +694,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="property_username">
         $username
-        <a href="classes/GitHub-Updater.html#property_username" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_username" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
@@ -690,7 +702,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">24</span>
+    <span class="phpdocumentor-element-found-in__line">27</span>
 
     </aside>
 
@@ -716,7 +728,7 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
             <section class="phpdocumentor-methods">
         <h3 class="phpdocumentor-elements__header" id="methods">
             Methods
-            <a href="classes/GitHub-Updater.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="classes/Graphic-Data-GitHub-Updater.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article
@@ -727,13 +739,13 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method___construct">
         __construct()
-        <a href="classes/GitHub-Updater.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">74</span>
+    <span class="phpdocumentor-element-found-in__line">84</span>
 
     </aside>
 
@@ -812,13 +824,13 @@ Optimized to reduce API calls and prevent GitHub rate limiting.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_after_install">
         after_install()
-        <a href="classes/GitHub-Updater.html#method_after_install" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_after_install" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">488</span>
+    <span class="phpdocumentor-element-found-in__line">526</span>
 
     </aside>
 
@@ -889,13 +901,13 @@ Hooked to 'upgrader_post_install'.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_after_theme_install">
         after_theme_install()
-        <a href="classes/GitHub-Updater.html#method_after_theme_install" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_after_theme_install" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">525</span>
+    <span class="phpdocumentor-element-found-in__line">563</span>
 
     </aside>
 
@@ -966,41 +978,47 @@ Hooked to 'upgrader_post_install'.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_clear_update_cache">
         clear_update_cache()
-        <a href="classes/GitHub-Updater.html#method_clear_update_cache" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_clear_update_cache" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">377</span>
+    <span class="phpdocumentor-element-found-in__line">407</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Clear update cache when plugin/theme is updated</p>
+        <p class="phpdocumentor-summary">Clears the update cache when plugin/theme is updated.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">clear_update_cache</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$upgrader</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$options</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">clear_update_cache</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><abbr title="\WP_Upgrader">WP_Upgrader</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$upgrader</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$options</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-    
+        <section class="phpdocumentor-description"><p>Hooked to 'upgrader_process_complete'.</p>
+</section>
+
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$upgrader</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\WP_Upgrader">WP_Upgrader</abbr></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>WP_Upgrader instance.</p>
+</section>
+
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$options</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>Array of bulk item update data.</p>
+</section>
+
             </dd>
             </dl>
 
@@ -1018,13 +1036,13 @@ Hooked to 'upgrader_post_install'.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_plugin_info">
         plugin_info()
-        <a href="classes/GitHub-Updater.html#method_plugin_info" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_plugin_info" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">405</span>
+    <span class="phpdocumentor-element-found-in__line">435</span>
 
     </aside>
 
@@ -1093,13 +1111,13 @@ Hooked to 'upgrader_post_install'.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_rate_limit_notice">
         rate_limit_notice()
-        <a href="classes/GitHub-Updater.html#method_rate_limit_notice" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_rate_limit_notice" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">364</span>
+    <span class="phpdocumentor-element-found-in__line">389</span>
 
     </aside>
 
@@ -1128,13 +1146,13 @@ Hooked to 'upgrader_post_install'.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_set_plugin_properties">
         set_plugin_properties()
-        <a href="classes/GitHub-Updater.html#method_set_plugin_properties" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_set_plugin_properties" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">110</span>
+    <span class="phpdocumentor-element-found-in__line">119</span>
 
     </aside>
 
@@ -1165,13 +1183,13 @@ Hooked to 'upgrader_post_install'.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_theme_update_state">
         theme_update_state()
-        <a href="classes/GitHub-Updater.html#method_theme_update_state" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_theme_update_state" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">392</span>
+    <span class="phpdocumentor-element-found-in__line">422</span>
 
     </aside>
 
@@ -1222,13 +1240,13 @@ Hooked to 'upgrader_post_install'.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_update_state">
         update_state()
-        <a href="classes/GitHub-Updater.html#method_update_state" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_update_state" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">280</span>
+    <span class="phpdocumentor-element-found-in__line">301</span>
 
     </aside>
 
@@ -1279,13 +1297,13 @@ Hooked to 'upgrader_post_install'.</p>
 >
     <h4 class="phpdocumentor-element__name" id="method_get_download_url">
         get_download_url()
-        <a href="classes/GitHub-Updater.html#method_get_download_url" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_get_download_url" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">444</span>
+    <span class="phpdocumentor-element-found-in__line">478</span>
 
     </aside>
 
@@ -1325,13 +1343,13 @@ then the release's zipball_url, then a direct archive link to the default branch
 >
     <h4 class="phpdocumentor-element__name" id="method_get_repository_info">
         get_repository_info()
-        <a href="classes/GitHub-Updater.html#method_get_repository_info" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_get_repository_info" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">131</span>
+    <span class="phpdocumentor-element-found-in__line">140</span>
 
     </aside>
 
@@ -1362,13 +1380,13 @@ then the release's zipball_url, then a direct archive link to the default branch
 >
     <h4 class="phpdocumentor-element__name" id="method_recursive_copy">
         recursive_copy()
-        <a href="classes/GitHub-Updater.html#method_recursive_copy" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_copy" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">558</span>
+    <span class="phpdocumentor-element-found-in__line">596</span>
 
     </aside>
 
@@ -1426,13 +1444,13 @@ then the release's zipball_url, then a direct archive link to the default branch
 >
     <h4 class="phpdocumentor-element__name" id="method_recursive_remove_directory">
         recursive_remove_directory()
-        <a href="classes/GitHub-Updater.html#method_recursive_remove_directory" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_remove_directory" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">591</span>
+    <span class="phpdocumentor-element-found-in__line">633</span>
 
     </aside>
 
@@ -1582,43 +1600,43 @@ then the release's zipball_url, then a direct archive link to the default branch
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                                            <li><a href="classes/GitHub-Updater.html#toc-properties">Properties</a></li>
-                                                            <li><a href="classes/GitHub-Updater.html#toc-methods">Methods</a></li>
+                                                            <li><a href="classes/Graphic-Data-GitHub-Updater.html#toc-properties">Properties</a></li>
+                                                            <li><a href="classes/Graphic-Data-GitHub-Updater.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
             
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_cache_duration">$cache_duration</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_github_response">$github_response</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_is_theme">$is_theme</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_plugin_data">$plugin_data</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_plugin_file">$plugin_file</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_repository">$repository</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_slug">$slug</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_subdir_path">$subdir_path</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_update_checked">$update_checked</a></li>
-                                                    <li class=""><a href="classes/GitHub-Updater.html#property_username">$username</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_cache_duration">$cache_duration</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_github_response">$github_response</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_is_theme">$is_theme</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_data">$plugin_data</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_file">$plugin_file</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_repository">$repository</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_slug">$slug</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_subdir_path">$subdir_path</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_update_checked">$update_checked</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_username">$username</a></li>
                                             </ul>
                 </li>
             
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                            <li class=""><a href="classes/GitHub-Updater.html#method___construct">__construct()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_after_install">after_install()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_after_theme_install">after_theme_install()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_clear_update_cache">clear_update_cache()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_plugin_info">plugin_info()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_rate_limit_notice">rate_limit_notice()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_set_plugin_properties">set_plugin_properties()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_theme_update_state">theme_update_state()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_update_state">update_state()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_get_download_url">get_download_url()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_get_repository_info">get_repository_info()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_recursive_copy">recursive_copy()</a></li>
-                                            <li class=""><a href="classes/GitHub-Updater.html#method_recursive_remove_directory">recursive_remove_directory()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method___construct">__construct()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_after_install">after_install()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_after_theme_install">after_theme_install()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_clear_update_cache">clear_update_cache()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_plugin_info">plugin_info()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_rate_limit_notice">rate_limit_notice()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_set_plugin_properties">set_plugin_properties()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_theme_update_state">theme_update_state()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_update_state">update_state()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_get_download_url">get_download_url()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_get_repository_info">get_repository_info()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_copy">recursive_copy()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_remove_directory">recursive_remove_directory()</a></li>
                                     </ul>
             </li>
                     </ul>
@@ -1638,7 +1656,7 @@ then the release's zipball_url, then a direct archive link to the default branch
     </section>
 </section>
         </div>
-        <a href="classes/GitHub-Updater.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
 
     </main>
 
@@ -1649,4 +1667,5 @@ then the release's zipball_url, then a direct archive link to the default branch
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.min.js"></script>
-
+</body>
+</html>
