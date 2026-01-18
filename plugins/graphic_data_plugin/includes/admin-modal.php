@@ -85,7 +85,7 @@ class Modal {
         );
 
         // get list of locations
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $locations = $function_utilities -> returnAllInstances();
 
         $transient_fields_exist = false;
@@ -433,7 +433,7 @@ class Modal {
             for ($i = 1; $i < 7; $i++){
                 array_push($modal_rest_fields,'modal_info' . $i, 'modal_photo' . $i, 'modal_tab_title' . $i );
             }
-            $function_utilities = new Utility();
+            $function_utilities = new Graphic_Data_Utility();
             $function_utilities -> register_custom_rest_fields("modal", $modal_rest_fields);
     }
 
@@ -646,7 +646,7 @@ class Modal {
 
             echo $field_length_dropdown;
             
-            $function_utilities = new Utility();
+            $function_utilities = new Graphic_Data_Utility();
             $function_utilities -> createInstanceDropDownFilter('modal_instance');
 
             // Scene dropdown
@@ -923,8 +923,8 @@ class Modal {
                     echo $modal_tagline;
                     break;
                 case "medium":
-                    $medium_tagline = new Utility();
-                    $final_tagline = $medium_tagline -> stringTruncate($modal_tagline, 75);
+                    $medium_tagline = new Graphic_Data_Utility();
+                    $final_tagline = $medium_tagline -> string_truncate($modal_tagline, 75);
                     echo $final_tagline;
                     break;
                 case "small":

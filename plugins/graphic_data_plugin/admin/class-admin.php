@@ -2,9 +2,8 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       https://www.noaa.gov
- *
- * @package    graphic_data_plugin
+ * @link       https://github.com/ioos/sanctuarywatch_graphicdata
+ * @package    Graphic_Data_Plugin
  */
 
 /**

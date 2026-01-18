@@ -351,7 +351,7 @@ class Scene {
 
         echo $field_length_dropdown; 
 
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $function_utilities -> createInstanceDropDownFilter('scene_instance');
         
         // Store the filter values after displaying the dropdowns
@@ -448,7 +448,7 @@ class Scene {
                     echo $scene_tagline;
                     break;
                 case "medium":
-                    echo $this->stringTruncate($scene_tagline, 75);
+                    echo $this->string_truncate($scene_tagline, 75);
                     break;
                 case "small":
                     if ($scene_tagline != NULL){
@@ -492,7 +492,7 @@ class Scene {
      * @param int $your_desired_width The number of characters in the shortened string.
 	 * @since    1.0.0
 	 */
-    public function stringTruncate($string, $your_desired_width) {
+    public function string_truncate($string, $your_desired_width) {
         $parts = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
         $parts_count = count($parts);
         
@@ -615,7 +615,7 @@ class Scene {
             'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
         );
 
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $instances = $function_utilities ->  returnAllInstances();
 
         $fields = array(
@@ -969,7 +969,7 @@ class Scene {
         for ($i = 1; $i < 7; $i++){
             array_push($scene_rest_fields,'scene_info' . $i, 'scene_photo' . $i, 'scene_photo_internal' . $i, 'scene_section' . $i);
         }
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $function_utilities -> register_custom_rest_fields("scene", $scene_rest_fields);
     }
 

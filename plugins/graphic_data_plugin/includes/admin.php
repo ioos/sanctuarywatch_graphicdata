@@ -6,7 +6,7 @@
  * A class definition that includes attributes and functions used across both the
  * public-facing side of the site and the admin area.
  *
- * @link       https://www.noaa.gov
+ * @link       https://github.com/ioos/sanctuarywatch_graphicdata
  * @since      1.0.0
  *
  */
@@ -152,7 +152,7 @@ class Graphic_Data_Plugin {
 	 */
 	public function define_admin_hooks() { 
 		// Load class and functions of utility functions
-		$plugin_utility = new Utility();
+		$plugin_utility = new Graphic_Data_Utility();
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'post_admin_notice' ); 
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' ); 
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible',10 ); 

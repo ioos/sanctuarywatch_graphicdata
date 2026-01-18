@@ -7,7 +7,7 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://www.noaa.gov
+ * @link              https://github.com/ioos/sanctuarywatch_graphicdata
  * @package           Graphic_Data_Plugin
  *
  * @wordpress-plugin
@@ -36,8 +36,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Get plugin version from header.
 if ( ! defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) ) {
-	$plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
-	define( 'GRAPHIC_DATA_PLUGIN_VERSION', $plugin_data['Version'] );
+	$graphic_data_plugin_data = get_file_data( __FILE__, array( 'Version' => 'Version' ) );
+	define( 'GRAPHIC_DATA_PLUGIN_VERSION', $graphic_data_plugin_data['Version'] );
 }
 
 // Include the GitHub Updater class.
@@ -46,10 +46,10 @@ require_once plugin_dir_path( __FILE__ ) . 'admin/class-github-updater.php';
 // Initialize the GitHub Updater.
 	new Graphic_Data_GitHub_Updater(
 		__FILE__,
-		'ioos', // the GitHub username
-		'sanctuarywatch_graphicdata', // the repository name
-		false, // This is a plugin, not a theme
-		'plugins/graphic_data_plugin' // Subdirectory path in the repository
+		'ioos', // the GitHub username.
+		'sanctuarywatch_graphicdata', // the repository name.
+		false, // This is a plugin, not a theme.
+		'plugins/graphic_data_plugin' // Subdirectory path in the repository.
 	);
 
 	/**
@@ -61,8 +61,8 @@ require_once plugin_dir_path( __FILE__ ) . 'admin/class-github-updater.php';
 	/**
 	 * The data directory inside of wp-content
 	 */
-	define( 'MYPLUGIN_DATA_DIR', WP_CONTENT_DIR . '/data' );
-	define( 'MYPLUGIN_DATA_URL', content_url( 'data' ) );
+	define( 'GRAPHIC_DATA_DATA_DIR', WP_CONTENT_DIR . '/data' );
+	define( 'GRAPHIC_DATA_DATA_URL', content_url( 'data' ) );
 
 	register_activation_hook( __FILE__, 'myplugin_activate' );
 	function myplugin_activate() {
@@ -72,18 +72,18 @@ require_once plugin_dir_path( __FILE__ ) . 'admin/class-github-updater.php';
 	add_action( 'admin_init', 'myplugin_ensure_public_data_dir' ); // fallback after migrations.
 	function myplugin_ensure_public_data_dir() {
 		// Create dir if missing.
-		if ( ! is_dir( MYPLUGIN_DATA_DIR ) ) {
-			if ( ! wp_mkdir_p( MYPLUGIN_DATA_DIR ) ) {
-				update_option( 'myplugin_data_dir_error', 'Could not create ' . MYPLUGIN_DATA_DIR . '. Check permissions.' );
+		if ( ! is_dir( GRAPHIC_DATA_DATA_DIR ) ) {
+			if ( ! wp_mkdir_p( GRAPHIC_DATA_DATA_DIR ) ) {
+				update_option( 'myplugin_data_dir_error', 'Could not create ' . GRAPHIC_DATA_DATA_DIR . '. Check permissions.' );
 				return;
 			}
 		}
 
 		// Ensure perms (drwxr-xr-x).
-		@chmod( MYPLUGIN_DATA_DIR, 0755 );
+		@chmod( GRAPHIC_DATA_DATA_DIR, 0755 );
 
 		// Create index.php to block directory access (but not file access).
-		$index = MYPLUGIN_DATA_DIR . '/index.php';
+		$index = GRAPHIC_DATA_DATA_DIR . '/index.php';
 		if ( ! file_exists( $index ) ) {
 			$contents = "<?php\nhttp_response_code(403); exit; // Block directory browsing\n";
 			@file_put_contents( $index, $contents );

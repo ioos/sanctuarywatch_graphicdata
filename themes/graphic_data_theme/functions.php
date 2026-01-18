@@ -8,7 +8,7 @@
  * during page load or admin panel interactions. Proper use of actions and filters follows WordPress best practices,
  * aiming to extend the functionality of WordPress themes without modifying core files.
  *
- * @package Graphic_Data
+ * @package Graphic_Data_Plugin
  */
 
 /**

@@ -31,7 +31,7 @@ class Export_Figures {
             <p>
             <?php
                 // get list of locations
-                $function_utilities = new Utility();
+                $function_utilities = new Graphic_Data_Utility();
                 $locations = $function_utilities -> returnAllInstances();
 
                 echo '<select id="location" name="location">'; // Opening the <select> tag

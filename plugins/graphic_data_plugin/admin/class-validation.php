@@ -50,7 +50,7 @@ class Validation {
 
     // The purpose of this function is to validate the fields of the About custom content type. 
     public function validate_about (){
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         
         $save_about_fields = true;
         $about_errors = [];
@@ -117,7 +117,7 @@ class Validation {
      */
     public function validate_instance (){
 
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $save_instance_fields = true;
 
         $instance_errors = [];
@@ -255,7 +255,7 @@ class Validation {
      */
     public function validate_figure (){
 
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $save_figure_fields = true;
 
         $figure_errors = [];
@@ -390,7 +390,7 @@ class Validation {
      */
     public function validate_modal(){
 
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $save_modal_fields = true;
 
         $modal_errors = [];
@@ -632,7 +632,7 @@ class Validation {
      * - 'scene_warnings': Array of error messages (30 second expiration)
      */
     public function validate_scene (){
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $save_scene_fields = true;
 
         $scene_errors = [];

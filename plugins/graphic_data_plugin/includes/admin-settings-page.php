@@ -1,10 +1,9 @@
 <?php
 /**
  * Register class that defines the functions used to create the Graphic Data Settings page in the admin dashboard.
+ *
+ * @package Graphic_Data_Plugin
  */
-
-include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
-
 
 /**
  * Handles the admin settings page for the Graphic Data plugin.

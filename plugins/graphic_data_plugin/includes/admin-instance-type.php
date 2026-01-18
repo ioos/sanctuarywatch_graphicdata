@@ -4,8 +4,6 @@
  * 
  */
 
- 
-include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
 class Instance_Type
  {
 

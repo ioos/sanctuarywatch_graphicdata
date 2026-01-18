@@ -283,7 +283,7 @@ class Figure {
             $current_icon = isset($_GET['figure_icon']) ? absint($_GET['figure_icon']) : $this->get_figure_filter_value('figure_icon');
             
             // Instances dropdown 
-            $function_utilities = new Utility();
+            $function_utilities = new Graphic_Data_Utility();
             $function_utilities -> createInstanceDropDownFilter('figure_instance');
 
             global $wpdb;
@@ -474,7 +474,7 @@ class Figure {
         );
 
         // get list of locations
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $locations = $function_utilities -> returnAllInstances();
 
         $transient_fields_exist = false;
@@ -806,7 +806,7 @@ class Figure {
 	 */
     function register_figure_rest_fields() {
         $figure_rest_fields = array('figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt',  'figure_code', 'figure_upload_file','figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments','uploaded_path_json','figure_title'); //figure_temp_filepath
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
         $function_utilities -> register_custom_rest_fields("figure", $figure_rest_fields);
     }
 
