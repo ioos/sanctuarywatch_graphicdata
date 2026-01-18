@@ -86,7 +86,7 @@ class Instance {
 
 
         // get list of locations, which is saved as a taxonomy
-        $function_utilities = new Utility();
+        $function_utilities = new Graphic_Data_Utility();
 
         $scene_titles = array("" => "Scenes");
 
@@ -311,7 +311,7 @@ class Instance {
             'instance_type', 'instance_status', 'instance_tile', 'instance_overview_scene', 'instance_footer_columns', 
             'instance_mobile_tile_background_color', 'instance_mobile_tile_text_color', 'instance_footer_column1', 
             'instance_footer_column2', 'instance_footer_column3');
-            $function_utilities = new Utility();
+            $function_utilities = new Graphic_Data_Utility();
             $function_utilities -> register_custom_rest_fields("instance", $instance_rest_fields);
     }
 
