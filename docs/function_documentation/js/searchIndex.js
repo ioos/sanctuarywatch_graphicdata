@@ -126,20 +126,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Create-SVG.html#method_create_svg_page"
         },                {
-            "fqsen": "\\Export_Figures",
-            "name": "Export_Figures",
-            "summary": "",
-            "url": "classes/Export-Figures.html"
+            "fqsen": "\\Graphic_Data_Export_Figures",
+            "name": "Graphic_Data_Export_Figures",
+            "summary": "Class\u0020Graphic_Data_Export_Figures",
+            "url": "classes/Graphic-Data-Export-Figures.html"
         },                {
-            "fqsen": "\\Export_Figures\u003A\u003Aadd_export_figures_menu\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Export_Figures\u003A\u003Aadd_export_figures_menu\u0028\u0029",
             "name": "add_export_figures_menu",
             "summary": "Function\u0020to\u0020add\u0020the\u0020\u0022Export\u0020Figures\u0022\u0020submenu\u0020under\u0020Tools",
-            "url": "classes/Export-Figures.html#method_add_export_figures_menu"
+            "url": "classes/Graphic-Data-Export-Figures.html#method_add_export_figures_menu"
         },                {
-            "fqsen": "\\Export_Figures\u003A\u003Aexport_figures_page\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Export_Figures\u003A\u003Aexport_figures_page\u0028\u0029",
             "name": "export_figures_page",
-            "summary": "",
-            "url": "classes/Export-Figures.html#method_export_figures_page"
+            "summary": "Callback\u0020function\u0020to\u0020display\u0020the\u0020content\u0020of\u0020the\u0020\u0022Export\u0020Figures\u0022\u0020page.",
+            "url": "classes/Graphic-Data-Export-Figures.html#method_export_figures_page"
         },                {
             "fqsen": "\\Graphic_Data_GitHub_Updater",
             "name": "Graphic_Data_GitHub_Updater",
