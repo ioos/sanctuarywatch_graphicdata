@@ -477,51 +477,55 @@ class Graphic_Data_Utility {
 		$current_user = wp_get_current_user();
 
 		// Check if user is content editor but not administrator.
-		if (current_user_can('content_editor') && !current_user_can('administrator')) {
+		if ( current_user_can( 'content_editor' ) && ! current_user_can( 'administrator' ) ) {
 			// Get assigned instances for the content editor.
-			$user_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
+			$user_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
 			// Ensure user_instances is a non-empty array before querying.
-			if (!empty($user_instances) && is_array($user_instances)) {
+			if ( ! empty( $user_instances ) && is_array( $user_instances ) ) {
 				// Sanitize instance IDs.
-				$instance_ids = array_map('absint', $user_instances);
-				$instance_ids_sql = implode(',', $instance_ids);
+				$instance_ids = array_map( 'absint', $user_instances );
+				$instance_ids_sql = implode( ',', $instance_ids );
 
 				// Query only the assigned instances.
-				$instances = $wpdb->get_results("
+				$instances = $wpdb->get_results(
+					"
 					SELECT ID, post_title
 					FROM {$wpdb->posts}
 					WHERE post_type = 'instance'
 					AND post_status = 'publish'
 					AND ID IN ({$instance_ids_sql})
-					ORDER BY post_title ASC");
+					ORDER BY post_title ASC"
+				);
 			}
 			// If content editor has no assigned instances, $instances remains empty, so only "All Instances" shows.
 
 		} else {
 			// Administrators or other roles see all instances.
-			$instances = $wpdb->get_results("
+			$instances = $wpdb->get_results(
+				"
 				SELECT ID, post_title
 				FROM {$wpdb->posts}
 				WHERE post_type = 'instance'
 				AND post_status = 'publish'
-				ORDER BY post_title ASC");
+				ORDER BY post_title ASC"
+			);
 		}
 
 		// Get selected instance from URL or from stored value.
-		$current_selection = isset($_GET[$element_name]) ? absint($_GET[$element_name]) : $this->get_filter_value("{$element_name}");
+		$current_selection = isset( $_GET[ $element_name ] ) ? absint( $_GET[ $element_name ] ) : $this->get_filter_value( "{$element_name}" );
 
 		// Generate the dropdown HTML.
 		echo '<select name="' . $element_name . '" id="' . $element_name . '">';
 		echo '<option value="">All Instances</option>';
 
 		// Check if $instances is not null and is an array before looping.
-		if (is_array($instances)) {
-			foreach ($instances as $instance) {
+		if ( is_array( $instances ) ) {
+			foreach ( $instances as $instance ) {
 				// Ensure $instance is an object with ID and post_title properties.
-				if (is_object($instance) && isset($instance->ID) && isset($instance->post_title)) {
-					$selected = selected($current_selection, $instance->ID, false); // Use selected() helper.
-					echo '<option value="' . esc_attr($instance->ID) . '" ' . $selected . '>' . esc_html($instance->post_title) . '</option>';
+				if ( is_object( $instance ) && isset( $instance->ID ) && isset( $instance->post_title ) ) {
+					$selected = selected( $current_selection, $instance->ID, false ); // Use selected() helper.
+					echo '<option value="' . esc_attr( $instance->ID ) . '" ' . $selected . '>' . esc_html( $instance->post_title ) . '</option>';
 				}
 			}
 		}
@@ -534,13 +538,13 @@ class Graphic_Data_Utility {
 	 *
 	 * @return array An associative array of instance IDs and titles.
 	 */
-	public function returnAllInstances(){
+	public function returnAllInstances() {
 		// Initialize the result array with a default empty option.
-		$instances_array = array( " " => "" );
+		$instances_array = array( ' ' => '' );
 
 		// Get the current user.
 		$current_user = wp_get_current_user();
-		if (!$current_user || $current_user->ID === 0) {
+		if ( ! $current_user || $current_user->ID === 0 ) {
 			// If no user is logged in, return just the empty option (or handle as needed).
 			return $instances_array;
 		}
@@ -557,14 +561,14 @@ class Graphic_Data_Utility {
 
 		// --- Role-Based Filtering Logic ---
 		// Check if the current user is a 'content_editor' BUT NOT an 'administrator'.
-		if ( user_can($current_user, 'content_editor') && !user_can($current_user, 'administrator') ) {
+		if ( user_can( $current_user, 'content_editor' ) && ! user_can( $current_user, 'administrator' ) ) {
 			// Get the instances assigned to this content editor.
-			$user_assigned_instances = get_user_meta($current_user->ID, 'assigned_instances', true);
+			$user_assigned_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
 			// Ensure it's a non-empty array.
-			if (!empty($user_assigned_instances) && is_array($user_assigned_instances)) {
+			if ( ! empty( $user_assigned_instances ) && is_array( $user_assigned_instances ) ) {
 				// Modify the query to only include posts with these IDs.
-				$args['post__in'] = array_map('absint', $user_assigned_instances); // Sanitize IDs just in case.
+				$args['post__in'] = array_map( 'absint', $user_assigned_instances ); // Sanitize IDs just in case.
 			} else {
 				// If the content editor has no assigned instances, return only the default empty option.
 				return $instances_array;
@@ -574,15 +578,15 @@ class Graphic_Data_Utility {
 		// Administrators and other roles will use the default $args (fetching all instances).
 
 		// Execute the query.
-		$query = new WP_Query($args);
+		$query = new WP_Query( $args );
 
 		// Build the associative array of ID => Title.
-		if ($query->have_posts()) {
-			foreach ($query->posts as $post_id) {
-				$title = get_the_title($post_id);
+		if ( $query->have_posts() ) {
+			foreach ( $query->posts as $post_id ) {
+				$title = get_the_title( $post_id );
 				// Add to array only if title is not empty.
-				if ($title) {
-					$instances_array[$post_id] = $title;
+				if ( $title ) {
+					$instances_array[ $post_id ] = $title;
 				}
 			}
 		}
@@ -592,7 +596,7 @@ class Graphic_Data_Utility {
 	}
 
 	// Get a list of all scenes associated with an instance.
-	public function returnInstanceScenes($instance_id){
+	public function returnInstanceScenes( $instance_id ) {
 
 		$scene_titles = array();
 		$args = array(
@@ -609,24 +613,24 @@ class Graphic_Data_Utility {
 		);
 
 		// Execute the query.
-		$query = new WP_Query($args);
-		
+		$query = new WP_Query( $args );
+
 		// Get the array of post IDs.
 		$scene_post_ids = $query->posts;
-		foreach ($scene_post_ids as $target_id){
-			$target_title = get_post_meta($target_id, "post_title", true);
-			$scene_titles[$target_id] = $target_title;
+		foreach ( $scene_post_ids as $target_id ) {
+			$target_title = get_post_meta( $target_id, 'post_title', true );
+			$scene_titles[ $target_id ] = $target_title;
 		}
-		asort($scene_titles);
+		asort( $scene_titles );
 		return $scene_titles;
 	}
 
-	public function returnSceneTitles($scene_id, $modal_id){
-		$final_scene_titles = array( " " => "" );
-		if (array_key_exists("post", $_GET)) {
-			$scene_location = get_post_meta($modal_id, "modal_location", true);
-			$scene_name = get_post_meta($scene_id, "post_title", true);
-			$scenes[$scene_id] = $scene_name;
+	public function returnSceneTitles( $scene_id, $modal_id ) {
+		$final_scene_titles = array( ' ' => '' );
+		if ( array_key_exists( 'post', $_GET ) ) {
+			$scene_location = get_post_meta( $modal_id, 'modal_location', true );
+			$scene_name = get_post_meta( $scene_id, 'post_title', true );
+			$scenes[ $scene_id ] = $scene_name;
 
 			$args = array(
 				'post_type' => 'scene',  // Your custom post type.
@@ -642,20 +646,20 @@ class Graphic_Data_Utility {
 			);
 
 			// Execute the query.
-			$query = new WP_Query($args);
+			$query = new WP_Query( $args );
 
 			// Get the array of post IDs.
 			$scene_post_ids = $query->posts;
 
 			$scene_titles = array();
-			foreach ($scene_post_ids as $target_id){
-				$target_title = get_post_meta($target_id, "post_title", true);
-				$scene_titles[$target_id] = $target_title;
+			foreach ( $scene_post_ids as $target_id ) {
+				$target_title = get_post_meta( $target_id, 'post_title', true );
+				$scene_titles[ $target_id ] = $target_title;
 			}
-			asort($scene_titles);
+			asort( $scene_titles );
 
 			// Create the final array starting with the desired empty option.
-			$final_scene_titles = array( " " => "" );
+			$final_scene_titles = array( ' ' => '' );
 
 			// Use the union operator (+) to add the sorted scenes after the empty option.
 			// This preserves the keys from $scene_titles.
@@ -664,36 +668,36 @@ class Graphic_Data_Utility {
 		return $final_scene_titles;
 	}
 
-	public function returnIcons($scene_id){
-		$modal_icons = array("" => "");
-		$scene_infographic = get_post_meta($scene_id, "scene_infographic", true);
-		if ($scene_infographic == true){
-			$relative_path = ltrim(parse_url($scene_infographic)['path'], "/");
+	public function returnIcons( $scene_id ) {
+		$modal_icons = array( '' => '' );
+		$scene_infographic = get_post_meta( $scene_id, 'scene_infographic', true );
+		if ( $scene_infographic == true ) {
+			$relative_path = ltrim( parse_url( $scene_infographic )['path'], '/' );
 
 			$full_path = get_home_path() . $relative_path;
 
-			$svg_content = file_get_contents($full_path);
+			$svg_content = file_get_contents( $full_path );
 
-			if ($svg_content === false) {
-				die("Failed to load SVG file.");
+			if ( $svg_content === false ) {
+				die( 'Failed to load SVG file.' );
 			}
 
 			// Create a new DOMDocument instance and load the SVG content.
 			$dom = new DOMDocument();
-			libxml_use_internal_errors(true); // Suppress errors related to invalid XML.
-			$dom->loadXML($svg_content);
+			libxml_use_internal_errors( true ); // Suppress errors related to invalid XML.
+			$dom->loadXML( $svg_content );
 			libxml_clear_errors();
 
 			// Create a new DOMXPath instance.
-			$xpath = new DOMXPath($dom);
+			$xpath = new DOMXPath( $dom );
 
-		// Find the element with the ID "icons" (case-insensitive).
-		// XPath 1.0 doesn't have lower-case(), so we use translate().
-		$query = "//*[translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'icons']";
-		$icons_element = $xpath->query($query)->item(0);
+			// Find the element with the ID "icons" (case-insensitive).
+			// XPath 1.0 doesn't have lower-case(), so we use translate().
+			$query = "//*[translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'icons']";
+			$icons_element = $xpath->query( $query )->item( 0 );
 
-			if ($icons_element === null) {
-				error_log("Utility::returnIcons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path);
+			if ( $icons_element === null ) {
+				error_log( "Utility::returnIcons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path );
 				return $modal_icons; // Element not found.
 			}
 
@@ -704,24 +708,24 @@ class Graphic_Data_Utility {
 			$child_ids = array();
 
 			// Loop through the child elements and extract their IDs.
-			foreach ($child_elements as $child) {
-				if ($child->nodeType === XML_ELEMENT_NODE && $child->hasAttribute('id')) {
-					$child_ids[] = $child->getAttribute('id');
+			foreach ( $child_elements as $child ) {
+				if ( $child->nodeType === XML_ELEMENT_NODE && $child->hasAttribute( 'id' ) ) {
+					$child_ids[] = $child->getAttribute( 'id' );
 				}
 			}
-			asort($child_ids);
-			foreach ($child_ids as $single_icon){
-				$modal_icons[$single_icon] = $single_icon;
+			asort( $child_ids );
+			foreach ( $child_ids as $single_icon ) {
+				$modal_icons[ $single_icon ] = $single_icon;
 			}
 		}
 		return $modal_icons;
 	}
 
 	// Return an array of scenes, other than the current scene, for a given location.
-	public function returnScenesExceptCurrent($scene_id){
+	public function returnScenesExceptCurrent( $scene_id ) {
 		$potential_scenes = array();
-		$scene_location = get_post_meta($scene_id, "scene_location", true);
-		if ($scene_location == true){
+		$scene_location = get_post_meta( $scene_id, 'scene_location', true );
+		if ( $scene_location == true ) {
 			$args = array(
 				'post_type' => 'scene',  // Your custom post type.
 				'posts_per_page' => -1,       // Retrieve all matching posts (-1 means no limit).
@@ -736,46 +740,45 @@ class Graphic_Data_Utility {
 			);
 
 			// Execute the query.
-			$query = new WP_Query($args);
+			$query = new WP_Query( $args );
 
 			// Get the array of post IDs.
 			$scene_post_ids = $query->posts;
-			foreach ($scene_post_ids as $target_id){
-				if ($target_id != $scene_id) {
-					$target_title = get_post_meta($target_id, "post_title", true);
-					$potential_scenes[$target_id] = $target_title;
+			foreach ( $scene_post_ids as $target_id ) {
+				if ( $target_id != $scene_id ) {
+					$target_title = get_post_meta( $target_id, 'post_title', true );
+					$potential_scenes[ $target_id ] = $target_title;
 				}
 			}
-			asort($potential_scenes);
-			$potential_scenes = array("" => "") + $potential_scenes;
+			asort( $potential_scenes );
+			$potential_scenes = array( '' => '' ) + $potential_scenes;
 		}
 		return $potential_scenes;
 	}
 
 	// Potential section headers for icons.
-	public function returnModalSections($scene_id){
+	public function returnModalSections( $scene_id ) {
 		$modal_sections = array();
-		for ($i = 1; $i < 7; $i++){
+		for ( $i = 1; $i < 7; $i++ ) {
 			$field_target = 'scene_section' . $i;
-			$target_section = get_post_meta($scene_id, $field_target, true);
-			if ($target_section != null && $target_section != "" & is_array($target_section)){
-				$target_title = $target_section["scene_section_title" . $i];
-				if ($target_title != null && $target_title != ""){
-					$modal_sections[$field_target] = $target_title;
+			$target_section = get_post_meta( $scene_id, $field_target, true );
+			if ( $target_section != null && $target_section != '' & is_array( $target_section ) ) {
+				$target_title = $target_section[ 'scene_section_title' . $i ];
+				if ( $target_title != null && $target_title != '' ) {
+					$modal_sections[ $field_target ] = $target_title;
 				}
-
 			}
 		}
-		asort($modal_sections);
-		$modal_sections = array_merge( array( "" => "" ), $modal_sections );
+		asort( $modal_sections );
+		$modal_sections = array_merge( array( '' => '' ), $modal_sections );
 		return $modal_sections;
 	}
 
 	// Dropdown options for Scene in figure content type.
-	public function returnScenesFigure($location){
-		$potential_scenes[""] = "";
+	public function returnScenesFigure( $location ) {
+		$potential_scenes[''] = '';
 
-		if ($location != ""){
+		if ( $location != '' ) {
 			$args = array(
 				'post_type' => 'scene',  // Your custom post type.
 				'posts_per_page' => -1,   // Retrieve all matching posts (-1 means no limit).
@@ -789,39 +792,38 @@ class Graphic_Data_Utility {
 				'fields' => 'ids',            // Only return post IDs.
 			);
 			// Execute the query.
-			$query = new WP_Query($args);
+			$query = new WP_Query( $args );
 
 			// Get the array of post IDs.
 			$scene_post_ids = $query->posts;
-			foreach ($scene_post_ids as $target_id){
-				$target_title = get_post_meta($target_id, "post_title", true);
-				$potential_scenes[$target_id] = $target_title;
+			foreach ( $scene_post_ids as $target_id ) {
+				$target_title = get_post_meta( $target_id, 'post_title', true );
+				$potential_scenes[ $target_id ] = $target_title;
 			}
-		//    asort($potential_scenes);
+			// asort($potential_scenes);
 		}
 		return $potential_scenes;
-		
 	}
 
-	public function returnModalTabs($modal_id){
-		$potential_tabs[""] = "";
-		if ($modal_id != "") {
-			for ($i = 1; $i < 7; $i++){
-				$target_field = "modal_tab_title" . $i;
-				$target_title = get_post_meta($modal_id, $target_field, true);
-				if ($target_title != "" && $target_title != null ){
-					$potential_tabs[$i] = $target_title;
+	public function returnModalTabs( $modal_id ) {
+		$potential_tabs[''] = '';
+		if ( $modal_id != '' ) {
+			for ( $i = 1; $i < 7; $i++ ) {
+				$target_field = 'modal_tab_title' . $i;
+				$target_title = get_post_meta( $modal_id, $target_field, true );
+				if ( $target_title != '' && $target_title != null ) {
+					$potential_tabs[ $i ] = $target_title;
 				}
 			}
-		//    asort($potential_tabs);
+			// asort($potential_tabs);
 		}
 		return $potential_tabs;
 	}
 
 	// Dropdown options for Icon in figure content type.
-	public function returnFigureIcons($scene_id){
-		$potential_icons[""] = "";
-		if ($scene_id != ""){
+	public function returnFigureIcons( $scene_id ) {
+		$potential_icons[''] = '';
+		if ( $scene_id != '' ) {
 
 			$args = array(
 				'post_type' => 'modal',  // Your custom post type.
@@ -842,25 +844,25 @@ class Graphic_Data_Utility {
 			);
 
 			// Execute the query.
-			$query = new WP_Query($args);
+			$query = new WP_Query( $args );
 
 			// Get the array of post IDs.
 			$modal_post_ids = $query->posts;
 
 			$modal_titles = array();
-			foreach ($modal_post_ids as $target_id){
-				$target_title = get_post_meta($target_id, "post_title", true);
-				$potential_icons[$target_id] = $target_title;
+			foreach ( $modal_post_ids as $target_id ) {
+				$target_title = get_post_meta( $target_id, 'post_title', true );
+				$potential_icons[ $target_id ] = $target_title;
 			}
-		  //  asort($potential_icons);
+			// asort($potential_icons);
 		}
 
 		return $potential_icons;
 	}
 
 	// Register rest fields for when rest api hook is called.
-	public function register_custom_rest_fields($post_type, $rest_fields){
-		foreach($rest_fields as $target_field){
+	public function register_custom_rest_fields( $post_type, $rest_fields ) {
+		foreach ( $rest_fields as $target_field ) {
 			register_rest_field(
 				$post_type, // Custom post type name.
 				$target_field, // Name of the custom field.
@@ -873,48 +875,48 @@ class Graphic_Data_Utility {
 	}
 
 	// Used by register_custom_rest_fields.
-	public function meta_get_callback($object, $field_name, $request) {
-		return get_post_meta($object['id'], $field_name, true);
+	public function meta_get_callback( $object, $field_name, $request ) {
+		return get_post_meta( $object['id'], $field_name, true );
 	}
 
 
 	/**
 	 * Display warning message if add new post is not possible for custom content post type.
-	 * 
+	 *
 	 * This function display a warning message on the admin screen for a custom content type, if the underlying data necessary
 	 * to create a new post of that content type is not present. This function is only currently
 	 * implemented for the instance content type, but is intended to be generalized for use with scene, modal, and figure content types as well.
-	 * 
+	 *
 	 * @global string $pagenow  The current admin page filename.
 	 * @global string $typenow  The current post type being viewed.
-	 * 
+	 *
 	 * @return void  Outputs HTML directly to the admin screen. No return value.
 	 * @since    1.0.0
 	 */
 	function display_warning_message_if_new_post_impossible() {
 
 		global $pagenow, $typenow;
-		
+
 		// Check if we're on the instance post type admin page.
-		if ($pagenow == 'edit.php' && $typenow == 'instance') {
+		if ( $pagenow == 'edit.php' && $typenow == 'instance' ) {
 			// Check if there are no terms.
-			$terms = get_terms(array(
-				'taxonomy' => 'instance_type',
-				'hide_empty' => false,
-				'number' => 1,
-				'fields' => 'ids',
-			));
-			
-			if (is_wp_error($terms) || empty($terms)) {
+			$terms = get_terms(
+				array(
+					'taxonomy' => 'instance_type',
+					'hide_empty' => false,
+					'number' => 1,
+					'fields' => 'ids',
+				)
+			);
+
+			if ( is_wp_error( $terms ) || empty( $terms ) ) {
 				?>
 				<div class="notice notice-error is-dismissible">
-					<p><strong>Cannot create Instance posts.</strong> You must create at least one <a href="<?php echo admin_url('edit-tags.php?taxonomy=instance_type&post_type=instance'); ?>">Instance Type</a> before you can add an Instance post. </p>
+					<p><strong>Cannot create Instance posts.</strong> You must create at least one <a href="<?php echo admin_url( 'edit-tags.php?taxonomy=instance_type&post_type=instance' ); ?>">Instance Type</a> before you can add an Instance post. </p>
 				</div>
 				<?php
 			}
 		}
 	}
-
-
 }
 
