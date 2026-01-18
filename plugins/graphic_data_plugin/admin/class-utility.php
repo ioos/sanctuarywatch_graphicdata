@@ -702,6 +702,8 @@ class Graphic_Data_Utility {
 			}
 
 			// Get all child elements of the "icons" element.
+			// The phpcs ignore command on the next line is needed to suppress a php code sniffer error.
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			$child_elements = $icons_element->childNodes;
 
 			// Initialize an array to hold the IDs.
@@ -709,7 +711,10 @@ class Graphic_Data_Utility {
 
 			// Loop through the child elements and extract their IDs.
 			foreach ( $child_elements as $child ) {
+				// The phpcs ignore command on the next two lines is needed to suppress a php code sniffer error.
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				if ( $child->nodeType === XML_ELEMENT_NODE && $child->hasAttribute( 'id' ) ) {
+					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 					$child_ids[] = $child->getAttribute( 'id' );
 				}
 			}
