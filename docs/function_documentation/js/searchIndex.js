@@ -108,7 +108,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Create_SVG",
             "name": "Create_SVG",
-            "summary": "",
+            "summary": "Register\u0020class\u0020that\u0020defines\u0020Create\u0020SVG\u0020functions",
             "url": "classes/Create-SVG.html"
         },                {
             "fqsen": "\\Create_SVG\u003A\u003Aadd_create_svg_menu\u0028\u0029",
@@ -381,140 +381,140 @@ Search.appendIndex(
             "summary": "Restricts\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020edit\u0020screens\u0020based\u0020on\u0020user\u0020role\u0020and\u0020assigned\u0020instances.",
             "url": "classes/Custom-Roles.html#method_restrict_editing"
         },                {
-            "fqsen": "\\Utility",
-            "name": "Utility",
+            "fqsen": "\\Graphic_Data_Utility",
+            "name": "Graphic_Data_Utility",
             "summary": "Utility\u0020functions\u0020used\u0020across\u0020the\u0020plugin",
-            "url": "classes/Utility.html"
+            "url": "classes/Graphic-Data-Utility.html"
         },                {
-            "fqsen": "\\Utility\u003A\u003AstringTruncate\u0028\u0029",
-            "name": "stringTruncate",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Astring_truncate\u0028\u0029",
+            "name": "string_truncate",
             "summary": "Shorten\u0020string\u0020without\u0020cutting\u0020words\u0020midword.",
-            "url": "classes/Utility.html#method_stringTruncate"
+            "url": "classes/Graphic-Data-Utility.html#method_string_truncate"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aoutput_transient_to_js\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aoutput_transient_to_js\u0028\u0029",
             "name": "output_transient_to_js",
-            "summary": "",
-            "url": "classes/Utility.html#method_output_transient_to_js"
+            "summary": "Output\u0020transient\u0020data\u0020as\u0020JavaScript\u0020for\u0020field\u0020validation.",
+            "url": "classes/Graphic-Data-Utility.html#method_output_transient_to_js"
         },                {
-            "fqsen": "\\Utility\u003A\u003Afields_to_transient\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Afields_to_transient\u0028\u0029",
             "name": "fields_to_transient",
-            "summary": "Generalized\u0020function\u0020to\u0020write\u0020all\u0020field\u0020values\u0020from\u0020any\u0020custom\u0020content\u0020type\u0020to\u0020transients",
-            "url": "classes/Utility.html#method_fields_to_transient"
+            "summary": "Store\u0020field\u0020values\u0020in\u0020a\u0020user\u002Dspecific\u0020transient.",
+            "url": "classes/Graphic-Data-Utility.html#method_fields_to_transient"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aget_user_transient_key\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aget_user_transient_key\u0028\u0029",
             "name": "get_user_transient_key",
-            "summary": "Helper\u0020function\u0020to\u0020create\u0020a\u0020unique\u0020transient\u0020key\u0020for\u0020the\u0020current\u0020user,\u0020based\u0020on\u0020the\u0020user\u0020ID",
-            "url": "classes/Utility.html#method_get_user_transient_key"
+            "summary": "Helper\u0020function\u0020to\u0020create\u0020a\u0020unique\u0020transient\u0020key\u0020for\u0020the\u0020current\u0020user,\u0020based\u0020on\u0020the\u0020user\u0020ID.",
+            "url": "classes/Graphic-Data-Utility.html#method_get_user_transient_key"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aget_fields_from_transient\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aget_fields_from_transient\u0028\u0029",
             "name": "get_fields_from_transient",
-            "summary": "Helper\u0020function\u0020to\u0020retrieve\u0020field\u0020values\u0020from\u0020transients",
-            "url": "classes/Utility.html#method_get_fields_from_transient"
+            "summary": "Helper\u0020function\u0020to\u0020retrieve\u0020field\u0020values\u0020from\u0020transients.",
+            "url": "classes/Graphic-Data-Utility.html#method_get_fields_from_transient"
         },                {
-            "fqsen": "\\Utility\u003A\u003Adummy_sanitize\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Adummy_sanitize\u0028\u0029",
             "name": "dummy_sanitize",
             "summary": "Dummy\u0020sanitize\u0020function\u0020that\u0020returns\u0020the\u0020value\u0020as\u0020is.",
-            "url": "classes/Utility.html#method_dummy_sanitize"
+            "url": "classes/Graphic-Data-Utility.html#method_dummy_sanitize"
         },                {
-            "fqsen": "\\Utility\u003A\u003Adelete_fields_transient\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Adelete_fields_transient\u0028\u0029",
             "name": "delete_fields_transient",
             "summary": "Helper\u0020function\u0020to\u0020delete\u0020field\u0020values\u0020from\u0020transients",
-            "url": "classes/Utility.html#method_delete_fields_transient"
+            "url": "classes/Graphic-Data-Utility.html#method_delete_fields_transient"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aextract_field_values\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aextract_field_values\u0028\u0029",
             "name": "extract_field_values",
             "summary": "Recursively\u0020extract\u0020field\u0020values\u0020from\u0020POST\u0020data\u0020based\u0020on\u0020field\u0020configuration",
-            "url": "classes/Utility.html#method_extract_field_values"
+            "url": "classes/Graphic-Data-Utility.html#method_extract_field_values"
         },                {
-            "fqsen": "\\Utility\u003A\u003Acheck_draft_overview_scene\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Acheck_draft_overview_scene\u0028\u0029",
             "name": "check_draft_overview_scene",
             "summary": "Checks\u0020if\u0020a\u0020scene\u0020is\u0020the\u0020overview\u0020scene\u0020for\u0020an\u0020instance\u0020and\u0020\u002D\u0020if\u0020so\u0020\u002D\u0020if\u0020the\u0020scene\u0020has\u0020been\u0020set\u0020to\u0020draft\u0020\u0028hint\u003A\u0020it\u0020shouldn\u0027t\u0020be\u0029",
-            "url": "classes/Utility.html#method_check_draft_overview_scene"
+            "url": "classes/Graphic-Data-Utility.html#method_check_draft_overview_scene"
         },                {
-            "fqsen": "\\Utility\u003A\u003Apost_admin_notice\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Apost_admin_notice\u0028\u0029",
             "name": "post_admin_notice",
             "summary": "Displays\u0020admin\u0020notices\u0020for\u0020the\u0020following\u0020kind\u0020of\u0020custom\u0020content\u0020posts\u003A\u0020about,\u0020instance,\u0020scene,\u0020modal,\u0020and\u0020figure.",
-            "url": "classes/Utility.html#method_post_admin_notice"
+            "url": "classes/Graphic-Data-Utility.html#method_post_admin_notice"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aretrieve_post_status\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aretrieve_post_status\u0028\u0029",
             "name": "retrieve_post_status",
             "summary": "Return\u0020post\u0020status\u0020for\u0020custom\u0020posts.",
-            "url": "classes/Utility.html#method_retrieve_post_status"
+            "url": "classes/Graphic-Data-Utility.html#method_retrieve_post_status"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aretrieve_post_errors_warnings\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aretrieve_post_errors_warnings\u0028\u0029",
             "name": "retrieve_post_errors_warnings",
             "summary": "Return\u0020data\u0020entry\u0020errors\u0020and\u0020warnings\u0020associated\u0020with\u0020custom\u0020posts.",
-            "url": "classes/Utility.html#method_retrieve_post_errors_warnings"
+            "url": "classes/Graphic-Data-Utility.html#method_retrieve_post_errors_warnings"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aget_filter_value\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aget_filter_value\u0028\u0029",
             "name": "get_filter_value",
             "summary": "Check\u0020if\u0020stored\u0020filter\u0020values\u0020are\u0020still\u0020valid\u0020and\u0020retrieve\u0020them\u0020if\u0020they\u0020are.",
-            "url": "classes/Utility.html#method_get_filter_value"
+            "url": "classes/Graphic-Data-Utility.html#method_get_filter_value"
         },                {
-            "fqsen": "\\Utility\u003A\u003AcreateInstanceDropDownFilter\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AcreateInstanceDropDownFilter\u0028\u0029",
             "name": "createInstanceDropDownFilter",
             "summary": "Create\u0020Instance\u0020filter\u0020dropdown\u0020shown\u0020in\u0020the\u0020Scene,\u0020Modal,\u0020and\u0020Figure\u0020admin\u0020column\u0020screens.",
-            "url": "classes/Utility.html#method_createInstanceDropDownFilter"
+            "url": "classes/Graphic-Data-Utility.html#method_createInstanceDropDownFilter"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnAllInstances\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnAllInstances\u0028\u0029",
             "name": "returnAllInstances",
             "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020instances,\u0020filtered\u0020for\u0020\u0027content_editor\u0027\u0020role.",
-            "url": "classes/Utility.html#method_returnAllInstances"
+            "url": "classes/Graphic-Data-Utility.html#method_returnAllInstances"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnInstanceScenes\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnInstanceScenes\u0028\u0029",
             "name": "returnInstanceScenes",
             "summary": "",
-            "url": "classes/Utility.html#method_returnInstanceScenes"
+            "url": "classes/Graphic-Data-Utility.html#method_returnInstanceScenes"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnSceneTitles\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnSceneTitles\u0028\u0029",
             "name": "returnSceneTitles",
             "summary": "",
-            "url": "classes/Utility.html#method_returnSceneTitles"
+            "url": "classes/Graphic-Data-Utility.html#method_returnSceneTitles"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnIcons\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnIcons\u0028\u0029",
             "name": "returnIcons",
             "summary": "",
-            "url": "classes/Utility.html#method_returnIcons"
+            "url": "classes/Graphic-Data-Utility.html#method_returnIcons"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnScenesExceptCurrent\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnScenesExceptCurrent\u0028\u0029",
             "name": "returnScenesExceptCurrent",
             "summary": "",
-            "url": "classes/Utility.html#method_returnScenesExceptCurrent"
+            "url": "classes/Graphic-Data-Utility.html#method_returnScenesExceptCurrent"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnModalSections\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnModalSections\u0028\u0029",
             "name": "returnModalSections",
             "summary": "",
-            "url": "classes/Utility.html#method_returnModalSections"
+            "url": "classes/Graphic-Data-Utility.html#method_returnModalSections"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnScenesFigure\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnScenesFigure\u0028\u0029",
             "name": "returnScenesFigure",
             "summary": "",
-            "url": "classes/Utility.html#method_returnScenesFigure"
+            "url": "classes/Graphic-Data-Utility.html#method_returnScenesFigure"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnModalTabs\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnModalTabs\u0028\u0029",
             "name": "returnModalTabs",
             "summary": "",
-            "url": "classes/Utility.html#method_returnModalTabs"
+            "url": "classes/Graphic-Data-Utility.html#method_returnModalTabs"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnFigureIcons\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnFigureIcons\u0028\u0029",
             "name": "returnFigureIcons",
             "summary": "",
-            "url": "classes/Utility.html#method_returnFigureIcons"
+            "url": "classes/Graphic-Data-Utility.html#method_returnFigureIcons"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aregister_custom_rest_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aregister_custom_rest_fields\u0028\u0029",
             "name": "register_custom_rest_fields",
             "summary": "",
-            "url": "classes/Utility.html#method_register_custom_rest_fields"
+            "url": "classes/Graphic-Data-Utility.html#method_register_custom_rest_fields"
         },                {
-            "fqsen": "\\Utility\u003A\u003Ameta_get_callback\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Ameta_get_callback\u0028\u0029",
             "name": "meta_get_callback",
             "summary": "",
-            "url": "classes/Utility.html#method_meta_get_callback"
+            "url": "classes/Graphic-Data-Utility.html#method_meta_get_callback"
         },                {
-            "fqsen": "\\Utility\u003A\u003Adisplay_warning_message_if_new_post_impossible\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Adisplay_warning_message_if_new_post_impossible\u0028\u0029",
             "name": "display_warning_message_if_new_post_impossible",
             "summary": "Display\u0020warning\u0020message\u0020if\u0020add\u0020new\u0020post\u0020is\u0020not\u0020possible\u0020for\u0020custom\u0020content\u0020post\u0020type.",
-            "url": "classes/Utility.html#method_display_warning_message_if_new_post_impossible"
+            "url": "classes/Graphic-Data-Utility.html#method_display_warning_message_if_new_post_impossible"
         },                {
             "fqsen": "\\Validation",
             "name": "Validation",
@@ -1846,15 +1846,15 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION"
         },                {
-            "fqsen": "\\MYPLUGIN_DATA_DIR",
-            "name": "MYPLUGIN_DATA_DIR",
+            "fqsen": "\\GRAPHIC_DATA_DATA_DIR",
+            "name": "GRAPHIC_DATA_DATA_DIR",
             "summary": "The\u0020data\u0020directory\u0020inside\u0020of\u0020wp\u002Dcontent",
-            "url": "namespaces/default.html#constant_MYPLUGIN_DATA_DIR"
+            "url": "namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR"
         },                {
-            "fqsen": "\\MYPLUGIN_DATA_URL",
-            "name": "MYPLUGIN_DATA_URL",
+            "fqsen": "\\GRAPHIC_DATA_DATA_URL",
+            "name": "GRAPHIC_DATA_DATA_URL",
             "summary": "",
-            "url": "namespaces/default.html#constant_MYPLUGIN_DATA_URL"
+            "url": "namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL"
         },                {
             "fqsen": "\\myplugin_activate\u0028\u0029",
             "name": "myplugin_activate",
@@ -1883,7 +1883,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\About",
             "name": "About",
-            "summary": "",
+            "summary": "Register\u0020class\u0020that\u0020defines\u0020the\u0020Figure\u0020custom\u0020content\u0020type\u0020as\u0020well\u0020as\u0020associated\u0020Modal\u0020functions",
             "url": "classes/About.html"
         },                {
             "fqsen": "\\About\u003A\u003Acustom_content_type_about\u0028\u0029",
@@ -2013,7 +2013,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Instance_Type",
             "name": "Instance_Type",
-            "summary": "",
+            "summary": "Register\u0020class\u0020that\u0020defines\u0020the\u0020Instance\u0020Type\u0020functions",
             "url": "classes/Instance-Type.html"
         },                {
             "fqsen": "\\Instance_Type\u003A\u003Ainstance_settings_init\u0028\u0029",
@@ -2271,10 +2271,10 @@ Search.appendIndex(
             "summary": "Populate\u0020custom\u0020fields\u0020for\u0020Scene\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
             "url": "classes/Scene.html#method_custom_scene_column"
         },                {
-            "fqsen": "\\Scene\u003A\u003AstringTruncate\u0028\u0029",
-            "name": "stringTruncate",
+            "fqsen": "\\Scene\u003A\u003Astring_truncate\u0028\u0029",
+            "name": "string_truncate",
             "summary": "Shorten\u0020string\u0020without\u0020cutting\u0020words\u0020midword.",
-            "url": "classes/Scene.html#method_stringTruncate"
+            "url": "classes/Scene.html#method_string_truncate"
         },                {
             "fqsen": "\\Scene\u003A\u003Aremove_bulk_actions\u0028\u0029",
             "name": "remove_bulk_actions",
