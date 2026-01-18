@@ -2,7 +2,7 @@
 defined('ABSPATH') || exit;
 $instance_num =  get_post_meta(get_the_ID(), 'scene_location', true);
 
-$singleInstance = singleInstanceCheck();
+$singleInstance = graphic_data_single_instance_check();
 if ($singleInstance != false) {
     $instance_num = $singleInstance["instanceID"];
 }

@@ -242,7 +242,6 @@ function graphic_data_enqueue_api_script() {
 }
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_api_script' );
 
-
 /**
  * Sets a default site icon if none is configured.
  *
@@ -445,14 +444,14 @@ function graphic_data_get_modal_array( $svg_url ) {
 			return null;
 		}
 
-		// Get the child nodes of the "icons" element.
+		// Get the child nodes of the "icons" element. The phpcs ignore command on the next line is needed to suppress a php code sniffer error.
 		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		$child_elements = $icons_element->childNodes;
 		$child_ids = array();
 
 		foreach ( $child_elements as $child ) {
 			if ( $child instanceof DOMElement && $child->hasAttribute( 'id' ) ) {
-				// Add the "id" attribute to the array.
+				// Add the "id" attribute to the array. The phpcs ignore command on the next line is needed to suppress a php code sniffer error.
 				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 				$child_id = $child->getAttribute( 'id' );
 				// This is a WP_query object for the current child ID.

@@ -33,7 +33,7 @@
 
             $inst_overview_scene = isset($postMeta['instance_overview_scene'][0]) ? $postMeta['instance_overview_scene'][0] : '';
             
-            $singleInstance = singleInstanceCheck();
+            $singleInstance = graphic_data_single_instance_check();
             if ($singleInstance != false) {
                 $sceneLocation = $singleInstance["instanceID"];
             }
