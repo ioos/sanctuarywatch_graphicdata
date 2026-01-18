@@ -154,7 +154,7 @@ $overview = get_post_meta($instance, 'instance_overview_scene', true);
           $scene_full_screen_button = get_post_meta($post_id, 'scene_full_screen_button', true); 
           $scene_same_hover_color_sections	= get_post_meta($post_id, 'scene_same_hover_color_sections', true); 
 
-          $child_ids = get_modal_array($svg_url);
+          $child_ids = graphic_data_get_modal_array($svg_url);
         
         ?>
       </div>
