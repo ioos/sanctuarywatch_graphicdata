@@ -713,7 +713,7 @@ class Graphic_Data_Utility {
 			foreach ( $child_elements as $child ) {
 				// The phpcs ignore command on the next two lines is needed to suppress a php code sniffer error.
 				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				if ( $child->nodeType === XML_ELEMENT_NODE && $child->hasAttribute( 'id' ) ) {
+				if ( XML_ELEMENT_NODE === $child->nodeType && $child instanceof DOMElement && $child->hasAttribute( 'id' ) ) {
 					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 					$child_ids[] = $child->getAttribute( 'id' );
 				}
