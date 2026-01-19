@@ -1,0 +1,1640 @@
+---
+layout: page
+title: "Documentation"
+permalink: /classes/Graphic-Data-GitHub-Updater/
+---
+
+
+<header class="phpdocumentor-header phpdocumentor-section">
+    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">Documentation</a></h1>
+    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button">
+        <i class="fas fa-bars"></i>
+    </label>
+    <section data-search-form class="phpdocumentor-search">
+    <label>
+        <span class="visually-hidden">Search for</span>
+        <svg class="phpdocumentor-search__icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="2"/>
+            <line x1="12.4892" y1="12.2727" x2="19.1559" y2="18.9393" stroke="currentColor" stroke-width="3"/>
+        </svg>
+        <input type="search" class="phpdocumentor-field phpdocumentor-search__field" placeholder="Loading .." disabled />
+    </label>
+</section>
+
+    <nav class="phpdocumentor-topnav">
+    <ul class="phpdocumentor-topnav__menu">
+        </ul>
+</nav>
+</header>
+
+    <main class="phpdocumentor">
+        <div class="phpdocumentor-section">
+            <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
+<label class="phpdocumentor-sidebar__menu-icon" for="sidebar-button">
+    Menu
+</label>
+<aside class="phpdocumentor-column -three phpdocumentor-sidebar">
+                    <section class="phpdocumentor-sidebar__category -packages">
+            <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Graphic.html" class="">Graphic</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="packages/Graphic-Data.html" class="">Data</a>
+                
+            </li>
+            </ul>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Application.html" class="">Application</a>
+</h4>
+
+                        </section>
+            
+    <section class="phpdocumentor-sidebar__category -reports">
+        <h2 class="phpdocumentor-sidebar__category-header">Reports</h2>
+                <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/deprecated.html">Deprecated</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/errors.html">Errors</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/markers.html">Markers</a></h3>
+    </section>
+
+    <section class="phpdocumentor-sidebar__category -indices">
+        <h2 class="phpdocumentor-sidebar__category-header">Indices</h2>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="indices/files.html">Files</a></h3>
+    </section>
+</aside>
+
+            <div class="phpdocumentor-column -nine phpdocumentor-content">
+                                <section>
+                                        <ul class="phpdocumentor-breadcrumbs">
+            <li class="phpdocumentor-breadcrumb"><a href="packages/Application.html">Application</a></li>
+    </ul>
+
+    <article class="phpdocumentor-element -class">
+        <h2 class="phpdocumentor-content__title">
+    Graphic_Data_GitHub_Updater
+
+    
+            <div class="phpdocumentor-element__package">
+            in package
+            <ul class="phpdocumentor-breadcrumbs">
+                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Application.html">Application</a></li>
+                            </ul>
+        </div>
+    
+    
+    </h2>
+
+<div class="phpdocumentor-label-line">
+
+
+</div>
+
+        <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">8</span>
+
+    </aside>
+
+            <p class="phpdocumentor-summary">GitHub Updater - Optimized Version</p>
+
+
+    <section class="phpdocumentor-description"><p>Enables WordPress plugins and themes to update from GitHub, including pre-releases.
+Optimized to reduce API calls and prevent GitHub rate limiting.</p>
+</section>
+
+
+
+    
+    
+<h3 id="toc">
+    Table of Contents
+    <a href="classes/Graphic-Data-GitHub-Updater.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h3>
+
+
+
+
+
+
+
+
+
+<h4 id="toc-properties">
+    Properties
+    <a href="classes/Graphic-Data-GitHub-Updater.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_cache_duration">$cache_duration</a>
+    <span>
+                        &nbsp;: int            </span>
+</dt>
+<dd>Cache duration in seconds (24 hours by default)</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_github_response">$github_response</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;|null            </span>
+</dt>
+<dd>Stores the response from the GitHub API (latest release or commit data).</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_is_theme">$is_theme</a>
+    <span>
+                        &nbsp;: bool            </span>
+</dt>
+<dd>Flag indicating if the current instance is for a theme.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_data">$plugin_data</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;|null            </span>
+</dt>
+<dd>Stores plugin or theme data retrieved from WordPress.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_file">$plugin_file</a>
+    <span>
+                        &nbsp;: string|null            </span>
+</dt>
+<dd>The main plugin file path. Only used if $is_theme is false.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_repository">$repository</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>The GitHub repository name.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_slug">$slug</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>The slug of the plugin or theme.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_subdir_path">$subdir_path</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>The path to the plugin/theme within the GitHub repository, if it&#039;s in a subdirectory.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_update_checked">$update_checked</a>
+    <span>
+                        &nbsp;: bool            </span>
+</dt>
+<dd>Flag to track if we&#039;ve already checked for updates in this request</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#property_username">$username</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>The GitHub username or organization name.</dd>
+
+    </dl>
+
+<h4 id="toc-methods">
+    Methods
+    <a href="classes/Graphic-Data-GitHub-Updater.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method___construct">__construct()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Constructor.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_after_install">after_install()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Post-installation hook for plugins.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_after_theme_install">after_theme_install()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Post-installation hook for themes.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_clear_update_cache">clear_update_cache()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Clears the update cache when plugin/theme is updated.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_plugin_info">plugin_info()</a>
+    <span>
+                                &nbsp;: false|object    </span>
+</dt>
+<dd>Provides plugin information for the &quot;View details&quot; popup.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_rate_limit_notice">rate_limit_notice()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Display admin notice when rate limited</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_set_plugin_properties">set_plugin_properties()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Sets plugin or theme properties using WordPress functions.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_theme_update_state">theme_update_state()</a>
+    <span>
+                                &nbsp;: object    </span>
+</dt>
+<dd>Alias for theme updates to use the same update_state logic.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_update_state">update_state()</a>
+    <span>
+                                &nbsp;: object    </span>
+</dt>
+<dd>Checks for updates and modifies the update transient.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_get_download_url">get_download_url()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Gets the download URL for the plugin or theme.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_get_repository_info">get_repository_info()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Retrieves repository information from GitHub API with enhanced caching.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_copy">recursive_copy()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Helper function to recursively copy directories using WP_Filesystem.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_remove_directory">recursive_remove_directory()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Helper function to recursively remove a directory using WP_Filesystem.</dd>
+
+    </dl>
+
+
+
+        
+
+        
+    <section class="phpdocumentor-properties">
+        <h3 class="phpdocumentor-elements__header" id="properties">
+            Properties
+            <a href="classes/Graphic-Data-GitHub-Updater.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_cache_duration">
+        $cache_duration
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_cache_duration" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">64</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Cache duration in seconds (24 hours by default)</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">$cache_duration</span>
+     = <span class="phpdocumentor-signature__default-value">\DAY_IN_SECONDS</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_github_response">
+        $github_response
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_github_response" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">39</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Stores the response from the GitHub API (latest release or commit data).</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;|null</span>
+    <span class="phpdocumentor-signature__name">$github_response</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_is_theme">
+        $is_theme
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_is_theme" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">51</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Flag indicating if the current instance is for a theme.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">bool</span>
+    <span class="phpdocumentor-signature__name">$is_theme</span>
+     = <span class="phpdocumentor-signature__default-value">\false</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_plugin_data">
+        $plugin_data
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_data" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">21</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Stores plugin or theme data retrieved from WordPress.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;|null</span>
+    <span class="phpdocumentor-signature__name">$plugin_data</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_plugin_file">
+        $plugin_file
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_file" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">45</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The main plugin file path. Only used if $is_theme is false.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string|null</span>
+    <span class="phpdocumentor-signature__name">$plugin_file</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_repository">
+        $repository
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_repository" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">33</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The GitHub repository name.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$repository</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_slug">
+        $slug
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_slug" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">15</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The slug of the plugin or theme.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$slug</span>
+    </code>
+
+        <section class="phpdocumentor-description"><p>For plugins, it's plugin_basename($file). For themes, it's the theme directory name.</p>
+</section>
+
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_subdir_path">
+        $subdir_path
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_subdir_path" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">57</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The path to the plugin/theme within the GitHub repository, if it&#039;s in a subdirectory.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$subdir_path</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_update_checked">
+        $update_checked
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_update_checked" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">71</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Flag to track if we&#039;ve already checked for updates in this request</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">bool</span>
+    <span class="phpdocumentor-signature__name">$update_checked</span>
+     = <span class="phpdocumentor-signature__default-value">\false</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_username">
+        $username
+        <a href="classes/Graphic-Data-GitHub-Updater.html#property_username" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">27</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The GitHub username or organization name.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$username</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+            </section>
+
+            <section class="phpdocumentor-methods">
+        <h3 class="phpdocumentor-elements__header" id="methods">
+            Methods
+            <a href="classes/Graphic-Data-GitHub-Updater.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method___construct">
+        __construct()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">84</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Constructor.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$file</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$github_username</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$github_repo</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$is_theme</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">false</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$subdir_path</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">''</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Sets up hooks for plugin or theme updates.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$file</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The main plugin file path or theme directory path.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$github_username</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The GitHub username or organization.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$github_repo</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The GitHub repository name.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$is_theme</span>
+                : <span class="phpdocumentor-argument-list__argument__type">bool</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">false</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Optional. True if this is a theme, false for a plugin. Default false.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$subdir_path</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">''</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Optional. Path to the plugin/theme within the repository if it's in a subdirectory.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_after_install">
+        after_install()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_after_install" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">526</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Post-installation hook for plugins.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">after_install</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$response</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$hook_extra</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$result</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Moves the plugin from the temporary download location to the correct plugin directory.
+Handles cases where the plugin is in a subdirectory within the repository zip.
+Hooked to 'upgrader_post_install'.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$response</span>
+                : <span class="phpdocumentor-argument-list__argument__type">bool</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Installation response.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$hook_extra</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Extra arguments passed to hooked filters.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$result</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Installation result data.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The (potentially modified) result data.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_after_theme_install">
+        after_theme_install()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_after_theme_install" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">563</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Post-installation hook for themes.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">after_theme_install</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$response</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$hook_extra</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$result</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Moves the theme from the temporary download location to the correct theme directory.
+Handles cases where the theme is in a subdirectory within the repository zip.
+Hooked to 'upgrader_post_install'.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$response</span>
+                : <span class="phpdocumentor-argument-list__argument__type">bool</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Installation response.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$hook_extra</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Extra arguments passed to hooked filters.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$result</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Installation result data.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The (potentially modified) result data.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_clear_update_cache">
+        clear_update_cache()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_clear_update_cache" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">407</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Clears the update cache when plugin/theme is updated.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">clear_update_cache</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><abbr title="\WP_Upgrader">WP_Upgrader</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$upgrader</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$options</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to 'upgrader_process_complete'.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$upgrader</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\WP_Upgrader">WP_Upgrader</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>WP_Upgrader instance.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$options</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Array of bulk item update data.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_plugin_info">
+        plugin_info()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_plugin_info" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">435</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Provides plugin information for the &quot;View details&quot; popup.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">plugin_info</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">false|object|array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$false</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$action</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">object&nbsp;</span><span class="phpdocumentor-signature__argument__name">$response</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">false|object</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to 'plugins_api'.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$false</span>
+                : <span class="phpdocumentor-argument-list__argument__type">false|object|array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The result object or array. Default false.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$action</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The type of information being requested from the Plugin Installation API.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$response</span>
+                : <span class="phpdocumentor-argument-list__argument__type">object</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>An object of arguments used to solicit information about a plugin.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">false|object</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The plugin info object or false if not applicable.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_rate_limit_notice">
+        rate_limit_notice()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_rate_limit_notice" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">389</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Display admin notice when rate limited</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">rate_limit_notice</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_set_plugin_properties">
+        set_plugin_properties()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_set_plugin_properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">119</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Sets plugin or theme properties using WordPress functions.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">set_plugin_properties</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to 'admin_init'.</p>
+</section>
+
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_theme_update_state">
+        theme_update_state()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_theme_update_state" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">422</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Alias for theme updates to use the same update_state logic.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">theme_update_state</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">object&nbsp;</span><span class="phpdocumentor-signature__argument__name">$transient</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">object</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to 'site_transient_update_themes'.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$transient</span>
+                : <span class="phpdocumentor-argument-list__argument__type">object</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The WordPress update transient for themes.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">object</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The modified transient.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_update_state">
+        update_state()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_update_state" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">301</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Checks for updates and modifies the update transient.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">update_state</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">object&nbsp;</span><span class="phpdocumentor-signature__argument__name">$transient</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">object</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Enhanced with better caching and rate limit handling.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$transient</span>
+                : <span class="phpdocumentor-argument-list__argument__type">object</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The WordPress update transient.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">object</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The modified transient.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_download_url">
+        get_download_url()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_get_download_url" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">478</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Gets the download URL for the plugin or theme.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">get_download_url</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Prioritizes specific release assets (graphic_data_plugin.zip or graphic_data_theme.zip),
+then the release's zipball_url, then a direct archive link to the default branch.</p>
+</section>
+
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The download URL.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_repository_info">
+        get_repository_info()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_get_repository_info" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">140</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Retrieves repository information from GitHub API with enhanced caching.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">get_repository_info</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Fetches the latest release or, if no releases, the latest commit from the default branch.</p>
+</section>
+
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_recursive_copy">
+        recursive_copy()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_copy" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">596</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Helper function to recursively copy directories using WP_Filesystem.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">recursive_copy</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$src</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dst</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$src</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Source directory path.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$dst</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Destination directory path.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>True on success, false on failure.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_recursive_remove_directory">
+        recursive_remove_directory()
+        <a href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_remove_directory" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-github-updater.php"><a href="files/admin-class-github-updater.html"><abbr title="admin/class-github-updater.php">class-github-updater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">633</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Helper function to recursively remove a directory using WP_Filesystem.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">recursive_remove_directory</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$directory</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Includes safety checks to prevent accidental deletion of critical directories.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$directory</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Path to the directory to remove.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>True on success, false on failure or if safety checks fail.</p>
+</section>
+
+            </section>
+
+</article>
+            </section>
+
+        <div class="phpdocumentor-modal" id="source-view">
+    <div class="phpdocumentor-modal-bg" data-exit-button></div>
+    <div class="phpdocumentor-modal-container">
+        <div class="phpdocumentor-modal-content">
+            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/admin/class-github-updater.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
+        </div>
+        <button data-exit-button class="phpdocumentor-modal__close">&times;</button>
+    </div>
+</div>
+
+    <script type="text/javascript">
+        (function () {
+            function loadExternalCodeSnippet(el, url, line) {
+                Array.prototype.slice.call(el.querySelectorAll('pre[data-src]')).forEach((pre) => {
+                    const src = url || pre.getAttribute('data-src').replace(/\\/g, '/');
+                    const language = 'php';
+
+                    const code = document.createElement('code');
+                    code.className = 'language-' + language;
+                    pre.textContent = '';
+                    pre.setAttribute('data-line', line)
+                    code.textContent = 'Loading…';
+                    pre.appendChild(code);
+
+                    var xhr = new XMLHttpRequest();
+
+                    xhr.open('GET', src, true);
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState !== 4) {
+                            return;
+                        }
+
+                        if (xhr.status < 400 && xhr.responseText) {
+                            code.textContent = xhr.responseText;
+                            Prism.highlightElement(code);
+                            d=document.getElementsByClassName("line-numbers");
+                            d[0].scrollTop = d[0].children[1].offsetTop;
+                            return;
+                        }
+
+                        if (xhr.status === 404) {
+                            code.textContent = '✖ Error: File could not be found';
+                            return;
+                        }
+
+                        if (xhr.status >= 400) {
+                            code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                            return;
+                        }
+
+                        code.textContent = '✖ Error: An unknown error occurred';
+                    };
+
+                    xhr.send(null);
+                });
+            }
+
+            const modalButtons = document.querySelectorAll("[data-modal]");
+            const openedAsLocalFile = window.location.protocol === 'file:';
+            if (modalButtons.length > 0 && openedAsLocalFile) {
+                console.warn(
+                    'Viewing the source code is unavailable because you are opening this page from the file:// scheme; ' +
+                    'browsers block XHR requests when a page is opened this way'
+                );
+            }
+
+            modalButtons.forEach(function (trigger) {
+                if (openedAsLocalFile) {
+                    trigger.setAttribute("hidden", "hidden");
+                }
+
+                trigger.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    const modal = document.getElementById(trigger.dataset.modal);
+                    if (!modal) {
+                        console.error(`Modal with id "${trigger.dataset.modal}" could not be found`);
+                        return;
+                    }
+                    modal.classList.add("phpdocumentor-modal__open");
+
+                    loadExternalCodeSnippet(modal, trigger.dataset.src || null, trigger.dataset.line)
+                    const exits = modal.querySelectorAll("[data-exit-button]");
+                    exits.forEach(function (exit) {
+                        exit.addEventListener("click", function (event) {
+                            event.preventDefault();
+                            modal.classList.remove("phpdocumentor-modal__open");
+                        });
+                    });
+                });
+            });
+        })();
+    </script>
+
+    </article>
+                                </section>
+                <section class="phpdocumentor-on-this-page__sidebar">
+                                
+    <section class="phpdocumentor-on-this-page__content">
+        <strong class="phpdocumentor-on-this-page__title">On this page</strong>
+
+        <ul class="phpdocumentor-list -clean">
+            <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
+            <li>
+                <ul class="phpdocumentor-list -clean">
+                                                            <li><a href="classes/Graphic-Data-GitHub-Updater.html#toc-properties">Properties</a></li>
+                                                            <li><a href="classes/Graphic-Data-GitHub-Updater.html#toc-methods">Methods</a></li>
+                                    </ul>
+            </li>
+            
+                            <li class="phpdocumentor-on-this-page-section__title">Properties</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_cache_duration">$cache_duration</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_github_response">$github_response</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_is_theme">$is_theme</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_data">$plugin_data</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_plugin_file">$plugin_file</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_repository">$repository</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_slug">$slug</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_subdir_path">$subdir_path</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_update_checked">$update_checked</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#property_username">$username</a></li>
+                                            </ul>
+                </li>
+            
+                        <li class="phpdocumentor-on-this-page-section__title">Methods</li>
+            <li>
+                <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method___construct">__construct()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_after_install">after_install()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_after_theme_install">after_theme_install()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_clear_update_cache">clear_update_cache()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_plugin_info">plugin_info()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_rate_limit_notice">rate_limit_notice()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_set_plugin_properties">set_plugin_properties()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_theme_update_state">theme_update_state()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_update_state">update_state()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_get_download_url">get_download_url()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_get_repository_info">get_repository_info()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_copy">recursive_copy()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-GitHub-Updater.html#method_recursive_remove_directory">recursive_remove_directory()</a></li>
+                                    </ul>
+            </li>
+                    </ul>
+    </section>
+
+                </section>
+                            </div>
+            <section data-search-results class="phpdocumentor-search-results phpdocumentor-search-results--hidden">
+    <section class="phpdocumentor-search-results__dialog">
+        <header class="phpdocumentor-search-results__header">
+            <h2 class="phpdocumentor-search-results__title">Search results</h2>
+            <button class="phpdocumentor-search-results__close"><i class="fas fa-times"></i></button>
+        </header>
+        <section class="phpdocumentor-search-results__body">
+            <ul class="phpdocumentor-search-results__entries"></ul>
+        </section>
+    </section>
+</section>
+        </div>
+        <a href="classes/Graphic-Data-GitHub-Updater.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+
+    </main>
+
+    <script>
+        cssVars({});
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.min.js"></script>
