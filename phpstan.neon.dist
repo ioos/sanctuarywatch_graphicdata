@@ -19,7 +19,10 @@ parameters:
         # Common WordPress exclusions
         - '*/tests/*'
         - '*/Test/*'
-    
+
+    fileExtensions:
+        - php
+
     # Scan files to load class definitions
     scanDirectories:
         - plugins/graphic_data_plugin/admin/exopite-simple-options/
