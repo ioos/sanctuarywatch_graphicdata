@@ -287,7 +287,7 @@ class Figure {
 
 			// Instances dropdown
 			$function_utilities = new Graphic_Data_Utility();
-			$function_utilities->createInstanceDropDownFilter( 'figure_instance' );
+			$function_utilities->create_instance_dropdown_filter( 'figure_instance' );
 
 			global $wpdb;
 			// Scene dropdown
@@ -484,16 +484,16 @@ class Figure {
 			'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
 		);
 
-		// get list of locations
+		// get list of locations.
 		$function_utilities = new Graphic_Data_Utility();
-		$locations = $function_utilities->returnAllInstances();
+		$locations = $function_utilities->return_all_instances();
 
 		$transient_fields_exist = false;
 
-		// Get current user ID
+		// Get current user ID.
 		$user_id = get_current_user_id();
 
-		// Check if transient exists for this user
+		// Check if transient exists for this user.
 		$transient_name = "figure_error_all_fields_user_{$user_id}";
 		$transient_fields = get_transient( $transient_name );
 

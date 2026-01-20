@@ -360,9 +360,9 @@ class Scene {
 		echo $field_length_dropdown;
 
 		$function_utilities = new Graphic_Data_Utility();
-		$function_utilities->createInstanceDropDownFilter( 'scene_instance' );
+		$function_utilities->create_instance_dropdown_filter( 'scene_instance' );
 
-		// Store the filter values after displaying the dropdowns
+		// Store the filter values after displaying the dropdowns.
 		$this->store_scene_filter_values();
 	}
 
@@ -625,7 +625,7 @@ class Scene {
 		);
 
 		$function_utilities = new Graphic_Data_Utility();
-		$instances = $function_utilities->returnAllInstances();
+		$instances = $function_utilities->return_all_instances();
 
 		$fields = array(
 			array(

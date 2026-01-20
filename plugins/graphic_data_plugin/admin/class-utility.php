@@ -300,7 +300,7 @@ class Graphic_Data_Utility {
 						return;
 					}
 					if ( 'post_good' == $current_post_status ) {
-						echo '<div class="notice notice-info is-dismissible"><p>' . ucfirst( $post_type ) . ' created or updated.</p></div>';
+						echo '<div class="notice notice-info is-dismissible"><p>' . esc_html( ucfirst( $post_type ) ) . ' created or updated.</p></div>';
 					} else if ( 'post_error' == $current_post_status ) {
 						$error_message = '<p>Error or errors in ' . $post_type . '</p>';
 						$error_list_array = $this->retrieve_post_errors_warnings( $post_type, '_errors' );
@@ -313,7 +313,7 @@ class Graphic_Data_Utility {
 							$error_message = $error_message . '</ul></p>';
 						}
 
-						echo '<div class="notice notice-error is-dismissible">' . $error_message . '</div>';
+						echo '<div class="notice notice-error is-dismissible">' . esc_html( $error_message ) . '</div>';
 					}
 					$warning_list_array = $this->retrieve_post_errors_warnings( $post_type, '_warnings' );
 					if ( 'none' != $warning_list_array ) {
@@ -324,7 +324,7 @@ class Graphic_Data_Utility {
 							$warning_message = $warning_message . '<li>' . $warning_list_array[ $i ] . '</li>';
 						}
 						$warning_message = $warning_message . '</ul></p>';
-						echo '<div class="notice notice-warning is-dismissible">' . $warning_message . '</div>';
+						echo '<div class="notice notice-warning is-dismissible">' . esc_html( $warning_message ) . '</div>';
 					}
 				}
 			}
@@ -460,7 +460,7 @@ class Graphic_Data_Utility {
 	 *
 	 * @example
 	 * // Display instance filter with custom element name
-	 * $this->createInstanceDropDownFilter('scene_instance');
+	 * $this->create_instance_dropdown_filter('scene_instance');
 	 *
 	 * @security
 	 * - Sanitizes instance IDs using absint() before SQL queries
@@ -470,14 +470,14 @@ class Graphic_Data_Utility {
 	 *
 	 * @access public
 	 */
-	public function createInstanceDropDownFilter( $element_name ) {
+	public function create_instance_dropdown_filter( $element_name ) {
 		global $wpdb;
 		$instances = array(); // Initialize as empty array.
 
 		$current_user = wp_get_current_user();
 
 		// Check if user is content editor but not administrator.
-		if ( current_user_can( 'content_editor' ) && ! current_user_can( 'administrator' ) ) {
+		if ( current_user_can( 'content_editor' ) && ! current_user_can( 'manage_options' ) ) {
 			// Get assigned instances for the content editor.
 			$user_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
@@ -516,7 +516,7 @@ class Graphic_Data_Utility {
 		$current_selection = isset( $_GET[ $element_name ] ) ? absint( $_GET[ $element_name ] ) : $this->get_filter_value( "{$element_name}" );
 
 		// Generate the dropdown HTML.
-		echo '<select name="' . $element_name . '" id="' . $element_name . '">';
+		echo '<select name="' . esc_attr( $element_name ) . '" id="' . esc_attr( $element_name ) . '">';
 		echo '<option value="">All Instances</option>';
 
 		// Check if $instances is not null and is an array before looping.
@@ -525,7 +525,7 @@ class Graphic_Data_Utility {
 				// Ensure $instance is an object with ID and post_title properties.
 				if ( is_object( $instance ) && isset( $instance->ID ) && isset( $instance->post_title ) ) {
 					$selected = selected( $current_selection, $instance->ID, false ); // Use selected() helper.
-					echo '<option value="' . esc_attr( $instance->ID ) . '" ' . $selected . '>' . esc_html( $instance->post_title ) . '</option>';
+					echo '<option value="' . esc_attr( $instance->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( $instance->post_title ) . '</option>';
 				}
 			}
 		}
@@ -538,13 +538,13 @@ class Graphic_Data_Utility {
 	 *
 	 * @return array An associative array of instance IDs and titles.
 	 */
-	public function returnAllInstances() {
+	public function return_all_instances() {
 		// Initialize the result array with a default empty option.
 		$instances_array = array( ' ' => '' );
 
 		// Get the current user.
 		$current_user = wp_get_current_user();
-		if ( ! $current_user || $current_user->ID === 0 ) {
+		if ( ! $current_user || 0 === $current_user->ID ) {
 			// If no user is logged in, return just the empty option (or handle as needed).
 			return $instances_array;
 		}
@@ -595,8 +595,13 @@ class Graphic_Data_Utility {
 		return $instances_array;
 	}
 
-	// Get a list of all scenes associated with an instance.
-	public function returnInstanceScenes( $instance_id ) {
+	/**
+	 * Get a list of all scenes associated with an instance.
+	 *
+	 * @param int $instance_id The instance ID to find scenes for.
+	 * @return array Associative array of scene IDs to scene titles, sorted alphabetically.
+	 */
+	public function return_instance_scenes( $instance_id ) {
 
 		$scene_titles = array();
 		$args = array(
@@ -625,7 +630,14 @@ class Graphic_Data_Utility {
 		return $scene_titles;
 	}
 
-	public function returnSceneTitles( $scene_id, $modal_id ) {
+	/**
+	 * Get scene titles for scenes sharing the same instance as a modal.
+	 *
+	 * @param int $scene_id The scene ID to get the title for.
+	 * @param int $modal_id The modal ID to determine the scene instance.
+	 * @return array Associative array of scene IDs to titles with an empty option first, sorted alphabetically.
+	 */
+	public function return_scene_titles( $scene_id, $modal_id ) {
 		$final_scene_titles = array( ' ' => '' );
 		if ( array_key_exists( 'post', $_GET ) ) {
 			$scene_location = get_post_meta( $modal_id, 'modal_location', true );
@@ -668,17 +680,28 @@ class Graphic_Data_Utility {
 		return $final_scene_titles;
 	}
 
-	public function returnIcons( $scene_id ) {
+	/**
+	 * Retrieves icon IDs from an SVG infographic associated with a scene.
+	 *
+	 * Parses the SVG file linked to the scene's infographic meta field and extracts
+	 * the IDs of all child elements within the 'icons' group element.
+	 *
+	 * @param int $scene_id The post ID of the scene.
+	 * @return array Associative array of icon IDs where both key and value are the icon ID.
+	 *               Returns array with single empty key/value pair if no infographic exists
+	 *               or if the 'icons' element is not found in the SVG.
+	 */
+	public function return_icons( $scene_id ) {
 		$modal_icons = array( '' => '' );
 		$scene_infographic = get_post_meta( $scene_id, 'scene_infographic', true );
-		if ( $scene_infographic == true ) {
+		if ( true == $scene_infographic ) {
 			$relative_path = ltrim( parse_url( $scene_infographic )['path'], '/' );
 
 			$full_path = get_home_path() . $relative_path;
 
 			$svg_content = file_get_contents( $full_path );
 
-			if ( $svg_content === false ) {
+			if ( false === $svg_content ) {
 				die( 'Failed to load SVG file.' );
 			}
 
@@ -696,8 +719,8 @@ class Graphic_Data_Utility {
 			$query = "//*[translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'icons']";
 			$icons_element = $xpath->query( $query )->item( 0 );
 
-			if ( $icons_element === null ) {
-				error_log( "Utility::returnIcons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path );
+			if ( null === $icons_element ) {
+				error_log( "Utility::return_icons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path );
 				return $modal_icons; // Element not found.
 			}
 
@@ -726,7 +749,12 @@ class Graphic_Data_Utility {
 		return $modal_icons;
 	}
 
-	// Return an array of scenes, other than the current scene, for a given location.
+	/**
+	 * Return an array of scenes, other than the current scene, for a given location.
+	 *
+	 * @param int $scene_id The current scene ID to exclude from results.
+	 * @return array Associative array of scene IDs to titles with an empty option first, sorted alphabetically.
+	 */
 	public function returnScenesExceptCurrent( $scene_id ) {
 		$potential_scenes = array();
 		$scene_location = get_post_meta( $scene_id, 'scene_location', true );

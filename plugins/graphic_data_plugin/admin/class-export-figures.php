@@ -47,7 +47,7 @@ class Graphic_Data_Export_Figures {
 			<?php
 			// get list of locations.
 			$function_utilities = new Graphic_Data_Utility();
-			$locations = $function_utilities->returnAllInstances();
+			$locations = $function_utilities->return_all_instances();
 
 			echo '<select id="location" name="location">'; // Opening the <select> tag.
 			foreach ( $locations as $key => $value ) {

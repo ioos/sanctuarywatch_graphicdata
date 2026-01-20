@@ -83,16 +83,16 @@ class Modal {
 			'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
 		);
 
-		// get list of locations
+		// get list of locations.
 		$function_utilities = new Graphic_Data_Utility();
-		$locations = $function_utilities->returnAllInstances();
+		$locations = $function_utilities->return_all_instances();
 
 		$transient_fields_exist = false;
 
-		// Get current user ID
+		// Get current user ID.
 		$user_id = get_current_user_id();
 
-		// Check if transient exists for this user
+		// Check if transient exists for this user.
 		$transient_name = "modal_error_all_fields_user_{$user_id}";
 		$transient_fields = get_transient( $transient_name );
 
@@ -104,21 +104,21 @@ class Modal {
 		$modal_icons = [];
 		$icon_scene_out = [];
 		$modal_section = [];
-		// used by both scene and icon dropdowns
+		// used by both scene and icon dropdowns.
 		if ( array_key_exists( 'post', $_GET ) ) {
 			$modal_id = intval( $_GET['post'] );
 			$scene_id = intval( get_post_meta( $modal_id, 'modal_scene', true ) );
-			$scene_titles = $function_utilities->returnSceneTitles( $scene_id, $modal_id );
+			$scene_titles = $function_utilities->return_scene_titles( $scene_id, $modal_id );
 			if ( $transient_fields_exist ) {
-				$scene_titles = $function_utilities->returnSceneTitles( $transient_fields['modal_scene'], $modal_id );
+				$scene_titles = $function_utilities->return_scene_titles( $transient_fields['modal_scene'], $modal_id );
 			} else {
-				$scene_titles = $function_utilities->returnSceneTitles( $scene_id, $modal_id );
+				$scene_titles = $function_utilities->return_scene_titles( $scene_id, $modal_id );
 			}
 
 			if ( $transient_fields_exist ) {
-				$modal_icons = $function_utilities->returnIcons( $transient_fields['modal_scene'] );
+				$modal_icons = $function_utilities->return_icons( $transient_fields['modal_scene'] );
 			} else {
-				$modal_icons = $function_utilities->returnIcons( $scene_id );
+				$modal_icons = $function_utilities->return_icons( $scene_id );
 			}
 
 			if ( $transient_fields_exist ) {
@@ -667,7 +667,7 @@ class Modal {
 			echo $field_length_dropdown;
 
 			$function_utilities = new Graphic_Data_Utility();
-			$function_utilities->createInstanceDropDownFilter( 'modal_instance' );
+			$function_utilities->create_instance_dropdown_filter( 'modal_instance' );
 
 			// Scene dropdown
 			echo '<select name="modal_scene" id="modal_scene">';

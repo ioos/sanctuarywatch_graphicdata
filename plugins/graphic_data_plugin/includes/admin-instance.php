@@ -83,18 +83,18 @@ class Instance {
 			'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
 		);
 
-		// get list of locations, which is saved as a taxonomy
+		// get list of locations, which is saved as a taxonomy.
 		$function_utilities = new Graphic_Data_Utility();
 
 		$scene_titles = array( '' => 'Scenes' );
 
-		// used by both scene and icon dropdowns
+		// used by both scene and icon dropdowns.
 		if ( array_key_exists( 'post', $_GET ) ) {
 			$instance_id = intval( $_GET['post'] );
-			$scene_titles = $function_utilities->returnInstanceScenes( $instance_id );
+			$scene_titles = $function_utilities->return_instance_scenes( $instance_id );
 		}
 
-		// create an array containing all instance types and ids from the taxonomy table
+		// create an array containing all instance types and ids from the taxonomy table.
 		$instance_type_terms = get_terms(
 			array(
 				'taxonomy' => 'instance_type',
