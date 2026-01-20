@@ -451,34 +451,34 @@ Search.appendIndex(
             "summary": "Check\u0020if\u0020stored\u0020filter\u0020values\u0020are\u0020still\u0020valid\u0020and\u0020retrieve\u0020them\u0020if\u0020they\u0020are.",
             "url": "classes/Graphic-Data-Utility.html#method_get_filter_value"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AcreateInstanceDropDownFilter\u0028\u0029",
-            "name": "createInstanceDropDownFilter",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Acreate_instance_dropdown_filter\u0028\u0029",
+            "name": "create_instance_dropdown_filter",
             "summary": "Create\u0020Instance\u0020filter\u0020dropdown\u0020shown\u0020in\u0020the\u0020Scene,\u0020Modal,\u0020and\u0020Figure\u0020admin\u0020column\u0020screens.",
-            "url": "classes/Graphic-Data-Utility.html#method_createInstanceDropDownFilter"
+            "url": "classes/Graphic-Data-Utility.html#method_create_instance_dropdown_filter"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnAllInstances\u0028\u0029",
-            "name": "returnAllInstances",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_all_instances\u0028\u0029",
+            "name": "return_all_instances",
             "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020instances,\u0020filtered\u0020for\u0020\u0027content_editor\u0027\u0020role.",
-            "url": "classes/Graphic-Data-Utility.html#method_returnAllInstances"
+            "url": "classes/Graphic-Data-Utility.html#method_return_all_instances"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnInstanceScenes\u0028\u0029",
-            "name": "returnInstanceScenes",
-            "summary": "",
-            "url": "classes/Graphic-Data-Utility.html#method_returnInstanceScenes"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_instance_scenes\u0028\u0029",
+            "name": "return_instance_scenes",
+            "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020scenes\u0020associated\u0020with\u0020an\u0020instance.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_instance_scenes"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnSceneTitles\u0028\u0029",
-            "name": "returnSceneTitles",
-            "summary": "",
-            "url": "classes/Graphic-Data-Utility.html#method_returnSceneTitles"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_scene_titles\u0028\u0029",
+            "name": "return_scene_titles",
+            "summary": "Get\u0020scene\u0020titles\u0020for\u0020scenes\u0020sharing\u0020the\u0020same\u0020instance\u0020as\u0020a\u0020modal.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_scene_titles"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnIcons\u0028\u0029",
-            "name": "returnIcons",
-            "summary": "",
-            "url": "classes/Graphic-Data-Utility.html#method_returnIcons"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_icons\u0028\u0029",
+            "name": "return_icons",
+            "summary": "Retrieves\u0020icon\u0020IDs\u0020from\u0020an\u0020SVG\u0020infographic\u0020associated\u0020with\u0020a\u0020scene.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_icons"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnScenesExceptCurrent\u0028\u0029",
             "name": "returnScenesExceptCurrent",
-            "summary": "",
+            "summary": "Return\u0020an\u0020array\u0020of\u0020scenes,\u0020other\u0020than\u0020the\u0020current\u0020scene,\u0020for\u0020a\u0020given\u0020location.",
             "url": "classes/Graphic-Data-Utility.html#method_returnScenesExceptCurrent"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnModalSections\u0028\u0029",
@@ -2356,6 +2356,21 @@ Search.appendIndex(
             "summary": "Initializes\u0020the\u0020plugin\u0020settings,\u0020sections,\u0020and\u0020fields.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_settings_init"
         },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Asanitize_graphic_data_settings\u0028\u0029",
+            "name": "sanitize_graphic_data_settings",
+            "summary": "Sanitize\u0020all\u0020plugin\u0020settings\u0020before\u0020saving.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings"
+        },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_placeholder_callback\u0028\u0029",
+            "name": "tutorial_content_placeholder_callback",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020tutorial\u0020content\u0020placeholder\u0020text.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_tutorial_content_placeholder_callback"
+        },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_toggle_callback\u0028\u0029",
+            "name": "tutorial_content_toggle_callback",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020tutorial\u0020content\u0020toggle\u0020switch.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_tutorial_content_toggle_callback"
+        },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aregister_rest_settings\u0028\u0029",
             "name": "register_rest_settings",
             "summary": "Registers\u0020custom\u0020REST\u0020API\u0020routes\u0020for\u0020plugin\u0020settings.",
@@ -2415,6 +2430,16 @@ Search.appendIndex(
             "name": "settings_page",
             "summary": "Renders\u0020the\u0020plugin\u0020settings\u0020page\u0020in\u0020the\u0020WordPress\u0020admin.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_settings_page"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content",
+            "name": "Graphic_Data_Tutorial_Content",
+            "summary": "Class\u0020Graphic_Data_Tutorial_Content",
+            "url": "classes/Graphic-Data-Tutorial-Content.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acheck_tutorial_content_status\u0028\u0029",
+            "name": "check_tutorial_content_status",
+            "summary": "",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status"
         },                {
             "fqsen": "\\Graphic_Data_Plugin",
             "name": "Graphic_Data_Plugin",
