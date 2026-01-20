@@ -1856,10 +1856,10 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL"
         },                {
-            "fqsen": "\\myplugin_activate\u0028\u0029",
-            "name": "myplugin_activate",
+            "fqsen": "\\graphic_data_activate\u0028\u0029",
+            "name": "graphic_data_activate",
             "summary": "",
-            "url": "namespaces/default.html#function_myplugin_activate"
+            "url": "namespaces/default.html#function_graphic_data_activate"
         },                {
             "fqsen": "\\myplugin_ensure_public_data_dir\u0028\u0029",
             "name": "myplugin_ensure_public_data_dir",
