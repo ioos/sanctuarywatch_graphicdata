@@ -6,7 +6,7 @@
 class Instance_Type {
 
 
-	// code version for instance
+	// code version for instance.
 	function instance_settings_init() {
 		// Register a new settings group
 		register_setting( 'theme_settings_group', 'instance_settings' );
@@ -20,7 +20,7 @@ class Instance_Type {
 		);
 	}
 
-	// Register the instance_type taxonomy if it doesn't exist
+	// Register the instance_type taxonomy if it doesn't exist.
 	function register_instance_type_taxonomy() {
 		if ( ! taxonomy_exists( 'instance_type' ) ) {
 			register_taxonomy(
@@ -49,7 +49,7 @@ class Instance_Type {
 		}
 	}
 
-	// Register the instance order meta field for the taxonomy
+	// Register the instance order meta field for the taxonomy.
 	function register_instance_type_order_meta() {
 		register_meta(
 			'term',
@@ -63,7 +63,7 @@ class Instance_Type {
 		);
 	}
 
-	// Register the instance navbar name meta field for the taxonomy
+	// Register the instance navbar name meta field for the taxonomy.
 	function register_instance_type_navbar_name_meta() {
 		register_meta(
 			'term',
@@ -76,7 +76,7 @@ class Instance_Type {
 		);
 	}
 
-	// Add the admin menu item
+	// Add the admin menu item.
 	function add_instance_type_admin_menu() {
 		add_menu_page(
 			'Manage Instance Types',
@@ -89,9 +89,9 @@ class Instance_Type {
 		);
 	}
 
-	// Render the admin page
+	// Render the admin page.
 	function render_instance_type_admin_page() {
-		// Check if taxonomy exists before proceeding
+		// Check if taxonomy exists before proceeding.
 		if ( ! taxonomy_exists( 'instance_type' ) ) {
 			echo '<div class="error"><p>Error: The instance_type taxonomy is not properly registered.</p></div>';
 			return;

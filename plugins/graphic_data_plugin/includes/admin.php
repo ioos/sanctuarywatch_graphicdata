@@ -94,50 +94,53 @@ class Graphic_Data_Plugin {
 		 */
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-admin.php';
 
-		// The class that defines the metaboxes used for field entry
+		// The class that defines the metaboxes used for field entry.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/exopite-simple-options/exopite-simple-options-framework-class.php';
 
-		// The class that defines the functions used to alter the WordPress login screen
+		// The class that defines the functions used to alter the WordPress login screen.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-login.php';
 
-		// The class that defines the functions used for the Scene custom content type
+		// The class that defines the functions used for the Scene custom content type.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-scene.php';
 
-		// The class that defines the functions used for the Modal custom content type
+		// The class that defines the functions used for the Modal custom content type.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-modal.php';
 
-		// The class that defines the functions used for the Figure custom content type
+		// The class that defines the functions used for the Figure custom content type.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-figure.php';
 
-		// The class that defines the functions used for the Instance custom content type
+		// The class that defines the functions used for the Instance custom content type.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-instance.php';
 
-		// The class that defines the functions used to define Instance Types
+		// The class that defines the functions used to define Instance Types.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-instance-type.php';
 
-		// The class that defines the functions used for the About custom content type
+		// The class that defines the functions used for the About custom content type.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-about.php';
 
-		// The class that defines the functions used for the Export Figures Tool
+		// The class that defines the functions used for the Export Figures Tool.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-export-figures.php';
 
-		// The class that defines the functions used for the Create SVG Tool
+		// The class that defines the functions used for the Create SVG Tool.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-create-svg.php';
 
-		// The class that defines the validation methods used for the custom post types
+		// The class that defines the validation methods used for the custom post types.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-validation.php';
 
-		// The class that defines the validation methods used for the new user roles
+		// The class that defines the validation methods used for the new user roles.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-new-roles.php';
 
-		// The class that defines the support page for the plugin
+		// The class that defines the support page for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-graphic-data-support.php';
 
-		// The class that defines the settings page for the plugin
+		// The class that defines the settings page for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-settings-page.php';
 
-		// The class that defines general utility functions for the plugin
-		include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
+		// The class that defines general utility functions for the plugin.
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
+
+		// The class that define the tutorial content for the plugin.
+		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
 
 		$this->loader = new Loader();
 	}
@@ -150,14 +153,14 @@ class Graphic_Data_Plugin {
 	 * @access   private
 	 */
 	public function define_admin_hooks() {
-		// Load class and functions of utility functions
+		// Load class and functions of utility functions.
 		$plugin_utility = new Graphic_Data_Utility();
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'post_admin_notice' );
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' );
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible', 10 );
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'check_draft_overview_scene', 40 );
 
-		// Load class and functions associated with new user roles
+		// Load class and functions associated with new user roles.
 		$plugin_custom_roles = new Custom_Roles();
 		$this->loader->add_action( 'init', $plugin_custom_roles, 'create_custom_roles' ); // Create custom roles on plugin activation
 		$this->loader->add_action( 'show_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen
@@ -172,7 +175,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'admin_bar_menu', $plugin_custom_roles, 'restrict_new_post_from_admin_bar', 999 );
 		$this->loader->add_filter( 'admin_menu', $plugin_custom_roles, 'restrict_content_editor_admin_menu', 999 );
 
-		// Load class and functions to change overall look and function of admin screens
+		// Load class and functions to change overall look and function of admin screens.
 		$plugin_admin = new Graphic_Data_Admin();
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles', 10 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10 );
@@ -193,24 +196,24 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'upload_mimes', $plugin_admin, 'allow_svg_uploads' );
 		$this->loader->add_filter( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_bootstrap_admin', 5 );
 		$this->loader->add_filter( 'gettext', $plugin_admin, 'modify_publish_button_text', 10, 3 );
-		add_filter( 'xmlrpc_enabled', '__return_false' );       // Disable Xlmrpc.php file
-		add_filter( 'screen_options_show_screen', '__return_false' ); // Disable Screen Options in admin screens
+		add_filter( 'xmlrpc_enabled', '__return_false' );       // Disable Xlmrpc.php file.
+		add_filter( 'screen_options_show_screen', '__return_false' ); // Disable Screen Options in admin screens.
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin, 'remove_view_link_from_post_type', 10, 2 );
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'plugin_check_required_theme' );
 		$this->loader->add_action( 'admin_footer-post.php', $plugin_admin, 'adjust_admin_post_time_display', 10 );
 		$this->loader->add_action( 'admin_footer-post-new.php', $plugin_admin, 'adjust_admin_post_time_display', 10 );
 
-		// Load  class and functions associated with About custom content type
+		// Load  class and functions associated with About custom content type.
 		$plugin_admin_about = new About();
 		$this->loader->add_action( 'init', $plugin_admin_about, 'custom_content_type_about' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_about, 'create_about_fields', 1 );
-		$this->loader->add_action( 'admin_head-edit.php', $plugin_admin_about, 'modify_about_add_new_button' ); // New Claude function for restricting number of about posts
-		$this->loader->add_action( 'admin_notices', $plugin_admin_about, 'display_about_limit_notice' );  // New Claude function for restricting number of about posts
-		$this->loader->add_action( 'wp_insert_post_data', $plugin_admin_about, 'prevent_multiple_about_posts', 10, 2 );  // New Claude function for restricting number of about posts
-		$this->loader->add_action( 'template_redirect', $plugin_admin_about, 'handle_about_template' );  // New Claude function for forcing use of single-about.php file for about posts
-		$this->loader->add_filter( 'post_type_link', $plugin_admin_about, 'custom_about_permalink', 10, 2 ); // Claude function for forcing About permalink structure
+		$this->loader->add_action( 'admin_head-edit.php', $plugin_admin_about, 'modify_about_add_new_button' ); // restricting number of about posts.
+		$this->loader->add_action( 'admin_notices', $plugin_admin_about, 'display_about_limit_notice' );  // restricting number of about posts.
+		$this->loader->add_action( 'wp_insert_post_data', $plugin_admin_about, 'prevent_multiple_about_posts', 10, 2 );  // restricting number of about posts.
+		$this->loader->add_action( 'template_redirect', $plugin_admin_about, 'handle_about_template' );  // forcing use of single-about.php file for about posts.
+		$this->loader->add_filter( 'post_type_link', $plugin_admin_about, 'custom_about_permalink', 10, 2 ); // forcing About permalink structure.
 
-		// Load  class and functions associated with Instance custom content type
+		// Load  class and functions associated with Instance custom content type.
 		$plugin_admin_instance = new Instance();
 		$this->loader->add_action( 'init', $plugin_admin_instance, 'custom_content_type_instance' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_instance, 'create_instance_fields', 1 );
@@ -220,17 +223,17 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin_instance, 'custom_content_remove_quick_edit_link', 10, 2 );
 		$this->loader->add_filter( 'rest_api_init', $plugin_admin_instance, 'register_instance_rest_fields' );
 
-		// Load class and functions associated with the Settings Page
+		// Load class and functions associated with the Settings Page.
 		$plugin_admin_settings_page = new Graphic_Data_Settings_Page();
 		$this->loader->add_action( 'admin_menu', $plugin_admin_settings_page, 'add_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin_settings_page, 'settings_init' );
-		$plugin = plugin_basename( __FILE__ ); // Used in the next line
+		$plugin = plugin_basename( __FILE__ ); // Used in the next line.
 		$this->loader->add_filter( "plugin_action_links_$plugin", $plugin_admin_settings_page, 'add_settings_link' );
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_settings_page, 'register_rest_settings' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_line_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_bar_styles' );
 
-		// Load class and functions associated with Instance Types
+		// Load class and functions associated with Instance Types.
 		$plugin_admin_instance_type = new Instance_Type();
 		$this->loader->add_action( 'admin_init', $plugin_admin_instance_type, 'instance_settings_init' );
 		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_taxonomy', 0 ); // Priority 0 to run early
@@ -238,7 +241,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_navbar_name_meta' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_instance_type, 'add_instance_type_admin_menu' );
 
-		// Load  class and functions associated with Scene custom content type
+		// Load  class and functions associated with Scene custom content type.
 		$plugin_admin_scene = new Scene();
 		$this->loader->add_action( 'restrict_manage_posts', $plugin_admin_scene, 'scene_filter_dropdowns' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_scene, 'scene_location_filter_results' );
@@ -261,7 +264,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_scene, 'scene_enqueue_quick_edit_validation' ); // new AI
 		$this->loader->add_action( 'wp_ajax_scene_validate_slug', $plugin_admin_scene, 'scene_validate_slug_ajax' ); // new AI
 
-		// Load  class and functions associated with Modal custom content type
+		// Load  class and functions associated with Modal custom content type.
 		$plugin_admin_modal = new Modal();
 		$this->loader->add_action( 'restrict_manage_posts', $plugin_admin_modal, 'modal_filter_dropdowns' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_modal, 'modal_location_filter_results' );
@@ -277,7 +280,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'manage_edit-modal_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column' );
 		$this->loader->add_action( 'admin_notices', $plugin_admin_modal, 'modal_warning_notice_tabs' );
 
-		// Load  class and functions associated with Figure custom content type
+		// Load  class and functions associated with Figure custom content type.
 		$plugin_admin_figure = new Figure();
 		$this->loader->add_action( 'init', $plugin_admin_figure, 'custom_content_type_figure' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_figure, 'create_figure_fields', 1 );
@@ -295,22 +298,26 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'wp_ajax_custom_file_delete', $plugin_admin_figure, 'custom_file_delete_handler' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script' );
 
-		// Load class and functions connected to login screen customization
+		// Load class and functions connected to login screen customization.
 		$plugin_admin_logo = new Login();
 		$this->loader->add_action( 'login_enqueue_scripts', $plugin_admin_logo, 'login_logo' );
 
-		// Load class and functions connected with Export Figures Tool
+		// Load class and functions connected with Export Figures Tool.
 		$plugin_admin_export_figures = new Graphic_Data_Export_Figures();
 		$this->loader->add_action( 'admin_menu', $plugin_admin_export_figures, 'add_export_figures_menu' );
 
-		// Load class and functions connected with Create SVG Tool
+		// Load class and functions connected with Create SVG Tool.
 		$plugin_admin_create_svg = new Create_SVG();
 		$this->loader->add_action( 'admin_menu', $plugin_admin_create_svg, 'add_create_svg_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_create_svg, 'enqueue_admin_svg_script' );
 
-		// Load class and functions connected with Support page
+		// Load class and functions connected with Support page.
 		$plugin_admin_support = new Graphic_Data_Support();
 		$this->loader->add_action( 'admin_menu', $plugin_admin_support, 'add_admin_menu' );
+
+		// Load class and functions connected with tutorial content.
+		$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
+		$this->loader->add_action( 'update_option_graphic_data_settings', $plugin_admin_tutorial, 'check_tutorial_content_status' );
 	}
 
 	/**

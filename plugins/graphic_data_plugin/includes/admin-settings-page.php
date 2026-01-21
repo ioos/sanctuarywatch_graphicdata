@@ -99,6 +99,30 @@ class Graphic_Data_Settings_Page {
 			'graphic_data_settings', // [ 'sanitize_callback' => [ $this, 'sanitize_graphic_data_settings' ] ]
 		);
 
+		// Tutorial Content section.
+		add_settings_section(
+			'tutorial_content_section',
+			'Tutorial Content',
+			null,
+			'theme_settings'
+		);
+
+		add_settings_field(
+			'tutorial_content_description',
+			'Information',
+			[ $this, 'tutorial_content_description_callback' ],
+			'theme_settings',
+			'tutorial_content_section'
+		);
+
+		add_settings_field(
+			'tutorial_content_toggle',
+			'Include tutorial content?',
+			[ $this, 'tutorial_content_toggle_callback' ],
+			'theme_settings',
+			'tutorial_content_section'
+		);
+
 		// Theme Display section.
 		add_settings_section(
 			'settings_section',
@@ -229,30 +253,6 @@ class Graphic_Data_Settings_Page {
 				'sanitize_callback' => 'wp_kses_post', // Allows safe HTML.
 			]
 		);
-
-		// Tutorial Content section.
-		add_settings_section(
-			'tutorial_content_section',
-			'Tutorial Content',
-			null,
-			'theme_settings'
-		);
-
-		add_settings_field(
-			'tutorial_content_placeholder',
-			'Information',
-			[ $this, 'tutorial_content_placeholder_callback' ],
-			'theme_settings',
-			'tutorial_content_section'
-		);
-
-		add_settings_field(
-			'tutorial_content_toggle',
-			'Include tutorial content?',
-			[ $this, 'tutorial_content_toggle_callback' ],
-			'theme_settings',
-			'tutorial_content_section'
-		);
 	}
 
 	/**
@@ -313,19 +313,18 @@ class Graphic_Data_Settings_Page {
 	}
 
 	/**
-	 * Callback function to render the tutorial content placeholder text.
-	 *
-	 * Displays informational Lorem ipsum text in the Tutorial Content section.
+	 * Callback function to render the Tutorial Content description text.
 	 *
 	 * @since 1.0.0
 	 * @return void
 	 */
-	public function tutorial_content_placeholder_callback() {
+	public function tutorial_content_description_callback() {
 		?>
 		<p>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-			Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-			Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+			New to Graphic Data? Turn on the tutorial content to see working examples of everything in action! 
+			Once you're done with the tutorial content, you can remove it by turning the tutorial content off. 
+			Word of warning! If you turn the tutorial content off, all tutorial content will be permanently 
+			deleted from your site, including any modifications you may have made to the tutorial content. 
 		</p>
 		<?php
 	}
