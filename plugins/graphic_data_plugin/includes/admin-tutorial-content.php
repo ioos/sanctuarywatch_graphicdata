@@ -16,7 +16,7 @@ class Graphic_Data_Tutorial_Content {
 
 	public function check_tutorial_content_status() {
 		$options = get_option( 'graphic_data_settings' );
-		$tutorial_content_enabled = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : 0;
+		$tutorial_content_wamted = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : 0;
 		if ( 1 == $tutorial_content_enabled ) {
 			$this->create_tutorial_content();
 		} else {

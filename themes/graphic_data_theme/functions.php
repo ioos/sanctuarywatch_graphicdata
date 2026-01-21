@@ -479,22 +479,52 @@ function graphic_data_get_modal_array( $svg_url ) {
 	return null;
 }
 
-  /**
-   * Check if the Graphic Data plugin is active and display an admin notice if not.
-   *
-   * This function verifies whether the Graphic Data plugin required by the theme
-   * is currently active. If the plugin is not active, it displays a dismissible
-   * warning notice in the WordPress admin panel with a link to activate the plugin.
-   *
-   * @since 1.0.0
-   * @access public
-   *
-   * @uses is_plugin_active()   To check if the plugin is active
-   * @uses admin_url()          To generate the URL to the plugins page
-   * @uses add_action()         Hooked into 'admin_notices' action
-   *
-   * @return void
-   */
+/**
+ * Add theme support for title tag
+ */
+add_theme_support( 'title-tag' );
+
+/**
+ * Create document title.
+ *
+ * Modifies the title display based on the page type:
+ * - Front page: Shows only the site name without tagline.
+ * - Scene or About posts: Shows post title followed by site name.
+ *
+ * @param array $title The document title.
+ * @return array Modified title.
+ */
+function graphic_data_document_title_parts( $title ) {
+	if ( is_front_page() ) {
+		// Front page: just the site name.
+		$title['title'] = get_bloginfo( 'name' );
+		unset( $title['tagline'] );
+	} elseif ( is_singular( array( 'scene', 'about' ) ) ) {
+		// Scene or About posts: post title | site name.
+		$title['title'] = get_the_title();
+		$title['site'] = get_bloginfo( 'name' );
+	}
+
+	return $title;
+}
+add_filter( 'document_title_parts', 'graphic_data_document_title_parts' );
+
+/**
+ * Check if the Graphic Data plugin is active and display an admin notice if not.
+ *
+ * This function verifies whether the Graphic Data plugin required by the theme
+ * is currently active. If the plugin is not active, it displays a dismissible
+ * warning notice in the WordPress admin panel with a link to activate the plugin.
+ *
+ * @since 1.0.0
+ * @access public
+ *
+ * @uses is_plugin_active()   To check if the plugin is active
+ * @uses admin_url()          To generate the URL to the plugins page
+ * @uses add_action()         Hooked into 'admin_notices' action
+ *
+ * @return void
+ */
 function graphic_data_theme_check_required_plugin() {
 	// Check if the is_plugin_active function is available.
 	if ( ! function_exists( 'is_plugin_active' ) ) {
