@@ -152,8 +152,30 @@ permalink: /classes/Graphic-Data-Tutorial-Content/
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status">check_tutorial_content_status()</a>
     <span>
-                                &nbsp;: mixed    </span>
+                                &nbsp;: void    </span>
 </dt>
+<dd>Synchronize tutorial content based on plugin settings.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types">create_instance_types()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Create example instance type taxonomy terms for the tutorial.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_instances">create_instances()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Create example instances for the tutorial.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types">delete_instance_types()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Deletes all tutorial instance type terms from the database.</dd>
 
     </dl>
 
@@ -183,14 +205,127 @@ permalink: /classes/Graphic-Data-Tutorial-Content/
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">17</span>
+    <span class="phpdocumentor-element-found-in__line">30</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">Synchronize tutorial content based on plugin settings.</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">check_tutorial_content_status</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">check_tutorial_content_status</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Checks the 'tutorial_content' setting and takes action accordingly:</p>
+<ul>
+<li>If set to 0 and tutorial content hasn't been deleted, deletes all tutorial instance types.</li>
+<li>If set to 1 and tutorial content doesn't exist, creates tutorial instance types.</li>
+</ul>
+<p>Updates the 'tutorial_content_present' flag to track the current state.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_create_instance_types">
+        create_instance_types()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">63</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Create example instance type taxonomy terms for the tutorial.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">create_instance_types</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Creates two sample instance type terms with predefined names, slugs,
+and descriptions. Sets appropriate term meta including display order
+and navbar names.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">global</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>wpdb $wpdb WordPress database abstraction object.</p>
+</section>
+
+                                    </dd>
+                                            </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_create_instances">
+        create_instances()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instances" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">142</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Create example instances for the tutorial.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">create_instances</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -198,6 +333,69 @@ permalink: /classes/Graphic-Data-Tutorial-Content/
     
     
     
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_delete_instance_types">
+        delete_instance_types()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">110</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Deletes all tutorial instance type terms from the database.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">delete_instance_types</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Finds all taxonomy terms that have the 'tutorial_instance_type_id' meta key
+and removes them along with their associated metadata. Uses wp_delete_term()
+which handles cleanup of wp_terms, wp_term_taxonomy, and wp_termmeta tables.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                                <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">global</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>wpdb $wpdb WordPress database abstraction object.</p>
+</section>
+
+                                    </dd>
+                                            </dl>
 
         
     
@@ -319,6 +517,9 @@ permalink: /classes/Graphic-Data-Tutorial-Content/
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status">check_tutorial_content_status()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types">create_instance_types()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instances">create_instances()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types">delete_instance_types()</a></li>
                                     </ul>
             </li>
                     </ul>

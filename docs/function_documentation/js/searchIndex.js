@@ -2361,10 +2361,10 @@ Search.appendIndex(
             "summary": "Sanitize\u0020all\u0020plugin\u0020settings\u0020before\u0020saving.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings"
         },                {
-            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_placeholder_callback\u0028\u0029",
-            "name": "tutorial_content_placeholder_callback",
-            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020tutorial\u0020content\u0020placeholder\u0020text.",
-            "url": "classes/Graphic-Data-Settings-Page.html#method_tutorial_content_placeholder_callback"
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_description_callback\u0028\u0029",
+            "name": "tutorial_content_description_callback",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020Tutorial\u0020Content\u0020description\u0020text.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_tutorial_content_description_callback"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_toggle_callback\u0028\u0029",
             "name": "tutorial_content_toggle_callback",
@@ -2438,8 +2438,23 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acheck_tutorial_content_status\u0028\u0029",
             "name": "check_tutorial_content_status",
-            "summary": "",
+            "summary": "Synchronize\u0020tutorial\u0020content\u0020based\u0020on\u0020plugin\u0020settings.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_instance_types\u0028\u0029",
+            "name": "create_instance_types",
+            "summary": "Create\u0020example\u0020instance\u0020type\u0020taxonomy\u0020terms\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_instance_types\u0028\u0029",
+            "name": "delete_instance_types",
+            "summary": "Deletes\u0020all\u0020tutorial\u0020instance\u0020type\u0020terms\u0020from\u0020the\u0020database.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_instances\u0028\u0029",
+            "name": "create_instances",
+            "summary": "Create\u0020example\u0020instances\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_instances"
         },                {
             "fqsen": "\\Graphic_Data_Plugin",
             "name": "Graphic_Data_Plugin",
