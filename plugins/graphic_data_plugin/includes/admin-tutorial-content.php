@@ -34,17 +34,20 @@ class Graphic_Data_Tutorial_Content {
 			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
 			case 0:
 				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
-					$this->delete_instance_types();
+					$this->delete_tutorial_instance_types();
 					$options['tutorial_content'] = 0;
 					update_option( 'graphic_data_settings', $options );
+					$this->delete_tutorial_images();
+					$this->delete_tutorial_posts();
 				}
 				break;
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
 			case 1:
 				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
-					$this->create_instance_types();
+					$this->create_tutorial_instance_types();
 					$options['tutorial_content_present'] = 1;
 					update_option( 'graphic_data_settings', $options );
+					$this->create_tutorial_instances();
 				}
 				break;
 		}
@@ -60,7 +63,7 @@ class Graphic_Data_Tutorial_Content {
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 * @return void
 	 */
-	public function create_instance_types() {
+	public function create_tutorial_instance_types() {
 		global $wpdb;
 
 		$term_name = [ 'Instance Type Example 1', 'Instance Type Example 2' ];
@@ -107,7 +110,7 @@ class Graphic_Data_Tutorial_Content {
 	 *
 	 * @return void
 	 */
-	public function delete_instance_types() {
+	public function delete_tutorial_instance_types() {
 		global $wpdb;
 
 		// Step 1: Get all term IDs associated with the tutorial (they'll have a value for tutorial_instance_type_id).
@@ -135,11 +138,65 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
+	 * Deletes all tutorial images from the media library.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function delete_tutorial_images() {
+
+		// Get all attachments with the image_tutorial_id meta key
+		$attachments = get_posts( array(
+			'post_type'      => 'attachment',
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+			'meta_query'     => array(
+				array(
+					'key'     => 'image_tutorial_id',
+					'compare' => 'EXISTS',
+				),
+			),
+		) );
+
+		// Delete each attachment
+		foreach ( $attachments as $attachment ) {
+			wp_delete_attachment( $attachment->ID, true );
+		}
+	}
+
+	/**
+	 * Deletes all tutorial posts.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function delete_tutorial_posts() {
+
+		// Get all attachments with the tutorial_id meta key
+		$attachments = get_posts( array(
+			'post_type'      => 'attachment',
+			'post_status'    => 'any',
+			'posts_per_page' => -1,
+			'meta_query'     => array(
+				array(
+					'key'     => 'tutorial_id',
+					'compare' => 'EXISTS',
+				),
+			),
+		) );
+
+		// Delete each attachment
+		foreach ( $attachments as $attachment ) {
+			wp_delete_attachment( $attachment->ID, true );
+		}
+	}
+
+	/**
 	 * Create example instances for the tutorial.
 	 *
 	 * @return void
 	 */
-	public function create_instances() {
+	public function create_tutorial_instances() {
 		// get current user ID or default to first user if no user is logged in.
 		$current_user_id = get_current_user_id();
 		if ( 0 === $current_user_id ) {
@@ -157,57 +214,114 @@ class Graphic_Data_Tutorial_Content {
 			}
 		}
 
+		// set up information to be saved as the three tutorial instances.
 		$post_title = [ 'Example Instance 1', 'Example Instance 2', 'Example Instance 3' ];
 		$instance_short_title = [ 'Example 1', 'Example 2', 'Example 3' ];
 		$instance_slug = [ 'example-instance-1', 'example-instance-2', 'example-instance-3' ];
 		$instance_type = [ 1, 1, 2 ];
+		$tutorial_id = [ 3, 4, 5 ];
 		$instance_status = 'Published';
-		// instance_tile.
+		$instance_tile  = [ 'example_files/tutorial/balloon_instance_tile.jpg', 'example_files/tutorial/bird_instance_tile.jpg', 'example_files/tutorial/bishwa_instance_tile.jpg' ];
 		$instance_mobile_tile_background_color = '#f0f0f0';
 		$instance_mobile_tile_text_color = '#000000';
-		$instance_footer_columns = 2;
+		$instance_footer_columns = 3;
 		$instance_footer_column1 = array(
-			'instance_footer_column_title1' => 'First footer column',
+			'instance_footer_column_title1' => 'First column',
 			'instance_footer_column_content1' => 'You can have between zero and three footer columns that are unique to each instance. Here is an example of the first column.',
 		);
 		$instance_footer_column2 = array(
-			'instance_footer_column_title2' => 'Second footer column',
-			'instance_footer_column_content2' => '<p>Here is an example of the second column.</p>',
+			'instance_footer_column_title2' => 'Second column',
+			'instance_footer_column_content2' => 'Here is an example of the second column.',
 		);
 		$instance_footer_column3 = array(
-			'instance_footer_column_title3' => '',
-			'instance_footer_column_content3' => '',
+			'instance_footer_column_title3' => 'Third column',
+			'instance_footer_column_content3' => 'Here is an example of the third column.',
 		);
 
-		$post_data = array(
-			'post_title'   => 'Example Instance 1',
-			'post_type'    => 'instance',
-			'post_status'  => 'publish',
-			'post_author'  => $current_user_id,
-		);
+		// create the three tutorial instances
+		for ( $i = 0; $i < 3; $i++ ) {
+			$post_data = array(
+				'post_title'   => $post_title[ $i ],
+				'post_type'    => 'instance',
+				'post_status'  => 'publish',
+				'post_author'  => $current_user_id,
+			);
 
-		// Insert the post and get its ID.
-		$post_id = wp_insert_post( $post_data );
+			// Insert the post and get its ID.
+			$post_id = wp_insert_post( $post_data );
 
-		// Check if post was created successfully.
-		if ( ! is_wp_error( $post_id ) ) {
-			// Add post meta.
-/*
-			instance_short_title
-			instance_slug
-			instance_type
-			instance_status
-				// instance_tile
-instance_mobile_tile_background_color #f0f0f0
-instance_mobile_tile_text_color #000000
-instance_footer_columns 2 
-instance_footer_column1 a:2:{s:29:"instance_footer_column_title1";s:19:"First footer column";s:31:"instance_footer_column_content1";s:124:"You can have between zero and three footer columns that are unique to each instance. Here is an example of the first column.";}
-instance_footer_column2 a:2:{s:29:"instance_footer_column_title2";s:20:"Second footer column";s:31:"instance_footer_column_content2";s:47:"<p>Here is an example of the second column.</p>";}
-instance_footer_column3  a:2:{s:29:"instance_footer_column_title3";s:0:"";s:31:"instance_footer_column_content3";s:0:"";}
-*/
-			update_post_meta( $post_id, 'instance_legacy_content', 'no' );
-			update_post_meta( $post_id, 'instance_footer_columns', 0 );
-		}
+			// Check if post was created successfully.
+			if ( ! is_wp_error( $post_id ) ) {			
+				update_post_meta( $post_id, 'instance_short_title', $instance_short_title[ $i ]);
+				update_post_meta( $post_id, 'instance_type', $instance_type[ $i ]);
+				update_post_meta( $post_id, 'instance_status', 'Published' );
+
+				$instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ] );
+				update_post_meta( $post_id, 'instance_tile', $instance_tile_url );
+				update_post_meta( $post_id, 'instance_legacy_content', 'no' );
+				update_post_meta( $post_id, 'instance_mobile_tile_background_color', '#f0f0f0' );
+				update_post_meta( $post_id, 'instance_mobile_tile_text_color', '#000000' );
+				update_post_meta( $post_id, 'instance_footer_columns', 3 );
+				update_post_meta( $post_id, 'instance_footer_column1', $instance_footer_column1 );
+				update_post_meta( $post_id, 'instance_footer_column2', $instance_footer_column2 );
+				update_post_meta( $post_id, 'instance_footer_column3', $instance_footer_column3 );
+				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
+			}
+		};
 	}
 
+	/**
+	 * Copies an image file from the plugin directory to the WordPress media library.
+	 *
+	 * This method takes an image file from within the plugin's directory structure,
+	 * uploads it to the WordPress media library, generates the necessary attachment
+	 * metadata (including image sizes), and associates it with a tutorial ID for
+	 * later reference or cleanup.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $plugin_relative_path The relative path to the image file from the plugin's includes directory.
+	 *                                     Example: '../example_files/tutorial/image.jpg'
+	 * @param int    $tutorial_id          The tutorial ID to associate with this media library item.
+	 *                                     This is stored in post meta to keep track of tutorial media.
+	 *
+	 * @return string|false The URL of the uploaded attachment on success, false on failure.
+	 *                      Failure can occur if the source file doesn't exist or if
+	 *                      the upload process encounters an error.
+	 */
+	public function copy_image_to_media_library( $plugin_relative_path, $tutorial_id ) {
+		$plugin_image_path = plugin_dir_path( __FILE__ ) . $plugin_relative_path;
+		
+		if ( ! file_exists( $plugin_image_path ) ) {
+			return false;
+		}
+		
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once( ABSPATH . 'wp-admin/includes/media.php' );
+		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+		
+		$filename = basename( $plugin_image_path );
+		$upload_file = wp_upload_bits( $filename, null, file_get_contents( $plugin_image_path ) );
+		
+		if ( $upload_file['error'] ) {
+			return false;
+		}
+		
+		$attachment_data = array(
+			'post_mime_type' => $upload_file['type'],
+			'post_title'     => sanitize_file_name( pathinfo( $filename, PATHINFO_FILENAME ) ),
+			'post_content'   => '',
+			'post_status'    => 'inherit'
+		);
+		
+		$attachment_id = wp_insert_attachment( $attachment_data, $upload_file['file'] );
+		$attachment_metadata = wp_generate_attachment_metadata( $attachment_id, $upload_file['file'] );
+		wp_update_attachment_metadata( $attachment_id, $attachment_metadata );
+		
+		// Add a flag to the post meta table so that we can find this media library item if we need to delete it later.
+		update_post_meta( $attachment_id, 'image_tutorial_id', $tutorial_id );
+		
+		// Return the URL associated with the media library item.
+		return wp_get_attachment_url( $attachment_id );
+	}
 }
