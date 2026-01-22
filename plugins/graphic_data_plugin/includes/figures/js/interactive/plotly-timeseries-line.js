@@ -60,6 +60,28 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
     const [yMin, yMax] = layout.yaxis.range || [0, 1];
     const overlays = [];  
 
+    const dateFormat = figureArguments['XAxisFormat'];
+    let xHoverFormat = '';
+
+    switch (dateFormat) {
+    case 'YYYY':
+        xHoverFormat = '%Y';
+        break;
+    case 'YYYY-MM':
+        xHoverFormat = '%Y-%m';
+        break;
+    case 'YYYY-MM-DD':
+        xHoverFormat = '%Y-%m-%d';
+        break;
+    default:
+        xHoverFormat = ''; // fallback to raw
+    }
+
+    // Then build your hovertemplate:
+    const xHoverValue = xHoverFormat
+    ? `%{x|${xHoverFormat}}`
+    : `%{x}`;
+
     // === Evaluation Period ===
     if (figureArguments['EvaluationPeriod'] === 'on') {
         let start = figureArguments['EvaluationPeriodStartDate'];
@@ -108,7 +130,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     showlegend: true,
                     yaxis: 'y',
                     xaxis: 'x',
-                    hoverinfo: `x`,
+                    //hoverinfo: `x`,
+                    hovertemplate: `${label}: ${xHoverValue}<extra></extra>`,  
                 });
             }
             if (axisType === 'y') {
@@ -124,7 +147,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     showlegend: true,
                     yaxis: 'y',
                     xaxis: 'x',
-                    hoverinfo: `${label} y`,
+                    //hoverinfo: `${label} y`,
+                    hovertemplate: `${label}: %{y}<extra></extra>`,
                 });
             }
             if (axisType === 'x') {
@@ -325,6 +349,28 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
 
                 const stdDev = computeStandardDeviation(plotlyY);
 
+                const dateFormat = figureArguments['XAxisFormat'];
+                let xHoverFormat = '';
+
+                switch (dateFormat) {
+                case 'YYYY':
+                    xHoverFormat = '%Y';
+                    break;
+                case 'YYYY-MM':
+                    xHoverFormat = '%Y-%m';
+                    break;
+                case 'YYYY-MM-DD':
+                    xHoverFormat = '%Y-%m-%d';
+                    break;
+                default:
+                    xHoverFormat = ''; // fallback to raw
+                }
+
+                // Then build your hovertemplate:
+                const xHoverValue = xHoverFormat
+                ? `%{x|${xHoverFormat}}`
+                : `%{x}`;
+
                 // Line type, marker type, and marker size
                 const lineType = figureArguments[targetLineColumn + 'LineType'];
                 if (lineType === undefined) {
@@ -398,8 +444,10 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                     error_y: errorBarY,
                     connectgaps: connectGapsOpt, 
                     hovertemplate:
-                        figureArguments['XAxisTitle'] + ': %{x}<br>' +
-                        figureArguments['YAxisTitle'] + ': %{y}'
+                        `${figureArguments['XAxisTitle']}: ${xHoverValue}<br>` +
+                        `${figureArguments['YAxisTitle']}: %{y}<extra></extra>`
+                        //figureArguments['XAxisTitle'] + ': %{x}<br>' +
+                        //figureArguments['YAxisTitle'] + ': %{y}'
                 };
                 allLinesPlotly.push(singleLinePlotly);
 
@@ -1078,7 +1126,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
       logFormFieldValues();
   });
 
-  const dateFormats =["YYYY", "YYYY-MM-DD"];
+  const dateFormats =["None", "YYYY", "YYYY-MM","YYYY-MM-DD"];
 
   dateFormats.forEach((dateFormat) => {
       let selectXAxisFormatOption = document.createElement("option");

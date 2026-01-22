@@ -466,358 +466,363 @@ class Figure {
 	 * @param bool $return_fields_only If true, only return the custom fields array without registering the metabox (used as part of field validation).
 	 * @since    1.0.0
 	 */
-	function create_figure_fields( $return_fields_only = false ) {
+    function create_figure_fields($return_fields_only = false) {
 
-		$config_metabox = array(
+        $config_metabox = array(
 
-			/*
-			* METABOX
-			*/
-			'type'              => 'metabox',                       // Required, menu or metabox
-			'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
-			'post_types'        => array( 'figure' ),                 // Post types to display meta box
-			'context'           => 'advanced',                      // The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
-			'priority'          => 'default',                       // The priority within the context where the boxes should show ('high', 'low').
-			'title'             => 'Figure Fields',                  // The title of the metabox
-			'capability'        => 'edit_posts',                    // The capability needed to view the page
-			'tabbed'            => true,
-			'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
-		);
+            /*
+            * METABOX
+            */
+            'type'              => 'metabox',                       // Required, menu or metabox
+            'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
+            'post_types'        => array( 'figure' ),                 // Post types to display meta box
+            'context'           => 'advanced',                      // 	The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
+            'priority'          => 'default',                       // 	The priority within the context where the boxes should show ('high', 'low').
+            'title'             => 'Figure Fields',                  // The title of the metabox
+            'capability'        => 'edit_posts',                    // The capability needed to view the page
+            'tabbed'            => true,
+            'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
+        );
 
-		// get list of locations.
-		$function_utilities = new Graphic_Data_Utility();
-		$locations = $function_utilities->return_all_instances();
+        // get list of locations
+        $function_utilities = new Utility();
+        $locations = $function_utilities -> returnAllInstances();
 
-		$transient_fields_exist = false;
+        $transient_fields_exist = false;
+        
+        // Get current user ID
+        $user_id = get_current_user_id();
+                
+        // Check if transient exists for this user
+        $transient_name = "figure_error_all_fields_user_{$user_id}";
+        $transient_fields = get_transient($transient_name);
+        
+        if ($transient_fields !== false) {
+            $transient_fields_exist = true;
+        }
 
-		// Get current user ID.
-		$user_id = get_current_user_id();
+        $scene_titles = [];
+        $modal_icons = [];
+        $modal_tabs = [];
 
-		// Check if transient exists for this user.
-		$transient_name = "figure_error_all_fields_user_{$user_id}";
-		$transient_fields = get_transient( $transient_name );
+        // used by both scene and icon dropdowns
+        if (array_key_exists("post", $_GET)) {
+            $figure_id = intval($_GET["post"]);
+            $location = get_post_meta($figure_id, "location", true);
+            if ($transient_fields_exist){
+                $scene_titles = $function_utilities -> returnScenesFigure($transient_fields["location"]);
+            } else {
+                $scene_titles = $function_utilities -> returnScenesFigure($location);
+            }   
 
-		if ( $transient_fields !== false ) {
-			$transient_fields_exist = true;
-		}
+            $scene_id = get_post_meta($figure_id, "figure_scene", true);
+            if ($transient_fields_exist){
+                $modal_icons = $function_utilities -> returnFigureIcons($transient_fields["figure_scene"]);
+            } else {
+                $modal_icons = $function_utilities -> returnFigureIcons($scene_id);
+            }  
 
-		$scene_titles = [];
-		$modal_icons = [];
-		$modal_tabs = [];
+            $modal_id = get_post_meta($figure_id, "figure_modal", true);
 
-		// used by both scene and icon dropdowns
-		if ( array_key_exists( 'post', $_GET ) ) {
-			$figure_id = intval( $_GET['post'] );
-			$location = get_post_meta( $figure_id, 'location', true );
-			if ( $transient_fields_exist ) {
-				$scene_titles = $function_utilities->returnScenesFigure( $transient_fields['location'] );
-			} else {
-				$scene_titles = $function_utilities->returnScenesFigure( $location );
-			}
+            if ($transient_fields_exist){
+                $modal_tabs = $function_utilities -> returnModalTabs($transient_fields["figure_modal"]);       
+            } else {
+                $modal_tabs = $function_utilities -> returnModalTabs($modal_id);
+            }  
 
-			$scene_id = get_post_meta( $figure_id, 'figure_scene', true );
-			if ( $transient_fields_exist ) {
-				$modal_icons = $function_utilities->returnFigureIcons( $transient_fields['figure_scene'] );
-			} else {
-				$modal_icons = $function_utilities->returnFigureIcons( $scene_id );
-			}
+        }
 
-			$modal_id = get_post_meta( $figure_id, 'figure_modal', true );
+        $fields[] = array(
+            'name'   => 'basic',
+            'title'  => 'Basic',
+            'icon'   => 'dashicons-admin-generic',
+            'fields' => array(
+                array(
+                    'id'             => 'figure_published',
+                    'type'           => 'select',
+                    'title'          => 'Status*',
+                    'options'        => array("draft" => "Draft", "published" => "Published"),
+                    'default'        => 'draft',
+                    'description' => 'Should the figure be live? If set to Published, the figure will be visible.',
+                ),
+                array(
+                    'id'             => 'location',
+                    'type'           => 'select',
+                    'title'          => 'Instance*',
+                    'options'        => $locations,
+                    'description' => 'What instance is this figure part of?',
+                ),
+                array(
+                    'id'             => 'figure_scene',
+                    'type'           => 'select',
+                    'title'          => 'Scene*',
+                    'options'        => $scene_titles,
+                    'description' => 'What scene is this figure part of?',
+                ),
+                array(
+                    'id'             => 'figure_modal',
+                    'type'           => 'select',
+                    'title'          => 'Icon*',
+                    'options'        => $modal_icons, 
+                    'description' => 'What modal is this figure part of?',
+                ),
+                array(
+                    'id'             => 'figure_tab',
+                    'type'           => 'select',
+                    'title'          => 'Tab*',
+                    'options'        => $modal_tabs,
+                    'description' => 'What tab in the modal is this figure part of?',
+                ),
+                array(
+                    'id'      => 'figure_order',
+                    'type'    => 'number',
+                    'title'   => 'Order',
+                    'description' => 'If there are multiple figures in this modal tab, in what order should this figure appear?',
+                    'default' => '1',                               
+                    'min'     => '1',                                    
+                    'max'     => '4',      
+                    'step'    => '1',   
+                ),
+                array(
+                    'type' => 'fieldset',
+                    'id' => 'figure_science_info',
+                    'title'   => 'Monitoring program link',
+                    'description' => 'What should the monitoring program icon link to, if anything?',
+                    'fields' => array(
+                        array(
+                            'id'          => 'figure_science_link_text',
+                            'type'        => 'text',
+                            'title'       => 'Text',
+                            'class'       => 'text-class',
+                        ),
+                        array(
+                            'id'          => 'figure_science_link_url',
+                            'type'        => 'text',
+                            'title'       => 'URL',
+                            'class'       => 'text-class',
+                            'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
 
-			if ( $transient_fields_exist ) {
-				$modal_tabs = $function_utilities->returnModalTabs( $transient_fields['figure_modal'] );
-			} else {
-				$modal_tabs = $function_utilities->returnModalTabs( $modal_id );
-			}
-		}
+                        ),
+                    ),
+                ),
+                array(
+                    'type' => 'fieldset',
+                    'id' => 'figure_data_info',
+                    'title'   => 'Data link',
+                    'description' => 'What should the data icon link to, if anything?',
+                    'fields' => array(
+                        array(
+                            'id'          => 'figure_data_link_text',
+                            'type'        => 'text',
+                            'title'       => 'Text',
+                            'class'       => 'text-class',
+                        ),
+                        array(
+                            'id'          => 'figure_data_link_url',
+                            'type'        => 'text',
+                            'title'       => 'URL',
+                            'class'       => 'text-class',
+                            'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
 
-		$fields[] = array(
-			'name'   => 'basic',
-			'title'  => 'Basic',
-			'icon'   => 'dashicons-admin-generic',
-			'fields' => array(
-				array(
-					'id'             => 'figure_published',
-					'type'           => 'select',
-					'title'          => 'Status*',
-					'options'        => array(
-						'draft' => 'Draft',
-						'published' => 'Published',
-					),
-					'default'        => 'draft',
-					'description' => 'Should the figure be live? If set to Published, the figure will be visible.',
-				),
-				array(
-					'id'             => 'location',
-					'type'           => 'select',
-					'title'          => 'Instance*',
-					'options'        => $locations,
-					'description' => 'What instance is this figure part of?',
-				),
-				array(
-					'id'             => 'figure_scene',
-					'type'           => 'select',
-					'title'          => 'Scene*',
-					'options'        => $scene_titles,
-					'description' => 'What scene is this figure part of?',
-				),
-				array(
-					'id'             => 'figure_modal',
-					'type'           => 'select',
-					'title'          => 'Icon*',
-					'options'        => $modal_icons,
-					'description' => 'What modal is this figure part of?',
-				),
-				array(
-					'id'             => 'figure_tab',
-					'type'           => 'select',
-					'title'          => 'Tab*',
-					'options'        => $modal_tabs,
-					'description' => 'What tab in the modal is this figure part of?',
-				),
-				array(
-					'id'      => 'figure_order',
-					'type'    => 'number',
-					'title'   => 'Order',
-					'description' => 'If there are multiple figures in this modal tab, in what order should this figure appear?',
-					'default' => '1',
-					'min'     => '1',
-					'max'     => '4',
-					'step'    => '1',
-				),
-				array(
-					'type' => 'fieldset',
-					'id' => 'figure_science_info',
-					'title'   => 'Monitoring program link',
-					'description' => 'What should the monitoring program icon link to, if anything?',
-					'fields' => array(
-						array(
-							'id'          => 'figure_science_link_text',
-							'type'        => 'text',
-							'title'       => 'Text',
-							'class'       => 'text-class',
-						),
-						array(
-							'id'          => 'figure_science_link_url',
-							'type'        => 'text',
-							'title'       => 'URL',
-							'class'       => 'text-class',
-							'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
+                        ),
+                    ),
+                ),
+                array(
+                    'id'             => 'figure_path',
+                    'type'           => 'select',
+                    'title'          => 'Figure type*',
+                    'options'        => array("Internal" => "Internal image", "External" => "External image", "Interactive" => "Interactive", "Code" => "Code"),
+                    'default'        =>  'Internal',
+                    'description' => 'Is the figure type an image stored within this website, or at some external location, is it piece a code, or does it need to be an interactive figure generated from data?',
+                ),
+                array(
+                    'id'          => 'figure_title',
+                    'type'        => 'text',
+                    'title'       => 'Figure Title',
+                    'description' => 'Should the figure have a title in the modal window? If this field is left blank than no title will be shown.',
+                ),
+                array(
+                    'id'    => 'figure_image',
+                    'type'  => 'image',
+                    'title' => 'Figure image*',
+                    'description' => 'What is the figure image?',
+                ),
+                array(
+                    'id'          => 'figure_external_url',
+                    'type'        => 'text',
+                    'title'       => 'External URL*',
+                    'class'       => 'text-class',
+                    'description' => 'This external URL should link just to the image itself (that is the URL should end in .png .jpeg .jpg or .tiff)',
+                    'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
 
-						),
-					),
-				),
-				array(
-					'type' => 'fieldset',
-					'id' => 'figure_data_info',
-					'title'   => 'Data link',
-					'description' => 'What should the data icon link to, if anything?',
-					'fields' => array(
-						array(
-							'id'          => 'figure_data_link_text',
-							'type'        => 'text',
-							'title'       => 'Text',
-							'class'       => 'text-class',
-						),
-						array(
-							'id'          => 'figure_data_link_url',
-							'type'        => 'text',
-							'title'       => 'URL',
-							'class'       => 'text-class',
-							'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
+                ),
+                array(
+                    'id'          => 'figure_external_alt',
+                    'type'        => 'text',
+                    'title'       => 'Alt text for external image*',
+                    'class'       => 'text-class',
+                    'description' => 'What is the "alternative text" that should be associated with this image for accessibility?',
+                ),
+                // New HTML/JS Code Editor Field
+                array(
+                    'id'          => 'figure_code',
+                    'type'        => 'ace_editor',
+                    'title'       => 'HTML/JavaScript Code',
+                    'class'       => 'text-class',
+                    'description' => 'Insert your custom HTML or JavaScript code here.',
+                    'options' => array(
+                        'theme'                     => 'ace/theme/chrome',
+                        'mode'                      => 'ace/mode/javascript',
+                        'showGutter'                => true,
+                        'showPrintMargin'           => false,
+                        'enableBasicAutocompletion' => true,
+                        'enableSnippets'            => true,
+                        'enableLiveAutocompletion'  => true,
+                    ),
+                    'attributes'    => array(
+                        'style'        => 'height: 150px; max-width: 100%;',
+                    ),
+                ),
+                //FILE UPLOAD ARRAY BOX
+                // This is a custom programmed upload box, the call for this field uses the Exopite_Simple_Options_Framework_Field_upload class.
+                // The functionality inside upload.php has been drastically reprogrammed to the current upload file functionality. 
+                // See the functions below: custom_file_upload_handler, custom_file_delete_handler.
+                // It also ties into the action at the top of this script: add_action('wp_ajax_custom_file_upload'), add_action('wp_ajax_custom_file_delete').
+                array(
+                    'id'      => 'figure_upload_file',               
+                    'type'    => 'upload',
+                    'title'   => 'Upload Interactive Figure File',
+                    'options' => array(
+                        //'upload_path'               =>  See the custom_file_upload_handler & custom_file_delete_handler functions below.
+                        'maxsize'                   =>  10485760, //Keeping for future development.
+                    ),
+                ),   
+                array(
+                    'id'          => 'figure_interactive_arguments',
+                    'type'        => 'textarea',
+                    'title'       => 'Figure: interactive arguments',
+                ),    
+                array(
+                    'id'          => 'figure_interactive_settings',
+                    'type'        => 'button',
+                    'title'       => 'Interactive Figure Settings',
+                    'class'        => 'figure_interactive_settings',
+                    'options'     => array(
+                        'href'  =>  '#nowhere',
+                        'target' => '_self',
+                        'value' => 'Run',
+                        'btn-class' => 'exopite-sof-btn'
+                    ),
+                ),
+                array(
+                    'id'     => 'figure_caption_short',
+                    'type'   => 'editor',
+                    'editor' => 'trumbowyg',
+                    'title'  => 'Short figure caption', 
+                    'description' => 'What is the short version of the figure caption?',
+                ),
+                array(
+                    'id'     => 'figure_caption_long',
+                    'type'   => 'editor',
+                    'editor' => 'trumbowyg',
+                    'title'  => 'Extended caption', 
+                    'description' => 'This caption appears in the "Click for Details" section under the short caption. If nothing is provided in this field, then the "Click for Details" section will be be blank for this figure.',
+                ),
+                //Preview button for displaying the internal or external images at the bottom of form
+                array(
+                    'id'          => 'figure_preview',
+                    'type'        => 'button',
+                    'title'       => 'Preview Figure (Desktop Mode)',
+                    'class'        => 'figure_preview',
+                    'options'     => array(
+                        'href'  =>  '#nowhere',
+                        'target' => '_self',
+                        'value' => 'Preview',
+                        'btn-class' => 'exopite-sof-btn'
+                    ),
+                ),
+                array(
+                    'id'          => 'figure_preview_mobile',
+                    'type'        => 'button',
+                    'title'       => 'Preview Figure (Mobile Mode)',
+                    'class'        => 'figure_preview_mobile',
+                    'options'     => array(
+                        'href'  =>  '#nowhere',
+                        'target' => '_self',
+                        'value' => 'Preview',
+                        'btn-class' => 'exopite-sof-btn'
+                    ),
+                ),
+            )
+        );
 
-						),
-					),
-				),
-				array(
-					'id'             => 'figure_path',
-					'type'           => 'select',
-					'title'          => 'Figure type*',
-					'options'        => array(
-						'Internal' => 'Internal image',
-						'External' => 'External image',
-						'Interactive' => 'Interactive',
-						'Code' => 'Code',
-					),
-					'default'        => 'Internal',
-					'description' => 'Is the figure type an image stored within this website, or at some external location, is it piece a code, or does it need to be an interactive figure generated from data?',
-				),
-				array(
-					'id'          => 'figure_title',
-					'type'        => 'text',
-					'title'       => 'Figure Title',
-					'description' => 'Should the figure have a title in the modal window? If this field is left blank than no title will be shown.',
-				),
-				array(
-					'id'    => 'figure_image',
-					'type'  => 'image',
-					'title' => 'Figure image*',
-					'description' => 'What is the figure image?',
-				),
-				array(
-					'id'          => 'figure_external_url',
-					'type'        => 'text',
-					'title'       => 'External URL*',
-					'class'       => 'text-class',
-					'description' => 'This external URL should link just to the image itself (that is the URL should end in .png .jpeg .jpg or .tiff)',
-					'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
+        // If we're just running this function to get the custom field list for field validation, return early
+        if ($return_fields_only) {
+            return $fields;
+        }
 
-				),
-				array(
-					'id'          => 'figure_external_alt',
-					'type'        => 'text',
-					'title'       => 'Alt text for external image*',
-					'class'       => 'text-class',
-					'description' => 'What is the "alternative text" that should be associated with this image for accessibility?',
-				),
-				// New HTML/JS Code Editor Field
-				array(
-					'id'          => 'figure_code',
-					'type'        => 'ace_editor',
-					'title'       => 'HTML/JavaScript Code',
-					'class'       => 'text-class',
-					'description' => 'Insert your custom HTML or JavaScript code here.',
-					'options' => array(
-						'theme'                     => 'ace/theme/chrome',
-						'mode'                      => 'ace/mode/javascript',
-						'showGutter'                => true,
-						'showPrintMargin'           => false,
-						'enableBasicAutocompletion' => true,
-						'enableSnippets'            => true,
-						'enableLiveAutocompletion'  => true,
-					),
-					'attributes'    => array(
-						'style'        => 'height: 150px; max-width: 100%;',
-					),
-				),
-				// FILE UPLOAD ARRAY BOX
-				// This is a custom programmed upload box, the call for this field uses the Exopite_Simple_Options_Framework_Field_upload class.
-				// The functionality inside upload.php has been drastically reprogrammed to the current upload file functionality.
-				// See the functions below: custom_file_upload_handler, custom_file_delete_handler.
-				// It also ties into the action at the top of this script: add_action('wp_ajax_custom_file_upload'), add_action('wp_ajax_custom_file_delete').
-				array(
-					'id'      => 'figure_upload_file',
-					'type'    => 'upload',
-					'title'   => 'Upload Interactive Figure File',
-					'options' => array(
-						// 'upload_path'               =>  See the custom_file_upload_handler & custom_file_delete_handler functions below.
-						'maxsize'                   => 10485760, // Keeping for future development.
-					),
-				),
-				array(
-					'id'          => 'figure_interactive_arguments',
-					'type'        => 'textarea',
-					'title'       => 'Figure: interactive arguments',
-				),
-				array(
-					'id'          => 'figure_interactive_settings',
-					'type'        => 'button',
-					'title'       => 'Interactive Figure Settings',
-					'class'        => 'figure_interactive_settings',
-					'options'     => array(
-						'href'  => '#nowhere',
-						'target' => '_self',
-						'value' => 'Run',
-						'btn-class' => 'exopite-sof-btn',
-					),
-				),
-				array(
-					'id'     => 'figure_caption_short',
-					'type'   => 'editor',
-					'editor' => 'trumbowyg',
-					'title'  => 'Short figure caption',
-					'description' => 'What is the short version of the figure caption?',
-				),
-				array(
-					'id'     => 'figure_caption_long',
-					'type'   => 'editor',
-					'editor' => 'trumbowyg',
-					'title'  => 'Extended caption',
-					'description' => 'This caption appears in the "Click for Details" section under the short caption. If nothing is provided in this field, then the "Click for Details" section will be be blank for this figure.',
-				),
-				// Preview button for displaying the internal or external images at the bottom of form
-				array(
-					'id'          => 'figure_preview',
-					'type'        => 'button',
-					'title'       => 'Preview Figure',
-					'class'        => 'figure_preview',
-					'options'     => array(
-						'href'  => '#nowhere',
-						'target' => '_self',
-						'value' => 'Preview',
-						'btn-class' => 'exopite-sof-btn',
-					),
-				),
-			),
-		);
+        // instantiate the admin page
+        $options_panel = new Exopite_Simple_Options_Framework( $config_metabox, $fields );
 
-		// If we're just running this function to get the custom field list for field validation, return early
-		if ( $return_fields_only ) {
-			return $fields;
-		}
+        // make several of the modal custom fields available to the REST API
+        $fieldsToBeRegistered = array(
+            array('figure_published', 'string', 'The figure published status'),
+            array('figure_modal', 'string', 'The figure modal'),
+            array('figure_tab', 'string', 'The figure tab'),
+            array('figure_order', 'integer', 'The figure order'),
+            array('figure_path', 'string', 'The figure path'),
+            array('figure_image', 'string', 'The figure image url, internal'),
+            array('figure_external_url', 'string', 'The figure external url'),
+            array('figure_external_alt', 'string', 'The alt text for external figure'),
+            array('figure_code', 'string', 'HTML or JS code'),
+            array('figure_upload_file', 'string', 'Upload the .csv or .json file for an interactive figure'),
+            array('figure_caption_short', 'string', 'The short figure caption'),
+            array('figure_caption_long', 'string', 'The long figure caption'),
+            array('figure_interactive_arguments', 'string', 'Arguments used in interactive figures'),
+            array('figure_title', 'string', 'The title of the figure, for any figure type.')
+        );
+        // Register fields in REST API
+        foreach ($fieldsToBeRegistered as $targetFieldsToBeRegistered){
+            register_meta(
+                'post', // Object type. In this case, 'post' refers to custom post type 'Figure'
+                $targetFieldsToBeRegistered[0], // Meta key name
+                array(
+                    'show_in_rest' => true, // Make the field available in REST API
+                    'single' => true, // Indicates whether the meta key has one single value
+                    'type' => $targetFieldsToBeRegistered[1], // Data type of the meta value
+                    'description' => $targetFieldsToBeRegistered[2], // Description of the meta key
+                    'auth_callback' => '__return_false' //Return false to disallow writing
+                )
+            );
+        }
 
-		// instantiate the admin page
-		$options_panel = new Exopite_Simple_Options_Framework( $config_metabox, $fields );
+        $fieldsToBeRegistered2 = array(
+            array('figure_science_info', 'URL for figure info'),
+            array('figure_data_info', 'URL for figure data'),
+        );
 
-		// make several of the modal custom fields available to the REST API
-		$fieldsToBeRegistered = array(
-			array( 'figure_published', 'string', 'The figure published status' ),
-			array( 'figure_modal', 'string', 'The figure modal' ),
-			array( 'figure_tab', 'string', 'The figure tab' ),
-			array( 'figure_order', 'integer', 'The figure order' ),
-			array( 'figure_path', 'string', 'The figure path' ),
-			array( 'figure_image', 'string', 'The figure image url, internal' ),
-			array( 'figure_external_url', 'string', 'The figure external url' ),
-			array( 'figure_external_alt', 'string', 'The alt text for external figure' ),
-			array( 'figure_code', 'string', 'HTML or JS code' ),
-			array( 'figure_upload_file', 'string', 'Upload the .csv or .json file for an interactive figure' ),
-			array( 'figure_caption_short', 'string', 'The short figure caption' ),
-			array( 'figure_caption_long', 'string', 'The long figure caption' ),
-			array( 'figure_interactive_arguments', 'string', 'Arguments used in interactive figures' ),
-			array( 'figure_title', 'string', 'The title of the figure, for any figure type.' ),
-		);
-		// Register fields in REST API
-		foreach ( $fieldsToBeRegistered as $targetFieldsToBeRegistered ) {
-			register_meta(
-				'post', // Object type. In this case, 'post' refers to custom post type 'Figure'
-				$targetFieldsToBeRegistered[0], // Meta key name
-				array(
-					'show_in_rest' => true, // Make the field available in REST API
-					'single' => true, // Indicates whether the meta key has one single value
-					'type' => $targetFieldsToBeRegistered[1], // Data type of the meta value
-					'description' => $targetFieldsToBeRegistered[2], // Description of the meta key
-					'auth_callback' => '__return_false', // Return false to disallow writing
-				)
-			);
-		}
+        foreach ($fieldsToBeRegistered2 as $targetFieldsToBeRegistered2){
+            register_meta( 
+                'post', 
+                $targetFieldsToBeRegistered2[0], // Meta key name
+                array(
+                    'auth_callback'     => '__return_false' ,
+                    'single'            => true, // The field contains a single array
+                    'description' => $targetFieldsToBeRegistered2[1], // Description of the meta key
+                    'show_in_rest'      => array(
+                        'schema' => array(
+                            'type'  => 'array', // The meta field is an array
+                            'items' => array(
+                                'type' => 'string', // Each item in the array is a string
+                            ),
+                        ),
+                    ),
+                ) 
+            );
+        }
+    }  
 
-		$fieldsToBeRegistered2 = array(
-			array( 'figure_science_info', 'URL for figure info' ),
-			array( 'figure_data_info', 'URL for figure data' ),
-		);
-
-		foreach ( $fieldsToBeRegistered2 as $targetFieldsToBeRegistered2 ) {
-			register_meta(
-				'post',
-				$targetFieldsToBeRegistered2[0], // Meta key name
-				array(
-					'auth_callback'     => '__return_false',
-					'single'            => true, // The field contains a single array
-					'description' => $targetFieldsToBeRegistered2[1], // Description of the meta key
-					'show_in_rest'      => array(
-						'schema' => array(
-							'type'  => 'array', // The meta field is an array
-							'items' => array(
-								'type' => 'string', // Each item in the array is a string
-							),
-						),
-					),
-				)
-			);
-		}
-	}
-
-	/**
+    /**
 	 * Register Figure custom fields for use by REST API.
 	 *
 	 * @since    1.0.0

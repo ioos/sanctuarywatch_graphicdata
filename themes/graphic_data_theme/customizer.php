@@ -400,583 +400,418 @@ class Customizer_Settings {
 			)
 		);
 
-		// Add setting for Theme Color 6
-		$wp_customize->add_setting(
-			'theme_color_6',
-			array(
-				'default'   => '#f2f2f2',
-				'transport' => 'refresh',
-				'sanitize_callback' => 'sanitize_hex_color',
-			)
-		);
+            // Monitor image selection changes
+            wp.customize('header_row_image', function(value) {
+                value.bind(function(imageId) {
+                    var headerRowEnabled = wp.customize('header_row_enable').get();
+                    
+                    if (headerRowEnabled && (!imageId || imageId == 0)) {
+                        // Show error if header row is enabled but no image selected
+                        $('#customize-control-header_row_image .customize-control-notifications-container').remove();
+                        $('#customize-control-header_row_image .description').append(
+                            '<div class="customize-control-notifications-container" style="margin-top: 4px;">' +
+                            '<div class="notice notice-error"><p>Header image is required when header row is enabled.</p></div>' +
+                            '</div>'
+                        );
+                    } else {
+                        // Remove error messages when image is selected
+                        $('#customize-control-header_row_image .customize-control-notifications-container').remove();
+                    }
+                });
+            });
+        });
+        </script>
+        <style>
+        .customize-control-required .customize-control-title:after {
+            content: " *";
+            color: #dc3232;
+        }
+        </style>
+        <?php
+    }
 
-		// Add control for Theme Color 6
-		$wp_customize->add_control(
-			new WP_Customize_Color_Control(
-				$wp_customize,
-				'theme_color_6',
-				array(
-					'label'    => __( 'Color 6', 'sanctuary-watch' ),
-					'description' => __(
-						'This color is used for the following:<br>
-                • Background of primary content area for all pages, ',
-						'textdomain'
-					),
-					'section'  => 'theme_color_settings',
-					'settings' => 'theme_color_6',
-				)
-			)
-		);
-	}
-
-	/**
-	 * Validate header image dimensions and requirement
-	 *
-	 * @param WP_Error             $validity
-	 * @param mixed                $value
-	 * @param WP_Customize_Setting $setting
-	 * @return WP_Error
-	 */
-	function header_row_validate_image( $validity, $value, $setting ) {
-		// Check if header row is enabled
-		$header_row_enabled = $setting->manager->get_setting( 'header_row_enable' )->value();
-
-		if ( $header_row_enabled ) {
-			// If header row is enabled, image is required
-			if ( empty( $value ) || $value == 0 ) {
-				$validity->add( 'required_field', __( 'Header image is required when header row is enabled.', 'textdomain' ) );
-				return $validity;
-			}
-
-			// Validate image dimensions
-			$image_data = wp_get_attachment_image_src( $value, 'full' );
-
-			if ( $image_data ) {
-				$width = $image_data[1];
-				$height = $image_data[2];
-
-				if ( $width != 433 || $height != 50 ) {
-					$validity->add(
-						'invalid_dimensions',
-						sprintf(
-							__( 'Header image must be exactly 433 pixels wide and 50 pixels tall. Your image is %1$dx%2$d pixels.', 'textdomain' ),
-							$width,
-							$height
-						)
-					);
-				}
-			} else {
-				$validity->add( 'invalid_image', __( 'Invalid image selected.', 'textdomain' ) );
-			}
-		}
-
-		return $validity;
-	}
-
-	/**
-	 * Generic validation function for fields required when header row is enabled
-	 *
-	 * @param WP_Error             $validity
-	 * @param mixed                $value
-	 * @param WP_Customize_Setting $setting
-	 * @return WP_Error
-	 */
-	function validate_required_when_header_enabled( $validity, $value, $setting ) {
-		// Check if header row is enabled
-		$header_row_enabled = $setting->manager->get_setting( 'header_row_enable' )->value();
-
-		if ( $header_row_enabled ) {
-			// If header row is enabled, this field is required
-			if ( empty( $value ) || $value == 0 ) {
-				// Create dynamic error message based on setting ID
-				$field_names = [
-					'header_row_image_alt'  => __( 'Header Image Alt Text', 'textdomain' ),
-					'header_row_image_link' => __( 'Header Image Link', 'textdomain' ),
-					'header_row_breadcrumb_name' => __( 'Header Name Within Breadcrumb Row', 'textdomain' ),
-				];
-
-				$field_name = isset( $field_names[ $setting->id ] ) ? $field_names[ $setting->id ] : __( 'This field', 'textdomain' );
-
-				$validity->add(
-					'required_field',
-					sprintf(
-						__( '%s is required when header row is enabled.', 'textdomain' ),
-						$field_name
-					)
-				);
-			}
-		}
-
-		return $validity;
-	}
+    /**
+     * Additional helper function to check validation on theme activation or updates
+     */
+    function validate_header_settings_on_save() {
+        $header_row_enabled = get_theme_mod('header_row_enable');
+        $header_image = get_theme_mod('header_row_image');
+        
+        if ($header_row_enabled) {
+            if (!empty($header_image)) {
+                // Validate dimensions
+                $image_data = wp_get_attachment_image_src($header_image, 'full');
+                if ($image_data && ($image_data[1] != 433 || $image_data[2] != 50)) {
+                    add_action('admin_notices', function() use ($image_data) {
+                        echo '<div class="notice notice-warning"><p>' . 
+                             sprintf(__('Warning: Header image dimensions are %dx%d pixels, but should be exactly 433x50 pixels.', 'textdomain'), 
+                                    $image_data[1], $image_data[2]) . 
+                             '</p></div>';
+                    });
+                }
+            }
+        }
+    }
 
 
-	/**
-	 * Sanitize header image value
-	 *
-	 * @param mixed $value
-	 * @return int
-	 */
-	function header_row_sanitize_image( $value ) {
-		// Ensure it's a valid attachment ID
-		$attachment_id = absint( $value );
+    /**
+     * Get the default header image attachment ID
+     * This function checks if the default image exists in the media library
+     * and returns its attachment ID, or 0 if not found
+     */
+    function get_header_row_default_image_id() {
+        static $default_image_id = null;
+        
+        if ($default_image_id === null) {
+            $default_image_path = get_template_directory() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
+            $default_image_url = get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
+            
+            // Check if image exists in filesystem
+            if (file_exists($default_image_path)) {
+                // Try to find this image in the media library
+                $attachment = get_posts(array(
+                    'post_type' => 'attachment',
+                    'meta_query' => array(
+                        array(
+                            'key' => '_wp_attached_file',
+                            'value' => basename($default_image_path),
+                            'compare' => 'LIKE'
+                        )
+                    ),
+                    'posts_per_page' => 1
+                ));
+                
+                if (!empty($attachment)) {
+                    $default_image_id = $attachment[0]->ID;
+                } else {
+                    // If not in media library, try to add it
+                    $default_image_id = $this->add_default_header_image_to_media_library();
+                }
+            } else {
+                $default_image_id = 0;
+            }
+        }
+        
+        return $default_image_id;
+    }
 
-		// Verify it's actually an image attachment
-		if ( $attachment_id && wp_attachment_is_image( $attachment_id ) ) {
-			return $attachment_id;
-		}
+    /**
+     * Add the default header image to the media library
+     */
+    function add_default_header_image_to_media_library() {
+        $default_image_path = get_template_directory() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
+        $default_image_url = get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
+        
+        if (!file_exists($default_image_path)) {
+            return 0;
+        }
+        
+        // Check if already exists
+        $existing = get_posts(array(
+            'post_type' => 'attachment',
+            'meta_query' => array(
+                array(
+                    'key' => '_wp_attached_file',
+                    'value' => basename($default_image_path),
+                    'compare' => 'LIKE'
+                )
+            ),
+            'posts_per_page' => 1
+        ));
+        
+        if (!empty($existing)) {
+            return $existing[0]->ID;
+        }
+        
+        // Include WordPress file handling functions
+        if (!function_exists('wp_handle_upload')) {
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+        }
+        if (!function_exists('wp_generate_attachment_metadata')) {
+            require_once(ABSPATH . 'wp-admin/includes/image.php');
+        }
+        if (!function_exists('media_handle_upload')) {
+            require_once(ABSPATH . 'wp-admin/includes/media.php');
+        }
+        
+        // Copy file to uploads directory
+        $upload_dir = wp_upload_dir();
+        $filename = basename($default_image_path);
+        $new_file_path = $upload_dir['path'] . '/' . $filename;
+        
+        // Only copy if it doesn't already exist in uploads
+        if (!file_exists($new_file_path)) {
+            if (!copy($default_image_path, $new_file_path)) {
+                return 0;
+            }
+        }
+        
+        // Create attachment
+        $attachment = array(
+            'guid' => $upload_dir['url'] . '/' . $filename,
+            'post_mime_type' => 'image/png',
+            'post_title' => 'IOOS Header Image',
+            'post_content' => '',
+            'post_status' => 'inherit'
+        );
+        
+        $attachment_id = wp_insert_attachment($attachment, $new_file_path);
+        
+        if (!is_wp_error($attachment_id)) {
+            // Generate metadata
+            $attachment_data = wp_generate_attachment_metadata($attachment_id, $new_file_path);
+            wp_update_attachment_metadata($attachment_id, $attachment_data);
+            
+            return $attachment_id;
+        }
+        
+        return 0;
+    }
 
-		return 0;
-	}
+    /**
+     * Active callback to show/hide header row controls when header row is enabled
+     */
+    function is_header_row_enabled($control) {
+        $value = $control->manager->get_setting('header_row_enable')->value();
+        if ($value == 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	/**
-	 * Add JavaScript for enhanced client-side validation
-	 */
-	function header_row_validation_script() {
-		?>
-		<script type="text/javascript">
-		jQuery(document).ready(function($) {
-			// Monitor header row enable/disable changes
-			wp.customize('header_row_enable', function(value) {
-				value.bind(function(enabled) {
-					if (enabled) {
-						// When header row is enabled, validate the image
-						var imageValue = wp.customize('header_row_image').get();
-						if (!imageValue || imageValue == 0) {
-							// Add visual indicator that image is required
-							$('#customize-control-header_row_image').addClass('customize-control-required');
-							$('#customize-control-header_row_image .description').append(
-								'<div class="customize-control-notifications-container" style="margin-top: 4px;">' +
-								'<div class="notice notice-error"><p>Header image is required when header row is enabled.</p></div>' +
-								'</div>'
-							);
-						}
-					} else {
-						// Remove required indicator when disabled
-						$('#customize-control-header_row_image').removeClass('customize-control-required');
-						$('#customize-control-header_row_image .customize-control-notifications-container').remove();
-					}
-				});
-			});
+    /**
+     * Add inline JavaScript to control the visibility of header row settings
+     */
+    function header_row_customizer_inline_script() {
+        ?>
+        <script type="text/javascript">
+        (function() {
+            wp.customize.bind('ready', function() {
+                // List of controls that should be hidden/shown based on header row enable
+                var dependentControls = [
+                    'header_row_bg_color',
+                    'header_row_image', 
+                    'header_row_image_alt',
+                    'header_row_image_link',
+                    'header_row_breadcrumb_name'
+                ];
+                
+                // Function to slide down (show) an element
+                function slideDown(element, duration) {
+                    duration = duration || 300;
+                    element.style.display = 'block';
+                    element.style.height = '0px';
+                    element.style.overflow = 'hidden';
+                    element.style.transition = 'height ' + duration + 'ms ease-out';
+                    
+                    var height = element.scrollHeight + 'px';
+                    element.style.height = height;
+                    
+                    setTimeout(function() {
+                        element.style.height = '';
+                        element.style.overflow = '';
+                        element.style.transition = '';
+                    }, duration);
+                }
+                
+                // Function to slide up (hide) an element
+                function slideUp(element, duration) {
+                    duration = duration || 300;
+                    element.style.height = element.offsetHeight + 'px';
+                    element.style.overflow = 'hidden';
+                    element.style.transition = 'height ' + duration + 'ms ease-out';
+                    
+                    setTimeout(function() {
+                        element.style.height = '0px';
+                    }, 10);
+                    
+                    setTimeout(function() {
+                        element.style.display = 'none';
+                        element.style.height = '';
+                        element.style.overflow = '';
+                        element.style.transition = '';
+                    }, duration);
+                }
+                
+                // Function to toggle control visibility
+                function toggleHeaderRowControls(enabled) {
+                    dependentControls.forEach(function(controlId) {
+                        var control = wp.customize.control(controlId);
+                        if (control) {
+                            var container = control.container[0]; // Get DOM element from jQuery object
+                            if (enabled) {
+                                slideDown(container);
+                            } else {
+                                slideUp(container);
+                            }
+                        }
+                    });
+                }
+                
+                // Get the header row enable control
+                var headerRowEnable = wp.customize.control('header_row_enable');
+                
+                if (headerRowEnable) {
+                    // Set initial state
+                    var initialValue = wp.customize('header_row_enable').get();
+                    toggleHeaderRowControls(!!initialValue);
+                    
+                    // Listen for changes to the checkbox
+                    wp.customize('header_row_enable', function(setting) {
+                        setting.bind(function(value) {
+                            toggleHeaderRowControls(!!value);
+                        });
+                    });
+                }
+            });
+        })();
+        </script>
+        <?php
+    }
 
-			// Monitor image selection changes
-			wp.customize('header_row_image', function(value) {
-				value.bind(function(imageId) {
-					var headerRowEnabled = wp.customize('header_row_enable').get();
-					
-					if (headerRowEnabled && (!imageId || imageId == 0)) {
-						// Show error if header row is enabled but no image selected
-						$('#customize-control-header_row_image .customize-control-notifications-container').remove();
-						$('#customize-control-header_row_image .description').append(
-							'<div class="customize-control-notifications-container" style="margin-top: 4px;">' +
-							'<div class="notice notice-error"><p>Header image is required when header row is enabled.</p></div>' +
-							'</div>'
-						);
-					} else {
-						// Remove error messages when image is selected
-						$('#customize-control-header_row_image .customize-control-notifications-container').remove();
-					}
-				});
-			});
-		});
-		</script>
-		<style>
-		.customize-control-required .customize-control-title:after {
-			content: " *";
-			color: #dc3232;
-		}
-		</style>
-		<?php
-	}
+    /**
+     * Outputs custom CSS from the Theme Customizer.
+     */
+    function sanctuary_watch_customizer_css() {
+        $color2 = get_theme_mod( 'theme_color_2', '#ffffff' );
+        $color2_encoded = rawurlencode( $color2 );
+        ?>
+        <style type="text/css">
+            #top-bar {
+                background-color: <?php echo esc_attr( get_theme_mod( 'header_row_bg_color', '#ffffff' ) ); ?>;
+            }
 
-	/**
-	 * Additional helper function to check validation on theme activation or updates
-	 */
-	function validate_header_settings_on_save() {
-		$header_row_enabled = get_theme_mod( 'header_row_enable' );
-		$header_image = get_theme_mod( 'header_row_image' );
+            /* Theme Color 1 */
+            .site-title-main, .gray-bar-links {
+                color: <?php echo esc_attr( get_theme_mod( 'theme_color_1', '#03386c' ) ); ?>;
+            }
+            #navbar-inner, 
+            #taglineHeaderId > button,
+            .site-footer, 
+            .instance_published_button, 
+            .accordion-button, 
+            .accordion-button:not(.collapsed), 
+            .ViewSceneButton,
+            .btn-primary {
+                background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_1', '#03386c') ); ?>;
+            }
 
-		if ( $header_row_enabled ) {
-			if ( ! empty( $header_image ) ) {
-				// Validate dimensions
-				$image_data = wp_get_attachment_image_src( $header_image, 'full' );
-				if ( $image_data && ( $image_data[1] != 433 || $image_data[2] != 50 ) ) {
-					add_action(
-						'admin_notices',
-						function () use ( $image_data ) {
-							echo '<div class="notice notice-warning"><p>' .
-							sprintf(
-								__( 'Warning: Header image dimensions are %1$dx%2$d pixels, but should be exactly 433x50 pixels.', 'textdomain' ),
-								$image_data[1],
-								$image_data[2]
-							) .
-							 '</p></div>';
-						}
-					);
-				}
-			}
-		}
-	}
+            /* Theme Color 2 */
+            #taglineHeaderId > button,
+            #site-name-logo-banner, 
+            #site-name-logo-banner a, 
+            #site-name-logo-banner p, 
+            .navbar-brand, 
+            .nav-link, 
+            .footer-column-title, 
+            .footer_component, 
+            .footer_component a, 
+            .instance_published_button, 
+            .accordion-button, 
+            .accordion-button:not(.collapsed),
+            .ViewSceneButton,
+            .btn-primary  {
+                color: <?php echo esc_attr( get_theme_mod( 'theme_color_2', "#ffffff" ) ); ?> ;
+            }
 
+            /* STILL THEME COLOR 2: Override arrow with inline SVG  */
+            .accordion-button::after {
+                content: "▼"; 
+                font-size: 1rem; 
+                /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='<?php echo $color2_encoded; ?>' d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E") !important;
+                background-repeat: no-repeat;
+                background-size: 1.25rem; */
+                width: 1.25rem;
+                height: 1.25rem;
+                margin-left: auto;
+            }
 
-	/**
-	 * Get the default header image attachment ID
-	 * This function checks if the default image exists in the media library
-	 * and returns its attachment ID, or 0 if not found
-	 */
-	function get_header_row_default_image_id() {
-		static $default_image_id = null;
+            /* Only when text is exactly “More Info” */
+            button.accordion-button[data-text!="More Info"]::after {
+                /* background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23000000' d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E"); */
+            }
 
-		if ( $default_image_id === null ) {
-			$default_image_path = get_template_directory() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
-			$default_image_url = get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
+            .accordion-button:not(.collapsed)::after {
+                transform: rotate(-180deg);
+            }
 
-			// Check if image exists in filesystem
-			if ( file_exists( $default_image_path ) ) {
-				// Try to find this image in the media library
-				$attachment = get_posts(
-					array(
-						'post_type' => 'attachment',
-						'meta_query' => array(
-							array(
-								'key' => '_wp_attached_file',
-								'value' => basename( $default_image_path ),
-								'compare' => 'LIKE',
-							),
-						),
-						'posts_per_page' => 1,
-					)
-				);
+            /* Theme Color 3 */
+            .theme-title > h2, #title-container > h1, #modal-title, .instance_type_title {
+                color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> ;
+            }
 
-				if ( ! empty( $attachment ) ) {
-					$default_image_id = $attachment[0]->ID;
-				} else {
-					// If not in media library, try to add it
-					$default_image_id = $this->add_default_header_image_to_media_library();
-				}
-			} else {
-				$default_image_id = 0;
-			}
-		}
+            .tab-title {
+                color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> !important;
+            }
 
-		return $default_image_id;
-	}
+            /* Theme Color 4 */
+            #site-name-logo-banner {
+                background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_4', '#008da8' ) ); ?>;
+            }
 
-	/**
-	 * Add the default header image to the media library
-	 */
-	function add_default_header_image_to_media_library() {
-		$default_image_path = get_template_directory() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
-		$default_image_url = get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
+            .site-tagline-main {
+                color: <?php echo esc_attr( get_theme_mod( 'theme_color_4', '#008da8' ) ); ?>;
+            }
 
-		if ( ! file_exists( $default_image_path ) ) {
-			return 0;
-		}
+            /* Theme Color 5 */
 
-		// Check if already exists
-		$existing = get_posts(
-			array(
-				'post_type' => 'attachment',
-				'meta_query' => array(
-					array(
-						'key' => '_wp_attached_file',
-						'value' => basename( $default_image_path ),
-						'compare' => 'LIKE',
-					),
-				),
-				'posts_per_page' => 1,
-			)
-		);
+            #toc-container a, 
+            #more-info-item-1 a, 
+            #images-item-1 a, 
+            #accordion-item-1 a, 
+            #accordion-item-2 a {
+                color: <?php echo esc_attr( get_theme_mod( 'theme_color_5', '#024880' ) ); ?>;
+            }
 
-		if ( ! empty( $existing ) ) {
-			return $existing[0]->ID;
-		}
+            /* Theme Color 6 */
+            #entire_thing {
+                background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_6', '#f2f2f2' ) ); ?>;
+            }
+        </style>
+        <?php
+    }
 
-		// Include WordPress file handling functions
-		if ( ! function_exists( 'wp_handle_upload' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/image.php';
-		}
-		if ( ! function_exists( 'media_handle_upload' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/media.php';
-		}
+    /**
+     * Helper function to check if header row is enabled 
+     */
+    function is_header_row_active() {
+        return get_theme_mod('header_row_enable', false);
+    }
 
-		// Copy file to uploads directory
-		$upload_dir = wp_upload_dir();
-		$filename = basename( $default_image_path );
-		$new_file_path = $upload_dir['path'] . '/' . $filename;
+    /**
+     * Helper function to get header row image URL 
+     */
+    function get_header_row_image() {
+        return get_theme_mod('header_row_image', get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png');
+    }
 
-		// Only copy if it doesn't already exist in uploads
-		if ( ! file_exists( $new_file_path ) ) {
-			if ( ! copy( $default_image_path, $new_file_path ) ) {
-				return 0;
-			}
-		}
+    /**
+     * Helper function to get header row image alt text 
+     */
+    function get_header_row_image_alt() {
+        return get_theme_mod('header_row_image_alt', 'IOOS');
+    }
 
-		// Create attachment
-		$attachment = array(
-			'guid' => $upload_dir['url'] . '/' . $filename,
-			'post_mime_type' => 'image/png',
-			'post_title' => 'IOOS Header Image',
-			'post_content' => '',
-			'post_status' => 'inherit',
-		);
+    /**
+     * Helper function to get header row image link 
+     */
+    function get_header_row_image_link() {
+        return get_theme_mod('header_row_image_link', 'https://ioos.us/');
+    }
 
-		$attachment_id = wp_insert_attachment( $attachment, $new_file_path );
+    /**
+     * Helper function to get header row breadcrumb name 
+     */
+    function get_header_row_breadcrumb_name() {
+        return get_theme_mod('header_row_breadcrumb_name', 'IOOS');
+    }
 
-		if ( ! is_wp_error( $attachment_id ) ) {
-			// Generate metadata
-			$attachment_data = wp_generate_attachment_metadata( $attachment_id, $new_file_path );
-			wp_update_attachment_metadata( $attachment_id, $attachment_data );
-
-			return $attachment_id;
-		}
-
-		return 0;
-	}
-
-	/**
-	 * Active callback to show/hide header row controls when header row is enabled
-	 */
-	function is_header_row_enabled( $control ) {
-		$value = $control->manager->get_setting( 'header_row_enable' )->value();
-		if ( $value == 1 ) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * Add inline JavaScript to control the visibility of header row settings
-	 */
-	function header_row_customizer_inline_script() {
-		?>
-		<script type="text/javascript">
-		(function() {
-			wp.customize.bind('ready', function() {
-				// List of controls that should be hidden/shown based on header row enable
-				var dependentControls = [
-					'header_row_bg_color',
-					'header_row_image', 
-					'header_row_image_alt',
-					'header_row_image_link',
-					'header_row_breadcrumb_name'
-				];
-				
-				// Function to slide down (show) an element
-				function slideDown(element, duration) {
-					duration = duration || 300;
-					element.style.display = 'block';
-					element.style.height = '0px';
-					element.style.overflow = 'hidden';
-					element.style.transition = 'height ' + duration + 'ms ease-out';
-					
-					var height = element.scrollHeight + 'px';
-					element.style.height = height;
-					
-					setTimeout(function() {
-						element.style.height = '';
-						element.style.overflow = '';
-						element.style.transition = '';
-					}, duration);
-				}
-				
-				// Function to slide up (hide) an element
-				function slideUp(element, duration) {
-					duration = duration || 300;
-					element.style.height = element.offsetHeight + 'px';
-					element.style.overflow = 'hidden';
-					element.style.transition = 'height ' + duration + 'ms ease-out';
-					
-					setTimeout(function() {
-						element.style.height = '0px';
-					}, 10);
-					
-					setTimeout(function() {
-						element.style.display = 'none';
-						element.style.height = '';
-						element.style.overflow = '';
-						element.style.transition = '';
-					}, duration);
-				}
-				
-				// Function to toggle control visibility
-				function toggleHeaderRowControls(enabled) {
-					dependentControls.forEach(function(controlId) {
-						var control = wp.customize.control(controlId);
-						if (control) {
-							var container = control.container[0]; // Get DOM element from jQuery object
-							if (enabled) {
-								slideDown(container);
-							} else {
-								slideUp(container);
-							}
-						}
-					});
-				}
-				
-				// Get the header row enable control
-				var headerRowEnable = wp.customize.control('header_row_enable');
-				
-				if (headerRowEnable) {
-					// Set initial state
-					var initialValue = wp.customize('header_row_enable').get();
-					toggleHeaderRowControls(!!initialValue);
-					
-					// Listen for changes to the checkbox
-					wp.customize('header_row_enable', function(setting) {
-						setting.bind(function(value) {
-							toggleHeaderRowControls(!!value);
-						});
-					});
-				}
-			});
-		})();
-		</script>
-		<?php
-	}
-
-	/**
-	 * Outputs custom CSS from the Theme Customizer.
-	 */
-	function sanctuary_watch_customizer_css() {
-		$color2 = get_theme_mod( 'theme_color_2', '#ffffff' );
-		$color2_encoded = rawurlencode( $color2 );
-		?>
-		<style type="text/css">
-			#top-bar {
-				background-color: <?php echo esc_attr( get_theme_mod( 'header_row_bg_color', '#ffffff' ) ); ?>;
-			}
-
-			/* Theme Color 1 */
-			.site-title-main, .gray-bar-links {
-				color: <?php echo esc_attr( get_theme_mod( 'theme_color_1', '#03386c' ) ); ?>;
-			}
-			#navbar-inner, 
-			#taglineHeaderId > button,
-			.site-footer, 
-			.instance_published_button, 
-			.accordion-button, 
-			.accordion-button:not(.collapsed), 
-			.ViewSceneButton,
-			.btn-primary {
-				background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_1', '#03386c' ) ); ?>;
-			}
-
-			/* Theme Color 2 */
-			#taglineHeaderId > button,
-			#site-name-logo-banner, 
-			#site-name-logo-banner a, 
-			#site-name-logo-banner p, 
-			.navbar-brand, 
-			.nav-link, 
-			.footer-column-title, 
-			.footer_component, 
-			.footer_component a, 
-			.instance_published_button, 
-			.accordion-button, 
-			.accordion-button:not(.collapsed),
-			.ViewSceneButton,
-			.btn-primary  {
-				color: <?php echo esc_attr( get_theme_mod( 'theme_color_2', '#ffffff' ) ); ?> ;
-			}
-
-			/* STILL THEME COLOR 2: Override arrow with inline SVG  */
-			.accordion-button::after {
-				content: "";
-				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='<?php echo $color2_encoded; ?>' d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E") !important;
-				background-repeat: no-repeat;
-				background-size: 1.25rem;
-				width: 1.25rem;
-				height: 1.25rem;
-				margin-left: auto;
-			}
-
-			.accordion-button:not(.collapsed)::after {
-				transform: rotate(-180deg);
-			}
-
-			/* Theme Color 3 */
-			.theme-title > h2, #title-container > h1, #modal-title, .instance_type_title {
-				color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> ;
-			}
-
-			.tab-title {
-				color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> !important;
-			}
-
-			/* Theme Color 4 */
-			#site-name-logo-banner {
-				background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_4', '#008da8' ) ); ?>;
-			}
-
-			.site-tagline-main {
-				color: <?php echo esc_attr( get_theme_mod( 'theme_color_4', '#008da8' ) ); ?>;
-			}
-
-			/* Theme Color 5 */
-
-			#toc-container a, 
-			#more-info-item-1 a, 
-			#images-item-1 a, 
-			#accordion-item-1 a, 
-			#accordion-item-2 a {
-				color: <?php echo esc_attr( get_theme_mod( 'theme_color_5', '#024880' ) ); ?>;
-			}
-
-			/* Theme Color 6 */
-			#entire_thing {
-				background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_6', '#f2f2f2' ) ); ?>;
-			}
-		</style>
-		<?php
-	}
-
-	/**
-	 * Helper function to check if header row is enabled
-	 */
-	function is_header_row_active() {
-		return get_theme_mod( 'header_row_enable', false );
-	}
-
-	/**
-	 * Helper function to get header row image URL
-	 */
-	function get_header_row_image() {
-		return get_theme_mod( 'header_row_image', get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png' );
-	}
-
-	/**
-	 * Helper function to get header row image alt text
-	 */
-	function get_header_row_image_alt() {
-		return get_theme_mod( 'header_row_image_alt', 'IOOS' );
-	}
-
-	/**
-	 * Helper function to get header row image link
-	 */
-	function get_header_row_image_link() {
-		return get_theme_mod( 'header_row_image_link', 'https://ioos.us/' );
-	}
-
-	/**
-	 * Helper function to get header row breadcrumb name
-	 */
-	function get_header_row_breadcrumb_name() {
-		return get_theme_mod( 'header_row_breadcrumb_name', 'IOOS' );
-	}
-
-	/**
-	 * Enqueue customizer control scripts
-	 */
-	function enqueue_single_instance_scripts() {
-		wp_add_inline_script(
-			'customize-controls',
-			'
+    /**
+     * Enqueue customizer control scripts
+     */
+    function enqueue_single_instance_scripts() {
+        wp_add_inline_script( 'customize-controls', '
             wp.customize.bind("ready", function() {
                 
                 // Function to handle the conditional logic

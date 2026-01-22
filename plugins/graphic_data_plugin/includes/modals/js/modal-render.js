@@ -22,6 +22,7 @@
  */
 function render_modal(key, obj, modal_obj){
 
+
     // Allow passing in a specific child_obj from preview mode in admin-modal.js
     if (typeof child_obj === 'undefined') {
         child_obj = obj;
