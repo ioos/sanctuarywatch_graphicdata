@@ -721,8 +721,20 @@ class Figure {
                 array(
                     'id'          => 'figure_preview',
                     'type'        => 'button',
-                    'title'       => 'Preview Figure',
+                    'title'       => 'Preview Figure (Desktop Mode)',
                     'class'        => 'figure_preview',
+                    'options'     => array(
+                        'href'  =>  '#nowhere',
+                        'target' => '_self',
+                        'value' => 'Preview',
+                        'btn-class' => 'exopite-sof-btn'
+                    ),
+                ),
+                array(
+                    'id'          => 'figure_preview_mobile',
+                    'type'        => 'button',
+                    'title'       => 'Preview Figure (Mobile Mode)',
+                    'class'        => 'figure_preview_mobile',
                     'options'     => array(
                         'href'  =>  '#nowhere',
                         'target' => '_self',

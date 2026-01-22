@@ -88,7 +88,7 @@ function errorPreviewHandler(divID, figureType){
  * @modifies
  * - The DOM by removing and creating the modal preview window.
  */
-let previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="figure_preview"]');
+let previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"]');
 
 if (!previewFigureOrModalElements) {
     previewFigureOrModalElements = [];
@@ -116,7 +116,7 @@ if (previewFigureOrModalElements.length > 0) {
                         <div class="modal-content">
                         <div class="modal-header">
                             <h4 id="modal-title1" class="modal-title"> Full Scene Image</h4>
-                            <button id="close" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <button id="close1" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body"></div>
                         </div>
@@ -128,7 +128,7 @@ if (previewFigureOrModalElements.length > 0) {
                         <div class="modal-content" aria-labelledby="modal-title">
                         <div class="modal-header">
                             <h4 id="modal-title" class="modal-title"></h4>
-                            <button id="close" type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <button id="close1" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
                         <div class="modal-body">
@@ -139,7 +139,7 @@ if (previewFigureOrModalElements.length > 0) {
                         </div>
 
                         <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-left: 1%;"></ul>
-                        <div class="tab-content" id="myTabContent" style="margin-top: 2%; margin-left: 2%; margin-right: 2%;"></div>
+                        <div class="tab-content" id="myTabContent" style="margin-top: 2%; margin-left: 1%; margin-right: 1%;"></div>
                         </div>
                     </div>
                     </div>
@@ -151,9 +151,28 @@ if (previewFigureOrModalElements.length > 0) {
                 return;
             }
 
+
             // Inject as the first child of #wpcontent
             wpcontent.insertAdjacentHTML('afterbegin', markup);
             //console.log('✅ Modals injected into #wpcontent');
+
+
+            const modalEl2 = document.getElementById('myModal');
+            const dialog2 = modalEl2?.querySelector('.modal-dialog');
+            // Apply mobile preview sizing ONLY for mobile preview trigger
+            if (el.getAttribute('data-depend-id') === 'modal_preview_mobile' || el.getAttribute('data-depend-id') === 'figure_preview_mobile') {
+                deviceDetector.device = 'phone';
+                if (dialog2) {
+                    dialog2.style.minWidth = '33%';
+                    dialog2.style.width = '350px';
+                    dialog2.style.paddingTop = '2%'; // if you need this
+                }
+            } 
+
+            //remove mobile css if present 
+            if (el.getAttribute('data-depend-id') === 'modal_preview' || el.getAttribute('data-depend-id') === 'figure_preview') {
+                document.getElementById('sw-modal-accordion-btn-css')?.remove();
+            }
 
             // Wait for DOM update, then show the modal (Bootstrap 5 API)
             setTimeout(() => {
@@ -166,8 +185,8 @@ if (previewFigureOrModalElements.length > 0) {
                 }
             }, 100);
 
-            const hasModalPreview = document.querySelectorAll('[data-depend-id="modal_preview"]');
-            const hasFigurePreview = document.querySelectorAll('[data-depend-id="figure_preview"]');
+            const hasModalPreview = document.querySelectorAll('[data-depend-id="modal_preview"],[data-depend-id="modal_preview_mobile"]');
+            const hasFigurePreview = document.querySelectorAll('[data-depend-id="figure_preview"],[data-depend-id="figure_preview_mobile"]');
             //console.log('hasModalPreview:', hasModalPreview);
             //console.log('hasFigurePreview:', hasFigurePreview);
 
@@ -259,11 +278,83 @@ if (previewFigureOrModalElements.length > 0) {
                     }
                 };
 
-                //console.log('modal_data', modal_data);
-
                 render_modal(iconSelected, child_obj, modal_data);
-                modal_data.remove();
-                child_obj.remove();
+
+                // if (el.getAttribute('data-depend-id') === 'modal_preview_mobile') {
+                //     const color2 = '#ff6600'; // example
+                //     const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='${color2}' d='M1.5 5.5l6 6 6-6'/></svg>`;
+                //     const svgEncoded = encodeURIComponent(svg);
+
+                //     const style = document.createElement('style');
+                //     style.id = 'sw-modal-accordion-btn-css'; // optional: for easy debugging/removal
+                //     style.textContent = `
+
+                //     @media (min-width: 900px) {
+                //     #accordion-container {
+                //         max-width: 100% !important;  /* or unset */
+                //         margin-left: 0 !important;   /* or unset */
+                //         /* min-width can stay if you want */
+                //     }
+                //     }
+                //     /* -----------------------------
+                //     Accordion chevron
+                //     ----------------------------- */
+                //     .accordion-button::after {
+                //     content: "";
+                //     background-image: url("data:image/svg+xml,${svgEncoded}");
+                //     background-repeat: no-repeat;
+                //     background-size: 1.25rem;
+                //     width: 1.25rem;
+                //     height: 1.25rem;
+                //     margin-left: auto;
+                //     transform: rotate(0deg);
+                //     transition: transform .2s ease-in-out;
+                //     }
+                //     .accordion-button:not(.collapsed)::after {
+                //     transform: rotate(180deg);
+                //     }      
+
+                //     @media (min-width: 900px) {
+                //     #accordion-container {
+                //         max-width: 100%;
+                //         min-width: 200px;
+                //         margin-left: -15%;
+                //     }
+                //     }
+
+                //     /* Stack tab "buttons" vertically */
+                //     .nav-tabs {
+                //     display: flex !important;
+                //     flex-direction: column !important;
+                //     width: 100% !important;
+                //     border-bottom: 0 !important; /* optional: remove the bottom tab border line */
+                //     }
+
+                //     /* Make each tab item full width */
+                //     .nav-tabs .nav-item {
+                //     width: 100% !important;
+                //     flex: 0 0 auto !important;
+                //     }
+
+                //     /* Make the clickable area a full-width centered button */
+                //     .nav-tabs .nav-link {
+                //     width: 98% !important;
+                //     text-align: center !important;
+                //     justify-content: center !important; /* helps if link uses flex */
+                //     border-radius: 0.75rem;            /* optional */
+                //     margin: 0 0 0.5rem 0;              /* spacing between "buttons" */
+                //     }
+
+                //     /* Optional: last one no extra gap */
+                //     .nav-tabs .nav-item:last-child .nav-link {
+                //     margin-bottom: 0;
+                //     }
+                //     `;
+
+                //     document.head.appendChild(style);
+                // }
+
+
             }
 
             // --- GATHER FIGURE DATA FROM FORM FIELDS ---
@@ -283,8 +374,96 @@ if (previewFigureOrModalElements.length > 0) {
                     }
                 };
 
-                //console.log('modal_data', modal_data);
                 render_modal(iconSelected, child_obj, modal_data);
+
+                // if (el.getAttribute('data-depend-id') === 'figure_preview_mobile') {
+                //     const color2 = '#ff6600'; // example
+                //     const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='${color2}' d='M1.5 5.5l6 6 6-6'/></svg>`;
+                //     const svgEncoded = encodeURIComponent(svg);
+
+                //     const style = document.createElement('style');
+                //     style.id = 'sw-modal-accordion-btn-css'; // optional: for easy debugging/removal
+                //     style.textContent = `
+
+                //     @media (min-width: 900px) {
+                //     #accordion-container {
+                //         max-width: 100% !important;  /* or unset */
+                //         margin-left: 0 !important;   /* or unset */
+                //         /* min-width can stay if you want */
+                //     }
+                //     }
+                //     /* -----------------------------
+                //     Accordion chevron
+                //     ----------------------------- */
+                //     .accordion-button::after {
+                //     content: "";
+                //     background-image: url("data:image/svg+xml,${svgEncoded}");
+                //     background-repeat: no-repeat;
+                //     background-size: 1.25rem;
+                //     width: 1.25rem;
+                //     height: 1.25rem;
+                //     margin-left: auto;
+                //     transform: rotate(0deg);
+                //     transition: transform .2s ease-in-out;
+                //     }
+                //     .accordion-button:not(.collapsed)::after {
+                //     transform: rotate(180deg);
+                //     }
+
+                //     @media (min-width: 900px) {
+                //     #accordion-container {
+                //         max-width: 100%;
+                //         min-width: 200px;
+                //         margin-left: -15%;
+                //     }
+                //     }
+
+                //     /* Stack tab "buttons" vertically */
+                //     .nav-tabs {
+                //     display: flex !important;
+                //     flex-direction: column !important;
+                //     width: 100% !important;
+                //     border-bottom: 0 !important; /* optional: remove the bottom tab border line */
+                //     }
+
+                //     /* Make each tab item full width */
+                //     .nav-tabs .nav-item {
+                //     width: 100% !important;
+                //     flex: 0 0 auto !important;
+                //     }
+
+                //     /* Make the clickable area a full-width centered button */
+                //     .nav-tabs .nav-link {
+                //     width: 98% !important;
+                //     text-align: center !important;
+                //     justify-content: center !important; /* helps if link uses flex */
+                //     border-radius: 0.75rem;            /* optional */
+                //     margin: 0 0 0.5rem 0;              /* spacing between "buttons" */
+                //     }
+
+                //     /* Optional: last one no extra gap */
+                //     .nav-tabs .nav-item:last-child .nav-link {
+                //     margin-bottom: 0;
+                //     }
+                //     `;
+                //     document.head.appendChild(style);
+                // }
+
+                if (el.getAttribute('data-depend-id') === 'figure_preview') {
+                    // Create a new style element
+                    const style = document.createElement('style');
+
+                    // Define CSS for the pseudo-element inside that style block
+                    style.textContent = `
+                    .accordion-button::after {
+                    content: "▼";
+                    font-size: 1rem;
+                    width: 1.25rem;
+                    height: 1.25rem;
+                    margin-left: auto;
+                    }
+                    `;
+                }
 
                 //FIGURE PREVIEW LOGIC
                 const info_obj = {
@@ -326,7 +505,6 @@ if (previewFigureOrModalElements.length > 0) {
                     await render_interactive_plots(tabContentElement, info_obj);
                 })();
             }
-
         });
     });
 };
@@ -549,8 +727,8 @@ if (previewSceneElements.length > 0) {
             // Apply mobile preview sizing ONLY for mobile preview trigger
             if (el.getAttribute('data-depend-id') === 'scene_preview_mobile') {
                 if (dialog) {
-                    dialog.style.minWidth = '22%';
-                    dialog.style.width = '300px';
+                    dialog.style.minWidth = '27%';
+                    dialog.style.width = '450px';
                     dialog.style.paddingTop = '2%'; // if you need this
                 }
             }
@@ -627,8 +805,9 @@ if (previewSceneElements.length > 0) {
     });
 };
 
+//________________________________________________________________________________________
 
-
+//Applies to  Scene, Figure, and Modals previews
 // When the modal close button is clicked, remove both CSS files
 document.addEventListener('click', function(e) {
     if (e.target && e.target.id === 'close1') {
@@ -638,6 +817,65 @@ document.addEventListener('click', function(e) {
         if (css2) css2.remove();
     }
 });
+
+//________________________________________________________________________________________
+
+async function plotlySnapshotFromDivAndSave(
+    gd,
+    {
+      config = { responsive: true },
+      figureId = null,
+      sceneSlug = null,
+      endpoint = "/wp-json/sw/v1/plotly-snapshot",
+      meta = {}
+    } = {}
+  ) {
+    if (!gd?.data || !gd?.layout) throw new Error("Plotly div not ready");
+  
+    const snap = {
+      schema: "plotly-snapshot/v1",
+      createdAt: new Date().toISOString(),
+      figureId,
+      sceneSlug,
+      meta,
+      data: structuredClone(gd.data),
+      layout: structuredClone(gd.layout),
+      config: structuredClone(config)
+    };
+  
+    // Portable
+    delete snap.layout.width;
+    delete snap.layout.height;
+    snap.layout.autosize = true;
+    snap.config = snap.config || {};
+    snap.config.responsive = true;
+  
+    // Save to WP
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(snap),
+      credentials: "same-origin"
+    });
+  
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`Snapshot save failed (${res.status}): ${text}`);
+    }
+  
+    // Expect server to return: { id, url, ... }
+    const saved = await res.json();
+  
+    // Add “location” info
+    snap.saved = {
+      id: saved.id || saved.key || null,
+      url: saved.url || null
+    };
+  
+    return snap;
+  }
+  
+
 
 
 

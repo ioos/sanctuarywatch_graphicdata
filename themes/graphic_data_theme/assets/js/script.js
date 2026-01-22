@@ -35,7 +35,7 @@ if ((window.location.href.includes('post.php') || window.location.href.includes(
 if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene'){
     url = document.getElementsByName('scene_infographic')[0].value;
 }
-else { 
+if (!window.location.href.includes('post.php')) { 
     let url1 =(JSON.stringify(svg_url));
     url = url1.substring(2, url1.length - 2);
 }
@@ -170,11 +170,11 @@ window.mobileBool = window.mobileBool || false;
 
 function admin_preview_condition_checker() {
     const admin_preview_mobile = document.querySelectorAll(
-        '[data-depend-id="scene_preview_mobile"]'
+        '[data-depend-id="scene_preview_mobile"],[data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"]'
     );
 
     const admin_preview_desktop = document.querySelectorAll(
-        '[data-depend-id="scene_preview"]'
+        '[data-depend-id="scene_preview"],[data-depend-id="modal_preview"],[data-depend-id="figure_preview"]'
     );
 
     // Ensure the global exists
@@ -205,6 +205,8 @@ function admin_preview_condition_checker() {
             });
         });
     }
+
+    // console.log('window.mobileBool', window.mobileBool);
 
     // Return the current state *now*
     return !!window.mobileBool;
@@ -361,7 +363,7 @@ function is_mobile() {
 
     // Admin preview mobile functionality to allow for is_mobile() to return true
     if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
-        console.log('admin_preview_condition_checker');
+        //console.log('admin_preview_condition_checker');
         return true;
     }
     // Everything else that isnt admin preview related uses this

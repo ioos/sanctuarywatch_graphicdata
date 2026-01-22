@@ -251,7 +251,7 @@ class Modal {
             array(
                 'id'          => 'modal_preview',
                 'type'        => 'button',
-                'title'       => 'Preview Modal',
+                'title'       => 'Preview Modal (Desktop Mode)',
                 'class'        => 'modal_preview',
                 'options'     => array(
                     'href'  =>  '#nowhere',
@@ -259,7 +259,19 @@ class Modal {
                     'value' => 'Preview',
                     'btn-class' => 'exopite-sof-btn'
                 ),
-            )         
+            ),
+            array(
+                'id'          => 'modal_preview_mobile',
+                'type'        => 'button',
+                'title'       => 'Preview Modal (Mobile Mode)',
+                'class'        => 'modal_preview_mobile',
+                'options'     => array(
+                    'href'  =>  '#nowhere',
+                    'target' => '_self',
+                    'value' => 'Preview',
+                    'btn-class' => 'exopite-sof-btn'
+                ),
+            )          
         );
 
         // Step 1: Create an array to hold the new info sub-arrays

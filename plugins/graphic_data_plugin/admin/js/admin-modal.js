@@ -347,6 +347,7 @@ function modalWindow(){
         document.getElementsByName("modal_photo_entries")[0].parentElement.parentElement.style.display = "block";
         document.getElementsByName("modal_tab_number")[0].parentElement.parentElement.style.display = "block";
         document.getElementsByClassName("modal_preview")[0].parentElement.parentElement.style.display = "block";
+        document.getElementsByClassName("modal_preview_mobile")[0].parentElement.parentElement.style.display = "block";
         displayTabEntries(document.getElementsByName("modal_tab_number")[0].value);
     } else {
 
@@ -375,6 +376,7 @@ function modalWindow(){
 
         // Turn off the Modal preview button
         document.getElementsByClassName("modal_preview")[0].parentElement.parentElement.style.display = "none";
+        document.getElementsByClassName("modal_preview_mobile")[0].parentElement.parentElement.style.display = "none";
     }
 }
 
