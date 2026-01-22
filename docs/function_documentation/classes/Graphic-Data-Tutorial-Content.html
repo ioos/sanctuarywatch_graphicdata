@@ -157,25 +157,46 @@ permalink: /classes/Graphic-Data-Tutorial-Content/
 <dd>Synchronize tutorial content based on plugin settings.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types">create_instance_types()</a>
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_copy_image_to_media_library">copy_image_to_media_library()</a>
+    <span>
+                                &nbsp;: string|false    </span>
+</dt>
+<dd>Copies an image file from the plugin directory to the WordPress media library.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instance_types">create_tutorial_instance_types()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
 <dd>Create example instance type taxonomy terms for the tutorial.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_instances">create_instances()</a>
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instances">create_tutorial_instances()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
 <dd>Create example instances for the tutorial.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types">delete_instance_types()</a>
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_images">delete_tutorial_images()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Deletes all tutorial images from the media library.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_instance_types">delete_tutorial_instance_types()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
 <dd>Deletes all tutorial instance type terms from the database.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_posts">delete_tutorial_posts()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Deletes all tutorial posts.</dd>
 
     </dl>
 
@@ -254,15 +275,103 @@ permalink: /classes/Graphic-Data-Tutorial-Content/
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_create_instance_types">
-        create_instance_types()
-        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_copy_image_to_media_library">
+        copy_image_to_media_library()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_copy_image_to_media_library" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">63</span>
+    <span class="phpdocumentor-element-found-in__line">292</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Copies an image file from the plugin directory to the WordPress media library.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">copy_image_to_media_library</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$plugin_relative_path</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$tutorial_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|false</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>This method takes an image file from within the plugin's directory structure,
+uploads it to the WordPress media library, generates the necessary attachment
+metadata (including image sizes), and associates it with a tutorial ID for
+later reference or cleanup.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$plugin_relative_path</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The relative path to the image file from the plugin's includes directory.
+Example: '../example_files/tutorial/image.jpg'</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$tutorial_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The tutorial ID to associate with this media library item.
+This is stored in post meta to keep track of tutorial media.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_copy_image_to_media_library#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string|false</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The URL of the uploaded attachment on success, false on failure.
+Failure can occur if the source file doesn't exist or if
+the upload process encounters an error.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_create_tutorial_instance_types">
+        create_tutorial_instance_types()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instance_types" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">66</span>
 
     </aside>
 
@@ -270,7 +379,7 @@ permalink: /classes/Graphic-Data-Tutorial-Content/
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">create_instance_types</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">create_tutorial_instance_types</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -284,7 +393,7 @@ and navbar names.</p>
     
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instance_types#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -309,15 +418,15 @@ and navbar names.</p>
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_create_instances">
-        create_instances()
-        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instances" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_create_tutorial_instances">
+        create_tutorial_instances()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instances" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">142</span>
+    <span class="phpdocumentor-element-found-in__line">199</span>
 
     </aside>
 
@@ -325,7 +434,7 @@ and navbar names.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">create_instances</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">create_tutorial_instances</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -344,15 +453,65 @@ and navbar names.</p>
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_delete_instance_types">
-        delete_instance_types()
-        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_delete_tutorial_images">
+        delete_tutorial_images()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_images" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">110</span>
+    <span class="phpdocumentor-element-found-in__line">146</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Deletes all tutorial images from the media library.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">delete_tutorial_images</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_images#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_delete_tutorial_instance_types">
+        delete_tutorial_instance_types()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_instance_types" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">113</span>
 
     </aside>
 
@@ -360,7 +519,7 @@ and navbar names.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">delete_instance_types</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">delete_tutorial_instance_types</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -374,7 +533,7 @@ which handles cleanup of wp_terms, wp_term_taxonomy, and wp_termmeta tables.</p>
     
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_instance_types#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -394,6 +553,56 @@ which handles cleanup of wp_terms, wp_term_taxonomy, and wp_termmeta tables.</p>
                                                  <section class="phpdocumentor-description"><p>wpdb $wpdb WordPress database abstraction object.</p>
 </section>
 
+                                    </dd>
+                                            </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_delete_tutorial_posts">
+        delete_tutorial_posts()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_posts" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-tutorial-content.php"><a href="files/includes-admin-tutorial-content.html"><abbr title="includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">173</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Deletes all tutorial posts.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">delete_tutorial_posts</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_posts#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
                                     </dd>
                                             </dl>
 
@@ -517,9 +726,12 @@ which handles cleanup of wp_terms, wp_term_taxonomy, and wp_termmeta tables.</p>
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status">check_tutorial_content_status()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instance_types">create_instance_types()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_instances">create_instances()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_instance_types">delete_instance_types()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_copy_image_to_media_library">copy_image_to_media_library()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instance_types">create_tutorial_instance_types()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instances">create_tutorial_instances()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_images">delete_tutorial_images()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_instance_types">delete_tutorial_instance_types()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_posts">delete_tutorial_posts()</a></li>
                                     </ul>
             </li>
                     </ul>
