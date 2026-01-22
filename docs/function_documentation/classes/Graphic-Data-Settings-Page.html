@@ -38,20 +38,6 @@ permalink: /classes/Graphic-Data-Settings-Page/
                     <section class="phpdocumentor-sidebar__category -packages">
             <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="packages/graphic.html" class="">graphic</a>
-</h4>
-    <ul class="phpdocumentor-list">
-                    <li>
-                <a href="packages/graphic-data.html" class="">data</a>
-                
-            </li>
-            </ul>
-
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="packages/Application.html" class="">Application</a>
-</h4>
-
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="packages/Graphic.html" class="">Graphic</a>
 </h4>
     <ul class="phpdocumentor-list">
@@ -60,6 +46,10 @@ permalink: /classes/Graphic-Data-Settings-Page/
                 
             </li>
             </ul>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Application.html" class="">Application</a>
+</h4>
 
                         </section>
             
@@ -79,7 +69,9 @@ permalink: /classes/Graphic-Data-Settings-Page/
             <div class="phpdocumentor-column -nine phpdocumentor-content">
                                 <section>
                                         <ul class="phpdocumentor-breadcrumbs">
-            <li class="phpdocumentor-breadcrumb"><a href="packages/Application.html">Application</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic.html">Graphic</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic-Data.html">Data</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic-Data-Plugin.html">Plugin</a></li>
     </ul>
 
     <article class="phpdocumentor-element -class">
@@ -90,7 +82,9 @@ permalink: /classes/Graphic-Data-Settings-Page/
             <div class="phpdocumentor-element__package">
             in package
             <ul class="phpdocumentor-breadcrumbs">
-                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Application.html">Application</a></li>
+                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic.html">Graphic</a></li>
+                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic-Data.html">Data</a></li>
+                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic-Data-Plugin.html">Plugin</a></li>
                             </ul>
         </div>
     
@@ -105,7 +99,7 @@ permalink: /classes/Graphic-Data-Settings-Page/
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">18</span>
+    <span class="phpdocumentor-element-found-in__line">17</span>
 
     </aside>
 
@@ -242,6 +236,13 @@ and provides callback functions for rendering each settings field.</p>
 <dd>Registers custom REST API routes for plugin settings.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings">sanitize_graphic_data_settings()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Sanitize all plugin settings before saving.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Settings-Page.html#method_settings_init">settings_init()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -268,6 +269,20 @@ and provides callback functions for rendering each settings field.</p>
                                 &nbsp;: void    </span>
 </dt>
 <dd>Callback function to render the &quot;Site footer title&quot; field.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Settings-Page.html#method_tutorial_content_description_callback">tutorial_content_description_callback()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Callback function to render the Tutorial Content description text.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Settings-Page.html#method_tutorial_content_toggle_callback">tutorial_content_toggle_callback()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Callback function to render the tutorial content toggle switch.</dd>
 
     </dl>
 
@@ -297,7 +312,7 @@ and provides callback functions for rendering each settings field.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">29</span>
+    <span class="phpdocumentor-element-found-in__line">28</span>
 
     </aside>
 
@@ -350,7 +365,7 @@ users with administrator capability to configure plugin settings.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">72</span>
+    <span class="phpdocumentor-element-found-in__line">71</span>
 
     </aside>
 
@@ -403,7 +418,7 @@ styles on the plugin settings page. Only enqueues on the settings page.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">48</span>
+    <span class="phpdocumentor-element-found-in__line">47</span>
 
     </aside>
 
@@ -456,7 +471,7 @@ styles on the plugin settings page. Only enqueues on the settings page.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">266</span>
+    <span class="phpdocumentor-element-found-in__line">438</span>
 
     </aside>
 
@@ -529,7 +544,7 @@ as a JSON response for use by external applications or themes.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">348</span>
+    <span class="phpdocumentor-element-found-in__line">520</span>
 
     </aside>
 
@@ -567,7 +582,7 @@ additional instructions and links for users to configure their Google Analytics 
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">473</span>
+    <span class="phpdocumentor-element-found-in__line">645</span>
 
     </aside>
 
@@ -607,7 +622,7 @@ container file with user-provided IDs.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">417</span>
+    <span class="phpdocumentor-element-found-in__line">589</span>
 
     </aside>
 
@@ -660,7 +675,7 @@ used when generating interactive bar charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">440</span>
+    <span class="phpdocumentor-element-found-in__line">612</span>
 
     </aside>
 
@@ -713,7 +728,7 @@ defaults for interactive time series bar charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">370</span>
+    <span class="phpdocumentor-element-found-in__line">542</span>
 
     </aside>
 
@@ -766,7 +781,7 @@ used when generating interactive time series line charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">393</span>
+    <span class="phpdocumentor-element-found-in__line">565</span>
 
     </aside>
 
@@ -819,7 +834,7 @@ defaults for interactive time series line charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">323</span>
+    <span class="phpdocumentor-element-found-in__line">495</span>
 
     </aside>
 
@@ -869,7 +884,7 @@ defaults for interactive time series line charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">241</span>
+    <span class="phpdocumentor-element-found-in__line">413</span>
 
     </aside>
 
@@ -914,6 +929,79 @@ that provides read-only access to footer settings data.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_sanitize_graphic_data_settings">
+        sanitize_graphic_data_settings()
+        <a href="classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">268</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Sanitize all plugin settings before saving.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">sanitize_graphic_data_settings</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$input</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Validates and sanitizes each field in the graphic data settings array to ensure
+data integrity and security before saving to the database.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$input</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The raw input values from the settings form.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The sanitized settings array.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_settings_init">
         settings_init()
         <a href="classes/Graphic-Data-Settings-Page.html#method_settings_init" class="headerlink"><i class="fas fa-link"></i></a>
@@ -922,7 +1010,7 @@ that provides read-only access to footer settings data.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">96</span>
+    <span class="phpdocumentor-element-found-in__line">95</span>
 
     </aside>
 
@@ -977,7 +1065,7 @@ access for specific settings.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">587</span>
+    <span class="phpdocumentor-element-found-in__line">759</span>
 
     </aside>
 
@@ -1031,7 +1119,7 @@ administrator capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">300</span>
+    <span class="phpdocumentor-element-found-in__line">472</span>
 
     </aside>
 
@@ -1081,7 +1169,7 @@ administrator capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">282</span>
+    <span class="phpdocumentor-element-found-in__line">454</span>
 
     </aside>
 
@@ -1100,6 +1188,109 @@ administrator capability.</p>
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
         <a href="classes/Graphic-Data-Settings-Page.html#method_sitewide_footer_title_field_callback#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_tutorial_content_description_callback">
+        tutorial_content_description_callback()
+        <a href="classes/Graphic-Data-Settings-Page.html#method_tutorial_content_description_callback" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">321</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Callback function to render the Tutorial Content description text.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">tutorial_content_description_callback</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Settings-Page.html#method_tutorial_content_description_callback#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_tutorial_content_toggle_callback">
+        tutorial_content_toggle_callback()
+        <a href="classes/Graphic-Data-Settings-Page.html#method_tutorial_content_toggle_callback" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">341</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Callback function to render the tutorial content toggle switch.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">tutorial_content_toggle_callback</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Displays a checkbox toggle for enabling/disabling tutorial content.
+The value is saved to wp_options as graphic_data_tutorial_content.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Settings-Page.html#method_tutorial_content_toggle_callback#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -1244,10 +1435,13 @@ administrator capability.</p>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_interactive_line_defaults_callback">interactive_line_defaults_callback()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_intro_text_field_callback">intro_text_field_callback()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_register_rest_settings">register_rest_settings()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings">sanitize_graphic_data_settings()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_settings_init">settings_init()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_settings_page">settings_page()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_sitewide_footer_field_callback">sitewide_footer_field_callback()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_sitewide_footer_title_field_callback">sitewide_footer_title_field_callback()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_tutorial_content_description_callback">tutorial_content_description_callback()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_tutorial_content_toggle_callback">tutorial_content_toggle_callback()</a></li>
                                     </ul>
             </li>
                     </ul>

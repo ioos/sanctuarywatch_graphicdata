@@ -1,114 +1,114 @@
 Search.appendIndex(
     [
                 {
-            "fqsen": "\\Admin",
-            "name": "Admin",
+            "fqsen": "\\Graphic_Data_Admin",
+            "name": "Graphic_Data_Admin",
             "summary": "The\u0020admin\u002Dspecific\u0020functionality\u0020of\u0020the\u0020plugin.",
-            "url": "classes/Admin.html"
+            "url": "classes/Graphic-Data-Admin.html"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aenqueue_styles\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aenqueue_styles\u0028\u0029",
             "name": "enqueue_styles",
             "summary": "Register\u0020the\u0020stylesheets\u0020for\u0020the\u0020admin\u0020area.",
-            "url": "classes/Admin.html#method_enqueue_styles"
+            "url": "classes/Graphic-Data-Admin.html#method_enqueue_styles"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aenqueue_scripts\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aenqueue_scripts\u0028\u0029",
             "name": "enqueue_scripts",
             "summary": "Register\u0020the\u0020JavaScript\u0020for\u0020the\u0020admin\u0020area.",
-            "url": "classes/Admin.html#method_enqueue_scripts"
+            "url": "classes/Graphic-Data-Admin.html#method_enqueue_scripts"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_admin_bar_options\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_admin_bar_options\u0028\u0029",
             "name": "remove_admin_bar_options",
             "summary": "Remove\u0020the\u0020ability\u0020to\u0020access\u0020Comments,\u0020Posts,\u0020Users,\u0020and\u0020Pages\u0020content\u0020types\u0020from\u0020the\u0020admin\u0020bar\u0020of\u0020the\u0020dashboard.",
-            "url": "classes/Admin.html#method_remove_admin_bar_options"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_admin_bar_options"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aenqueue_bootstrap_admin\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aenqueue_bootstrap_admin\u0028\u0029",
             "name": "enqueue_bootstrap_admin",
             "summary": "Enqueue\u0020Bootstrap\u0020\u0028version\u00205.3.0\u0029\u0020CSS\u0020and\u0020Javascript.",
-            "url": "classes/Admin.html#method_enqueue_bootstrap_admin"
+            "url": "classes/Graphic-Data-Admin.html#method_enqueue_bootstrap_admin"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_elements_from_menu\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_elements_from_menu\u0028\u0029",
             "name": "remove_elements_from_menu",
             "summary": "Remove\u0020the\u0020ability\u0020to\u0020access\u0020the\u0020Comments,\u0020Posts,\u0020and\u0020Pages\u0020content\u0020types\u0020from\u0020the\u0020sidebar\u0020of\u0020the\u0020dashboard.",
-            "url": "classes/Admin.html#method_remove_elements_from_menu"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_elements_from_menu"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_dashboard_widgets\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_dashboard_widgets\u0028\u0029",
             "name": "remove_dashboard_widgets",
             "summary": "Remove\u0020remove\u0020unwanted\u0020widgets\u0020from\u0020the\u0020WordPress\u0020dashboard.",
-            "url": "classes/Admin.html#method_remove_dashboard_widgets"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_dashboard_widgets"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_header_row\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_header_row\u0028\u0029",
             "name": "remove_header_row",
             "summary": "Remove\u0020header\u0020row\u0020before\u0020fields\u0020for\u0020custom\u0020content\u0020types.",
-            "url": "classes/Admin.html#method_remove_header_row"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_header_row"
         },                {
-            "fqsen": "\\Admin\u003A\u003Awppversionremove\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Awppversionremove\u0028\u0029",
             "name": "wppversionremove",
             "summary": "Remove\u0020WordPress\u0020version\u0020number\u0020from\u0020appearing\u0020in\u0020the\u0020lower\u0020right\u0020of\u0020admin\u0020footer.",
-            "url": "classes/Admin.html#method_wppversionremove"
+            "url": "classes/Graphic-Data-Admin.html#method_wppversionremove"
         },                {
-            "fqsen": "\\Admin\u003A\u003Ahide_permalink\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Ahide_permalink\u0028\u0029",
             "name": "hide_permalink",
             "summary": "Remove\u0020permalink\u0020from\u0020edit\u0020post\u0020admin\u0020screens.",
-            "url": "classes/Admin.html#method_hide_permalink"
+            "url": "classes/Graphic-Data-Admin.html#method_hide_permalink"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_screen_options\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_screen_options\u0028\u0029",
             "name": "remove_screen_options",
             "summary": "Remove\u0020screen\u0020options\u0020metabox\u0020from\u0020edit\u0020post\u0020screens.",
-            "url": "classes/Admin.html#method_remove_screen_options"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_screen_options"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_thank_you\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_thank_you\u0028\u0029",
             "name": "remove_thank_you",
             "summary": "Remove\u0020\u0020\u0022Thank\u0020you\u0020for\u0020creating\u0020with\u0020wordpress\u0022\u0020from\u0020the\u0020lower\u0020left\u0020of\u0020the\u0020footer\u0020of\u0020admin\u0020screens.",
-            "url": "classes/Admin.html#method_remove_thank_you"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_thank_you"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_gutenberg\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_gutenberg\u0028\u0029",
             "name": "remove_gutenberg",
             "summary": "Remove\u0020\u0020\u0022Thank\u0020you\u0020for\u0020creating\u0020with\u0020wordpress\u0022\u0020from\u0020the\u0020lower\u0020left\u0020of\u0020the\u0020footer\u0020of\u0020admin\u0020screens.",
-            "url": "classes/Admin.html#method_remove_gutenberg"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_gutenberg"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_all_dates\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_all_dates\u0028\u0029",
             "name": "remove_all_dates",
             "summary": "Remove\u0020\u0022All\u0020dates\u0022\u0020filter\u0020from\u0020admin\u0020screens.",
-            "url": "classes/Admin.html#method_remove_all_dates"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_all_dates"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aadd_favicon\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aadd_favicon\u0028\u0029",
             "name": "add_favicon",
             "summary": "Change\u0020default\u0020favicon\u0020associated\u0020with\u0020site\u0020to\u0020Sanctuary\u0020Watch\u0020logo,\u0020if\u0020there\u0020is\u0020no\u0020site\u0020icon\u0020set\u0020in\u0020the\u0020theme.",
-            "url": "classes/Admin.html#method_add_favicon"
+            "url": "classes/Graphic-Data-Admin.html#method_add_favicon"
         },                {
-            "fqsen": "\\Admin\u003A\u003Amodify_publish_button_text\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Amodify_publish_button_text\u0028\u0029",
             "name": "modify_publish_button_text",
             "summary": "Filters\u0020the\u0020text\u0020of\u0020the\u0020Publish\u0020and\u0020Update\u0020buttons\u0020to\u0020display\u0020\u0022Save\u0022\u0020instead.",
-            "url": "classes/Admin.html#method_modify_publish_button_text"
+            "url": "classes/Graphic-Data-Admin.html#method_modify_publish_button_text"
         },                {
-            "fqsen": "\\Admin\u003A\u003Arestrict_content_editor_admin_menu\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Arestrict_content_editor_admin_menu\u0028\u0029",
             "name": "restrict_content_editor_admin_menu",
             "summary": "Edit\u0020what\u0020users\u0020with\u0020the\u0020Content\u0020Editor\u0020can\u0020see\u0020on\u0020the\u0020dashboard",
-            "url": "classes/Admin.html#method_restrict_content_editor_admin_menu"
+            "url": "classes/Graphic-Data-Admin.html#method_restrict_content_editor_admin_menu"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aallow_svg_uploads\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aallow_svg_uploads\u0028\u0029",
             "name": "allow_svg_uploads",
-            "summary": "",
-            "url": "classes/Admin.html#method_allow_svg_uploads"
+            "summary": "Add\u0020SVG\u0020support\u0020to\u0020allowed\u0020upload\u0020MIME\u0020types.",
+            "url": "classes/Graphic-Data-Admin.html#method_allow_svg_uploads"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aremove_view_link_from_post_type\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_view_link_from_post_type\u0028\u0029",
             "name": "remove_view_link_from_post_type",
             "summary": "Remove\u0020\u0022view\u0022\u0020link\u0020from\u0020admin\u0020screen\u0020for\u0020instance,\u0020modal,\u0020and\u0020figure\u0020posts.",
-            "url": "classes/Admin.html#method_remove_view_link_from_post_type"
+            "url": "classes/Graphic-Data-Admin.html#method_remove_view_link_from_post_type"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aplugin_check_required_theme\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aplugin_check_required_theme\u0028\u0029",
             "name": "plugin_check_required_theme",
             "summary": "Checks\u0020if\u0020the\u0020required\u0020theme\u0020\u0028\u0022Graphic\u0020Data\u0020Theme\u0022\u0029\u0020is\u0020active.",
-            "url": "classes/Admin.html#method_plugin_check_required_theme"
+            "url": "classes/Graphic-Data-Admin.html#method_plugin_check_required_theme"
         },                {
-            "fqsen": "\\Admin\u003A\u003Aadjust_admin_post_time_display\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aadjust_admin_post_time_display\u0028\u0029",
             "name": "adjust_admin_post_time_display",
             "summary": "Adjust\u0020admin\u0020post\u0020time\u0020display\u0020to\u0020show\u0020local\u0020timezone\u0020and\u0020author\u0020information.",
-            "url": "classes/Admin.html#method_adjust_admin_post_time_display"
+            "url": "classes/Graphic-Data-Admin.html#method_adjust_admin_post_time_display"
         },                {
             "fqsen": "\\Create_SVG",
             "name": "Create_SVG",
-            "summary": "",
+            "summary": "Register\u0020class\u0020that\u0020defines\u0020Create\u0020SVG\u0020functions",
             "url": "classes/Create-SVG.html"
         },                {
             "fqsen": "\\Create_SVG\u003A\u003Aadd_create_svg_menu\u0028\u0029",
@@ -126,140 +126,140 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/Create-SVG.html#method_create_svg_page"
         },                {
-            "fqsen": "\\Export_Figures",
-            "name": "Export_Figures",
-            "summary": "",
-            "url": "classes/Export-Figures.html"
+            "fqsen": "\\Graphic_Data_Export_Figures",
+            "name": "Graphic_Data_Export_Figures",
+            "summary": "Class\u0020Graphic_Data_Export_Figures",
+            "url": "classes/Graphic-Data-Export-Figures.html"
         },                {
-            "fqsen": "\\Export_Figures\u003A\u003Aadd_export_figures_menu\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Export_Figures\u003A\u003Aadd_export_figures_menu\u0028\u0029",
             "name": "add_export_figures_menu",
             "summary": "Function\u0020to\u0020add\u0020the\u0020\u0022Export\u0020Figures\u0022\u0020submenu\u0020under\u0020Tools",
-            "url": "classes/Export-Figures.html#method_add_export_figures_menu"
+            "url": "classes/Graphic-Data-Export-Figures.html#method_add_export_figures_menu"
         },                {
-            "fqsen": "\\Export_Figures\u003A\u003Aexport_figures_page\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Export_Figures\u003A\u003Aexport_figures_page\u0028\u0029",
             "name": "export_figures_page",
-            "summary": "",
-            "url": "classes/Export-Figures.html#method_export_figures_page"
+            "summary": "Callback\u0020function\u0020to\u0020display\u0020the\u0020content\u0020of\u0020the\u0020\u0022Export\u0020Figures\u0022\u0020page.",
+            "url": "classes/Graphic-Data-Export-Figures.html#method_export_figures_page"
         },                {
-            "fqsen": "\\GitHub_Updater",
-            "name": "GitHub_Updater",
+            "fqsen": "\\Graphic_Data_GitHub_Updater",
+            "name": "Graphic_Data_GitHub_Updater",
             "summary": "GitHub\u0020Updater\u0020\u002D\u0020Optimized\u0020Version",
-            "url": "classes/GitHub-Updater.html"
+            "url": "classes/Graphic-Data-GitHub-Updater.html"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A__construct\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
             "summary": "Constructor.",
-            "url": "classes/GitHub-Updater.html#method___construct"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method___construct"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Aset_plugin_properties\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Aset_plugin_properties\u0028\u0029",
             "name": "set_plugin_properties",
             "summary": "Sets\u0020plugin\u0020or\u0020theme\u0020properties\u0020using\u0020WordPress\u0020functions.",
-            "url": "classes/GitHub-Updater.html#method_set_plugin_properties"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_set_plugin_properties"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Aget_repository_info\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Aget_repository_info\u0028\u0029",
             "name": "get_repository_info",
             "summary": "Retrieves\u0020repository\u0020information\u0020from\u0020GitHub\u0020API\u0020with\u0020enhanced\u0020caching.",
-            "url": "classes/GitHub-Updater.html#method_get_repository_info"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_get_repository_info"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Aupdate_state\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Aupdate_state\u0028\u0029",
             "name": "update_state",
             "summary": "Checks\u0020for\u0020updates\u0020and\u0020modifies\u0020the\u0020update\u0020transient.",
-            "url": "classes/GitHub-Updater.html#method_update_state"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_update_state"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Arate_limit_notice\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Arate_limit_notice\u0028\u0029",
             "name": "rate_limit_notice",
             "summary": "Display\u0020admin\u0020notice\u0020when\u0020rate\u0020limited",
-            "url": "classes/GitHub-Updater.html#method_rate_limit_notice"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_rate_limit_notice"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Aclear_update_cache\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Aclear_update_cache\u0028\u0029",
             "name": "clear_update_cache",
-            "summary": "Clear\u0020update\u0020cache\u0020when\u0020plugin\/theme\u0020is\u0020updated",
-            "url": "classes/GitHub-Updater.html#method_clear_update_cache"
+            "summary": "Clears\u0020the\u0020update\u0020cache\u0020when\u0020plugin\/theme\u0020is\u0020updated.",
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_clear_update_cache"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Atheme_update_state\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Atheme_update_state\u0028\u0029",
             "name": "theme_update_state",
             "summary": "Alias\u0020for\u0020theme\u0020updates\u0020to\u0020use\u0020the\u0020same\u0020update_state\u0020logic.",
-            "url": "classes/GitHub-Updater.html#method_theme_update_state"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_theme_update_state"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Aplugin_info\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Aplugin_info\u0028\u0029",
             "name": "plugin_info",
             "summary": "Provides\u0020plugin\u0020information\u0020for\u0020the\u0020\u0022View\u0020details\u0022\u0020popup.",
-            "url": "classes/GitHub-Updater.html#method_plugin_info"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_plugin_info"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Aget_download_url\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Aget_download_url\u0028\u0029",
             "name": "get_download_url",
             "summary": "Gets\u0020the\u0020download\u0020URL\u0020for\u0020the\u0020plugin\u0020or\u0020theme.",
-            "url": "classes/GitHub-Updater.html#method_get_download_url"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_get_download_url"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Aafter_install\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Aafter_install\u0028\u0029",
             "name": "after_install",
             "summary": "Post\u002Dinstallation\u0020hook\u0020for\u0020plugins.",
-            "url": "classes/GitHub-Updater.html#method_after_install"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_after_install"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Aafter_theme_install\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Aafter_theme_install\u0028\u0029",
             "name": "after_theme_install",
             "summary": "Post\u002Dinstallation\u0020hook\u0020for\u0020themes.",
-            "url": "classes/GitHub-Updater.html#method_after_theme_install"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_after_theme_install"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Arecursive_copy\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Arecursive_copy\u0028\u0029",
             "name": "recursive_copy",
             "summary": "Helper\u0020function\u0020to\u0020recursively\u0020copy\u0020directories\u0020using\u0020WP_Filesystem.",
-            "url": "classes/GitHub-Updater.html#method_recursive_copy"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_recursive_copy"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003Arecursive_remove_directory\u0028\u0029",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003Arecursive_remove_directory\u0028\u0029",
             "name": "recursive_remove_directory",
             "summary": "Helper\u0020function\u0020to\u0020recursively\u0020remove\u0020a\u0020directory\u0020using\u0020WP_Filesystem.",
-            "url": "classes/GitHub-Updater.html#method_recursive_remove_directory"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#method_recursive_remove_directory"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024slug",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024slug",
             "name": "slug",
             "summary": "The\u0020slug\u0020of\u0020the\u0020plugin\u0020or\u0020theme.",
-            "url": "classes/GitHub-Updater.html#property_slug"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_slug"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024plugin_data",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024plugin_data",
             "name": "plugin_data",
             "summary": "Stores\u0020plugin\u0020or\u0020theme\u0020data\u0020retrieved\u0020from\u0020WordPress.",
-            "url": "classes/GitHub-Updater.html#property_plugin_data"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_plugin_data"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024username",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024username",
             "name": "username",
             "summary": "The\u0020GitHub\u0020username\u0020or\u0020organization\u0020name.",
-            "url": "classes/GitHub-Updater.html#property_username"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_username"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024repository",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024repository",
             "name": "repository",
             "summary": "The\u0020GitHub\u0020repository\u0020name.",
-            "url": "classes/GitHub-Updater.html#property_repository"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_repository"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024github_response",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024github_response",
             "name": "github_response",
             "summary": "Stores\u0020the\u0020response\u0020from\u0020the\u0020GitHub\u0020API\u0020\u0028latest\u0020release\u0020or\u0020commit\u0020data\u0029.",
-            "url": "classes/GitHub-Updater.html#property_github_response"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_github_response"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024plugin_file",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024plugin_file",
             "name": "plugin_file",
             "summary": "The\u0020main\u0020plugin\u0020file\u0020path.\u0020Only\u0020used\u0020if\u0020\u0024is_theme\u0020is\u0020false.",
-            "url": "classes/GitHub-Updater.html#property_plugin_file"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_plugin_file"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024is_theme",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024is_theme",
             "name": "is_theme",
             "summary": "Flag\u0020indicating\u0020if\u0020the\u0020current\u0020instance\u0020is\u0020for\u0020a\u0020theme.",
-            "url": "classes/GitHub-Updater.html#property_is_theme"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_is_theme"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024subdir_path",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024subdir_path",
             "name": "subdir_path",
             "summary": "The\u0020path\u0020to\u0020the\u0020plugin\/theme\u0020within\u0020the\u0020GitHub\u0020repository,\u0020if\u0020it\u0027s\u0020in\u0020a\u0020subdirectory.",
-            "url": "classes/GitHub-Updater.html#property_subdir_path"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_subdir_path"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024cache_duration",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024cache_duration",
             "name": "cache_duration",
             "summary": "Cache\u0020duration\u0020in\u0020seconds\u0020\u002824\u0020hours\u0020by\u0020default\u0029",
-            "url": "classes/GitHub-Updater.html#property_cache_duration"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_cache_duration"
         },                {
-            "fqsen": "\\GitHub_Updater\u003A\u003A\u0024update_checked",
+            "fqsen": "\\Graphic_Data_GitHub_Updater\u003A\u003A\u0024update_checked",
             "name": "update_checked",
             "summary": "Flag\u0020to\u0020track\u0020if\u0020we\u0027ve\u0020already\u0020checked\u0020for\u0020updates\u0020in\u0020this\u0020request",
-            "url": "classes/GitHub-Updater.html#property_update_checked"
+            "url": "classes/Graphic-Data-GitHub-Updater.html#property_update_checked"
         },                {
             "fqsen": "\\Graphic_Data_Support",
             "name": "Graphic_Data_Support",
@@ -276,35 +276,35 @@ Search.appendIndex(
             "summary": "Display\u0020the\u0020support\u0020page\u0020content",
             "url": "classes/Graphic-Data-Support.html#method_display_support_page"
         },                {
-            "fqsen": "\\SVG_Validator",
-            "name": "SVG_Validator",
+            "fqsen": "\\Graphic_Data_SVG_Validator",
+            "name": "Graphic_Data_SVG_Validator",
             "summary": "Enhanced\u0020SVG\u0020validation\u0020for\u0020WordPress\u0020plugin",
-            "url": "classes/SVG-Validator.html"
+            "url": "classes/Graphic-Data-SVG-Validator.html"
         },                {
-            "fqsen": "\\SVG_Validator\u003A\u003Avalidate_svg_file\u0028\u0029",
+            "fqsen": "\\Graphic_Data_SVG_Validator\u003A\u003Avalidate_svg_file\u0028\u0029",
             "name": "validate_svg_file",
             "summary": "Validate\u0020SVG\u0020file\u0020with\u0020comprehensive\u0020security\u0020checks",
-            "url": "classes/SVG-Validator.html#method_validate_svg_file"
+            "url": "classes/Graphic-Data-SVG-Validator.html#method_validate_svg_file"
         },                {
-            "fqsen": "\\SVG_Validator\u003A\u003Avalidate_svg_structure\u0028\u0029",
+            "fqsen": "\\Graphic_Data_SVG_Validator\u003A\u003Avalidate_svg_structure\u0028\u0029",
             "name": "validate_svg_structure",
-            "summary": "Validate\u0020SVG\u0020XML\u0020structure\u0020\u0028enhanced\u0020with\u0020better\u0020error\u0020reporting\u0029",
-            "url": "classes/SVG-Validator.html#method_validate_svg_structure"
+            "summary": "Validate\u0020SVG\u0020XML\u0020structure\u0020with\u0020comprehensive\u0020error\u0020reporting.",
+            "url": "classes/Graphic-Data-SVG-Validator.html#method_validate_svg_structure"
         },                {
-            "fqsen": "\\SVG_Validator\u003A\u003Ahas_icons_layer\u0028\u0029",
+            "fqsen": "\\Graphic_Data_SVG_Validator\u003A\u003Ahas_icons_layer\u0028\u0029",
             "name": "has_icons_layer",
-            "summary": "Check\u0020if\u0020SVG\u0020contains\u0020a\u0020layer\u0020named\u0020\u0022icons\u0022",
-            "url": "classes/SVG-Validator.html#method_has_icons_layer"
+            "summary": "Check\u0020if\u0020the\u0020SVG\u0020contains\u0020a\u0020group\u0020element\u0020with\u0020id\u003D\u0022icons\u0022.",
+            "url": "classes/Graphic-Data-SVG-Validator.html#method_has_icons_layer"
         },                {
-            "fqsen": "\\SVG_Validator\u003A\u003Ascan_svg_security\u0028\u0029",
+            "fqsen": "\\Graphic_Data_SVG_Validator\u003A\u003Ascan_svg_security\u0028\u0029",
             "name": "scan_svg_security",
-            "summary": "Security\u0020scan\u0020for\u0020dangerous\u0020SVG\u0020content",
-            "url": "classes/SVG-Validator.html#method_scan_svg_security"
+            "summary": "Scan\u0020SVG\u0020content\u0020for\u0020potentially\u0020dangerous\u0020or\u0020malicious\u0020elements.",
+            "url": "classes/Graphic-Data-SVG-Validator.html#method_scan_svg_security"
         },                {
-            "fqsen": "\\SVG_Validator\u003A\u003Aremove_bom\u0028\u0029",
+            "fqsen": "\\Graphic_Data_SVG_Validator\u003A\u003Aremove_bom\u0028\u0029",
             "name": "remove_bom",
-            "summary": "Remove\u0020BOM\u0020from\u0020content",
-            "url": "classes/SVG-Validator.html#method_remove_bom"
+            "summary": "Remove\u0020UTF\u002D8\u0020Byte\u0020Order\u0020Mark\u0020\u0028BOM\u0029\u0020from\u0020the\u0020beginning\u0020of\u0020content.",
+            "url": "classes/Graphic-Data-SVG-Validator.html#method_remove_bom"
         },                {
             "fqsen": "\\Login",
             "name": "Login",
@@ -381,140 +381,140 @@ Search.appendIndex(
             "summary": "Restricts\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020edit\u0020screens\u0020based\u0020on\u0020user\u0020role\u0020and\u0020assigned\u0020instances.",
             "url": "classes/Custom-Roles.html#method_restrict_editing"
         },                {
-            "fqsen": "\\Utility",
-            "name": "Utility",
+            "fqsen": "\\Graphic_Data_Utility",
+            "name": "Graphic_Data_Utility",
             "summary": "Utility\u0020functions\u0020used\u0020across\u0020the\u0020plugin",
-            "url": "classes/Utility.html"
+            "url": "classes/Graphic-Data-Utility.html"
         },                {
-            "fqsen": "\\Utility\u003A\u003AstringTruncate\u0028\u0029",
-            "name": "stringTruncate",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Astring_truncate\u0028\u0029",
+            "name": "string_truncate",
             "summary": "Shorten\u0020string\u0020without\u0020cutting\u0020words\u0020midword.",
-            "url": "classes/Utility.html#method_stringTruncate"
+            "url": "classes/Graphic-Data-Utility.html#method_string_truncate"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aoutput_transient_to_js\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aoutput_transient_to_js\u0028\u0029",
             "name": "output_transient_to_js",
-            "summary": "",
-            "url": "classes/Utility.html#method_output_transient_to_js"
+            "summary": "Output\u0020transient\u0020data\u0020as\u0020JavaScript\u0020for\u0020field\u0020validation.",
+            "url": "classes/Graphic-Data-Utility.html#method_output_transient_to_js"
         },                {
-            "fqsen": "\\Utility\u003A\u003Afields_to_transient\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Afields_to_transient\u0028\u0029",
             "name": "fields_to_transient",
-            "summary": "Generalized\u0020function\u0020to\u0020write\u0020all\u0020field\u0020values\u0020from\u0020any\u0020custom\u0020content\u0020type\u0020to\u0020transients",
-            "url": "classes/Utility.html#method_fields_to_transient"
+            "summary": "Store\u0020field\u0020values\u0020in\u0020a\u0020user\u002Dspecific\u0020transient.",
+            "url": "classes/Graphic-Data-Utility.html#method_fields_to_transient"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aget_user_transient_key\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aget_user_transient_key\u0028\u0029",
             "name": "get_user_transient_key",
-            "summary": "Helper\u0020function\u0020to\u0020create\u0020a\u0020unique\u0020transient\u0020key\u0020for\u0020the\u0020current\u0020user,\u0020based\u0020on\u0020the\u0020user\u0020ID",
-            "url": "classes/Utility.html#method_get_user_transient_key"
+            "summary": "Helper\u0020function\u0020to\u0020create\u0020a\u0020unique\u0020transient\u0020key\u0020for\u0020the\u0020current\u0020user,\u0020based\u0020on\u0020the\u0020user\u0020ID.",
+            "url": "classes/Graphic-Data-Utility.html#method_get_user_transient_key"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aget_fields_from_transient\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aget_fields_from_transient\u0028\u0029",
             "name": "get_fields_from_transient",
-            "summary": "Helper\u0020function\u0020to\u0020retrieve\u0020field\u0020values\u0020from\u0020transients",
-            "url": "classes/Utility.html#method_get_fields_from_transient"
+            "summary": "Helper\u0020function\u0020to\u0020retrieve\u0020field\u0020values\u0020from\u0020transients.",
+            "url": "classes/Graphic-Data-Utility.html#method_get_fields_from_transient"
         },                {
-            "fqsen": "\\Utility\u003A\u003Adummy_sanitize\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Adummy_sanitize\u0028\u0029",
             "name": "dummy_sanitize",
             "summary": "Dummy\u0020sanitize\u0020function\u0020that\u0020returns\u0020the\u0020value\u0020as\u0020is.",
-            "url": "classes/Utility.html#method_dummy_sanitize"
+            "url": "classes/Graphic-Data-Utility.html#method_dummy_sanitize"
         },                {
-            "fqsen": "\\Utility\u003A\u003Adelete_fields_transient\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Adelete_fields_transient\u0028\u0029",
             "name": "delete_fields_transient",
             "summary": "Helper\u0020function\u0020to\u0020delete\u0020field\u0020values\u0020from\u0020transients",
-            "url": "classes/Utility.html#method_delete_fields_transient"
+            "url": "classes/Graphic-Data-Utility.html#method_delete_fields_transient"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aextract_field_values\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aextract_field_values\u0028\u0029",
             "name": "extract_field_values",
             "summary": "Recursively\u0020extract\u0020field\u0020values\u0020from\u0020POST\u0020data\u0020based\u0020on\u0020field\u0020configuration",
-            "url": "classes/Utility.html#method_extract_field_values"
+            "url": "classes/Graphic-Data-Utility.html#method_extract_field_values"
         },                {
-            "fqsen": "\\Utility\u003A\u003Acheck_draft_overview_scene\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Acheck_draft_overview_scene\u0028\u0029",
             "name": "check_draft_overview_scene",
             "summary": "Checks\u0020if\u0020a\u0020scene\u0020is\u0020the\u0020overview\u0020scene\u0020for\u0020an\u0020instance\u0020and\u0020\u002D\u0020if\u0020so\u0020\u002D\u0020if\u0020the\u0020scene\u0020has\u0020been\u0020set\u0020to\u0020draft\u0020\u0028hint\u003A\u0020it\u0020shouldn\u0027t\u0020be\u0029",
-            "url": "classes/Utility.html#method_check_draft_overview_scene"
+            "url": "classes/Graphic-Data-Utility.html#method_check_draft_overview_scene"
         },                {
-            "fqsen": "\\Utility\u003A\u003Apost_admin_notice\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Apost_admin_notice\u0028\u0029",
             "name": "post_admin_notice",
             "summary": "Displays\u0020admin\u0020notices\u0020for\u0020the\u0020following\u0020kind\u0020of\u0020custom\u0020content\u0020posts\u003A\u0020about,\u0020instance,\u0020scene,\u0020modal,\u0020and\u0020figure.",
-            "url": "classes/Utility.html#method_post_admin_notice"
+            "url": "classes/Graphic-Data-Utility.html#method_post_admin_notice"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aretrieve_post_status\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aretrieve_post_status\u0028\u0029",
             "name": "retrieve_post_status",
             "summary": "Return\u0020post\u0020status\u0020for\u0020custom\u0020posts.",
-            "url": "classes/Utility.html#method_retrieve_post_status"
+            "url": "classes/Graphic-Data-Utility.html#method_retrieve_post_status"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aretrieve_post_errors_warnings\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aretrieve_post_errors_warnings\u0028\u0029",
             "name": "retrieve_post_errors_warnings",
             "summary": "Return\u0020data\u0020entry\u0020errors\u0020and\u0020warnings\u0020associated\u0020with\u0020custom\u0020posts.",
-            "url": "classes/Utility.html#method_retrieve_post_errors_warnings"
+            "url": "classes/Graphic-Data-Utility.html#method_retrieve_post_errors_warnings"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aget_filter_value\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aget_filter_value\u0028\u0029",
             "name": "get_filter_value",
             "summary": "Check\u0020if\u0020stored\u0020filter\u0020values\u0020are\u0020still\u0020valid\u0020and\u0020retrieve\u0020them\u0020if\u0020they\u0020are.",
-            "url": "classes/Utility.html#method_get_filter_value"
+            "url": "classes/Graphic-Data-Utility.html#method_get_filter_value"
         },                {
-            "fqsen": "\\Utility\u003A\u003AcreateInstanceDropDownFilter\u0028\u0029",
-            "name": "createInstanceDropDownFilter",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Acreate_instance_dropdown_filter\u0028\u0029",
+            "name": "create_instance_dropdown_filter",
             "summary": "Create\u0020Instance\u0020filter\u0020dropdown\u0020shown\u0020in\u0020the\u0020Scene,\u0020Modal,\u0020and\u0020Figure\u0020admin\u0020column\u0020screens.",
-            "url": "classes/Utility.html#method_createInstanceDropDownFilter"
+            "url": "classes/Graphic-Data-Utility.html#method_create_instance_dropdown_filter"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnAllInstances\u0028\u0029",
-            "name": "returnAllInstances",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_all_instances\u0028\u0029",
+            "name": "return_all_instances",
             "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020instances,\u0020filtered\u0020for\u0020\u0027content_editor\u0027\u0020role.",
-            "url": "classes/Utility.html#method_returnAllInstances"
+            "url": "classes/Graphic-Data-Utility.html#method_return_all_instances"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnInstanceScenes\u0028\u0029",
-            "name": "returnInstanceScenes",
-            "summary": "",
-            "url": "classes/Utility.html#method_returnInstanceScenes"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_instance_scenes\u0028\u0029",
+            "name": "return_instance_scenes",
+            "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020scenes\u0020associated\u0020with\u0020an\u0020instance.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_instance_scenes"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnSceneTitles\u0028\u0029",
-            "name": "returnSceneTitles",
-            "summary": "",
-            "url": "classes/Utility.html#method_returnSceneTitles"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_scene_titles\u0028\u0029",
+            "name": "return_scene_titles",
+            "summary": "Get\u0020scene\u0020titles\u0020for\u0020scenes\u0020sharing\u0020the\u0020same\u0020instance\u0020as\u0020a\u0020modal.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_scene_titles"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnIcons\u0028\u0029",
-            "name": "returnIcons",
-            "summary": "",
-            "url": "classes/Utility.html#method_returnIcons"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_icons\u0028\u0029",
+            "name": "return_icons",
+            "summary": "Retrieves\u0020icon\u0020IDs\u0020from\u0020an\u0020SVG\u0020infographic\u0020associated\u0020with\u0020a\u0020scene.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_icons"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnScenesExceptCurrent\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnScenesExceptCurrent\u0028\u0029",
             "name": "returnScenesExceptCurrent",
-            "summary": "",
-            "url": "classes/Utility.html#method_returnScenesExceptCurrent"
+            "summary": "Return\u0020an\u0020array\u0020of\u0020scenes,\u0020other\u0020than\u0020the\u0020current\u0020scene,\u0020for\u0020a\u0020given\u0020location.",
+            "url": "classes/Graphic-Data-Utility.html#method_returnScenesExceptCurrent"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnModalSections\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnModalSections\u0028\u0029",
             "name": "returnModalSections",
             "summary": "",
-            "url": "classes/Utility.html#method_returnModalSections"
+            "url": "classes/Graphic-Data-Utility.html#method_returnModalSections"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnScenesFigure\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnScenesFigure\u0028\u0029",
             "name": "returnScenesFigure",
             "summary": "",
-            "url": "classes/Utility.html#method_returnScenesFigure"
+            "url": "classes/Graphic-Data-Utility.html#method_returnScenesFigure"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnModalTabs\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnModalTabs\u0028\u0029",
             "name": "returnModalTabs",
             "summary": "",
-            "url": "classes/Utility.html#method_returnModalTabs"
+            "url": "classes/Graphic-Data-Utility.html#method_returnModalTabs"
         },                {
-            "fqsen": "\\Utility\u003A\u003AreturnFigureIcons\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnFigureIcons\u0028\u0029",
             "name": "returnFigureIcons",
             "summary": "",
-            "url": "classes/Utility.html#method_returnFigureIcons"
+            "url": "classes/Graphic-Data-Utility.html#method_returnFigureIcons"
         },                {
-            "fqsen": "\\Utility\u003A\u003Aregister_custom_rest_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aregister_custom_rest_fields\u0028\u0029",
             "name": "register_custom_rest_fields",
             "summary": "",
-            "url": "classes/Utility.html#method_register_custom_rest_fields"
+            "url": "classes/Graphic-Data-Utility.html#method_register_custom_rest_fields"
         },                {
-            "fqsen": "\\Utility\u003A\u003Ameta_get_callback\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Ameta_get_callback\u0028\u0029",
             "name": "meta_get_callback",
             "summary": "",
-            "url": "classes/Utility.html#method_meta_get_callback"
+            "url": "classes/Graphic-Data-Utility.html#method_meta_get_callback"
         },                {
-            "fqsen": "\\Utility\u003A\u003Adisplay_warning_message_if_new_post_impossible\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Adisplay_warning_message_if_new_post_impossible\u0028\u0029",
             "name": "display_warning_message_if_new_post_impossible",
             "summary": "Display\u0020warning\u0020message\u0020if\u0020add\u0020new\u0020post\u0020is\u0020not\u0020possible\u0020for\u0020custom\u0020content\u0020post\u0020type.",
-            "url": "classes/Utility.html#method_display_warning_message_if_new_post_impossible"
+            "url": "classes/Graphic-Data-Utility.html#method_display_warning_message_if_new_post_impossible"
         },                {
             "fqsen": "\\Validation",
             "name": "Validation",
@@ -1846,20 +1846,20 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION"
         },                {
-            "fqsen": "\\MYPLUGIN_DATA_DIR",
-            "name": "MYPLUGIN_DATA_DIR",
+            "fqsen": "\\GRAPHIC_DATA_DATA_DIR",
+            "name": "GRAPHIC_DATA_DATA_DIR",
             "summary": "The\u0020data\u0020directory\u0020inside\u0020of\u0020wp\u002Dcontent",
-            "url": "namespaces/default.html#constant_MYPLUGIN_DATA_DIR"
+            "url": "namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR"
         },                {
-            "fqsen": "\\MYPLUGIN_DATA_URL",
-            "name": "MYPLUGIN_DATA_URL",
+            "fqsen": "\\GRAPHIC_DATA_DATA_URL",
+            "name": "GRAPHIC_DATA_DATA_URL",
             "summary": "",
-            "url": "namespaces/default.html#constant_MYPLUGIN_DATA_URL"
+            "url": "namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL"
         },                {
-            "fqsen": "\\myplugin_activate\u0028\u0029",
-            "name": "myplugin_activate",
+            "fqsen": "\\graphic_data_activate\u0028\u0029",
+            "name": "graphic_data_activate",
             "summary": "",
-            "url": "namespaces/default.html#function_myplugin_activate"
+            "url": "namespaces/default.html#function_graphic_data_activate"
         },                {
             "fqsen": "\\myplugin_ensure_public_data_dir\u0028\u0029",
             "name": "myplugin_ensure_public_data_dir",
@@ -1883,7 +1883,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\About",
             "name": "About",
-            "summary": "",
+            "summary": "Register\u0020class\u0020that\u0020defines\u0020the\u0020Figure\u0020custom\u0020content\u0020type\u0020as\u0020well\u0020as\u0020associated\u0020Modal\u0020functions",
             "url": "classes/About.html"
         },                {
             "fqsen": "\\About\u003A\u003Acustom_content_type_about\u0028\u0029",
@@ -2013,7 +2013,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Instance_Type",
             "name": "Instance_Type",
-            "summary": "",
+            "summary": "Register\u0020class\u0020that\u0020defines\u0020the\u0020Instance\u0020Type\u0020functions",
             "url": "classes/Instance-Type.html"
         },                {
             "fqsen": "\\Instance_Type\u003A\u003Ainstance_settings_init\u0028\u0029",
@@ -2271,10 +2271,10 @@ Search.appendIndex(
             "summary": "Populate\u0020custom\u0020fields\u0020for\u0020Scene\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
             "url": "classes/Scene.html#method_custom_scene_column"
         },                {
-            "fqsen": "\\Scene\u003A\u003AstringTruncate\u0028\u0029",
-            "name": "stringTruncate",
+            "fqsen": "\\Scene\u003A\u003Astring_truncate\u0028\u0029",
+            "name": "string_truncate",
             "summary": "Shorten\u0020string\u0020without\u0020cutting\u0020words\u0020midword.",
-            "url": "classes/Scene.html#method_stringTruncate"
+            "url": "classes/Scene.html#method_string_truncate"
         },                {
             "fqsen": "\\Scene\u003A\u003Aremove_bulk_actions\u0028\u0029",
             "name": "remove_bulk_actions",
@@ -2356,6 +2356,21 @@ Search.appendIndex(
             "summary": "Initializes\u0020the\u0020plugin\u0020settings,\u0020sections,\u0020and\u0020fields.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_settings_init"
         },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Asanitize_graphic_data_settings\u0028\u0029",
+            "name": "sanitize_graphic_data_settings",
+            "summary": "Sanitize\u0020all\u0020plugin\u0020settings\u0020before\u0020saving.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings"
+        },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_description_callback\u0028\u0029",
+            "name": "tutorial_content_description_callback",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020Tutorial\u0020Content\u0020description\u0020text.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_tutorial_content_description_callback"
+        },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_toggle_callback\u0028\u0029",
+            "name": "tutorial_content_toggle_callback",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020tutorial\u0020content\u0020toggle\u0020switch.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_tutorial_content_toggle_callback"
+        },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aregister_rest_settings\u0028\u0029",
             "name": "register_rest_settings",
             "summary": "Registers\u0020custom\u0020REST\u0020API\u0020routes\u0020for\u0020plugin\u0020settings.",
@@ -2415,6 +2430,46 @@ Search.appendIndex(
             "name": "settings_page",
             "summary": "Renders\u0020the\u0020plugin\u0020settings\u0020page\u0020in\u0020the\u0020WordPress\u0020admin.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_settings_page"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content",
+            "name": "Graphic_Data_Tutorial_Content",
+            "summary": "Class\u0020Graphic_Data_Tutorial_Content",
+            "url": "classes/Graphic-Data-Tutorial-Content.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acheck_tutorial_content_status\u0028\u0029",
+            "name": "check_tutorial_content_status",
+            "summary": "Synchronize\u0020tutorial\u0020content\u0020based\u0020on\u0020plugin\u0020settings.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_instance_types\u0028\u0029",
+            "name": "create_tutorial_instance_types",
+            "summary": "Create\u0020example\u0020instance\u0020type\u0020taxonomy\u0020terms\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instance_types"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_tutorial_instance_types\u0028\u0029",
+            "name": "delete_tutorial_instance_types",
+            "summary": "Deletes\u0020all\u0020tutorial\u0020instance\u0020type\u0020terms\u0020from\u0020the\u0020database.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_instance_types"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_tutorial_images\u0028\u0029",
+            "name": "delete_tutorial_images",
+            "summary": "Deletes\u0020all\u0020tutorial\u0020images\u0020from\u0020the\u0020media\u0020library.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_images"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_tutorial_posts\u0028\u0029",
+            "name": "delete_tutorial_posts",
+            "summary": "Deletes\u0020all\u0020tutorial\u0020posts.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_posts"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_instances\u0028\u0029",
+            "name": "create_tutorial_instances",
+            "summary": "Create\u0020example\u0020instances\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instances"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acopy_image_to_media_library\u0028\u0029",
+            "name": "copy_image_to_media_library",
+            "summary": "Copies\u0020an\u0020image\u0020file\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020the\u0020WordPress\u0020media\u0020library.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_copy_image_to_media_library"
         },                {
             "fqsen": "\\Graphic_Data_Plugin",
             "name": "Graphic_Data_Plugin",

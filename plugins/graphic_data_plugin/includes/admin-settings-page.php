@@ -1,10 +1,9 @@
 <?php
 /**
  * Register class that defines the functions used to create the Graphic Data Settings page in the admin dashboard.
+ *
+ * @package Graphic_Data_Plugin
  */
-
-include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
-
 
 /**
  * Handles the admin settings page for the Graphic Data plugin.
@@ -94,8 +93,35 @@ class Graphic_Data_Settings_Page {
 	 * @return void
 	 */
 	public function settings_init() {
-		// Register a new settings group.
-		register_setting( 'theme_settings_group', 'graphic_data_settings' );
+		// Register a graphic data settings group.
+		register_setting(
+			'theme_settings_group',
+			'graphic_data_settings', // [ 'sanitize_callback' => [ $this, 'sanitize_graphic_data_settings' ] ]
+		);
+
+		// Tutorial Content section.
+		add_settings_section(
+			'tutorial_content_section',
+			'Tutorial Content',
+			null,
+			'theme_settings'
+		);
+
+		add_settings_field(
+			'tutorial_content_description',
+			'Information',
+			[ $this, 'tutorial_content_description_callback' ],
+			'theme_settings',
+			'tutorial_content_section'
+		);
+
+		add_settings_field(
+			'tutorial_content_toggle',
+			'Include tutorial content?',
+			[ $this, 'tutorial_content_toggle_callback' ],
+			'theme_settings',
+			'tutorial_content_section'
+		);
 
 		// Theme Display section.
 		add_settings_section(
@@ -227,6 +253,152 @@ class Graphic_Data_Settings_Page {
 				'sanitize_callback' => 'wp_kses_post', // Allows safe HTML.
 			]
 		);
+	}
+
+	/**
+	 * Sanitize all plugin settings before saving.
+	 *
+	 * Validates and sanitizes each field in the graphic data settings array to ensure
+	 * data integrity and security before saving to the database.
+	 *
+	 * @since 1.0.0
+	 * @param array $input The raw input values from the settings form.
+	 * @return array The sanitized settings array.
+	 */
+	public function sanitize_graphic_data_settings( $input ) {
+		$sanitized = [];
+
+		// Sanitize text fields.
+		if ( isset( $input['intro_text'] ) ) {
+			$sanitized['intro_text'] = sanitize_textarea_field( $input['intro_text'] );
+		}
+
+		if ( isset( $input['sitewide_footer_title'] ) ) {
+			$sanitized['sitewide_footer_title'] = sanitize_text_field( $input['sitewide_footer_title'] );
+		}
+
+		if ( isset( $input['site_footer'] ) ) {
+			$sanitized['site_footer'] = wp_kses_post( $input['site_footer'] );
+		}
+
+		if ( isset( $input['google_analytics_measurement_id'] ) ) {
+			$sanitized['google_analytics_measurement_id'] = sanitize_text_field( $input['google_analytics_measurement_id'] );
+		}
+
+		if ( isset( $input['google_tags_container_id'] ) ) {
+			$sanitized['google_tags_container_id'] = sanitize_text_field( $input['google_tags_container_id'] );
+		}
+
+		// Sanitize boolean toggle - handles both checked and unchecked states.
+		$sanitized['tutorial_content'] = isset( $input['tutorial_content'] ) ? (bool) $input['tutorial_content'] : false;
+
+		// Sanitize editor fields (allow safe HTML).
+		if ( isset( $input['interactive_line_arguments'] ) ) {
+			$sanitized['interactive_line_arguments'] = wp_kses_post( $input['interactive_line_arguments'] );
+		}
+
+		if ( isset( $input['interactive_line_defaults'] ) ) {
+			$sanitized['interactive_line_defaults'] = sanitize_text_field( $input['interactive_line_defaults'] );
+		}
+
+		if ( isset( $input['interactive_bar_arguments'] ) ) {
+			$sanitized['interactive_bar_arguments'] = wp_kses_post( $input['interactive_bar_arguments'] );
+		}
+
+		if ( isset( $input['interactive_bar_defaults'] ) ) {
+			$sanitized['interactive_bar_defaults'] = sanitize_text_field( $input['interactive_bar_defaults'] );
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Callback function to render the Tutorial Content description text.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function tutorial_content_description_callback() {
+		?>
+		<p>
+			New to Graphic Data? Turn on the tutorial content to see working examples of everything in action! 
+			Once you're done with the tutorial content, you can remove it by turning the tutorial content off. 
+			Word of warning! If you turn the tutorial content off, all tutorial content will be permanently 
+			deleted from your site, including any modifications you may have made to the tutorial content. 
+		</p>
+		<?php
+	}
+
+	/**
+	 * Callback function to render the tutorial content toggle switch.
+	 *
+	 * Displays a checkbox toggle for enabling/disabling tutorial content.
+	 * The value is saved to wp_options as graphic_data_tutorial_content.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function tutorial_content_toggle_callback() {
+		$options = get_option( 'graphic_data_settings' );
+		$value = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : false;
+		$checked = $value ? 'checked' : '';
+		?>
+		<label class="switch">
+			<input type="checkbox" name="graphic_data_settings[tutorial_content]" value="1" <?php echo esc_attr( $checked ); ?>>
+			<span class="slider"></span>
+		</label>
+		<style>
+			/* Toggle switch styling */
+			.switch {
+				position: relative;
+				display: inline-block;
+				width: 60px;
+				height: 34px;
+			}
+
+			.switch input {
+				opacity: 0;
+				width: 0;
+				height: 0;
+			}
+
+			.slider {
+				position: absolute;
+				cursor: pointer;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #ccc;
+				transition: .4s;
+				border-radius: 34px;
+			}
+
+			.slider:before {
+				position: absolute;
+				content: "";
+				height: 26px;
+				width: 26px;
+				left: 4px;
+				bottom: 4px;
+				background-color: white;
+				transition: .4s;
+				border-radius: 50%;
+			}
+
+			input:checked + .slider {
+				background-color: #2196F3;
+			}
+
+			input:focus + .slider {
+				box-shadow: 0 0 1px #2196F3;
+			}
+
+			input:checked + .slider:before {
+				transform: translateX(26px);
+			}
+		</style>
+		<?php
 	}
 
 	/**
@@ -596,10 +768,18 @@ class Graphic_Data_Settings_Page {
 			   <?php
 				settings_fields( 'theme_settings_group' );
 				do_settings_sections( 'theme_settings' );
-				submit_button();
+				submit_button( 'Save Changes', 'primary', 'submit', true, array( 'style' => 'padding: 15px 32px; font-size: 1.4em;' ) );
 				?>
 		   </form>
 		</div>
+		<style>
+			/* Section heading styling */
+			h2 {
+				font-size: 1.3rem;
+				font-weight: 400;
+				text-decoration: underline;
+			}
+		</style>
 		<?php
 	}
 }

@@ -13,6 +13,9 @@
     <exclude-pattern>*/Test/*</exclude-pattern>
     <exclude-pattern>plugins/graphic_data_plugin/admin/exopite-simple-options/</exclude-pattern>
 
+    <!-- Only scan PHP files -->
+    <arg name="extensions" value="php"/>
+    
     <!-- Show progress and use colors -->
     <arg value="ps"/>
     <arg name="colors"/>

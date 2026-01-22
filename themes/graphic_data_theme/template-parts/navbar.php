@@ -25,119 +25,119 @@
 ?>
 
 <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-    <div id = "navbar-inner" class="container-fluid">
-        <div class="navbar-wrapper">
-            <?php
-            $postMeta = get_post_meta(get_the_ID());
-            $sceneLocation = isset($postMeta['scene_location'][0]) ? $postMeta['scene_location'][0] : '';
+	<div id = "navbar-inner" class="container-fluid">
+		<div class="navbar-wrapper">
+			<?php
+			$postMeta = get_post_meta( get_the_ID() );
+			$sceneLocation = isset( $postMeta['scene_location'][0] ) ? $postMeta['scene_location'][0] : '';
 
-            $inst_overview_scene = isset($postMeta['instance_overview_scene'][0]) ? $postMeta['instance_overview_scene'][0] : '';
-            
-            $singleInstance = singleInstanceCheck();
-            if ($singleInstance != false) {
-                $sceneLocation = $singleInstance["instanceID"];
-            }
-            
-            if(!empty($sceneLocation)){
-                $title = get_post_meta($sceneLocation, 'post_title')[0];
-                echo "<span class='navbar-brand'>$title</span>";
+			$inst_overview_scene = isset( $postMeta['instance_overview_scene'][0] ) ? $postMeta['instance_overview_scene'][0] : '';
 
-            }else {
-                //echo '<a class="navbar-brand" href="' . home_url() . '"><img class="navbar-emblem" width="55px" src="' . get_site_icon_url(512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png') . '" alt="Navbar Emblem">'. get_bloginfo('name'). '</a>';
-                //echo '<a class="navbar-brand" href="' . home_url() . '">'. get_bloginfo('name'). '</a>';
-                //echo '<a class="navbar-brand" href="' . home_url() . '">'. get_bloginfo('name'). '</a>';
-            }
-            
-            ?>
-            <!-- <button class="navbar-toggler" style="position: absolute;left: 82%;" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button> -->
-            <div class="collapse navbar-collapse" id="navbarColor01">
-                <ul class="navbar-nav">
-                    <?php 
+			$singleInstance = graphic_data_single_instance_check();
+			if ( $singleInstance != false ) {
+				$sceneLocation = $singleInstance['instanceID'];
+			}
 
-                    $args = array(
-                        'post_type' => 'scene',
-                        'post_status' => 'publish',
-                        'meta_query' => array(
-                            array(
-                                'key' => 'scene_location',
-                                'value' => $sceneLocation,
-                                'compare' => '='
-                            )
-                        )
-                    );
-                    $query = new WP_Query($args);
-                    if ($query->have_posts()){
-                        $post_titles = array();
-                        while($query->have_posts()) {
-                            $query->the_post();
-                            $scene_loc = get_post_meta(get_the_ID(), 'scene_location')[0];
-                            $scene_published = get_post_meta(get_the_ID(), 'scene_published', true);
-                            $inst_overview_scene = get_post_meta($scene_loc, 'instance_overview_scene')[0];
-                            $scene_order = get_post_meta(get_the_ID(), 'scene_order');
-                            if(get_the_ID() != $inst_overview_scene && $scene_published != 'draft'){
-                                $post_titles[] = [get_the_title(), $scene_order[0], get_the_ID()];
-                            }
-                        }
-                        wp_reset_postdata();
-                        function customCompare($a, $b) {
-                            $result = $a[1] - $b[1];
-                            if ($result==0) {
-                                $result = strcmp($a[0], $b[0]);
-                            }
-                            return $result;
-                        }
-                        usort($post_titles, 'customCompare');
+			if ( ! empty( $sceneLocation ) ) {
+				$title = get_post_meta( $sceneLocation, 'post_title' )[0];
+				echo "<span class='navbar-brand'>$title</span>";
 
-                        if ($inst_overview_scene){
-                            echo "<li class='nav-item'><a class='nav-link' href='". get_permalink($inst_overview_scene) . "'>" . get_the_title($inst_overview_scene) ."</a></li>";
+			} else {
+				// echo '<a class="navbar-brand" href="' . home_url() . '"><img class="navbar-emblem" width="55px" src="' . get_site_icon_url(512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png') . '" alt="Navbar Emblem">'. get_bloginfo('name'). '</a>';
+				// echo '<a class="navbar-brand" href="' . home_url() . '">'. get_bloginfo('name'). '</a>';
+				// echo '<a class="navbar-brand" href="' . home_url() . '">'. get_bloginfo('name'). '</a>';
+			}
 
-                        }
+			?>
+			<!-- <button class="navbar-toggler" style="position: absolute;left: 82%;" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button> -->
+			<div class="collapse navbar-collapse" id="navbarColor01">
+				<ul class="navbar-nav">
+					<?php
 
-                        foreach ($post_titles as $post_title){
-                            echo "<li class='nav-item'><a class='nav-link' href='". esc_url(get_permalink($post_title[2])) ."'>$post_title[0]</a></li>";
-                        }
+					$args = array(
+						'post_type' => 'scene',
+						'post_status' => 'publish',
+						'meta_query' => array(
+							array(
+								'key' => 'scene_location',
+								'value' => $sceneLocation,
+								'compare' => '=',
+							),
+						),
+					);
+					$query = new WP_Query( $args );
+					if ( $query->have_posts() ) {
+						$post_titles = array();
+						while ( $query->have_posts() ) {
+							$query->the_post();
+							$scene_loc = get_post_meta( get_the_ID(), 'scene_location' )[0];
+							$scene_published = get_post_meta( get_the_ID(), 'scene_published', true );
+							$inst_overview_scene = get_post_meta( $scene_loc, 'instance_overview_scene' )[0];
+							$scene_order = get_post_meta( get_the_ID(), 'scene_order' );
+							if ( get_the_ID() != $inst_overview_scene && $scene_published != 'draft' ) {
+								$post_titles[] = [ get_the_title(), $scene_order[0], get_the_ID() ];
+							}
+						}
+						wp_reset_postdata();
+						function customCompare( $a, $b ) {
+							$result = $a[1] - $b[1];
+							if ( $result == 0 ) {
+								$result = strcmp( $a[0], $b[0] );
+							}
+							return $result;
+						}
+						usort( $post_titles, 'customCompare' );
 
-                        // Add about option to the end of scene list, if this is a single instance view
-                        if ($singleInstance != false) {
-                            if (is_user_logged_in() == true) {
-                            $args = array(
-                                    'post_type' => 'about', // custom post type 
-                                    'post_status' => 'publish',
-                                    'posts_per_page' => 1, // We only need to know if at least one exists
-                                );
-                            } else {
-                                $args = array(
-                                    'post_type' => 'about', // custom post type 
-                                    'post_status' => 'publish',
-                                    'posts_per_page' => 1, // We only need to know if at least one exists
-                                    'meta_query' => array( // only show if about_published is published
-                                        array(
-                                            'key' => 'about_published',
-                                            'value' => 'published',
-                                            'compare' => '='
-                                        )
-                                    )
-                                );
-                            }
-                            $about_query = new WP_Query($args);
+						if ( $inst_overview_scene ) {
+							echo "<li class='nav-item'><a class='nav-link' href='" . get_permalink( $inst_overview_scene ) . "'>" . get_the_title( $inst_overview_scene ) . '</a></li>';
 
-                            if ($about_query->have_posts()) {
-                                // At least one "about" post exists
-                                echo '<li class="nav-item ">';
-                                echo '<a class="nav-link "  href="/about" role="button" aria-haspopup="true" aria-expanded="false">About</a>';
-                                echo '</li>';
-                            }
-                        }
-                    }else {
-                        get_template_part( 'parts/navbar-dropdown' );
-                    }
-                    ?>
-                
-                </ul>
-            </div>
-        </div>
-    </div>
+						}
+
+						foreach ( $post_titles as $post_title ) {
+							echo "<li class='nav-item'><a class='nav-link' href='" . esc_url( get_permalink( $post_title[2] ) ) . "'>$post_title[0]</a></li>";
+						}
+
+						// Add about option to the end of scene list, if this is a single instance view
+						if ( $singleInstance != false ) {
+							if ( is_user_logged_in() == true ) {
+								$args = array(
+									'post_type' => 'about', // custom post type
+									'post_status' => 'publish',
+									'posts_per_page' => 1, // We only need to know if at least one exists
+								);
+							} else {
+								$args = array(
+									'post_type' => 'about', // custom post type
+									'post_status' => 'publish',
+									'posts_per_page' => 1, // We only need to know if at least one exists
+									'meta_query' => array( // only show if about_published is published
+										array(
+											'key' => 'about_published',
+											'value' => 'published',
+											'compare' => '=',
+										),
+									),
+								);
+							}
+							$about_query = new WP_Query( $args );
+
+							if ( $about_query->have_posts() ) {
+								// At least one "about" post exists
+								echo '<li class="nav-item ">';
+								echo '<a class="nav-link "  href="/about" role="button" aria-haspopup="true" aria-expanded="false">About</a>';
+								echo '</li>';
+							}
+						}
+					} else {
+						get_template_part( 'parts/navbar-dropdown' );
+					}
+					?>
+				
+				</ul>
+			</div>
+		</div>
+	</div>
 </nav>
 
