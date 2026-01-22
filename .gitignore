@@ -42,3 +42,6 @@ eslint-report.json
 eslint-report.txt
 node_modules/
 package-lock.json
+docs/function_documentation/packages/graphic-data-plugin.html
+docs/function_documentation/packages/graphic-data.html
+docs/function_documentation/packages/graphic.html
