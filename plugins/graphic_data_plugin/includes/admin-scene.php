@@ -1,604 +1,613 @@
 <?php
 /**
  * Register class that defines the Scene custom content type as well as associated Scene functions
- * 
  */
 
-include_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-utility.php';
+include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
-class Scene { 
+class Scene {
 
-    /**
-     * Display an admin notice if the current scene is the overview scene for its instance.
-     *
-     * @since    1.0.0
-     */
-    public function display_overview_scene_notice() {
-        // 1. Check if we are on the correct screen (Scene edit page for an existing post)
-        $screen = get_current_screen();
-        if ( ! $screen || $screen->base !== 'post' || $screen->id !== 'scene' || $screen->action === 'add' ) {
-            return; // Exit if not on the scene edit screen for an existing post
-        }
+	/**
+	 * Display an admin notice if the current scene is the overview scene for its instance.
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_overview_scene_notice() {
+		// 1. Check if we are on the correct screen (Scene edit page for an existing post)
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->base !== 'post' || $screen->id !== 'scene' || $screen->action === 'add' ) {
+			return; // Exit if not on the scene edit screen for an existing post
+		}
 
-        // 2. Get the current Scene's ID
-        $current_scene_id = get_the_ID();
-        if ( ! $current_scene_id ) {
-            return; // Exit if we can't get the current post ID
-        }
+		// 2. Get the current Scene's ID
+		$current_scene_id = get_the_ID();
+		if ( ! $current_scene_id ) {
+			return; // Exit if we can't get the current post ID
+		}
 
-        // 3. Get the associated Instance ID from the Scene's meta field 'scene_location'
-        $instance_id = get_post_meta( $current_scene_id, 'scene_location', true );
+		// 3. Get the associated Instance ID from the Scene's meta field 'scene_location'
+		$instance_id = get_post_meta( $current_scene_id, 'scene_location', true );
 
-        // 4. Check if we have a valid Instance ID
-        if ( empty( $instance_id ) || ! is_numeric( $instance_id ) ) {
-            // If the scene_location isn't set, we can't determine if it's the overview scene.
-            return;
-        }
-        $instance_id = (int) $instance_id; // Ensure it's an integer
+		// 4. Check if we have a valid Instance ID
+		if ( empty( $instance_id ) || ! is_numeric( $instance_id ) ) {
+			// If the scene_location isn't set, we can't determine if it's the overview scene.
+			return;
+		}
+		$instance_id = (int) $instance_id; // Ensure it's an integer
 
-        // 5. Get the Overview Scene ID from the Instance's meta field 'instance_overview_scene'
-        $overview_scene_id = get_post_meta( $instance_id, 'instance_overview_scene', true );
+		// 5. Get the Overview Scene ID from the Instance's meta field 'instance_overview_scene'
+		$overview_scene_id = get_post_meta( $instance_id, 'instance_overview_scene', true );
 
-        // 6. Check if the Instance has designated an overview scene
-        if ( empty( $overview_scene_id ) || ! is_numeric( $overview_scene_id ) ) {
-            // If the instance hasn't set an overview scene, the current scene cannot be it.
-            return;
-        }
-        $overview_scene_id = (int) $overview_scene_id; // Ensure it's an integer
+		// 6. Check if the Instance has designated an overview scene
+		if ( empty( $overview_scene_id ) || ! is_numeric( $overview_scene_id ) ) {
+			// If the instance hasn't set an overview scene, the current scene cannot be it.
+			return;
+		}
+		$overview_scene_id = (int) $overview_scene_id; // Ensure it's an integer
 
-        // 7. Compare the current Scene ID with the Instance's Overview Scene ID
-        if ( $current_scene_id === $overview_scene_id ) {
-            // 8. Display the notice if they match
-            wp_admin_notice('This is the overview scene for ' . get_the_title($instance_id) . ".",
-                array(
-                    'additional_classes' => array( 'updated' ),
-                    'dismissible'        => true,
-                )
-            );
-        }
-    }
+		// 7. Compare the current Scene ID with the Instance's Overview Scene ID
+		if ( $current_scene_id === $overview_scene_id ) {
+			// 8. Display the notice if they match
+			wp_admin_notice(
+				'This is the overview scene for ' . get_the_title( $instance_id ) . '.',
+				array(
+					'additional_classes' => array( 'updated' ),
+					'dismissible'        => true,
+				)
+			);
+		}
+	}
 
-    /// BEGIN AI CODE
+	// BEGIN AI CODE
 
-    // Enqueue JavaScript for Quick Edit slug validation
-    function scene_enqueue_quick_edit_validation($hook) {
-        // Only load on the scene post type edit screen
-        if ($hook !== 'edit.php' || !isset($_GET['post_type']) || $_GET['post_type'] !== 'scene') {
-            return;
-        }
-        
-        wp_enqueue_script(
-            'scene-quick-edit-validation',
-            plugin_dir_url( __DIR__ ) . 'admin/js/scene-quick-edit-validation.js',
-            array('inline-edit-post'),
-            GRAPHIC_DATA_PLUGIN_VERSION,
-            true
-        );
-        
-        wp_localize_script('scene-quick-edit-validation', 'sceneQuickEdit', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('scene_validate_slug_nonce'),
-            'messages' => array(
-                'slug_exists' => __('Warning: A post with this slug already exists. WordPress will automatically modify it to make it unique.', 'your-text-domain'),
-                'checking' => __('Checking slug...', 'your-text-domain')
-            )
-        ));
-    }
+	// Enqueue JavaScript for Quick Edit slug validation
+	function scene_enqueue_quick_edit_validation( $hook ) {
+		// Only load on the scene post type edit screen
+		if ( $hook !== 'edit.php' || ! isset( $_GET['post_type'] ) || $_GET['post_type'] !== 'scene' ) {
+			return;
+		}
 
-    // AJAX handler to check if slug exists
-    function scene_validate_slug_ajax() {
-        check_ajax_referer('scene_validate_slug_nonce', 'nonce');
-        
-        $slug = isset($_POST['slug']) ? sanitize_title($_POST['slug']) : '';
-        $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
-        
-        if (empty($slug)) {
-            wp_send_json_error(array('message' => 'Invalid slug'));
-        }
-        
-        // Check if a post with this slug exists (excluding the current post)
-        global $wpdb;
-        $existing = $wpdb->get_var($wpdb->prepare(
-            "SELECT ID FROM {$wpdb->posts} 
+		wp_enqueue_script(
+			'scene-quick-edit-validation',
+			plugin_dir_url( __DIR__ ) . 'admin/js/scene-quick-edit-validation.js',
+			array( 'inline-edit-post' ),
+			GRAPHIC_DATA_PLUGIN_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'scene-quick-edit-validation',
+			'sceneQuickEdit',
+			array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'nonce' => wp_create_nonce( 'scene_validate_slug_nonce' ),
+				'messages' => array(
+					'slug_exists' => __( 'Warning: A post with this slug already exists. WordPress will automatically modify it to make it unique.', 'your-text-domain' ),
+					'checking' => __( 'Checking slug...', 'your-text-domain' ),
+				),
+			)
+		);
+	}
+
+	// AJAX handler to check if slug exists
+	function scene_validate_slug_ajax() {
+		check_ajax_referer( 'scene_validate_slug_nonce', 'nonce' );
+
+		$slug = isset( $_POST['slug'] ) ? sanitize_title( $_POST['slug'] ) : '';
+		$post_id = isset( $_POST['post_id'] ) ? intval( $_POST['post_id'] ) : 0;
+
+		if ( empty( $slug ) ) {
+			wp_send_json_error( array( 'message' => 'Invalid slug' ) );
+		}
+
+		// Check if a post with this slug exists (excluding the current post)
+		global $wpdb;
+		$existing = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT ID FROM {$wpdb->posts} 
             WHERE post_name = %s 
             AND post_type = 'scene' 
             AND ID != %d 
             AND post_status != 'trash'",
-            $slug,
-            $post_id
-        ));
-        
-        if ($existing) {
-            // Get the post title
-            $existing_post = get_post($existing);
-            $post_title = $existing_post ? $existing_post->post_title : __('Unknown', 'your-text-domain');
-            
-            wp_send_json_success(array(
-                'exists' => true,
-                'message' => sprintf(
-                    'A scene with slug "%s" already exists (Post ID: %d, Scene Title: "%s").',
-                    $slug,
-                    $existing,
-                    $post_title
-                )
-            ));
-        } else {
-            wp_send_json_success(array('exists' => false));
-        }
-    }
+				$slug,
+				$post_id
+			)
+		);
 
-    /// END AI CODE
+		if ( $existing ) {
+			// Get the post title
+			$existing_post = get_post( $existing );
+			$post_title = $existing_post ? $existing_post->post_title : __( 'Unknown', 'your-text-domain' );
 
-    //change Quick Edit link name in admin columns for Scene post type
-    function modify_scene_quick_edit_link($actions, $post) {
-        // Check if the post type is 'scene'.
-        if ($post->post_type === 'scene') {
-            // Check if the 'quick edit' action exists.
-            if (isset($actions['inline hide-if-no-js'])) {
-                // Modify the link text to "Edit Scene Name".
-                $actions['inline hide-if-no-js'] = str_replace(
-                    __('Quick&nbsp;Edit'), // The original "Quick Edit" text.
-                    __('Edit Scene Title or URL'), // The new text.
-                    $actions['inline hide-if-no-js'] // The existing action link.
-                );
-            }
-        }
-        return $actions;
-    }
-    
-    /**
-     * Enqueues custom CSS for scene admin columns on the post type edit screen.
-     *
-     * This function conditionally loads CSS styling for the admin columns display
-     * when viewing the list of 'scene' custom post type entries in the WordPress admin.
-     * The CSS is only enqueued when on the edit.php screen for the modal post type.
-     *
-     * @since 1.0.0
-     *
-     * @param string $hook The current admin page hook suffix.
-     *
-     * @return void
-     */
-    function enqueue_scene_admin_columns_css($hook) {
-        // Get the current screen object.
-        $screen = get_current_screen();
-    
-        // Check if we are on the edit screen for the custom post type 'scene'.
-        if ($screen->post_type === 'scene' && $screen->base === 'edit') {
-            // Enqueue CSS file.
-            wp_enqueue_style(
-                'scene-admin-columns-css', // Handle of the CSS file.
-                plugin_dir_url( __DIR__ ) . 'admin/css/scene-admin-columns.css',
-                array(), 
-                GRAPHIC_DATA_PLUGIN_VERSION
-            );
-        }
-    }
+			wp_send_json_success(
+				array(
+					'exists' => true,
+					'message' => sprintf(
+						'A scene with slug "%s" already exists (Post ID: %d, Scene Title: "%s").',
+						$slug,
+						$existing,
+						$post_title
+					),
+				)
+			);
+		} else {
+			wp_send_json_success( array( 'exists' => false ) );
+		}
+	}
 
-    /**
-     * Store filter values in user metadata with 20-minute expiration.
-     *
-     * This function captures the current Scene filter selections from the URL parameters
-     * and stores them in user metadata with a 20-minute expiration timestamp.
-     * It only runs on the Scene post type admin screen and requires a logged-in user.
-     *
-     * @since    1.0.0
-     * @access   public
-     * @return   void
-     */
-    public function store_scene_filter_values() {
-        $screen = get_current_screen();
-        if ($screen->id != 'edit-scene') {
-            return;
-        }
-        
-        $user_id = get_current_user_id();
-        if (!$user_id) {
-            return;
-        }
-        
-        // Get current timestamp
-        $current_time = time();
-        
-        // Store the expiration time (20 minutes = 1200 seconds)
-        $expiration_time = $current_time + 1200;
-        
-        // Store field_length filter value if it exists
-        if (isset($_GET['field_length']) && !empty($_GET['field_length'])) {
-            update_user_meta($user_id, 'scene_field_length', sanitize_key($_GET['field_length']));
-            update_user_meta($user_id, 'scene_field_length_expiration', $expiration_time);
-        }
-        
-        // Store scene_instance filter value if it exists
-        if (isset($_GET['scene_instance']) && !empty($_GET['scene_instance'])) {
-            update_user_meta($user_id, 'scene_instance', absint($_GET['scene_instance']));
-            update_user_meta($user_id, 'scene_instance_expiration', $expiration_time);
-        }
-    }
+	// END AI CODE
 
-    /**
-     * Check if stored filter values are still valid and retrieve them if they are.
-     *
-     * This function retrieves a stored filter value from user metadata and verifies
-     * if it has exceeded its expiration time. If the value has expired, it cleans up
-     * the metadata entries and returns false. Otherwise, it returns the stored value.
-     *
-     * @since    1.0.0
-     * @access   public
-     * @param    string  $meta_key  The meta key to check expiration for.
-     * @return   bool|string|int    False if expired or not found, the value if still valid.
-     */
-    public function get_scene_filter_value($meta_key) {
-        $user_id = get_current_user_id();
-        if (!$user_id) {
-            return false;
-        }
-        
-        $value = get_user_meta($user_id, $meta_key, true);
-        if (empty($value)) {
-            return false;
-        }
-        
-        // Check if the value has expired
-        $expiration_time = get_user_meta($user_id, $meta_key . '_expiration', true);
-        $current_time = time();
-        
-        if ($current_time > $expiration_time) {
-            // Delete expired values
-            delete_user_meta($user_id, $meta_key);
-            delete_user_meta($user_id, $meta_key . '_expiration');
-            return false;
-        }
-        
-        return $value;
-    }
+	// change Quick Edit link name in admin columns for Scene post type
+	function modify_scene_quick_edit_link( $actions, $post ) {
+		// Check if the post type is 'scene'.
+		if ( $post->post_type === 'scene' ) {
+			// Check if the 'quick edit' action exists.
+			if ( isset( $actions['inline hide-if-no-js'] ) ) {
+				// Modify the link text to "Edit Scene Name".
+				$actions['inline hide-if-no-js'] = str_replace(
+					__( 'Quick&nbsp;Edit' ), // The original "Quick Edit" text.
+					__( 'Edit Scene Title or URL' ), // The new text.
+					$actions['inline hide-if-no-js'] // The existing action link.
+				);
+			}
+		}
+		return $actions;
+	}
 
-    /**
-     * Clean up expired scene filter values in user metadata.
-     *
-     * This function runs on admin page load and checks if any stored filter values
-     * have exceeded their 20-minute expiration time. Any expired values are removed
-     * from the database to maintain clean user metadata and prevent stale filters
-     * from being applied.
-     *
-     * @since    1.0.0
-     * @access   public
-     * @return   void
-     */
-    public function cleanup_expired_scene_filters() {
-        $screen = get_current_screen();
-        if (!$screen || $screen->id != 'edit-scene') {
-            return;
-        }
-        
-        $user_id = get_current_user_id();
-        if (!$user_id) {
-            return;
-        }
-        
-        $current_time = time();
-        
-        // Check and clean up field_length
-        $expiration_time = get_user_meta($user_id, 'scene_field_length_expiration', true);
-        if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'scene_field_length');
-            delete_user_meta($user_id, 'scene_field_length_expiration');
-        }
-        
-        // Check and clean up scene_instance
-        $expiration_time = get_user_meta($user_id, 'scene_instance_expiration', true);
-        if ($expiration_time && $current_time > $expiration_time) {
-            delete_user_meta($user_id, 'scene_instance');
-            delete_user_meta($user_id, 'scene_instance_expiration');
-        }
-    }
+	/**
+	 * Enqueues custom CSS for scene admin columns on the post type edit screen.
+	 *
+	 * This function conditionally loads CSS styling for the admin columns display
+	 * when viewing the list of 'scene' custom post type entries in the WordPress admin.
+	 * The CSS is only enqueued when on the edit.php screen for the modal post type.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $hook The current admin page hook suffix.
+	 *
+	 * @return void
+	 */
+	function enqueue_scene_admin_columns_css( $hook ) {
+		// Get the current screen object.
+		$screen = get_current_screen();
 
-    /**
-     * Add filter dropdowns for the Scene admin screen with persistent selection support.
-     *
-     * This function creates and outputs filter dropdowns for field length and instance
-     * on the Scene post type admin screen. It first checks for filter values in the URL 
-     * parameters, then falls back to stored user metadata values if they haven't expired.
-     * After displaying the dropdowns, it stores the current selections for future use.
-     * This function handles proper user capability checks to show only assigned instances
-     * for content editors.
-     *
-     * @since    1.0.0
-     * @access   public
-     * @return   void
-     */
-    public function scene_filter_dropdowns() {
-        $screen = get_current_screen();
-        // Only proceed if we are on the 'scene' edit screen.
-        if (!$screen || $screen->id !== 'edit-scene') {
-            return;
-        }
+		// Check if we are on the edit screen for the custom post type 'scene'.
+		if ( $screen->post_type === 'scene' && $screen->base === 'edit' ) {
+			// Enqueue CSS file.
+			wp_enqueue_style(
+				'scene-admin-columns-css', // Handle of the CSS file.
+				plugin_dir_url( __DIR__ ) . 'admin/css/scene-admin-columns.css',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+		}
+	}
 
-        // Run cleanup of expired filters
-        $this->cleanup_expired_scene_filters();
+	/**
+	 * Store filter values in user metadata with 20-minute expiration.
+	 *
+	 * This function captures the current Scene filter selections from the URL parameters
+	 * and stores them in user metadata with a 20-minute expiration timestamp.
+	 * It only runs on the Scene post type admin screen and requires a logged-in user.
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @return   void
+	 */
+	public function store_scene_filter_values() {
+		$screen = get_current_screen();
+		if ( $screen->id != 'edit-scene' ) {
+			return;
+		}
 
-        // --- Field Length Dropdown ---
-        $fieldOptions = array(
-            array("", "large", "Full tagline"),
-            array("", "medium", "Medium tagline"),
-            array("", "small", "Short tagline")
-        );
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			return;
+		}
 
-        // Check for filter in URL first, then check for stored value
-        $field_length = isset($_GET["field_length"]) ? sanitize_key($_GET["field_length"]) : $this->get_scene_filter_value('scene_field_length');
-        
-        if ($field_length) {
-            switch ($field_length) {
-                case "large":
-                    $fieldOptions[0][0] = "selected ";
-                    break;
-                case "medium":
-                    $fieldOptions[1][0] = "selected ";
-                    break;
-                case "small":
-                    $fieldOptions[2][0] = "selected ";
-                    break;
-            }
-        } else {
-            $fieldOptions[2][0] = "selected ";
-        }
+		// Get current timestamp
+		$current_time = time();
 
-        $field_length_dropdown = '<select name="field_length" id="field_length">';
-        for ($i = 0; $i < 3; $i++) {
-            $field_length_dropdown .= '<option ' . $fieldOptions[$i][0] . 'value="' . esc_attr($fieldOptions[$i][1]) . '">' . esc_html($fieldOptions[$i][2]) . '</option>';
-        }
-        $field_length_dropdown .= '</select>';
+		// Store the expiration time (20 minutes = 1200 seconds)
+		$expiration_time = $current_time + 1200;
 
-        echo $field_length_dropdown; 
+		// Store field_length filter value if it exists
+		if ( isset( $_GET['field_length'] ) && ! empty( $_GET['field_length'] ) ) {
+			update_user_meta( $user_id, 'scene_field_length', sanitize_key( $_GET['field_length'] ) );
+			update_user_meta( $user_id, 'scene_field_length_expiration', $expiration_time );
+		}
 
-        $function_utilities = new Utility();
-        $function_utilities -> createInstanceDropDownFilter('scene_instance');
-        
-        // Store the filter values after displaying the dropdowns
-        $this->store_scene_filter_values();
-    }
+		// Store scene_instance filter value if it exists
+		if ( isset( $_GET['scene_instance'] ) && ! empty( $_GET['scene_instance'] ) ) {
+			update_user_meta( $user_id, 'scene_instance', absint( $_GET['scene_instance'] ) );
+			update_user_meta( $user_id, 'scene_instance_expiration', $expiration_time );
+		}
+	}
 
-    /**
-     * Filter the Scene admin screen results based on selected or stored filter values.
-     *
-     * This function modifies the WordPress query to filter Scene posts based on the
-     * selected location (instance) values. It first checks for values in the URL parameters,
-     * then falls back to stored user metadata values that haven't expired. This ensures
-     * filter persistence for 20 minutes across page loads.
-     *
-     * @since    1.0.0
-     * @access   public
-     * @param    WP_Query  $query  The WordPress Query instance being filtered.
-     * @return   void
-     */
-    public function scene_location_filter_results($query) {
-        global $pagenow;
-        $type = 'scene';
-        
-        if ($pagenow == 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] == $type) {
-            // Check URL params first, then check stored values
-            $instance = isset($_GET['scene_instance']) ? absint($_GET['scene_instance']) : $this->get_scene_filter_value('scene_instance');
-            
-            if ($instance) {
-                $meta_query = array(
-                    array(
-                        'key' => 'scene_location', // The custom field storing the instance ID
-                        'value' => $instance,
-                        'compare' => '='
-                    )
-                );
-                $query->set('meta_query', $meta_query);
-            }
-        }
-    }
+	/**
+	 * Check if stored filter values are still valid and retrieve them if they are.
+	 *
+	 * This function retrieves a stored filter value from user metadata and verifies
+	 * if it has exceeded its expiration time. If the value has expired, it cleans up
+	 * the metadata entries and returns false. Otherwise, it returns the stored value.
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @param    string $meta_key  The meta key to check expiration for.
+	 * @return   bool|string|int    False if expired or not found, the value if still valid.
+	 */
+	public function get_scene_filter_value( $meta_key ) {
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			return false;
+		}
 
-    /**
+		$value = get_user_meta( $user_id, $meta_key, true );
+		if ( empty( $value ) ) {
+			return false;
+		}
+
+		// Check if the value has expired
+		$expiration_time = get_user_meta( $user_id, $meta_key . '_expiration', true );
+		$current_time = time();
+
+		if ( $current_time > $expiration_time ) {
+			// Delete expired values
+			delete_user_meta( $user_id, $meta_key );
+			delete_user_meta( $user_id, $meta_key . '_expiration' );
+			return false;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Clean up expired scene filter values in user metadata.
+	 *
+	 * This function runs on admin page load and checks if any stored filter values
+	 * have exceeded their 20-minute expiration time. Any expired values are removed
+	 * from the database to maintain clean user metadata and prevent stale filters
+	 * from being applied.
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @return   void
+	 */
+	public function cleanup_expired_scene_filters() {
+		$screen = get_current_screen();
+		if ( ! $screen || $screen->id != 'edit-scene' ) {
+			return;
+		}
+
+		$user_id = get_current_user_id();
+		if ( ! $user_id ) {
+			return;
+		}
+
+		$current_time = time();
+
+		// Check and clean up field_length
+		$expiration_time = get_user_meta( $user_id, 'scene_field_length_expiration', true );
+		if ( $expiration_time && $current_time > $expiration_time ) {
+			delete_user_meta( $user_id, 'scene_field_length' );
+			delete_user_meta( $user_id, 'scene_field_length_expiration' );
+		}
+
+		// Check and clean up scene_instance
+		$expiration_time = get_user_meta( $user_id, 'scene_instance_expiration', true );
+		if ( $expiration_time && $current_time > $expiration_time ) {
+			delete_user_meta( $user_id, 'scene_instance' );
+			delete_user_meta( $user_id, 'scene_instance_expiration' );
+		}
+	}
+
+	/**
+	 * Add filter dropdowns for the Scene admin screen with persistent selection support.
+	 *
+	 * This function creates and outputs filter dropdowns for field length and instance
+	 * on the Scene post type admin screen. It first checks for filter values in the URL
+	 * parameters, then falls back to stored user metadata values if they haven't expired.
+	 * After displaying the dropdowns, it stores the current selections for future use.
+	 * This function handles proper user capability checks to show only assigned instances
+	 * for content editors.
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @return   void
+	 */
+	public function scene_filter_dropdowns() {
+		$screen = get_current_screen();
+		// Only proceed if we are on the 'scene' edit screen.
+		if ( ! $screen || $screen->id !== 'edit-scene' ) {
+			return;
+		}
+
+		// Run cleanup of expired filters
+		$this->cleanup_expired_scene_filters();
+
+		// --- Field Length Dropdown ---
+		$fieldOptions = array(
+			array( '', 'large', 'Full tagline' ),
+			array( '', 'medium', 'Medium tagline' ),
+			array( '', 'small', 'Short tagline' ),
+		);
+
+		// Check for filter in URL first, then check for stored value
+		$field_length = isset( $_GET['field_length'] ) ? sanitize_key( $_GET['field_length'] ) : $this->get_scene_filter_value( 'scene_field_length' );
+
+		if ( $field_length ) {
+			switch ( $field_length ) {
+				case 'large':
+					$fieldOptions[0][0] = 'selected ';
+					break;
+				case 'medium':
+					$fieldOptions[1][0] = 'selected ';
+					break;
+				case 'small':
+					$fieldOptions[2][0] = 'selected ';
+					break;
+			}
+		} else {
+			$fieldOptions[2][0] = 'selected ';
+		}
+
+		$field_length_dropdown = '<select name="field_length" id="field_length">';
+		for ( $i = 0; $i < 3; $i++ ) {
+			$field_length_dropdown .= '<option ' . $fieldOptions[ $i ][0] . 'value="' . esc_attr( $fieldOptions[ $i ][1] ) . '">' . esc_html( $fieldOptions[ $i ][2] ) . '</option>';
+		}
+		$field_length_dropdown .= '</select>';
+
+		echo $field_length_dropdown;
+
+		$function_utilities = new Graphic_Data_Utility();
+		$function_utilities->create_instance_dropdown_filter( 'scene_instance' );
+
+		// Store the filter values after displaying the dropdowns.
+		$this->store_scene_filter_values();
+	}
+
+	/**
+	 * Filter the Scene admin screen results based on selected or stored filter values.
+	 *
+	 * This function modifies the WordPress query to filter Scene posts based on the
+	 * selected location (instance) values. It first checks for values in the URL parameters,
+	 * then falls back to stored user metadata values that haven't expired. This ensures
+	 * filter persistence for 20 minutes across page loads.
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @param    WP_Query $query  The WordPress Query instance being filtered.
+	 * @return   void
+	 */
+	public function scene_location_filter_results( $query ) {
+		global $pagenow;
+		$type = 'scene';
+
+		if ( $pagenow == 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $type ) {
+			// Check URL params first, then check stored values
+			$instance = isset( $_GET['scene_instance'] ) ? absint( $_GET['scene_instance'] ) : $this->get_scene_filter_value( 'scene_instance' );
+
+			if ( $instance ) {
+				$meta_query = array(
+					array(
+						'key' => 'scene_location', // The custom field storing the instance ID
+						'value' => $instance,
+						'compare' => '=',
+					),
+				);
+				$query->set( 'meta_query', $meta_query );
+			}
+		}
+	}
+
+	/**
 	 * Set columns in admin screen for Scene custom content type.
 	 *
-     * @link https://www.smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/
+	 * @link https://www.smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/
 	 * @since    1.0.0
 	 */
-    function change_scene_columns( $columns ) {
-        $columns = array (
-            //'cb' => $columns['cb'],
-            'title' => 'Title',
-            'scene_location' => 'Instance',
-            'scene_infographic' => 'Infographic',		
-            'scene_tagline' => 'Tagline',			
-            'scene_order' => 'Order',	
-            'scene_overview' => 'Overview'
-,            'status' => 'Status',
-        );
-        return $columns;
-    }
+	function change_scene_columns( $columns ) {
+		$columns = array(
+			// 'cb' => $columns['cb'],
+			'title' => 'Title',
+			'scene_location' => 'Instance',
+			'scene_infographic' => 'Infographic',
+			'scene_tagline' => 'Tagline',
+			'scene_order' => 'Order',
+			'scene_overview' => 'Overview',
+			'status' => 'Status',
+		);
+		return $columns;
+	}
 
-    /**
+	/**
 	 * Populate custom fields for Scene content type in the admin screen.
 	 *
-     * @param string $column The name of the column.
-     * @param int $post_id The database id of the post.
+	 * @param string $column The name of the column.
+	 * @param int    $post_id The database id of the post.
 	 * @since    1.0.0
 	 */
-    public function custom_scene_column( $column, $post_id ) {  
+	public function custom_scene_column( $column, $post_id ) {
 
-        if (isset($_GET["field_length"])) {
-            $field_length = sanitize_key($_GET["field_length"]);
-        } else {
-            $stored_field_length = $this->get_scene_filter_value('scene_field_length');
-            $field_length = $stored_field_length ? $stored_field_length : "small"; // Default to "small" if no stored value or expired
-        }
+		if ( isset( $_GET['field_length'] ) ) {
+			$field_length = sanitize_key( $_GET['field_length'] );
+		} else {
+			$stored_field_length = $this->get_scene_filter_value( 'scene_field_length' );
+			$field_length = $stored_field_length ? $stored_field_length : 'small'; // Default to "small" if no stored value or expired
+		}
 
-        // Populate columns based on the determined field_length
-        if ( $column === 'scene_location' ) {
-            $instance_id = get_post_meta( $post_id, 'scene_location', true ); 
-            echo get_the_title($instance_id ); 
-        }
+		// Populate columns based on the determined field_length
+		if ( $column === 'scene_location' ) {
+			$instance_id = get_post_meta( $post_id, 'scene_location', true );
+			echo get_the_title( $instance_id );
+		}
 
-        if ( $column === 'scene_infographic' ) {
-                $scene_infographic = get_post_meta($post_id, 'scene_infographic', true);
-                if (!empty($scene_infographic)) {
-                        echo '<img src="' . esc_url($scene_infographic) . '" style="max-width:100px; max-height:100px;" /><br>';
-                }
-        }
+		if ( $column === 'scene_infographic' ) {
+				$scene_infographic = get_post_meta( $post_id, 'scene_infographic', true );
+			if ( ! empty( $scene_infographic ) ) {
+					echo '<img src="' . esc_url( $scene_infographic ) . '" style="max-width:100px; max-height:100px;" /><br>';
+			}
+		}
 
-        if ($column == 'scene_tagline'){
-            $scene_tagline = get_post_meta( $post_id, 'scene_tagline', true );
-            switch ($field_length){
-                case "large":
-                    echo $scene_tagline;
-                    break;
-                case "medium":
-                    echo $this->stringTruncate($scene_tagline, 75);
-                    break;
-                case "small":
-                    if ($scene_tagline != NULL){
-                        echo '<span class="dashicons dashicons-yes"></span>';
-                    }
-                    break;
-            }
-        }
+		if ( $column == 'scene_tagline' ) {
+			$scene_tagline = get_post_meta( $post_id, 'scene_tagline', true );
+			switch ( $field_length ) {
+				case 'large':
+					echo $scene_tagline;
+					break;
+				case 'medium':
+					echo $this->string_truncate( $scene_tagline, 75 );
+					break;
+				case 'small':
+					if ( $scene_tagline != null ) {
+						echo '<span class="dashicons dashicons-yes"></span>';
+					}
+					break;
+			}
+		}
 
-        if ( $column === 'scene_order' ) {
-            echo get_post_meta( $post_id, 'scene_order', true ); 
-        }
+		if ( $column === 'scene_order' ) {
+			echo get_post_meta( $post_id, 'scene_order', true );
+		}
 
-        if ( $column === 'scene_overview' ) {
-            $instance_id = get_post_meta( $post_id, 'scene_location', true ); 
-            $instance_overview_scene = get_post_meta($instance_id, 'instance_overview_scene', true );
-            if ($instance_overview_scene == $post_id) {
-                echo '<span class="dashicons dashicons-yes"></span>';
-            }
-        }
+		if ( $column === 'scene_overview' ) {
+			$instance_id = get_post_meta( $post_id, 'scene_location', true );
+			$instance_overview_scene = get_post_meta( $instance_id, 'instance_overview_scene', true );
+			if ( $instance_overview_scene == $post_id ) {
+				echo '<span class="dashicons dashicons-yes"></span>';
+			}
+		}
 
-        if ($column === "status"){
-            date_default_timezone_set('America/Los_Angeles'); 
-            $last_modified_time = get_post_modified_time('g:i A', false, $post_id, true);
-            $last_modified_date = get_post_modified_time('F j, Y', false, $post_id, true);
-            $last_modified_user_id = get_post_meta($post_id, '_edit_last', true);
-            if (empty($last_modified_user_id)){
-                 $last_modified_user_id = get_post_field('post_author', $post_id);
-            }
-            $last_modified_user = get_userdata($last_modified_user_id);
-            $last_modified_name = $last_modified_user -> first_name . " " . $last_modified_user -> last_name; 
+		if ( $column === 'status' ) {
+			date_default_timezone_set( 'America/Los_Angeles' );
+			$last_modified_time = get_post_modified_time( 'g:i A', false, $post_id, true );
+			$last_modified_date = get_post_modified_time( 'F j, Y', false, $post_id, true );
+			$last_modified_user_id = get_post_meta( $post_id, '_edit_last', true );
+			if ( empty( $last_modified_user_id ) ) {
+				 $last_modified_user_id = get_post_field( 'post_author', $post_id );
+			}
+			$last_modified_user = get_userdata( $last_modified_user_id );
+			$last_modified_name = $last_modified_user->first_name . ' ' . $last_modified_user->last_name;
 
-            echo "Last updated at " . $last_modified_time . " on " . $last_modified_date . " by " . $last_modified_name;
-        }
-    }
+			echo 'Last updated at ' . $last_modified_time . ' on ' . $last_modified_date . ' by ' . $last_modified_name;
+		}
+	}
 
-    /**
+	/**
 	 * Shorten string without cutting words midword.
 	 *
-     * @param string $string The string to be shortened.
-     * @param int $your_desired_width The number of characters in the shortened string.
+	 * @param string $string The string to be shortened.
+	 * @param int    $your_desired_width The number of characters in the shortened string.
 	 * @since    1.0.0
 	 */
-    public function stringTruncate($string, $your_desired_width) {
-        $parts = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
-        $parts_count = count($parts);
-        
-        $length = 0;
-        //$last_part = 0;
-        for ($last_part = 0; $last_part < $parts_count; ++$last_part) {
-            $length += strlen($parts[$last_part]);
-            if ($length > $your_desired_width) { break; }
-        }
-        
-        return implode(array_slice($parts, 0, $last_part));
-    }
+	public function string_truncate( $string, $your_desired_width ) {
+		$parts = preg_split( '/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE );
+		$parts_count = count( $parts );
 
-    /**
+		$length = 0;
+		// $last_part = 0;
+		for ( $last_part = 0; $last_part < $parts_count; ++$last_part ) {
+			$length += strlen( $parts[ $last_part ] );
+			if ( $length > $your_desired_width ) {
+				break; }
+		}
+
+		return implode( array_slice( $parts, 0, $last_part ) );
+	}
+
+	/**
 	 * Remove Bulk Actions dropdown from Scene, Modal, Figure, and Instance admin screens.
 	 *
-     * @param array $actions An array of the available bulk actions.
+	 * @param array $actions An array of the available bulk actions.
 	 * @since    1.0.0
 	 */
-    function remove_bulk_actions($actions) {
-        global $post_type;
-    
-        if ($post_type === 'scene' || $post_type === 'modal' || $post_type === 'figure' || $post_type === 'instance') {
-            unset($actions['bulk-edit']);
-            unset($actions['edit']);
-            unset($actions['trash']);
-            unset($actions['spam']);
-            unset($actions['unspam']);
-            unset($actions['delete']);
-        }
-        return $actions;
-    }
+	function remove_bulk_actions( $actions ) {
+		global $post_type;
 
-    /**
+		if ( $post_type === 'scene' || $post_type === 'modal' || $post_type === 'figure' || $post_type === 'instance' ) {
+			unset( $actions['bulk-edit'] );
+			unset( $actions['edit'] );
+			unset( $actions['trash'] );
+			unset( $actions['spam'] );
+			unset( $actions['unspam'] );
+			unset( $actions['delete'] );
+		}
+		return $actions;
+	}
+
+	/**
 	 * Remove Quick Edit links from Scene admin screen.
 	 *
-     * @param string[] $actions An array of row action links.
-     * @param int $post The database id of the post.
+	 * @param string[] $actions An array of row action links.
+	 * @param int      $post The database id of the post.
 	 * @since    1.0.0
 	 */
-    function scene_remove_quick_edit_link($actions, $post) {
-        global $current_screen;
-    
-        if ($current_screen->post_type === 'scene') {
-            unset($actions['inline hide-if-no-js']);
-        }
-        return $actions;
-    }
+	function scene_remove_quick_edit_link( $actions, $post ) {
+		global $current_screen;
 
-    /**
+		if ( $current_screen->post_type === 'scene' ) {
+			unset( $actions['inline hide-if-no-js'] );
+		}
+		return $actions;
+	}
+
+	/**
 	 * Create Scene custom content type.
 	 *
 	 * @since    1.0.0
 	 */
-    function custom_content_type_scene() {
-        $labels = array(
-            'name'                  => _x( 'Scenes', 'Post type general name', 'textdomain' ),
-            'singular_name'         => _x( 'Scene', 'Post type singular name', 'textdomain' ),
-            'menu_name'             => _x( 'Scenes', 'Admin Menu text', 'textdomain' ),
-            'name_admin_bar'        => _x( 'Scene', 'Add New on Toolbar', 'textdomain' ),
-            'add_new'               => __( 'Add New Scene', 'textdomain' ),
-            'add_new_item'          => __( 'Add New Scene', 'textdomain' ),
-            'new_item'              => __( 'New Scene', 'textdomain' ),
-            'edit_item'             => __( 'Edit Scene', 'textdomain' ),
-            'view_item'             => __( 'View Scene', 'textdomain' ),
-            'all_items'             => __( 'All Scenes', 'textdomain' ),
-            'search_items'          => __( 'Search Scenes', 'textdomain' ),
-            'parent_item_colon'     => __( 'Parent Scenes:', 'textdomain' ),
-            'not_found'             => __( 'No Scenes found.', 'textdomain' ),
-            'not_found_in_trash'    => __( 'No Scenes found in Trash.', 'textdomain' ),
-            'featured_image'        => _x( 'Scene Cover Image', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'textdomain' ),
-            'set_featured_image'    => _x( 'Set cover image', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-            'remove_featured_image' => _x( 'Remove cover image', 'Overrides the “Remove featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-            'use_featured_image'    => _x( 'Use as cover image', 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-            'archives'              => _x( 'Scene archives', 'The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4', 'textdomain' ),
-            'insert_into_item'      => _x( 'Insert into Scene', 'Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4', 'textdomain' ),
-            'uploaded_to_this_item' => _x( 'Uploaded to this Scene', 'Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used when viewing media attached to a post). Added in 4.4', 'textdomain' ),
-            'filter_items_list'     => _x( 'Filter Scenes list', 'Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4', 'textdomain' ),
-            'items_list_navigation' => _x( 'Scenes list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4', 'textdomain' ),
-            'items_list'            => _x( 'Scenes list', 'Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4', 'textdomain' ),
-        );
-    
-        $args = array(
-            'labels'             => $labels,
-            'public'             => true,
-            'publicly_queryable' => true,
-            'show_ui'            => true,
-            'show_in_menu'       => true,
-            'show_in_rest'       => true,
-            'query_var'          => true,
-            'rewrite'            => array( 'slug' => 'scenes' ),
-            'capability_type'    => 'post',
-            'menu_icon'          => 'dashicons-tag',
-            'has_archive'        => true,
-            'hierarchical'       => false,
-            'menu_position'      => null,
-            'supports'           => array( 'title'), //array( 'title', 'revisions' ),
-        );
-    
-        register_post_type( 'scene', $args );
-    }
+	function custom_content_type_scene() {
+		$labels = array(
+			'name'                  => _x( 'Scenes', 'Post type general name', 'textdomain' ),
+			'singular_name'         => _x( 'Scene', 'Post type singular name', 'textdomain' ),
+			'menu_name'             => _x( 'Scenes', 'Admin Menu text', 'textdomain' ),
+			'name_admin_bar'        => _x( 'Scene', 'Add New on Toolbar', 'textdomain' ),
+			'add_new'               => __( 'Add New Scene', 'textdomain' ),
+			'add_new_item'          => __( 'Add New Scene', 'textdomain' ),
+			'new_item'              => __( 'New Scene', 'textdomain' ),
+			'edit_item'             => __( 'Edit Scene', 'textdomain' ),
+			'view_item'             => __( 'View Scene', 'textdomain' ),
+			'all_items'             => __( 'All Scenes', 'textdomain' ),
+			'search_items'          => __( 'Search Scenes', 'textdomain' ),
+			'parent_item_colon'     => __( 'Parent Scenes:', 'textdomain' ),
+			'not_found'             => __( 'No Scenes found.', 'textdomain' ),
+			'not_found_in_trash'    => __( 'No Scenes found in Trash.', 'textdomain' ),
+			'featured_image'        => _x( 'Scene Cover Image', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'textdomain' ),
+			'set_featured_image'    => _x( 'Set cover image', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
+			'remove_featured_image' => _x( 'Remove cover image', 'Overrides the “Remove featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
+			'use_featured_image'    => _x( 'Use as cover image', 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
+			'archives'              => _x( 'Scene archives', 'The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4', 'textdomain' ),
+			'insert_into_item'      => _x( 'Insert into Scene', 'Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4', 'textdomain' ),
+			'uploaded_to_this_item' => _x( 'Uploaded to this Scene', 'Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used when viewing media attached to a post). Added in 4.4', 'textdomain' ),
+			'filter_items_list'     => _x( 'Filter Scenes list', 'Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4', 'textdomain' ),
+			'items_list_navigation' => _x( 'Scenes list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4', 'textdomain' ),
+			'items_list'            => _x( 'Scenes list', 'Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4', 'textdomain' ),
+		);
 
-    /**
+		$args = array(
+			'labels'             => $labels,
+			'public'             => true,
+			'publicly_queryable' => true,
+			'show_ui'            => true,
+			'show_in_menu'       => true,
+			'show_in_rest'       => true,
+			'query_var'          => true,
+			'rewrite'            => array( 'slug' => 'scenes' ),
+			'capability_type'    => 'post',
+			'menu_icon'          => 'dashicons-tag',
+			'has_archive'        => true,
+			'hierarchical'       => false,
+			'menu_position'      => null,
+			'supports'           => array( 'title' ), // array( 'title', 'revisions' ),
+		);
+
+		register_post_type( 'scene', $args );
+	}
+
+	/**
 	 * Create custom fields, using metaboxes, for Scene custom content type.
-     * 
-     * @param bool $return_fields_only If true, only return the custom fields array without registering the metabox (used as part of field validation).
+	 *
+	 * @param bool $return_fields_only If true, only return the custom fields array without registering the metabox (used as part of field validation).
 	 * @since    1.0.0
 	 */
     public function create_scene_fields($return_fields_only = false) {
@@ -973,110 +982,119 @@ class Scene {
 	 *
 	 * @since    1.0.0
 	 */
-    function register_scene_rest_fields() {
-        $scene_rest_fields = array('scene_location', 'scene_infographic', 'scene_tagline',
+	function register_scene_rest_fields() {
+		$scene_rest_fields = array(
+			'scene_location',
+			'scene_infographic',
+			'scene_tagline',
 
-            'scene_info_entries', 'scene_photo_entries', 'scene_section_number', 'scene_hover_color', 'scene_hover_text_color','scene_published', 'scene_toc_style');
+			'scene_info_entries',
+			'scene_photo_entries',
+			'scene_section_number',
+			'scene_hover_color',
+			'scene_hover_text_color',
+			'scene_published',
+			'scene_toc_style',
+		);
 
-        for ($i = 1; $i < 7; $i++){
-            array_push($scene_rest_fields,'scene_info' . $i, 'scene_photo' . $i, 'scene_photo_internal' . $i, 'scene_section' . $i);
-        }
-        $function_utilities = new Utility();
-        $function_utilities -> register_custom_rest_fields("scene", $scene_rest_fields);
-    }
+		for ( $i = 1; $i < 7; $i++ ) {
+			array_push( $scene_rest_fields, 'scene_info' . $i, 'scene_photo' . $i, 'scene_photo_internal' . $i, 'scene_section' . $i );
+		}
+		$function_utilities = new Graphic_Data_Utility();
+		$function_utilities->register_custom_rest_fields( 'scene', $scene_rest_fields );
+	}
 
-    /**
+	/**
 	 * Add a filter to support filtering by "scene_location" in REST API queries.
 	 *
 	 * @since    1.0.0
 	 */
-    function filter_scene_by_scene_location($args, $request) {
-        if (isset($request['scene_location'])) {
-            $args['meta_query'][] = array(
-                'key' => 'scene_location',
-                'value' => $request['scene_location'],
-                'compare' => 'LIKE', // Change comparison method as needed
-            );
-        }
-        return $args;
-    }
+	function filter_scene_by_scene_location( $args, $request ) {
+		if ( isset( $request['scene_location'] ) ) {
+			$args['meta_query'][] = array(
+				'key' => 'scene_location',
+				'value' => $request['scene_location'],
+				'compare' => 'LIKE', // Change comparison method as needed
+			);
+		}
+		return $args;
+	}
 
-    /**
+	/**
 	 * Add scene rewrite rules for permalinks (Skanda). THIS FUNCTION IS NOT IN USE AND REPLACED WITH OTHER REWRITE RULE FUNCTIONS. REMOVE?
 	 *
 	 * @since    1.0.0
 	 */
-    function add_scene_rewrite_rules($rules) {
-        $new_rules = array(
-            '([^/]+)/([^/]+)/?$' => 'index.php?post_type=scene&name=$matches[2]&instance_slug=$matches[1]' // Map URL structure to scene post type
-        );
-        return $new_rules + $rules;
-    }
+	function add_scene_rewrite_rules( $rules ) {
+		$new_rules = array(
+			'([^/]+)/([^/]+)/?$' => 'index.php?post_type=scene&name=$matches[2]&instance_slug=$matches[1]', // Map URL structure to scene post type
+		);
+		return $new_rules + $rules;
+	}
 
-    /**
+	/**
 	 * Add scene rewrite rules for permalinks.
 	 *
 	 * @since    1.0.0
 	 */
-    function remove_scene_slug($post_link, $post, $leavename) {
-        if ('scene' != $post->post_type || 'publish' != $post->post_status) {
-            return $post_link;
-        }
-    
-        $instance_id = get_post_meta($post->ID, 'scene_location', true);
-        $instance = get_post($instance_id);
-        $web_slug = get_post_meta($instance_id, 'instance_slug', true);
-    
-        if (!$instance || !$web_slug) {
-            return $post_link;
-        }
-    
-        return home_url('/' . $web_slug . '/' . $post->post_name . '/');
-    }
+	function remove_scene_slug( $post_link, $post, $leavename ) {
+		if ( 'scene' != $post->post_type || 'publish' != $post->post_status ) {
+			return $post_link;
+		}
 
-    function scene_preview() {
-      
-        header("Location: ".$_SERVER["HTTP_REFERER"]);
-      //  echo "hello";
-        wp_die();
-    }
+		$instance_id = get_post_meta( $post->ID, 'scene_location', true );
+		$instance = get_post( $instance_id );
+		$web_slug = get_post_meta( $instance_id, 'instance_slug', true );
 
-    /**
-     * Registers the "status" column as sortable in the Scene, Modal, and Figure custom post admin lists.
-     *
-     * @param array $sortable_columns An array of sortable columns.
-     * @return array Modified array with the "status" column set as sortable by "modified".
-     */
-    function register_status_as_sortable_column($sortable_columns) {
-        $sortable_columns['status'] = 'modified'; // Sorting by post_modified column
-        return $sortable_columns;
-    }
+		if ( ! $instance || ! $web_slug ) {
+			return $post_link;
+		}
 
-    /**
-     * Modifies the main WordPress query to enable sorting by the last modified date.
-     *
-     * This function ensures that when sorting is triggered by the "status" column,
-     * WordPress orders the Scene, Modal, or Figure posts based on the `post_modified` field in ascending
-     * or descending order, depending on user selection.
-     *
-     * @param WP_Query $query The current query instance.
-     * @return void
-     */
-    function orderby_status_column($query) {
-        // Ensure we are in the admin area and working with the main query
-        if (!is_admin() || !$query->is_main_query()) {
-            return;
-        }
+		return home_url( '/' . $web_slug . '/' . $post->post_name . '/' );
+	}
 
-        // Retrieve the sorting parameters
-        $orderby = $query->get('orderby');
-        $order = strtoupper($query->get('order')) === 'ASC' ? 'ASC' : 'DESC'; // Default to DESC if not set
+	function scene_preview() {
 
-        // Apply sorting if the "modified" column is selected
-        if ($orderby == 'modified') {
-            $query->set('orderby', 'modified');
-            $query->set('order', $order);
-        }
-    }
+		header( 'Location: ' . $_SERVER['HTTP_REFERER'] );
+		// echo "hello";
+		wp_die();
+	}
 
+	/**
+	 * Registers the "status" column as sortable in the Scene, Modal, and Figure custom post admin lists.
+	 *
+	 * @param array $sortable_columns An array of sortable columns.
+	 * @return array Modified array with the "status" column set as sortable by "modified".
+	 */
+	function register_status_as_sortable_column( $sortable_columns ) {
+		$sortable_columns['status'] = 'modified'; // Sorting by post_modified column
+		return $sortable_columns;
+	}
+
+	/**
+	 * Modifies the main WordPress query to enable sorting by the last modified date.
+	 *
+	 * This function ensures that when sorting is triggered by the "status" column,
+	 * WordPress orders the Scene, Modal, or Figure posts based on the `post_modified` field in ascending
+	 * or descending order, depending on user selection.
+	 *
+	 * @param WP_Query $query The current query instance.
+	 * @return void
+	 */
+	function orderby_status_column( $query ) {
+		// Ensure we are in the admin area and working with the main query
+		if ( ! is_admin() || ! $query->is_main_query() ) {
+			return;
+		}
+
+		// Retrieve the sorting parameters
+		$orderby = $query->get( 'orderby' );
+		$order = strtoupper( $query->get( 'order' ) ) === 'ASC' ? 'ASC' : 'DESC'; // Default to DESC if not set
+
+		// Apply sorting if the "modified" column is selected
+		if ( $orderby == 'modified' ) {
+			$query->set( 'orderby', 'modified' );
+			$query->set( 'order', $order );
+		}
+	}
 }
