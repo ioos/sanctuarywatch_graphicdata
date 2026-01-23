@@ -59,6 +59,11 @@ new Graphic_Data_GitHub_Updater(
 require plugin_dir_path( __FILE__ ) . 'includes/admin.php';
 
 /**
+ * The directory path of the plugin.
+ */
+define( 'GRAPHIC_DATA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+
+/**
  * The data directory inside of wp-content
  */
 define( 'GRAPHIC_DATA_DATA_DIR', WP_CONTENT_DIR . '/data' );

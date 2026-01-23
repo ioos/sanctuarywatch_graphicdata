@@ -145,20 +145,22 @@ class Graphic_Data_Tutorial_Content {
 	 */
 	public function delete_tutorial_images() {
 
-		// Get all attachments with the image_tutorial_id meta key
-		$attachments = get_posts( array(
-			'post_type'      => 'attachment',
-			'post_status'    => 'any',
-			'posts_per_page' => -1,
-			'meta_query'     => array(
-				array(
-					'key'     => 'image_tutorial_id',
-					'compare' => 'EXISTS',
+		// Get all attachments with the image_tutorial_id meta key.
+		$attachments = get_posts(
+			array(
+				'post_type'      => 'attachment',
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'meta_query'     => array(
+					array(
+						'key'     => 'image_tutorial_id',
+						'compare' => 'EXISTS',
+					),
 				),
-			),
-		) );
+			)
+		);
 
-		// Delete each attachment
+		// Delete each attachment.
 		foreach ( $attachments as $attachment ) {
 			wp_delete_attachment( $attachment->ID, true );
 		}
@@ -172,22 +174,24 @@ class Graphic_Data_Tutorial_Content {
 	 */
 	public function delete_tutorial_posts() {
 
-		// Get all attachments with the tutorial_id meta key
-		$attachments = get_posts( array(
-			'post_type'      => 'attachment',
-			'post_status'    => 'any',
-			'posts_per_page' => -1,
-			'meta_query'     => array(
-				array(
-					'key'     => 'tutorial_id',
-					'compare' => 'EXISTS',
+		// Get all posts with the tutorial_id meta key.
+		$posts_to_be_deleted = get_posts(
+			array(
+				'post_type'      => array( 'instance', 'scene', 'modal', 'figure' ),
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'meta_query'     => array(
+					array(
+						'key'     => 'tutorial_id',
+						'compare' => 'EXISTS',
+					),
 				),
-			),
-		) );
+			)
+		);
 
-		// Delete each attachment
-		foreach ( $attachments as $attachment ) {
-			wp_delete_attachment( $attachment->ID, true );
+		// Delete each post.
+		foreach ( $posts_to_be_deleted as $deleted_post ) {
+			wp_delete_post( $deleted_post->ID, true );
 		}
 	}
 
@@ -197,6 +201,7 @@ class Graphic_Data_Tutorial_Content {
 	 * @return void
 	 */
 	public function create_tutorial_instances() {
+		global $wpdb;
 		// get current user ID or default to first user if no user is logged in.
 		$current_user_id = get_current_user_id();
 		if ( 0 === $current_user_id ) {
@@ -238,7 +243,7 @@ class Graphic_Data_Tutorial_Content {
 			'instance_footer_column_content3' => 'Here is an example of the third column.',
 		);
 
-		// create the three tutorial instances
+		// create the three tutorial instances.
 		for ( $i = 0; $i < 3; $i++ ) {
 			$post_data = array(
 				'post_title'   => $post_title[ $i ],
@@ -251,9 +256,18 @@ class Graphic_Data_Tutorial_Content {
 			$post_id = wp_insert_post( $post_data );
 
 			// Check if post was created successfully.
-			if ( ! is_wp_error( $post_id ) ) {			
-				update_post_meta( $post_id, 'instance_short_title', $instance_short_title[ $i ]);
-				update_post_meta( $post_id, 'instance_type', $instance_type[ $i ]);
+			if ( ! is_wp_error( $post_id ) ) {
+				update_post_meta( $post_id, 'instance_short_title', $instance_short_title[ $i ] );
+				update_post_meta( $post_id, 'instance_slug', $instance_slug[ $i ] );
+
+				$tutorial_instance_type_id = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT term_id FROM {$wpdb->termmeta} WHERE meta_key = %s AND meta_value = %s",
+						'tutorial_instance_type_id',
+						$instance_type[ $i ],
+					)
+				);
+				update_post_meta( $post_id, 'instance_type', $tutorial_instance_type_id );
 				update_post_meta( $post_id, 'instance_status', 'Published' );
 
 				$instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ] );
@@ -290,37 +304,37 @@ class Graphic_Data_Tutorial_Content {
 	 *                      the upload process encounters an error.
 	 */
 	public function copy_image_to_media_library( $plugin_relative_path, $tutorial_id ) {
-		$plugin_image_path = plugin_dir_path( __FILE__ ) . $plugin_relative_path;
-		
+		$plugin_image_path = GRAPHIC_DATA_PLUGIN_DIR . $plugin_relative_path;
+
 		if ( ! file_exists( $plugin_image_path ) ) {
 			return false;
 		}
-		
-		require_once( ABSPATH . 'wp-admin/includes/file.php' );
-		require_once( ABSPATH . 'wp-admin/includes/media.php' );
-		require_once( ABSPATH . 'wp-admin/includes/image.php' );
-		
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
 		$filename = basename( $plugin_image_path );
 		$upload_file = wp_upload_bits( $filename, null, file_get_contents( $plugin_image_path ) );
-		
+
 		if ( $upload_file['error'] ) {
 			return false;
 		}
-		
+
 		$attachment_data = array(
 			'post_mime_type' => $upload_file['type'],
 			'post_title'     => sanitize_file_name( pathinfo( $filename, PATHINFO_FILENAME ) ),
 			'post_content'   => '',
-			'post_status'    => 'inherit'
+			'post_status'    => 'inherit',
 		);
-		
+
 		$attachment_id = wp_insert_attachment( $attachment_data, $upload_file['file'] );
 		$attachment_metadata = wp_generate_attachment_metadata( $attachment_id, $upload_file['file'] );
 		wp_update_attachment_metadata( $attachment_id, $attachment_metadata );
-		
+
 		// Add a flag to the post meta table so that we can find this media library item if we need to delete it later.
 		update_post_meta( $attachment_id, 'image_tutorial_id', $tutorial_id );
-		
+
 		// Return the URL associated with the media library item.
 		return wp_get_attachment_url( $attachment_id );
 	}

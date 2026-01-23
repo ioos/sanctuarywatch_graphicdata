@@ -112,7 +112,6 @@ body{
 @media (max-width: 992.98px) {
   .footer-column {
       justify-content: flex-start; /* Left-justify the .footer-content-wrapper */
-      padding-bottom: 60%;
   }
 
 }
