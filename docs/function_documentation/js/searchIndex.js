@@ -1846,6 +1846,11 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION"
         },                {
+            "fqsen": "\\GRAPHIC_DATA_PLUGIN_DIR",
+            "name": "GRAPHIC_DATA_PLUGIN_DIR",
+            "summary": "The\u0020directory\u0020path\u0020of\u0020the\u0020plugin.",
+            "url": "namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_DIR"
+        },                {
             "fqsen": "\\GRAPHIC_DATA_DATA_DIR",
             "name": "GRAPHIC_DATA_DATA_DIR",
             "summary": "The\u0020data\u0020directory\u0020inside\u0020of\u0020wp\u002Dcontent",
