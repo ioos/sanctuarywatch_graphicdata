@@ -1,8 +1,0 @@
-{
-    "workbench.colorTheme": "Visual Studio Light",
-
-    // Settings for obliviousharmony.vscode-php-codesniffer extension
-    "phpCodeSniffer.standard": "Custom",
-    "phpCodeSniffer.standardCustom": "/Users/jai/Local Sites/aug12/app/public/wp-content/phpcs.xml.dist",
-    "phpCodeSniffer.exec.osx": "/Users/jai/phpcs"
-}

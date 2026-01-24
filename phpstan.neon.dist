@@ -19,15 +19,17 @@ parameters:
         # Common WordPress exclusions
         - '*/tests/*'
         - '*/Test/*'
-    
+
+    fileExtensions:
+        - php
+
     # Scan files to load class definitions
     scanDirectories:
         - plugins/graphic_data_plugin/admin/exopite-simple-options/
     
     # Bootstrap file if your plugin/theme has one that defines constants
-    # Uncomment and adjust the path if needed:
-    # bootstrapFiles:
-    #     - plugins/graphic_data_plugin/graphic_data_plugin.php
+    bootstrapFiles:
+        - plugins/graphic_data_plugin/graphic_data_plugin.php
     
     # Treat PHP more strictly in some cases
     treatPhpDocTypesAsCertain: false
