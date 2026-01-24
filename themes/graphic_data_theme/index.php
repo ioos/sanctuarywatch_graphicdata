@@ -102,7 +102,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 	<?php
 
 
-		$front_page_intro = 'None';
+		$front_page_intro = '';
 		$graphic_data_settings = get_option( 'graphic_data_settings' );
 	if ( $graphic_data_settings && isset( $graphic_data_settings['intro_text'] ) && ! empty( $graphic_data_settings['intro_text'] ) ) {
 		$front_page_intro = $graphic_data_settings['intro_text'];

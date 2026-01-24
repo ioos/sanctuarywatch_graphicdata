@@ -84,6 +84,26 @@ function graphic_data_single_instance_front_page_redirect() {
 add_action( 'template_redirect', 'graphic_data_single_instance_front_page_redirect' );
 
 /**
+ * Enqueues Google Fonts for the theme.
+ *
+ * Loads the Roboto and Open Sans font families from Google Fonts
+ * with specified font weights for use throughout the theme.
+ *
+ * @since 1.0.0
+ *
+ * @return void
+ */
+function graphic_data_enqueue_fonts() {
+	wp_enqueue_style(
+		'google-fonts',
+		'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;700&display=swap',
+		array(),
+		null
+	);
+}
+add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_fonts' );
+
+/**
  * Determines whether Single Instance settings should be applied to the theme and returns the target post ID.
  *
  * This function checks if the single instance mode is enabled in the customizer, verifies that exactly
@@ -208,24 +228,79 @@ function graphic_data_enqueue_main_css() {
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_main_css' );
 
 /**
- * Enqueues Bootstrap's JavaScript library with dependency management.
+ * Enqueues Bootstrap CSS and JavaScript from CDN.
  *
- * This function registers and enqueues the Bootstrap JavaScript library from a CDN. It specifies jQuery as a dependency,
- * meaning jQuery will be loaded before the Bootstrap JavaScript. The script is added to the footer of the HTML document
- * and is set to defer loading until after the HTML parsing has completed.
+ * Registers and enqueues Bootstrap 5.0.2 CSS and the JavaScript bundle from jsDelivr CDN.
+ * The JS bundle is loaded in the footer. Adds filters to include integrity and crossorigin
+ * attributes for enhanced security.
  *
  * @return void
  */
-function graphic_data_enqueue_bootstrap_scripts() {
-	wp_enqueue_script(
-		'bootstrap-js',
-		'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js',
-		array( 'jquery' ),
-		null,
-		array( 'strategy' => 'defer' ) // Corrected the 'strategy' syntax.
+function graphic_data_enqueue_bootstrap() {
+	// Enqueue Bootstrap CSS.
+	wp_enqueue_style(
+		'bootstrap',
+		'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css',
+		array(),
+		'5.0.2'
 	);
+
+	// Enqueue Bootstrap JS Bundle.
+	wp_enqueue_script(
+		'bootstrap-bundle',
+		'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js',
+		array(),
+		'5.0.2',
+		true
+	);
+
+	// Add integrity attributes.
+	add_filter( 'style_loader_tag', 'graphic_data_add_bootstrap_integrity', 10, 2 );
+	add_filter( 'script_loader_tag', 'graphic_data_add_bootstrap_integrity_js', 10, 2 );
 }
-add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_bootstrap_scripts' );
+add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_bootstrap' );
+
+/**
+ * Adds integrity and crossorigin attributes to the Bootstrap CSS link tag.
+ *
+ * Filters the Bootstrap stylesheet tag to include subresource integrity (SRI)
+ * hash for security verification.
+ *
+ * @param string $html   The link tag HTML.
+ * @param string $handle The stylesheet handle.
+ * @return string Modified HTML with integrity attribute, or original HTML for other handles.
+ */
+function graphic_data_add_bootstrap_integrity( $html, $handle ) {
+	if ( 'bootstrap' === $handle ) {
+		$html = str_replace(
+			"media='all' />",
+			"integrity='sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC' crossorigin='anonymous' media='all' />",
+			$html
+		);
+	}
+	return $html;
+}
+
+/**
+ * Adds integrity and crossorigin attributes to the Bootstrap JS script tag.
+ *
+ * Filters the Bootstrap bundle script tag to include subresource integrity (SRI)
+ * hash for security verification.
+ *
+ * @param string $tag    The script tag HTML.
+ * @param string $handle The script handle.
+ * @return string Modified HTML with integrity attribute, or original HTML for other handles.
+ */
+function graphic_data_add_bootstrap_integrity_js( $tag, $handle ) {
+	if ( 'bootstrap-bundle' === $handle ) {
+		$tag = str_replace(
+			'></script>',
+			" integrity='sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM' crossorigin='anonymous'></script>",
+			$tag
+		);
+	}
+	return $tag;
+}
 
 /**
  * Enqueues the WordPress REST API JavaScript client.
