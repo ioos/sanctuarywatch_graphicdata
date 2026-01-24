@@ -27,6 +27,7 @@ debug.log
 /plugins/graphic_data_plugin/admin/.DS_Store
 /plugins/debug-bar-actions-and-filters-addon
 data/
+/docs/function_documentation/
 
 # Composer
 vendor/
