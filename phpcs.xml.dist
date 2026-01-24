@@ -12,6 +12,7 @@
     <exclude-pattern>*/tests/*</exclude-pattern>
     <exclude-pattern>*/Test/*</exclude-pattern>
     <exclude-pattern>plugins/graphic_data_plugin/admin/exopite-simple-options/</exclude-pattern>
+    <exclude-pattern>*/stubs/*</exclude-pattern>
 
     <!-- Show progress and use colors -->
     <arg value="ps"/>
