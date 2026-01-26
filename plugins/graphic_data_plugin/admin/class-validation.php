@@ -1,30 +1,35 @@
 <?php
 
-/**
- * The class that defines the validation methods for the fields of the custom content types
- */
-
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-graphic-data-SVGValidator.php';
 
-class Validation {
+/**
+ * Handles validation of custom post type fields before saving.
+ *
+ * This class provides comprehensive validation for all custom content types in the
+ * Graphic Data plugin, including About, Scene, Modal, Figure, and Instance posts.
+ * Each validation method checks required fields, validates URLs for syntax and
+ * accessibility, and stores errors/warnings in transients for display after page reload.
+ *
+ * @since      1.0.0
+ * @package    Graphic_Data_Plugin
+ * @subpackage Graphic_Data_Plugin/admin
+ */
+class Graphic_Data_Validation {
 
 	/**
-	 * The unique identifier of this plugin.
+	 * Routes validation to the appropriate content type validator.
 	 *
-	 * @since    1.0.0
-	 * @access   public
-	 */
-
-	/**
-	 * The current version of the plugin.
+	 * Acts as a dispatcher that calls the specific validation method based on
+	 * the content type being saved. Each content type has its own validation
+	 * logic with specific field requirements and rules.
 	 *
-	 * @since    1.0.0
-	 * @access   public
-	 * @var      string    $version    The current version of the plugin.
+	 * @since 1.0.0
+	 *
+	 * @param string $validate_content_type The content type to validate.
+	 *                                      Accepts 'about', 'scene', 'modal', 'figure', or 'instance'.
+	 * @return bool True if validation passes, false if validation fails or content type is invalid.
 	 */
-	public $version = '1.0.0';
-
 	public function master_validate( $validate_content_type ) {
 
 		switch ( $validate_content_type ) {
@@ -48,7 +53,27 @@ class Validation {
 		}
 	}
 
-	// The purpose of this function is to validate the fields of the About custom content type.
+	/**
+	 * Validates a post of About custom post type before saving.
+	 *
+	 * Performs validation on a given About post, checking that required fields
+	 * such as the central content main field and about box titles/content are filled.
+	 * If validation fails, stores error messages and field values in transients
+	 * for display after page reload.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @global array $_POST Contains the submitted About post type field values.
+	 * @return bool True if all validation passes and post can be saved, false otherwise.
+	 *
+	 * Transients set on validation failure:
+	 * - 'about_errors': Array of error messages (30 second expiration)
+	 * - 'about_post_status': Set to "post_error" (30 second expiration)
+	 * - 'about_error_all_fields': Field configuration and submitted values (30 second expiration)
+	 *
+	 * Transient set on validation success:
+	 * - 'about_post_status': Set to "post_good" (30 second expiration)
+	 */
 	public function validate_about() {
 		$function_utilities = new Graphic_Data_Utility();
 
@@ -56,32 +81,39 @@ class Validation {
 		$about_errors = [];
 		$about_warnings = [];
 
-		if ( $_POST['centralAbout']['aboutMain'] == '' ) {
+		// Verify nonce first.
+		if ( ! isset( $_POST['about_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['about_nonce'] ) ), 'save_about_fields' ) ) {
+			wp_die( 'Security check failed for post of About custom post type.' );
+		}
+
+		if ( isset( $_POST['centralAbout']['aboutMain'] ) && '' === $_POST['centralAbout']['aboutMain'] ) {
 			array_push( $about_errors, 'The "Central content: main" field cannot be left blank.' );
 			$save_about_fields = false;
 		}
 
-		$numberAboutBoxes = $_POST['numberAboutBoxes'];
-		if ( $numberAboutBoxes > 0 ) {
-			for ( $i = 1; $i <= $numberAboutBoxes; $i++ ) {
-				if ( $_POST[ 'aboutBox' . $i ][ 'aboutBoxTitle' . $i ] == '' || $_POST[ 'aboutBox' . $i ][ 'aboutBoxMain' . $i ] == '' ) {
+		$number_about_boxes = isset( $_POST['numberAboutBoxes'] ) ? absint( wp_unslash( $_POST['numberAboutBoxes'] ) ) : 0;
+		if ( $number_about_boxes > 0 ) {
+			for ( $i = 1; $i <= $number_about_boxes; $i++ ) {
+
+				if ( ( isset( $_POST[ 'aboutBox' . $i ], $_POST[ 'aboutBox' . $i ][ 'aboutBoxTitle' . $i ] ) && '' === sanitize_text_field( wp_unslash( $_POST[ 'aboutBox' . $i ][ 'aboutBoxTitle' . $i ] ) ) ) ||
+					( isset( $_POST[ 'aboutBox' . $i ], $_POST[ 'aboutBox' . $i ][ 'aboutBoxMain' . $i ] ) && '' === sanitize_textarea_field( wp_unslash( $_POST[ 'aboutBox' . $i ][ 'aboutBoxMain' . $i ] ) ) ) ) {
 					array_push( $about_errors, 'In About Box ' . $i . ' , the title and  "content: main" fields cannot be left blank.' );
 					$save_about_fields = false;
 				}
 			}
 		}
 
-		if ( $save_about_fields == false ) {
+		if ( false == $save_about_fields ) {
 			$function_utilities->fields_to_transient( 'about_errors', $about_errors, 30 );
 			$function_utilities->fields_to_transient( 'about_post_status', 'post_error', 30 );
 
-			// Instantiate the about class - we need this to get the current custom fields list for the content type
+			// Instantiate the about class - we need this to get the current custom fields list for the content type.
 			$about_class = new About();
 
-			// Get the list of custom fields for the content type
+			// Get the list of custom fields for the content type.
 			$fields_config = $this->get_fields_config( 'about', $about_class );
 
-			// save the fields to the transient
+			// save the fields to the transient.
 
 			$function_utilities->fields_to_transient( 'about_error_all_fields', $fields_config, 30 );
 		} else {
@@ -90,7 +122,6 @@ class Validation {
 
 		return $save_about_fields;
 	}
-
 
 	/**
 	 * Validates a post of Instance custom post type before saving.
@@ -123,12 +154,18 @@ class Validation {
 		$instance_errors = [];
 		$instance_warnings = [];
 
-		if ( $_POST['instance_short_title'] == '' ) {
-			array_push( $instance_errors, 'The Short title field cannot be left blank.' );
+		// First, verify nonce.
+		if ( ! isset( $_POST['instance_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['instance_nonce'] ) ), 'save_instance_fields' ) ) {
+			wp_die( 'Security check failed for post of Instance custom post type.' );
+		}
+
+		$instance_short_title = isset( $_POST['instance_short_title'] ) ? sanitize_text_field( wp_unslash( $_POST['instance_short_title'] ) ) : '';
+		if ( '' === $instance_short_title ) {
+			array_push( $instance_errors, 'The short title field cannot be left blank.' );
 			$save_instance_fields = false;
 		}
 
-		if ( $_POST['instance_slug'] == '' ) {
+		if ( '' == $_POST['instance_slug'] ) {
 			array_push( $instance_errors, 'The URL component field cannot be left blank.' );
 			$save_instance_fields = false;
 		}
@@ -145,7 +182,7 @@ class Validation {
 				array_push( $instance_errors, "The image specified by the 'Tile image' field does not exist." );
 				$save_instance_fields = false;
 			} else {
-				// Check file type based on content
+				// Check file type based on content.
 				$file_info = finfo_open( FILEINFO_MIME_TYPE );
 				$mime_type = finfo_file( $file_info, $image_path );
 				finfo_close( $file_info );
@@ -188,7 +225,7 @@ class Validation {
 					array_push( $instance_errors, 'The Legacy content URL is not valid' );
 			} else {
 				$url_http_code = $this->check_url_is_accessible( $instance_legacy_content_url );
-				if ( $url_http_code != 200 ) {
+				if ( 200 != $url_http_code ) {
 					array_push( $instance_warnings, "The 'Legacy content URL' field cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case." );
 				}
 			}
@@ -207,17 +244,17 @@ class Validation {
 		if ( ! empty( $instance_warnings ) ) {
 			$function_utilities->fields_to_transient( 'instance_warnings', $instance_warnings, 30 );
 		}
-		if ( $save_instance_fields == false ) {
+		if ( false == $save_instance_fields ) {
 			$function_utilities->fields_to_transient( 'instance_errors', $instance_errors, 30 );
 			$function_utilities->fields_to_transient( 'instance_post_status', 'post_error', 30 );
 
-			// Instantiate the modal class - we need this to get the current custom fields list for the content type
+			// Instantiate the modal class - we need this to get the current custom fields list for the content type.
 			$instance_class = new Instance();
 
-			// Get the list of custom fields for the content type
+			// Get the list of custom fields for the content type.
 			$fields_config = $this->get_fields_config( 'instance', $instance_class );
 
-			// save the fields to the transient
+			// save the fields to the transient.
 			$function_utilities->fields_to_transient( 'instance_error_all_fields', $fields_config, 30 );
 		} else {
 			$function_utilities->fields_to_transient( 'instance_post_status', 'post_good', 30 );
@@ -278,14 +315,14 @@ class Validation {
 			$save_figure_fields = false;
 		}
 
-		if ( $_POST['figure_path'] == 'Internal' && $_POST['figure_image'] == '' ) {
+		if ( 'Internal' == $_POST['figure_path'] && '' == $_POST['figure_image'] ) {
 			array_push( $figure_errors, "If the Figure Type is set to 'Internal image', then the 'Figure image' field cannot be left blank." );
 			$save_figure_fields = false;
 		}
 
-		if ( $_POST['figure_path'] == 'External' ) {
+		if ( 'External' == $_POST['figure_path'] ) {
 			$figure_external_url = $_POST['figure_external_url'];
-			if ( $figure_external_url == '' ) {
+			if ( '' == $figure_external_url ) {
 				$save_figure_fields = false;
 				array_push( $figure_errors, "If the Figure Type is set to 'External image', then the External URL field cannot be left blank." );
 			} elseif ( $this->url_check( $figure_external_url ) == false ) {
@@ -293,13 +330,13 @@ class Validation {
 					array_push( $figure_errors, 'The External URL is not a valid URL.' );
 			} else {
 				$url_http_code = $this->check_url_is_accessible( $figure_external_url );
-				if ( $url_http_code != 200 ) {
+				if ( 200 != $url_http_code ) {
 					array_push( $figure_warnings, "The 'External URL' field cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case." );
 				}
 			}
 		}
 
-		if ( $_POST['figure_path'] == 'External' && $_POST['figure_external_alt'] == '' ) {
+		if (  'External' == $_POST['figure_path'] && '' == $_POST['figure_external_alt'] ) {
 			array_push( $figure_errors, "If the Figure Type is set to 'External image', then the 'Alt text for external image' field cannot be left blank." );
 			$save_figure_fields = false;
 		}
@@ -326,7 +363,7 @@ class Validation {
 						array_push( $figure_errors, 'The URL for the ' . $error_notice_name[ $field_type ] . ' link is not valid' );
 					} else {
 						$url_http_code = $this->check_url_is_accessible( $field_couplet[ $field_url ] );
-						if ( $url_http_code != 200 ) {
+						if ( 200 != $url_http_code ) {
 							array_push( $figure_warnings, 'The URL for the ' . $error_notice_name[ $field_type ] . " link cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case." );
 						}
 					}
@@ -337,18 +374,17 @@ class Validation {
 		if ( ! empty( $figure_warnings ) ) {
 			$function_utilities->fields_to_transient( 'figure_warnings', $figure_warnings, 30 );
 		}
-		if ( $save_figure_fields == false ) {
+		if ( false == $save_figure_fields ) {
 			$function_utilities->fields_to_transient( 'figure_errors', $figure_errors, 30 );
 			$function_utilities->fields_to_transient( 'figure_post_status', 'post_error', 30 );
 
-			// Instantiate the figure class - we need this to get the current custom fields list for the content type
+			// Instantiate the figure class - we need this to get the current custom fields list for the content type.
 			$figure_class = new Figure();
 
-			// Get the list of custom fields for the content type
+			// Get the list of custom fields for the content type.
 			$fields_config = $this->get_fields_config( 'figure', $figure_class );
 
-			// save the fields to the transient
-
+			// save the fields to the transient.
 			$function_utilities->fields_to_transient( 'figure_error_all_fields', $fields_config, 30 );
 		} else {
 			$function_utilities->fields_to_transient( 'figure_post_status', 'post_good', 30 );
@@ -390,19 +426,19 @@ class Validation {
 		$modal_errors = [];
 		$modal_warnings = [];
 
-		// Check modal title for potential errors
+		// Check modal title for potential errors.
 		$modal_title = $_POST['post_title'];
 		$words = explode( ' ', $modal_title );
 
 		foreach ( $words as $word ) {
-			// Remove any punctuation for accurate word length
+			// Remove any punctuation for accurate word length.
 			$clean_word = preg_replace( '/[^\p{L}\p{N}]/u', '', $word );
 			if ( strlen( $clean_word ) > 14 ) {
 				array_push( $modal_warnings, "The word '" . $clean_word . "' in the modal title is longer than 14 characters, which may cause issues in mobile view." );
 			}
 		}
 
-		// Report warning if total title length exceeds 70 characters
+		// Report warning if total title length exceeds 70 characters.
 		$string_length = strlen( $modal_title );
 		if ( $string_length > 70 ) {
 			array_push( $modal_warnings, "The title length is {$string_length} characters long, which exceeds the 70 character limit recommendation for proper layout." );
@@ -429,64 +465,63 @@ class Validation {
 			$scene_id = $_POST['modal_scene'];
 
 			$args = array(
-				'post_type'      => 'modal',       // Specify the custom post type
-				'posts_per_page' => -1,          // Ensure we count all matching posts, not just the first page
-				'fields'         => 'ids',         // More efficient: Only retrieve post IDs, not full post objects
+				'post_type'      => 'modal',       // Specify the custom post type.
+				'posts_per_page' => -1,          // Ensure we count all matching posts, not just the first page.
+				'fields'         => 'ids',         // More efficient: Only retrieve post IDs, not full post objects.
 				'meta_query'     => array(
-					'relation' => 'AND', // Both conditions must be true
+					'relation' => 'AND', // Both conditions must be true.
 					array(
-						'key'     => 'modal_icons', // First custom field key
-						'value'   => $icon_id,      // Value to match for modal_icons
-						'compare' => '=',           // Exact match comparison
-				   // 'type'    => 'NUMERIC',     // Treat the value as a number
+						'key'     => 'modal_icons', // First custom field key.
+						'value'   => $icon_id,      // Value to match for modal_icons.
+						'compare' => '=',           // Exact match comparison.
 					),
 					array(
-						'key'     => 'modal_scene', // Second custom field key
-						'value'   => $scene_id,     // Value to match for modal_scene
-						'compare' => '=',           // Exact match comparison
-						'type'    => 'NUMERIC',     // Treat the value as a number
+						'key'     => 'modal_scene', // Second custom field key.
+						'value'   => $scene_id,     // Value to match for modal_scene.
+						'compare' => '=',           // Exact match comparison.
+						'type'    => 'NUMERIC',     // Treat the value as a number.
 					),
 				),
-				// Performance optimizations for counting:
-				'no_found_rows'          => false, // We *need* found_rows to get the count
-				'cache_results'          => false, // Disable caching if you need the absolute latest count
-				'update_post_meta_cache' => false, // Don't need post meta cache for counting IDs
-				'update_post_term_cache' => false, // Don't need term cache for counting IDs
+				// Performance optimizations for counting.
+				'no_found_rows'          => false, // We *need* found_rows to get the count.
+				'cache_results'          => false, // Disable caching.
+				'update_post_meta_cache' => false, // Don't need post meta cache for counting IDs.
+				'update_post_term_cache' => false, // Don't need term cache for counting IDs.
 			);
 
-			// Create a new WP_Query instance
+			// Create a new WP_Query instance.
 			$query = new WP_Query( $args );
 
-			// Get the total number of posts found by the query
+			// Get the total number of posts found by the query.
 			$record_count = $query->found_posts;
 			if ( $record_count > 1 ) {
 				array_push( $modal_warnings, 'This icon has already been claimed by one or more other modals.' );
-			} else if ( $record_count == 1 ) {
-				$saved_ID = $query->posts[0];
-				if ( $saved_ID != $_POST['post_ID'] ) {
+			} else if ( 1 == $record_count ) {
+				$saved_id = $query->posts[0];
+				if ( $saved_id != $_POST['post_ID'] ) {
 					array_push( $modal_warnings, 'This icon has already been claimed by one or more other modals.' );
 				}
 			}
 		}
-		// If the associated scene contains sections, force the use of sections with this modal
+		// If the associated scene contains sections, force the use of sections with this modal.
 		if ( $_POST['modal_scene'] != '' ) {
 			$scene_ID = intval( $_POST['modal_scene'] );
 			$scene_toc_style = get_post_meta( $scene_ID, 'scene_toc_style', true );
 			$scene_section_number = get_post_meta( $scene_ID, 'scene_section_number', true );
-			if ( $scene_toc_style != 'list' && $scene_section_number != 0 ) {
-				if ( $_POST['icon_toc_section'] == '' ) {
+			if ( 'list' != $scene_toc_style && 0 != $scene_section_number ) {
+				if ( '' == $_POST['icon_toc_section'] ) {
 					array_push( $modal_errors, 'The Icon Section field cannot be left blank.' );
 					$save_modal_fields = false;
 				}
 			}
 		}
 
-		// Based upon the value of the icon action field (that's the title, but the actual name is icon function), do some error checking
+		// Based upon the value of the icon action field (that's the title, but the actual name is icon function), do some error checking.
 		switch ( $_POST['icon_function'] ) {
 			case 'External URL':
 				$icon_external_url = $_POST['icon_external_url'];
 
-				if ( $icon_external_url == '' ) {
+				if ( '' == $icon_external_url ) {
 					$save_modal_fields = false;
 					array_push( $modal_errors, 'The Icon External URL field is blank.' );
 				} elseif ( $this->url_check( $icon_external_url ) == false ) {
@@ -494,14 +529,14 @@ class Validation {
 						array_push( $modal_errors, 'The Icon External URL is not valid' );
 				} else {
 					$url_http_code = $this->check_url_is_accessible( $icon_external_url );
-					if ( $url_http_code != 200 ) {
+					if ( 200 != $url_http_code ) {
 						array_push( $modal_warnings, "The 'Icon External URL' field cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case." );
 					}
 				}
 				break;
 			case 'Modal':
 				$modal_tab_number = $_POST['modal_tab_number'];
-				if ( $modal_tab_number == 0 ) {
+				if ( 0 == $modal_tab_number ) {
 					$save_modal_fields = false;
 					array_push( $modal_errors, 'There must be at least one modal tab if the Icon Action is set to Modal' );
 				} else {
@@ -517,7 +552,7 @@ class Validation {
 			case 'Scene':
 				$icon_scene_out = $_POST['icon_scene_out'];
 
-				if ( $icon_scene_out == '' ) {
+				if ( '' == $icon_scene_out ) {
 					$save_modal_fields = false;
 					array_push( $modal_errors, 'The Icon Scene Out field is blank.' );
 				}
@@ -528,7 +563,7 @@ class Validation {
 
 		foreach ( $field_types as $field_type ) {
 
-			if ( $field_type == 'info' ) {
+			if ( 'info' == $field_type ) {
 				$field_max = intval( $_POST['modal_info_entries'] ) + 1;
 			} else {
 				$field_max = intval( $_POST['modal_photo_entries'] ) + 1;
@@ -542,11 +577,11 @@ class Validation {
 				$field_url = 'modal_' . $field_type . '_url' . $i;
 				$field_photo_internal = 'modal_photo_internal' . $i;
 
-				if ( $field_couplet[ $field_url ] == '' && $field_couplet[ $field_text ] == '' ) {
+				if ( '' == $field_couplet[ $field_url ] && '' == $field_couplet[ $field_text ] ) {
 					$save_modal_fields = false;
 					array_push( $modal_errors, 'The Modal ' . ucfirst( $field_type ) . ' Link ' . $i . ' is blank.' );
 				} elseif ( ! $field_couplet[ $field_url ] == '' || ! $field_couplet[ $field_text ] == '' ) {
-					if ( ( $field_type == 'info' && ( $field_couplet[ $field_url ] == '' || $field_couplet[ $field_text ] == '' ) ) || ( $field_type == 'photo' && ( ( $field_couplet[ $field_url ] == '' && $field_couplet[ $field_photo_internal ] == '' ) || $field_couplet[ $field_text ] == '' ) ) ) {
+					if ( ( 'info' == $field_type && ( $field_couplet[ $field_url ] == '' || $field_couplet[ $field_text ] == '' ) ) || ( $field_type == 'photo' && ( ( $field_couplet[ $field_url ] == '' && $field_couplet[ $field_photo_internal ] == '' ) || $field_couplet[ $field_text ] == '' ) ) ) {
 						$save_modal_fields = false;
 						array_push( $modal_errors, 'Error in Modal ' . ucfirst( $field_type ) . ' Link ' . $i );
 					}
@@ -556,7 +591,7 @@ class Validation {
 							array_push( $modal_errors, 'The URL for Modal ' . ucfirst( $field_type ) . ' Link ' . $i . ' is not valid' );
 						} else {
 							$url_http_code = $this->check_url_is_accessible( $field_couplet[ $field_url ] );
-							if ( $url_http_code != 200 ) {
+							if ( 200 != $url_http_code ) {
 								array_push( $modal_warnings, 'The URL for Modal ' . ucfirst( $field_type ) . ' Link ' . $i . " cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case." );
 							}
 						}
@@ -568,18 +603,17 @@ class Validation {
 		if ( ! empty( $modal_warnings ) ) {
 			$function_utilities->fields_to_transient( 'modal_warnings', $modal_warnings, 30 );
 		}
-		if ( $save_modal_fields == false ) {
-
+		if ( false == $save_modal_fields ) {
 			$function_utilities->fields_to_transient( 'modal_errors', $modal_errors, 30 );
 			$function_utilities->fields_to_transient( 'modal_post_status', 'post_error', 30 );
 
-			// Instantiate the modal class - we need this to get the current custom fields list for the content type
+			// Instantiate the modal class - we need this to get the current custom fields list for the content type.
 			$modal_class = new Modal();
 
-			// Get the custom fields list for the content type
+			// Get the custom fields list for the content type.
 			$fields_config = $this->get_fields_config( 'modal', $modal_class );
 
-			// save the fields to the transient
+			// save the fields to the transient.
 			$function_utilities->fields_to_transient( 'modal_error_all_fields', $fields_config, 30 );
 
 		} else {
@@ -627,21 +661,21 @@ class Validation {
 		$scene_errors = [];
 		$scene_warnings = [];
 
-		if ( $_POST['scene_location'] == ' ' ) {
+		if ( ' ' == $_POST['scene_location'] ) {
 			array_push( $scene_errors, 'The Instance field cannot be left blank.' );
 			$save_scene_fields = false;
 		}
 
 		$scene_infographic = $_POST['scene_infographic'];
 
-		if ( is_null( $scene_infographic ) || $scene_infographic == '' ) {
+		if ( is_null( $scene_infographic ) || '' == $scene_infographic ) {
 			array_push( $scene_errors, 'The Infographic field cannot be left blank.' );
 			$save_scene_fields = false;
 		} else {
-			// Parse the URL to extract the path
+			// Parse the URL to extract the path.
 			$parsed_url = parse_url( $scene_infographic );
 
-			// Get the path from the parsed URL
+			// Get the path from the parsed URL.
 			$path_url = $parsed_url['path'];
 			$content_path = rtrim( get_home_path(), '/' ) . $path_url;
 
@@ -697,7 +731,7 @@ class Validation {
 							array_push( $scene_errors, 'The URL for Scene ' . ucfirst( $field_type ) . ' Link ' . $i . ' is not valid' );
 						} else {
 							$url_http_code = $this->check_url_is_accessible( $field_couplet[ $field_url ] );
-							if ( $url_http_code != 200 ) {
+							if ( 200 != $url_http_code ) {
 								array_push( $scene_warnings, 'The URL for Scene ' . ucfirst( $field_type ) . ' Link ' . $i . ' cannot be accessed' );
 							}
 						}
@@ -708,17 +742,17 @@ class Validation {
 		if ( ! empty( $scene_warnings ) ) {
 			$function_utilities->fields_to_transient( 'scene_warnings', $scene_warnings, 30 );
 		}
-		if ( $save_scene_fields == false ) {
+		if ( false == $save_scene_fields ) {
 			$function_utilities->fields_to_transient( 'scene_errors', $scene_errors, 30 );
 			$function_utilities->fields_to_transient( 'scene_post_status', 'post_error', 30 );
 
-			// Instantiate the scene class - we need this to get the current custom fields list for the content type
+			// Instantiate the scene class - we need this to get the current custom fields list for the content type.
 			$scene_class = new Scene();
 
-			// Get the custom fields list for the content type
+			// Get the custom fields list for the content type.
 			$fields_config = $this->get_fields_config( 'scene', $scene_class );
 
-			// save the fields to the transient
+			// save the fields to the transient.
 			$function_utilities->fields_to_transient( 'scene_error_all_fields', $fields_config, 30 );
 		} else {
 			$function_utilities->fields_to_transient( 'scene_post_status', 'post_good', 30 );
@@ -729,33 +763,35 @@ class Validation {
 	/**
 	 * Return HTTP status code for a given URL to check if it's accessible.
 	 *
-	 * This function uses cURL to perform a HEAD request to the specified URL and retrieves the HTTP status code. Note that
-	 * prior to this funciton being called, the URL to be checked has already been validated for correct syntax, so it
-	 * doesn't need to be validated again here.
+	 * Uses cURL to perform a HEAD request to the specified URL and retrieves
+	 * the HTTP status code. The URL should already be validated for correct
+	 * syntax before calling this method.
+	 *
+	 * @since 1.0.0
 	 *
 	 * @param string $url_to_be_checked The URL to be checked for accessibility.
-	 * @return integer The HTTP status code for the URL (e.g., 200 for accessible, 404 for not found, etc.)
+	 * @return int The HTTP status code for the URL (e.g., 200 for accessible, 404 for not found).
 	 */
 	public function check_url_is_accessible( $url_to_be_checked ) {
 
-		// Set cURL options
+		// Set cURL options.
 		$ch = curl_init( $url_to_be_checked );
-		$userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );  // Return the transfer as a string
-		curl_setopt( $ch, CURLOPT_NOBODY, true );  // Exclude the body from the output
-		curl_setopt( $ch, CURLOPT_HEADER, true );  // Include the header in the output
-		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );  // Follow redirects
-		curl_setopt( $ch, CURLOPT_USERAGENT, $userAgent );  // Set User-Agent header
+		$user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );  // Return the transfer as a string.
+		curl_setopt( $ch, CURLOPT_NOBODY, true );  // Exclude the body from the output.
+		curl_setopt( $ch, CURLOPT_HEADER, true );  // Include the header in the output.
+		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );  // Follow redirects.
+		curl_setopt( $ch, CURLOPT_USERAGENT, $user_agent );  // Set User-Agent header.
 
-		// Execute cURL session
+		// Execute cURL session.
 		curl_exec( $ch );
-		// Get the headers
+		// Get the headers.
 		$headers = curl_getinfo( $ch );
 
-		// Close cURL session
+		// Close cURL session.
 		curl_close( $ch );
 
-		// return the HTTP code for url that is being checked (note anything other than 200 is a problem)
+		// return the HTTP code for url that is being checked (note anything other than 200 is a problem).
 		return $headers['http_code'];
 	}
 
@@ -784,19 +820,25 @@ class Validation {
 	}
 
 	/**
-	 * Get fields configuration from a content type's field creation method
+	 * Get fields configuration from a content type's field creation method.
 	 *
-	 * @param string $content_type The custom content type (e.g., 'modal', 'scene', etc.)
-	 * @param object $class_instance Instance of the class containing the field creation method
-	 * @return array The fields configuration array
+	 * Retrieves the field configuration array from a content type class by calling
+	 * its field creation method with a flag to return the configuration instead
+	 * of creating the options panel.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $content_type   The custom content type (e.g., 'modal', 'scene', 'about', 'figure', 'instance').
+	 * @param object $class_instance Instance of the class containing the field creation method.
+	 * @return array The fields configuration array, or empty array if method doesn't exist.
 	 */
 	public function get_fields_config( $content_type, $class_instance ) {
 		$method_name = 'create_' . $content_type . '_fields';
 
 		if ( method_exists( $class_instance, $method_name ) ) {
 			// We need to modify the field creation methods to return the fields array
-			// instead of just creating the options panel
-			return $class_instance->$method_name( true ); // Pass true to indicate we want fields returned
+			// instead of just creating the options panel.
+			return $class_instance->$method_name( true ); // Pass true to indicate we want fields returned.
 		}
 
 		return [];

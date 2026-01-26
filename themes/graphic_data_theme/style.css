@@ -3,7 +3,7 @@ Theme Name: Graphic Data Theme
 Theme URI: https://github.com/ioos/sanctuarywatch_graphicdata
 Author: The Graphic Data Team
 Description: The Graphic Data Theme is an interactive theme used for the easy visualization of scientific data, within the Graphic Data framework. 
-Version: 1.2.0
+Version: 1.2.1
 */
 
 @import url('assets/css/bootstrap.css');
@@ -15,16 +15,6 @@ Version: 1.2.0
   margin-top: -20px;
   padding-top: 1%;
 }
-
-body{
-  /* font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
-}
-@media (max-width: 767.98px) {
-  body{
-    /* font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
-  }
-}
-
 
 #top-bar {
   text-align: center;
@@ -112,7 +102,6 @@ body{
 @media (max-width: 992.98px) {
   .footer-column {
       justify-content: flex-start; /* Left-justify the .footer-content-wrapper */
-      padding-bottom: 60%;
   }
 
 }
@@ -363,13 +352,6 @@ body > h1{
 .container-fluid {
   width: 100%;
 /*   padding: 20px; */
-}
-
-/* ✅ Center text on mobile screens (below 768px) */
-@media (max-width: 767.98px) {
-  .container-fluid {
-    /* text-align: center; */
-  }
 }
 
 
@@ -741,11 +723,6 @@ input:checked + .slider:before {
       /* The .navbar-nav block itself is centered by its parent, .navbar-collapse. */
   }
 }
-
-body > nav > div > div{
-  /* margin-left: 7%; */
-}
-
 
 /* Universal focus style */
 :focus {

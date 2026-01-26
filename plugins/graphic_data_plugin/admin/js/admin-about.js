@@ -7,16 +7,21 @@ replaceFieldValuesWithTransientValues();
 // The following code changes the number of visible about boxes depending on the value of "Number of About Boxes"
 displayAboutBoxes();
 
-function displayAboutBoxes (){
+function displayAboutBoxes() {
     const numAboutBoxes = document.getElementsByName("numberAboutBoxes")[0].value;
     let target_element = "";
     for (let i = 10; i > numAboutBoxes; i--){
-        target_element =  "aboutBoxMain" + i;
+        let target_element =  "aboutBoxMain" + i;
         document.getElementById(target_element).closest('.exopite-sof-field-fieldset').style.display="none";
+        document.getElementsByName("aboutBox" + i + "[aboutBoxTitle" + i + "]")[0].value = '';
+        if (document.getElementById("aboutBoxMain" + i ).previousElementSibling){
+            document.getElementById("aboutBoxMain" + i ).previousElementSibling.innerText = '';
+            document.getElementById("aboutBoxDetail" + i ).previousElementSibling.innerText = '';
+        }
     }
 
     for (let i = 1; i <= numAboutBoxes; i++){
-        target_element =  "aboutBoxMain" + i;
+        let target_element =  "aboutBoxMain" + i;
         document.getElementById(target_element).closest('.exopite-sof-field-fieldset').style.display="block";
     }
 }
