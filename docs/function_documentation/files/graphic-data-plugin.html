@@ -38,20 +38,6 @@ permalink: /files/graphic-data-plugin/
                     <section class="phpdocumentor-sidebar__category -packages">
             <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="packages/graphic.html" class="">graphic</a>
-</h4>
-    <ul class="phpdocumentor-list">
-                    <li>
-                <a href="packages/graphic-data.html" class="">data</a>
-                
-            </li>
-            </ul>
-
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="packages/Application.html" class="">Application</a>
-</h4>
-
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="packages/Graphic.html" class="">Graphic</a>
 </h4>
     <ul class="phpdocumentor-list">
@@ -60,6 +46,10 @@ permalink: /files/graphic-data-plugin/
                 
             </li>
             </ul>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Application.html" class="">Application</a>
+</h4>
 
                         </section>
             
@@ -107,7 +97,7 @@ that starts the plugin.</p>
                     <span class="phpdocumentor-tag__name">link</span>
                 </dt>
                 <dd class="phpdocumentor-tag-list__definition">
-                                                                                                        <a class="phpdocumentor-tag-link" href="https://www.noaa.gov"> https://www.noaa.gov </a>
+                                                                                                        <a class="phpdocumentor-tag-link" href="https://github.com/ioos/sanctuarywatch_graphicdata"> https://github.com/ioos/sanctuarywatch_graphicdata </a>
                     
                                     </dd>
                                                 <dt class="phpdocumentor-tag-list__entry">
@@ -152,22 +142,22 @@ Domain Path:       /languages</p>
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
-    <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION">GRAPHIC_DATA_PLUGIN_VERSION</a>
-    <span>
-        &nbsp;= $plugin_data[&#039;Version&#039;]                            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
-    <a class="" href="namespaces/default.html#constant_MYPLUGIN_DATA_DIR">MYPLUGIN_DATA_DIR</a>
+    <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR">GRAPHIC_DATA_DATA_DIR</a>
     <span>
         &nbsp;= \WP_CONTENT_DIR . &#039;/data&#039;                            </span>
 </dt>
 <dd>The data directory inside of wp-content</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
-    <a class="" href="namespaces/default.html#constant_MYPLUGIN_DATA_URL">MYPLUGIN_DATA_URL</a>
+    <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL">GRAPHIC_DATA_DATA_URL</a>
     <span>
         &nbsp;= \content_url(&#039;data&#039;)                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION">GRAPHIC_DATA_PLUGIN_VERSION</a>
+    <span>
+        &nbsp;= $graphic_data_plugin_data[&#039;Version&#039;]                            </span>
 </dt>
 
     </dl>
@@ -182,7 +172,7 @@ Domain Path:       /languages</p>
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -function -">
-    <a class="" href="namespaces/default.html#function_myplugin_activate">myplugin_activate()</a>
+    <a class="" href="namespaces/default.html#function_graphic_data_activate">graphic_data_activate()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
@@ -225,6 +215,67 @@ Domain Path:       /languages</p>
 
         </h3>
                     <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_GRAPHIC_DATA_DATA_DIR">
+        GRAPHIC_DATA_DATA_DIR
+        <a href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="graphic_data_plugin.php"><a href="files/graphic-data-plugin.html">graphic_data_plugin.php</a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">64</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The data directory inside of wp-content</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">GRAPHIC_DATA_DATA_DIR</span>
+    = <span class="phpdocumentor-signature__default-value">\WP_CONTENT_DIR . &#039;/data&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_GRAPHIC_DATA_DATA_URL">
+        GRAPHIC_DATA_DATA_URL
+        <a href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="graphic_data_plugin.php"><a href="files/graphic-data-plugin.html">graphic_data_plugin.php</a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">65</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">GRAPHIC_DATA_DATA_URL</span>
+    = <span class="phpdocumentor-signature__default-value">\content_url(&#039;data&#039;)</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
     <h4 class="phpdocumentor-element__name" id="constant_GRAPHIC_DATA_PLUGIN_VERSION">
         GRAPHIC_DATA_PLUGIN_VERSION
         <a href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION" class="headerlink"><i class="fas fa-link"></i></a>
@@ -244,68 +295,7 @@ Domain Path:       /languages</p>
     <span class="phpdocumentor-signature__visibility">public</span>
         <span class="phpdocumentor-signature__type">mixed</span>
     <span class="phpdocumentor-signature__name">GRAPHIC_DATA_PLUGIN_VERSION</span>
-    = <span class="phpdocumentor-signature__default-value">$plugin_data[&#039;Version&#039;]</span>
-</code>
-
-
-    
-    
-    
-
-        
-    </article>
-                    <article class="phpdocumentor-element -constant -public ">
-    <h4 class="phpdocumentor-element__name" id="constant_MYPLUGIN_DATA_DIR">
-        MYPLUGIN_DATA_DIR
-        <a href="namespaces/default.html#constant_MYPLUGIN_DATA_DIR" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="graphic_data_plugin.php"><a href="files/graphic-data-plugin.html">graphic_data_plugin.php</a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">64</span>
-
-    </aside>
-
-        <p class="phpdocumentor-summary">The data directory inside of wp-content</p>
-
-    
-    <code class="phpdocumentor-signature phpdocumentor-code ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-        <span class="phpdocumentor-signature__type">mixed</span>
-    <span class="phpdocumentor-signature__name">MYPLUGIN_DATA_DIR</span>
-    = <span class="phpdocumentor-signature__default-value">\WP_CONTENT_DIR . &#039;/data&#039;</span>
-</code>
-
-
-    
-    
-    
-
-        
-    </article>
-                    <article class="phpdocumentor-element -constant -public ">
-    <h4 class="phpdocumentor-element__name" id="constant_MYPLUGIN_DATA_URL">
-        MYPLUGIN_DATA_URL
-        <a href="namespaces/default.html#constant_MYPLUGIN_DATA_URL" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="graphic_data_plugin.php"><a href="files/graphic-data-plugin.html">graphic_data_plugin.php</a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">65</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-signature phpdocumentor-code ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-        <span class="phpdocumentor-signature__type">mixed</span>
-    <span class="phpdocumentor-signature__name">MYPLUGIN_DATA_URL</span>
-    = <span class="phpdocumentor-signature__default-value">\content_url(&#039;data&#039;)</span>
+    = <span class="phpdocumentor-signature__default-value">$graphic_data_plugin_data[&#039;Version&#039;]</span>
 </code>
 
 
@@ -324,9 +314,9 @@ Domain Path:       /languages</p>
 
         </h3>
                     <article class="phpdocumentor-element -function - ">
-    <h4 class="phpdocumentor-element__name" id="function_myplugin_activate">
-        myplugin_activate()
-        <a href="namespaces/default.html#function_myplugin_activate" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="function_graphic_data_activate">
+        graphic_data_activate()
+        <a href="namespaces/default.html#function_graphic_data_activate" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
@@ -340,7 +330,7 @@ Domain Path:       /languages</p>
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility"></span>
-                    <span class="phpdocumentor-signature__name">myplugin_activate</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">graphic_data_activate</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     
     
@@ -357,7 +347,7 @@ Domain Path:       /languages</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="graphic_data_plugin.php"><a href="files/graphic-data-plugin.html">graphic_data_plugin.php</a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">73</span>
+    <span class="phpdocumentor-element-found-in__line">74</span>
 
     </aside>
 
@@ -382,7 +372,7 @@ Domain Path:       /languages</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="graphic_data_plugin.php"><a href="files/graphic-data-plugin.html">graphic_data_plugin.php</a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">111</span>
+    <span class="phpdocumentor-element-found-in__line">112</span>
 
     </aside>
 
@@ -424,7 +414,7 @@ Domain Path:       /languages</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="graphic_data_plugin.php"><a href="files/graphic-data-plugin.html">graphic_data_plugin.php</a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">150</span>
+    <span class="phpdocumentor-element-found-in__line">151</span>
 
     </aside>
 
@@ -476,7 +466,7 @@ Domain Path:       /languages</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="graphic_data_plugin.php"><a href="files/graphic-data-plugin.html">graphic_data_plugin.php</a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">187</span>
+    <span class="phpdocumentor-element-found-in__line">188</span>
 
     </aside>
 
@@ -612,18 +602,18 @@ not affect the page life cycle.</p>
                             <li class="phpdocumentor-on-this-page-section__title">Constants</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR">GRAPHIC_DATA_DATA_DIR</a></li>
+                                                    <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL">GRAPHIC_DATA_DATA_URL</a></li>
                                                     <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION">GRAPHIC_DATA_PLUGIN_VERSION</a></li>
-                                                    <li class=""><a href="namespaces/default.html#constant_MYPLUGIN_DATA_DIR">MYPLUGIN_DATA_DIR</a></li>
-                                                    <li class=""><a href="namespaces/default.html#constant_MYPLUGIN_DATA_URL">MYPLUGIN_DATA_URL</a></li>
                                             </ul>
                 </li>
             
                             <li class="phpdocumentor-on-this-page-section__title">Functions</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="namespaces/default.html#function_graphic_data_activate">graphic_data_activate()</a></li>
                                                     <li class=""><a href="namespaces/default.html#function_my_svg_cleanup_on_upload">my_svg_cleanup_on_upload()</a></li>
                                                     <li class=""><a href="namespaces/default.html#function_my_transform_svg_inkscape">my_transform_svg_inkscape()</a></li>
-                                                    <li class=""><a href="namespaces/default.html#function_myplugin_activate">myplugin_activate()</a></li>
                                                     <li class=""><a href="namespaces/default.html#function_myplugin_ensure_public_data_dir">myplugin_ensure_public_data_dir()</a></li>
                                                     <li class=""><a href="namespaces/default.html#function_run_graphic_data_plugin">run_graphic_data_plugin()</a></li>
                                             </ul>
