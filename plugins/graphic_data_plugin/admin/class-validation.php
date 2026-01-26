@@ -155,8 +155,8 @@ class Graphic_Data_Validation {
 		$instance_warnings = [];
 
 		// First, verify nonce.
-		if ( ! isset( $_POST['instance_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['instance_nonce'] ) ), 'save_instance_data' ) ) {
-			wp_die( 'Security check failed.' );
+		if ( ! isset( $_POST['instance_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['instance_nonce'] ) ), 'save_instance_fields' ) ) {
+			wp_die( 'Security check failed for post of Instance custom post type.' );
 		}
 
 		$instance_short_title = isset( $_POST['instance_short_title'] ) ? sanitize_text_field( wp_unslash( $_POST['instance_short_title'] ) ) : '';
