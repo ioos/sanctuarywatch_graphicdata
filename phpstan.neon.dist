@@ -24,6 +24,10 @@ parameters:
     scanDirectories:
         - plugins/graphic_data_plugin/admin/exopite-simple-options/
     
+    # Scan stubs for WordPress functions
+    scanFiles:
+        - .stubs/wordpress-stubs.php
+    
     # Bootstrap file if your plugin/theme has one that defines constants
     # Uncomment and adjust the path if needed:
     # bootstrapFiles:
