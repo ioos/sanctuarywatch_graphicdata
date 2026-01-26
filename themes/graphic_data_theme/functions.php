@@ -8,7 +8,7 @@
  * during page load or admin panel interactions. Proper use of actions and filters follows WordPress best practices,
  * aiming to extend the functionality of WordPress themes without modifying core files.
  *
- * @package Graphic_Data_Plugin
+ * @package Graphic_Data_Theme
  */
 
 /**
@@ -28,7 +28,7 @@ function graphic_data_get_theme_asset_version() {
 
 // Customizer functions - first let's load the customizer class.
 include_once get_template_directory() . '/customizer.php';
-$graphic_data_customizer_settings = new Customizer_Settings();
+$graphic_data_customizer_settings = new Graphic_Data_Customizer_Settings();
 
 // Now let's call the customizer functions.
 add_action( 'customize_register', array( $graphic_data_customizer_settings, 'sanctuary_watch_customize_register' ) );
@@ -38,7 +38,7 @@ add_action( 'customize_controls_print_footer_scripts', array( $graphic_data_cust
 add_action(
 	'after_setup_theme',
 	function () {
-		$graphic_data_customizer_settings = new Customizer_Settings();
+		$graphic_data_customizer_settings = new Graphic_Data_Customizer_Settings();
 		add_action( 'admin_init', array( $graphic_data_customizer_settings, 'validate_header_settings_on_save' ) );
 	}
 );
@@ -193,6 +193,72 @@ function graphic_data_single_instance_check() {
 }
 
 /**
+ * Enqueue Google Analytics gtag.js script and initialization code.
+ *
+ * Retrieves the Google Analytics Measurement ID from theme settings and enqueues
+ * the gtag.js script if a valid ID is present. Also adds the inline initialization
+ * script to configure Google Analytics tracking.
+ *
+ * The script is loaded in the header with async attribute for optimal performance
+ * as recommended by Google Analytics documentation.
+ *
+ * @since 1.0.0
+ *
+ * @return void
+ */
+function graphic_data_enqueue_google_analytics() {
+	$settings = get_option( 'graphic_data_settings' );
+	$measurement_id = isset( $settings['google_analytics_measurement_id'] ) ? sanitize_text_field( $settings['google_analytics_measurement_id'] ) : '';
+
+	if ( ! empty( $measurement_id ) ) {
+		// Enqueue gtag.js script.
+		wp_enqueue_script(
+			'google-analytics-gtag',
+			'https://www.googletagmanager.com/gtag/js?id=' . $measurement_id,
+			array(),
+			null,
+			false // Load in header (Google recommends this).
+		);
+
+		// Add async attribute.
+		add_filter( 'script_loader_tag', 'graphic_data_add_async_to_gtag', 10, 2 );
+
+		// Add inline initialization script.
+		wp_add_inline_script(
+			'google-analytics-gtag',
+			"window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', '" . esc_js( $measurement_id ) . "');",
+			'after'
+		);
+	}
+}
+add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_google_analytics' );
+
+/**
+ * Add async attribute to Google Analytics gtag.js script tag.
+ *
+ * Modifies the script tag for the gtag.js file to include the async attribute,
+ * allowing the script to load asynchronously without blocking page rendering.
+ * This follows Google's recommended implementation for optimal page performance.
+ *
+ * @since 1.0.0
+ *
+ * @param string $tag    The script tag HTML.
+ * @param string $handle The script handle (registered name).
+ *
+ * @return string Modified script tag with async attribute if handle matches,
+ *                original tag otherwise.
+ */
+function graphic_data_add_async_to_gtag( $tag, $handle ) {
+	if ( 'google-analytics-gtag' === $handle ) {
+		$tag = str_replace( ' src', ' async src', $tag );
+	}
+	return $tag;
+}
+
+/**
  * Enqueues the Font Awesome icon library stylesheet.
  *
  * Loads Font Awesome 6.6.0 from the cdnjs CDN to provide icon support
@@ -228,79 +294,23 @@ function graphic_data_enqueue_main_css() {
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_main_css' );
 
 /**
- * Enqueues Bootstrap CSS and JavaScript from CDN.
+ * Enqueues the Bootstrap JavaScript bundle from local theme assets.
  *
- * Registers and enqueues Bootstrap 5.0.2 CSS and the JavaScript bundle from jsDelivr CDN.
- * The JS bundle is loaded in the footer. Adds filters to include integrity and crossorigin
- * attributes for enhanced security.
+ * Loads the Bootstrap JS bundle from the theme's assets directory in the footer.
  *
  * @return void
  */
 function graphic_data_enqueue_bootstrap() {
-	// Enqueue Bootstrap CSS.
-	wp_enqueue_style(
-		'bootstrap',
-		'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css',
-		array(),
-		'5.0.2'
-	);
-
-	// Enqueue Bootstrap JS Bundle.
+	// Enqueue Bootstrap JS Bundle from local assets.
 	wp_enqueue_script(
 		'bootstrap-bundle',
-		'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js',
+		get_template_directory_uri() . '/assets/js/bootstrap.bundle.min.js',
 		array(),
-		'5.0.2',
+		graphic_data_get_theme_asset_version(),
 		true
 	);
-
-	// Add integrity attributes.
-	add_filter( 'style_loader_tag', 'graphic_data_add_bootstrap_integrity', 10, 2 );
-	add_filter( 'script_loader_tag', 'graphic_data_add_bootstrap_integrity_js', 10, 2 );
 }
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_bootstrap' );
-
-/**
- * Adds integrity and crossorigin attributes to the Bootstrap CSS link tag.
- *
- * Filters the Bootstrap stylesheet tag to include subresource integrity (SRI)
- * hash for security verification.
- *
- * @param string $html   The link tag HTML.
- * @param string $handle The stylesheet handle.
- * @return string Modified HTML with integrity attribute, or original HTML for other handles.
- */
-function graphic_data_add_bootstrap_integrity( $html, $handle ) {
-	if ( 'bootstrap' === $handle ) {
-		$html = str_replace(
-			"media='all' />",
-			"integrity='sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC' crossorigin='anonymous' media='all' />",
-			$html
-		);
-	}
-	return $html;
-}
-
-/**
- * Adds integrity and crossorigin attributes to the Bootstrap JS script tag.
- *
- * Filters the Bootstrap bundle script tag to include subresource integrity (SRI)
- * hash for security verification.
- *
- * @param string $tag    The script tag HTML.
- * @param string $handle The script handle.
- * @return string Modified HTML with integrity attribute, or original HTML for other handles.
- */
-function graphic_data_add_bootstrap_integrity_js( $tag, $handle ) {
-	if ( 'bootstrap-bundle' === $handle ) {
-		$tag = str_replace(
-			'></script>',
-			" integrity='sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM' crossorigin='anonymous'></script>",
-			$tag
-		);
-	}
-	return $tag;
-}
 
 /**
  * Enqueues the WordPress REST API JavaScript client.

@@ -30,6 +30,42 @@ class Graphic_Data_Utility {
 	}
 
 	/**
+	 * Add nonce field to about, modal, scene, instance, and figure custom post types.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param WP_Post $post Current post object.
+	 */
+	public function render_nonce_field( $post ) {
+		$custom_post_type = $post->post_type;
+		switch ( $custom_post_type ) {
+			case 'about':
+				$action = 'save_about_fields';
+				$name   = 'about_nonce';
+				break;
+			case 'modal':
+				$action = 'save_modal_fields';
+				$name   = 'modal_nonce';
+				break;
+			case 'scene':
+				$action = 'save_scene_fields';
+				$name   = 'scene_nonce';
+				break;
+			case 'instance':
+				$action = 'save_instance_fields';
+				$name   = 'instance_nonce';
+				break;
+			case 'figure':
+				$action = 'save_figure_fields';
+				$name   = 'figure_nonce';
+				break;
+			default:
+				return; // No nonce for other post types.
+		}
+		wp_nonce_field( $action, $name );
+	}
+
+	/**
 	 * Output transient data as JavaScript for field validation.
 	 *
 	 * Retrieves user-specific transient data containing custom field values

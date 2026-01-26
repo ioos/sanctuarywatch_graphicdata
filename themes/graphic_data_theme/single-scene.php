@@ -45,18 +45,6 @@ $graphic_data_scene_url = get_post_meta( $graphic_data_post_id, 'scene_infograph
 $graphic_data_instance = get_post_meta( $graphic_data_post_id, 'scene_location', true );
 ?>
 
-<body>
-
-  <!-- // Google Tags Container ID call from wp_options single-scene.php-->
-  <?php
-	$graphic_data_settings = get_option( 'graphic_data_settings' );
-	$graphic_data_google_tags_container_id = isset( $graphic_data_settings['google_tags_container_id'] ) ? esc_js( $graphic_data_settings['google_tags_container_id'] ) : '';
-	?>
-  <!-- Google Tag Manager (noscript) -->
-  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo esc_url( $graphic_data_google_tags_container_id ); ?>"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-  <!-- End Google Tag Manager (noscript) -->
-
   <div class="modal" id="mobileModal" style="z-index: 9999; background-color: rgba(0,0,0,0.8);">
   <div class="modal-dialog modal-lg" style="z-index: 9999;margin-top: 5%; max-width: 95%;/* margin-right: 10%; */">
 	<div class="modal-content" >

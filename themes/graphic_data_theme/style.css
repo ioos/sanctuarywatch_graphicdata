@@ -16,16 +16,6 @@ Version: 1.2.1
   padding-top: 1%;
 }
 
-body{
-  /* font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
-}
-@media (max-width: 767.98px) {
-  body{
-    /* font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
-  }
-}
-
-
 #top-bar {
   text-align: center;
   /* padding: 5px; */
@@ -362,13 +352,6 @@ body > h1{
 .container-fluid {
   width: 100%;
 /*   padding: 20px; */
-}
-
-/* ✅ Center text on mobile screens (below 768px) */
-@media (max-width: 767.98px) {
-  .container-fluid {
-    /* text-align: center; */
-  }
 }
 
 
@@ -741,11 +724,6 @@ input:checked + .slider:before {
       /* The .navbar-nav block itself is centered by its parent, .navbar-collapse. */
   }
 }
-
-body > nav > div > div{
-  /* margin-left: 7%; */
-}
-
 
 /* Universal focus style */
 :focus {
