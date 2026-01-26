@@ -65,374 +65,385 @@ class Modal {
 	 * @param bool $return_fields_only If true, only return the custom fields array without registering the metabox (used as part of field validation).
 	 * @since    1.0.0
 	 */
-    function create_modal_fields($return_fields_only = false) {
+	function create_modal_fields( $return_fields_only = false ) {
 
-        $config_metabox = array(
+		$config_metabox = array(
 
-            /*
-            * METABOX
-            */
-            'type'              => 'metabox',                       // Required, menu or metabox
-            'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
-            'post_types'        => array( 'modal' ),                 // Post types to display meta box
-            'context'           => 'advanced',                      // 	The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
-            'priority'          => 'default',                       // 	The priority within the context where the boxes should show ('high', 'low').
-            'title'             => 'Modal Fields',                  // The title of the metabox
-            'capability'        => 'edit_posts',                    // The capability needed to view the page
-            'tabbed'            => true,
-            'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
-        );
+			/*
+			* METABOX
+			*/
+			'type'              => 'metabox',                       // Required, menu or metabox
+			'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
+			'post_types'        => array( 'modal' ),                 // Post types to display meta box
+			'context'           => 'advanced',                      // The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
+			'priority'          => 'default',                       // The priority within the context where the boxes should show ('high', 'low').
+			'title'             => 'Modal Fields',                  // The title of the metabox
+			'capability'        => 'edit_posts',                    // The capability needed to view the page
+			'tabbed'            => true,
+			'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
+		);
 
-        // get list of locations
-        $function_utilities = new Utility();
-        $locations = $function_utilities -> returnAllInstances();
+		// get list of locations.
+		$function_utilities = new Graphic_Data_Utility();
+		$locations = $function_utilities->return_all_instances();
 
-        $transient_fields_exist = false;
-        
-        // Get current user ID
-        $user_id = get_current_user_id();
-                
-        // Check if transient exists for this user
-        $transient_name = "modal_error_all_fields_user_{$user_id}";
-        $transient_fields = get_transient($transient_name);
-        
-        if ($transient_fields !== false) {
-            $transient_fields_exist = true;
-        }
+		$transient_fields_exist = false;
 
-        $scene_titles =[];
-        $modal_icons = [];
-        $icon_scene_out = []; 
-        $modal_section = [];
-        // used by both scene and icon dropdowns
-        if (array_key_exists("post", $_GET)) {
-            $modal_id = intval($_GET["post"]);
-            $scene_id = intval(get_post_meta($modal_id, "modal_scene", true));
-            $scene_titles = $function_utilities -> returnSceneTitles($scene_id, $modal_id);
-            if ($transient_fields_exist){
-                $scene_titles = $function_utilities -> returnSceneTitles($transient_fields["modal_scene"], $modal_id);
-            } else {
-                $scene_titles = $function_utilities -> returnSceneTitles($scene_id, $modal_id);
-            }   
+		// Get current user ID.
+		$user_id = get_current_user_id();
 
-            if ($transient_fields_exist){
-                $modal_icons = $function_utilities -> returnIcons($transient_fields["modal_scene"]);
-            } else {
-                $modal_icons = $function_utilities -> returnIcons($scene_id);
-            }  
+		// Check if transient exists for this user.
+		$transient_name = "modal_error_all_fields_user_{$user_id}";
+		$transient_fields = get_transient( $transient_name );
 
-            if ($transient_fields_exist){
-                $icon_scene_out = $function_utilities -> returnScenesExceptCurrent($transient_fields["modal_scene"]);
-            } else {
-                $icon_scene_out = $function_utilities -> returnScenesExceptCurrent($scene_id);
-            }  
+		if ( $transient_fields !== false ) {
+			$transient_fields_exist = true;
+		}
 
-            if ($transient_fields_exist){
-                $modal_section = $function_utilities -> returnModalSections($transient_fields["modal_scene"]);
-            } else {
-                $modal_section = $function_utilities -> returnModalSections($scene_id);
-            }  
-        }
+		$scene_titles = [];
+		$modal_icons = [];
+		$icon_scene_out = [];
+		$modal_section = [];
+		// used by both scene and icon dropdowns.
+		if ( array_key_exists( 'post', $_GET ) ) {
+			$modal_id = intval( $_GET['post'] );
+			$scene_id = intval( get_post_meta( $modal_id, 'modal_scene', true ) );
+			$scene_titles = $function_utilities->return_scene_titles( $scene_id, $modal_id );
+			if ( $transient_fields_exist ) {
+				$scene_titles = $function_utilities->return_scene_titles( $transient_fields['modal_scene'], $modal_id );
+			} else {
+				$scene_titles = $function_utilities->return_scene_titles( $scene_id, $modal_id );
+			}
 
-        $fields = array(
-            array(
-                'id'             => 'modal_published',
-                'type'           => 'select',
-                'title'          => 'Modal Status*',
-                'options'        => array("draft" => "Draft", "published" => "Published"),
-                'default'        => 'draft',
-                'description' => 'Should the modal be live? If set to Draft, the assigned icon for this modal will behave as set in the scene option "Icon visibility in scene, if no associated modal". If set to Published, the icon will be visible in the scene.',
-            ),
-            array(
-                'id'             => 'modal_location',
-                'type'           => 'select',
-                'title'          => 'Instance*',
-                'options'        => $locations,
-                'description' => 'In which instance is the modal located?',
-                'default'        =>  '',
-            ),
-            array(
-                'id'             => 'modal_scene',
-                'type'           => 'select',
-                'title'          => 'Scene*',
-                'options'        => $scene_titles,
-                'description' => 'In which scene is the modal located?',
-                'default'        =>  '',
-            ),
-            array(
-                'id'             => 'modal_icons',
-                'type'           => 'select',
-                'title'          => 'Icons*',
-                'options'        => $modal_icons, 
-                'description' => 'Which icon from the above scene is the modal associated with?',
-                'default'        =>  '',
-            ),
-            array(
-                'id'      => 'modal_icon_order',
-                'type'    => 'number',
-                'title'   => 'Icon order (optional)',
-                'min'     => '1',
-                'max'     => '20',
-                'step'    => '1',
-                'description' => "In the table of contents to the right of the scene, what is the order in which this icon should appear? Lower numbers will appear first. All icons with the same order number (example: all icons keep the default value of 1), will be sorted alphabetically.",
-                'default'        => 1,
-            ),
-            array(
-                'id'             => 'icon_toc_section',
-                'type'           => 'select',
-                'title'          => 'Icon Section*',
-                'options'        =>  $modal_section,
-                'description'    => 'Which scene section is this modal associated with?',
-                'default'        => '',
-            ),
-            array(
-                'id'             => 'icon_function',
-                'type'           => 'select',
-                'title'          => 'Icon Action*',
-                'options'        => array("External URL" => "Link to External URL", "Scene" => "Link to Scene", "Modal" => "Open Modal"),
-                'description'    => 'What should happen when the user clicks on the icon?',
-                'default'        =>  'Modal',
-            ),
-            array(
-                'id'          => 'icon_external_url',
-                'type'        => 'text',
-                'title'       => 'Icon External URL*',
-                'class'       => 'text-class',   
-                'description' => 'What is the external URL that the user should be taken to when the icon is clicked?',  
-                'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+			if ( $transient_fields_exist ) {
+				$modal_icons = $function_utilities->return_icons( $transient_fields['modal_scene'] );
+			} else {
+				$modal_icons = $function_utilities->return_icons( $scene_id );
+			}
 
-            ),
-            array(
-                'id'             => 'icon_scene_out',
-                'type'           => 'select',
-                'title'          => 'Icon Scene Out*',
-                'options'        => $icon_scene_out,  
-                'description' => 'What is the scene that the user should be taken to when the icon is clicked?',
-                'default'        => '',
-            ),
-            array(
-                'id'          => 'modal_tagline',
-                'type'   => 'editor',
-                'editor' => 'trumbowyg',
-                'title'       => 'Modal Tagline',
-                'description' => 'What is the modal tagline?',
-            ),
-            array(
-                'id'      => 'modal_info_entries',
-                'type'    => 'range',
-                'title'   => 'Number of Modal Info Entries',
-                'description' => 'How many info links are there for the modal?',
-                'min'     => 0,      
-                'max'     => 6,         
-                'step'    => 1,          
-                'default'     => 0,   
-            ),    
-            array(
-                'id'      => 'modal_photo_entries',
-                'type'    => 'range',
-                'title'   => 'Number of Modal Photo Entries',
-                'description' => 'How many photo links are there for the modal?',
-                'min'     => 0,     
-                'max'     => 6,         
-                'step'    => 1,  
-                'default'     =>  0,         
-            ),     
-            array(
-                'id'      => 'modal_tab_number',
-                'type'    => 'range',
-                'title'   => 'Number of Modal Tabs*',
-                'description' => 'How many modal tabs are there?',
-                'min'     => 1,    
-                'default'     =>  1,   
-                'max'     => 6,         
-                'step'    => 1,             
-            ), 
-            array(
-                'id'          => 'modal_preview',
-                'type'        => 'button',
-                'title'       => 'Preview Modal (Desktop Mode)',
-                'class'        => 'modal_preview',
-                'options'     => array(
-                    'href'  =>  '#nowhere',
-                    'target' => '_self',
-                    'value' => 'Preview',
-                    'btn-class' => 'exopite-sof-btn'
-                ),
-            ),
-            array(
-                'id'          => 'modal_preview_mobile',
-                'type'        => 'button',
-                'title'       => 'Preview Modal (Mobile Mode)',
-                'class'        => 'modal_preview_mobile',
-                'options'     => array(
-                    'href'  =>  '#nowhere',
-                    'target' => '_self',
-                    'value' => 'Preview',
-                    'btn-class' => 'exopite-sof-btn'
-                ),
-            )          
-        );
+			if ( $transient_fields_exist ) {
+				$icon_scene_out = $function_utilities->returnScenesExceptCurrent( $transient_fields['modal_scene'] );
+			} else {
+				$icon_scene_out = $function_utilities->returnScenesExceptCurrent( $scene_id );
+			}
 
-        // Step 1: Create an array to hold the new info sub-arrays
-        $infoFields = array();
+			if ( $transient_fields_exist ) {
+				$modal_section = $function_utilities->returnModalSections( $transient_fields['modal_scene'] );
+			} else {
+				$modal_section = $function_utilities->returnModalSections( $scene_id );
+			}
+		}
 
-        // Step 2: Use a loop to generate the new info sub-arrays
-        for ($i = 1; $i <= 6; $i++) {
-            $infoFields[] = array(
-                'type' => 'fieldset',
-                'id' => 'modal_info' . $i,
-                'title'   => 'Modal Info Link ' . $i,
-                'fields' => array(
-                    array(
-                        'id'          => 'modal_info_text' . $i,
-                        'type'        => 'text',
-                        'title'       => 'Text',
-                        'class'       => 'text-class',
-                    ),
-                    array(
-                        'id'          => 'modal_info_url' . $i,
-                        'type'        => 'text',
-                        'title'       => 'URL',
-                        'class'       => 'text-class',
-                        'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
-                    ),
-                ),
-            );
-        }
-        // Step 1: Create an array to hold the new info sub-arrays
-        $photoFields = array();
+		$fields = array(
+			array(
+				'id'             => 'modal_published',
+				'type'           => 'select',
+				'title'          => 'Modal Status*',
+				'options'        => array(
+					'draft' => 'Draft',
+					'published' => 'Published',
+				),
+				'default'        => 'draft',
+				'description' => 'Should the modal be live? If set to Draft, the assigned icon for this modal will behave as set in the scene option "Icon visibility in scene, if no associated modal". If set to Published, the icon will be visible in the scene.',
+			),
+			array(
+				'id'             => 'modal_location',
+				'type'           => 'select',
+				'title'          => 'Instance*',
+				'options'        => $locations,
+				'description' => 'In which instance is the modal located?',
+				'default'        => '',
+			),
+			array(
+				'id'             => 'modal_scene',
+				'type'           => 'select',
+				'title'          => 'Scene*',
+				'options'        => $scene_titles,
+				'description' => 'In which scene is the modal located?',
+				'default'        => '',
+			),
+			array(
+				'id'             => 'modal_icons',
+				'type'           => 'select',
+				'title'          => 'Icons*',
+				'options'        => $modal_icons,
+				'description' => 'Which icon from the above scene is the modal associated with?',
+				'default'        => '',
+			),
+			array(
+				'id'      => 'modal_icon_order',
+				'type'    => 'number',
+				'title'   => 'Icon order (optional)',
+				'min'     => '1',
+				'max'     => '20',
+				'step'    => '1',
+				'description' => 'In the table of contents to the right of the scene, what is the order in which this icon should appear? Lower numbers will appear first. All icons with the same order number (example: all icons keep the default value of 1), will be sorted alphabetically.',
+				'default'        => 1,
+			),
+			array(
+				'id'             => 'icon_toc_section',
+				'type'           => 'select',
+				'title'          => 'Icon Section*',
+				'options'        => $modal_section,
+				'description'    => 'Which scene section is this modal associated with?',
+				'default'        => '',
+			),
+			array(
+				'id'             => 'icon_function',
+				'type'           => 'select',
+				'title'          => 'Icon Action*',
+				'options'        => array(
+					'External URL' => 'Link to External URL',
+					'Scene' => 'Link to Scene',
+					'Modal' => 'Open Modal',
+				),
+				'description'    => 'What should happen when the user clicks on the icon?',
+				'default'        => 'Modal',
+			),
+			array(
+				'id'          => 'icon_external_url',
+				'type'        => 'text',
+				'title'       => 'Icon External URL*',
+				'class'       => 'text-class',
+				'description' => 'What is the external URL that the user should be taken to when the icon is clicked?',
+				'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
 
-        // Step 2: Use a loop to generate the new info sub-arrays
-        for ($i = 1; $i <= 6; $i++) {
-            $photoFields[] = array(
-                'type' => 'fieldset',
-                'id' => 'modal_photo' . $i,
-                'title'   => 'Modal Photo Link ' . $i,
-                'fields' => array(
-                    array(
-                        'id'             => 'modal_photo_location' . $i,
-                        'type'           => 'select',
-                        'title'          => 'Image Location',
-                        'options'        => array("Internal" => "Within this site", "External" => "Outside of this site"),
-                        'default'     => 'External', 
-                    ),
-                    array(
-                        'id'          => 'modal_photo_text' . $i,
-                        'type'        => 'text',
-                        'title'       => 'Link Text',
-                        'class'       => 'text-class',
-                    ),
-                    array(
-                        'id'          => 'modal_photo_url' . $i,
-                        'type'        => 'text',
-                        'title'       => 'URL',
-                        'class'       => 'text-class',
-                        'sanitize'    => array($function_utilities, 'dummy_sanitize'), // Prevents automatic URL sanitization
+			),
+			array(
+				'id'             => 'icon_scene_out',
+				'type'           => 'select',
+				'title'          => 'Icon Scene Out*',
+				'options'        => $icon_scene_out,
+				'description' => 'What is the scene that the user should be taken to when the icon is clicked?',
+				'default'        => '',
+			),
+			array(
+				'id'          => 'modal_tagline',
+				'type'   => 'editor',
+				'editor' => 'trumbowyg',
+				'title'       => 'Modal Tagline',
+				'description' => 'What is the modal tagline?',
+			),
+			array(
+				'id'      => 'modal_info_entries',
+				'type'    => 'range',
+				'title'   => 'Number of Modal Info Entries',
+				'description' => 'How many info links are there for the modal?',
+				'min'     => 0,
+				'max'     => 6,
+				'step'    => 1,
+				'default'     => 0,
+			),
+			array(
+				'id'      => 'modal_photo_entries',
+				'type'    => 'range',
+				'title'   => 'Number of Modal Photo Entries',
+				'description' => 'How many photo links are there for the modal?',
+				'min'     => 0,
+				'max'     => 6,
+				'step'    => 1,
+				'default'     => 0,
+			),
+			array(
+				'id'      => 'modal_tab_number',
+				'type'    => 'range',
+				'title'   => 'Number of Modal Tabs*',
+				'description' => 'How many modal tabs are there?',
+				'min'     => 1,
+				'default'     => 1,
+				'max'     => 6,
+				'step'    => 1,
+			),
+			array(
+				'id'          => 'modal_preview',
+				'type'        => 'button',
+				'title'       => 'Preview Modal (Desktop Mode)',
+				'class'        => 'modal_preview',
+				'options'     => array(
+					'href'  => '#nowhere',
+					'target' => '_self',
+					'value' => 'Preview',
+					'btn-class' => 'exopite-sof-btn',
+				),
+			),
+			array(
+				'id'          => 'modal_preview_mobile',
+				'type'        => 'button',
+				'title'       => 'Preview Modal (Mobile Mode)',
+				'class'        => 'modal_preview_mobile',
+				'options'     => array(
+					'href'  => '#nowhere',
+					'target' => '_self',
+					'value' => 'Preview',
+					'btn-class' => 'exopite-sof-btn',
+				),
+			),
+		);
 
-                    ),
-                    array(
-                        'id'    => 'modal_photo_internal' . $i,
-                        'type'  => 'image',
-                        'title' => 'Image',
-                    ),
-                ),
-            );
-        }
+		// Step 1: Create an array to hold the new info sub-arrays
+		$infoFields = array();
 
-        // Step 1: Create an array to hold the new info sub-arrays
-        $tabFields = array();
+		// Step 2: Use a loop to generate the new info sub-arrays
+		for ( $i = 1; $i <= 6; $i++ ) {
+			$infoFields[] = array(
+				'type' => 'fieldset',
+				'id' => 'modal_info' . $i,
+				'title'   => 'Modal Info Link ' . $i,
+				'fields' => array(
+					array(
+						'id'          => 'modal_info_text' . $i,
+						'type'        => 'text',
+						'title'       => 'Text',
+						'class'       => 'text-class',
+					),
+					array(
+						'id'          => 'modal_info_url' . $i,
+						'type'        => 'text',
+						'title'       => 'URL',
+						'class'       => 'text-class',
+						'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
+					),
+				),
+			);
+		}
+		// Step 1: Create an array to hold the new info sub-arrays
+		$photoFields = array();
 
-        // Step 2: Use a loop to generate the new info sub-arrays
-        for ($i = 1; $i <= 6; $i++) {
-            $tabFields[] = array(
-                    'id'          => 'modal_tab_title' . $i,
-                    'type'        => 'text',
-                    'title'       => 'Modal Tab Title ' . $i. '*',
-                    'class'       => 'text-class',
-            );
-        }
+		// Step 2: Use a loop to generate the new info sub-arrays
+		for ( $i = 1; $i <= 6; $i++ ) {
+			$photoFields[] = array(
+				'type' => 'fieldset',
+				'id' => 'modal_photo' . $i,
+				'title'   => 'Modal Photo Link ' . $i,
+				'fields' => array(
+					array(
+						'id'             => 'modal_photo_location' . $i,
+						'type'           => 'select',
+						'title'          => 'Image Location',
+						'options'        => array(
+							'Internal' => 'Within this site',
+							'External' => 'Outside of this site',
+						),
+						'default'     => 'External',
+					),
+					array(
+						'id'          => 'modal_photo_text' . $i,
+						'type'        => 'text',
+						'title'       => 'Link Text',
+						'class'       => 'text-class',
+					),
+					array(
+						'id'          => 'modal_photo_url' . $i,
+						'type'        => 'text',
+						'title'       => 'URL',
+						'class'       => 'text-class',
+						'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
 
-        // Step 3: Insert the new sub-arrays after the second element in the original 'fields' array
-        array_splice($fields, 11, 0, $infoFields);
-        array_splice($fields, 18, 0, $photoFields);
-        array_splice($fields, 25, 0, $tabFields);
+					),
+					array(
+						'id'    => 'modal_photo_internal' . $i,
+						'type'  => 'image',
+						'title' => 'Image',
+					),
+				),
+			);
+		}
 
-        // If we're just running this function to get the custom field list for field validation, return early
-        if ($return_fields_only) {
-            return $fields;
-        }
+		// Step 1: Create an array to hold the new info sub-arrays
+		$tabFields = array();
 
-        $fieldsHolder[] = array(
-            'name'   => 'basic',
-            'title'  => 'Basic',
-            'icon'   => 'dashicons-admin-generic',
-            'fields' => $fields,
-        );
+		// Step 2: Use a loop to generate the new info sub-arrays
+		for ( $i = 1; $i <= 6; $i++ ) {
+			$tabFields[] = array(
+				'id'          => 'modal_tab_title' . $i,
+				'type'        => 'text',
+				'title'       => 'Modal Tab Title ' . $i . '*',
+				'class'       => 'text-class',
+			);
+		}
 
-        // instantiate the admin page
-        $options_panel = new Exopite_Simple_Options_Framework( $config_metabox, $fieldsHolder ); 
+		// Step 3: Insert the new sub-arrays after the second element in the original 'fields' array
+		array_splice( $fields, 11, 0, $infoFields );
+		array_splice( $fields, 18, 0, $photoFields );
+		array_splice( $fields, 25, 0, $tabFields );
 
-        // Create array of fields to be registered with register_meta
-        $fieldsToBeRegistered = array(
-            array('modal_scene', 'integer', 'The modal scene'),
-            array('modal_icon_order', 'integer', 'The modal icon order'),
-            array('icon_function', 'string', 'The icon function'),           
-            array('modal_published', 'string', 'The icon function'),
-            array('modal_tagline', 'string', 'The modal tagline'),
-            array('icon_toc_section', 'string', 'The icon table of contents section'),
-            array('modal_info_entries', 'integer', 'The number of info links'),
-            array('modal_photo_entries', 'integer', 'The number of photo links'),
-            array('modal_tab_number', 'integer', 'The number of modal tabs'),
-        );
+		// If we're just running this function to get the custom field list for field validation, return early
+		if ( $return_fields_only ) {
+			return $fields;
+		}
 
-        for ($i = 1; $i < 7; $i++ ) {
-            $fieldsToBeRegistered[] = array('modal_tab_title' . $i, 'string', 'Modal tab ' . $i);
-        }
-        foreach ($fieldsToBeRegistered as $targetSubArray) {
-            register_meta(
-                'post', // Object type. In this case, 'post' refers to custom post type 'Scene'
-                $targetSubArray[0], // Meta key name
-                array(
-                    'show_in_rest' => true, // Make the field available in REST API
-                    'single' => true, // Indicates whether the meta key has one single value
-                    'type' => $targetSubArray[1], // Data type of the meta value
-                    'description' => $targetSubArray[2], // Description of the meta key
-                    'auth_callback' => '__return_false'
-                )
-            );
-        }
+		$fieldsHolder[] = array(
+			'name'   => 'basic',
+			'title'  => 'Basic',
+			'icon'   => 'dashicons-admin-generic',
+			'fields' => $fields,
+		);
 
-        $fieldAndDescription = array(
-            array('modal_info', 'Info link '),
-            array('modal_photo', 'Photo link '),
-            array('modal_photo_internal', 'Internal photo link ')
-        );
+		// instantiate the admin page
+		$options_panel = new Exopite_Simple_Options_Framework( $config_metabox, $fieldsHolder );
 
-        for ($i = 1; $i < 7; $i++ ) {
-            foreach($fieldAndDescription as $targetFieldAndDescription){
-                $target_field = $targetFieldAndDescription[0] . $i;
-                $target_description = $targetFieldAndDescription[1] . $i;
-                register_meta( 'post', 
-                    $target_field,
-                    array(
-                        'auth_callback'     => '__return_false' ,
-                        'single'            => true, // The field contains a single array
-                        'description' => $target_description, // Description of the meta key
-                        'show_in_rest'      => array(
-                            'schema' => array(
-                                'type'  => 'array', // The meta field is an array
-                                'items' => array(
-                                    'type' => 'string', // Each item in the array is a string
-                                ),
-                            ),
-                        ),
-                    ) 
-                );
-            }
-        }
-    }
+		// Create array of fields to be registered with register_meta
+		$fieldsToBeRegistered = array(
+			array( 'modal_scene', 'integer', 'The modal scene' ),
+			array( 'modal_icon_order', 'integer', 'The modal icon order' ),
+			array( 'icon_function', 'string', 'The icon function' ),
+			array( 'modal_published', 'string', 'The icon function' ),
+			array( 'modal_tagline', 'string', 'The modal tagline' ),
+			array( 'icon_toc_section', 'string', 'The icon table of contents section' ),
+			array( 'modal_info_entries', 'integer', 'The number of info links' ),
+			array( 'modal_photo_entries', 'integer', 'The number of photo links' ),
+			array( 'modal_tab_number', 'integer', 'The number of modal tabs' ),
+		);
 
-    /**
+		for ( $i = 1; $i < 7; $i++ ) {
+			$fieldsToBeRegistered[] = array( 'modal_tab_title' . $i, 'string', 'Modal tab ' . $i );
+		}
+		foreach ( $fieldsToBeRegistered as $targetSubArray ) {
+			register_meta(
+				'post', // Object type. In this case, 'post' refers to custom post type 'Scene'
+				$targetSubArray[0], // Meta key name
+				array(
+					'show_in_rest' => true, // Make the field available in REST API
+					'single' => true, // Indicates whether the meta key has one single value
+					'type' => $targetSubArray[1], // Data type of the meta value
+					'description' => $targetSubArray[2], // Description of the meta key
+					'auth_callback' => '__return_false',
+				)
+			);
+		}
+
+		$fieldAndDescription = array(
+			array( 'modal_info', 'Info link ' ),
+			array( 'modal_photo', 'Photo link ' ),
+			array( 'modal_photo_internal', 'Internal photo link ' ),
+		);
+
+		for ( $i = 1; $i < 7; $i++ ) {
+			foreach ( $fieldAndDescription as $targetFieldAndDescription ) {
+				$target_field = $targetFieldAndDescription[0] . $i;
+				$target_description = $targetFieldAndDescription[1] . $i;
+				register_meta(
+					'post',
+					$target_field,
+					array(
+						'auth_callback'     => '__return_false',
+						'single'            => true, // The field contains a single array
+						'description' => $target_description, // Description of the meta key
+						'show_in_rest'      => array(
+							'schema' => array(
+								'type'  => 'array', // The meta field is an array
+								'items' => array(
+									'type' => 'string', // Each item in the array is a string
+								),
+							),
+						),
+					)
+				);
+			}
+		}
+	}
+
+	/**
 	 * Register Modal custom fields for use by REST API.
 	 *
 	 * @since    1.0.0
