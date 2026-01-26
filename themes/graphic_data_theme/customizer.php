@@ -547,56 +547,56 @@ class Graphic_Data_Customizer_Settings {
 				});
 			});
 
-            // Monitor image selection changes
-            wp.customize('header_row_image', function(value) {
-                value.bind(function(imageId) {
-                    var headerRowEnabled = wp.customize('header_row_enable').get();
-                    
-                    if (headerRowEnabled && (!imageId || imageId == 0)) {
-                        // Show error if header row is enabled but no image selected
-                        $('#customize-control-header_row_image .customize-control-notifications-container').remove();
-                        $('#customize-control-header_row_image .description').append(
-                            '<div class="customize-control-notifications-container" style="margin-top: 4px;">' +
-                            '<div class="notice notice-error"><p>Header image is required when header row is enabled.</p></div>' +
-                            '</div>'
-                        );
-                    } else {
-                        // Remove error messages when image is selected
-                        $('#customize-control-header_row_image .customize-control-notifications-container').remove();
-                    }
-                });
-            });
-        });
-        </script>
-        <style>
-        .customize-control-required .customize-control-title:after {
-            content: " *";
-            color: #dc3232;
-        }
-        </style>
-        <?php
-    }
+			// Monitor image selection changes
+			wp.customize('header_row_image', function(value) {
+				value.bind(function(imageId) {
+					var headerRowEnabled = wp.customize('header_row_enable').get();
+					
+					if (headerRowEnabled && (!imageId || imageId == 0)) {
+						// Show error if header row is enabled but no image selected
+						$('#customize-control-header_row_image .customize-control-notifications-container').remove();
+						$('#customize-control-header_row_image .description').append(
+							'<div class="customize-control-notifications-container" style="margin-top: 4px;">' +
+							'<div class="notice notice-error"><p>Header image is required when header row is enabled.</p></div>' +
+							'</div>'
+						);
+					} else {
+						// Remove error messages when image is selected
+						$('#customize-control-header_row_image .customize-control-notifications-container').remove();
+					}
+				});
+			});
+		});
+		</script>
+		<style>
+		.customize-control-required .customize-control-title:after {
+			content: " *";
+			color: #dc3232;
+		}
+		</style>
+		<?php
+	}
 
 	/**
 	 * Additional helper function to check validation on theme activation or updates
 	 */
-	function validate_header_settings_on_save() {
+	public function validate_header_settings_on_save() {
 		$header_row_enabled = get_theme_mod( 'header_row_enable' );
 		$header_image = get_theme_mod( 'header_row_image' );
 
 		if ( $header_row_enabled ) {
 			if ( ! empty( $header_image ) ) {
-				// Validate dimensions
+				// Validate dimensions.
 				$image_data = wp_get_attachment_image_src( $header_image, 'full' );
-				if ( $image_data && ( $image_data[1] != 433 || $image_data[2] != 50 ) ) {
+				if ( $image_data && ( 433 != $image_data[1] || 50 != $image_data[2] ) ) {
 					add_action(
 						'admin_notices',
 						function () use ( $image_data ) {
 							echo '<div class="notice notice-warning"><p>' .
 							sprintf(
-								__( 'Warning: Header image dimensions are %1$dx%2$d pixels, but should be exactly 433x50 pixels.', 'textdomain' ),
-								$image_data[1],
-								$image_data[2]
+								'Warning: Header image dimensions are %1$dx%2$d pixels, but should be exactly 433x50 pixels.',
+								absint( $image_data[1] ),
+								absint( $image_data[2] ),
 							) .
 							 '</p></div>';
 						}
@@ -612,16 +612,16 @@ class Graphic_Data_Customizer_Settings {
 	 * This function checks if the default image exists in the media library
 	 * and returns its attachment ID, or 0 if not found
 	 */
-	function get_header_row_default_image_id() {
+	public function get_header_row_default_image_id() {
 		static $default_image_id = null;
 
-		if ( $default_image_id === null ) {
+		if ( null === $default_image_id ) {
 			$default_image_path = get_template_directory() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
 			$default_image_url = get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
 
-			// Check if image exists in filesystem
+			// Check if image exists in filesystem.
 			if ( file_exists( $default_image_path ) ) {
-				// Try to find this image in the media library
+				// Try to find this image in the media library.
 				$attachment = get_posts(
 					array(
 						'post_type' => 'attachment',
@@ -639,7 +639,7 @@ class Graphic_Data_Customizer_Settings {
 				if ( ! empty( $attachment ) ) {
 					$default_image_id = $attachment[0]->ID;
 				} else {
-					// If not in media library, try to add it
+					// If not in media library, try to add it.
 					$default_image_id = $this->add_default_header_image_to_media_library();
 				}
 			} else {
@@ -653,7 +653,7 @@ class Graphic_Data_Customizer_Settings {
 	/**
 	 * Add the default header image to the media library
 	 */
-	function add_default_header_image_to_media_library() {
+	public function add_default_header_image_to_media_library() {
 		$default_image_path = get_template_directory() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
 		$default_image_url = get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png';
 
@@ -661,7 +661,7 @@ class Graphic_Data_Customizer_Settings {
 			return 0;
 		}
 
-		// Check if already exists
+		// Check if already exists.
 		$existing = get_posts(
 			array(
 				'post_type' => 'attachment',
@@ -680,7 +680,7 @@ class Graphic_Data_Customizer_Settings {
 			return $existing[0]->ID;
 		}
 
-		// Include WordPress file handling functions
+		// Include WordPress file handling functions.
 		if ( ! function_exists( 'wp_handle_upload' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
@@ -691,19 +691,19 @@ class Graphic_Data_Customizer_Settings {
 			require_once ABSPATH . 'wp-admin/includes/media.php';
 		}
 
-		// Copy file to uploads directory
+		// Copy file to uploads directory.
 		$upload_dir = wp_upload_dir();
 		$filename = basename( $default_image_path );
 		$new_file_path = $upload_dir['path'] . '/' . $filename;
 
-		// Only copy if it doesn't already exist in uploads
+		// Only copy if it doesn't already exist in uploads.
 		if ( ! file_exists( $new_file_path ) ) {
 			if ( ! copy( $default_image_path, $new_file_path ) ) {
 				return 0;
 			}
 		}
 
-		// Create attachment
+		// Create attachment.
 		$attachment = array(
 			'guid' => $upload_dir['url'] . '/' . $filename,
 			'post_mime_type' => 'image/png',
@@ -715,7 +715,7 @@ class Graphic_Data_Customizer_Settings {
 		$attachment_id = wp_insert_attachment( $attachment, $new_file_path );
 
 		if ( ! is_wp_error( $attachment_id ) ) {
-			// Generate metadata
+			// Generate metadata.
 			$attachment_data = wp_generate_attachment_metadata( $attachment_id, $new_file_path );
 			wp_update_attachment_metadata( $attachment_id, $attachment_data );
 
@@ -726,11 +726,17 @@ class Graphic_Data_Customizer_Settings {
 	}
 
 	/**
-	 * Active callback to show/hide header row controls when header row is enabled
+	 * Determines whether header row controls should be visible.
+	 *
+	 * Active callback for conditionally showing header row controls
+	 * based on the header_row_enable setting.
+	 *
+	 * @param WP_Customize_Control $control The control instance.
+	 * @return bool True if header row is enabled, false otherwise.
 	 */
-	function is_header_row_enabled( $control ) {
+	public function is_header_row_enabled( $control ) {
 		$value = $control->manager->get_setting( 'header_row_enable' )->value();
-		if ( $value == 1 ) {
+		if ( 1 == $value ) {
 			return true;
 		} else {
 			return false;
@@ -740,7 +746,7 @@ class Graphic_Data_Customizer_Settings {
 	/**
 	 * Add inline JavaScript to control the visibility of header row settings
 	 */
-	function header_row_customizer_inline_script() {
+	public function header_row_customizer_inline_script() {
 		?>
 		<script type="text/javascript">
 		(function() {
@@ -830,7 +836,7 @@ class Graphic_Data_Customizer_Settings {
 	/**
 	 * Outputs custom CSS from the Theme Customizer.
 	 */
-	function sanctuary_watch_customizer_css() {
+	public function sanctuary_watch_customizer_css() {
 		$color2 = get_theme_mod( 'theme_color_2', '#ffffff' );
 		$color2_encoded = rawurlencode( $color2 );
 		?>
@@ -839,43 +845,43 @@ class Graphic_Data_Customizer_Settings {
 				background-color: <?php echo esc_attr( get_theme_mod( 'header_row_bg_color', '#ffffff' ) ); ?>;
 			}
 
-            /* Theme Color 1 */
-            .site-title-main, .gray-bar-links {
-                color: <?php echo esc_attr( get_theme_mod( 'theme_color_1', '#03386c' ) ); ?>;
-            }
-            #navbar-inner, 
-            #taglineHeaderId > button,
-            .site-footer, 
-            .instance_published_button, 
-            .accordion-button, 
-            .accordion-button:not(.collapsed), 
-            .ViewSceneButton,
-            .btn-primary {
-                background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_1', '#03386c') ); ?>;
-            }
+			/* Theme Color 1 */
+			.site-title-main, .gray-bar-links {
+				color: <?php echo esc_attr( get_theme_mod( 'theme_color_1', '#03386c' ) ); ?>;
+			}
+			#navbar-inner, 
+			#taglineHeaderId > button,
+			.site-footer, 
+			.instance_published_button, 
+			.accordion-button, 
+			.accordion-button:not(.collapsed), 
+			.ViewSceneButton,
+			.btn-primary {
+				background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_1', '#03386c' ) ); ?>;
+			}
 
-            /* Theme Color 2 */
-            #taglineHeaderId > button,
-            #site-name-logo-banner, 
-            #site-name-logo-banner a, 
-            #site-name-logo-banner p, 
-            .navbar-brand, 
-            .nav-link, 
-            .footer-column-title, 
-            .footer_component, 
-            .footer_component a, 
-            .instance_published_button, 
-            .accordion-button, 
-            .accordion-button:not(.collapsed),
-            .ViewSceneButton,
-            .btn-primary  {
-                color: <?php echo esc_attr( get_theme_mod( 'theme_color_2', "#ffffff" ) ); ?> ;
-            }
+			/* Theme Color 2 */
+			#taglineHeaderId > button,
+			#site-name-logo-banner, 
+			#site-name-logo-banner a, 
+			#site-name-logo-banner p, 
+			.navbar-brand, 
+			.nav-link, 
+			.footer-column-title, 
+			.footer_component, 
+			.footer_component a, 
+			.instance_published_button, 
+			.accordion-button, 
+			.accordion-button:not(.collapsed),
+			.ViewSceneButton,
+			.btn-primary  {
+				color: <?php echo esc_attr( get_theme_mod( 'theme_color_2', '#ffffff' ) ); ?> ;
+			}
 
 			/* STILL THEME COLOR 2: Override arrow with inline SVG  */
 			.accordion-button::after {
 				content: "";
-				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='<?php echo $color2_encoded; ?>' d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E") !important;
+				background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='<?php echo esc_attr( $color2_encoded ); ?>' d='M1.5 5.5l6 6 6-6'/%3E%3C/svg%3E") !important;
 				background-repeat: no-repeat;
 				background-size: 1.25rem;
 				width: 1.25rem;
@@ -883,85 +889,85 @@ class Graphic_Data_Customizer_Settings {
 				margin-left: auto;
 			}
 
-            .accordion-button:not(.collapsed)::after {
-                transform: rotate(-180deg);
-            }
+			.accordion-button:not(.collapsed)::after {
+				transform: rotate(-180deg);
+			}
 
-            /* Theme Color 3 */
-            .theme-title > h2, #title-container > h1, #modal-title, .instance_type_title {
-                color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> ;
-            }
+			/* Theme Color 3 */
+			.theme-title > h2, #title-container > h1, #modal-title, .instance_type_title {
+				color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> ;
+			}
 
-            .tab-title {
-                color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> !important;
-            }
+			.tab-title {
+				color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> !important;
+			}
 
-            /* Theme Color 4 */
-            #site-name-logo-banner {
-                background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_4', '#008da8' ) ); ?>;
-            }
+			/* Theme Color 4 */
+			#site-name-logo-banner {
+				background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_4', '#008da8' ) ); ?>;
+			}
 
-            .site-tagline-main {
-                color: <?php echo esc_attr( get_theme_mod( 'theme_color_4', '#008da8' ) ); ?>;
-            }
+			.site-tagline-main {
+				color: <?php echo esc_attr( get_theme_mod( 'theme_color_4', '#008da8' ) ); ?>;
+			}
 
-            /* Theme Color 5 */
+			/* Theme Color 5 */
 
-            #toc-container a, 
-            #more-info-item-1 a, 
-            #images-item-1 a, 
-            #accordion-item-1 a, 
-            #accordion-item-2 a {
-                color: <?php echo esc_attr( get_theme_mod( 'theme_color_5', '#024880' ) ); ?>;
-            }
+			#toc-container a, 
+			#more-info-item-1 a, 
+			#images-item-1 a, 
+			#accordion-item-1 a, 
+			#accordion-item-2 a {
+				color: <?php echo esc_attr( get_theme_mod( 'theme_color_5', '#024880' ) ); ?>;
+			}
 
-            /* Theme Color 6 */
-            #entire_thing {
-                background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_6', '#f2f2f2' ) ); ?>;
-            }
-        </style>
-        <?php
-    }
+			/* Theme Color 6 */
+			#entire_thing {
+				background-color: <?php echo esc_attr( get_theme_mod( 'theme_color_6', '#f2f2f2' ) ); ?>;
+			}
+		</style>
+		<?php
+	}
 
 	/**
 	 * Helper function to check if header row is enabled
 	 */
-	function is_header_row_active() {
+	public function is_header_row_active() {
 		return get_theme_mod( 'header_row_enable', false );
 	}
 
 	/**
 	 * Helper function to get header row image URL
 	 */
-	function get_header_row_image() {
+	public function get_header_row_image() {
 		return get_theme_mod( 'header_row_image', get_template_directory_uri() . '/assets/images/IOOS_Emblem_Tertiary_B_RGB.png' );
 	}
 
 	/**
 	 * Helper function to get header row image alt text
 	 */
-	function get_header_row_image_alt() {
+	public function get_header_row_image_alt() {
 		return get_theme_mod( 'header_row_image_alt', 'IOOS' );
 	}
 
 	/**
 	 * Helper function to get header row image link
 	 */
-	function get_header_row_image_link() {
+	public function get_header_row_image_link() {
 		return get_theme_mod( 'header_row_image_link', 'https://ioos.us/' );
 	}
 
 	/**
 	 * Helper function to get header row breadcrumb name
 	 */
-	function get_header_row_breadcrumb_name() {
+	public function get_header_row_breadcrumb_name() {
 		return get_theme_mod( 'header_row_breadcrumb_name', 'IOOS' );
 	}
 
 	/**
 	 * Enqueue customizer control scripts
 	 */
-	function enqueue_single_instance_scripts() {
+	public function enqueue_single_instance_scripts() {
 		wp_add_inline_script(
 			'customize-controls',
 			'
