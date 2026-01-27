@@ -1,6 +1,6 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
-  "landingPage": "/wp-admin/",
+  "landingPage": "/",
   "preferredVersions": {
     "php": "8.3",
     "wp": "latest"
@@ -31,7 +31,7 @@
       "step": "installPlugin",
       "pluginData": {
         "resource": "url",
-        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.2.0/graphic_data_plugin.zip"
+        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.2.1/graphic_data_plugin.zip"
       }
     },
     {
@@ -42,12 +42,24 @@
       "step": "installTheme",
       "themeData": {
         "resource": "url",
-        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.2.0/graphic_data_theme.zip"
+        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.2.1/graphic_data_theme.zip"
       }
     },
     {
       "step": "activateTheme",
       "themeFolderName": "graphic_data_theme"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "graphic_data_settings": {
+          "tutorial_content": true
+        }
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php define('WP_USE_THEMES', false); require_once 'wordpress/wp-load.php'; do_action('plugins_loaded'); do_action('init'); if (class_exists('Graphic_Data_Tutorial_Content')) { $tutorial = new Graphic_Data_Tutorial_Content(); if (method_exists($tutorial, 'check_tutorial_content_status')) { $tutorial->check_tutorial_content_status(); } } ?>"
     }
   ]
 }

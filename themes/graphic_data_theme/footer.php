@@ -1,63 +1,62 @@
 <?php
 defined( 'ABSPATH' ) || exit;
-$instance_num = get_post_meta( get_the_ID(), 'scene_location', true );
+$graphic_data_instance_num = get_post_meta( get_the_ID(), 'scene_location', true );
 
-$singleInstance = graphic_data_single_instance_check();
-if ( $singleInstance != false ) {
-	$instance_num = $singleInstance['instanceID'];
+$graphic_data_single_instance = graphic_data_single_instance_check();
+if ( false != $graphic_data_single_instance ) {
+	$graphic_data_instance_num = $graphic_data_single_instance['instanceID'];
 }
 
-$instance_footer = intval( get_post_meta( $instance_num, 'instance_footer_columns', true ) );
-$settings = get_option( 'graphic_data_settings', [] );
-$sitewide_footer_title = ( ! empty( $settings['sitewide_footer_title'] ?? '' ) ) ? $settings['sitewide_footer_title'] : '';
+$graphic_data_instance_footer = intval( get_post_meta( $graphic_data_instance_num, 'instance_footer_columns', true ) );
+$graphic_data_settings = get_option( 'graphic_data_settings', [] );
 
-$sitewide_footer = ( ! empty( $settings['site_footer'] ?? '' ) ) ? $settings['site_footer'] : '';
-if ( $sitewide_footer_title == '' || $sitewide_footer == '' ) {
-	$sitewide_footer_present = false;
+$graphic_data_sitewide_footer_title = ( ! empty( $graphic_data_settings['sitewide_footer_title'] ?? '' ) ) ? $graphic_data_settings['sitewide_footer_title'] : '';
+$graphic_data_sitewide_footer = ( ! empty( $graphic_data_settings['site_footer'] ?? '' ) ) ? $graphic_data_settings['site_footer'] : '';
+if ( '' == $graphic_data_sitewide_footer_title || '' == $graphic_data_sitewide_footer ) {
+	$graphic_data_sitewide_footer_present = false;
 } else {
-	$sitewide_footer_present = true;
+	$graphic_data_sitewide_footer_present = true;
 }
 
-
-if ( ( $instance_footer > 0 ) || ( $sitewide_footer_present == true ) ) {
+if ( ( $graphic_data_instance_footer > 0 ) || ( true == $graphic_data_sitewide_footer_present ) ) {
 	echo '<footer class="site-footer" >';
 	echo '<div class="container" style="margin: 0 auto; max-width: 1200px;">';
 	echo '<div class="row">';
 
-	if ( $sitewide_footer_present == true ) {
-		// Apply flex styling to .col-sm to center its direct child (the new wrapper)
-		echo '<div class="col-sm footer-column">';
-		// This wrapper will be centered in .col-sm, and its text content will be left-aligned.
-		echo '  <div class="footer-content-wrapper">';
-		echo '    <h6 class="footer-column-title">' . $sitewide_footer_title . '</h6>';
-		echo '    <div class="footer_component">';
-		echo $sitewide_footer;
-		echo '    </div>';
-		echo '  </div>'; // Closing footer-content-wrapper
-		echo '</div>';
-	}
+	if ( $graphic_data_instance_footer > 0 ) {
+		for ( $graphic_data_i = 1; $graphic_data_i <= $graphic_data_instance_footer; $graphic_data_i++ ) {
 
-	if ( $instance_footer > 0 ) {
-		for ( $i = 1; $i <= $instance_footer; $i++ ) {
+			$graphic_data_target_footer_column = 'instance_footer_column' . $graphic_data_i;
 
-			$target_footer_column = 'instance_footer_column' . $i;
-
-			$instance_footer = get_post_meta( $instance_num, $target_footer_column, true );
-			if ( $instance_footer != '' ) {
-				if ( $instance_footer[ 'instance_footer_column_title' . $i ] != '' && $instance_footer[ 'instance_footer_column_content' . $i ] != '' ) {
-					// Apply flex styling to .col-sm to center its direct child (the new wrapper)
+			$graphic_data_instance_footer = get_post_meta( $graphic_data_instance_num, $graphic_data_target_footer_column, true );
+			if ( '' != $graphic_data_instance_footer ) {
+				if ( '' !== $graphic_data_instance_footer[ 'instance_footer_column_title' . $graphic_data_i ] && '' !== $graphic_data_instance_footer[ 'instance_footer_column_content' . $graphic_data_i ] ) {
+					// Apply flex styling to .col-sm to center its direct child (the new wrapper).
 					echo '<div class="col-sm footer-column">';
 					// This wrapper will be centered in .col-sm, and its text content will be left-aligned.
 					echo '  <div class="footer-content-wrapper">';
-					echo '    <h6 class="footer-column-title">' . $instance_footer[ 'instance_footer_column_title' . $i ] . '</h6>';
+					echo '    <h6 class="footer-column-title">' . esc_html( $graphic_data_instance_footer[ 'instance_footer_column_title' . $graphic_data_i ] ) . '</h6>';
 					echo '    <div class="footer_component">';
-					echo $instance_footer[ 'instance_footer_column_content' . $i ];
+					echo wp_kses_post( $graphic_data_instance_footer[ 'instance_footer_column_content' . $graphic_data_i ] );
 					echo '    </div>';
-					echo '  </div>'; // Closing footer-content-wrapper
+					echo '  </div>'; // Closing footer-content-wrapper.
 					echo '</div>';
 				}
 			}
 		}
+	}
+
+	if ( true == $graphic_data_sitewide_footer_present ) {
+		// Apply flex styling to .col-sm to center its direct child (the new wrapper).
+		echo '<div class="col-sm footer-column">';
+		// This wrapper will be centered in .col-sm, and its text content will be left-aligned.
+		echo '  <div class="footer-content-wrapper">';
+		echo '    <h6 class="footer-column-title">' . esc_html( $graphic_data_sitewide_footer_title ) . '</h6>';
+		echo '    <div class="footer_component">';
+		echo wp_kses_post( $graphic_data_sitewide_footer );
+		echo '    </div>';
+		echo '  </div>'; // Closing footer-content-wrapper.
+		echo '</div>';
 	}
 
 	echo '</div>';

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the core plugin class
  *
@@ -7,6 +6,7 @@
  * public-facing side of the site and the admin area.
  *
  * @link       https://github.com/ioos/sanctuarywatch_graphicdata
+ * @package    Graphic_Data_Plugin
  * @since      1.0.0
  */
 
@@ -159,19 +159,20 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'output_transient_to_js' );
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible', 10 );
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'check_draft_overview_scene', 40 );
+		$this->loader->add_action( 'edit_form_after_title', $plugin_utility, 'render_nonce_field' );
 
 		// Load class and functions associated with new user roles.
 		$plugin_custom_roles = new Custom_Roles();
-		$this->loader->add_action( 'init', $plugin_custom_roles, 'create_custom_roles' ); // Create custom roles on plugin activation
-		$this->loader->add_action( 'show_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen
-		$this->loader->add_action( 'edit_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen
-		$this->loader->add_action( 'personal_options_update', $plugin_custom_roles, 'save_instance_selections' ); // Save the selected instances when the user is updated
-		$this->loader->add_action( 'edit_user_profile_update', $plugin_custom_roles, 'save_instance_selections' ); // Save the selected instances when the user is updated
-		$this->loader->add_filter( 'editable_roles', $plugin_custom_roles, 'filter_user_roles' ); // Filter the available roles in the dropdown
-		$this->loader->add_action( 'admin_footer-user-new.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output
-		$this->loader->add_action( 'admin_footer-profile.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output
-		$this->loader->add_action( 'pre_get_posts', $plugin_custom_roles, 'restrict_listing' ); // Filter admin list queries for custom content types
-		$this->loader->add_action( 'current_screen', $plugin_custom_roles, 'restrict_editing' ); // For restrict editing access
+		$this->loader->add_action( 'init', $plugin_custom_roles, 'create_custom_roles' ); // Create custom roles on plugin activation.
+		$this->loader->add_action( 'show_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.
+		$this->loader->add_action( 'edit_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.
+		$this->loader->add_action( 'personal_options_update', $plugin_custom_roles, 'save_instance_selections' ); // Save the selected instances when the user is updated.
+		$this->loader->add_action( 'edit_user_profile_update', $plugin_custom_roles, 'save_instance_selections' ); // Save the selected instances when the user is updated.
+		$this->loader->add_filter( 'editable_roles', $plugin_custom_roles, 'filter_user_roles' ); // Filter the available roles in the dropdown.
+		$this->loader->add_action( 'admin_footer-user-new.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output.
+		$this->loader->add_action( 'admin_footer-profile.php', $plugin_custom_roles, 'reorder_roles_js' ); // Direct manipulation of the role dropdown output.
+		$this->loader->add_action( 'pre_get_posts', $plugin_custom_roles, 'restrict_listing' ); // Filter admin list queries for custom content types.
+		$this->loader->add_action( 'current_screen', $plugin_custom_roles, 'restrict_editing' ); // For restrict editing access.
 		$this->loader->add_filter( 'admin_bar_menu', $plugin_custom_roles, 'restrict_new_post_from_admin_bar', 999 );
 		$this->loader->add_filter( 'admin_menu', $plugin_custom_roles, 'restrict_content_editor_admin_menu', 999 );
 
@@ -204,7 +205,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_footer-post-new.php', $plugin_admin, 'adjust_admin_post_time_display', 10 );
 
 		// Load  class and functions associated with About custom content type.
-		$plugin_admin_about = new About();
+		$plugin_admin_about = new Graphic_Data_About();
 		$this->loader->add_action( 'init', $plugin_admin_about, 'custom_content_type_about' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_about, 'create_about_fields', 1 );
 		$this->loader->add_action( 'admin_head-edit.php', $plugin_admin_about, 'modify_about_add_new_button' ); // restricting number of about posts.
@@ -234,9 +235,9 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_bar_styles' );
 
 		// Load class and functions associated with Instance Types.
-		$plugin_admin_instance_type = new Instance_Type();
+		$plugin_admin_instance_type = new Graphic_Data_Instance_Type();
 		$this->loader->add_action( 'admin_init', $plugin_admin_instance_type, 'instance_settings_init' );
-		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_taxonomy', 0 ); // Priority 0 to run early
+		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_taxonomy', 0 ); // Priority 0 to run early.
 		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_order_meta' );
 		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_navbar_name_meta' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_instance_type, 'add_instance_type_admin_menu' );
@@ -259,10 +260,10 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'rewrite_rules_array', $plugin_admin_scene, 'add_scene_rewrite_rules' );
 		$this->loader->add_filter( 'post_type_link', $plugin_admin_scene, 'remove_scene_slug', 10, 3 );
 		$this->loader->add_filter( 'manage_edit-scene_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column' );
-		$this->loader->add_action( 'pre_get_posts', $plugin_admin_scene, 'orderby_status_column' ); // This action orders by the status column for scene, modal, and figure content types
+		$this->loader->add_action( 'pre_get_posts', $plugin_admin_scene, 'orderby_status_column' ); // This action orders by the status column for scene, modal, and figure content types.
 		$this->loader->add_action( 'admin_notices', $plugin_admin_scene, 'display_overview_scene_notice' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_scene, 'scene_enqueue_quick_edit_validation' ); // new AI
-		$this->loader->add_action( 'wp_ajax_scene_validate_slug', $plugin_admin_scene, 'scene_validate_slug_ajax' ); // new AI
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_scene, 'scene_enqueue_quick_edit_validation' );
+		$this->loader->add_action( 'wp_ajax_scene_validate_slug', $plugin_admin_scene, 'scene_validate_slug_ajax' );
 
 		// Load  class and functions associated with Modal custom content type.
 		$plugin_admin_modal = new Modal();
@@ -299,8 +300,9 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script' );
 
 		// Load class and functions connected to login screen customization.
-		$plugin_admin_logo = new Login();
+		$plugin_admin_logo = new Graphic_Data_Login();
 		$this->loader->add_action( 'login_enqueue_scripts', $plugin_admin_logo, 'login_logo' );
+		$this->loader->add_action( 'login_headerurl', $plugin_admin_logo, 'logo_url' );
 
 		// Load class and functions connected with Export Figures Tool.
 		$plugin_admin_export_figures = new Graphic_Data_Export_Figures();
