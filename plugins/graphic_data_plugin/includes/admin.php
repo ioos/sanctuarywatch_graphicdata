@@ -235,7 +235,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_bar_styles' );
 
 		// Load class and functions associated with Instance Types.
-		$plugin_admin_instance_type = new Instance_Type();
+		$plugin_admin_instance_type = new Graphic_Data_Instance_Type();
 		$this->loader->add_action( 'admin_init', $plugin_admin_instance_type, 'instance_settings_init' );
 		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_taxonomy', 0 ); // Priority 0 to run early.
 		$this->loader->add_action( 'init', $plugin_admin_instance_type, 'register_instance_type_order_meta' );
@@ -300,8 +300,9 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script' );
 
 		// Load class and functions connected to login screen customization.
-		$plugin_admin_logo = new Login();
+		$plugin_admin_logo = new Graphic_Data_Login();
 		$this->loader->add_action( 'login_enqueue_scripts', $plugin_admin_logo, 'login_logo' );
+		$this->loader->add_action( 'login_headerurl', $plugin_admin_logo, 'logo_url' );
 
 		// Load class and functions connected with Export Figures Tool.
 		$plugin_admin_export_figures = new Graphic_Data_Export_Figures();

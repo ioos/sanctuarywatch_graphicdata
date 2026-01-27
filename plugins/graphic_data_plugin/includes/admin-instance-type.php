@@ -2,16 +2,23 @@
 /**
  * Register class that defines the Instance Type functions
  */
+class Graphic_Data_Instance_Type {
 
-class Instance_Type {
-
-
-	// code version for instance.
-	function instance_settings_init() {
-		// Register a new settings group
+	/**
+	 * Register the instance settings group and settings section.
+	 *
+	 * Registers the 'instance_settings' option under the 'theme_settings_group'
+	 * and adds a settings section for the instance configuration page.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function instance_settings_init() {
+		// Register a new settings group.
 		register_setting( 'theme_settings_group', 'instance_settings' );
 
-		// Add a new section
+		// Add a new section.
 		add_settings_section(
 			'instance_settings_section',
 			'Instance Settings',
@@ -20,8 +27,17 @@ class Instance_Type {
 		);
 	}
 
-	// Register the instance_type taxonomy if it doesn't exist.
-	function register_instance_type_taxonomy() {
+	/**
+	 * Register the 'instance_type' custom taxonomy if it does not already exist.
+	 *
+	 * Registers a flat (non-hierarchical) taxonomy with admin UI support,
+	 * an admin column, query var support, and a custom rewrite slug.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function register_instance_type_taxonomy() {
 		if ( ! taxonomy_exists( 'instance_type' ) ) {
 			register_taxonomy(
 				'instance_type',
@@ -49,8 +65,18 @@ class Instance_Type {
 		}
 	}
 
-	// Register the instance order meta field for the taxonomy.
-	function register_instance_type_order_meta() {
+	/**
+	 * Register the 'instance_order' meta field for the 'instance_type' taxonomy.
+	 *
+	 * Registers an integer meta field used to control the display order of
+	 * instance types. The field is exposed in the REST API and sanitized
+	 * with absint.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function register_instance_type_order_meta() {
 		register_meta(
 			'term',
 			'instance_order',
@@ -63,8 +89,17 @@ class Instance_Type {
 		);
 	}
 
-	// Register the instance navbar name meta field for the taxonomy.
-	function register_instance_type_navbar_name_meta() {
+	/**
+	 * Register the 'navbar_name' meta field for the 'instance_type' taxonomy.
+	 *
+	 * Registers a meta field used to store the navigation bar display name
+	 * for each instance type. The field is exposed in the REST API.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function register_instance_type_navbar_name_meta() {
 		register_meta(
 			'term',
 			'navbar_name',
@@ -76,8 +111,15 @@ class Instance_Type {
 		);
 	}
 
-	// Add the admin menu item.
-	function add_instance_type_admin_menu() {
+	/**
+	 * Add the Instance Types admin menu item.
+	 *
+	 * Registers a top-level WordPress admin menu page for managing
+	 * instance types. Requires the 'manage_categories' capability.
+	 *
+	 * @return void
+	 */
+	public function add_instance_type_admin_menu() {
 		add_menu_page(
 			'Manage Instance Types',
 			'Instance Types',
