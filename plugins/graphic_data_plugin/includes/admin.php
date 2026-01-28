@@ -267,7 +267,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'wp_ajax_scene_validate_slug', $plugin_admin_scene, 'scene_validate_slug_ajax' );
 
 		// Load  class and functions associated with Modal custom content type.
-		$plugin_admin_modal = new Modal();
+		$plugin_admin_modal = new Graphic_Data_Modal();
 		$this->loader->add_action( 'restrict_manage_posts', $plugin_admin_modal, 'modal_filter_dropdowns' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_modal, 'modal_location_filter_results' );
 		$this->loader->add_action( 'current_screen', $plugin_admin_modal, 'cleanup_expired_modal_filters' );

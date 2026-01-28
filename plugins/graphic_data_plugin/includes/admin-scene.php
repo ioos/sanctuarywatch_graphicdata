@@ -5,6 +5,15 @@
 
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
+/**
+ * Manages the Scene custom post type and its admin interface.
+ *
+ * Handles registration of the Scene post type, custom meta fields, REST API
+ * integration, admin list table columns and filters, permalink rewriting,
+ * Quick Edit validation, and bulk/row action customization.
+ *
+ * @since 1.0.0
+ */
 class Graphic_Data_Scene {
 
 	/**
@@ -391,7 +400,19 @@ class Graphic_Data_Scene {
 		}
 		$field_length_dropdown .= '</select>';
 
-		echo esc_html( $field_length_dropdown );
+		echo wp_kses(
+			$field_length_dropdown,
+			array(
+				'select' => array(
+					'name' => array(),
+					'id'   => array(),
+				),
+				'option' => array(
+					'value'    => array(),
+					'selected' => array(),
+				),
+			)
+		);
 
 		$function_utilities = new Graphic_Data_Utility();
 		$function_utilities->create_instance_dropdown_filter( 'scene_instance' );
@@ -489,7 +510,7 @@ class Graphic_Data_Scene {
 		// Populate columns based on the determined field_length.
 		if ( 'scene_location' === $column ) {
 			$instance_id = get_post_meta( $post_id, 'scene_location', true );
-			echo get_the_title( $instance_id );
+			echo esc_html( get_the_title( $instance_id ) );
 		}
 
 		if ( 'scene_infographic' === $column ) {
@@ -529,7 +550,6 @@ class Graphic_Data_Scene {
 		}
 
 		if ( 'status' === $column ) {
-			date_default_timezone_set( 'America/Los_Angeles' );
 			$last_modified_time = get_post_modified_time( 'g:i A', false, $post_id, true );
 			$last_modified_date = get_post_modified_time( 'F j, Y', false, $post_id, true );
 			$last_modified_user_id = get_post_meta( $post_id, '_edit_last', true );
@@ -539,7 +559,7 @@ class Graphic_Data_Scene {
 			$last_modified_user = get_userdata( $last_modified_user_id );
 			$last_modified_name = $last_modified_user->first_name . ' ' . $last_modified_user->last_name;
 
-			echo 'Last updated at ' . $last_modified_time . ' on ' . $last_modified_date . ' by ' . $last_modified_name;
+			echo 'Last updated at ' . esc_html( $last_modified_time ) . ' on ' . esc_html( $last_modified_date ) . ' by ' . esc_html( $last_modified_name );
 		}
 	}
 
@@ -574,7 +594,7 @@ class Graphic_Data_Scene {
 	public function remove_bulk_actions( $actions ) {
 		global $post_type;
 
-		if ( $post_type === 'scene' || $post_type === 'modal' || $post_type === 'figure' || $post_type === 'instance' ) {
+		if ( 'scene' === $post_type || 'modal' === $post_type || 'figure' === $post_type || 'instance' === $post_type ) {
 			unset( $actions['bulk-edit'] );
 			unset( $actions['edit'] );
 			unset( $actions['trash'] );
@@ -595,7 +615,7 @@ class Graphic_Data_Scene {
 	public function scene_remove_quick_edit_link( $actions, $post ) {
 		global $current_screen;
 
-		if ( $current_screen->post_type === 'scene' ) {
+		if ( 'scene' === $current_screen->post_type ) {
 			unset( $actions['inline hide-if-no-js'] );
 		}
 		return $actions;
@@ -608,30 +628,30 @@ class Graphic_Data_Scene {
 	 */
 	public function custom_content_type_scene() {
 		$labels = array(
-			'name'                  => _x( 'Scenes', 'Post type general name', 'textdomain' ),
-			'singular_name'         => _x( 'Scene', 'Post type singular name', 'textdomain' ),
-			'menu_name'             => _x( 'Scenes', 'Admin Menu text', 'textdomain' ),
-			'name_admin_bar'        => _x( 'Scene', 'Add New on Toolbar', 'textdomain' ),
-			'add_new'               => __( 'Add New Scene', 'textdomain' ),
-			'add_new_item'          => __( 'Add New Scene', 'textdomain' ),
-			'new_item'              => __( 'New Scene', 'textdomain' ),
-			'edit_item'             => __( 'Edit Scene', 'textdomain' ),
-			'view_item'             => __( 'View Scene', 'textdomain' ),
-			'all_items'             => __( 'All Scenes', 'textdomain' ),
-			'search_items'          => __( 'Search Scenes', 'textdomain' ),
-			'parent_item_colon'     => __( 'Parent Scenes:', 'textdomain' ),
-			'not_found'             => __( 'No Scenes found.', 'textdomain' ),
-			'not_found_in_trash'    => __( 'No Scenes found in Trash.', 'textdomain' ),
-			'featured_image'        => _x( 'Scene Cover Image', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'textdomain' ),
-			'set_featured_image'    => _x( 'Set cover image', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-			'remove_featured_image' => _x( 'Remove cover image', 'Overrides the “Remove featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-			'use_featured_image'    => _x( 'Use as cover image', 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-			'archives'              => _x( 'Scene archives', 'The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4', 'textdomain' ),
-			'insert_into_item'      => _x( 'Insert into Scene', 'Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4', 'textdomain' ),
-			'uploaded_to_this_item' => _x( 'Uploaded to this Scene', 'Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used when viewing media attached to a post). Added in 4.4', 'textdomain' ),
-			'filter_items_list'     => _x( 'Filter Scenes list', 'Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4', 'textdomain' ),
-			'items_list_navigation' => _x( 'Scenes list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4', 'textdomain' ),
-			'items_list'            => _x( 'Scenes list', 'Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4', 'textdomain' ),
+			'name'                  => 'Scenes',
+			'singular_name'         => 'Scene',
+			'menu_name'             => 'Scenes',
+			'name_admin_bar'        => 'Scene',
+			'add_new'               => 'Add New Scene',
+			'add_new_item'          => 'Add New Scene',
+			'new_item'              => 'New Scene',
+			'edit_item'             => 'Edit Scene',
+			'view_item'             => 'View Scene',
+			'all_items'             => 'All Scenes',
+			'search_items'          => 'Search Scenes',
+			'parent_item_colon'     => 'Parent Scenes:',
+			'not_found'             => 'No Scenes found.',
+			'not_found_in_trash'    => 'No Scenes found in Trash.',
+			'featured_image'        => 'Scene Cover Image',
+			'set_featured_image'    => 'Set cover image',
+			'remove_featured_image' => 'Remove cover image',
+			'use_featured_image'    => 'Use as cover image',
+			'archives'              => 'Scene archives',
+			'insert_into_item'      => 'Insert into Scene',
+			'uploaded_to_this_item' => 'Uploaded to this Scene',
+			'filter_items_list'     => 'Filter Scenes list',
+			'items_list_navigation' => 'Scenes list navigation',
+			'items_list'            => 'Scenes list',
 		);
 
 		$args = array(
@@ -648,7 +668,7 @@ class Graphic_Data_Scene {
 			'has_archive'        => true,
 			'hierarchical'       => false,
 			'menu_position'      => null,
-			'supports'           => array( 'title' ), // array( 'title', 'revisions' ),
+			'supports'           => array( 'title' ), // array( 'title', 'revisions' ),.
 		);
 
 		register_post_type( 'scene', $args );
@@ -662,14 +682,13 @@ class Graphic_Data_Scene {
 	 */
 	public function create_scene_fields( $return_fields_only = false ) {
 		$config_metabox = array(
-
-			'type'              => 'metabox',                       // Required, menu or metabox
-			'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
-			'post_types'        => array( 'scene' ),                 // Post types to display meta box
+			'type'              => 'metabox',                       // Required, menu or metabox.
+			'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id].
+			'post_types'        => array( 'scene' ),                 // Post types to display meta box.
 			'context'           => 'advanced',                      // The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
 			'priority'          => 'default',                       // The priority within the context where the boxes should show ('high', 'low').
-			'title'             => 'Scene Fields',                  // The title of the metabox
-			'capability'        => 'edit_posts',                    // The capability needed to view the page
+			'title'             => 'Scene Fields',                  // The title of the metabox.
+			'capability'        => 'edit_posts',                    // The capability needed to view the page.
 			'tabbed'            => true,
 			'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
 		);
@@ -683,183 +702,197 @@ class Graphic_Data_Scene {
 				'type'           => 'select',
 				'title'          => 'Scene status*',
 				'options'        => array(
-					'draft' => 'Draft',
-					'published' => 'Published',
+					'draft'      => 'Draft',
+					'published'  => 'Published',
 				),
-				'default' => 'draft',
-				'description' => 'Should the Scene be live?',
+				'default'        => 'draft',
+				'description'    => 'Should the Scene be live?',
+				'sanitize'       => 'sanitize_text_field',
 			),
 			array(
-				'id'   => 'scene_location',
-				'type' => 'select',
-				'title'          => 'Instance*',
-				'options'        => $instances,
+				'id'          => 'scene_location',
+				'type'        => 'select',
+				'title'       => 'Instance*',
+				'options'     => $instances,
 				'description' => 'What instance is the scene part of? ',
+				'sanitize'    => 'absint',
 			),
 			array(
-				'id'   => 'scene_infographic',
-				'type' => 'image',
-				'title' => 'Infographic*',
+				'id'          => 'scene_infographic',
+				'type'        => 'image',
+				'title'       => 'Infographic*',
 				'description' => 'What is the image for the scene? Only properly-formatted SVG-type images are allowed.',
+				'sanitize'    => 'sanitize_url',
 			),
 			array(
-				'id'   => 'scene_tagline',
-				'type'   => 'editor',
-				'editor' => 'trumbowyg',
+				'id'          => 'scene_tagline',
+				'type'        => 'editor',
+				'editor'      => 'trumbowyg',
 				'title'       => 'Tagline',
 				'description' => 'What is the tagline for the scene?',
+				'sanitize'    => 'wp_kses_post',
 			),
 			array(
-				'id'      => 'scene_info_entries',
-				'type'    => 'range',
-				'title'   => 'Number of info entries',
+				'id'          => 'scene_info_entries',
+				'type'        => 'range',
+				'title'       => 'Number of info entries',
 				'description' => 'How many info links are there for the scene?',
-				'min'     => 0,
-				'default' => 0,
-				'max'     => 6,
-				'step'    => 1,
+				'min'         => 0,
+				'default'     => 0,
+				'max'         => 6,
+				'step'        => 1,
+				'sanitize'    => 'absint',
 			),
 			array(
-				'id'      => 'scene_photo_entries',
-				'type'    => 'range',
-				'title'   => 'Number of photo entries',
+				'id'          => 'scene_photo_entries',
+				'type'        => 'range',
+				'title'       => 'Number of photo entries',
 				'description' => 'How many photo links are there for the scene?',
-				'min'     => 0,
-				'default' => 0,
-				'max'     => 6,
-				'step'    => 1,
+				'min'         => 0,
+				'default'     => 0,
+				'max'         => 6,
+				'step'        => 1,
+				'sanitize'    => 'absint',
 			),
 			array(
-				'id'      => 'scene_order',
-				'type'    => 'number',
-				'title'   => 'Order',
+				'id'          => 'scene_order',
+				'type'        => 'number',
+				'title'       => 'Order',
 				'description' => 'What is the order of the scene in the menu bar?',
-				'default' => '1',
-				'min'     => '1',
-				'max'     => '10',
-				'step'    => '1',
+				'default'     => '1',
+				'min'         => '1',
+				'max'         => '10',
+				'step'        => '1',
+				'sanitize'    => 'absint',
 			),
 			array(
-				'id'    => 'scene_full_screen_button',
-				'type'  => 'select',
-				'title' => 'Full Screen Button',
+				'id'          => 'scene_full_screen_button',
+				'type'        => 'select',
+				'title'       => 'Full Screen Button',
 				'description' => 'Should there be a button to allow full screen access to the scene?',
-				'options'        => array(
-					'no' => 'No',
-					'yes' => 'Yes',
+				'options'     => array(
+					'no'      => 'No',
+					'yes'     => 'Yes',
 				),
-				'default'   => 'yes',
+				'default'     => 'yes',
+				'sanitize'    => 'sanitize_text_field',
 			),
 			array(
 				'id'             => 'scene_text_toggle',
 				'type'           => 'select',
 				'title'          => 'Text Toggle',
 				'options'        => array(
-					'none' => 'No Toggle',
+					'none'       => 'No Toggle',
 					'toggle_off' => 'Toggle, Default Off',
-					'toggle_on' => 'Toggle, Default On',
+					'toggle_on'  => 'Toggle, Default On',
 				),
 				'default'        => 'toggle_on',
-				'description' => 'Should there be a button to toggle text on and off?',
-			 // 'class'      => 'chosen',
+				'description'    => 'Should there be a button to toggle text on and off?',
+				'sanitize'       => 'sanitize_text_field',
 			),
 			array(
-				'id'    => 'scene_orphan_icon_action',
-				'type'  => 'select',
-				'title' => 'Icon visibility in scene, if no associated modal',
-				'options'        => array(
-					'visible' => 'Keep icons as they are',
-					'hide' => 'Hide icons',
+				'id'              => 'scene_orphan_icon_action',
+				'type'            => 'select',
+				'title'           => 'Icon visibility in scene, if no associated modal',
+				'options'         => array(
+					'visible'     => 'Keep icons as they are',
+					'hide'        => 'Hide icons',
 					'translucent' => 'Make icons semi-transparent',
-					'color' => 'Color in icons with specific color',
+					'color'       => 'Color in icons with specific color',
 				),
-				'description' => 'What should happen to clickable icons in the scene that have no associated modal or a modal that is a draft?',
-				'default'   => 'visible',
+				'description'     => 'What should happen to clickable icons in the scene that have no associated modal or a modal that is a draft?',
+				'default'         => 'visible',
+				'sanitize'        => 'sanitize_text_field',
 			),
 			array(
-				'id'     => 'scene_orphan_icon_color',
-				'type'   => 'color',
-				'title'  => 'Color for icons with no associated modal',
+				'id'          => 'scene_orphan_icon_color',
+				'type'        => 'color',
+				'title'       => 'Color for icons with no associated modal',
 				'description' => 'What should the icon color be?',
-				'picker' => 'html5',
-				'default'   => '#808080',
+				'picker'      => 'html5',
+				'default'     => '#808080',
+				'sanitize'    => 'sanitize_hex_color',
 			),
 			array(
-				'id'             => 'scene_toc_style',
-				'type'           => 'select',
-				'title'          => 'Table of contents style*',
-				'options'        => array(
-					'accordion' => 'Accordion (Sections Required)',
-					'list' => 'List (default option, No Sections)',
+				'id'                 => 'scene_toc_style',
+				'type'               => 'select',
+				'title'              => 'Table of contents style*',
+				'options'            => array(
+					'accordion'      => 'Accordion (Sections Required)',
+					'list'           => 'List (default option, No Sections)',
 					'sectioned_list' => 'Sectioned List (Sections Required)',
 				),
-				'default' => 'list',
-				'description' => 'What should the table of contents to the right of the scene look like? Should the icons be in sections? If so, the sections can be created here. However, you will need to assign your modals to them.',
+				'default'            => 'list',
+				'description'        => 'What should the table of contents to the right of the scene look like? Should the icons be in sections? If so, the sections can be created here. However, you will need to assign your modals to them.',
+				'sanitize'           => 'sanitize_text_field',
 			),
 			array(
-				'id'    => 'scene_same_hover_color_sections',
-				'type'  => 'select',
-				'title' => 'Single color for sections',
-				'options'        => array(
-					'no' => 'No',
-					'yes' => 'Yes',
+				'id'          => 'scene_same_hover_color_sections',
+				'type'        => 'select',
+				'title'       => 'Single color for sections',
+				'options'     => array(
+					'no'      => 'No',
+					'yes'     => 'Yes',
 				),
 				'description' => 'Should all sections have the same hover color?',
-				'default'   => 'yes',
+				'default'     => 'yes',
+				'sanitize'    => 'sanitize_text_field',
 			),
 			array(
-				'id'     => 'scene_hover_color',
-				'type'   => 'color',
-				'title'  => 'Scene Hover color',
+				'id'          => 'scene_hover_color',
+				'type'        => 'color',
+				'title'       => 'Scene Hover color',
 				'description' => 'What should the hover color be?',
-				'picker' => 'html5',
-				'default'   => '#FFFF00',
+				'picker'      => 'html5',
+				'default'     => '#FFFF00',
+				'sanitize'    => 'sanitize_hex_color',
 			),
 			array(
-				'id'     => 'scene_hover_text_color',
-				'type'   => 'color',
-				'title'  => 'Scene Hover Text Color',
+				'id'          => 'scene_hover_text_color',
+				'type'        => 'color',
+				'title'       => 'Scene Hover Text Color',
 				'description' => 'What should the hover text color be?',
-				'picker' => 'html5',
-				'default'   => '#000',
-
+				'picker'      => 'html5',
+				'default'     => '#000',
+				'sanitize'    => 'sanitize_hex_color',
 			),
 			array(
-				'id'      => 'scene_section_number',
-				'type'    => 'select',
-				'title'   => 'Number of scene sections*',
+				'id'          => 'scene_section_number',
+				'type'        => 'select',
+				'title'       => 'Number of scene sections*',
 				'description' => 'How many scene sections are there?',
-				'options' => array(
-					0 => '0',
-					1 => '1',
-					2 => '2',
-					3 => '3',
-					4 => '4',
-					5 => '5',
-					6 => '6',
+				'options'     => array(
+					0         => '0',
+					1         => '1',
+					2         => '2',
+					3         => '3',
+					4         => '4',
+					5         => '5',
+					6         => '6',
 				),
-				'default' => 0,
+				'default'     => 0,
+				'sanitize'    => 'absint',
 			),
 			array(
-				'id'          => 'scene_preview',
-				'type'        => 'button',
-				'title'       => 'Preview scene',
-				'class'        => 'scene_preview',
-				'options'     => array(
-					'href'  => '#nowhere',
-					'target' => '_self',
-					'value' => 'Preview',
+				'id'            => 'scene_preview',
+				'type'          => 'button',
+				'title'         => 'Preview scene',
+				'class'         => 'scene_preview',
+				'options'       => array(
+					'href'      => '#nowhere',
+					'target'    => '_self',
+					'value'     => 'Preview',
 					'btn-class' => 'exopite-sof-btn',
 				),
 			),
 		);
 
-		// Step 1: Create an array to hold the new info sub-arrays
-		$infoFields = array();
+		// Step 1: Create an array to hold the new info sub-arrays.
+		$info_fields = array();
 
-		// Step 2: Use a loop to generate the new info sub-arrays
+		// Step 2: Use a loop to generate the new info sub-arrays.
 		for ( $i = 1; $i <= 6; $i++ ) {
-			$infoFields[] = array(
+			$info_fields[] = array(
 				'type' => 'fieldset',
 				'id' => 'scene_info' . $i,
 				'title'   => 'Info Link ' . $i,
@@ -870,24 +903,24 @@ class Graphic_Data_Scene {
 							'type'        => 'text',
 							'title'       => 'Text',
 							'class'       => 'text-class',
+							'sanitize'    => 'sanitize_text_field',
 						),
 						array(
 							'id'          => 'scene_info_url' . $i,
 							'type'        => 'text',
 							'title'       => 'URL',
 							'class'       => 'text-class',
-							'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
-
+							'sanitize'    => 'sanitize_url',
 						),
 					),
 			);
 		}
-		// Step 1: Create an array to hold the new info sub-arrays
-		$photoFields = array();
+		// Step 1: Create an array to hold the new info sub-arrays.
+		$photo_fields = array();
 
-		// Step 2: Use a loop to generate the new info sub-arrays
+		// Step 2: Use a loop to generate the new info sub-arrays.
 		for ( $i = 1; $i <= 6; $i++ ) {
-			$photoFields[] = array(
+			$photo_fields[] = array(
 				'type' => 'fieldset',
 				'id' => 'scene_photo' . $i,
 				'title'   => 'Photo Link ' . $i,
@@ -901,36 +934,38 @@ class Graphic_Data_Scene {
 							'External' => 'Outside of this site',
 						),
 						'default'     => 'External',
+						'sanitize'    => 'sanitize_url',
 					),
 					array(
 						'id'          => 'scene_photo_text' . $i,
 						'type'        => 'text',
 						'title'       => 'Link Text',
 						'class'       => 'text-class',
+						'sanitize'    => 'sanitize_text_field',
 					),
 					array(
 						'id'          => 'scene_photo_url' . $i,
 						'type'        => 'text',
 						'title'       => 'URL',
 						'class'       => 'text-class',
-						'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
-
+						'sanitize'    => 'sanitize_url',
 					),
 					array(
-						'id'    => 'scene_photo_internal' . $i,
-						'type'  => 'image',
-						'title' => 'Image',
+						'id'       => 'scene_photo_internal' . $i,
+						'type'     => 'image',
+						'title'    => 'Image',
+						'sanitize' => 'sanitize_url',
 					),
 				),
 			);
 		}
 
-		// Step 1: Create an array to hold the new info sub-arrays
-		$sectionFields = array();
+		// Step 1: Create an array to hold the new info sub-arrays.
+		$section_fields = array();
 
-		// Step 2: Use a loop to generate the new info sub-arrays
+		// Step 2: Use a loop to generate the new info sub-arrays.
 		for ( $i = 1; $i <= 6; $i++ ) {
-			$sectionFields[] = array(
+			$section_fields[] = array(
 				'type' => 'fieldset',
 				'id' => 'scene_section' . $i,
 				'title'   => 'Scene Section ' . $i . '*',
@@ -940,48 +975,51 @@ class Graphic_Data_Scene {
 						'type'        => 'text',
 						'title'       => 'Section Title',
 						'class'       => 'text-class',
+						'sanitize'    => 'sanitize_text_field',
 					),
 					array(
-						'id'     => 'scene_section_hover_color' . $i,
-						'type'   => 'color',
-						'title'  => 'Section Hover Color',
-						'picker' => 'html5',
-						'default'   => '#FFFF00',
+						'id'       => 'scene_section_hover_color' . $i,
+						'type'     => 'color',
+						'title'    => 'Section Hover Color',
+						'picker'   => 'html5',
+						'default'  => '#FFFF00',
+						'sanitize' => 'sanitize_hex_color',
 					),
 					array(
-						'id'     => 'scene_section_hover_text_color' . $i,
-						'type'   => 'color',
-						'title'  => 'Section Hover Text Color',
-						'picker' => 'html5',
-						'default'   => '#00000',
+						'id'       => 'scene_section_hover_text_color' . $i,
+						'type'     => 'color',
+						'title'    => 'Section Hover Text Color',
+						'picker'   => 'html5',
+						'default'  => '#00000',
+						'sanitize' => 'sanitize_hex_color',
 					),
 				),
 			);
 		}
 
-		// Step 3: Insert the new sub-arrays after the second element in the original 'fields' array
+		// Step 3: Insert the new sub-arrays after the second element in the original 'fields' array.
 
-		array_splice( $fields, 5, 0, $infoFields );
-		array_splice( $fields, 12, 0, $photoFields );
-		array_splice( $fields, 28, 0, $sectionFields );
+		array_splice( $fields, 5, 0, $info_fields );
+		array_splice( $fields, 12, 0, $photo_fields );
+		array_splice( $fields, 28, 0, $section_fields );
 
-		// If we're just running this function to get the custom field list for field validation, return early
+		// If we're just running this function to get the custom field list for field validation, return early.
 		if ( $return_fields_only ) {
 			return $fields;
 		}
 
-		$fieldsHolder[] = array(
+		$fields_holder[] = array(
 			'name'   => 'basic',
 			'title'  => 'Basic',
 			'icon'   => 'dashicons-admin-generic',
 			'fields' => $fields,
 		);
 
-		// instantiate the admin page
-		$options_panel = new Exopite_Simple_Options_Framework( $config_metabox, $fieldsHolder ); // $fields
+		// instantiate the admin page.
+		$options_panel = new Exopite_Simple_Options_Framework( $config_metabox, $fields_holder ); // $fields.
 
-		// Create array of fields to be registered with register_meta
-		$fieldsToBeRegistered = array(
+		// Create array of fields to be registered with register_meta.
+		$fields_to_be_registered = array(
 			array( 'scene_location', 'string', 'The location of the scene' ),
 			array( 'scene_tagline', 'string', 'The scene tagline' ),
 			array( 'scene_infographic', 'string', 'The url of the infographic' ),
@@ -994,21 +1032,21 @@ class Graphic_Data_Scene {
 			array( 'scene_toc_style', 'string', 'Table of contents style' ),
 		);
 
-		foreach ( $fieldsToBeRegistered as $targetSubArray ) {
+		foreach ( $fields_to_be_registered as $target_sub_array ) {
 			register_meta(
-				'post', // Object type. In this case, 'post' refers to custom post type 'Scene'
-				$targetSubArray[0], // Meta key name
+				'post', // Object type. In this case, 'post' refers to custom post type 'Scene'.
+				$target_sub_array[0], // Meta key name.
 				array(
-					'show_in_rest' => true, // Make the field available in REST API
-					'single' => true, // Indicates whether the meta key has one single value
-					'type' => $targetSubArray[1], // Data type of the meta value
-					'description' => $targetSubArray[2], // Description of the meta key
+					'show_in_rest' => true, // Make the field available in REST API.
+					'single' => true, // Indicates whether the meta key has one single value.
+					'type' => $target_sub_array[1], // Data type of the meta value.
+					'description' => $target_sub_array[2], // Description of the meta key.
 					'auth_callback' => '__return_false',
 				)
 			);
 		}
 
-		$fieldAndDescription = array(
+		$field_and_description = array(
 			array( 'scene_info', 'Info link ' ),
 			array( 'scene_photo', 'Photo link ' ),
 			array( 'scene_photo_internal', 'Internal photo link ' ),
@@ -1016,21 +1054,21 @@ class Graphic_Data_Scene {
 		);
 
 		for ( $i = 1; $i < 7; $i++ ) {
-			foreach ( $fieldAndDescription as $targetFieldAndDescription ) {
-				$target_field = $targetFieldAndDescription[0] . $i;
-				$target_description = $targetFieldAndDescription[1] . $i;
+			foreach ( $field_and_description as $target_field_and_description ) {
+				$target_field = $target_field_and_description[0] . $i;
+				$target_description = $target_field_and_description[1] . $i;
 				register_meta(
 					'post',
 					$target_field,
 					array(
 						'auth_callback'     => '__return_false',
-						'single'            => true, // The field contains a single array
-						'description' => $target_description, // Description of the meta key
+						'single'            => true, // The field contains a single array.
+						'description' => $target_description, // Description of the meta key.
 						'show_in_rest'      => array(
 							'schema' => array(
-								'type'  => 'array', // The meta field is an array
+								'type'  => 'array', // The meta field is an array.
 								'items' => array(
-									'type' => 'string', // Each item in the array is a string
+									'type' => 'string', // Each item in the array is a string.
 								),
 							),
 						),
@@ -1068,37 +1106,72 @@ class Graphic_Data_Scene {
 	}
 
 	/**
-	 * Add a filter to support filtering by "scene_location" in REST API queries.
+	 * Filter REST API queries for scenes by the "scene_location" meta field.
 	 *
-	 * @since    1.0.0
+	 * Appends a LIKE meta_query clause to the WP_Query arguments when the
+	 * 'scene_location' parameter is present in the REST request, enabling
+	 * partial-match filtering on the scene_location post meta value.
+	 *
+	 * Intended as a callback for the 'rest_scene_query' filter.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array           $args    The WP_Query arguments for the REST request.
+	 * @param WP_REST_Request $request The current REST API request object.
+	 * @return array Modified query arguments with the meta_query clause appended
+	 *               when the scene_location parameter is set.
 	 */
 	public function filter_scene_by_scene_location( $args, $request ) {
 		if ( isset( $request['scene_location'] ) ) {
 			$args['meta_query'][] = array(
 				'key' => 'scene_location',
 				'value' => $request['scene_location'],
-				'compare' => 'LIKE', // Change comparison method as needed
+				'compare' => 'LIKE', // Change comparison method as needed.
 			);
 		}
 		return $args;
 	}
 
 	/**
-	 * Add scene rewrite rules for permalinks (Skanda). THIS FUNCTION IS NOT IN USE AND REPLACED WITH OTHER REWRITE RULE FUNCTIONS. REMOVE?
+	 * Add custom rewrite rules for scene permalinks.
 	 *
-	 * @since    1.0.0
+	 * Prepends a rewrite rule that maps a two-segment URL structure
+	 * ({instance_slug}/{scene_slug}) to the scene post type. The new rule
+	 * is added before the existing rules so it takes priority.
+	 *
+	 * Intended as a callback for the 'rewrite_rules_array' filter.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $rules The existing WordPress rewrite rules.
+	 * @return array Modified rewrite rules with the scene rule prepended.
 	 */
 	public function add_scene_rewrite_rules( $rules ) {
 		$new_rules = array(
-			'([^/]+)/([^/]+)/?$' => 'index.php?post_type=scene&name=$matches[2]&instance_slug=$matches[1]', // Map URL structure to scene post type
+			'([^/]+)/([^/]+)/?$' => 'index.php?post_type=scene&name=$matches[2]&instance_slug=$matches[1]', // Map URL structure to scene post type.
 		);
 		return $new_rules + $rules;
 	}
 
 	/**
-	 * Add scene rewrite rules for permalinks.
+	 * Rewrite the permalink for scene posts to use the instance slug.
 	 *
-	 * @since    1.0.0
+	 * Replaces the default scene permalink with a custom structure:
+	 * {home_url}/{instance_slug}/{scene_slug}/
+	 *
+	 * The instance slug is derived from the 'instance_slug' meta field of
+	 * the instance post assigned via the scene's 'scene_location' meta.
+	 * Returns the original link unchanged if the post is not a published
+	 * scene or the associated instance data is missing.
+	 *
+	 * Intended as a callback for the 'post_type_link' filter.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string  $post_link  The default permalink for the post.
+	 * @param WP_Post $post       The current post object.
+	 * @param bool    $leavename  Whether to keep the post name or use a placeholder.
+	 * @return string The modified permalink, or the original if conditions are not met.
 	 */
 	public function remove_scene_slug( $post_link, $post, $leavename ) {
 		if ( 'scene' != $post->post_type || 'publish' != $post->post_status ) {
@@ -1116,13 +1189,6 @@ class Graphic_Data_Scene {
 		return home_url( '/' . $web_slug . '/' . $post->post_name . '/' );
 	}
 
-	public function scene_preview() {
-
-		header( 'Location: ' . $_SERVER['HTTP_REFERER'] );
-		// echo "hello";
-		wp_die();
-	}
-
 	/**
 	 * Registers the "status" column as sortable in the Scene, Modal, and Figure custom post admin lists.
 	 *
@@ -1130,7 +1196,7 @@ class Graphic_Data_Scene {
 	 * @return array Modified array with the "status" column set as sortable by "modified".
 	 */
 	public function register_status_as_sortable_column( $sortable_columns ) {
-		$sortable_columns['status'] = 'modified'; // Sorting by post_modified column
+		$sortable_columns['status'] = 'modified'; // Sorting by post_modified column.
 		return $sortable_columns;
 	}
 
@@ -1145,17 +1211,17 @@ class Graphic_Data_Scene {
 	 * @return void
 	 */
 	public function orderby_status_column( $query ) {
-		// Ensure we are in the admin area and working with the main query
+		// Ensure we are in the admin area and working with the main query.
 		if ( ! is_admin() || ! $query->is_main_query() ) {
 			return;
 		}
 
-		// Retrieve the sorting parameters
+		// Retrieve the sorting parameters.
 		$orderby = $query->get( 'orderby' );
-		$order = strtoupper( $query->get( 'order' ) ) === 'ASC' ? 'ASC' : 'DESC'; // Default to DESC if not set
+		$order = strtoupper( $query->get( 'order' ) ) === 'ASC' ? 'ASC' : 'DESC'; // Default to DESC if not set.
 
-		// Apply sorting if the "modified" column is selected
-		if ( $orderby == 'modified' ) {
+		// Apply sorting if the "modified" column is selected.
+		if ( 'modified' == $orderby ) {
 			$query->set( 'orderby', 'modified' );
 			$query->set( 'order', $order );
 		}

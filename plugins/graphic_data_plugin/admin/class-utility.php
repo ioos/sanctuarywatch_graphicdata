@@ -177,23 +177,6 @@ class Graphic_Data_Utility {
 	}
 
 	/**
-	 * Dummy sanitize function that returns the value as is.
-	 * .
-	 * This sanitize function is used to prevent automatic sanitization of
-	 * URL fields. What is causing the automatic sanitization is unknown but
-	 * exists somewhere deep in the Exopite Framework options. The problem comes up
-	 * with URL escape codes which are not interpreted correctly by whatever
-	 * is doing the automatic sanitization. This function, in contrast, ensures that
-	 * the user input is preserved.
-	 *
-	 * @param string $value The URL field to be returned.
-	 * @return string The URL field.
-	 */
-	public function dummy_sanitize( $value ) {
-		return $value;
-	}
-
-	/**
 	 * Helper function to delete field values from transients
 	 *
 	 * @param string $content_type The custom content type

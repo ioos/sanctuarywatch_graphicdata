@@ -139,7 +139,7 @@ class Graphic_Data_Instance_Type {
 			return;
 		}
 
-		// Handle form submissions
+		// Handle form submissions.
 		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 			if ( isset( $_POST['action'] ) ) {
 				switch ( $_POST['action'] ) {
@@ -197,7 +197,7 @@ class Graphic_Data_Instance_Type {
 			}
 		}
 
-		// Get all instance_type terms
+		// Get all instance_type terms.
 		$terms = get_terms(
 			[
 				'taxonomy' => 'instance_type',
@@ -205,13 +205,13 @@ class Graphic_Data_Instance_Type {
 			]
 		);
 
-		// Check if we got an error
+		// Check if we got an error.
 		if ( is_wp_error( $terms ) ) {
 			echo '<div class="error"><p>Error retrieving terms: ' . esc_html( $terms->get_error_message() ) . '</p></div>';
 			return;
 		}
 
-		// Convert terms to array if it's not already (for older WordPress versions)
+		// Convert terms to array if it's not already (for older WordPress versions).
 		$terms = is_array( $terms ) ? $terms : array();
 		?>
 		<div class="wrap">
@@ -265,7 +265,7 @@ class Graphic_Data_Instance_Type {
 					<tbody>
 						<?php
 						foreach ( $terms as $term ) :
-							// Ensure $term is a WP_Term object
+							// Ensure $term is a WP_Term object.
 							if ( ! is_object( $term ) || ! isset( $term->term_id ) ) {
 								continue;
 							}

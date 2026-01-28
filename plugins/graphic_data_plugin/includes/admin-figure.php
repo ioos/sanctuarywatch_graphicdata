@@ -602,8 +602,6 @@ class Figure {
 							'type'        => 'text',
 							'title'       => 'URL',
 							'class'       => 'text-class',
-							'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
-
 						),
 					),
 				),
@@ -624,8 +622,6 @@ class Figure {
 							'type'        => 'text',
 							'title'       => 'URL',
 							'class'       => 'text-class',
-							'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
-
 						),
 					),
 				),
@@ -660,8 +656,6 @@ class Figure {
 					'title'       => 'External URL*',
 					'class'       => 'text-class',
 					'description' => 'This external URL should link just to the image itself (that is the URL should end in .png .jpeg .jpg or .tiff)',
-					'sanitize'    => array( $function_utilities, 'dummy_sanitize' ), // Prevents automatic URL sanitization
-
 				),
 				array(
 					'id'          => 'figure_external_alt',
@@ -670,7 +664,7 @@ class Figure {
 					'class'       => 'text-class',
 					'description' => 'What is the "alternative text" that should be associated with this image for accessibility?',
 				),
-				// New HTML/JS Code Editor Field
+				// New HTML/JS Code Editor Field.
 				array(
 					'id'          => 'figure_code',
 					'type'        => 'ace_editor',

@@ -608,7 +608,7 @@ class Graphic_Data_Validation {
 			$function_utilities->fields_to_transient( 'modal_post_status', 'post_error', 30 );
 
 			// Instantiate the modal class - we need this to get the current custom fields list for the content type.
-			$modal_class = new Modal();
+			$modal_class = new Graphic_Data_Modal();
 
 			// Get the custom fields list for the content type.
 			$fields_config = $this->get_fields_config( 'modal', $modal_class );
