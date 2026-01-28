@@ -2,7 +2,6 @@
 /**
  * The code for creating the "Graphic Data Support" menu item and page in the plugin.
  */
-
 class Graphic_Data_Support {
 
 	/**
@@ -10,13 +9,13 @@ class Graphic_Data_Support {
 	 */
 	public function add_admin_menu() {
 		add_menu_page(
-			'Graphic Data Support',           // Page title
-			'Graphic Data Support',           // Menu title
-			'manage_options',                 // Capability required
-			'graphic-data-support',           // Menu slug
-			array( $this, 'display_support_page' ), // Callback function
-			'dashicons-chart-area',           // Icon (you can change this)
-			100                                // Position in menu
+			'Graphic Data Support',           // Page title.
+			'Graphic Data Support',           // Menu title.
+			'manage_options',                 // Capability required.
+			'graphic-data-support',           // Menu slug.
+			array( $this, 'display_support_page' ), // Callback function.
+			'dashicons-chart-area',           // Icon (you can change this).
+			100                                // Position in menu.
 		);
 	}
 

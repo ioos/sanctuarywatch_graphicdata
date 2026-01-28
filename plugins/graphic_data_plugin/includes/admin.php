@@ -13,7 +13,7 @@
 /**
  * The core plugin class.
  *
- * This is used to define internationalization, admin-specific hooks, and
+ * This is used to define admin-specific hooks, and
  * public-facing site hooks.
  *
  * Also maintains the unique identifier of this plugin as well as the current
@@ -29,7 +29,7 @@ class Graphic_Data_Plugin {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Graphic_Data_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -71,7 +71,7 @@ class Graphic_Data_Plugin {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
-	 * - Loader. Orchestrates the hooks of the plugin.
+	 * - Graphic_Data_Loader. Orchestrates the hooks of the plugin.
 	 * - Admin. Defines all hooks for the admin area.
 	 * - Graphic_Data_Public. Defines all hooks for the public side of the site.
 	 *
@@ -142,7 +142,7 @@ class Graphic_Data_Plugin {
 		// The class that define the tutorial content for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
 
-		$this->loader = new Loader();
+		$this->loader = new Graphic_Data_Loader();
 	}
 
 	/**
@@ -162,7 +162,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'edit_form_after_title', $plugin_utility, 'render_nonce_field' );
 
 		// Load class and functions associated with new user roles.
-		$plugin_custom_roles = new Custom_Roles();
+		$plugin_custom_roles = new Graphic_Data_Custom_Roles();
 		$this->loader->add_action( 'init', $plugin_custom_roles, 'create_custom_roles' ); // Create custom roles on plugin activation.
 		$this->loader->add_action( 'show_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.
 		$this->loader->add_action( 'edit_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.
@@ -215,7 +215,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'post_type_link', $plugin_admin_about, 'custom_about_permalink', 10, 2 ); // forcing About permalink structure.
 
 		// Load  class and functions associated with Instance custom content type.
-		$plugin_admin_instance = new Instance();
+		$plugin_admin_instance = new Graphic_Data_Instance();
 		$this->loader->add_action( 'init', $plugin_admin_instance, 'custom_content_type_instance' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_instance, 'create_instance_fields', 1 );
 		$this->loader->add_action( 'manage_instance_posts_columns', $plugin_admin_instance, 'change_instance_columns' );
@@ -233,6 +233,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_settings_page, 'register_rest_settings' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_line_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_bar_styles' );
+		$this->loader->add_action( 'update_option_graphic_data_settings', $plugin_admin_settings_page, 'check_sitewide_footer_status' );
 
 		// Load class and functions associated with Instance Types.
 		$plugin_admin_instance_type = new Graphic_Data_Instance_Type();
@@ -243,7 +244,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_menu', $plugin_admin_instance_type, 'add_instance_type_admin_menu' );
 
 		// Load  class and functions associated with Scene custom content type.
-		$plugin_admin_scene = new Scene();
+		$plugin_admin_scene = new Graphic_Data_Scene();
 		$this->loader->add_action( 'restrict_manage_posts', $plugin_admin_scene, 'scene_filter_dropdowns' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_scene, 'scene_location_filter_results' );
 		$this->loader->add_action( 'current_screen', $plugin_admin_scene, 'cleanup_expired_scene_filters' );
@@ -336,7 +337,7 @@ class Graphic_Data_Plugin {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    Loader    Orchestrates the hooks of the plugin.
+	 * @return    Graphic_Data_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;

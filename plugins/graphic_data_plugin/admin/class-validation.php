@@ -249,7 +249,7 @@ class Graphic_Data_Validation {
 			$function_utilities->fields_to_transient( 'instance_post_status', 'post_error', 30 );
 
 			// Instantiate the modal class - we need this to get the current custom fields list for the content type.
-			$instance_class = new Instance();
+			$instance_class = new Graphic_Data_Instance();
 
 			// Get the list of custom fields for the content type.
 			$fields_config = $this->get_fields_config( 'instance', $instance_class );
@@ -747,7 +747,7 @@ class Graphic_Data_Validation {
 			$function_utilities->fields_to_transient( 'scene_post_status', 'post_error', 30 );
 
 			// Instantiate the scene class - we need this to get the current custom fields list for the content type.
-			$scene_class = new Scene();
+			$scene_class = new Graphic_Data_Scene();
 
 			// Get the custom fields list for the content type.
 			$fields_config = $this->get_fields_config( 'scene', $scene_class );

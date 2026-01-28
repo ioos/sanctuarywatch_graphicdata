@@ -782,4 +782,19 @@ class Graphic_Data_Settings_Page {
 		</style>
 		<?php
 	}
+
+	/**
+	 * Checks the sitewide footer option and initializes it to an empty string if not set.
+	 *
+	 * For some reason, when sitewide footer isn't set, it produces an error in the log. This function corrects that error.
+	 *
+	 * @return void
+	 */
+	public function check_sitewide_footer_status() {
+		$options = get_option( 'graphic_data_settings' );
+		if ( null == $options['sitewide_footer'] || ! isset( $options['sitewide_footer'] ) ) {
+			$options['sitewide_footer'] = '';
+			update_option( 'graphic_data_settings', $options );
+		}
+	}
 }
