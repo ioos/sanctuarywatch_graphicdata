@@ -5,22 +5,20 @@
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
 class Figure {
-
-
 	// Register AJAX action for handling interactive graph data retrieval
-	// Register default_interactive_arguments from the plugin settings page
+	// Register default_interactive_arguments from the plugin settings page.
 	public function enqueue_admin_interactive_graph_script( $hook ) {
-		if ( $hook !== 'post.php' && $hook !== 'post-new.php' ) {
+		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
 			return;
 		}
 		$current_post_type = get_post_type();
-		if ( $current_post_type == 'figure' ) {
+		if ( 'figure' == $current_post_type ) {
 
-			// AJAX action for handling interactive graph data retrieval
+			// AJAX action for handling interactive graph data retrieval.
 			wp_enqueue_script(
 				'admin-figure',
 				plugin_dir_url( __FILE__ ) . '../admin/js/admin-figure.js',
-				[], // <-- no jquery needed
+				[], // <-- no jquery needed.
 				GRAPHIC_DATA_PLUGIN_VERSION,
 				true
 			);
@@ -33,20 +31,20 @@ class Figure {
 				]
 			);
 
-			// default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/admin-settings-page.php
+			// default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/admin-settings-page.php.
 			$settings = get_option( 'graphic_data_settings' );
 			$default_interactive_line_arguments = isset( $settings['interactive_line_arguments'] ) ? $settings['interactive_line_arguments'] : '';
 			wp_localize_script(
-				'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php
-				'argumentsDefaultsLine',           // global object name
+				'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php.
+				'argumentsDefaultsLine',           // global object name.
 				[ 'interactive_line_arguments' => $default_interactive_line_arguments ]
 			);
 
 			$settings = get_option( 'graphic_data_settings' );
 			$default_interactive_bar_arguments = isset( $settings['interactive_bar_arguments'] ) ? $settings['interactive_bar_arguments'] : '';
 			wp_localize_script(
-				'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php
-				'argumentsDefaultsBar',           // global object name
+				'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php.
+				'argumentsDefaultsBar',           // global object name.
 				[ 'interactive_bar_arguments' => $default_interactive_bar_arguments ]
 			);
 		}
@@ -60,7 +58,7 @@ class Figure {
 	 * @link https://www.smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/
 	 * @since    1.0.0
 	 */
-	function change_figure_columns( $columns ) {
+	public function change_figure_columns( $columns ) {
 		$columns = array(
 			'title' => 'Title',
 			'figure_instance' => 'Instance',
@@ -411,7 +409,7 @@ class Figure {
 	 *
 	 * @since    1.0.0
 	 */
-	function custom_content_type_figure() {
+	public function custom_content_type_figure() {
 		$labels = array(
 			'name'                  => _x( 'Figures', 'Post type general name', 'textdomain' ),
 			'singular_name'         => _x( 'Figure', 'Post type singular name', 'textdomain' ),
@@ -466,20 +464,20 @@ class Figure {
 	 * @param bool $return_fields_only If true, only return the custom fields array without registering the metabox (used as part of field validation).
 	 * @since    1.0.0
 	 */
-	function create_figure_fields( $return_fields_only = false ) {
+	public function create_figure_fields( $return_fields_only = false ) {
 
 		$config_metabox = array(
 
 			/*
 			* METABOX
 			*/
-			'type'              => 'metabox',                       // Required, menu or metabox
-			'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id]
-			'post_types'        => array( 'figure' ),                 // Post types to display meta box
+			'type'              => 'metabox',                       // Required, menu or metabox.
+			'id'                => 'graphic_data_plugin',              // Required, meta box id, unique, for saving meta: id[field-id].
+			'post_types'        => array( 'figure' ),                 // Post types to display meta box.
 			'context'           => 'advanced',                      // The context within the screen where the boxes should display: 'normal', 'side', and 'advanced'.
 			'priority'          => 'default',                       // The priority within the context where the boxes should show ('high', 'low').
-			'title'             => 'Figure Fields',                  // The title of the metabox
-			'capability'        => 'edit_posts',                    // The capability needed to view the page
+			'title'             => 'Figure Fields',                  // The title of the metabox.
+			'capability'        => 'edit_posts',                    // The capability needed to view the page.
 			'tabbed'            => true,
 			'options'           => 'simple',                        // Only for metabox, options is stored az induvidual meta key, value pair.
 		);
@@ -505,7 +503,7 @@ class Figure {
 		$modal_icons = [];
 		$modal_tabs = [];
 
-		// used by both scene and icon dropdowns
+		// used by both scene and icon dropdowns.
 		if ( array_key_exists( 'post', $_GET ) ) {
 			$figure_id = intval( $_GET['post'] );
 			$location = get_post_meta( $figure_id, 'location', true );
@@ -816,7 +814,7 @@ class Figure {
 	 *
 	 * @since    1.0.0
 	 */
-	function register_figure_rest_fields() {
+	public function register_figure_rest_fields() {
 		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'uploaded_path_json', 'figure_title' ); // figure_temp_filepath
 		$function_utilities = new Graphic_Data_Utility();
 		$function_utilities->register_custom_rest_fields( 'figure', $figure_rest_fields );
@@ -827,7 +825,7 @@ class Figure {
 	 *
 	 * @since    1.0.0
 	 */
-	function filter_figure_by_figure_modal( $args, $request ) {
+	public function filter_figure_by_figure_modal( $args, $request ) {
 		if ( isset( $request['figure_modal'] ) ) {
 			$args['meta_query'][] = [
 				[
