@@ -580,18 +580,19 @@ class Graphic_Data_Modal {
 		// Store field_length filter value if it exists.
 		if ( isset( $_GET['field_length'] ) && ! empty( $_GET['field_length'] ) ) {
 			update_user_meta( $user_id, 'modal_field_length', $_GET['field_length'] );
+			update_user_meta( $user_id, 'modal_field_length', sanitize_text_field( wp_unslash( $_GET['field_length'] ) ) );
 			update_user_meta( $user_id, 'modal_field_length_expiration', $expiration_time );
 		}
 
 		// Store modal_instance filter value if it exists.
 		if ( isset( $_GET['modal_instance'] ) && ! empty( $_GET['modal_instance'] ) ) {
-			update_user_meta( $user_id, 'modal_instance', $_GET['modal_instance'] );
+			update_user_meta( $user_id, 'modal_instance', absint( wp_unslash( $_GET['modal_instance'] ) ) );
 			update_user_meta( $user_id, 'modal_instance_expiration', $expiration_time );
 		}
 
 		// Store modal_scene filter value if it exists.
 		if ( isset( $_GET['modal_scene'] ) && ! empty( $_GET['modal_scene'] ) ) {
-			update_user_meta( $user_id, 'modal_scene', $_GET['modal_scene'] );
+			update_user_meta( $user_id, 'modal_scene', absint( wp_unslash( $_GET['modal_scene'] ) ) );
 			update_user_meta( $user_id, 'modal_scene_expiration', $expiration_time );
 		}
 	}
@@ -687,7 +688,7 @@ class Graphic_Data_Modal {
 			);
 
 			// Check for filter in URL first, then check for stored value.
-			$field_length = isset( $_GET['field_length'] ) ? $_GET['field_length'] : $this->get_modal_filter_value( 'modal_field_length' );
+			$field_length = isset( $_GET['field_length'] ) ? sanitize_text_field( wp_unslash( $_GET['field_length'] ) ) : $this->get_modal_filter_value( 'modal_field_length' );
 
 			if ( $field_length ) {
 				switch ( $field_length ) {
@@ -733,25 +734,28 @@ class Graphic_Data_Modal {
 			echo '<option value="">All Scenes</option>';
 
 			// Get selected scene from URL or from stored value.
-			$selected_instance = isset( $_GET['modal_instance'] ) ? $_GET['modal_instance'] : $this->get_modal_filter_value( 'modal_instance' );
-			$selected_scene = isset( $_GET['modal_scene'] ) ? $_GET['modal_scene'] : $this->get_modal_filter_value( 'modal_scene' );
+			$selected_instance = isset( $_GET['modal_instance'] ) ? absint( wp_unslash( $_GET['modal_instance'] ) ) : $this->get_modal_filter_value( 'modal_instance' );
+			$selected_scene = isset( $_GET['modal_scene'] ) ? absint( wp_unslash( $_GET['modal_scene'] ) ) : $this->get_modal_filter_value( 'modal_scene' );
 
 			if ( $selected_instance ) {
 				global $wpdb;
 				$scenes = $wpdb->get_results(
-					"
-                    SELECT p.ID, p.post_title 
-                    FROM $wpdb->posts p
-                    INNER JOIN $wpdb->postmeta pm ON p.ID = pm.post_id
-                    WHERE p.post_type = 'scene' 
-                    AND p.post_status = 'publish'
-                    AND pm.meta_key = 'scene_location' 
-                    AND pm.meta_value = " . $selected_instance
+					$wpdb->prepare(
+						"
+						SELECT p.ID, p.post_title
+						FROM $wpdb->posts p
+						INNER JOIN $wpdb->postmeta pm ON p.ID = pm.post_id
+						WHERE p.post_type = 'scene'
+						AND p.post_status = 'publish'
+						AND pm.meta_key = 'scene_location'
+						AND pm.meta_value = %d
+						",
+						$selected_instance
+					)
 				);
 
 				foreach ( $scenes as $scene ) {
-					$selected = ( $selected_scene == $scene->ID ) ? 'selected="selected"' : '';
-					echo '<option value="' . $scene->ID . '" ' . $selected . '>' . $scene->post_title . '</option>';
+					echo '<option value="' . esc_attr( $scene->ID ) . '" ' . selected( $selected_scene, $scene->ID, false ) . '>' . esc_html( $scene->post_title ) . '</option>';
 				}
 			}
 			echo '</select>';
@@ -780,8 +784,8 @@ class Graphic_Data_Modal {
 
 		if ( 'edit.php' == $pagenow && isset( $_GET['post_type'] ) && $_GET['post_type'] == $type ) {
 			// Check URL params first, then check stored values.
-			$instance = isset( $_GET['modal_instance'] ) ? $_GET['modal_instance'] : $this->get_modal_filter_value( 'modal_instance' );
-			$scene = isset( $_GET['modal_scene'] ) ? $_GET['modal_scene'] : $this->get_modal_filter_value( 'modal_scene' );
+			$instance = isset( $_GET['modal_instance'] ) ? absint( wp_unslash( $_GET['modal_instance'] ) ) : $this->get_modal_filter_value( 'modal_instance' );
+			$scene = isset( $_GET['modal_scene'] ) ? absint( wp_unslash( $_GET['modal_scene'] ) ) : $this->get_modal_filter_value( 'modal_scene' );
 
 			if ( $instance ) {
 				if ( $scene ) {
@@ -853,7 +857,26 @@ class Graphic_Data_Modal {
 		}
 	}
 
-	// Display warning notices on the Modal edit screen if tabs lack content.
+	/**
+	 * Display warning notices on the Modal edit screen if tabs lack content.
+	 *
+	 * Checks each configured tab in a modal post to verify it has associated
+	 * published figures. Displays admin warnings for tabs that either have no
+	 * figures assigned or only have draft figures.
+	 *
+	 * Skips warning display when:
+	 * - Not on a post edit screen
+	 * - Post type is not 'modal'
+	 * - Creating a new post (not editing existing)
+	 * - Post was just created (detected via transient)
+	 *
+	 * @since 1.0.0
+	 *
+	 * @global WP_Post $post   The current post object.
+	 * @global wpdb    $wpdb   WordPress database abstraction object.
+	 *
+	 * @return void Early returns if conditions for displaying warnings are not met.
+	 */
 	public function modal_warning_notice_tabs() {
 		// Get the current screen.
 		$screen = get_current_screen();
