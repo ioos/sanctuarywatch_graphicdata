@@ -22,7 +22,7 @@
  * @package Graphic_Data_Theme
  */
 
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 get_header();
 
