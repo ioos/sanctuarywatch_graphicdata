@@ -579,7 +579,6 @@ class Graphic_Data_Modal {
 
 		// Store field_length filter value if it exists.
 		if ( isset( $_GET['field_length'] ) && ! empty( $_GET['field_length'] ) ) {
-			update_user_meta( $user_id, 'modal_field_length', $_GET['field_length'] );
 			update_user_meta( $user_id, 'modal_field_length', sanitize_text_field( wp_unslash( $_GET['field_length'] ) ) );
 			update_user_meta( $user_id, 'modal_field_length_expiration', $expiration_time );
 		}
