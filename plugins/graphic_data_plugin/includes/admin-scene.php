@@ -727,7 +727,7 @@ class Graphic_Data_Scene {
 			array(
 				'id'          => 'scene_tagline',
 				'type'        => 'editor',
-				'editor'      => 'trumbowyg',
+				'editor'      => 'tinymce',
 				'title'       => 'Tagline',
 				'description' => 'What is the tagline for the scene?',
 				'sanitize'    => 'wp_kses_post',

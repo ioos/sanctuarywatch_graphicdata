@@ -255,7 +255,7 @@ class Graphic_Data_Instance {
 					array(
 						'id'     => 'instance_footer_column_content' . $i,
 						'type'   => 'editor',
-						'editor' => 'trumbowyg',
+						'editor' => 'tinymce',
 						'title'  => 'Column content',
 						'sanitize'    => 'wp_kses_post',
 					),

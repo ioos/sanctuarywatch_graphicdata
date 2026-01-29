@@ -4,6 +4,15 @@
  * Register class that defines the Modal custom content type as well as associated Modal functions
  */
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
+/**
+ * Manages the Modal custom post type and its admin interface.
+ *
+ * Handles registration of the Modal post type, custom meta fields, REST API
+ * integration, admin list table columns and filters, tab/figure validation
+ * warnings, and filter persistence via user metadata.
+ *
+ * @since 1.0.0
+ */
 class Graphic_Data_Modal {
 
 	/**
@@ -222,7 +231,7 @@ class Graphic_Data_Modal {
 			array(
 				'id'          => 'modal_tagline',
 				'type'        => 'editor',
-				'editor'      => 'trumbowyg',
+				'editor'      => 'tinymce',
 				'title'       => 'Modal Tagline',
 				'description' => 'What is the modal tagline?',
 				'sanitize'    => 'wp_kses_post',
@@ -969,13 +978,13 @@ class Graphic_Data_Modal {
 
 					if ( '' != $warning ) {
 						$show_warning = true;
-						$master_warning .= '<li>' . esc_html( $warning ) . '</li>';
+						$master_warning .= '<li>' . wp_kses_post( $warning ) . '</li>';
 					}
 				}
 
 				if ( $show_warning ) {
 					$master_warning .= '</ul>';
-					echo '<div class="notice notice-warning is-dismissible"><p>' . $master_warning . '</p></div>';
+					echo '<div class="notice notice-warning is-dismissible"><p>' . wp_kses_post( $master_warning ) . '</p></div>';
 				}
 			}
 		}
@@ -1003,33 +1012,33 @@ class Graphic_Data_Modal {
 		// Populate columns based on the determined field_length.
 		if ( 'modal_location' === $column ) {
 			$instance_id = get_post_meta( $post_id, 'modal_location', true );
-			echo get_the_title( $instance_id );
+			echo esc_html( get_the_title( $instance_id ) );
 		}
 
 		if ( 'modal_scene' === $column ) {
 			$scene_id = get_post_meta( $post_id, 'modal_scene', true );
 			$scene_title = get_the_title( $scene_id );
-			echo $scene_title;
+			echo esc_html( $scene_title );
 		}
 
 		if ( 'modal_icons' === $column ) {
-			echo get_post_meta( $post_id, 'modal_icons', true );
+			echo esc_html( get_post_meta( $post_id, 'modal_icons', true ) );
 		}
 
 		if ( 'icon_function' === $column ) {
-			echo get_post_meta( $post_id, 'icon_function', true );
+			echo esc_html( get_post_meta( $post_id, 'icon_function', true ) );
 		}
 
 		if ( 'modal_tagline' === $column ) {
 			$modal_tagline = get_post_meta( $post_id, 'modal_tagline', true );
 			switch ( $field_length ) {
 				case 'large':
-					echo $modal_tagline;
+					echo wp_kses_post( $modal_tagline );
 					break;
 				case 'medium':
 					$medium_tagline = new Graphic_Data_Utility();
 					$final_tagline = $medium_tagline->string_truncate( $modal_tagline, 75 );
-					echo $final_tagline;
+					echo wp_kses_post( $final_tagline );
 					break;
 				case 'small':
 					if ( null != $modal_tagline ) {
@@ -1103,13 +1112,12 @@ class Graphic_Data_Modal {
 					}
 					$tab_list .= '</ol>';
 
-					echo $tab_list;
+					echo wp_kses_post( $tab_list );
 				}
 			}
 		}
 
 		if ( 'status' === $column ) {
-			date_default_timezone_set( 'America/Los_Angeles' );
 			$last_modified_time = get_post_modified_time( 'g:i A', false, $post_id, true );
 			$last_modified_date = get_post_modified_time( 'F j, Y', false, $post_id, true );
 			$last_modified_user_id = get_post_meta( $post_id, '_edit_last', true );
@@ -1119,7 +1127,7 @@ class Graphic_Data_Modal {
 			$last_modified_user = get_userdata( $last_modified_user_id );
 			$last_modified_name = $last_modified_user->first_name . ' ' . $last_modified_user->last_name;
 
-			echo 'Last updated at ' . $last_modified_time . ' on ' . $last_modified_date . ' by ' . $last_modified_name;
+			echo 'Last updated at ' . esc_html( $last_modified_time ) . ' on ' . esc_html( $last_modified_date ) . ' by ' . esc_html( $last_modified_name );
 		}
 	}
 }
