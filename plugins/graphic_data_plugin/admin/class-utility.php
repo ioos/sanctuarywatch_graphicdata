@@ -857,6 +857,24 @@ class Graphic_Data_Utility {
 		return $potential_scenes;
 	}
 
+	/**
+	 * Sanitize the field value when the option is a whole number or an empty string.
+	 *
+	 * Returns an empty string if the value is empty, otherwise
+	 * converts it to a non-negative integer using absint().
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed $value The raw field value to sanitize.
+	 * @return string|int Empty string if blank, otherwise a non-negative integer.
+	 */
+	public function sanitize_number_or_quotes_field( $value ) {
+		if ( '' === $value ) {
+			return '';
+		}
+		return absint( $value );
+	}
+
 	public function returnModalTabs( $modal_id ) {
 		$potential_tabs[''] = '';
 		if ( $modal_id != '' ) {
@@ -906,7 +924,6 @@ class Graphic_Data_Utility {
 				$target_title = get_post_meta( $target_id, 'post_title', true );
 				$potential_icons[ $target_id ] = $target_title;
 			}
-			// asort($potential_icons);
 		}
 
 		return $potential_icons;

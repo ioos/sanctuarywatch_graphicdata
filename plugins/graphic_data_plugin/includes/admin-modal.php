@@ -158,7 +158,7 @@ class Graphic_Data_Modal {
 				'options'     => $locations,
 				'description' => 'In which instance is the modal located?',
 				'default'     => '',
-				'sanitize'    => 'absint',
+				'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 			),
 			array(
 				'id'          => 'modal_scene',
@@ -167,7 +167,7 @@ class Graphic_Data_Modal {
 				'options'     => $scene_titles,
 				'description' => 'In which scene is the modal located?',
 				'default'     => '',
-				'sanitize'    => 'absint',
+				'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 			),
 			array(
 				'id'          => 'modal_icons',
@@ -196,7 +196,7 @@ class Graphic_Data_Modal {
 				'options'        => $modal_section,
 				'description'    => 'Which scene section is this modal associated with?',
 				'default'        => '',
-				'sanitize'       => [ $this, 'sanitize_number_or_quotes_field' ],
+				'sanitize'       => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 			),
 			array(
 				'id'               => 'icon_function',
@@ -226,7 +226,7 @@ class Graphic_Data_Modal {
 				'options'     => $icon_scene_out,
 				'description' => 'What is the scene that the user should be taken to when the icon is clicked?',
 				'default'     => '',
-				'sanitize'    => [ $this, 'sanitize_number_or_quotes_field' ],
+				'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 			),
 			array(
 				'id'          => 'modal_tagline',
@@ -447,24 +447,6 @@ class Graphic_Data_Modal {
 				);
 			}
 		}
-	}
-
-	/**
-	 * Sanitize the field value when the option is a whole number or an empty string.
-	 *
-	 * Returns an empty string if the value is empty, otherwise
-	 * converts it to a non-negative integer using absint().
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param mixed $value The raw field value to sanitize.
-	 * @return string|int Empty string if blank, otherwise a non-negative integer.
-	 */
-	public function sanitize_number_or_quotes_field( $value ) {
-		if ( '' === $value ) {
-			return '';
-		}
-		return absint( $value );
 	}
 
 	/**

@@ -379,7 +379,7 @@ class Graphic_Data_Validation {
 			$function_utilities->fields_to_transient( 'figure_post_status', 'post_error', 30 );
 
 			// Instantiate the figure class - we need this to get the current custom fields list for the content type.
-			$figure_class = new Figure();
+			$figure_class = new Graphic_Data_Figure();
 
 			// Get the list of custom fields for the content type.
 			$fields_config = $this->get_fields_config( 'figure', $figure_class );

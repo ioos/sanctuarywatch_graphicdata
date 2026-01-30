@@ -4,9 +4,23 @@
  */
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
-class Figure {
-	// Register AJAX action for handling interactive graph data retrieval
-	// Register default_interactive_arguments from the plugin settings page.
+class Graphic_Data_Figure {
+	/**
+	 * Enqueue admin scripts for the Figure post type edit screen.
+	 *
+	 * Loads the admin-figure.js script with REST API credentials for
+	 * interactive graph data retrieval, and localizes default line and
+	 * bar chart arguments from the plugin settings page for use by the
+	 * Plotly charting scripts.
+	 *
+	 * Only enqueued on the post.php and post-new.php screens for the
+	 * 'figure' post type.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $hook The current admin page hook suffix.
+	 * @return void
+	 */
 	public function enqueue_admin_interactive_graph_script( $hook ) {
 		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
 			return;
@@ -50,13 +64,21 @@ class Figure {
 		}
 	}
 
-
-
 	/**
-	 * Set columns in admin screen for Figure custom content type.
+	 * Set custom columns for the Figure post type admin list table.
 	 *
-	 * @link https://www.smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/
-	 * @since    1.0.0
+	 * Replaces the default WordPress admin columns with custom columns
+	 * specific to the Figure custom post type, including instance, scene,
+	 * icon, tab, order, image location, and status information.
+	 *
+	 * Intended as a callback for the 'manage_figure_posts_columns' filter.
+	 *
+	 * @since 1.0.0
+	 * @link  https://www.smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/
+	 *
+	 * @param array $columns Default WordPress admin columns array where
+	 *                       keys are column IDs and values are column labels.
+	 * @return array Modified columns array with custom Figure-specific columns.
 	 */
 	public function change_figure_columns( $columns ) {
 		$columns = array(
@@ -83,37 +105,36 @@ class Figure {
 
 		$modal_id = get_post_meta( $post_id, 'figure_modal', true );
 
-		if ( $column === 'figure_instance' ) {
+		if ( 'figure_instance' === $column ) {
 			$instance_id = get_post_meta( $post_id, 'location', true );
-			echo get_the_title( $instance_id );
+			echo esc_html( get_the_title( $instance_id ) );
 		}
 
-		if ( $column === 'figure_scene' ) {
+		if ( 'figure_scene' === $column ) {
 			$scene_id = get_post_meta( $post_id, 'figure_scene', true );
 			$scene_title = get_the_title( $scene_id );
-			echo $scene_title;
+			echo esc_html( $scene_title );
 		}
 
-		if ( $column === 'figure_modal' ) {
-			echo get_the_title( $modal_id );
+		if ( 'figure_modal' === $column ) {
+			echo esc_html( get_the_title( $modal_id ) );
 		}
 
-		if ( $column === 'figure_tab' ) {
+		if ( 'figure_tab' === $column ) {
 			$tab_number = get_post_meta( $post_id, 'figure_tab', true );
 			$tab_meta_key = 'modal_tab_title' . $tab_number;
-			echo get_post_meta( $modal_id, $tab_meta_key, true );
+			echo esc_html( get_post_meta( $modal_id, $tab_meta_key, true ) );
 		}
 
-		if ( $column === 'figure_order' ) {
-			echo get_post_meta( $post_id, 'figure_order', true );
+		if ( 'figure_order' === $column ) {
+			echo esc_html( get_post_meta( $post_id, 'figure_order', true ) );
 		}
 
-		if ( $column === 'figure_image_location' ) {
-			echo get_post_meta( $post_id, 'figure_path', true );
+		if ( 'figure_image_location' === $column ) {
+			echo esc_html( get_post_meta( $post_id, 'figure_path', true ) );
 		}
 
-		if ( $column === 'status' ) {
-			date_default_timezone_set( 'America/Los_Angeles' );
+		if ( 'status' === $column ) {
 			$last_modified_time = get_post_modified_time( 'g:i A', false, $post_id, true );
 			$last_modified_date = get_post_modified_time( 'F j, Y', false, $post_id, true );
 			$last_modified_user_id = get_post_meta( $post_id, '_edit_last', true );
@@ -123,7 +144,7 @@ class Figure {
 			$last_modified_user = get_userdata( $last_modified_user_id );
 			$last_modified_name = $last_modified_user->first_name . ' ' . $last_modified_user->last_name;
 
-			echo 'Last updated at ' . $last_modified_time . ' on ' . $last_modified_date . ' by ' . $last_modified_name;
+			echo 'Last updated at ' . esc_html( $last_modified_time ) . ' on ' . esc_html( $last_modified_date ) . ' by ' . esc_html( $last_modified_name );
 		}
 	}
 
@@ -140,7 +161,7 @@ class Figure {
 	 */
 	public function store_figure_filter_values() {
 		$screen = get_current_screen();
-		if ( $screen->id != 'edit-figure' ) {
+		if ( 'edit-figure' != $screen->id ) {
 			return;
 		}
 
@@ -149,25 +170,25 @@ class Figure {
 			return;
 		}
 
-		// Get current timestamp
+		// Get current timestamp.
 		$current_time = time();
 
-		// Store the expiration time (20 minutes = 1200 seconds)
+		// Store the expiration time (20 minutes = 1200 seconds).
 		$expiration_time = $current_time + 1200;
 
-		// Store figure_instance filter value if it exists
+		// Store figure_instance filter value if it exists.
 		if ( isset( $_GET['figure_instance'] ) && ! empty( $_GET['figure_instance'] ) ) {
 			update_user_meta( $user_id, 'figure_instance', absint( $_GET['figure_instance'] ) );
 			update_user_meta( $user_id, 'figure_instance_expiration', $expiration_time );
 		}
 
-		// Store figure_scene filter value if it exists
+		// Store figure_scene filter value if it exists.
 		if ( isset( $_GET['figure_scene'] ) && ! empty( $_GET['figure_scene'] ) ) {
 			update_user_meta( $user_id, 'figure_scene', absint( $_GET['figure_scene'] ) );
 			update_user_meta( $user_id, 'figure_scene_expiration', $expiration_time );
 		}
 
-		// Store figure_icon filter value if it exists
+		// Store figure_icon filter value if it exists.
 		if ( isset( $_GET['figure_icon'] ) && ! empty( $_GET['figure_icon'] ) ) {
 			update_user_meta( $user_id, 'figure_icon', absint( $_GET['figure_icon'] ) );
 			update_user_meta( $user_id, 'figure_icon_expiration', $expiration_time );
@@ -197,12 +218,12 @@ class Figure {
 			return false;
 		}
 
-		// Check if the value has expired
+		// Check if the value has expired.
 		$expiration_time = get_user_meta( $user_id, $meta_key . '_expiration', true );
 		$current_time = time();
 
 		if ( $current_time > $expiration_time ) {
-			// Delete expired values
+			// Delete expired values.
 			delete_user_meta( $user_id, $meta_key );
 			delete_user_meta( $user_id, $meta_key . '_expiration' );
 			return false;
@@ -225,7 +246,7 @@ class Figure {
 	 */
 	public function cleanup_expired_figure_filters() {
 		$screen = get_current_screen();
-		if ( ! $screen || $screen->id != 'edit-figure' ) {
+		if ( ! $screen || 'edit-figure' != $screen->id ) {
 			return;
 		}
 
@@ -236,21 +257,21 @@ class Figure {
 
 		$current_time = time();
 
-		// Check and clean up figure_instance
+		// Check and clean up figure_instance.
 		$expiration_time = get_user_meta( $user_id, 'figure_instance_expiration', true );
 		if ( $expiration_time && $current_time > $expiration_time ) {
 			delete_user_meta( $user_id, 'figure_instance' );
 			delete_user_meta( $user_id, 'figure_instance_expiration' );
 		}
 
-		// Check and clean up figure_scene
+		// Check and clean up figure_scene.
 		$expiration_time = get_user_meta( $user_id, 'figure_scene_expiration', true );
 		if ( $expiration_time && $current_time > $expiration_time ) {
 			delete_user_meta( $user_id, 'figure_scene' );
 			delete_user_meta( $user_id, 'figure_scene_expiration' );
 		}
 
-		// Check and clean up figure_icon
+		// Check and clean up figure_icon.
 		$expiration_time = get_user_meta( $user_id, 'figure_icon_expiration', true );
 		if ( $expiration_time && $current_time > $expiration_time ) {
 			delete_user_meta( $user_id, 'figure_icon' );
@@ -274,25 +295,25 @@ class Figure {
 	 */
 	public function figure_filter_dropdowns() {
 		$screen = get_current_screen();
-		if ( $screen->id == 'edit-figure' ) {
-			// Run cleanup of expired filters
+		if ( 'edit-figure' == $screen->id ) {
+			// Run cleanup of expired filters.
 			$this->cleanup_expired_figure_filters();
 
-			// Get current filter values from URL or stored metadata
+			// Get current filter values from URL or stored metadata.
 			$current_instance = isset( $_GET['figure_instance'] ) ? absint( $_GET['figure_instance'] ) : $this->get_figure_filter_value( 'figure_instance' );
 			$current_scene = isset( $_GET['figure_scene'] ) ? absint( $_GET['figure_scene'] ) : $this->get_figure_filter_value( 'figure_scene' );
 			$current_icon = isset( $_GET['figure_icon'] ) ? absint( $_GET['figure_icon'] ) : $this->get_figure_filter_value( 'figure_icon' );
 
-			// Instances dropdown
+			// Instances dropdown.
 			$function_utilities = new Graphic_Data_Utility();
 			$function_utilities->create_instance_dropdown_filter( 'figure_instance' );
 
 			global $wpdb;
-			// Scene dropdown
+			// Scene dropdown.
 			echo '<select name="figure_scene" id="figure_scene">';
 			echo '<option value="">All Scenes</option>';
 
-			// If we have an instance selected (either from URL or stored value)
+			// If we have an instance selected (either from URL or stored value).
 			if ( $current_instance ) {
 				$scenes = $wpdb->get_results(
 					$wpdb->prepare(
@@ -310,16 +331,16 @@ class Figure {
 
 				foreach ( $scenes as $scene ) {
 					$selected = $current_scene == $scene->ID ? 'selected="selected"' : '';
-					echo '<option value="' . esc_attr( $scene->ID ) . '" ' . $selected . '>' . esc_html( $scene->post_title ) . '</option>';
+					echo '<option value="' . esc_attr( $scene->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( $scene->post_title ) . '</option>';
 				}
 			}
 			echo '</select>';
 
-			// Icon dropdown
+			// Icon dropdown.
 			echo '<select name="figure_icon" id="figure_icon">';
 			echo '<option value="">All Icons</option>';
 
-			// If we have a scene selected (either from URL or stored value)
+			// If we have a scene selected (either from URL or stored value).
 			if ( $current_scene ) {
 				$icons = $wpdb->get_results(
 					$wpdb->prepare(
@@ -338,12 +359,12 @@ class Figure {
 
 				foreach ( $icons as $icon ) {
 					$selected = $current_icon == $icon->ID ? 'selected="selected"' : '';
-					echo '<option value="' . esc_attr( $icon->ID ) . '" ' . $selected . '>' . esc_html( $icon->post_title ) . '</option>';
+					echo '<option value="' . esc_attr( $icon->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( $icon->post_title ) . '</option>';
 				}
 			}
 			echo '</select>';
 
-			// Store the filter values after displaying the dropdowns
+			// Store the filter values after displaying the dropdowns.
 			$this->store_figure_filter_values();
 		}
 	}
@@ -367,8 +388,8 @@ class Figure {
 		global $pagenow;
 		$type = 'figure';
 
-		if ( $pagenow == 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $type ) {
-			// Get current filter values from URL or stored metadata
+		if ( 'edit.php' == $pagenow && isset( $_GET['post_type'] ) && $_GET['post_type'] == $type ) {
+			// Get current filter values from URL or stored metadata.
 			$instance = isset( $_GET['figure_instance'] ) ? absint( $_GET['figure_instance'] ) : $this->get_figure_filter_value( 'figure_instance' );
 			$scene = isset( $_GET['figure_scene'] ) ? absint( $_GET['figure_scene'] ) : $this->get_figure_filter_value( 'figure_scene' );
 			$icon = isset( $_GET['figure_icon'] ) ? absint( $_GET['figure_icon'] ) : $this->get_figure_filter_value( 'figure_icon' );
@@ -377,7 +398,7 @@ class Figure {
 				if ( $icon ) {
 					$meta_query = array(
 						array(
-							'key' => 'figure_modal', // The custom field storing the icon ID
+							'key' => 'figure_modal', // The custom field storing the icon ID.
 							'value' => $icon,
 							'compare' => '=',
 						),
@@ -385,7 +406,7 @@ class Figure {
 				} elseif ( $scene ) {
 					$meta_query = array(
 						array(
-							'key' => 'figure_scene', // The custom field storing the scene ID
+							'key' => 'figure_scene', // The custom field storing the scene ID.
 							'value' => $scene,
 							'compare' => '=',
 						),
@@ -393,7 +414,7 @@ class Figure {
 				} else {
 					$meta_query = array(
 						array(
-							'key' => 'location', // The custom field storing the instance ID
+							'key' => 'location', // The custom field storing the instance ID.
 							'value' => $instance,
 							'compare' => '=',
 						),
@@ -411,30 +432,30 @@ class Figure {
 	 */
 	public function custom_content_type_figure() {
 		$labels = array(
-			'name'                  => _x( 'Figures', 'Post type general name', 'textdomain' ),
-			'singular_name'         => _x( 'Figure', 'Post type singular name', 'textdomain' ),
-			'menu_name'             => _x( 'Figures', 'Admin Menu text', 'textdomain' ),
-			'name_admin_bar'        => _x( 'Figure', 'Add New on Toolbar', 'textdomain' ),
-			'add_new'               => __( 'Add New Figure', 'textdomain' ),
-			'add_new_item'          => __( 'Add New Figure', 'textdomain' ),
-			'new_item'              => __( 'New Figure', 'textdomain' ),
-			'edit_item'             => __( 'Edit Figure', 'textdomain' ),
-			'view_item'             => __( 'View Figure', 'textdomain' ),
-			'all_items'             => __( 'All Figures', 'textdomain' ),
-			'search_items'          => __( 'Search Figures', 'textdomain' ),
-			'parent_item_colon'     => __( 'Parent Figures:', 'textdomain' ),
-			'not_found'             => __( 'No Figures found.', 'textdomain' ),
-			'not_found_in_trash'    => __( 'No Figures found in Trash.', 'textdomain' ),
-			'featured_image'        => _x( 'Figure Cover Image', 'Overrides the “Featured Image” phrase for this post type. Added in 4.3', 'textdomain' ),
-			'set_featured_image'    => _x( 'Set cover image', 'Overrides the “Set featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-			'remove_featured_image' => _x( 'Remove cover image', 'Overrides the “Remove featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-			'use_featured_image'    => _x( 'Use as cover image', 'Overrides the “Use as featured image” phrase for this post type. Added in 4.3', 'textdomain' ),
-			'archives'              => _x( 'Figure archives', 'The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4', 'textdomain' ),
-			'insert_into_item'      => _x( 'Insert into Figure', 'Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4', 'textdomain' ),
-			'uploaded_to_this_item' => _x( 'Uploaded to this Figure', 'Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used when viewing media attached to a post). Added in 4.4', 'textdomain' ),
-			'filter_items_list'     => _x( 'Filter Figures list', 'Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4', 'textdomain' ),
-			'items_list_navigation' => _x( 'Figures list navigation', 'Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4', 'textdomain' ),
-			'items_list'            => _x( 'Figures list', 'Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4', 'textdomain' ),
+			'name'                  => 'Figures',
+			'singular_name'         => 'Figure',
+			'menu_name'             => 'Figures',
+			'name_admin_bar'        => 'Figure',
+			'add_new'               => 'Add New Figure',
+			'add_new_item'          => 'Add New Figure',
+			'new_item'              => 'New Figure',
+			'edit_item'             => 'Edit Figure',
+			'view_item'             => 'View Figure',
+			'all_items'             => 'All Figures',
+			'search_items'          => 'Search Figures',
+			'parent_item_colon'     => 'Parent Figures:',
+			'not_found'             => 'No Figures found.',
+			'not_found_in_trash'    => 'No Figures found in Trash.',
+			'featured_image'        => 'Figure Cover Image',
+			'set_featured_image'    => 'Set cover image',
+			'remove_featured_image' => 'Remove cover image',
+			'use_featured_image'    => 'Use as cover image',
+			'archives'              => 'Figure archives',
+			'insert_into_item'      => 'Insert into Figure',
+			'uploaded_to_this_item' => 'Uploaded to this Figure',
+			'filter_items_list'     => 'Filter Figures list',
+			'items_list_navigation' => 'Figures list navigation',
+			'items_list'            => 'Figures list',
 		);
 
 		$args = array(
@@ -451,7 +472,7 @@ class Figure {
 			'has_archive'        => true,
 			'hierarchical'       => false,
 			'menu_position'      => 40,
-			'supports'           => array( 'title' ), // array( 'title', 'revisions' ),
+			'supports'           => array( 'title' ), // array( 'title', 'revisions' ),.
 		);
 
 		register_post_type( 'figure', $args );
@@ -495,7 +516,7 @@ class Figure {
 		$transient_name = "figure_error_all_fields_user_{$user_id}";
 		$transient_fields = get_transient( $transient_name );
 
-		if ( $transient_fields !== false ) {
+		if ( false !== $transient_fields ) {
 			$transient_fields_exist = true;
 		}
 
@@ -544,6 +565,7 @@ class Figure {
 					),
 					'default'        => 'draft',
 					'description' => 'Should the figure be live? If set to Published, the figure will be visible.',
+					'sanitize'      => 'sanitize_text_field',
 				),
 				array(
 					'id'             => 'location',
@@ -551,6 +573,7 @@ class Figure {
 					'title'          => 'Instance*',
 					'options'        => $locations,
 					'description' => 'What instance is this figure part of?',
+					'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 				),
 				array(
 					'id'             => 'figure_scene',
@@ -558,6 +581,7 @@ class Figure {
 					'title'          => 'Scene*',
 					'options'        => $scene_titles,
 					'description' => 'What scene is this figure part of?',
+					'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 				),
 				array(
 					'id'             => 'figure_modal',
@@ -565,6 +589,7 @@ class Figure {
 					'title'          => 'Icon*',
 					'options'        => $modal_icons,
 					'description' => 'What modal is this figure part of?',
+					'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 				),
 				array(
 					'id'             => 'figure_tab',
@@ -572,6 +597,7 @@ class Figure {
 					'title'          => 'Tab*',
 					'options'        => $modal_tabs,
 					'description' => 'What tab in the modal is this figure part of?',
+					'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 				),
 				array(
 					'id'      => 'figure_order',
@@ -580,8 +606,9 @@ class Figure {
 					'description' => 'If there are multiple figures in this modal tab, in what order should this figure appear?',
 					'default' => '1',
 					'min'     => '1',
-					'max'     => '4',
+					'max'     => '5',
 					'step'    => '1',
+					'sanitize'    => 'absint',
 				),
 				array(
 					'type' => 'fieldset',
@@ -594,12 +621,14 @@ class Figure {
 							'type'        => 'text',
 							'title'       => 'Text',
 							'class'       => 'text-class',
+							'sanitize'      => 'sanitize_text_field',
 						),
 						array(
 							'id'          => 'figure_science_link_url',
 							'type'        => 'text',
 							'title'       => 'URL',
 							'class'       => 'text-class',
+							'sanitize'      => 'sanitize_url',
 						),
 					),
 				),
@@ -614,12 +643,14 @@ class Figure {
 							'type'        => 'text',
 							'title'       => 'Text',
 							'class'       => 'text-class',
+							'sanitize'      => 'sanitize_text_field',
 						),
 						array(
 							'id'          => 'figure_data_link_url',
 							'type'        => 'text',
 							'title'       => 'URL',
 							'class'       => 'text-class',
+							'sanitize'      => 'sanitize_url',
 						),
 					),
 				),
@@ -635,18 +666,21 @@ class Figure {
 					),
 					'default'        => 'Internal',
 					'description' => 'Is the figure type an image stored within this website, or at some external location, is it piece a code, or does it need to be an interactive figure generated from data?',
+					'sanitize'      => 'sanitize_text_field',
 				),
 				array(
 					'id'          => 'figure_title',
 					'type'        => 'text',
 					'title'       => 'Figure Title',
 					'description' => 'Should the figure have a title in the modal window? If this field is left blank than no title will be shown.',
+					'sanitize'      => 'sanitize_text_field',
 				),
 				array(
 					'id'    => 'figure_image',
 					'type'  => 'image',
 					'title' => 'Figure image*',
 					'description' => 'What is the figure image?',
+					'sanitize'      => 'sanitize_url',
 				),
 				array(
 					'id'          => 'figure_external_url',
@@ -654,6 +688,7 @@ class Figure {
 					'title'       => 'External URL*',
 					'class'       => 'text-class',
 					'description' => 'This external URL should link just to the image itself (that is the URL should end in .png .jpeg .jpg or .tiff)',
+					'sanitize'      => 'sanitize_url',
 				),
 				array(
 					'id'          => 'figure_external_alt',
@@ -661,6 +696,7 @@ class Figure {
 					'title'       => 'Alt text for external image*',
 					'class'       => 'text-class',
 					'description' => 'What is the "alternative text" that should be associated with this image for accessibility?',
+					'sanitize'      => 'sanitize_text_field',
 				),
 				// New HTML/JS Code Editor Field.
 				array(
@@ -692,7 +728,6 @@ class Figure {
 					'type'    => 'upload',
 					'title'   => 'Upload Interactive Figure File',
 					'options' => array(
-						// 'upload_path'               =>  See the custom_file_upload_handler & custom_file_delete_handler functions below.
 						'maxsize'                   => 10485760, // Keeping for future development.
 					),
 				),
@@ -719,6 +754,7 @@ class Figure {
 					'editor' => 'tinymce',
 					'title'  => 'Short figure caption',
 					'description' => 'What is the short version of the figure caption?',
+					'sanitize'      => 'wp_kses_post',
 				),
 				array(
 					'id'     => 'figure_caption_long',
@@ -726,8 +762,9 @@ class Figure {
 					'editor' => 'tinymce',
 					'title'  => 'Extended caption',
 					'description' => 'This caption appears in the "Click for Details" section under the short caption. If nothing is provided in this field, then the "Click for Details" section will be be blank for this figure.',
+					'sanitize'      => 'wp_kses_post',
 				),
-				// Preview button for displaying the internal or external images at the bottom of form
+				// Preview button for displaying the internal or external images at the bottom of form.
 				array(
 					'id'          => 'figure_preview',
 					'type'        => 'button',
@@ -743,16 +780,16 @@ class Figure {
 			),
 		);
 
-		// If we're just running this function to get the custom field list for field validation, return early
+		// If we're just running this function to get the custom field list for field validation, return early.
 		if ( $return_fields_only ) {
 			return $fields;
 		}
 
-		// instantiate the admin page
+		// instantiate the admin page.
 		$options_panel = new Exopite_Simple_Options_Framework( $config_metabox, $fields );
 
-		// make several of the modal custom fields available to the REST API
-		$fieldsToBeRegistered = array(
+		// make several of the modal custom fields available to the REST API.
+		$fields_to_be_registered = array(
 			array( 'figure_published', 'string', 'The figure published status' ),
 			array( 'figure_modal', 'string', 'The figure modal' ),
 			array( 'figure_tab', 'string', 'The figure tab' ),
@@ -768,39 +805,39 @@ class Figure {
 			array( 'figure_interactive_arguments', 'string', 'Arguments used in interactive figures' ),
 			array( 'figure_title', 'string', 'The title of the figure, for any figure type.' ),
 		);
-		// Register fields in REST API
-		foreach ( $fieldsToBeRegistered as $targetFieldsToBeRegistered ) {
+		// Register fields in REST API.
+		foreach ( $fields_to_be_registered as $target_fields_to_be_registered ) {
 			register_meta(
-				'post', // Object type. In this case, 'post' refers to custom post type 'Figure'
-				$targetFieldsToBeRegistered[0], // Meta key name
+				'post', // Object type. In this case, 'post' refers to custom post type 'Figure'.
+				$target_fields_to_be_registered[0], // Meta key name.
 				array(
-					'show_in_rest' => true, // Make the field available in REST API
-					'single' => true, // Indicates whether the meta key has one single value
-					'type' => $targetFieldsToBeRegistered[1], // Data type of the meta value
-					'description' => $targetFieldsToBeRegistered[2], // Description of the meta key
-					'auth_callback' => '__return_false', // Return false to disallow writing
+					'show_in_rest' => true, // Make the field available in REST API.
+					'single' => true, // Indicates whether the meta key has one single value.
+					'type' => $target_fields_to_be_registered[1], // Data type of the meta value.
+					'description' => $target_fields_to_be_registered[2], // Description of the meta key.
+					'auth_callback' => '__return_false', // Return false to disallow writing.
 				)
 			);
 		}
 
-		$fieldsToBeRegistered2 = array(
+		$fields_to_be_registered2 = array(
 			array( 'figure_science_info', 'URL for figure info' ),
 			array( 'figure_data_info', 'URL for figure data' ),
 		);
 
-		foreach ( $fieldsToBeRegistered2 as $targetFieldsToBeRegistered2 ) {
+		foreach ( $fields_to_be_registered2 as $target_fields_to_be_registered2 ) {
 			register_meta(
 				'post',
-				$targetFieldsToBeRegistered2[0], // Meta key name
+				$target_fields_to_be_registered2[0], // Meta key name.
 				array(
 					'auth_callback'     => '__return_false',
-					'single'            => true, // The field contains a single array
-					'description' => $targetFieldsToBeRegistered2[1], // Description of the meta key
+					'single'            => true, // The field contains a single array.
+					'description' => $target_fields_to_be_registered2[1], // Description of the meta key.
 					'show_in_rest'      => array(
 						'schema' => array(
-							'type'  => 'array', // The meta field is an array
+							'type'  => 'array', // The meta field is an array.
 							'items' => array(
-								'type' => 'string', // Each item in the array is a string
+								'type' => 'string', // Each item in the array is a string.
 							),
 						),
 					),

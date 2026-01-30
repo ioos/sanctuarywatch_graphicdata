@@ -283,7 +283,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_notices', $plugin_admin_modal, 'modal_warning_notice_tabs' );
 
 		// Load  class and functions associated with Figure custom content type.
-		$plugin_admin_figure = new Figure();
+		$plugin_admin_figure = new Graphic_Data_Figure();
 		$this->loader->add_action( 'init', $plugin_admin_figure, 'custom_content_type_figure' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_figure, 'create_figure_fields', 1 );
 		$this->loader->add_action( 'manage_figure_posts_columns', $plugin_admin_figure, 'change_figure_columns' );

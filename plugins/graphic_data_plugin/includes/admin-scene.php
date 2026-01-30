@@ -715,7 +715,7 @@ class Graphic_Data_Scene {
 				'title'       => 'Instance*',
 				'options'     => $instances,
 				'description' => 'What instance is the scene part of? ',
-				'sanitize'    => 'absint',
+				'sanitize' => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 			),
 			array(
 				'id'          => 'scene_infographic',
