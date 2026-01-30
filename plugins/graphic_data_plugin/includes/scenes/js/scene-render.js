@@ -1,3 +1,4 @@
+
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
  * @returns {String} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
@@ -422,7 +423,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                                 const bbox = key.getBBox();
                                 svgClone.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
                                 renderedIcons++;
-                                console.log(`Rendered icon: ${currIcon}, total rendered: ${renderedIcons}`);
+                                //console.log(`Rendered icon: ${currIcon}, total rendered: ${renderedIcons}`);
                                 if (renderedIcons === iconIds.length) {
                                     body.style.display = "none"; // only hide once ALL icons are done
                                 } 
@@ -1740,7 +1741,7 @@ function toc_sections() {
         let title_test = scene_data?.[`scene_section${sections[i]}`]?.[`scene_section_title${i + 1}`];
         if (!title_test) {
             title_test = "None";
-            console.log("Title not found:", title_test);
+            //console.log("Title not found:", title_test);
         } 
 
 
@@ -1767,7 +1768,7 @@ function toc_sections() {
             let color = scene_default_hover_color;
             button.style.backgroundColor = hexToRgba(color, 0.2);
         } else {
-            console.log('Test 2');
+            //console.log('Test 2');
         }
 
 
@@ -1994,7 +1995,7 @@ function list_toc(){
         let modal = obj['modal'];
         //let title_formatted = title.replace(/\s+/g, '_')
         let title_formatted= slugify(title);
-        console.log('title_formatted', title_formatted);
+        //console.log('title_formatted', title_formatted);
         
     
         if (modal) {
@@ -2060,7 +2061,7 @@ function list_toc(){
                 };
             })(key));
         }
-        console.log('link', link);
+        //console.log('link', link);
         toc_group.appendChild(item);
     }
     toc_container.appendChild(toc_group);
@@ -2156,4 +2157,56 @@ function add_modal(){
             }
         }
     }
+}
+
+
+alertIfMissingModal();
+
+
+
+/**
+ * Alerts the user if the modal section referenced in the URL hash does not exist.
+ *
+ * Expected hash format:
+ *   #<modalSection>/<index>
+ * Example:
+ *   #Marine_spills___discharge/3
+ *
+ * How it works:
+ * - Reads window.location.hash
+ * - Waits until window "load" (so .modal-link elements exist)
+ * - Collects all .modal-link element IDs on the page
+ * - Compares the hash's first segment (<modalSection>) to those IDs
+ * - Alerts if no match is found
+ *
+ * Assumptions:
+ * - Modal links exist in the DOM as elements with class "modal-link"
+ * - Each modal link has an `id` that matches the hash's <modalSection> value
+ *
+ * @returns {void}
+ */
+function alertIfMissingModal() {
+    const raw = location.hash.slice(1);
+    if (!raw) return;
+
+    window.addEventListener("load", () => {
+        const modalLinks = [...document.querySelectorAll(".modal-link")]
+          .map(el => el.id)
+          .filter(Boolean);
+          //console.log('modalLinks', modalLinks);
+
+          let decoded = raw;
+            try { decoded = decodeURIComponent(raw); } catch (_) {}
+            //console.log('decoded', decoded);
+        
+            const urlModalGiven = decoded.split("/");
+
+            if (!modalLinks.includes(urlModalGiven[0])) {
+                alert("The modal link you are trying to access no longer exists and may have been changed.");
+            }    
+            if (modalLinks.includes(urlModalGiven[0])) {
+                return;
+            } 
+    });
+         
 }
