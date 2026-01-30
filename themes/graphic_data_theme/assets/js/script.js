@@ -553,38 +553,45 @@ async function handleHashNavigation() {
     }
 }
 
-
-// THIS IS POSSIBLY DEPRECATED NOW, MAYBE DELETE LATER
-// /**
-//  * Fetches instance details from the WordPress REST API.
-//  *
-//  * This asynchronous function retrieves data from the WordPress REST API endpoint for instances (`/wp-json/wp/v2/instance`)
-//  * using the current protocol and host. The results are fetched in ascending order.
-//  * It handles network errors and returns the data as a JSON object.
-//  *
-//  * @returns {Promise<Object[]>} - A Promise that resolves to an array of instance objects retrieved from the API.
-//  * 
-//  * @throws {Error} - Throws an error if the fetch request fails or the response is not successful (i.e., not OK).
-//  * 
-//  * Usage: called in init function to set to global variable testData, which is used to get information about current instance, section/color information
-//  */
-// async function load_instance_details() { //this should be done on the SCENE side of things; might not need this, may replace w scene postmeta call. keep for now
-//     const protocol = window.location.protocol;
-//     const host = window.location.host;
-//     const fetchURL = `${protocol}//${host}/wp-json/wp/v2/instance?&order=asc`;
-  
-//     try {
-//         const response = await fetch(fetchURL);
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         const data = await response.json();
-//         return data;
-//     } catch (error) {
-//         console.error('Error fetching data:', error);
-//         throw error;
-//     }
-// }
+/**
+ * Convert an arbitrary string into a URL/DOM-friendly “slug”.
+ *
+ * What it does:
+ * - Converts the input to a string.
+ * - Normalizes Unicode characters (splits accented characters into base + accent marks).
+ * - Removes diacritic marks (accents).
+ * - Lowercases the result.
+ * - Trims leading/trailing whitespace.
+ * - Replaces any run of non-alphanumeric characters with a single hyphen.
+ * - Trims leading/trailing hyphens.
+ *
+ * Common uses:
+ * - Generating safe IDs: `id="my-title-1"`
+ * - Building URL paths: `/posts/my-title-1`
+ * - Creating stable keys for maps/objects
+ *
+ * Notes:
+ * - Output is limited to ASCII `a-z`, `0-9`, and `-`.
+ * - If you need underscores instead of hyphens, change the replacement to `"_"`
+ *   and adjust the trim regex accordingly.
+ *
+ * @param {string} str - Input text to slugify.
+ * @returns {string} A slugified, lowercased, hyphen-separated string.
+ *
+ * @example
+ * slugify("R&D 50% Off — #1!") // "r-d-50-off-1"
+ * slugify("  Crème brûlée  ")  // "creme-brulee"
+ * slugify("Hello   world")     // "hello-world"
+ */
+function slugify(str) {
+    return String(str)
+        .normalize("NFKD")                 // split accents
+        .replace(/[\u0300-\u036f]/g, "")   // remove accents
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")       // non-alnum -> -
+        .replace(/^-+|-+$/g, "");          // trim dashes
+}
 
 
 

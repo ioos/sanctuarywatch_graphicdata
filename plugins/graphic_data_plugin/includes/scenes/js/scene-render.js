@@ -970,7 +970,7 @@ async function loadSVG(url, containerId) {
             modalHeader.style.borderBottom = "none";
 
             const modalWindow = document.querySelector('.modal-dialog.modal-xl.modal-dialog-scrollable');
-            modalWindow.style.paddingTop = "2%";
+            modalWindow.style.paddingTop = "1%";
 
             function toWpDateTimeLocal(d = new Date()) {
                 const pad = (n) => String(n).padStart(2, "0");
@@ -1992,7 +1992,9 @@ function list_toc(){
         let title = obj['title']; 
         let link = document.createElement("a");
         let modal = obj['modal'];
-        let title_formatted = title.replace(/\s+/g, '_')
+        //let title_formatted = title.replace(/\s+/g, '_')
+        let title_formatted= slugify(title);
+        console.log('title_formatted', title_formatted);
         
     
         if (modal) {
@@ -2058,7 +2060,7 @@ function list_toc(){
                 };
             })(key));
         }
-
+        console.log('link', link);
         toc_group.appendChild(item);
     }
     toc_container.appendChild(toc_group);
@@ -2155,6 +2157,3 @@ function add_modal(){
         }
     }
 }
-
-
-

@@ -182,7 +182,7 @@ function render_modal(key, obj, modal_obj){
             }
         }
         // Google Tags
-        // modalWindowLoaded(title, modal_id, gaMeasurementID);
+        //modalWindowLoaded(title, modal_id, gaMeasurementID);
     }
 
     // Fetch modal data and populate content PREVIEW MODE vs FRONTEND MODE
@@ -204,7 +204,8 @@ function render_modal(key, obj, modal_obj){
                 populateModalContent(modal_data, child_obj, key);
             })  
         .catch(error => console.error('Error fetching data:', error));
-    }   
+    }
+    //dumpComputedCSS('.modal-dialog');
 }
 
 /**
@@ -520,7 +521,8 @@ function trapFocus(modalElement) {
 function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
 
     tab_id = tab_label.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_'); //instead of tab id, it should just be the index (figure_data)
-    title = title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_');
+    //title = title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_');
+    title  = slugify(title);
     tab_id = iter;
 
     let tab_target = `#${title}-${tab_id}-pane`;
@@ -632,4 +634,99 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
 
 }
 
+/**
+ * Dump computed CSS for every element under a root selector.
+ * Usage:
+ *   dumpComputedCSS('#myDiv');
+ */
+// function dumpComputedCSS(rootSelector, { includeRoot = true, onlyChangedFromDefault = false } = {}) {
+//     const root = document.querySelector(rootSelector);
+//     if (!root) throw new Error(`Root not found: ${rootSelector}`);
+  
+//     const elements = includeRoot ? [root, ...root.querySelectorAll('*')] : [...root.querySelectorAll('*')];
+  
+//     // Build a "default" computed style map per tag name (optional filter)
+//     const defaultCache = new Map();
+//     function getDefaultComputed(tagName) {
+//       tagName = tagName.toLowerCase();
+//       if (defaultCache.has(tagName)) return defaultCache.get(tagName);
+  
+//       const el = document.createElement(tagName);
+//       // Put it offscreen so it still gets computed styles
+//       el.style.all = 'initial';
+//       el.style.position = 'absolute';
+//       el.style.left = '-99999px';
+//       el.style.top = '-99999px';
+//       document.body.appendChild(el);
+  
+//       const cs = getComputedStyle(el);
+//       const obj = {};
+//       for (const prop of cs) obj[prop] = cs.getPropertyValue(prop);
+  
+//       el.remove();
+//       defaultCache.set(tagName, obj);
+//       return obj;
+//     }
+  
+//     const lines = [];
+  
+//     for (const el of elements) {
+//       const cs = getComputedStyle(el);
+//       const selector = cssPath(el, root);
+  
+//       const defaults = onlyChangedFromDefault ? getDefaultComputed(el.tagName) : null;
+//       const props = [];
+  
+//       for (const prop of cs) {
+//         const val = cs.getPropertyValue(prop);
+//         if (!val) continue;
+//         if (onlyChangedFromDefault && defaults && defaults[prop] === val) continue;
+//         props.push(`  ${prop}: ${val};`);
+//       }
+  
+//       // Skip elements with no properties (possible if filtering)
+//       if (!props.length) continue;
+  
+//       lines.push(`${selector} {`);
+//       lines.push(...props);
+//       lines.push(`}\n`);
+//     }
+  
+//     const cssText = lines.join('\n');
+//     console.log(cssText);
+//     return cssText;
+  
+//     // Builds a stable-ish selector path relative to root
+//     function cssPath(el, rootEl) {
+//       if (el === rootEl) return rootSelector;
+  
+//       const parts = [];
+//       let node = el;
+  
+//       while (node && node.nodeType === 1 && node !== rootEl) {
+//         let part = node.nodeName.toLowerCase();
+  
+//         if (node.id) {
+//           part += `#${CSS.escape(node.id)}`;
+//           parts.unshift(part);
+//           break; // ID is usually unique enough
+//         } else {
+//           // Add nth-of-type for uniqueness among siblings of same tag
+//           const parent = node.parentElement;
+//           if (parent) {
+//             const sameType = [...parent.children].filter(c => c.nodeName === node.nodeName);
+//             if (sameType.length > 1) {
+//               const idx = sameType.indexOf(node) + 1;
+//               part += `:nth-of-type(${idx})`;
+//             }
+//           }
+//         }
+  
+//         parts.unshift(part);
+//         node = node.parentElement;
+//       }
+  
+//       return `${rootSelector} ${parts.join(' > ')}`;
+//     }
+//   }
 
