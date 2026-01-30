@@ -2202,7 +2202,7 @@ function alertIfMissingModal() {
             const urlModalGiven = decoded.split("/");
 
             if (!modalLinks.includes(urlModalGiven[0])) {
-                alert("The modal link you are trying to access no longer exists and may have been changed.");
+                alert("We couldn't find that content. It may have been, moved, renamed, or deleted.");
             }    
             if (modalLinks.includes(urlModalGiven[0])) {
                 return;

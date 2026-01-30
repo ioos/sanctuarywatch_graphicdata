@@ -28,10 +28,10 @@ function render_modal(key, obj, modal_obj){
         child_obj = obj;
     }
 
-    console.log('Rendering modal for key:', key, 'with child_obj:', child_obj);
+    //console.log('Rendering modal for key:', key, 'with child_obj:', child_obj);
 
     let id = child_obj[key]['modal_id'];
-    console.log('id', id);
+    //console.log('id', id);
 
     //function for rendering the modal content after fetching data
     function populateModalContent(modal_data, child_obj, key) {
@@ -200,7 +200,7 @@ function render_modal(key, obj, modal_obj){
             .then(response => response.json())
             .then(data => {
                 let modal_data = data; //.find(modal => modal.id === id);
-                console.log('modal_data:', modal_data);
+                //('modal_data:', modal_data);
                 populateModalContent(modal_data, child_obj, key);
             })  
         .catch(error => console.error('Error fetching data:', error));
@@ -435,7 +435,7 @@ function trapFocus(modalElement) {
             } else {
                 const element = document.getElementById(buttonID);
                 if (element.style.display == "none") {
-                    console.log('buttonID', buttonID);
+                    //console.log('buttonID', buttonID);
                     element.remove();
                 }
             }

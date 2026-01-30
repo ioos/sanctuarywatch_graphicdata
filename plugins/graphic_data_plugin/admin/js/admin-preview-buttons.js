@@ -449,21 +449,21 @@ if (previewFigureOrModalElements.length > 0) {
                 //     document.head.appendChild(style);
                 // }
 
-                if (el.getAttribute('data-depend-id') === 'figure_preview') {
-                    // Create a new style element
-                    const style = document.createElement('style');
+                // if (el.getAttribute('data-depend-id') === 'figure_preview') {
+                //     // Create a new style element
+                //     const style = document.createElement('style');
 
-                    // Define CSS for the pseudo-element inside that style block
-                    style.textContent = `
-                    .accordion-button::after {
-                    content: "▼";
-                    font-size: 1rem;
-                    width: 1.25rem;
-                    height: 1.25rem;
-                    margin-left: auto;
-                    }
-                    `;
-                }
+                //     // Define CSS for the pseudo-element inside that style block
+                //     style.textContent = `
+                //     .accordion-button::after {
+                //     content: "▼";
+                //     font-size: 1rem;
+                //     width: 1.25rem;
+                //     height: 1.25rem;
+                //     margin-left: auto;
+                //     }
+                //     `;
+                // }
 
                 //FIGURE PREVIEW LOGIC
                 const info_obj = {
@@ -515,17 +515,28 @@ if (previewFigureOrModalElements.length > 0) {
             el.addEventListener('click', function() {
                 // Only inject CSS if not already loaded
                 if (!document.getElementById('theme-css1') && !document.getElementById('theme-css2')) {
-                const css1 = document.createElement('link');
-                css1.id = 'theme-css1';
-                css1.rel = 'stylesheet';
-                css1.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.css`;
-                document.head.appendChild(css1);
 
-                const css2 = document.createElement('link');
-                css2.id = 'theme-css2';
-                css2.rel = 'stylesheet';
-                css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
-                document.head.appendChild(css2);
+                    // const links = document.querySelectorAll('link[rel="stylesheet"]');
+                    // links.forEach(link => {
+                    //     if (link.href.includes('bootstrap.min.css')) {
+                    //     link.parentNode.removeChild(link);
+                    //     console.log('bootstrap.min.css REMOVED');
+                    //     }
+                    // });
+
+                    const css1 = document.createElement('link');
+                    css1.id = 'theme-css1';
+                    css1.rel = 'stylesheet';
+                    //css1.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.css`;
+                    //css1.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/modal_mobile_modal-dialog.css`;
+                    //document.head.appendChild(css1);
+
+                    const css2 = document.createElement('link');
+                    css2.id = 'theme-css2';
+                    css2.rel = 'stylesheet';
+                    //css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
+                    //css2.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/modal_desktop_modal-dialog.css`;
+                    document.head.appendChild(css2);
 
                 //console.log('🎨 Theme CSS injected');
                 } else {
@@ -695,7 +706,7 @@ if (previewSceneElements.length > 0) {
                             <button id="close1" type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
 
-                        <div class="modal-body" id="sceneModalBody">
+                        <div class="modal-body" id="sceneModalBody" style="padding: 0%;">
                         </div>
 
                         </div>
@@ -783,19 +794,34 @@ if (previewSceneElements.length > 0) {
 if (previewSceneElements.length > 0) {
         previewSceneElements.forEach(el => {
             el.addEventListener('click', function() {
+
+                // links.forEach(link => {
+                //     if (link.href.includes('bootstrap.min.css')) {
+                //     link.parentNode.removeChild(link);
+                //     console.log('bootstrap.min.css REMOVED');
+                //     }
+                // });
+
                 // Only inject CSS if not already loaded
                 if (!document.getElementById('theme-css1') && !document.getElementById('theme-css2')) {
-                const css1 = document.createElement('link');
-                css1.id = 'theme-css1';
-                css1.rel = 'stylesheet';
-                css1.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.css`;
-                document.head.appendChild(css1);
 
-                const css2 = document.createElement('link');
-                css2.id = 'theme-css2';
-                css2.rel = 'stylesheet';
-                css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
-                document.head.appendChild(css2);
+                    if (el.getAttribute('data-depend-id') === 'scene_preview') {
+                        const css1 = document.createElement('link');
+                        css1.id = 'theme-css1';
+                        css1.rel = 'stylesheet';
+                        //css1.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.css`;
+                        css1.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/scene_desktop_entire_thing.css`;
+                        document.head.appendChild(css1);
+                    }
+                    
+                    if (el.getAttribute('data-depend-id') === 'scene_preview_mobile') {
+                        const css2 = document.createElement('link');
+                        css2.id = 'theme-css2';
+                        css2.rel = 'stylesheet';
+                        //css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
+                        css2.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/scene_mobile_title_container.css`;
+                        document.head.appendChild(css2);
+                    }
 
                 //console.log('🎨 Theme CSS injected');
                 } else {
@@ -811,10 +837,17 @@ if (previewSceneElements.length > 0) {
 // When the modal close button is clicked, remove both CSS files
 document.addEventListener('click', function(e) {
     if (e.target && e.target.id === 'close1') {
+
         const css1 = document.getElementById('theme-css1');
         const css2 = document.getElementById('theme-css2');
         if (css1) css1.remove();
         if (css2) css2.remove();
+
+        // const css3 = document.createElement('link');
+        // css3.id = 'theme-css3';
+        // css3.rel = 'stylesheet';
+        // css3.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.min.css`;
+        // document.head.appendChild(css3);
     }
 });
 
