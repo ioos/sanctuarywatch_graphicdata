@@ -131,8 +131,18 @@ class Graphic_Data_Instance_Type {
 		);
 	}
 
-	// Render the admin page.
-	function render_instance_type_admin_page() {
+	/**
+	 * Render the Instance Type taxonomy admin page.
+	 *
+	 * Handles POST submissions for adding, editing, and deleting
+	 * instance_type taxonomy terms (including custom meta fields
+	 * 'instance_order' and 'instance_navbar_name'), then outputs
+	 * the management interface with an add form, existing terms
+	 * table, and a hidden edit form toggled via JavaScript.
+	 *
+	 * @return void
+	 */
+	public function render_instance_type_admin_page() {
 		// Check if taxonomy exists before proceeding.
 		if ( ! taxonomy_exists( 'instance_type' ) ) {
 			echo '<div class="error"><p>Error: The instance_type taxonomy is not properly registered.</p></div>';
@@ -140,7 +150,7 @@ class Graphic_Data_Instance_Type {
 		}
 
 		// Handle form submissions.
-		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( isset( $_POST['action'] ) ) {
 				switch ( $_POST['action'] ) {
 					case 'add':
