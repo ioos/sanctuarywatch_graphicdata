@@ -70,17 +70,39 @@ define( 'GRAPHIC_DATA_DATA_DIR', WP_CONTENT_DIR . '/data' );
 define( 'GRAPHIC_DATA_DATA_URL', content_url( 'data' ) );
 
 
+/**
+ * Plugin activation callback.
+ *
+ * Ensures the public data directory exists when the plugin is activated.
+ *
+ * @see graphic_data_ensure_public_data_dir()
+ */
 function graphic_data_activate() {
-	myplugin_ensure_public_data_dir();
+	graphic_data_ensure_public_data_dir();
 }
 register_activation_hook( __FILE__, 'graphic_data_activate' );
 
-add_action( 'admin_init', 'myplugin_ensure_public_data_dir' ); // fallback after migrations.
-function myplugin_ensure_public_data_dir() {
+add_action( 'admin_init', 'graphic_data_ensure_public_data_dir' ); // fallback after migrations.
+
+/**
+ * Ensure the public data directory exists with correct permissions.
+ *
+ * Creates GRAPHIC_DATA_DATA_DIR if it does not already exist, sets directory
+ * permissions to 0755, and drops an index.php guard file to prevent directory
+ * browsing while still allowing direct file access.
+ *
+ * On failure the error is persisted to the 'graphic_data_data_dir_error' option
+ * so it can be surfaced via admin notices; on success that option is deleted.
+ *
+ * @since 1.0.0
+ *
+ * @return void
+ */
+function graphic_data_ensure_public_data_dir() {
 	// Create dir if missing.
 	if ( ! is_dir( GRAPHIC_DATA_DATA_DIR ) ) {
 		if ( ! wp_mkdir_p( GRAPHIC_DATA_DATA_DIR ) ) {
-			update_option( 'myplugin_data_dir_error', 'Could not create ' . GRAPHIC_DATA_DATA_DIR . '. Check permissions.' );
+			update_option( 'graphic_data_data_dir_error', 'Could not create ' . GRAPHIC_DATA_DATA_DIR . '. Check permissions.' );
 			return;
 		}
 	}
@@ -96,46 +118,65 @@ function myplugin_ensure_public_data_dir() {
 		@chmod( $index, 0644 );
 	}
 
-	delete_option( 'myplugin_data_dir_error' );
+	delete_option( 'graphic_data_data_dir_error' );
 }
 
 add_action(
 	'admin_notices',
 	function () {
-		if ( $msg = get_option( 'myplugin_data_dir_error' ) ) {
+		if ( get_option( 'graphic_data_data_dir_error' == $msg ) ) {
 			echo '<div class=\"notice notice-error\"><p>' . esc_html( $msg ) . '</p></div>';
 		}
 	}
 );
 
-
 /**
  * Run the cleanup after WP moves the file into the uploads dir.
  * This catches standard media modal uploads (what Exopite uses).
  */
-add_filter( 'wp_handle_upload', 'my_svg_cleanup_on_upload', 10, 2 );
-function my_svg_cleanup_on_upload( array $upload, string $context ) {
+add_filter( 'wp_handle_upload', 'graphic_data_svg_cleanup_on_upload', 10, 2 );
+
+
+/**
+ * Clean up Inkscape-generated SVGs after WordPress handles the upload.
+ *
+ * Hooked to `wp_handle_upload`, this function reads the uploaded file,
+ * checks whether it is an SVG containing Inkscape-specific markup, and
+ * if so, transforms it in-place using {@see graphic_data_transform_svg_inkscape()}.
+ * Non-SVG files and SVGs without Inkscape attributes are returned untouched.
+ *
+ * @param array  $upload  {
+ *     Array of upload data from WordPress.
+ *
+ *     @type string $file Full path to the uploaded file.
+ *     @type string $url  URL of the uploaded file.
+ *     @type string $type MIME type of the uploaded file.
+ * }
+ * @param string $context The type of upload action. Accepts 'upload' or 'sideload'.
+ * @return array The (possibly modified) upload data array.
+ */
+function graphic_data_svg_cleanup_on_upload( array $upload, string $context ) {
 	if ( ! isset( $upload['type'], $upload['file'] ) ) {
 		return $upload;
 	}
 
 	// Only touch SVGs.
-	if ( $upload['type'] !== 'image/svg+xml' && ! preg_match( '/\.svg$/i', $upload['file'] ) ) {
+	if ( 'image/svg+xml' !== $upload['type'] && ! preg_match( '/\.svg$/i', $upload['file'] ) ) {
 		return $upload;
 	}
 
 	$path = $upload['file'];
 	$svg  = @file_get_contents( $path );
-	if ( $svg === false ) {
-		return $upload; // couldn't read; bail without breaking the upload
+	if ( false === $svg ) {
+		return $upload; // couldn't read; bail without breaking the upload.
 	}
 
 	// Only process if it looks like an Inkscape SVG.
 	if ( strpos( $svg, 'inkscape:' ) === false ) {
-		return $upload; // no inkscape tags → leave untouched
+		return $upload; // no inkscape tags → leave untouched.
 	}
 
-	$clean = my_transform_svg_inkscape( $svg );
+	$clean = graphic_data_transform_svg_inkscape( $svg );
 
 	// Write back in-place
 	// You may also want to preserve permissions; WP handles that normally.
@@ -145,43 +186,18 @@ function my_svg_cleanup_on_upload( array $upload, string $context ) {
 }
 
 /**
- * Your transformation rules:
- * - Remove only the inkscape:groupmode="layer" attribute (keep the rest of the tag).
- * - If a start tag has id + inkscape:label:
- *     * If equal → keep id, drop label.
- *     * If different → set id to label value, drop label.
- * - Drop any remaining inkscape:label attributes.
- * - (Optional) Drop xmlns:inkscape if you’ve removed all inkscape:* attributes.
+ * Transform Inkscape-specific attributes in an SVG string.
+ *
+ * Replaces the id attribute value with the inkscape:label value
+ * on elements that have both attributes.
+ *
+ * @param string $svg The raw SVG markup.
+ * @return string The transformed SVG markup.
  */
-function my_transform_svg_inkscape( string $svg ): string {
-	// Safety: work only on the text; do not touch binary (SVGs are text).
-	// 1) Remove the specific layer marker, but NOT the whole tag.
-	// $svg = preg_replace('/\s+inkscape:groupmode="layer"(?=\s|>)/', '', $svg);
-
-	// 2a) If label then id → set id to label, drop label (keeps other attrs)
-	// <g inkscape:label="v2" id="v1" ...> → <g id="v2" ...>
-	// $svg = preg_replace('/inkscape:label="([^"]+)"\s+id="([^"]+)"/', 'id="$1"', $svg);
-
-	// <g inkscape:label="v2" id="v1" ...> → <g inkscape:label="v2" id="v2" ...>
-	// $svg = preg_replace('/inkscape:label="([^"]+)"\s+id="([^"]+)"/', 'inkscape:label="$1" id="$1"', $svg);
-
-	// 2b) If id then label → same
-	// <g id="v1" inkscape:label="v2" ...> → <g id="v2" ...>
+function graphic_data_transform_svg_inkscape( string $svg ): string {
 	$svg = preg_replace( '/id="([^"]+)"\s+inkscape:label="([^"]+)"/', 'id="$2" inkscape:label="$2"', $svg );
-
-	// 2c) If there’s a leftover inkscape:label (without a paired id in that same tag), drop it.
-	// (Matches only the attribute; keeps spacing/tag intact.)
-	// $svg = preg_replace('/\s+inkscape:label="[^"]*"(?=\s|>)/', '', $svg);
-
-	// (Optional) If you want to drop the namespace decl too:
-	// Only do this if you’re confident there are no remaining inkscape:* attrs.
-	// if (strpos($svg, 'inkscape:') === false) {
-	// $svg = preg_replace('/\s+xmlns:inkscape="[^"]*"/', '', $svg);
-	// }
-
 	return $svg;
 }
-
 
 /**
  * Begins execution of the plugin.
@@ -190,9 +206,9 @@ function my_transform_svg_inkscape( string $svg ): string {
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  */
-function run_graphic_data_plugin() {
+function graphic_data_plugin_run() {
 
 	$plugin = new Graphic_Data_Plugin();
 	$plugin->run();
 }
-run_graphic_data_plugin();
+graphic_data_plugin_run();
