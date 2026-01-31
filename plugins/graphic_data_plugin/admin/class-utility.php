@@ -580,7 +580,7 @@ class Graphic_Data_Utility {
 
 		// --- Role-Based Filtering Logic ---
 		// Check if the current user is a 'content_editor' BUT NOT an 'administrator'.
-		if ( user_can( $current_user, 'content_editor' ) && ! user_can( $current_user, 'administrator' ) ) {
+		if ( user_can( $current_user, 'content_editor' ) && ! user_can( $current_user, 'manage_options' ) ) {
 			// Get the instances assigned to this content editor.
 			$user_assigned_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
@@ -774,10 +774,10 @@ class Graphic_Data_Utility {
 	 * @param int $scene_id The current scene ID to exclude from results.
 	 * @return array Associative array of scene IDs to titles with an empty option first, sorted alphabetically.
 	 */
-	public function returnScenesExceptCurrent( $scene_id ) {
+	public function return_scenes_except_current( $scene_id ) {
 		$potential_scenes = array();
 		$scene_location = get_post_meta( $scene_id, 'scene_location', true );
-		if ( $scene_location == true ) {
+		if ( true == $scene_location ) {
 			$args = array(
 				'post_type' => 'scene',  // Your custom post type.
 				'posts_per_page' => -1,       // Retrieve all matching posts (-1 means no limit).
@@ -808,15 +808,26 @@ class Graphic_Data_Utility {
 		return $potential_scenes;
 	}
 
-	// Potential section headers for icons.
-	public function returnModalSections( $scene_id ) {
+	/**
+	 * Retrieve modal section headers for a given scene.
+	 *
+	 * Iterates through up to six scene sections, pulling each section's
+	 * post meta and collecting non-empty titles. The resulting array is
+	 * sorted alphabetically and prefixed with a blank entry for use as
+	 * dropdown options.
+	 *
+	 * @param int $scene_id The post ID of the scene.
+	 * @return array Associative array keyed by section field name (e.g. 'scene_section1')
+	 *               with section titles as values. Includes a leading empty entry.
+	 */
+	public function return_modal_sections( $scene_id ) {
 		$modal_sections = array();
 		for ( $i = 1; $i < 7; $i++ ) {
 			$field_target = 'scene_section' . $i;
 			$target_section = get_post_meta( $scene_id, $field_target, true );
-			if ( $target_section != null && $target_section != '' & is_array( $target_section ) ) {
+			if ( null != $target_section && '' != $target_section & is_array( $target_section ) ) {
 				$target_title = $target_section[ 'scene_section_title' . $i ];
-				if ( $target_title != null && $target_title != '' ) {
+				if ( null != $target_title && '' != $target_title ) {
 					$modal_sections[ $field_target ] = $target_title;
 				}
 			}
@@ -826,11 +837,22 @@ class Graphic_Data_Utility {
 		return $modal_sections;
 	}
 
-	// Dropdown options for Scene in figure content type.
-	public function returnScenesFigure( $location ) {
+	/**
+	 * Retrieve scene dropdown options for the figure content type.
+	 *
+	 * Queries all 'scene' posts whose 'scene_location' meta matches
+	 * the given location and returns their IDs mapped to titles.
+	 * The resulting array includes a leading empty entry for use
+	 * as a default dropdown option.
+	 *
+	 * @param string $location The location value to match against the 'scene_location' meta field.
+	 * @return array Associative array keyed by scene post ID with post titles as values.
+	 *               Includes a leading empty entry.
+	 */
+	public function return_scenes_figure( $location ) {
 		$potential_scenes[''] = '';
 
-		if ( $location != '' ) {
+		if ( '' != $location ) {
 			$args = array(
 				'post_type' => 'scene',  // Your custom post type.
 				'posts_per_page' => -1,   // Retrieve all matching posts (-1 means no limit).
@@ -852,7 +874,6 @@ class Graphic_Data_Utility {
 				$target_title = get_post_meta( $target_id, 'post_title', true );
 				$potential_scenes[ $target_id ] = $target_title;
 			}
-			// asort($potential_scenes);
 		}
 		return $potential_scenes;
 	}
@@ -875,25 +896,46 @@ class Graphic_Data_Utility {
 		return absint( $value );
 	}
 
-	public function returnModalTabs( $modal_id ) {
+	/**
+	 * Retrieve tab titles for a given modal.
+	 *
+	 * Iterates through up to six tab title meta fields for the specified
+	 * modal post and collects any non-empty titles. The resulting array
+	 * includes a leading empty entry for use as a default dropdown option.
+	 *
+	 * @param int|string $modal_id The post ID of the modal.
+	 * @return array Associative array keyed by tab number (1-6) with tab titles
+	 *               as values. Includes a leading empty entry.
+	 */
+	public function return_modal_tabs( $modal_id ) {
 		$potential_tabs[''] = '';
-		if ( $modal_id != '' ) {
+		if ( '' != $modal_id ) {
 			for ( $i = 1; $i < 7; $i++ ) {
 				$target_field = 'modal_tab_title' . $i;
 				$target_title = get_post_meta( $modal_id, $target_field, true );
-				if ( $target_title != '' && $target_title != null ) {
+				if ( '' != $target_title && null != $target_title ) {
 					$potential_tabs[ $i ] = $target_title;
 				}
 			}
-			// asort($potential_tabs);
 		}
 		return $potential_tabs;
 	}
 
-	// Dropdown options for Icon in figure content type.
-	public function returnFigureIcons( $scene_id ) {
+	/**
+	 * Retrieve modal icon dropdown options for the figure content type.
+	 *
+	 * Queries all 'modal' posts that belong to the given scene and have
+	 * an 'icon_function' of 'Modal', then returns their IDs mapped to
+	 * titles. The resulting array includes a leading empty entry for use
+	 * as a default dropdown option.
+	 *
+	 * @param int|string $scene_id The post ID of the scene to retrieve modal icons for.
+	 * @return array Associative array keyed by modal post ID with post titles
+	 *               as values. Includes a leading empty entry.
+	 */
+	public function return_figure_icons( $scene_id ) {
 		$potential_icons[''] = '';
-		if ( $scene_id != '' ) {
+		if ( '' != $scene_id ) {
 
 			$args = array(
 				'post_type' => 'modal',  // Your custom post type.
@@ -925,11 +967,19 @@ class Graphic_Data_Utility {
 				$potential_icons[ $target_id ] = $target_title;
 			}
 		}
-
 		return $potential_icons;
 	}
 
-	// Register rest fields for when rest api hook is called.
+	/**
+	 * Register custom meta fields with the REST API for a given post type.
+	 *
+	 * Iterates through the provided field names and registers each one
+	 * as a readable REST API field using the class's meta_get_callback method.
+	 *
+	 * @param string   $post_type   The post type slug to register the fields for.
+	 * @param string[] $rest_fields Array of meta field names to expose via the REST API.
+	 * @return void
+	 */
 	public function register_custom_rest_fields( $post_type, $rest_fields ) {
 		foreach ( $rest_fields as $target_field ) {
 			register_rest_field(
@@ -943,7 +993,16 @@ class Graphic_Data_Utility {
 		}
 	}
 
-	// Used by register_custom_rest_fields.
+	/**
+	 * REST API get callback for retrieving a post meta value.
+	 *
+	 * Used as the get_callback by register_custom_rest_fields().
+	 *
+	 * @param array           $object     The post data array containing the post 'id'.
+	 * @param string          $field_name The meta field name to retrieve.
+	 * @param WP_REST_Request $request    The current REST API request object.
+	 * @return mixed The single post meta value for the given field.
+	 */
 	public function meta_get_callback( $object, $field_name, $request ) {
 		return get_post_meta( $object['id'], $field_name, true );
 	}
@@ -962,12 +1021,12 @@ class Graphic_Data_Utility {
 	 * @return void  Outputs HTML directly to the admin screen. No return value.
 	 * @since    1.0.0
 	 */
-	function display_warning_message_if_new_post_impossible() {
+	public function display_warning_message_if_new_post_impossible() {
 
 		global $pagenow, $typenow;
 
 		// Check if we're on the instance post type admin page.
-		if ( $pagenow == 'edit.php' && $typenow == 'instance' ) {
+		if ( 'edit.php' == $pagenow && 'instance' == $typenow ) {
 			// Check if there are no terms.
 			$terms = get_terms(
 				array(
@@ -981,7 +1040,7 @@ class Graphic_Data_Utility {
 			if ( is_wp_error( $terms ) || empty( $terms ) ) {
 				?>
 				<div class="notice notice-error is-dismissible">
-					<p><strong>Cannot create Instance posts.</strong> You must create at least one <a href="<?php echo admin_url( 'edit-tags.php?taxonomy=instance_type&post_type=instance' ); ?>">Instance Type</a> before you can add an Instance post. </p>
+					<p><strong>Cannot create Instance posts.</strong> You must create at least one <a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=instance_type&post_type=instance' ) ); ?>">Instance Type</a> before you can add an Instance post. </p>
 				</div>
 				<?php
 			}

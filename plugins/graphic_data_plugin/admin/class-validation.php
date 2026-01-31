@@ -170,11 +170,11 @@ class Graphic_Data_Validation {
 			$save_instance_fields = false;
 		}
 
-		if ( $_POST['instance_overview_scene'] == '' ) {
+		if ( '' == $_POST['instance_overview_scene'] ) {
 			array_push( $instance_warnings, 'No overview scene is set. This will cause several issues with the display of the instance until it is corrected.' );
 		}
 
-		if ( $_POST['instance_tile'] == '' ) {
+		if ( '' == $_POST['instance_tile'] ) {
 			array_push( $instance_warnings, 'No tile image is set. This will cause an issue with the display of the front page of the site until it is corrected.' );
 		} else {
 			$image_path = $_SERVER['DOCUMENT_ROOT'] . wp_make_link_relative( $_POST['instance_tile'] );
@@ -187,8 +187,8 @@ class Graphic_Data_Validation {
 				$mime_type = finfo_file( $file_info, $image_path );
 				finfo_close( $file_info );
 
-				// Return false for SVG and other vector formats
-				if ( $mime_type === 'image/svg+xml' ) {
+				// Return false for SVG and other vector formats.
+				if ( 'image/svg+xml' === $mime_type ) {
 					array_push( $instance_errors, "The image specified by the 'Tile image' field has a SVG format. Only pixel-based formats like jpeg or png are allowed." );
 					$save_instance_fields = false;
 				} else {
@@ -197,10 +197,10 @@ class Graphic_Data_Validation {
 						$width = $image_size[0];
 						$height = $image_size[1];
 
-						if ( empty( $width ) || $width == 0 || empty( $height ) || $height == 0 ) {
+						if ( empty( $width ) || 0 == $width || empty( $height ) || 0 == $height ) {
 							array_push( $instance_errors, "The image specified by the 'Tile image' field has an unreadable height or width." );
 							$save_instance_fields = false;
-						} else if ( $width / $height != 1.25 ) {
+						} else if ( $width / 1.25 != $height ) {
 							array_push( $instance_errors, "The image specified by the 'Tile image' field does not have the correct aspect ratio. The image must be exactly 25% wider than it is tall." );
 							$save_instance_fields = false;
 						} else if ( $width < 250 ) {
@@ -215,9 +215,9 @@ class Graphic_Data_Validation {
 			}
 		}
 
-		if ( $_POST['instance_legacy_content'] == 'yes' ) {
+		if ( 'yes' == $_POST['instance_legacy_content'] ) {
 			$instance_legacy_content_url = $_POST['instance_legacy_content_url'];
-			if ( $instance_legacy_content_url == '' ) {
+			if ( '' == $instance_legacy_content_url ) {
 				array_push( $instance_errors, "If Legacy content is set to 'yes', then the Legacy content URL field cannot be left blank." );
 				$save_instance_fields = false;
 			} elseif ( $this->url_check( $instance_legacy_content_url ) == false ) {
@@ -235,7 +235,7 @@ class Graphic_Data_Validation {
 
 		for ( $i = 1; $i <= $instance_footer_column_number; $i++ ) {
 			$footer_column = $_POST[ 'instance_footer_column' . $i ];
-			if ( $footer_column[ 'instance_footer_column_title' . $i ] == '' || $footer_column[ 'instance_footer_column_content' . $i ] == '' ) {
+			if ( '' == $footer_column[ 'instance_footer_column_title' . $i ] || '' == $footer_column[ 'instance_footer_column_content' . $i ] ) {
 				$save_instance_fields = false;
 				array_push( $instance_errors, 'The Header and Content fields in Footer column ' . $i . ' cannot be blank.' );
 			}
@@ -259,10 +259,8 @@ class Graphic_Data_Validation {
 		} else {
 			$function_utilities->fields_to_transient( 'instance_post_status', 'post_good', 30 );
 		}
-
 		return $save_instance_fields;
 	}
-
 
 	/**
 	 * Validates a post of Figure custom post type before saving.
@@ -295,22 +293,22 @@ class Graphic_Data_Validation {
 		$figure_errors = [];
 		$figure_warnings = [];
 
-		if ( $_POST['location'] == ' ' ) {
+		if ( ' ' == $_POST['location'] ) {
 			array_push( $figure_errors, 'The Instance field cannot be left blank.' );
 			$save_figure_fields = false;
 		}
 
-		if ( $_POST['figure_scene'] == '' ) {
+		if ( '' == $_POST['figure_scene'] ) {
 			array_push( $figure_errors, 'The Scene field cannot be left blank.' );
 			$save_figure_fields = false;
 		}
 
-		if ( $_POST['figure_modal'] == '' ) {
+		if ( '' == $_POST['figure_modal'] ) {
 			array_push( $figure_errors, 'The Icon field cannot be left blank.' );
 			$save_figure_fields = false;
 		}
 
-		if ( $_POST['figure_tab'] == '' ) {
+		if ( '' == $_POST['figure_tab'] ) {
 			array_push( $figure_errors, 'The Tab field cannot be left blank.' );
 			$save_figure_fields = false;
 		}
@@ -336,7 +334,7 @@ class Graphic_Data_Validation {
 			}
 		}
 
-		if (  'External' == $_POST['figure_path'] && '' == $_POST['figure_external_alt'] ) {
+		if ( 'External' == $_POST['figure_path'] && '' == $_POST['figure_external_alt'] ) {
 			array_push( $figure_errors, "If the Figure Type is set to 'External image', then the 'Alt text for external image' field cannot be left blank." );
 			$save_figure_fields = false;
 		}
@@ -352,12 +350,12 @@ class Graphic_Data_Validation {
 
 			$field_text = $field_type . 'link_text';
 			$field_url = $field_type . 'link_url';
-			if ( ! $field_couplet[ $field_url ] == '' || ! $field_couplet[ $field_text ] == '' ) {
-				if ( $field_couplet[ $field_url ] == '' || $field_couplet[ $field_text ] == '' ) {
+			if ( '' != $field_couplet[ $field_url ] || '' != $field_couplet[ $field_text ] ) {
+				if ( '' == $field_couplet[ $field_url ] || '' == $field_couplet[ $field_text ] ) {
 					$save_figure_fields = false;
 					array_push( $figure_errors, 'The URL or Text is blank for the ' . $error_notice_name[ $field_type ] . ' link.' );
 				}
-				if ( ! $field_couplet[ $field_url ] == '' ) {
+				if ( '' != $field_couplet[ $field_url ] ) {
 					if ( $this->url_check( $field_couplet[ $field_url ] ) == false ) {
 						$save_figure_fields = false;
 						array_push( $figure_errors, 'The URL for the ' . $error_notice_name[ $field_type ] . ' link is not valid' );
@@ -444,22 +442,22 @@ class Graphic_Data_Validation {
 			array_push( $modal_warnings, "The title length is {$string_length} characters long, which exceeds the 70 character limit recommendation for proper layout." );
 		}
 
-		if ( $_POST['modal_location'] == ' ' || $_POST['modal_location'] == '' ) {
+		if ( ' ' == $_POST['modal_location'] || '' == $_POST['modal_location'] ) {
 			array_push( $modal_errors, 'The Instance field cannot be left blank.' );
 			$save_modal_fields = false;
 		}
 
-		if ( $_POST['modal_scene'] == ' ' || $_POST['modal_scene'] == '' ) {
+		if ( ' ' == $_POST['modal_scene'] || '' == $_POST['modal_scene'] ) {
 			array_push( $modal_errors, 'The Scene field cannot be left blank.' );
 			$save_modal_fields = false;
 		}
 
-		if ( $_POST['modal_icons'] == ' ' || $_POST['modal_icons'] == '' ) {
+		if ( ' ' == $_POST['modal_icons'] || '' == $_POST['modal_icons'] ) {
 			array_push( $modal_errors, 'The Icons field cannot be left blank.' );
 			$save_modal_fields = false;
 		}
 
-		if ( $_POST['modal_scene'] != ' ' && $_POST['modal_icons'] != ' ' ) {
+		if ( ' ' != $_POST['modal_scene'] && '' != $_POST['modal_icons'] ) {
 
 			$icon_id = $_POST['modal_icons'];
 			$scene_id = $_POST['modal_scene'];
@@ -504,10 +502,10 @@ class Graphic_Data_Validation {
 			}
 		}
 		// If the associated scene contains sections, force the use of sections with this modal.
-		if ( $_POST['modal_scene'] != '' ) {
-			$scene_ID = intval( $_POST['modal_scene'] );
-			$scene_toc_style = get_post_meta( $scene_ID, 'scene_toc_style', true );
-			$scene_section_number = get_post_meta( $scene_ID, 'scene_section_number', true );
+		if ( '' != $_POST['modal_scene'] ) {
+			$scene_id = intval( $_POST['modal_scene'] );
+			$scene_toc_style = get_post_meta( $scene_id, 'scene_toc_style', true );
+			$scene_section_number = get_post_meta( $scene_id, 'scene_section_number', true );
 			if ( 'list' != $scene_toc_style && 0 != $scene_section_number ) {
 				if ( '' == $_POST['icon_toc_section'] ) {
 					array_push( $modal_errors, 'The Icon Section field cannot be left blank.' );
@@ -580,12 +578,12 @@ class Graphic_Data_Validation {
 				if ( '' == $field_couplet[ $field_url ] && '' == $field_couplet[ $field_text ] ) {
 					$save_modal_fields = false;
 					array_push( $modal_errors, 'The Modal ' . ucfirst( $field_type ) . ' Link ' . $i . ' is blank.' );
-				} elseif ( ! $field_couplet[ $field_url ] == '' || ! $field_couplet[ $field_text ] == '' ) {
-					if ( ( 'info' == $field_type && ( $field_couplet[ $field_url ] == '' || $field_couplet[ $field_text ] == '' ) ) || ( $field_type == 'photo' && ( ( $field_couplet[ $field_url ] == '' && $field_couplet[ $field_photo_internal ] == '' ) || $field_couplet[ $field_text ] == '' ) ) ) {
+				} elseif ( '' != $field_couplet[ $field_url ] || '' != $field_couplet[ $field_text ] ) {
+					if ( ( 'info' == $field_type && ( '' == $field_couplet[ $field_url ] || '' == $field_couplet[ $field_text ] ) ) || ( 'photo' == $field_type && ( ( '' == $field_couplet[ $field_url ] && '' == $field_couplet[ $field_photo_internal ] ) || '' == $field_couplet[ $field_text ] ) ) ) {
 						$save_modal_fields = false;
 						array_push( $modal_errors, 'Error in Modal ' . ucfirst( $field_type ) . ' Link ' . $i );
 					}
-					if ( ! $field_couplet[ $field_url ] == '' ) {
+					if ( '' != $field_couplet[ $field_url ] ) {
 						if ( $this->url_check( $field_couplet[ $field_url ] ) == false ) {
 							$save_modal_fields = false;
 							array_push( $modal_errors, 'The URL for Modal ' . ucfirst( $field_type ) . ' Link ' . $i . ' is not valid' );

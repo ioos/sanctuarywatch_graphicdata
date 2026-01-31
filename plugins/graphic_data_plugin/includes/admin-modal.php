@@ -126,15 +126,15 @@ class Graphic_Data_Modal {
 			}
 
 			if ( $transient_fields_exist ) {
-				$icon_scene_out = $function_utilities->returnScenesExceptCurrent( $transient_fields['modal_scene'] );
+				$icon_scene_out = $function_utilities->return_scenes_except_current( $transient_fields['modal_scene'] );
 			} else {
-				$icon_scene_out = $function_utilities->returnScenesExceptCurrent( $scene_id );
+				$icon_scene_out = $function_utilities->return_scenes_except_current( $scene_id );
 			}
 
 			if ( $transient_fields_exist ) {
-				$modal_section = $function_utilities->returnModalSections( $transient_fields['modal_scene'] );
+				$modal_section = $function_utilities->return_modal_sections( $transient_fields['modal_scene'] );
 			} else {
-				$modal_section = $function_utilities->returnModalSections( $scene_id );
+				$modal_section = $function_utilities->return_modal_sections( $scene_id );
 			}
 		}
 

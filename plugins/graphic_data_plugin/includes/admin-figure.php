@@ -538,24 +538,24 @@ class Graphic_Data_Figure {
 			$figure_id = intval( $_GET['post'] );
 			$location = get_post_meta( $figure_id, 'location', true );
 			if ( $transient_fields_exist ) {
-				$scene_titles = $function_utilities->returnScenesFigure( $transient_fields['location'] );
+				$scene_titles = $function_utilities->return_scenes_figure( $transient_fields['location'] );
 			} else {
-				$scene_titles = $function_utilities->returnScenesFigure( $location );
+				$scene_titles = $function_utilities->return_scenes_figure( $location );
 			}
 
 			$scene_id = get_post_meta( $figure_id, 'figure_scene', true );
 			if ( $transient_fields_exist ) {
-				$modal_icons = $function_utilities->returnFigureIcons( $transient_fields['figure_scene'] );
+				$modal_icons = $function_utilities->return_figure_icons( $transient_fields['figure_scene'] );
 			} else {
-				$modal_icons = $function_utilities->returnFigureIcons( $scene_id );
+				$modal_icons = $function_utilities->return_figure_icons( $scene_id );
 			}
 
 			$modal_id = get_post_meta( $figure_id, 'figure_modal', true );
 
 			if ( $transient_fields_exist ) {
-				$modal_tabs = $function_utilities->returnModalTabs( $transient_fields['figure_modal'] );
+				$modal_tabs = $function_utilities->return_modal_tabs( $transient_fields['figure_modal'] );
 			} else {
-				$modal_tabs = $function_utilities->returnModalTabs( $modal_id );
+				$modal_tabs = $function_utilities->return_modal_tabs( $modal_id );
 			}
 		}
 
