@@ -4,6 +4,15 @@
  */
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
+/**
+ * Handles the Figure custom post type for the Graphic Data plugin.
+ *
+ * Registers the Figure post type, its custom fields and metaboxes,
+ * admin list table columns, filter dropdowns, REST API fields and routes,
+ * and file upload/delete handlers for interactive figure data.
+ *
+ * @since 1.0.0
+ */
 class Graphic_Data_Figure {
 	/**
 	 * Enqueue admin scripts for the Figure post type edit screen.
@@ -852,15 +861,23 @@ class Graphic_Data_Figure {
 	 * @since    1.0.0
 	 */
 	public function register_figure_rest_fields() {
-		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'uploaded_path_json', 'figure_title' ); // figure_temp_filepath
+		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'uploaded_path_json', 'figure_title' ); // figure_temp_filepath.
 		$function_utilities = new Graphic_Data_Utility();
 		$function_utilities->register_custom_rest_fields( 'figure', $figure_rest_fields );
 	}
 
 	/**
-	 * Add a filter to support filtering by "figure_modal", "figure_published", and id in REST API queries.
+	 * Filter REST API query arguments to support filtering figure custom posts by meta fields.
 	 *
-	 * @since    1.0.0
+	 * Appends meta_query clauses to the WP_Query arguments when the REST request
+	 * includes 'figure_modal', 'figure_published', or 'id' parameters. Intended
+	 * to be hooked into the 'rest_figure_query' filter.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array           $args    The WP_Query arguments for the REST API request.
+	 * @param WP_REST_Request $request The current REST API request object.
+	 * @return array Modified query arguments with additional meta_query clauses.
 	 */
 	public function filter_figure_by_figure_modal( $args, $request ) {
 		if ( isset( $request['figure_modal'] ) ) {
@@ -896,88 +913,87 @@ class Graphic_Data_Figure {
 	}
 
 	/**
-	 * Handles the custom file upload process for the WebCR plugin.
+	 * Handles the custom file upload process for the Graphic Data plugin.
 	 * Validates the uploaded file, ensures it is of an allowed type, and stores it in the appropriate directory.
 	 * Updates the post metadata with the file path upon successful upload.
 	 *
 	 * @return void Outputs a JSON response indicating success or failure.
 	 */
 	public static function custom_file_upload_handler() {
-		ob_clean(); // Ensure no unwanted output
+		ob_clean(); // Ensure no unwanted output.
 
-		// Error if no post ID
+		// First, verify nonce.
+		if ( ! isset( $_POST['figure_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ), 'save_figure_fields' ) ) {
+			wp_die( 'Security check failed for post of Figure custom post type.' );
+		}
+
+		// Error if no post ID.
 		if ( ! isset( $_POST['post_id'] ) || empty( $_POST['post_id'] ) ) {
 			wp_send_json_error( [ 'message' => 'Missing post ID.' ], 400 );
 		}
-		// Get the post's ID and the file to be uploaded's name
 		$post_id = intval( $_POST['post_id'] );
-		$file = $_FILES['uploaded_file'];
-		if ( ! $file ) {
-			wp_send_json_error( [ 'message' => 'No file uploaded.' ], 400 );
+
+		// From file, get the ['name'] and the ['tmp_name'].
+		if ( isset( $_FILES['uploaded_file'] ) ) {
+			// Sanitize and validate the uploaded file data.
+			$file_name = isset( $_FILES['uploaded_file']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['uploaded_file']['name'] ) ) : '';
+			$file_tmp_name = isset( $_FILES['uploaded_file']['tmp_name'] ) ? sanitize_text_field( wp_unslash( $_FILES['uploaded_file']['tmp_name'] ) ) : '';
+
+			// Validate that we have both required values.
+			if ( empty( $file_name ) || empty( $file_tmp_name ) ) {
+				wp_send_json_error( array( 'message' => 'Invalid file upload data.' ), 400 );
+			}
+		} else {
+			wp_send_json_error( array( 'message' => 'No file uploaded.' ), 400 );
 		}
 
-		// Get the file extension and check it to make sure it is of the type that are allowed
-		$file_ext = pathinfo( $file['name'], PATHINFO_EXTENSION );
+		// Get the file extension and check it to make sure it is of the type that are allowed.
+		$file_ext = pathinfo( $file_name, PATHINFO_EXTENSION );
 		$allowed_types = [ 'json', 'csv', 'geojson' ];
 		if ( ! in_array( $file_ext, $allowed_types ) ) {
 			wp_send_json_error( [ 'message' => 'Invalid file type.' ], 400 );
 		}
 
-		// Get instance ID, scene ID, and modal ID and define the upload path
-		// $instance_id = get_post_meta($post_id, 'location', true);
-		// $scene_id = get_post_meta($post_id, 'figure_scene', true);
-		// $modal_id = get_post_meta($post_id, 'figure_modal', true);
-		// if (!$instance_id) {
-		// wp_send_json_error(['message' => 'Invalid instance ID.'], 400);
-		// }
-		// if (!$scene_id) {
-		// wp_send_json_error(['message' => 'Invalid scene ID.'], 400);
-		// }
-		// if (!$modal_id) {
-		// wp_send_json_error(['message' => 'Invalid modal ID.'], 400);
-		// }
-
-		// Retrieve existing file paths from post metadata
+		// Retrieve existing file paths from post metadata.
 		$csv_path = get_post_meta( $post_id, 'uploaded_path_csv', true );
 		$json_path = get_post_meta( $post_id, 'uploaded_path_json', true );
 		$geojson_path = get_post_meta( $post_id, 'uploaded_path_geojson', true );
 
-		// Define the directory where the file is to be uploaded
-		// $upload_dir = ABSPATH . 'wp-content/data/instance_' . $instance_id . '/figure_' . $post_id  . '/';
+		// Define the directory where the file is to be uploaded.
 		$upload_dir = ABSPATH . 'wp-content/data/figure_' . $post_id . '/';
 
-		// Create the folders in which the file will be stored if they don't exist
+		// Create the folders in which the file will be stored if they don't exist.
 		if ( ! file_exists( $upload_dir ) ) {
 			mkdir( $upload_dir, 0775, true );
 		}
 
 		// Move the file to the upload folder and update the database fields.
-		$destination = $upload_dir . basename( $file['name'] );
-		$destination_json = $upload_dir . basename( preg_replace( '/\.csv$/', '.json', $file['name'] ) );
+		$destination = $upload_dir . basename( $file_name );
+		$destination_json = $upload_dir . basename( preg_replace( '/\.csv$/', '.json', $file_name ) );
 
-		// Move the uploaded file to the destination directory
-		if ( move_uploaded_file( $file['tmp_name'], $destination ) ) {
-			// Store file path in post metadata
-			if ( pathinfo( $file['name'], PATHINFO_EXTENSION ) === 'csv' ) {
+		// Move the uploaded file to the destination directory.
+		if ( move_uploaded_file( $file_tmp_name, $destination ) ) {
+			// Store file path in post metadata.
+			if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'csv' ) {
 				update_post_meta( $post_id, 'uploaded_path_csv', $destination );
-				update_post_meta( $post_id, 'uploaded_file', $file['name'] );
+				update_post_meta( $post_id, 'uploaded_file', $file_name );
 			}
 
-			if ( pathinfo( $file['name'], PATHINFO_EXTENSION ) === 'json' && $csv_path == '' ) {
+			if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'json' && '' == $csv_path ) {
 				update_post_meta( $post_id, 'uploaded_path_json', $destination );
-				update_post_meta( $post_id, 'uploaded_file', $file['name'] );
+				update_post_meta( $post_id, 'uploaded_file', $file_name );
 			}
 
-			if ( pathinfo( $file['name'], PATHINFO_EXTENSION ) === 'json' && $csv_path != '' ) {
+			if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'json' && '' != $csv_path ) {
 				update_post_meta( $post_id, 'uploaded_path_json', $destination );
 			}
 
-			if ( pathinfo( $file['name'], PATHINFO_EXTENSION ) === 'geojson' ) {
+			if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'geojson' ) {
 				update_post_meta( $post_id, 'uploaded_path_geojson', $destination );
 				update_post_meta( $post_id, 'uploaded_path_json', $destination );
-				update_post_meta( $post_id, 'uploaded_file', $file['name'] );
+				update_post_meta( $post_id, 'uploaded_file', $file_name );
 			}
-			// Send a success response with the file path
+			// Send a success response with the file path.
 			wp_send_json_success(
 				[
 					'message' => 'File uploaded successfully.',
@@ -986,57 +1002,46 @@ class Graphic_Data_Figure {
 			);
 
 		} else {
-			// Send an error response if the file upload fails
+			// Send an error response if the file upload fails.
 			wp_send_json_error( [ 'message' => 'File upload failed.' ], 500 );
 		}
 	}
 
 
 	/**
-	 * Handles the custom file deletion process for the WebCR plugin.
+	 * Handles the custom file deletion process for the Graphic Data plugin.
 	 * Validates the provided post ID and file name, deletes the specified file, and updates the post metadata.
 	 *
 	 * @return void Outputs a JSON response indicating success or failure.
 	 */
 	public static function custom_file_delete_handler() {
-		ob_clean(); // Ensure no unwanted output
+		ob_clean(); // Ensure no unwanted output.
 
-		// Get the post's ID
+		// First, verify nonce.
+		if ( ! isset( $_POST['figure_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ), 'save_figure_fields' ) ) {
+			wp_die( 'Security check failed for post of Figure custom post type.' );
+		}
+
+		// Get the post's ID.
 		if ( ! isset( $_POST['post_id'] ) || empty( $_POST['post_id'] ) ) {
 			wp_send_json_error( [ 'message' => 'Missing post ID.' ], 400 );
 		}
 
-		// Get the file to be deleted's name
+		// Get the file to be deleted's name.
 		if ( ! isset( $_POST['file_name'] ) || empty( $_POST['file_name'] ) ) {
 			wp_send_json_error( [ 'message' => 'Missing file name.' ], 400 );
 		}
 
-		// Variable-ize the post's ID & the file's name.
+		// Variable-ize the post's ID & the file's name..
 		$post_id = intval( $_POST['post_id'] );
-		// $file_name = sanitize_file_name($_POST['file_name']); // old version breaks special characters
-		$file_name = basename( urldecode( $_POST['file_name'] ) );
+		$file_name = basename( urldecode( sanitize_text_field( wp_unslash( $_POST['file_name'] ) ) ) );
 
-		// Get instance ID, scene ID, and modal ID
-		// $instance_id = get_post_meta($post_id, 'location', true);
-		// $scene_id = get_post_meta($post_id, 'figure_scene', true);
-		// $modal_id = get_post_meta($post_id, 'figure_modal', true);
-		// if (!$instance_id) {
-		// wp_send_json_error(['message' => 'Invalid instance ID.'], 400);
-		// }
-		// if (!$scene_id) {
-		// wp_send_json_error(['message' => 'Invalid scene ID.'], 400);
-		// }
-		// if (!$modal_id) {
-		// wp_send_json_error(['message' => 'Invalid modal ID.'], 400);
-		// }
-
-		// Define the directory where the file is to be deleted
-		// $delete_dir = ABSPATH . 'wp-content/data/instance_' . $instance_id . '/figure_' . $post_id  . '/';
+		// Define the directory where the file is to be deleted.
 		$delete_dir = ABSPATH . 'wp-content/data/figure_' . $post_id . '/';
 		$file_path = $delete_dir . $file_name;
 		$file_path_json = $delete_dir . basename( preg_replace( '/\.csv$/', '.json', $file_name ) );
 
-		// Check if file exists
+		// Check if file exists.
 		if ( ! file_exists( $file_path ) ) {
 			update_post_meta( $post_id, 'uploaded_path_geojson', '' );
 			update_post_meta( $post_id, 'uploaded_path_json', '' );
@@ -1061,11 +1066,10 @@ class Graphic_Data_Figure {
 
 		// Delete the uploaded file.
 		if ( unlink( $file_path ) ) {
-			// Update the metadata instead of deleting it
+			// Update the metadata instead of deleting it.
 			update_post_meta( $post_id, 'uploaded_path_csv', '' );
 			update_post_meta( $post_id, 'uploaded_path_json', '' );
 			update_post_meta( $post_id, 'uploaded_file', '' );
-			// update_post_meta($post_id, 'figure_interactive_arguments', '');
 			update_post_meta( $post_id, 'plotFields', '' );
 
 			wp_send_json_success(
@@ -1087,10 +1091,10 @@ class Graphic_Data_Figure {
 	 */
 	public function register_get_alt_text_by_url_route() {
 		register_rest_route(
-			'graphic_data/v1', // Your plugin's namespace
-			'/media/alt-text-by-url', // The route
+			'graphic_data/v1', // Your plugin's namespace.
+			'/media/alt-text-by-url', // The route.
 			array(
-				'methods'             => WP_REST_Server::READABLE, // This will be a GET request
+				'methods'             => WP_REST_Server::READABLE, // This will be a GET request.
 				'callback'            => array( $this, 'get_alt_text_by_url_callback' ),
 				'args'                => array(
 					'image_url' => array(
@@ -1098,7 +1102,7 @@ class Graphic_Data_Figure {
 						'type'        => 'string',
 						'description' => 'The URL of the image in the WordPress media library.',
 						'validate_callback' => function ( $param, $request, $key ) {
-							// Basic URL validation
+							// Basic URL validation.
 							return filter_var( $param, FILTER_VALIDATE_URL ) !== false;
 						},
 					),
@@ -1119,18 +1123,18 @@ class Graphic_Data_Figure {
 	public function get_alt_text_by_url_callback( WP_REST_Request $request ) {
 		$image_url = $request->get_param( 'image_url' );
 
-		// Sanitize the URL
+		// Sanitize the URL.
 		$sanitized_image_url = esc_url_raw( $image_url );
 
 		if ( empty( $sanitized_image_url ) ) {
 			return new WP_REST_Response( array( 'error' => 'Invalid image URL provided.' ), 400 );
 		}
 
-		// Get the attachment ID from the URL
+		// Get the attachment ID from the URL.
 		$attachment_id = attachment_url_to_postid( $sanitized_image_url );
 
 		if ( ! $attachment_id ) {
-			// If no attachment ID is found, return a 404 with an empty alt_text
+			// If no attachment ID is found, return a 404 with an empty alt_text.
 			return new WP_REST_Response(
 				array(
 					'message' => 'Attachment ID not found for the given URL. The URL might be for a non-library image or a resized version not directly mapped.',
@@ -1141,11 +1145,11 @@ class Graphic_Data_Figure {
 			);
 		}
 
-		// Get the alt text (stored in post meta)
+		// Get the alt text (stored in post meta).
 		$alt_text = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
 
-		// Default to an empty string if alt text is not set or explicitly empty
-		if ( $alt_text === false || $alt_text === null ) {
+		// Default to an empty string if alt text is not set or explicitly empty.
+		if ( false === $alt_text || null === $alt_text ) {
 			$alt_text = '';
 		}
 

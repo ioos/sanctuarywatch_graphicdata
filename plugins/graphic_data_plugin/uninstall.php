@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Fired when the plugin is uninstalled.
  *
@@ -21,7 +20,7 @@
  *
  * @link       https://github.com/ioos/sanctuarywatch_graphicdata
  * @since      1.0.0
- *
+ * @package    Graphic_Data_Plugin
  */
 
 // If uninstall not called from WordPress, then exit.
