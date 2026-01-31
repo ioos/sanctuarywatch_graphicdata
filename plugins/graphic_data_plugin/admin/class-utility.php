@@ -138,7 +138,7 @@ class Graphic_Data_Utility {
 
 		if ( 'array' == $variable_type ) {
 			if ( substr( $key_name, -16 ) === 'error_all_fields' ) {
-				$this->extract_field_values( $fields_config, $all_fields );
+				$this->extract_field_values( $fields_config, $all_fields, $key_name );
 			} else {
 				$all_fields = $fields_config;
 			}
@@ -190,10 +190,21 @@ class Graphic_Data_Utility {
 	/**
 	 * Recursively extract field values from POST data based on field configuration
 	 *
-	 * @param array $fields The fields configuration array
-	 * @param array &$all_fields Reference to array where field values will be stored
+	 * @param array  $fields The fields configuration array
+	 * @param array  &$all_fields Reference to array where field values will be stored
+	 * @param string $key_name  The base key for the associated transient, used  (e.g., 'modal_error_all_fields').
 	 */
-	public function extract_field_values( $fields, &$all_fields ) {
+	public function extract_field_values( $fields, &$all_fields, $key_name ) {
+
+		$content_type = strstr( $key_name, '_', true );
+		$nonce_action = 'save_' . $content_type . '_fields';
+		$nonce_name = $content_type . '_nonce';
+
+		// Verify nonce first.
+		if ( ! isset( $_POST[ $nonce_name ] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ $nonce_name ] ) ), $nonce_action ) ) {
+			wp_die( 'Security check failed during function extract_field_values.' );
+		}
+
 		foreach ( $fields as $field ) {
 			// Skip button type fields.
 			if ( isset( $field['type'] ) && 'button' === $field['type'] ) {
@@ -211,7 +222,7 @@ class Graphic_Data_Utility {
 							$nested_field_id = $nested_field['id'];
 							// For fieldsets, data is nested: $_POST[fieldset_id][field_id].
 							if ( isset( $_POST[ $fieldset_id ][ $nested_field_id ] ) ) {
-								$all_fields[ $nested_field_id ] = $_POST[ $fieldset_id ][ $nested_field_id ];
+								$all_fields[ $nested_field_id ] = sanitize_text_field( wp_unslash( $_POST[ $fieldset_id ][ $nested_field_id ] ) );
 							}
 						}
 					}
@@ -221,13 +232,13 @@ class Graphic_Data_Utility {
 				$field_id = $field['id'];
 				// For regular fields, data is direct: $_POST[field_id].
 				if ( isset( $_POST[ $field_id ] ) ) {
-					$all_fields[ $field_id ] = $_POST[ $field_id ];
+					$all_fields[ $field_id ] = sanitize_text_field( wp_unslash( $_POST[ $field_id ] ) );
 				}
 			}
 
-			// Handle nested field arrays (like your tabFields).
+			// Handle nested field arrays (like tabFields).
 			if ( isset( $field['fields'] ) && is_array( $field['fields'] ) ) {
-				$this->extract_field_values( $field['fields'], $all_fields );
+				$this->extract_field_values( $field['fields'], $all_fields, $key_name );
 			}
 		}
 	}
@@ -504,17 +515,25 @@ class Graphic_Data_Utility {
 			if ( ! empty( $user_instances ) && is_array( $user_instances ) ) {
 				// Sanitize instance IDs.
 				$instance_ids = array_map( 'absint', $user_instances );
-				$instance_ids_sql = implode( ',', $instance_ids );
 
-				// Query only the assigned instances.
-				$instances = $wpdb->get_results(
-					"
+				// Create placeholders for prepare().
+				$placeholders = implode( ', ', array_fill( 0, count( $instance_ids ), '%d' ) );
+
+				// Build query with placeholders.
+				$query = "
 					SELECT ID, post_title
 					FROM {$wpdb->posts}
 					WHERE post_type = 'instance'
 					AND post_status = 'publish'
-					AND ID IN ({$instance_ids_sql})
-					ORDER BY post_title ASC"
+					AND ID IN ($placeholders)
+					ORDER BY post_title ASC";
+
+				// Query only the assigned instances.
+				$instances = $wpdb->get_results(
+					$wpdb->prepare(
+						$query, // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+						...$instance_ids
+					)
 				);
 			}
 			// If content editor has no assigned instances, $instances remains empty, so only "All Instances" shows.
