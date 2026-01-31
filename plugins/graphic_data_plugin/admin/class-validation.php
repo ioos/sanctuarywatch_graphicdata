@@ -304,6 +304,11 @@ class Graphic_Data_Validation {
 		$figure_errors = [];
 		$figure_warnings = [];
 
+		// First, verify nonce.
+		if ( ! isset( $_POST['figure_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ), 'save_figure_fields' ) ) {
+			wp_die( 'Security check failed for post of Figure custom post type.' );
+		}
+
 		if ( isset( $_POST['location'] ) && ' ' == $_POST['location'] ) {
 			array_push( $figure_errors, 'The Instance field cannot be left blank.' );
 			$save_figure_fields = false;
@@ -324,13 +329,16 @@ class Graphic_Data_Validation {
 			$save_figure_fields = false;
 		}
 
-		if ( 'Internal' == $_POST['figure_path'] && '' == $_POST['figure_image'] ) {
+		if ( isset( $_POST['figure_path'] ) && 'Internal' == $_POST['figure_path'] && isset( $_POST['figure_image'] ) && '' == $_POST['figure_image'] ) {
 			array_push( $figure_errors, "If the Figure Type is set to 'Internal image', then the 'Figure image' field cannot be left blank." );
 			$save_figure_fields = false;
 		}
 
 		if ( 'External' == $_POST['figure_path'] ) {
-			$figure_external_url = $_POST['figure_external_url'];
+			$figure_external_url = isset( $_POST['figure_external_url'] )
+				? sanitize_url( wp_unslash( $_POST['figure_external_url'] ) )
+				: '';
+
 			if ( '' == $figure_external_url ) {
 				$save_figure_fields = false;
 				array_push( $figure_errors, "If the Figure Type is set to 'External image', then the External URL field cannot be left blank." );
@@ -345,7 +353,7 @@ class Graphic_Data_Validation {
 			}
 		}
 
-		if ( 'External' == $_POST['figure_path'] && '' == $_POST['figure_external_alt'] ) {
+		if ( isset( $_POST['figure_path'] ) && 'External' == $_POST['figure_path'] && isset( $_POST['figure_external_alt'] ) && '' == $_POST['figure_external_alt'] ) {
 			array_push( $figure_errors, "If the Figure Type is set to 'External image', then the 'Alt text for external image' field cannot be left blank." );
 			$save_figure_fields = false;
 		}
@@ -357,7 +365,9 @@ class Graphic_Data_Validation {
 
 		foreach ( $field_types as $field_type ) {
 			$form_fieldset = $field_type . 'info';
-			$field_couplet = $_POST[ $form_fieldset ];
+			$field_couplet = isset( $_POST[ $form_fieldset ] )
+				? array_map( 'sanitize_text_field', wp_unslash( $_POST[ $form_fieldset ] ) )
+				: array();
 
 			$field_text = $field_type . 'link_text';
 			$field_url = $field_type . 'link_url';
@@ -435,15 +445,27 @@ class Graphic_Data_Validation {
 		$modal_errors = [];
 		$modal_warnings = [];
 
-		// Check modal title for potential errors.
-		$modal_title = $_POST['post_title'];
-		$words = explode( ' ', $modal_title );
+		// Verify nonce first.
+		if ( ! isset( $_POST['modal_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['modal_nonce'] ) ), 'save_modal_fields' ) ) {
+			wp_die( 'Security check failed for post of Modal custom post type.' );
+		}
 
-		foreach ( $words as $word ) {
-			// Remove any punctuation for accurate word length.
-			$clean_word = preg_replace( '/[^\p{L}\p{N}]/u', '', $word );
-			if ( strlen( $clean_word ) > 14 ) {
-				array_push( $modal_warnings, "The word '" . $clean_word . "' in the modal title is longer than 14 characters, which may cause issues in mobile view." );
+		// Check modal title for potential errors.
+		$modal_title = isset( $_POST['post_title'] )
+			? sanitize_text_field( wp_unslash( $_POST['post_title'] ) )
+			: '';
+
+		if ( '' == $modal_title || ' ' == $modal_title ) {
+			array_push( $modal_errors, 'There is no modal title.' );
+			$save_modal_fields = false;
+		} else {
+			$words = explode( ' ', $modal_title );
+			foreach ( $words as $word ) {
+				// Remove any punctuation for accurate word length.
+				$clean_word = preg_replace( '/[^\p{L}\p{N}]/u', '', $word );
+				if ( strlen( $clean_word ) > 14 ) {
+					array_push( $modal_warnings, "The word '" . $clean_word . "' in the modal title is longer than 14 characters, which may cause issues in mobile view." );
+				}
 			}
 		}
 
@@ -453,25 +475,24 @@ class Graphic_Data_Validation {
 			array_push( $modal_warnings, "The title length is {$string_length} characters long, which exceeds the 70 character limit recommendation for proper layout." );
 		}
 
-		if ( ' ' == $_POST['modal_location'] || '' == $_POST['modal_location'] ) {
+		if ( ! isset( $_POST['modal_location'] ) || ' ' == $_POST['modal_location'] || '' == $_POST['modal_location'] ) {
 			array_push( $modal_errors, 'The Instance field cannot be left blank.' );
 			$save_modal_fields = false;
 		}
 
-		if ( ' ' == $_POST['modal_scene'] || '' == $_POST['modal_scene'] ) {
+		if ( ! isset( $_POST['modal_scene'] ) || ' ' == $_POST['modal_scene'] || '' == $_POST['modal_scene'] ) {
 			array_push( $modal_errors, 'The Scene field cannot be left blank.' );
 			$save_modal_fields = false;
 		}
 
-		if ( ' ' == $_POST['modal_icons'] || '' == $_POST['modal_icons'] ) {
+		if ( ! isset( $_POST['modal_icons'] ) || ' ' == $_POST['modal_icons'] || '' == $_POST['modal_icons'] ) {
 			array_push( $modal_errors, 'The Icons field cannot be left blank.' );
 			$save_modal_fields = false;
 		}
 
 		if ( ' ' != $_POST['modal_scene'] && '' != $_POST['modal_icons'] ) {
-
-			$icon_id = $_POST['modal_icons'];
-			$scene_id = $_POST['modal_scene'];
+			$icon_id = absint( wp_unslash( $_POST['modal_icons'] ) );
+			$scene_id = absint( wp_unslash( $_POST['modal_scene'] ) );
 
 			$args = array(
 				'post_type'      => 'modal',       // Specify the custom post type.
@@ -507,7 +528,7 @@ class Graphic_Data_Validation {
 				array_push( $modal_warnings, 'This icon has already been claimed by one or more other modals.' );
 			} else if ( 1 == $record_count ) {
 				$saved_id = $query->posts[0];
-				if ( $saved_id != $_POST['post_ID'] ) {
+				if ( isset( $_POST['post_ID'] ) && $saved_id != $_POST['post_ID'] ) {
 					array_push( $modal_warnings, 'This icon has already been claimed by one or more other modals.' );
 				}
 			}
@@ -518,7 +539,7 @@ class Graphic_Data_Validation {
 			$scene_toc_style = get_post_meta( $scene_id, 'scene_toc_style', true );
 			$scene_section_number = get_post_meta( $scene_id, 'scene_section_number', true );
 			if ( 'list' != $scene_toc_style && 0 != $scene_section_number ) {
-				if ( '' == $_POST['icon_toc_section'] ) {
+				if ( ! isset( $_POST['icon_toc_section'] ) || ( isset( $_POST['icon_toc_section'] ) && '' == $_POST['icon_toc_section'] ) ) {
 					array_push( $modal_errors, 'The Icon Section field cannot be left blank.' );
 					$save_modal_fields = false;
 				}
@@ -526,46 +547,63 @@ class Graphic_Data_Validation {
 		}
 
 		// Based upon the value of the icon action field (that's the title, but the actual name is icon function), do some error checking.
-		switch ( $_POST['icon_function'] ) {
-			case 'External URL':
-				$icon_external_url = $_POST['icon_external_url'];
+		if ( ! isset( $_POST['icon_function'] ) ) {
+			$save_modal_fields = false;
+			array_push( $modal_errors, 'The Icon Function field can not be left blank.' );
+		} else {
+			$modal_icon_function = sanitize_text_field( wp_unslash( $_POST['icon_function'] ) );
+			switch ( $modal_icon_function ) {
+				case 'External URL':
+					$icon_external_url = isset( $_POST['icon_external_url'] )
+						? sanitize_url( wp_unslash( $_POST['icon_external_url'] ) )
+						: '';
 
-				if ( '' == $icon_external_url ) {
-					$save_modal_fields = false;
-					array_push( $modal_errors, 'The Icon External URL field is blank.' );
-				} elseif ( $this->url_check( $icon_external_url ) == false ) {
+					if ( '' == $icon_external_url ) {
 						$save_modal_fields = false;
-						array_push( $modal_errors, 'The Icon External URL is not valid' );
-				} else {
-					$url_http_code = $this->check_url_is_accessible( $icon_external_url );
-					if ( 200 != $url_http_code ) {
-						array_push( $modal_warnings, "The 'Icon External URL' field cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case." );
-					}
-				}
-				break;
-			case 'Modal':
-				$modal_tab_number = $_POST['modal_tab_number'];
-				if ( 0 == $modal_tab_number ) {
-					$save_modal_fields = false;
-					array_push( $modal_errors, 'There must be at least one modal tab if the Icon Action is set to Modal' );
-				} else {
-					for ( $i = 1; $i <= $modal_tab_number; $i++ ) {
-						$tab_title = $_POST[ 'modal_tab_title' . $i ];
-						if ( empty( $tab_title ) || is_null( $tab_title ) ) {
+						array_push( $modal_errors, 'The Icon External URL field is blank.' );
+					} elseif ( $this->url_check( $icon_external_url ) == false ) {
 							$save_modal_fields = false;
-							array_push( $modal_errors, 'The Modal Tab Title ' . $i . ' is blank.' );
+							array_push( $modal_errors, 'The Icon External URL is not valid' );
+					} else {
+						$url_http_code = $this->check_url_is_accessible( $icon_external_url );
+						if ( 200 != $url_http_code ) {
+							array_push( $modal_warnings, "The 'Icon External URL' field cannot be accessed. This may be because there is something wrong with that URL. Alternatively, the automatic process used to check URL's might have been blocked in this case." );
 						}
 					}
-				}
-				break;
-			case 'Scene':
-				$icon_scene_out = $_POST['icon_scene_out'];
+					break;
+				case 'Modal':
+					if ( ! isset( $_POST['modal_tab_number'] ) ) {
+						$save_modal_fields = false;
+						array_push( $modal_errors, 'The Modal tab number field can not be left blank.' );
+					} else {
+						$modal_tab_number = absint( wp_unslash( $_POST['modal_tab_number'] ) );
+						if ( 0 == $modal_tab_number ) {
+							$save_modal_fields = false;
+							array_push( $modal_errors, 'There must be at least one modal tab if the Icon Action is set to Modal' );
+						} else {
+							for ( $i = 1; $i <= $modal_tab_number; $i++ ) {
+								$tab_title = isset( $_POST[ 'modal_tab_title' . $i ] )
+									? sanitize_text_field( wp_unslash( $_POST[ 'modal_tab_title' . $i ] ) )
+									: '';
+								if ( empty( $tab_title ) || is_null( $tab_title ) || '' == $tab_title ) {
+									$save_modal_fields = false;
+									array_push( $modal_errors, 'The Modal Tab Title ' . $i . ' is blank.' );
+								}
+							}
+						}
+					}
+					break;
+				case 'Scene':
+					$icon_scene_out = isset( $_POST['icon_scene_out'] )
+						? sanitize_text_field( wp_unslash( $_POST['icon_scene_out'] ) )
+						: '';
 
-				if ( '' == $icon_scene_out ) {
-					$save_modal_fields = false;
-					array_push( $modal_errors, 'The Icon Scene Out field is blank.' );
-				}
-				break;
+					if ( '' == $icon_scene_out ) {
+						$save_modal_fields = false;
+						array_push( $modal_errors, 'The Icon Scene Out field is blank.' );
+					}
+					break;
+			}
 		}
 
 		$field_types = array( 'info', 'photo' );
@@ -573,15 +611,21 @@ class Graphic_Data_Validation {
 		foreach ( $field_types as $field_type ) {
 
 			if ( 'info' == $field_type ) {
-				$field_max = intval( $_POST['modal_info_entries'] ) + 1;
+				$field_max = isset( $_POST['modal_info_entries'] )
+					? intval( $_POST['modal_info_entries'] ) + 1
+					: 1;
+
 			} else {
-				$field_max = intval( $_POST['modal_photo_entries'] ) + 1;
+				$field_max = isset( $_POST['modal_photo_entries'] )
+					? intval( $_POST['modal_photo_entries'] ) + 1
+					: 1;
 			}
 
 			for ( $i = 1; $i < $field_max; $i++ ) {
-
 				$form_fieldset = 'modal_' . $field_type . $i;
-				$field_couplet = $_POST[ $form_fieldset ];
+				$field_couplet = isset( $_POST[ $form_fieldset ] )
+					? array_map( 'sanitize_text_field', wp_unslash( $_POST[ $form_fieldset ] ) )
+					: array();
 				$field_text = 'modal_' . $field_type . '_text' . $i;
 				$field_url = 'modal_' . $field_type . '_url' . $i;
 				$field_photo_internal = 'modal_photo_internal' . $i;
@@ -630,12 +674,11 @@ class Graphic_Data_Validation {
 		}
 
 		if ( isset( $_POST['_wp_http_referer'] ) ) {
-			$http_referer = $_POST['_wp_http_referer'];
+			$http_referer = sanitize_url( wp_unslash( $_POST['_wp_http_referer'] ) );
 			if ( str_contains( $http_referer, 'post-new.php' ) ) {
 				$function_utilities->fields_to_transient( 'modal_post_new', 'true', 30 );
 			}
 		}
-
 		return $save_modal_fields;
 	}
 
@@ -670,12 +713,19 @@ class Graphic_Data_Validation {
 		$scene_errors = [];
 		$scene_warnings = [];
 
-		if ( ' ' == $_POST['scene_location'] ) {
+		// Verify nonce first.
+		if ( ! isset( $_POST['scene_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['scene_nonce'] ) ), 'save_scene_fields' ) ) {
+			wp_die( 'Security check failed for post of Scene custom post type.' );
+		}
+
+		if ( ! isset( $_POST['scene_location'] ) || ( isset( $_POST['scene_location'] ) && ' ' == $_POST['scene_location'] ) ) {
 			array_push( $scene_errors, 'The Instance field cannot be left blank.' );
 			$save_scene_fields = false;
 		}
 
-		$scene_infographic = $_POST['scene_infographic'];
+		$scene_infographic = isset( $_POST['scene_infographic'] )
+			? sanitize_url( wp_unslash( $_POST['scene_infographic'] ) )
+			: '';
 
 		if ( is_null( $scene_infographic ) || '' == $scene_infographic ) {
 			array_push( $scene_errors, 'The Infographic field cannot be left blank.' );
@@ -697,7 +747,7 @@ class Graphic_Data_Validation {
 			}
 		}
 
-		if ( 'list' != $_POST['scene_toc_style'] && '0' == $_POST['scene_section_number'] ) {
+		if ( isset( $_POST['scene_toc_style'] ) && 'list' != $_POST['scene_toc_style'] && isset( $_POST['scene_section_number'] ) && '0' == $_POST['scene_section_number'] ) {
 			array_push( $scene_errors, "If the field 'Table of contents style' is not set to List, then the 'Number of scene sections' field must be greater than 0." );
 			$save_scene_fields = false;
 		}
@@ -705,7 +755,7 @@ class Graphic_Data_Validation {
 		if ( 'list' != $_POST['scene_toc_style'] && '0' != $_POST['scene_section_number'] ) {
 			$section_number = intval( $_POST['scene_section_number'] );
 			for ( $q = 1; $q <= $section_number; $q++ ) {
-				if ( '' == $_POST[ 'scene_section' . $q ][ 'scene_section_title' . $q ] ) {
+				if ( ! isset( $_POST[ 'scene_section' . $q ][ 'scene_section_title' . $q ] ) || ( isset( $_POST[ 'scene_section' . $q ][ 'scene_section_title' . $q ] ) && '' == $_POST[ 'scene_section' . $q ][ 'scene_section_title' . $q ] ) ) {
 					array_push( $scene_errors, 'Scene section title ' . $q . ' is blank.' );
 					$save_scene_fields = false;
 				}
@@ -716,13 +766,19 @@ class Graphic_Data_Validation {
 
 		foreach ( $field_types as $field_type ) {
 			if ( 'info' == $field_type ) {
-				$field_max = intval( $_POST['scene_info_entries'] ) + 1;
+				$field_max = isset( $_POST['scene_info_entries'] )
+					? intval( $_POST['scene_info_entries'] ) + 1
+					: 1;
 			} else {
-				$field_max = intval( $_POST['scene_photo_entries'] ) + 1;
+				$field_max = isset( $_POST['scene_photo_entries'] )
+					? intval( $_POST['scene_photo_entries'] ) + 1
+					: 1;
 			}
 			for ( $i = 1; $i < $field_max; $i++ ) {
 				$form_fieldset = 'scene_' . $field_type . $i;
-				$field_couplet = $_POST[ $form_fieldset ];
+				$field_couplet = isset( $_POST[ $form_fieldset ] )
+					? array_map( 'sanitize_text_field', wp_unslash( $_POST[ $form_fieldset ] ) )
+					: array();
 				$field_text = 'scene_' . $field_type . '_text' . $i;
 				$field_url = 'scene_' . $field_type . '_url' . $i;
 				$field_photo_internal = 'scene_photo_internal' . $i;
