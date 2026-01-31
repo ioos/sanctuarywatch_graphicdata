@@ -165,19 +165,24 @@ class Graphic_Data_Validation {
 			$save_instance_fields = false;
 		}
 
-		if ( '' == $_POST['instance_slug'] ) {
+		if ( isset( $_POST['instance_slug'] ) && '' == $_POST['instance_slug'] ) {
 			array_push( $instance_errors, 'The URL component field cannot be left blank.' );
 			$save_instance_fields = false;
 		}
 
-		if ( '' == $_POST['instance_overview_scene'] ) {
+		if ( isset( $_POST['instance_overview_scene'] ) && '' == $_POST['instance_overview_scene'] ) {
 			array_push( $instance_warnings, 'No overview scene is set. This will cause several issues with the display of the instance until it is corrected.' );
 		}
 
-		if ( '' == $_POST['instance_tile'] ) {
+		if ( ! isset( $_SERVER['DOCUMENT_ROOT'] ) ) {
+			array_push( $instance_errors, "Server error: the array key SERVER['DOCUMENT_ROOT'] does not exist." );
+			$save_instance_fields = false;
+		}
+
+		if ( isset( $_POST['instance_tile'] ) && '' == $_POST['instance_tile'] ) {
 			array_push( $instance_warnings, 'No tile image is set. This will cause an issue with the display of the front page of the site until it is corrected.' );
-		} else {
-			$image_path = $_SERVER['DOCUMENT_ROOT'] . wp_make_link_relative( $_POST['instance_tile'] );
+		} elseif ( isset( $_SERVER['DOCUMENT_ROOT'] ) ) {
+			$image_path = sanitize_text_field( wp_unslash( $_SERVER['DOCUMENT_ROOT'] ) ) . wp_make_link_relative( esc_url_raw( wp_unslash( $_POST['instance_tile'] ) ) );
 			if ( ! file_exists( $image_path ) ) {
 				array_push( $instance_errors, "The image specified by the 'Tile image' field does not exist." );
 				$save_instance_fields = false;
@@ -215,8 +220,10 @@ class Graphic_Data_Validation {
 			}
 		}
 
-		if ( 'yes' == $_POST['instance_legacy_content'] ) {
-			$instance_legacy_content_url = $_POST['instance_legacy_content_url'];
+		if ( isset( $_POST['instance_legacy_content'] ) && 'yes' == $_POST['instance_legacy_content'] ) {
+			$instance_legacy_content_url = isset( $_POST['instance_legacy_content_url'] )
+				? sanitize_url( wp_unslash( $_POST['instance_legacy_content_url'] ) )
+				: '';
 			if ( '' == $instance_legacy_content_url ) {
 				array_push( $instance_errors, "If Legacy content is set to 'yes', then the Legacy content URL field cannot be left blank." );
 				$save_instance_fields = false;
@@ -231,10 +238,14 @@ class Graphic_Data_Validation {
 			}
 		}
 
-		$instance_footer_column_number = $_POST['instance_footer_columns'];
+		$instance_footer_column_number = isset( $_POST['instance_footer_columns'] )
+			? absint( wp_unslash( $_POST['instance_footer_columns'] ) )
+			: 0;
 
 		for ( $i = 1; $i <= $instance_footer_column_number; $i++ ) {
-			$footer_column = $_POST[ 'instance_footer_column' . $i ];
+			$footer_column = isset( $_POST[ 'instance_footer_column' . $i ] )
+				? wp_kses_post( wp_unslash( $_POST[ 'instance_footer_column' . $i ] ) )
+				: '';
 			if ( '' == $footer_column[ 'instance_footer_column_title' . $i ] || '' == $footer_column[ 'instance_footer_column_content' . $i ] ) {
 				$save_instance_fields = false;
 				array_push( $instance_errors, 'The Header and Content fields in Footer column ' . $i . ' cannot be blank.' );
@@ -293,22 +304,22 @@ class Graphic_Data_Validation {
 		$figure_errors = [];
 		$figure_warnings = [];
 
-		if ( ' ' == $_POST['location'] ) {
+		if ( isset( $_POST['location'] ) && ' ' == $_POST['location'] ) {
 			array_push( $figure_errors, 'The Instance field cannot be left blank.' );
 			$save_figure_fields = false;
 		}
 
-		if ( '' == $_POST['figure_scene'] ) {
+		if ( isset( $_POST['figure_scene'] ) && '' == $_POST['figure_scene'] ) {
 			array_push( $figure_errors, 'The Scene field cannot be left blank.' );
 			$save_figure_fields = false;
 		}
 
-		if ( '' == $_POST['figure_modal'] ) {
+		if ( isset( $_POST['figure_modal'] ) && '' == $_POST['figure_modal'] ) {
 			array_push( $figure_errors, 'The Icon field cannot be left blank.' );
 			$save_figure_fields = false;
 		}
 
-		if ( '' == $_POST['figure_tab'] ) {
+		if ( isset( $_POST['figure_tab'] ) && '' == $_POST['figure_tab'] ) {
 			array_push( $figure_errors, 'The Tab field cannot be left blank.' );
 			$save_figure_fields = false;
 		}
@@ -680,21 +691,21 @@ class Graphic_Data_Validation {
 			$infographic_svg_validate = new Graphic_Data_SVG_Validator();
 			$svg_analyze = $infographic_svg_validate->validate_svg_file( $content_path );
 
-			if ( $svg_analyze['valid'] == false ) {
+			if ( false == $svg_analyze['valid'] ) {
 				array_push( $scene_errors, $svg_analyze['error'] );
 				$save_scene_fields = false;
 			}
 		}
 
-		if ( $_POST['scene_toc_style'] != 'list' && $_POST['scene_section_number'] == '0' ) {
+		if ( 'list' != $_POST['scene_toc_style'] && '0' == $_POST['scene_section_number'] ) {
 			array_push( $scene_errors, "If the field 'Table of contents style' is not set to List, then the 'Number of scene sections' field must be greater than 0." );
 			$save_scene_fields = false;
 		}
 
-		if ( $_POST['scene_toc_style'] != 'list' && $_POST['scene_section_number'] != '0' ) {
+		if ( 'list' != $_POST['scene_toc_style'] && '0' != $_POST['scene_section_number'] ) {
 			$section_number = intval( $_POST['scene_section_number'] );
 			for ( $q = 1; $q <= $section_number; $q++ ) {
-				if ( $_POST[ 'scene_section' . $q ][ 'scene_section_title' . $q ] == '' ) {
+				if ( '' == $_POST[ 'scene_section' . $q ][ 'scene_section_title' . $q ] ) {
 					array_push( $scene_errors, 'Scene section title ' . $q . ' is blank.' );
 					$save_scene_fields = false;
 				}
@@ -704,7 +715,7 @@ class Graphic_Data_Validation {
 		$field_types = array( 'info', 'photo' );
 
 		foreach ( $field_types as $field_type ) {
-			if ( $field_type == 'info' ) {
+			if ( 'info' == $field_type ) {
 				$field_max = intval( $_POST['scene_info_entries'] ) + 1;
 			} else {
 				$field_max = intval( $_POST['scene_photo_entries'] ) + 1;
@@ -715,15 +726,15 @@ class Graphic_Data_Validation {
 				$field_text = 'scene_' . $field_type . '_text' . $i;
 				$field_url = 'scene_' . $field_type . '_url' . $i;
 				$field_photo_internal = 'scene_photo_internal' . $i;
-				if ( $field_couplet[ $field_url ] == '' && $field_couplet[ $field_text ] == '' ) {
+				if ( '' == $field_couplet[ $field_url ] && '' == $field_couplet[ $field_text ] ) {
 					$save_scene_fields = false;
 					array_push( $scene_errors, 'The Scene ' . ucfirst( $field_type ) . ' Link ' . $i . ' is blank.' );
 				} else {
-					if ( ( $field_type === 'info' && ( $field_couplet[ $field_url ] === '' || $field_couplet[ $field_text ] === '' ) ) || ( $field_type === 'photo' && ( ( $field_couplet[ $field_url ] === '' && $field_couplet[ $field_photo_internal ] === '' ) || $field_couplet[ $field_text ] === '' ) ) ) {
+					if ( ( 'info' === $field_type && ( '' === $field_couplet[ $field_url ] || '' === $field_couplet[ $field_text ] ) ) || ( 'photo' === $field_type && ( ( '' === $field_couplet[ $field_url ] && '' === $field_couplet[ $field_photo_internal ] ) || '' === $field_couplet[ $field_text ] ) ) ) {
 						$save_scene_fields = false;
 						array_push( $scene_errors, 'Error in Scene ' . ucfirst( $field_type ) . ' Link ' . $i );
 					}
-					if ( ! $field_couplet[ $field_url ] == '' ) {
+					if ( '' != $field_couplet[ $field_url ] ) {
 						if ( $this->url_check( $field_couplet[ $field_url ] ) == false ) {
 							$save_scene_fields = false;
 							array_push( $scene_errors, 'The URL for Scene ' . ucfirst( $field_type ) . ' Link ' . $i . ' is not valid' );

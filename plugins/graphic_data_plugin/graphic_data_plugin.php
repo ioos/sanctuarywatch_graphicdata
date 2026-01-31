@@ -40,18 +40,6 @@ if ( ! defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) ) {
 	define( 'GRAPHIC_DATA_PLUGIN_VERSION', $graphic_data_plugin_data['Version'] );
 }
 
-// Include the GitHub Updater class.
-require_once plugin_dir_path( __FILE__ ) . 'admin/class-github-updater.php';
-
-// Initialize the GitHub Updater.
-new Graphic_Data_GitHub_Updater(
-	__FILE__,
-	'ioos', // the GitHub username.
-	'sanctuarywatch_graphicdata', // the repository name.
-	false, // This is a plugin, not a theme.
-	'plugins/graphic_data_plugin' // Subdirectory path in the repository.
-);
-
 /**
  * The core plugin class that is used to define
  * admin-specific hooks, and public-facing site hooks.
@@ -129,75 +117,6 @@ add_action(
 		}
 	}
 );
-
-/**
- * Run the cleanup after WP moves the file into the uploads dir.
- * This catches standard media modal uploads (what Exopite uses).
- */
-add_filter( 'wp_handle_upload', 'graphic_data_svg_cleanup_on_upload', 10, 2 );
-
-
-/**
- * Clean up Inkscape-generated SVGs after WordPress handles the upload.
- *
- * Hooked to `wp_handle_upload`, this function reads the uploaded file,
- * checks whether it is an SVG containing Inkscape-specific markup, and
- * if so, transforms it in-place using {@see graphic_data_transform_svg_inkscape()}.
- * Non-SVG files and SVGs without Inkscape attributes are returned untouched.
- *
- * @param array  $upload  {
- *     Array of upload data from WordPress.
- *
- *     @type string $file Full path to the uploaded file.
- *     @type string $url  URL of the uploaded file.
- *     @type string $type MIME type of the uploaded file.
- * }
- * @param string $context The type of upload action. Accepts 'upload' or 'sideload'.
- * @return array The (possibly modified) upload data array.
- */
-function graphic_data_svg_cleanup_on_upload( array $upload, string $context ) {
-	if ( ! isset( $upload['type'], $upload['file'] ) ) {
-		return $upload;
-	}
-
-	// Only touch SVGs.
-	if ( 'image/svg+xml' !== $upload['type'] && ! preg_match( '/\.svg$/i', $upload['file'] ) ) {
-		return $upload;
-	}
-
-	$path = $upload['file'];
-	$svg  = @file_get_contents( $path );
-	if ( false === $svg ) {
-		return $upload; // couldn't read; bail without breaking the upload.
-	}
-
-	// Only process if it looks like an Inkscape SVG.
-	if ( strpos( $svg, 'inkscape:' ) === false ) {
-		return $upload; // no inkscape tags → leave untouched.
-	}
-
-	$clean = graphic_data_transform_svg_inkscape( $svg );
-
-	// Write back in-place
-	// You may also want to preserve permissions; WP handles that normally.
-	@file_put_contents( $path, $clean );
-
-	return $upload;
-}
-
-/**
- * Transform Inkscape-specific attributes in an SVG string.
- *
- * Replaces the id attribute value with the inkscape:label value
- * on elements that have both attributes.
- *
- * @param string $svg The raw SVG markup.
- * @return string The transformed SVG markup.
- */
-function graphic_data_transform_svg_inkscape( string $svg ): string {
-	$svg = preg_replace( '/id="([^"]+)"\s+inkscape:label="([^"]+)"/', 'id="$2" inkscape:label="$2"', $svg );
-	return $svg;
-}
 
 /**
  * Begins execution of the plugin.
