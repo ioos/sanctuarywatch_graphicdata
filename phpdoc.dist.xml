@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor configVersion="3">
+    <paths>
+        <output>/data/docs/function_documentation</output>
+    </paths>
+    <version number="3.0.0">
+        <api>
+            <source dsn="/data">
+                <path>plugins/graphic_data_plugin</path>
+            </source>
+            <ignore>
+                <path>plugins/graphic_data_plugin/admin/exopite-simple-options</path>
+            </ignore>
+        </api>
+    </version>
+</phpdocumentor>

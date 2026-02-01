@@ -6,6 +6,7 @@ on:
     paths:
       - 'plugins/graphic_data_plugin/**'
       - '.github/workflows/phpdoc.yml'
+      - 'phpdoc.dist.xml'
   workflow_dispatch:
 
 permissions:
@@ -28,9 +29,7 @@ jobs:
       - name: Generate HTML documentation with phpDocumentor
         run: |
           docker run --rm -v "${PWD}":/data phpdoc/phpdoc:3 \
-            -d /data/plugins/graphic_data_plugin \
-            -t /data/docs/function_documentation \
-            --ignore "admin/exopite-simple-options/*" || true
+            --config /data/phpdoc.dist.xml || true
 
       - name: Fix file permissions after Docker
         run: |
