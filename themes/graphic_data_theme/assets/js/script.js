@@ -1,20 +1,25 @@
-// Deep clone the child_ids object to create childObj, ensuring that modifications to childObj do not affect the original child_ids.
+// Deep clone the childIds object to create childObj, ensuring that modifications to childObj do not affect the original childIds.
 // This is useful for safely manipulating or filtering the childObj data structure later in the script.
 let childObj = {};
 
 //Checking the page title to see if we are in admin edit mode for a scene
 let adminEditTitle;
 try {
-	adminEditTitle = document.querySelector('h1.wp-heading-inline')?.textContent.trim();
+	adminEditTitle = document
+		.querySelector('h1.wp-heading-inline')
+		?.textContent.trim();
 } catch {
 	adminEditTitle = 'none';
 }
 
 //Allows for declaration of childObj variable for theme and for admin side preview mode
-if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
+if (
+	window.location.href.includes('post.php') ||
+	window.location.href.includes('edit.php')
+) {
 	childObj = undefined;
-} else { 
-	childObj = JSON.parse(JSON.stringify(child_ids));
+} else {
+	childObj = JSON.parse(JSON.stringify(childIds));
 }
 
 // Convert the svg_url variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
@@ -140,36 +145,25 @@ try {
 	}
 } catch {}
 
-
 // Step 4: extract the objects (no keys) to match your original format
-
 let sorted_childObjs = null;
 if (!window.location.href.includes('post.php')) {
 	sorted_childObjs = sorted_child_entries.map(([_, val]) => val);
 }
 
-
-// Step 5: build child_ids_helper for title-to-key mapping
-child_ids_helper = {};
+// Step 5: build childIds_helper for title-to-key mapping
+childIds_helper = {};
 if (!window.location.href.includes('post.php')) {
 	for (const [key, value] of sorted_child_entries) {
-		child_ids_helper[value.title] = key;
+		childIds_helper[value.title] = key;
 	}
 }
 
-
-// Declare a variable to track if the current environment is mobile.
-// Initially set to false, assuming a non-mobile environment by default.
-let mobileBool = false;
-
 //Main Initialization of script
-document.addEventListener("DOMContentLoaded", () => {
-	init(); 
-	
+document.addEventListener('DOMContentLoaded', () => {
+	init();
 	handleHashNavigation();
-
 });
-
 
 /**
  * Debounces a function, delaying its execution until after a specified wait time
@@ -461,7 +455,7 @@ async function handleHashNavigation() {
 		let modName;
 		if (is_mobile()){
 			let modModal =  modalName.replace(/_/g, ' ');
-			modName = child_ids_helper[modModal] + '-container';
+			modName = childIds_helper[modModal] + '-container';
 		} else{
 			modName = modalName;
 		}

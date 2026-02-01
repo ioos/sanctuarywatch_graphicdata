@@ -3,7 +3,7 @@ layout: home
 title: Home
 ---
 
-Welcome to the documentation for Graphic Data, a WordPress plugin and theme.
+Welcome to the documentation for Graphic Data, a WordPress plugin and theme. 
 
 ## Overview
 
