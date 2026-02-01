@@ -1,4 +1,0 @@
-﻿2026-02-01T02:35:53.9439909Z ##[group]Run mkdir -p docs/function_documentation
-2026-02-01T02:35:53.9440810Z [36;1mmkdir -p docs/function_documentation[0m
-2026-02-01T02:35:53.9475944Z shell: /usr/bin/bash -e {0}
-2026-02-01T02:35:53.9476513Z ##[endgroup]

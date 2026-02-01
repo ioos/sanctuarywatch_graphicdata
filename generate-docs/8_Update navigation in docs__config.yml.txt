@@ -1,6 +1,0 @@
-﻿2026-02-01T02:36:08.1047810Z ##[group]Run if ! grep -q "function_documentation/index.md" docs/_config.yml; then
-2026-02-01T02:36:08.1048384Z [36;1mif ! grep -q "function_documentation/index.md" docs/_config.yml; then[0m
-2026-02-01T02:36:08.1048990Z [36;1m  sed -i "/^# Exclude files from processing/i\  - function_documentation/index.md" docs/_config.yml || true[0m
-2026-02-01T02:36:08.1049474Z [36;1mfi[0m
-2026-02-01T02:36:08.1079488Z shell: /usr/bin/bash -e {0}
-2026-02-01T02:36:08.1079724Z ##[endgroup]

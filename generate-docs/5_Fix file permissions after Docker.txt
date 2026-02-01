@@ -1,6 +1,0 @@
-﻿2026-02-01T02:36:07.9757900Z ##[group]Run if [ -d docs/function_documentation ]; then
-2026-02-01T02:36:07.9758343Z [36;1mif [ -d docs/function_documentation ]; then[0m
-2026-02-01T02:36:07.9758727Z [36;1m  sudo chown -R $(id -u):$(id -g) docs/function_documentation[0m
-2026-02-01T02:36:07.9759061Z [36;1mfi[0m
-2026-02-01T02:36:07.9791148Z shell: /usr/bin/bash -e {0}
-2026-02-01T02:36:07.9791389Z ##[endgroup]
