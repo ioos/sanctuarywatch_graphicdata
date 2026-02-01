@@ -29,7 +29,8 @@ jobs:
         run: |
           docker run --rm -v "${PWD}":/data phpdoc/phpdoc:3 \
             -d /data/plugins/graphic_data_plugin \
-            -t /data/docs/function_documentation || true
+            -t /data/docs/function_documentation \
+            --ignore "admin/exopite-simple-options/*" || true
 
       - name: Fix file permissions after Docker
         run: |
