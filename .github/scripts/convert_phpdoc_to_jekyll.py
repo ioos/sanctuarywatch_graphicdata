@@ -35,13 +35,14 @@ def extract_body_inner(html: str) -> str:
 
 
 def make_front_matter(title: str, rel_path: Path, dir_name: str) -> str:
-    # create a permalink that mirrors the file path (without .html)
-    # use as_posix to get forward-slash separated path on all platforms
-    rel_posix = rel_path.with_suffix("").as_posix()
-    if rel_posix == "index":
+    # Keep .html in permalinks so phpDocumentor's relative links resolve correctly.
+    # e.g. a link from classes/Foo.html to ../namespaces/default.html only works
+    # if the browser sees the page URL as .html (file), not a / (directory).
+    rel_posix = rel_path.as_posix()
+    if rel_posix == "index.html":
         permalink = "/" + dir_name + "/"
     else:
-        permalink = "/" + dir_name + "/" + rel_posix + "/"
+        permalink = "/" + dir_name + "/" + rel_posix
     # quote the title safely for YAML (escape double quotes)
     safe_title = title.replace('"', '\\"')
     fm = (
