@@ -30,39 +30,45 @@ class Graphic_Data_Utility {
 	}
 
 	/**
-	 * Add nonce field to about, modal, scene, instance, and figure custom post types.
+	 * Add nonce field to about, modal, scene, instance, and figure custom post types, as well as for the Instance Type page.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param WP_Post $post Current post object.
 	 */
 	public function render_nonce_field( $post ) {
-		$custom_post_type = $post->post_type;
-		switch ( $custom_post_type ) {
-			case 'about':
-				$action = 'save_about_fields';
-				$name   = 'about_nonce';
-				break;
-			case 'modal':
-				$action = 'save_modal_fields';
-				$name   = 'modal_nonce';
-				break;
-			case 'scene':
-				$action = 'save_scene_fields';
-				$name   = 'scene_nonce';
-				break;
-			case 'instance':
-				$action = 'save_instance_fields';
-				$name   = 'instance_nonce';
-				break;
-			case 'figure':
-				$action = 'save_figure_fields';
-				$name   = 'figure_nonce';
-				break;
-			default:
-				return; // No nonce for other post types.
+		if ( null == $post ) {
+			if ( isset( $_GET['page'] ) && 'manage-instance-types' === sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) {
+				wp_nonce_field( 'save_instance_type_fields', 'instance_type_nonce' );
+			}
+		} else {
+			$custom_post_type = $post->post_type;
+			switch ( $custom_post_type ) {
+				case 'about':
+					$action = 'save_about_fields';
+					$name   = 'about_nonce';
+					break;
+				case 'modal':
+					$action = 'save_modal_fields';
+					$name   = 'modal_nonce';
+					break;
+				case 'scene':
+					$action = 'save_scene_fields';
+					$name   = 'scene_nonce';
+					break;
+				case 'instance':
+					$action = 'save_instance_fields';
+					$name   = 'instance_nonce';
+					break;
+				case 'figure':
+					$action = 'save_figure_fields';
+					$name   = 'figure_nonce';
+					break;
+				default:
+					return; // No nonce for other post types.
+			}
+			wp_nonce_field( $action, $name );
 		}
-		wp_nonce_field( $action, $name );
 	}
 
 	/**

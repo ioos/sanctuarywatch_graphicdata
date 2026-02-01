@@ -143,7 +143,7 @@ class Graphic_Data_Plugin {
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
 
 		// Include the GitHub Updater class.
-		require_once plugin_dir_path( __FILE__ ) . 'admin/class-github-updater.php';
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-github-updater.php';
 
 		// Initialize the GitHub Updater.
 		new Graphic_Data_GitHub_Updater(

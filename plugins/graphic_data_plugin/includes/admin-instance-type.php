@@ -143,6 +143,12 @@ class Graphic_Data_Instance_Type {
 	 * @return void
 	 */
 	public function render_instance_type_admin_page() {
+
+		// Verify nonce first.
+		if ( ! isset( $_POST['instance_type_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( 'instance_type_nonce' ) ), 'save_instance_type_fields' ) ) {
+			wp_die( 'Security check failed on Instance Type page.' );
+		}
+
 		// Check if taxonomy exists before proceeding.
 		if ( ! taxonomy_exists( 'instance_type' ) ) {
 			echo '<div class="error"><p>Error: The instance_type taxonomy is not properly registered.</p></div>';
@@ -150,16 +156,16 @@ class Graphic_Data_Instance_Type {
 		}
 
 		// Handle form submissions.
-		if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( isset( $_POST['action'] ) ) {
 				switch ( $_POST['action'] ) {
 					case 'add':
-						if ( isset( $_POST['term_name'] ) && isset( $_POST['instance_order'] ) && isset( $_POST['instance_navbar_name'] ) ) {
-							$term_name = sanitize_text_field( $_POST['term_name'] );
-							$term_slug = sanitize_title( $_POST['term_slug'] );
-							$term_description = sanitize_textarea_field( $_POST['term_description'] );
+						if ( isset( $_POST['term_name'] ) && isset( $_POST['instance_order'] ) && isset( $_POST['term_description'] ) && isset( $_POST['term_slug'] ) && isset( $_POST['instance_navbar_name'] ) ) {
+							$term_name = sanitize_text_field( wp_unslash( $_POST['term_name'] ) );
+							$term_slug = sanitize_title( wp_unslash( $_POST['term_slug'] ) );
+							$term_description = sanitize_textarea_field( wp_unslash( $_POST['term_description'] ) );
 							$instance_order = absint( $_POST['instance_order'] );
-							$instance_navbar_name = sanitize_text_field( $_POST['instance_navbar_name'] );
+							$instance_navbar_name = sanitize_text_field( wp_unslash( $_POST['instance_navbar_name'] ) );
 
 							$args = array(
 								'slug' => $term_slug,
@@ -177,11 +183,11 @@ class Graphic_Data_Instance_Type {
 					case 'edit':
 						if ( isset( $_POST['term_id'] ) && isset( $_POST['term_name'] ) && isset( $_POST['instance_order'] ) && isset( $_POST['instance_navbar_name'] ) ) {
 							$term_id = absint( $_POST['term_id'] );
-							$term_name = sanitize_text_field( $_POST['term_name'] );
-							$term_slug = sanitize_title( $_POST['term_slug'] );
-							$term_description = sanitize_textarea_field( $_POST['term_description'] );
+							$term_name = sanitize_text_field( wp_unslash( $_POST['term_name'] ) );
+							$term_slug = sanitize_title( wp_unslash( $_POST['term_slug'] ) );
+							$term_description = sanitize_textarea_field( wp_unslash( $_POST['term_description'] ) );
 							$instance_order = absint( $_POST['instance_order'] );
-							$instance_navbar_name = sanitize_text_field( $_POST['instance_navbar_name'] );
+							$instance_navbar_name = sanitize_text_field( wp_unslash( $_POST['instance_navbar_name'] ) );
 
 							wp_update_term(
 								$term_id,
