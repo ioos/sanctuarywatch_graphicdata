@@ -61,6 +61,11 @@ def process_file(path: Path, base_dir: Path):
         print(f"Skipping (read error): {path}")
         return
 
+    # Skip files that have already been converted (contain Jekyll front matter)
+    if text.startswith("---"):
+        print(f"Skipping (already converted): {path}")
+        return
+
     title = extract_title(text)
     body = extract_body_inner(text)
 
