@@ -106,25 +106,25 @@ Search.appendIndex(
             "summary": "Adjust\u0020admin\u0020post\u0020time\u0020display\u0020to\u0020show\u0020local\u0020timezone\u0020and\u0020author\u0020information.",
             "url": "classes/Graphic-Data-Admin.html#method_adjust_admin_post_time_display"
         },                {
-            "fqsen": "\\Create_SVG",
-            "name": "Create_SVG",
+            "fqsen": "\\Graphic_Data_Create_SVG",
+            "name": "Graphic_Data_Create_SVG",
             "summary": "Register\u0020class\u0020that\u0020defines\u0020Create\u0020SVG\u0020functions",
-            "url": "classes/Create-SVG.html"
+            "url": "classes/Graphic-Data-Create-SVG.html"
         },                {
-            "fqsen": "\\Create_SVG\u003A\u003Aadd_create_svg_menu\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Create_SVG\u003A\u003Aadd_create_svg_menu\u0028\u0029",
             "name": "add_create_svg_menu",
             "summary": "Function\u0020to\u0020add\u0020the\u0020\u0022Create\u0020SVG\u0022\u0020submenu\u0020under\u0020Tools",
-            "url": "classes/Create-SVG.html#method_add_create_svg_menu"
+            "url": "classes/Graphic-Data-Create-SVG.html#method_add_create_svg_menu"
         },                {
-            "fqsen": "\\Create_SVG\u003A\u003Aenqueue_admin_svg_script\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Create_SVG\u003A\u003Aenqueue_admin_svg_script\u0028\u0029",
             "name": "enqueue_admin_svg_script",
-            "summary": "Enqueue\u0020the\u0020JavaScript\u0020and\u0020CSS\u0020files\u0020for\u0020Create\u0020SVG\u0020functionality",
-            "url": "classes/Create-SVG.html#method_enqueue_admin_svg_script"
+            "summary": "Enqueue\u0020the\u0020JavaScript\u0020and\u0020CSS\u0020files\u0020for\u0020Create\u0020SVG\u0020functionality.",
+            "url": "classes/Graphic-Data-Create-SVG.html#method_enqueue_admin_svg_script"
         },                {
-            "fqsen": "\\Create_SVG\u003A\u003Acreate_svg_page\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Create_SVG\u003A\u003Acreate_svg_page\u0028\u0029",
             "name": "create_svg_page",
-            "summary": "",
-            "url": "classes/Create-SVG.html#method_create_svg_page"
+            "summary": "Display\u0020the\u0020content\u0020of\u0020the\u0020Create\u0020SVG\u0020admin\u0020page.",
+            "url": "classes/Graphic-Data-Create-SVG.html#method_create_svg_page"
         },                {
             "fqsen": "\\Graphic_Data_Export_Figures",
             "name": "Graphic_Data_Export_Figures",
@@ -306,80 +306,75 @@ Search.appendIndex(
             "summary": "Remove\u0020UTF\u002D8\u0020Byte\u0020Order\u0020Mark\u0020\u0028BOM\u0029\u0020from\u0020the\u0020beginning\u0020of\u0020content.",
             "url": "classes/Graphic-Data-SVG-Validator.html#method_remove_bom"
         },                {
-            "fqsen": "\\Login",
-            "name": "Login",
+            "fqsen": "\\Graphic_Data_Login",
+            "name": "Graphic_Data_Login",
             "summary": "Register\u0020class\u0020that\u0020has\u0020the\u0020functions\u0020used\u0020to\u0020modify\u0020the\u0020login\u0020WordPress\u0020scene",
-            "url": "classes/Login.html"
+            "url": "classes/Graphic-Data-Login.html"
         },                {
-            "fqsen": "\\Login\u003A\u003Alogin_logo\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Login\u003A\u003Alogin_logo\u0028\u0029",
             "name": "login_logo",
             "summary": "Change\u0020the\u0020WordPress\u0020default\u0020logo\u0020at\u0020the\u0020admin\u0020login\u0020screen\u0020to\u0020the\u0020Sanctuary\u0020Watch\u0020logo.",
-            "url": "classes/Login.html#method_login_logo"
+            "url": "classes/Graphic-Data-Login.html#method_login_logo"
         },                {
-            "fqsen": "\\Login\u003A\u003Alogo_url\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Login\u003A\u003Alogo_url\u0028\u0029",
             "name": "logo_url",
             "summary": "Change\u0020the\u0020URL\u0020associated\u0020with\u0020the\u0020logo\u0020on\u0020the\u0020login\u0020admin\u0020screen\u0020to\u0020the\u0020front\u0020page\u0020of\u0020the\u0020site",
-            "url": "classes/Login.html#method_logo_url"
+            "url": "classes/Graphic-Data-Login.html#method_logo_url"
         },                {
-            "fqsen": "\\Login\u003A\u003Alogo_url_title\u0028\u0029",
-            "name": "logo_url_title",
-            "summary": "Change\u0020the\u0020header\u0020text\u0020on\u0020the\u0020login\u0020screen\u0020to\u0020Sanctuary\u0020Watch",
-            "url": "classes/Login.html#method_logo_url_title"
-        },                {
-            "fqsen": "\\Login\u003A\u003Acustom_login_title\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Login\u003A\u003Acustom_login_title\u0028\u0029",
             "name": "custom_login_title",
-            "summary": "Change\u0020WordPress\u0020login\u0020screen\u0020page\u0020title\u0020to\u0020Sanctuary\u0020Watch",
-            "url": "classes/Login.html#method_custom_login_title"
+            "summary": "Modify\u0020the\u0020WordPress\u0020login\u0020screen\u0020page\u0020title\u0020to\u0020use\u0020Sanctuary\u0020Watch\u0020branding.",
+            "url": "classes/Graphic-Data-Login.html#method_custom_login_title"
         },                {
-            "fqsen": "\\Custom_Roles",
-            "name": "Custom_Roles",
-            "summary": "",
-            "url": "classes/Custom-Roles.html"
+            "fqsen": "\\Graphic_Data_Custom_Roles",
+            "name": "Graphic_Data_Custom_Roles",
+            "summary": "Manages\u0020custom\u0020user\u0020roles\u0020and\u0020role\u002Dbased\u0020access\u0020control\u0020for\u0020the\u0020Graphic\u0020Data\u0020Plugin.",
+            "url": "classes/Graphic-Data-Custom-Roles.html"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Arestrict_content_editor_admin_menu\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_content_editor_admin_menu\u0028\u0029",
             "name": "restrict_content_editor_admin_menu",
-            "summary": "Edit\u0020what\u0020users\u0020with\u0020the\u0020Content\u0020Editor\u0020can\u0020see\u0020on\u0020the\u0020dashboard",
-            "url": "classes/Custom-Roles.html#method_restrict_content_editor_admin_menu"
+            "summary": "Removes\u0020admin\u0020menu\u0020pages\u0020that\u0020Content\u0020Editors\u0020should\u0020not\u0020access.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_content_editor_admin_menu"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Arestrict_new_post_from_admin_bar\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_new_post_from_admin_bar\u0028\u0029",
             "name": "restrict_new_post_from_admin_bar",
-            "summary": "",
-            "url": "classes/Custom-Roles.html#method_restrict_new_post_from_admin_bar"
+            "summary": "Removes\u0020\u0022New\u0022\u0020content\u0020links\u0020from\u0020the\u0020admin\u0020bar\u0020for\u0020non\u002Dadmin\u0020users.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_new_post_from_admin_bar"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Arestrict_listing\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_listing\u0028\u0029",
             "name": "restrict_listing",
-            "summary": "",
-            "url": "classes/Custom-Roles.html#method_restrict_listing"
+            "summary": "Filters\u0020admin\u0020list\u0020queries\u0020to\u0020show\u0020only\u0020posts\u0020belonging\u0020to\u0020a\u0020Content\u0020Editor\u0027s\u0020assigned\u0020instances.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_listing"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Acreate_custom_roles\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Acreate_custom_roles\u0028\u0029",
             "name": "create_custom_roles",
-            "summary": "Create\u0020the\u0020custom\u0020roles\u0020if\u0020they\u0020don\u0027t\u0020exist",
-            "url": "classes/Custom-Roles.html#method_create_custom_roles"
+            "summary": "Registers\u0020the\u0020Content\u0020Editor\u0020and\u0020Content\u0020Manager\u0020roles\u0020and\u0020removes\u0020default\u0020WordPress\u0020roles.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_create_custom_roles"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Afilter_user_roles\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Afilter_user_roles\u0028\u0029",
             "name": "filter_user_roles",
-            "summary": "Filter\u0020the\u0020available\u0020user\u0020roles",
-            "url": "classes/Custom-Roles.html#method_filter_user_roles"
+            "summary": "Filters\u0020the\u0020editable\u0020roles\u0020list\u0020to\u0020only\u0020include\u0020allowed\u0020custom\u0020roles.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_filter_user_roles"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Areorder_roles_js\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Areorder_roles_js\u0028\u0029",
             "name": "reorder_roles_js",
-            "summary": "Add\u0020JavaScript\u0020to\u0020reorder\u0020the\u0020role\u0020dropdown\u0020directly\u0020in\u0020the\u0020DOM",
-            "url": "classes/Custom-Roles.html#method_reorder_roles_js"
+            "summary": "Outputs\u0020inline\u0020JavaScript\u0020to\u0020reorder\u0020the\u0020role\u0020dropdown\u0020on\u0020user\u0020edit\u0020screens.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_reorder_roles_js"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Aadd_instance_selection_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Aadd_instance_selection_fields\u0028\u0029",
             "name": "add_instance_selection_fields",
-            "summary": "Add\u0020instance\u0020selection\u0020fields\u0020to\u0020the\u0020user\u0020edit\u0020screen",
-            "url": "classes/Custom-Roles.html#method_add_instance_selection_fields"
+            "summary": "Renders\u0020the\u0020Instance\u0020Assignments\u0020checkbox\u0020fields\u0020on\u0020the\u0020user\u0020edit\u0020screen.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_add_instance_selection_fields"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Asave_instance_selections\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Asave_instance_selections\u0028\u0029",
             "name": "save_instance_selections",
-            "summary": "Save\u0020the\u0020selected\u0020instances\u0020when\u0020the\u0020user\u0020is\u0020updated",
-            "url": "classes/Custom-Roles.html#method_save_instance_selections"
+            "summary": "Saves\u0020the\u0020assigned\u0020instance\u0020selections\u0020when\u0020a\u0020user\u0020profile\u0020is\u0020saved.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_save_instance_selections"
         },                {
-            "fqsen": "\\Custom_Roles\u003A\u003Arestrict_editing\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_editing\u0028\u0029",
             "name": "restrict_editing",
-            "summary": "Restricts\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020edit\u0020screens\u0020based\u0020on\u0020user\u0020role\u0020and\u0020assigned\u0020instances.",
-            "url": "classes/Custom-Roles.html#method_restrict_editing"
+            "summary": "Restricts\u0020access\u0020to\u0020individual\u0020post\u0020edit\u0020screens\u0020for\u0020Content\u0020Editors.",
+            "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_editing"
         },                {
             "fqsen": "\\Graphic_Data_Utility",
             "name": "Graphic_Data_Utility",
@@ -390,6 +385,11 @@ Search.appendIndex(
             "name": "string_truncate",
             "summary": "Shorten\u0020string\u0020without\u0020cutting\u0020words\u0020midword.",
             "url": "classes/Graphic-Data-Utility.html#method_string_truncate"
+        },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Arender_nonce_field\u0028\u0029",
+            "name": "render_nonce_field",
+            "summary": "Add\u0020nonce\u0020field\u0020to\u0020about,\u0020modal,\u0020scene,\u0020instance,\u0020and\u0020figure\u0020custom\u0020post\u0020types,\u0020as\u0020well\u0020as\u0020for\u0020the\u0020Instance\u0020Type\u0020page.",
+            "url": "classes/Graphic-Data-Utility.html#method_render_nonce_field"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Aoutput_transient_to_js\u0028\u0029",
             "name": "output_transient_to_js",
@@ -410,11 +410,6 @@ Search.appendIndex(
             "name": "get_fields_from_transient",
             "summary": "Helper\u0020function\u0020to\u0020retrieve\u0020field\u0020values\u0020from\u0020transients.",
             "url": "classes/Graphic-Data-Utility.html#method_get_fields_from_transient"
-        },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003Adummy_sanitize\u0028\u0029",
-            "name": "dummy_sanitize",
-            "summary": "Dummy\u0020sanitize\u0020function\u0020that\u0020returns\u0020the\u0020value\u0020as\u0020is.",
-            "url": "classes/Graphic-Data-Utility.html#method_dummy_sanitize"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Adelete_fields_transient\u0028\u0029",
             "name": "delete_fields_transient",
@@ -476,39 +471,44 @@ Search.appendIndex(
             "summary": "Retrieves\u0020icon\u0020IDs\u0020from\u0020an\u0020SVG\u0020infographic\u0020associated\u0020with\u0020a\u0020scene.",
             "url": "classes/Graphic-Data-Utility.html#method_return_icons"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnScenesExceptCurrent\u0028\u0029",
-            "name": "returnScenesExceptCurrent",
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_scenes_except_current\u0028\u0029",
+            "name": "return_scenes_except_current",
             "summary": "Return\u0020an\u0020array\u0020of\u0020scenes,\u0020other\u0020than\u0020the\u0020current\u0020scene,\u0020for\u0020a\u0020given\u0020location.",
-            "url": "classes/Graphic-Data-Utility.html#method_returnScenesExceptCurrent"
+            "url": "classes/Graphic-Data-Utility.html#method_return_scenes_except_current"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnModalSections\u0028\u0029",
-            "name": "returnModalSections",
-            "summary": "",
-            "url": "classes/Graphic-Data-Utility.html#method_returnModalSections"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_modal_sections\u0028\u0029",
+            "name": "return_modal_sections",
+            "summary": "Retrieve\u0020modal\u0020section\u0020headers\u0020for\u0020a\u0020given\u0020scene.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_modal_sections"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnScenesFigure\u0028\u0029",
-            "name": "returnScenesFigure",
-            "summary": "",
-            "url": "classes/Graphic-Data-Utility.html#method_returnScenesFigure"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_scenes_figure\u0028\u0029",
+            "name": "return_scenes_figure",
+            "summary": "Retrieve\u0020scene\u0020dropdown\u0020options\u0020for\u0020the\u0020figure\u0020content\u0020type.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_scenes_figure"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnModalTabs\u0028\u0029",
-            "name": "returnModalTabs",
-            "summary": "",
-            "url": "classes/Graphic-Data-Utility.html#method_returnModalTabs"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Asanitize_number_or_quotes_field\u0028\u0029",
+            "name": "sanitize_number_or_quotes_field",
+            "summary": "Sanitize\u0020the\u0020field\u0020value\u0020when\u0020the\u0020option\u0020is\u0020a\u0020whole\u0020number\u0020or\u0020an\u0020empty\u0020string.",
+            "url": "classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003AreturnFigureIcons\u0028\u0029",
-            "name": "returnFigureIcons",
-            "summary": "",
-            "url": "classes/Graphic-Data-Utility.html#method_returnFigureIcons"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_modal_tabs\u0028\u0029",
+            "name": "return_modal_tabs",
+            "summary": "Retrieve\u0020tab\u0020titles\u0020for\u0020a\u0020given\u0020modal.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_modal_tabs"
+        },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_figure_icons\u0028\u0029",
+            "name": "return_figure_icons",
+            "summary": "Retrieve\u0020modal\u0020icon\u0020dropdown\u0020options\u0020for\u0020the\u0020figure\u0020content\u0020type.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_figure_icons"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Aregister_custom_rest_fields\u0028\u0029",
             "name": "register_custom_rest_fields",
-            "summary": "",
+            "summary": "Register\u0020custom\u0020meta\u0020fields\u0020with\u0020the\u0020REST\u0020API\u0020for\u0020a\u0020given\u0020post\u0020type.",
             "url": "classes/Graphic-Data-Utility.html#method_register_custom_rest_fields"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Ameta_get_callback\u0028\u0029",
             "name": "meta_get_callback",
-            "summary": "",
+            "summary": "REST\u0020API\u0020get\u0020callback\u0020for\u0020retrieving\u0020a\u0020post\u0020meta\u0020value.",
             "url": "classes/Graphic-Data-Utility.html#method_meta_get_callback"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Adisplay_warning_message_if_new_post_impossible\u0028\u0029",
@@ -516,60 +516,55 @@ Search.appendIndex(
             "summary": "Display\u0020warning\u0020message\u0020if\u0020add\u0020new\u0020post\u0020is\u0020not\u0020possible\u0020for\u0020custom\u0020content\u0020post\u0020type.",
             "url": "classes/Graphic-Data-Utility.html#method_display_warning_message_if_new_post_impossible"
         },                {
-            "fqsen": "\\Validation",
-            "name": "Validation",
-            "summary": "",
-            "url": "classes/Validation.html"
+            "fqsen": "\\Graphic_Data_Validation",
+            "name": "Graphic_Data_Validation",
+            "summary": "Handles\u0020validation\u0020of\u0020custom\u0020post\u0020type\u0020fields\u0020before\u0020saving.",
+            "url": "classes/Graphic-Data-Validation.html"
         },                {
-            "fqsen": "\\Validation\u003A\u003Amaster_validate\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Amaster_validate\u0028\u0029",
             "name": "master_validate",
-            "summary": "",
-            "url": "classes/Validation.html#method_master_validate"
+            "summary": "Routes\u0020validation\u0020to\u0020the\u0020appropriate\u0020content\u0020type\u0020validator.",
+            "url": "classes/Graphic-Data-Validation.html#method_master_validate"
         },                {
-            "fqsen": "\\Validation\u003A\u003Avalidate_about\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Avalidate_about\u0028\u0029",
             "name": "validate_about",
-            "summary": "",
-            "url": "classes/Validation.html#method_validate_about"
+            "summary": "Validates\u0020a\u0020post\u0020of\u0020About\u0020custom\u0020post\u0020type\u0020before\u0020saving.",
+            "url": "classes/Graphic-Data-Validation.html#method_validate_about"
         },                {
-            "fqsen": "\\Validation\u003A\u003Avalidate_instance\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Avalidate_instance\u0028\u0029",
             "name": "validate_instance",
             "summary": "Validates\u0020a\u0020post\u0020of\u0020Instance\u0020custom\u0020post\u0020type\u0020before\u0020saving.",
-            "url": "classes/Validation.html#method_validate_instance"
+            "url": "classes/Graphic-Data-Validation.html#method_validate_instance"
         },                {
-            "fqsen": "\\Validation\u003A\u003Avalidate_figure\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Avalidate_figure\u0028\u0029",
             "name": "validate_figure",
             "summary": "Validates\u0020a\u0020post\u0020of\u0020Figure\u0020custom\u0020post\u0020type\u0020before\u0020saving.",
-            "url": "classes/Validation.html#method_validate_figure"
+            "url": "classes/Graphic-Data-Validation.html#method_validate_figure"
         },                {
-            "fqsen": "\\Validation\u003A\u003Avalidate_modal\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Avalidate_modal\u0028\u0029",
             "name": "validate_modal",
             "summary": "Validates\u0020a\u0020post\u0020of\u0020Modal\u0020custom\u0020post\u0020type\u0020before\u0020saving.",
-            "url": "classes/Validation.html#method_validate_modal"
+            "url": "classes/Graphic-Data-Validation.html#method_validate_modal"
         },                {
-            "fqsen": "\\Validation\u003A\u003Avalidate_scene\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Avalidate_scene\u0028\u0029",
             "name": "validate_scene",
             "summary": "Validates\u0020a\u0020post\u0020of\u0020Scene\u0020custom\u0020post\u0020type\u0020before\u0020saving.",
-            "url": "classes/Validation.html#method_validate_scene"
+            "url": "classes/Graphic-Data-Validation.html#method_validate_scene"
         },                {
-            "fqsen": "\\Validation\u003A\u003Acheck_url_is_accessible\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Acheck_url_is_accessible\u0028\u0029",
             "name": "check_url_is_accessible",
             "summary": "Return\u0020HTTP\u0020status\u0020code\u0020for\u0020a\u0020given\u0020URL\u0020to\u0020check\u0020if\u0020it\u0027s\u0020accessible.",
-            "url": "classes/Validation.html#method_check_url_is_accessible"
+            "url": "classes/Graphic-Data-Validation.html#method_check_url_is_accessible"
         },                {
-            "fqsen": "\\Validation\u003A\u003Aurl_check\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Aurl_check\u0028\u0029",
             "name": "url_check",
             "summary": "Validates\u0020URL\u0020syntax\u0020with\u0020path\u0020requirement.",
-            "url": "classes/Validation.html#method_url_check"
+            "url": "classes/Graphic-Data-Validation.html#method_url_check"
         },                {
-            "fqsen": "\\Validation\u003A\u003Aget_fields_config\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Aget_fields_config\u0028\u0029",
             "name": "get_fields_config",
-            "summary": "Get\u0020fields\u0020configuration\u0020from\u0020a\u0020content\u0020type\u0027s\u0020field\u0020creation\u0020method",
-            "url": "classes/Validation.html#method_get_fields_config"
-        },                {
-            "fqsen": "\\Validation\u003A\u003A\u0024version",
-            "name": "version",
-            "summary": "The\u0020current\u0020version\u0020of\u0020the\u0020plugin.",
-            "url": "classes/Validation.html#property_version"
+            "summary": "Get\u0020fields\u0020configuration\u0020from\u0020a\u0020content\u0020type\u0027s\u0020field\u0020creation\u0020method.",
+            "url": "classes/Graphic-Data-Validation.html#method_get_fields_config"
         },                {
             "fqsen": "\\get_exopite_sof_option\u0028\u0029",
             "name": "get_exopite_sof_option",
@@ -1863,478 +1858,473 @@ Search.appendIndex(
         },                {
             "fqsen": "\\graphic_data_activate\u0028\u0029",
             "name": "graphic_data_activate",
-            "summary": "",
+            "summary": "Plugin\u0020activation\u0020callback.",
             "url": "namespaces/default.html#function_graphic_data_activate"
         },                {
-            "fqsen": "\\myplugin_ensure_public_data_dir\u0028\u0029",
-            "name": "myplugin_ensure_public_data_dir",
-            "summary": "",
-            "url": "namespaces/default.html#function_myplugin_ensure_public_data_dir"
+            "fqsen": "\\graphic_data_ensure_public_data_dir\u0028\u0029",
+            "name": "graphic_data_ensure_public_data_dir",
+            "summary": "Ensure\u0020the\u0020public\u0020data\u0020directory\u0020exists\u0020with\u0020correct\u0020permissions.",
+            "url": "namespaces/default.html#function_graphic_data_ensure_public_data_dir"
         },                {
-            "fqsen": "\\my_svg_cleanup_on_upload\u0028\u0029",
-            "name": "my_svg_cleanup_on_upload",
-            "summary": "",
-            "url": "namespaces/default.html#function_my_svg_cleanup_on_upload"
-        },                {
-            "fqsen": "\\my_transform_svg_inkscape\u0028\u0029",
-            "name": "my_transform_svg_inkscape",
-            "summary": "Your\u0020transformation\u0020rules\u003A\n\u002D\u0020Remove\u0020only\u0020the\u0020inkscape\u003Agroupmode\u003D\u0022layer\u0022\u0020attribute\u0020\u0028keep\u0020the\u0020rest\u0020of\u0020the\u0020tag\u0029.",
-            "url": "namespaces/default.html#function_my_transform_svg_inkscape"
-        },                {
-            "fqsen": "\\run_graphic_data_plugin\u0028\u0029",
-            "name": "run_graphic_data_plugin",
+            "fqsen": "\\graphic_data_plugin_run\u0028\u0029",
+            "name": "graphic_data_plugin_run",
             "summary": "Begins\u0020execution\u0020of\u0020the\u0020plugin.",
-            "url": "namespaces/default.html#function_run_graphic_data_plugin"
+            "url": "namespaces/default.html#function_graphic_data_plugin_run"
         },                {
-            "fqsen": "\\About",
-            "name": "About",
-            "summary": "Register\u0020class\u0020that\u0020defines\u0020the\u0020Figure\u0020custom\u0020content\u0020type\u0020as\u0020well\u0020as\u0020associated\u0020Modal\u0020functions",
-            "url": "classes/About.html"
+            "fqsen": "\\Graphic_Data_About",
+            "name": "Graphic_Data_About",
+            "summary": "Register\u0020class\u0020that\u0020defines\u0020the\u0020About\u0020custom\u0020content\u0020post\u0020type\u0020as\u0020well\u0020as\u0020associated\u0020functions.",
+            "url": "classes/Graphic-Data-About.html"
         },                {
-            "fqsen": "\\About\u003A\u003Acustom_content_type_about\u0028\u0029",
+            "fqsen": "\\Graphic_Data_About\u003A\u003Acustom_content_type_about\u0028\u0029",
             "name": "custom_content_type_about",
             "summary": "Create\u0020About\u0020custom\u0020content\u0020type.",
-            "url": "classes/About.html#method_custom_content_type_about"
+            "url": "classes/Graphic-Data-About.html#method_custom_content_type_about"
         },                {
-            "fqsen": "\\About\u003A\u003Acreate_about_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_About\u003A\u003Acreate_about_fields\u0028\u0029",
             "name": "create_about_fields",
             "summary": "Create\u0020custom\u0020fields,\u0020using\u0020metaboxes,\u0020for\u0020About\u0020custom\u0020content\u0020type.",
-            "url": "classes/About.html#method_create_about_fields"
+            "url": "classes/Graphic-Data-About.html#method_create_about_fields"
         },                {
-            "fqsen": "\\About\u003A\u003Acheck_existing_about_posts\u0028\u0029",
+            "fqsen": "\\Graphic_Data_About\u003A\u003Acheck_existing_about_posts\u0028\u0029",
             "name": "check_existing_about_posts",
-            "summary": "",
-            "url": "classes/About.html#method_check_existing_about_posts"
+            "summary": "Counts\u0020existing\u0020About\u0020posts\u0020across\u0020all\u0020post\u0020statuses.",
+            "url": "classes/Graphic-Data-About.html#method_check_existing_about_posts"
         },                {
-            "fqsen": "\\About\u003A\u003Adisplay_about_limit_notice\u0028\u0029",
+            "fqsen": "\\Graphic_Data_About\u003A\u003Adisplay_about_limit_notice\u0028\u0029",
             "name": "display_about_limit_notice",
-            "summary": "",
-            "url": "classes/About.html#method_display_about_limit_notice"
+            "summary": "Displays\u0020an\u0020admin\u0020notice\u0020when\u0020About\u0020page\u0020creation\u0020limit\u0020is\u0020reached.",
+            "url": "classes/Graphic-Data-About.html#method_display_about_limit_notice"
         },                {
-            "fqsen": "\\About\u003A\u003Aprevent_multiple_about_posts\u0028\u0029",
+            "fqsen": "\\Graphic_Data_About\u003A\u003Aprevent_multiple_about_posts\u0028\u0029",
             "name": "prevent_multiple_about_posts",
-            "summary": "",
-            "url": "classes/About.html#method_prevent_multiple_about_posts"
+            "summary": "Prevents\u0020creation\u0020of\u0020multiple\u0020About\u0020posts.",
+            "url": "classes/Graphic-Data-About.html#method_prevent_multiple_about_posts"
         },                {
-            "fqsen": "\\About\u003A\u003Amodify_about_add_new_button\u0028\u0029",
+            "fqsen": "\\Graphic_Data_About\u003A\u003Amodify_about_add_new_button\u0028\u0029",
             "name": "modify_about_add_new_button",
-            "summary": "",
-            "url": "classes/About.html#method_modify_about_add_new_button"
+            "summary": "Hides\u0020the\u0020\u0022Add\u0020New\u0022\u0020button\u0020when\u0020an\u0020About\u0020post\u0020already\u0020exists.",
+            "url": "classes/Graphic-Data-About.html#method_modify_about_add_new_button"
         },                {
-            "fqsen": "\\About\u003A\u003Ahandle_about_template\u0028\u0029",
+            "fqsen": "\\Graphic_Data_About\u003A\u003Ahandle_about_template\u0028\u0029",
             "name": "handle_about_template",
-            "summary": "",
-            "url": "classes/About.html#method_handle_about_template"
+            "summary": "Handles\u0020template\u0020loading\u0020for\u0020the\u0020About\u0020page\u0020at\u0020the\u0020\/about\u0020URL.",
+            "url": "classes/Graphic-Data-About.html#method_handle_about_template"
         },                {
-            "fqsen": "\\About\u003A\u003Acustom_about_permalink\u0028\u0029",
+            "fqsen": "\\Graphic_Data_About\u003A\u003Acustom_about_permalink\u0028\u0029",
             "name": "custom_about_permalink",
-            "summary": "",
-            "url": "classes/About.html#method_custom_about_permalink"
+            "summary": "Modifies\u0020the\u0020permalink\u0020structure\u0020for\u0020About\u0020post\u0020type.",
+            "url": "classes/Graphic-Data-About.html#method_custom_about_permalink"
         },                {
-            "fqsen": "\\Figure",
-            "name": "Figure",
-            "summary": "",
-            "url": "classes/Figure.html"
+            "fqsen": "\\Graphic_Data_Figure",
+            "name": "Graphic_Data_Figure",
+            "summary": "Handles\u0020the\u0020Figure\u0020custom\u0020post\u0020type\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
+            "url": "classes/Graphic-Data-Figure.html"
         },                {
-            "fqsen": "\\Figure\u003A\u003Aenqueue_admin_interactive_graph_script\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aenqueue_admin_interactive_graph_script\u0028\u0029",
             "name": "enqueue_admin_interactive_graph_script",
-            "summary": "",
-            "url": "classes/Figure.html#method_enqueue_admin_interactive_graph_script"
+            "summary": "Enqueue\u0020admin\u0020scripts\u0020for\u0020the\u0020Figure\u0020post\u0020type\u0020edit\u0020screen.",
+            "url": "classes/Graphic-Data-Figure.html#method_enqueue_admin_interactive_graph_script"
         },                {
-            "fqsen": "\\Figure\u003A\u003Achange_figure_columns\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Achange_figure_columns\u0028\u0029",
             "name": "change_figure_columns",
-            "summary": "Set\u0020columns\u0020in\u0020admin\u0020screen\u0020for\u0020Figure\u0020custom\u0020content\u0020type.",
-            "url": "classes/Figure.html#method_change_figure_columns"
+            "summary": "Set\u0020custom\u0020columns\u0020for\u0020the\u0020Figure\u0020post\u0020type\u0020admin\u0020list\u0020table.",
+            "url": "classes/Graphic-Data-Figure.html#method_change_figure_columns"
         },                {
-            "fqsen": "\\Figure\u003A\u003Acustom_figure_column\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Acustom_figure_column\u0028\u0029",
             "name": "custom_figure_column",
             "summary": "Populate\u0020custom\u0020fields\u0020for\u0020Figure\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
-            "url": "classes/Figure.html#method_custom_figure_column"
+            "url": "classes/Graphic-Data-Figure.html#method_custom_figure_column"
         },                {
-            "fqsen": "\\Figure\u003A\u003Astore_figure_filter_values\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Astore_figure_filter_values\u0028\u0029",
             "name": "store_figure_filter_values",
             "summary": "Store\u0020figure\u0020filter\u0020values\u0020in\u0020user\u0020metadata\u0020with\u002020\u002Dminute\u0020expiration.",
-            "url": "classes/Figure.html#method_store_figure_filter_values"
+            "url": "classes/Graphic-Data-Figure.html#method_store_figure_filter_values"
         },                {
-            "fqsen": "\\Figure\u003A\u003Aget_figure_filter_value\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aget_figure_filter_value\u0028\u0029",
             "name": "get_figure_filter_value",
             "summary": "Check\u0020if\u0020stored\u0020filter\u0020values\u0020are\u0020still\u0020valid\u0020and\u0020retrieve\u0020them\u0020if\u0020they\u0020are.",
-            "url": "classes/Figure.html#method_get_figure_filter_value"
+            "url": "classes/Graphic-Data-Figure.html#method_get_figure_filter_value"
         },                {
-            "fqsen": "\\Figure\u003A\u003Acleanup_expired_figure_filters\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Acleanup_expired_figure_filters\u0028\u0029",
             "name": "cleanup_expired_figure_filters",
             "summary": "Clean\u0020up\u0020expired\u0020figure\u0020filter\u0020values\u0020in\u0020user\u0020metadata.",
-            "url": "classes/Figure.html#method_cleanup_expired_figure_filters"
+            "url": "classes/Graphic-Data-Figure.html#method_cleanup_expired_figure_filters"
         },                {
-            "fqsen": "\\Figure\u003A\u003Afigure_filter_dropdowns\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Afigure_filter_dropdowns\u0028\u0029",
             "name": "figure_filter_dropdowns",
             "summary": "Add\u0020filter\u0020dropdowns\u0020for\u0020the\u0020Figure\u0020admin\u0020screen\u0020with\u0020persistent\u0020selection\u0020support.",
-            "url": "classes/Figure.html#method_figure_filter_dropdowns"
+            "url": "classes/Graphic-Data-Figure.html#method_figure_filter_dropdowns"
         },                {
-            "fqsen": "\\Figure\u003A\u003Afigure_location_filter_results\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Afigure_location_filter_results\u0028\u0029",
             "name": "figure_location_filter_results",
             "summary": "Filter\u0020the\u0020Figure\u0020admin\u0020screen\u0020results\u0020based\u0020on\u0020selected\u0020or\u0020stored\u0020filter\u0020values.",
-            "url": "classes/Figure.html#method_figure_location_filter_results"
+            "url": "classes/Graphic-Data-Figure.html#method_figure_location_filter_results"
         },                {
-            "fqsen": "\\Figure\u003A\u003Acustom_content_type_figure\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Acustom_content_type_figure\u0028\u0029",
             "name": "custom_content_type_figure",
             "summary": "Create\u0020Figure\u0020custom\u0020content\u0020type.",
-            "url": "classes/Figure.html#method_custom_content_type_figure"
+            "url": "classes/Graphic-Data-Figure.html#method_custom_content_type_figure"
         },                {
-            "fqsen": "\\Figure\u003A\u003Acreate_figure_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Acreate_figure_fields\u0028\u0029",
             "name": "create_figure_fields",
             "summary": "Create\u0020custom\u0020fields,\u0020using\u0020metaboxes,\u0020for\u0020Figure\u0020custom\u0020content\u0020type.",
-            "url": "classes/Figure.html#method_create_figure_fields"
+            "url": "classes/Graphic-Data-Figure.html#method_create_figure_fields"
         },                {
-            "fqsen": "\\Figure\u003A\u003Aregister_figure_rest_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aregister_figure_rest_fields\u0028\u0029",
             "name": "register_figure_rest_fields",
             "summary": "Register\u0020Figure\u0020custom\u0020fields\u0020for\u0020use\u0020by\u0020REST\u0020API.",
-            "url": "classes/Figure.html#method_register_figure_rest_fields"
+            "url": "classes/Graphic-Data-Figure.html#method_register_figure_rest_fields"
         },                {
-            "fqsen": "\\Figure\u003A\u003Afilter_figure_by_figure_modal\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Afilter_figure_by_figure_modal\u0028\u0029",
             "name": "filter_figure_by_figure_modal",
-            "summary": "Add\u0020a\u0020filter\u0020to\u0020support\u0020filtering\u0020by\u0020\u0022figure_modal\u0022,\u0020\u0022figure_published\u0022,\u0020and\u0020id\u0020in\u0020REST\u0020API\u0020queries.",
-            "url": "classes/Figure.html#method_filter_figure_by_figure_modal"
+            "summary": "Filter\u0020REST\u0020API\u0020query\u0020arguments\u0020to\u0020support\u0020filtering\u0020figure\u0020custom\u0020posts\u0020by\u0020meta\u0020fields.",
+            "url": "classes/Graphic-Data-Figure.html#method_filter_figure_by_figure_modal"
         },                {
-            "fqsen": "\\Figure\u003A\u003Acustom_file_upload_handler\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Acustom_file_upload_handler\u0028\u0029",
             "name": "custom_file_upload_handler",
-            "summary": "Handles\u0020the\u0020custom\u0020file\u0020upload\u0020process\u0020for\u0020the\u0020WebCR\u0020plugin.",
-            "url": "classes/Figure.html#method_custom_file_upload_handler"
+            "summary": "Handles\u0020the\u0020custom\u0020file\u0020upload\u0020process\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
+            "url": "classes/Graphic-Data-Figure.html#method_custom_file_upload_handler"
         },                {
-            "fqsen": "\\Figure\u003A\u003Acustom_file_delete_handler\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Acustom_file_delete_handler\u0028\u0029",
             "name": "custom_file_delete_handler",
-            "summary": "Handles\u0020the\u0020custom\u0020file\u0020deletion\u0020process\u0020for\u0020the\u0020WebCR\u0020plugin.",
-            "url": "classes/Figure.html#method_custom_file_delete_handler"
+            "summary": "Handles\u0020the\u0020custom\u0020file\u0020deletion\u0020process\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
+            "url": "classes/Graphic-Data-Figure.html#method_custom_file_delete_handler"
         },                {
-            "fqsen": "\\Figure\u003A\u003Aregister_get_alt_text_by_url_route\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aregister_get_alt_text_by_url_route\u0028\u0029",
             "name": "register_get_alt_text_by_url_route",
             "summary": "Registers\u0020a\u0020custom\u0020REST\u0020API\u0020route\u0020to\u0020get\u0020alt\u0020text\u0020by\u0020image\u0020URL.",
-            "url": "classes/Figure.html#method_register_get_alt_text_by_url_route"
+            "url": "classes/Graphic-Data-Figure.html#method_register_get_alt_text_by_url_route"
         },                {
-            "fqsen": "\\Figure\u003A\u003Aget_alt_text_by_url_callback\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aget_alt_text_by_url_callback\u0028\u0029",
             "name": "get_alt_text_by_url_callback",
             "summary": "Callback\u0020function\u0020for\u0020the\u0020\/media\/alt\u002Dtext\u002Dby\u002Durl\u0020REST\u0020route.",
-            "url": "classes/Figure.html#method_get_alt_text_by_url_callback"
+            "url": "classes/Graphic-Data-Figure.html#method_get_alt_text_by_url_callback"
         },                {
-            "fqsen": "\\Instance_Type",
-            "name": "Instance_Type",
+            "fqsen": "\\Graphic_Data_Instance_Type",
+            "name": "Graphic_Data_Instance_Type",
             "summary": "Register\u0020class\u0020that\u0020defines\u0020the\u0020Instance\u0020Type\u0020functions",
-            "url": "classes/Instance-Type.html"
+            "url": "classes/Graphic-Data-Instance-Type.html"
         },                {
-            "fqsen": "\\Instance_Type\u003A\u003Ainstance_settings_init\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance_Type\u003A\u003Ainstance_settings_init\u0028\u0029",
             "name": "instance_settings_init",
-            "summary": "",
-            "url": "classes/Instance-Type.html#method_instance_settings_init"
+            "summary": "Register\u0020the\u0020instance\u0020settings\u0020group\u0020and\u0020settings\u0020section.",
+            "url": "classes/Graphic-Data-Instance-Type.html#method_instance_settings_init"
         },                {
-            "fqsen": "\\Instance_Type\u003A\u003Aregister_instance_type_taxonomy\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance_Type\u003A\u003Aregister_instance_type_taxonomy\u0028\u0029",
             "name": "register_instance_type_taxonomy",
-            "summary": "",
-            "url": "classes/Instance-Type.html#method_register_instance_type_taxonomy"
+            "summary": "Register\u0020the\u0020\u0027instance_type\u0027\u0020custom\u0020taxonomy\u0020if\u0020it\u0020does\u0020not\u0020already\u0020exist.",
+            "url": "classes/Graphic-Data-Instance-Type.html#method_register_instance_type_taxonomy"
         },                {
-            "fqsen": "\\Instance_Type\u003A\u003Aregister_instance_type_order_meta\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance_Type\u003A\u003Aregister_instance_type_order_meta\u0028\u0029",
             "name": "register_instance_type_order_meta",
-            "summary": "",
-            "url": "classes/Instance-Type.html#method_register_instance_type_order_meta"
+            "summary": "Register\u0020the\u0020\u0027instance_order\u0027\u0020meta\u0020field\u0020for\u0020the\u0020\u0027instance_type\u0027\u0020taxonomy.",
+            "url": "classes/Graphic-Data-Instance-Type.html#method_register_instance_type_order_meta"
         },                {
-            "fqsen": "\\Instance_Type\u003A\u003Aregister_instance_type_navbar_name_meta\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance_Type\u003A\u003Aregister_instance_type_navbar_name_meta\u0028\u0029",
             "name": "register_instance_type_navbar_name_meta",
-            "summary": "",
-            "url": "classes/Instance-Type.html#method_register_instance_type_navbar_name_meta"
+            "summary": "Register\u0020the\u0020\u0027navbar_name\u0027\u0020meta\u0020field\u0020for\u0020the\u0020\u0027instance_type\u0027\u0020taxonomy.",
+            "url": "classes/Graphic-Data-Instance-Type.html#method_register_instance_type_navbar_name_meta"
         },                {
-            "fqsen": "\\Instance_Type\u003A\u003Aadd_instance_type_admin_menu\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance_Type\u003A\u003Aadd_instance_type_admin_menu\u0028\u0029",
             "name": "add_instance_type_admin_menu",
-            "summary": "",
-            "url": "classes/Instance-Type.html#method_add_instance_type_admin_menu"
+            "summary": "Add\u0020the\u0020Instance\u0020Types\u0020admin\u0020menu\u0020item.",
+            "url": "classes/Graphic-Data-Instance-Type.html#method_add_instance_type_admin_menu"
         },                {
-            "fqsen": "\\Instance_Type\u003A\u003Arender_instance_type_admin_page\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance_Type\u003A\u003Arender_instance_type_admin_page\u0028\u0029",
             "name": "render_instance_type_admin_page",
-            "summary": "",
-            "url": "classes/Instance-Type.html#method_render_instance_type_admin_page"
+            "summary": "Render\u0020the\u0020Instance\u0020Type\u0020taxonomy\u0020admin\u0020page.",
+            "url": "classes/Graphic-Data-Instance-Type.html#method_render_instance_type_admin_page"
         },                {
-            "fqsen": "\\Instance",
-            "name": "Instance",
-            "summary": "",
-            "url": "classes/Instance.html"
+            "fqsen": "\\Graphic_Data_Instance",
+            "name": "Graphic_Data_Instance",
+            "summary": "Registers\u0020the\u0020Instance\u0020custom\u0020post\u0020type\u0020and\u0020manages\u0020its\u0020admin\u0020interface.",
+            "url": "classes/Graphic-Data-Instance.html"
         },                {
-            "fqsen": "\\Instance\u003A\u003Acustom_content_type_instance\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Acustom_content_type_instance\u0028\u0029",
             "name": "custom_content_type_instance",
-            "summary": "Create\u0020Instance\u0020custom\u0020content\u0020type.",
-            "url": "classes/Instance.html#method_custom_content_type_instance"
+            "summary": "Registers\u0020the\u0020\u0027instance\u0027\u0020custom\u0020post\u0020type\u0020with\u0020WordPress.",
+            "url": "classes/Graphic-Data-Instance.html#method_custom_content_type_instance"
         },                {
-            "fqsen": "\\Instance\u003A\u003Acreate_instance_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Acreate_instance_fields\u0028\u0029",
             "name": "create_instance_fields",
-            "summary": "Create\u0020custom\u0020fields,\u0020using\u0020metaboxes,\u0020for\u0020Instance\u0020custom\u0020content\u0020type.",
-            "url": "classes/Instance.html#method_create_instance_fields"
+            "summary": "Creates\u0020the\u0020Instance\u0020metabox\u0020and\u0020registers\u0020its\u0020custom\u0020fields\u0020and\u0020REST\u0020API\u0020meta.",
+            "url": "classes/Graphic-Data-Instance.html#method_create_instance_fields"
         },                {
-            "fqsen": "\\Instance\u003A\u003Aregister_meta_nonarray_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Aregister_meta_nonarray_fields\u0028\u0029",
             "name": "register_meta_nonarray_fields",
-            "summary": "",
-            "url": "classes/Instance.html#method_register_meta_nonarray_fields"
+            "summary": "Registers\u0020non\u002Darray\u0020post\u0020meta\u0020fields\u0020for\u0020the\u0020REST\u0020API.",
+            "url": "classes/Graphic-Data-Instance.html#method_register_meta_nonarray_fields"
         },                {
-            "fqsen": "\\Instance\u003A\u003Aregister_meta_array_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Aregister_meta_array_fields\u0028\u0029",
             "name": "register_meta_array_fields",
-            "summary": "",
-            "url": "classes/Instance.html#method_register_meta_array_fields"
+            "summary": "Registers\u0020the\u0020instance\u0020footer\u0020column\u0020meta\u0020fields\u0020for\u0020the\u0020REST\u0020API.",
+            "url": "classes/Graphic-Data-Instance.html#method_register_meta_array_fields"
         },                {
-            "fqsen": "\\Instance\u003A\u003Aregister_instance_rest_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Aregister_instance_rest_fields\u0028\u0029",
             "name": "register_instance_rest_fields",
-            "summary": "Register\u0020Instance\u0020custom\u0020fields\u0020for\u0020use\u0020by\u0020REST\u0020API.",
-            "url": "classes/Instance.html#method_register_instance_rest_fields"
+            "summary": "Registers\u0020Instance\u0020custom\u0020fields\u0020as\u0020REST\u0020API\u0020response\u0020fields.",
+            "url": "classes/Graphic-Data-Instance.html#method_register_instance_rest_fields"
         },                {
-            "fqsen": "\\Instance\u003A\u003Achange_instance_columns\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Achange_instance_columns\u0028\u0029",
             "name": "change_instance_columns",
-            "summary": "Set\u0020columns\u0020in\u0020admin\u0020screen\u0020for\u0020Scene\u0020custom\u0020content\u0020type.",
-            "url": "classes/Instance.html#method_change_instance_columns"
+            "summary": "Defines\u0020the\u0020columns\u0020displayed\u0020on\u0020the\u0020Instance\u0020post\u0020type\u0020admin\u0020list\u0020table.",
+            "url": "classes/Graphic-Data-Instance.html#method_change_instance_columns"
         },                {
-            "fqsen": "\\Instance\u003A\u003Acustom_instance_column\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Acustom_instance_column\u0028\u0029",
             "name": "custom_instance_column",
-            "summary": "",
-            "url": "classes/Instance.html#method_custom_instance_column"
+            "summary": "Renders\u0020the\u0020content\u0020for\u0020custom\u0020columns\u0020on\u0020the\u0020Instance\u0020admin\u0020list\u0020table.",
+            "url": "classes/Graphic-Data-Instance.html#method_custom_instance_column"
         },                {
-            "fqsen": "\\Instance\u003A\u003Aremove_bulk_actions\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Aremove_bulk_actions\u0028\u0029",
             "name": "remove_bulk_actions",
-            "summary": "Remove\u0020Bulk\u0020Actions\u0020dropdown\u0020from\u0020Scene,\u0020Modal,\u0020Figure,\u0020and\u0020Instance\u0020admin\u0020screens.",
-            "url": "classes/Instance.html#method_remove_bulk_actions"
+            "summary": "Removes\u0020bulk\u0020action\u0020options\u0020from\u0020custom\u0020post\u0020type\u0020admin\u0020list\u0020tables.",
+            "url": "classes/Graphic-Data-Instance.html#method_remove_bulk_actions"
         },                {
-            "fqsen": "\\Instance\u003A\u003Acustom_content_remove_quick_edit_link\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Instance\u003A\u003Acustom_content_remove_quick_edit_link\u0028\u0029",
             "name": "custom_content_remove_quick_edit_link",
-            "summary": "Remove\u0020Quick\u0020Edit\u0020links\u0020from\u0020most\u0020custom\u0020content\u0020admin\u0020screens.",
-            "url": "classes/Instance.html#method_custom_content_remove_quick_edit_link"
+            "summary": "Removes\u0020the\u0020Quick\u0020Edit\u0020row\u0020action\u0020from\u0020custom\u0020post\u0020type\u0020admin\u0020list\u0020tables.",
+            "url": "classes/Graphic-Data-Instance.html#method_custom_content_remove_quick_edit_link"
         },                {
-            "fqsen": "\\Loader",
-            "name": "Loader",
+            "fqsen": "\\Graphic_Data_Loader",
+            "name": "Graphic_Data_Loader",
             "summary": "Register\u0020all\u0020actions\u0020and\u0020filters\u0020for\u0020the\u0020plugin.",
-            "url": "classes/Loader.html"
+            "url": "classes/Graphic-Data-Loader.html"
         },                {
-            "fqsen": "\\Loader\u003A\u003A__construct\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Loader\u003A\u003A__construct\u0028\u0029",
             "name": "__construct",
             "summary": "Initialize\u0020the\u0020collections\u0020used\u0020to\u0020maintain\u0020the\u0020actions\u0020and\u0020filters.",
-            "url": "classes/Loader.html#method___construct"
+            "url": "classes/Graphic-Data-Loader.html#method___construct"
         },                {
-            "fqsen": "\\Loader\u003A\u003Aadd_action\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Loader\u003A\u003Aadd_action\u0028\u0029",
             "name": "add_action",
             "summary": "Add\u0020a\u0020new\u0020action\u0020to\u0020the\u0020collection\u0020to\u0020be\u0020registered\u0020with\u0020WordPress.",
-            "url": "classes/Loader.html#method_add_action"
+            "url": "classes/Graphic-Data-Loader.html#method_add_action"
         },                {
-            "fqsen": "\\Loader\u003A\u003Aadd_filter\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Loader\u003A\u003Aadd_filter\u0028\u0029",
             "name": "add_filter",
             "summary": "Add\u0020a\u0020new\u0020filter\u0020to\u0020the\u0020collection\u0020to\u0020be\u0020registered\u0020with\u0020WordPress.",
-            "url": "classes/Loader.html#method_add_filter"
+            "url": "classes/Graphic-Data-Loader.html#method_add_filter"
         },                {
-            "fqsen": "\\Loader\u003A\u003Aadd\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Loader\u003A\u003Aadd\u0028\u0029",
             "name": "add",
             "summary": "A\u0020utility\u0020function\u0020that\u0020is\u0020used\u0020to\u0020register\u0020the\u0020actions\u0020and\u0020hooks\u0020into\u0020a\u0020single\ncollection.",
-            "url": "classes/Loader.html#method_add"
+            "url": "classes/Graphic-Data-Loader.html#method_add"
         },                {
-            "fqsen": "\\Loader\u003A\u003Arun\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Loader\u003A\u003Arun\u0028\u0029",
             "name": "run",
             "summary": "Register\u0020the\u0020filters\u0020and\u0020actions\u0020with\u0020WordPress.",
-            "url": "classes/Loader.html#method_run"
+            "url": "classes/Graphic-Data-Loader.html#method_run"
         },                {
-            "fqsen": "\\Loader\u003A\u003A\u0024actions",
+            "fqsen": "\\Graphic_Data_Loader\u003A\u003A\u0024actions",
             "name": "actions",
             "summary": "The\u0020array\u0020of\u0020actions\u0020registered\u0020with\u0020WordPress.",
-            "url": "classes/Loader.html#property_actions"
+            "url": "classes/Graphic-Data-Loader.html#property_actions"
         },                {
-            "fqsen": "\\Loader\u003A\u003A\u0024filters",
+            "fqsen": "\\Graphic_Data_Loader\u003A\u003A\u0024filters",
             "name": "filters",
             "summary": "The\u0020array\u0020of\u0020filters\u0020registered\u0020with\u0020WordPress.",
-            "url": "classes/Loader.html#property_filters"
+            "url": "classes/Graphic-Data-Loader.html#property_filters"
         },                {
-            "fqsen": "\\Modal",
-            "name": "Modal",
-            "summary": "",
-            "url": "classes/Modal.html"
+            "fqsen": "\\Graphic_Data_Modal",
+            "name": "Graphic_Data_Modal",
+            "summary": "Manages\u0020the\u0020Modal\u0020custom\u0020post\u0020type\u0020and\u0020its\u0020admin\u0020interface.",
+            "url": "classes/Graphic-Data-Modal.html"
         },                {
-            "fqsen": "\\Modal\u003A\u003Acustom_content_type_modal\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Acustom_content_type_modal\u0028\u0029",
             "name": "custom_content_type_modal",
             "summary": "Create\u0020Modal\u0020custom\u0020content\u0020type.",
-            "url": "classes/Modal.html#method_custom_content_type_modal"
+            "url": "classes/Graphic-Data-Modal.html#method_custom_content_type_modal"
         },                {
-            "fqsen": "\\Modal\u003A\u003Acreate_modal_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Acreate_modal_fields\u0028\u0029",
             "name": "create_modal_fields",
             "summary": "Create\u0020custom\u0020fields,\u0020using\u0020metaboxes,\u0020for\u0020Modal\u0020custom\u0020content\u0020type.",
-            "url": "classes/Modal.html#method_create_modal_fields"
+            "url": "classes/Graphic-Data-Modal.html#method_create_modal_fields"
         },                {
-            "fqsen": "\\Modal\u003A\u003Aregister_modal_rest_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Aregister_modal_rest_fields\u0028\u0029",
             "name": "register_modal_rest_fields",
             "summary": "Register\u0020Modal\u0020custom\u0020fields\u0020for\u0020use\u0020by\u0020REST\u0020API.",
-            "url": "classes/Modal.html#method_register_modal_rest_fields"
+            "url": "classes/Graphic-Data-Modal.html#method_register_modal_rest_fields"
         },                {
-            "fqsen": "\\Modal\u003A\u003Afilter_modal_by_modal_scene\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Afilter_modal_by_modal_scene\u0028\u0029",
             "name": "filter_modal_by_modal_scene",
-            "summary": "Add\u0020a\u0020filter\u0020to\u0020support\u0020filtering\u0020by\u0020\u0022modal_location\u0022\u0020in\u0020REST\u0020API\u0020queries.",
-            "url": "classes/Modal.html#method_filter_modal_by_modal_scene"
+            "summary": "Filter\u0020REST\u0020API\u0020queries\u0020for\u0020modals\u0020by\u0020scene\u0020and\u0020icon\u0020function.",
+            "url": "classes/Graphic-Data-Modal.html#method_filter_modal_by_modal_scene"
         },                {
-            "fqsen": "\\Modal\u003A\u003Achange_modal_columns\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Achange_modal_columns\u0028\u0029",
             "name": "change_modal_columns",
-            "summary": "Set\u0020columns\u0020in\u0020admin\u0020screen\u0020for\u0020Modal\u0020custom\u0020content\u0020type.",
-            "url": "classes/Modal.html#method_change_modal_columns"
+            "summary": "Set\u0020custom\u0020columns\u0020for\u0020the\u0020Modal\u0020post\u0020type\u0020admin\u0020list\u0020table.",
+            "url": "classes/Graphic-Data-Modal.html#method_change_modal_columns"
         },                {
-            "fqsen": "\\Modal\u003A\u003Astore_modal_filter_values\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Astore_modal_filter_values\u0028\u0029",
             "name": "store_modal_filter_values",
             "summary": "Store\u0020filter\u0020values\u0020in\u0020user\u0020metadata\u0020with\u002020\u002Dminute\u0020expiration.",
-            "url": "classes/Modal.html#method_store_modal_filter_values"
+            "url": "classes/Graphic-Data-Modal.html#method_store_modal_filter_values"
         },                {
-            "fqsen": "\\Modal\u003A\u003Aget_modal_filter_value\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Aget_modal_filter_value\u0028\u0029",
             "name": "get_modal_filter_value",
             "summary": "Check\u0020if\u0020stored\u0020filter\u0020values\u0020are\u0020still\u0020valid\u0020and\u0020retrieve\u0020them\u0020if\u0020they\u0020are.",
-            "url": "classes/Modal.html#method_get_modal_filter_value"
+            "url": "classes/Graphic-Data-Modal.html#method_get_modal_filter_value"
         },                {
-            "fqsen": "\\Modal\u003A\u003Aenqueue_modal_admin_columns_css\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Aenqueue_modal_admin_columns_css\u0028\u0029",
             "name": "enqueue_modal_admin_columns_css",
             "summary": "Enqueues\u0020custom\u0020CSS\u0020for\u0020modal\u0020admin\u0020columns\u0020on\u0020the\u0020post\u0020type\u0020edit\u0020screen.",
-            "url": "classes/Modal.html#method_enqueue_modal_admin_columns_css"
+            "url": "classes/Graphic-Data-Modal.html#method_enqueue_modal_admin_columns_css"
         },                {
-            "fqsen": "\\Modal\u003A\u003Amodal_filter_dropdowns\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Amodal_filter_dropdowns\u0028\u0029",
             "name": "modal_filter_dropdowns",
             "summary": "Add\u0020filter\u0020dropdowns\u0020for\u0020the\u0020Modal\u0020admin\u0020screen\u0020with\u0020persistent\u0020selection\u0020support.",
-            "url": "classes/Modal.html#method_modal_filter_dropdowns"
+            "url": "classes/Graphic-Data-Modal.html#method_modal_filter_dropdowns"
         },                {
-            "fqsen": "\\Modal\u003A\u003Amodal_location_filter_results\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Amodal_location_filter_results\u0028\u0029",
             "name": "modal_location_filter_results",
             "summary": "Filter\u0020the\u0020Modal\u0020admin\u0020screen\u0020results\u0020based\u0020on\u0020selected\u0020or\u0020stored\u0020filter\u0020values.",
-            "url": "classes/Modal.html#method_modal_location_filter_results"
+            "url": "classes/Graphic-Data-Modal.html#method_modal_location_filter_results"
         },                {
-            "fqsen": "\\Modal\u003A\u003Acleanup_expired_modal_filters\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Acleanup_expired_modal_filters\u0028\u0029",
             "name": "cleanup_expired_modal_filters",
             "summary": "Clean\u0020up\u0020expired\u0020modal\u0020filter\u0020values\u0020in\u0020user\u0020metadata.",
-            "url": "classes/Modal.html#method_cleanup_expired_modal_filters"
+            "url": "classes/Graphic-Data-Modal.html#method_cleanup_expired_modal_filters"
         },                {
-            "fqsen": "\\Modal\u003A\u003Amodal_warning_notice_tabs\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Amodal_warning_notice_tabs\u0028\u0029",
             "name": "modal_warning_notice_tabs",
-            "summary": "",
-            "url": "classes/Modal.html#method_modal_warning_notice_tabs"
+            "summary": "Display\u0020warning\u0020notices\u0020on\u0020the\u0020Modal\u0020edit\u0020screen\u0020if\u0020tabs\u0020lack\u0020content.",
+            "url": "classes/Graphic-Data-Modal.html#method_modal_warning_notice_tabs"
         },                {
-            "fqsen": "\\Modal\u003A\u003Acustom_modal_column\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Modal\u003A\u003Acustom_modal_column\u0028\u0029",
             "name": "custom_modal_column",
             "summary": "Populate\u0020custom\u0020fields\u0020for\u0020Modal\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
-            "url": "classes/Modal.html#method_custom_modal_column"
+            "url": "classes/Graphic-Data-Modal.html#method_custom_modal_column"
         },                {
-            "fqsen": "\\Scene",
-            "name": "Scene",
-            "summary": "",
-            "url": "classes/Scene.html"
+            "fqsen": "\\Graphic_Data_Scene",
+            "name": "Graphic_Data_Scene",
+            "summary": "Manages\u0020the\u0020Scene\u0020custom\u0020post\u0020type\u0020and\u0020its\u0020admin\u0020interface.",
+            "url": "classes/Graphic-Data-Scene.html"
         },                {
-            "fqsen": "\\Scene\u003A\u003Adisplay_overview_scene_notice\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Adisplay_overview_scene_notice\u0028\u0029",
             "name": "display_overview_scene_notice",
             "summary": "Display\u0020an\u0020admin\u0020notice\u0020if\u0020the\u0020current\u0020scene\u0020is\u0020the\u0020overview\u0020scene\u0020for\u0020its\u0020instance.",
-            "url": "classes/Scene.html#method_display_overview_scene_notice"
+            "url": "classes/Graphic-Data-Scene.html#method_display_overview_scene_notice"
         },                {
-            "fqsen": "\\Scene\u003A\u003Ascene_enqueue_quick_edit_validation\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Agraphic_data_svg_cleanup_on_upload\u0028\u0029",
+            "name": "graphic_data_svg_cleanup_on_upload",
+            "summary": "Clean\u0020up\u0020Inkscape\u002Dgenerated\u0020SVGs\u0020after\u0020WordPress\u0020handles\u0020the\u0020upload.",
+            "url": "classes/Graphic-Data-Scene.html#method_graphic_data_svg_cleanup_on_upload"
+        },                {
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Agraphic_data_transform_svg_inkscape\u0028\u0029",
+            "name": "graphic_data_transform_svg_inkscape",
+            "summary": "Transform\u0020Inkscape\u002Dspecific\u0020attributes\u0020in\u0020an\u0020SVG\u0020string.",
+            "url": "classes/Graphic-Data-Scene.html#method_graphic_data_transform_svg_inkscape"
+        },                {
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Ascene_enqueue_quick_edit_validation\u0028\u0029",
             "name": "scene_enqueue_quick_edit_validation",
-            "summary": "",
-            "url": "classes/Scene.html#method_scene_enqueue_quick_edit_validation"
+            "summary": "Enqueues\u0020the\u0020Quick\u0020Edit\u0020slug\u0020validation\u0020script\u0020on\u0020the\u0020Scene\u0020list\u0020table\u0020screen.",
+            "url": "classes/Graphic-Data-Scene.html#method_scene_enqueue_quick_edit_validation"
         },                {
-            "fqsen": "\\Scene\u003A\u003Ascene_validate_slug_ajax\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Ascene_validate_slug_ajax\u0028\u0029",
             "name": "scene_validate_slug_ajax",
-            "summary": "",
-            "url": "classes/Scene.html#method_scene_validate_slug_ajax"
+            "summary": "AJAX\u0020handler\u0020that\u0020checks\u0020whether\u0020a\u0020scene\u0020post\u0020slug\u0020is\u0020already\u0020in\u0020use.",
+            "url": "classes/Graphic-Data-Scene.html#method_scene_validate_slug_ajax"
         },                {
-            "fqsen": "\\Scene\u003A\u003Amodify_scene_quick_edit_link\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Amodify_scene_quick_edit_link\u0028\u0029",
             "name": "modify_scene_quick_edit_link",
-            "summary": "",
-            "url": "classes/Scene.html#method_modify_scene_quick_edit_link"
+            "summary": "Renames\u0020the\u0020Quick\u0020Edit\u0020row\u0020action\u0020link\u0020for\u0020the\u0020Scene\u0020post\u0020type.",
+            "url": "classes/Graphic-Data-Scene.html#method_modify_scene_quick_edit_link"
         },                {
-            "fqsen": "\\Scene\u003A\u003Aenqueue_scene_admin_columns_css\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aenqueue_scene_admin_columns_css\u0028\u0029",
             "name": "enqueue_scene_admin_columns_css",
             "summary": "Enqueues\u0020custom\u0020CSS\u0020for\u0020scene\u0020admin\u0020columns\u0020on\u0020the\u0020post\u0020type\u0020edit\u0020screen.",
-            "url": "classes/Scene.html#method_enqueue_scene_admin_columns_css"
+            "url": "classes/Graphic-Data-Scene.html#method_enqueue_scene_admin_columns_css"
         },                {
-            "fqsen": "\\Scene\u003A\u003Astore_scene_filter_values\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Astore_scene_filter_values\u0028\u0029",
             "name": "store_scene_filter_values",
             "summary": "Store\u0020filter\u0020values\u0020in\u0020user\u0020metadata\u0020with\u002020\u002Dminute\u0020expiration.",
-            "url": "classes/Scene.html#method_store_scene_filter_values"
+            "url": "classes/Graphic-Data-Scene.html#method_store_scene_filter_values"
         },                {
-            "fqsen": "\\Scene\u003A\u003Aget_scene_filter_value\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aget_scene_filter_value\u0028\u0029",
             "name": "get_scene_filter_value",
             "summary": "Check\u0020if\u0020stored\u0020filter\u0020values\u0020are\u0020still\u0020valid\u0020and\u0020retrieve\u0020them\u0020if\u0020they\u0020are.",
-            "url": "classes/Scene.html#method_get_scene_filter_value"
+            "url": "classes/Graphic-Data-Scene.html#method_get_scene_filter_value"
         },                {
-            "fqsen": "\\Scene\u003A\u003Acleanup_expired_scene_filters\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Acleanup_expired_scene_filters\u0028\u0029",
             "name": "cleanup_expired_scene_filters",
             "summary": "Clean\u0020up\u0020expired\u0020scene\u0020filter\u0020values\u0020in\u0020user\u0020metadata.",
-            "url": "classes/Scene.html#method_cleanup_expired_scene_filters"
+            "url": "classes/Graphic-Data-Scene.html#method_cleanup_expired_scene_filters"
         },                {
-            "fqsen": "\\Scene\u003A\u003Ascene_filter_dropdowns\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Ascene_filter_dropdowns\u0028\u0029",
             "name": "scene_filter_dropdowns",
             "summary": "Add\u0020filter\u0020dropdowns\u0020for\u0020the\u0020Scene\u0020admin\u0020screen\u0020with\u0020persistent\u0020selection\u0020support.",
-            "url": "classes/Scene.html#method_scene_filter_dropdowns"
+            "url": "classes/Graphic-Data-Scene.html#method_scene_filter_dropdowns"
         },                {
-            "fqsen": "\\Scene\u003A\u003Ascene_location_filter_results\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Ascene_location_filter_results\u0028\u0029",
             "name": "scene_location_filter_results",
             "summary": "Filter\u0020the\u0020Scene\u0020admin\u0020screen\u0020results\u0020based\u0020on\u0020selected\u0020or\u0020stored\u0020filter\u0020values.",
-            "url": "classes/Scene.html#method_scene_location_filter_results"
+            "url": "classes/Graphic-Data-Scene.html#method_scene_location_filter_results"
         },                {
-            "fqsen": "\\Scene\u003A\u003Achange_scene_columns\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Achange_scene_columns\u0028\u0029",
             "name": "change_scene_columns",
-            "summary": "Set\u0020columns\u0020in\u0020admin\u0020screen\u0020for\u0020Scene\u0020custom\u0020content\u0020type.",
-            "url": "classes/Scene.html#method_change_scene_columns"
+            "summary": "Set\u0020custom\u0020columns\u0020for\u0020the\u0020Scene\u0020post\u0020type\u0020admin\u0020list\u0020table.",
+            "url": "classes/Graphic-Data-Scene.html#method_change_scene_columns"
         },                {
-            "fqsen": "\\Scene\u003A\u003Acustom_scene_column\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Acustom_scene_column\u0028\u0029",
             "name": "custom_scene_column",
             "summary": "Populate\u0020custom\u0020fields\u0020for\u0020Scene\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
-            "url": "classes/Scene.html#method_custom_scene_column"
+            "url": "classes/Graphic-Data-Scene.html#method_custom_scene_column"
         },                {
-            "fqsen": "\\Scene\u003A\u003Astring_truncate\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Astring_truncate\u0028\u0029",
             "name": "string_truncate",
             "summary": "Shorten\u0020string\u0020without\u0020cutting\u0020words\u0020midword.",
-            "url": "classes/Scene.html#method_string_truncate"
+            "url": "classes/Graphic-Data-Scene.html#method_string_truncate"
         },                {
-            "fqsen": "\\Scene\u003A\u003Aremove_bulk_actions\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aremove_bulk_actions\u0028\u0029",
             "name": "remove_bulk_actions",
             "summary": "Remove\u0020Bulk\u0020Actions\u0020dropdown\u0020from\u0020Scene,\u0020Modal,\u0020Figure,\u0020and\u0020Instance\u0020admin\u0020screens.",
-            "url": "classes/Scene.html#method_remove_bulk_actions"
+            "url": "classes/Graphic-Data-Scene.html#method_remove_bulk_actions"
         },                {
-            "fqsen": "\\Scene\u003A\u003Ascene_remove_quick_edit_link\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Ascene_remove_quick_edit_link\u0028\u0029",
             "name": "scene_remove_quick_edit_link",
             "summary": "Remove\u0020Quick\u0020Edit\u0020links\u0020from\u0020Scene\u0020admin\u0020screen.",
-            "url": "classes/Scene.html#method_scene_remove_quick_edit_link"
+            "url": "classes/Graphic-Data-Scene.html#method_scene_remove_quick_edit_link"
         },                {
-            "fqsen": "\\Scene\u003A\u003Acustom_content_type_scene\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Acustom_content_type_scene\u0028\u0029",
             "name": "custom_content_type_scene",
             "summary": "Create\u0020Scene\u0020custom\u0020content\u0020type.",
-            "url": "classes/Scene.html#method_custom_content_type_scene"
+            "url": "classes/Graphic-Data-Scene.html#method_custom_content_type_scene"
         },                {
-            "fqsen": "\\Scene\u003A\u003Acreate_scene_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Acreate_scene_fields\u0028\u0029",
             "name": "create_scene_fields",
             "summary": "Create\u0020custom\u0020fields,\u0020using\u0020metaboxes,\u0020for\u0020Scene\u0020custom\u0020content\u0020type.",
-            "url": "classes/Scene.html#method_create_scene_fields"
+            "url": "classes/Graphic-Data-Scene.html#method_create_scene_fields"
         },                {
-            "fqsen": "\\Scene\u003A\u003Aregister_scene_rest_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aregister_scene_rest_fields\u0028\u0029",
             "name": "register_scene_rest_fields",
             "summary": "Register\u0020Scene\u0020custom\u0020fields\u0020for\u0020use\u0020by\u0020REST\u0020API.",
-            "url": "classes/Scene.html#method_register_scene_rest_fields"
+            "url": "classes/Graphic-Data-Scene.html#method_register_scene_rest_fields"
         },                {
-            "fqsen": "\\Scene\u003A\u003Afilter_scene_by_scene_location\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Afilter_scene_by_scene_location\u0028\u0029",
             "name": "filter_scene_by_scene_location",
-            "summary": "Add\u0020a\u0020filter\u0020to\u0020support\u0020filtering\u0020by\u0020\u0022scene_location\u0022\u0020in\u0020REST\u0020API\u0020queries.",
-            "url": "classes/Scene.html#method_filter_scene_by_scene_location"
+            "summary": "Filter\u0020REST\u0020API\u0020queries\u0020for\u0020scenes\u0020by\u0020the\u0020\u0022scene_location\u0022\u0020meta\u0020field.",
+            "url": "classes/Graphic-Data-Scene.html#method_filter_scene_by_scene_location"
         },                {
-            "fqsen": "\\Scene\u003A\u003Aadd_scene_rewrite_rules\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aadd_scene_rewrite_rules\u0028\u0029",
             "name": "add_scene_rewrite_rules",
-            "summary": "Add\u0020scene\u0020rewrite\u0020rules\u0020for\u0020permalinks\u0020\u0028Skanda\u0029.\u0020THIS\u0020FUNCTION\u0020IS\u0020NOT\u0020IN\u0020USE\u0020AND\u0020REPLACED\u0020WITH\u0020OTHER\u0020REWRITE\u0020RULE\u0020FUNCTIONS.\u0020REMOVE\u003F",
-            "url": "classes/Scene.html#method_add_scene_rewrite_rules"
+            "summary": "Add\u0020custom\u0020rewrite\u0020rules\u0020for\u0020scene\u0020permalinks.",
+            "url": "classes/Graphic-Data-Scene.html#method_add_scene_rewrite_rules"
         },                {
-            "fqsen": "\\Scene\u003A\u003Aremove_scene_slug\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aremove_scene_slug\u0028\u0029",
             "name": "remove_scene_slug",
-            "summary": "Add\u0020scene\u0020rewrite\u0020rules\u0020for\u0020permalinks.",
-            "url": "classes/Scene.html#method_remove_scene_slug"
+            "summary": "Rewrite\u0020the\u0020permalink\u0020for\u0020scene\u0020posts\u0020to\u0020use\u0020the\u0020instance\u0020slug.",
+            "url": "classes/Graphic-Data-Scene.html#method_remove_scene_slug"
         },                {
-            "fqsen": "\\Scene\u003A\u003Ascene_preview\u0028\u0029",
-            "name": "scene_preview",
-            "summary": "",
-            "url": "classes/Scene.html#method_scene_preview"
-        },                {
-            "fqsen": "\\Scene\u003A\u003Aregister_status_as_sortable_column\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aregister_status_as_sortable_column\u0028\u0029",
             "name": "register_status_as_sortable_column",
             "summary": "Registers\u0020the\u0020\u0022status\u0022\u0020column\u0020as\u0020sortable\u0020in\u0020the\u0020Scene,\u0020Modal,\u0020and\u0020Figure\u0020custom\u0020post\u0020admin\u0020lists.",
-            "url": "classes/Scene.html#method_register_status_as_sortable_column"
+            "url": "classes/Graphic-Data-Scene.html#method_register_status_as_sortable_column"
         },                {
-            "fqsen": "\\Scene\u003A\u003Aorderby_status_column\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aorderby_status_column\u0028\u0029",
             "name": "orderby_status_column",
             "summary": "Modifies\u0020the\u0020main\u0020WordPress\u0020query\u0020to\u0020enable\u0020sorting\u0020by\u0020the\u0020last\u0020modified\u0020date.",
-            "url": "classes/Scene.html#method_orderby_status_column"
+            "url": "classes/Graphic-Data-Scene.html#method_orderby_status_column"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page",
             "name": "Graphic_Data_Settings_Page",
@@ -2435,6 +2425,11 @@ Search.appendIndex(
             "name": "settings_page",
             "summary": "Renders\u0020the\u0020plugin\u0020settings\u0020page\u0020in\u0020the\u0020WordPress\u0020admin.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_settings_page"
+        },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Acheck_sitewide_footer_status\u0028\u0029",
+            "name": "check_sitewide_footer_status",
+            "summary": "Checks\u0020the\u0020sitewide\u0020footer\u0020option\u0020and\u0020initializes\u0020it\u0020to\u0020an\u0020empty\u0020string\u0020if\u0020not\u0020set.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_check_sitewide_footer_status"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content",
             "name": "Graphic_Data_Tutorial_Content",

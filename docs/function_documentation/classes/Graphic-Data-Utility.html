@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Documentation"
-permalink: /classes/Graphic-Data-Utility/
+permalink: /function_documentation/classes/Graphic-Data-Utility/
 ---
 
 
@@ -179,13 +179,6 @@ permalink: /classes/Graphic-Data-Utility/
 <dd>Display warning message if add new post is not possible for custom content post type.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Utility.html#method_dummy_sanitize">dummy_sanitize()</a>
-    <span>
-                                &nbsp;: string    </span>
-</dt>
-<dd>Dummy sanitize function that returns the value as is.</dd>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_extract_field_values">extract_field_values()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -225,6 +218,7 @@ permalink: /classes/Graphic-Data-Utility/
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
+<dd>REST API get callback for retrieving a post meta value.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_output_transient_to_js">output_transient_to_js()</a>
@@ -243,8 +237,16 @@ permalink: /classes/Graphic-Data-Utility/
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_register_custom_rest_fields">register_custom_rest_fields()</a>
     <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Register custom meta fields with the REST API for a given post type.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_render_nonce_field">render_nonce_field()</a>
+    <span>
                                 &nbsp;: mixed    </span>
 </dt>
+<dd>Add nonce field to about, modal, scene, instance, and figure custom post types, as well as for the Instance Type page.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_retrieve_post_errors_warnings">retrieve_post_errors_warnings()</a>
@@ -268,6 +270,13 @@ permalink: /classes/Graphic-Data-Utility/
 <dd>Get a list of all instances, filtered for &#039;content_editor&#039; role.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_return_figure_icons">return_figure_icons()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Retrieve modal icon dropdown options for the figure content type.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_return_icons">return_icons()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
@@ -282,6 +291,20 @@ permalink: /classes/Graphic-Data-Utility/
 <dd>Get a list of all scenes associated with an instance.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_return_modal_sections">return_modal_sections()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Retrieve modal section headers for a given scene.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_return_modal_tabs">return_modal_tabs()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Retrieve tab titles for a given modal.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_return_scene_titles">return_scene_titles()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
@@ -289,35 +312,25 @@ permalink: /classes/Graphic-Data-Utility/
 <dd>Get scene titles for scenes sharing the same instance as a modal.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Utility.html#method_returnFigureIcons">returnFigureIcons()</a>
-    <span>
-                                &nbsp;: mixed    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Utility.html#method_returnModalSections">returnModalSections()</a>
-    <span>
-                                &nbsp;: mixed    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Utility.html#method_returnModalTabs">returnModalTabs()</a>
-    <span>
-                                &nbsp;: mixed    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Utility.html#method_returnScenesExceptCurrent">returnScenesExceptCurrent()</a>
+    <a class="" href="classes/Graphic-Data-Utility.html#method_return_scenes_except_current">return_scenes_except_current()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
 <dd>Return an array of scenes, other than the current scene, for a given location.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Utility.html#method_returnScenesFigure">returnScenesFigure()</a>
+    <a class="" href="classes/Graphic-Data-Utility.html#method_return_scenes_figure">return_scenes_figure()</a>
     <span>
-                                &nbsp;: mixed    </span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
+<dd>Retrieve scene dropdown options for the figure content type.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field">sanitize_number_or_quotes_field()</a>
+    <span>
+                                &nbsp;: string|int    </span>
+</dt>
+<dd>Sanitize the field value when the option is a whole number or an empty string.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_string_truncate">string_truncate()</a>
@@ -354,7 +367,7 @@ permalink: /classes/Graphic-Data-Utility/
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">226</span>
+    <span class="phpdocumentor-element-found-in__line">262</span>
 
     </aside>
 
@@ -402,7 +415,7 @@ in the edit screen for the relevant scene and instance.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">473</span>
+    <span class="phpdocumentor-element-found-in__line">509</span>
 
     </aside>
 
@@ -598,7 +611,7 @@ $this-&gt;create_instance_dropdown_filter('scene_instance');</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">166</span>
+    <span class="phpdocumentor-element-found-in__line">191</span>
 
     </aside>
 
@@ -653,7 +666,7 @@ $this-&gt;create_instance_dropdown_filter('scene_instance');</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">929</span>
+    <span class="phpdocumentor-element-found-in__line">1049</span>
 
     </aside>
 
@@ -725,69 +738,6 @@ implemented for the instance content type, but is intended to be generalized for
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_dummy_sanitize">
-        dummy_sanitize()
-        <a href="classes/Graphic-Data-Utility.html#method_dummy_sanitize" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">156</span>
-
-    </aside>
-
-        <p class="phpdocumentor-summary">Dummy sanitize function that returns the value as is.</p>
-
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">dummy_sanitize</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-        <section class="phpdocumentor-description"><p>.
-This sanitize function is used to prevent automatic sanitization of
-URL fields. What is causing the automatic sanitization is unknown but
-exists somewhere deep in the Exopite Framework options. The problem comes up
-with URL escape codes which are not interpreted correctly by whatever
-is doing the automatic sanitization. This function, in contrast, ensures that
-the user input is preserved.</p>
-</section>
-
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$value</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>The URL field to be returned.</p>
-</section>
-
-            </dd>
-            </dl>
-
-    
-
-        
-    
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">string</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>The URL field.</p>
-</section>
-
-            </section>
-
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
     <h4 class="phpdocumentor-element__name" id="method_extract_field_values">
         extract_field_values()
         <a href="classes/Graphic-Data-Utility.html#method_extract_field_values" class="headerlink"><i class="fas fa-link"></i></a>
@@ -796,7 +746,7 @@ the user input is preserved.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">177</span>
+    <span class="phpdocumentor-element-found-in__line">203</span>
 
     </aside>
 
@@ -804,7 +754,7 @@ the user input is preserved.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">extract_field_values</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fields</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$all_fields</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">extract_field_values</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fields</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$all_fields</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$key_name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -830,6 +780,15 @@ the user input is preserved.</p>
 </section>
 
             </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$key_name</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The base key for the associated transient, used  (e.g., 'modal_error_all_fields').</p>
+</section>
+
+            </dd>
             </dl>
 
     
@@ -852,7 +811,7 @@ the user input is preserved.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">97</span>
+    <span class="phpdocumentor-element-found-in__line">139</span>
 
     </aside>
 
@@ -937,7 +896,7 @@ stores the data as-is. Cleans up expired transients before storing new ones.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">138</span>
+    <span class="phpdocumentor-element-found-in__line">180</span>
 
     </aside>
 
@@ -992,7 +951,7 @@ stores the data as-is. Cleans up expired transients before storing new ones.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">411</span>
+    <span class="phpdocumentor-element-found-in__line">447</span>
 
     </aside>
 
@@ -1075,7 +1034,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">127</span>
+    <span class="phpdocumentor-element-found-in__line">169</span>
 
     </aside>
 
@@ -1132,41 +1091,50 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">911</span>
+    <span class="phpdocumentor-element-found-in__line">1031</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">REST API get callback for retrieving a post meta value.</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">meta_get_callback</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$object</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$field_name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$request</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">meta_get_callback</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$object</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$field_name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type"><abbr title="\WP_REST_Request">WP_REST_Request</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$request</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-    
+        <section class="phpdocumentor-description"><p>Used as the get_callback by register_custom_rest_fields().</p>
+</section>
+
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$object</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>The post data array containing the post 'id'.</p>
+</section>
+
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$field_name</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>The meta field name to retrieve.</p>
+</section>
+
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$request</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\WP_REST_Request">WP_REST_Request</abbr></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>The current REST API request object.</p>
+</section>
+
             </dd>
             </dl>
 
@@ -1174,7 +1142,15 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
 
         
     
-    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">mixed</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The single post meta value for the given field.</p>
+</section>
+
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -1190,7 +1166,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">43</span>
+    <span class="phpdocumentor-element-found-in__line">85</span>
 
     </aside>
 
@@ -1245,7 +1221,7 @@ The transient is deleted after being output.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">288</span>
+    <span class="phpdocumentor-element-found-in__line">324</span>
 
     </aside>
 
@@ -1291,14 +1267,74 @@ Notices are displayed only on the post type edit screen after a post has been up
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">897</span>
+    <span class="phpdocumentor-element-found-in__line">1008</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">Register custom meta fields with the REST API for a given post type.</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">register_custom_rest_fields</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$rest_fields</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">register_custom_rest_fields</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, string&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$rest_fields</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Iterates through the provided field names and registers each one
+as a readable REST API field using the class's meta_get_callback method.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The post type slug to register the fields for.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$rest_fields</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, string&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Array of meta field names to expose via the REST API.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_render_nonce_field">
+        render_nonce_field()
+        <a href="classes/Graphic-Data-Utility.html#method_render_nonce_field" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">39</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Add nonce field to about, modal, scene, instance, and figure custom post types, as well as for the Instance Type page.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">render_nonce_field</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><abbr title="\WP_Post">WP_Post</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1307,22 +1343,32 @@ Notices are displayed only on the post type edit screen after a post has been up
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-argument-list__argument__name">$post</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\WP_Post">WP_Post</abbr></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$rest_fields</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>Current post object.</p>
+</section>
+
             </dd>
             </dl>
 
     
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Utility.html#method_render_nonce_field#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
 
         
     
@@ -1342,7 +1388,7 @@ Notices are displayed only on the post type edit screen after a post has been up
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">378</span>
+    <span class="phpdocumentor-element-found-in__line">414</span>
 
     </aside>
 
@@ -1404,7 +1450,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">345</span>
+    <span class="phpdocumentor-element-found-in__line">381</span>
 
     </aside>
 
@@ -1457,7 +1503,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">541</span>
+    <span class="phpdocumentor-element-found-in__line">585</span>
 
     </aside>
 
@@ -1492,6 +1538,67 @@ posts reloads after the save.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_return_figure_icons">
+        return_figure_icons()
+        <a href="classes/Graphic-Data-Utility.html#method_return_figure_icons" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">961</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Retrieve modal icon dropdown options for the figure content type.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">return_figure_icons</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int|string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Queries all 'modal' posts that belong to the given scene and have
+an 'icon_function' of 'Modal', then returns their IDs mapped to
+titles. The resulting array includes a leading empty entry for use
+as a default dropdown option.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$scene_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int|string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The post ID of the scene to retrieve modal icons for.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Associative array keyed by modal post ID with post titles
+as values. Includes a leading empty entry.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_return_icons">
         return_icons()
         <a href="classes/Graphic-Data-Utility.html#method_return_icons" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1500,7 +1607,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">694</span>
+    <span class="phpdocumentor-element-found-in__line">738</span>
 
     </aside>
 
@@ -1560,7 +1667,7 @@ or if the 'icons' element is not found in the SVG.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">604</span>
+    <span class="phpdocumentor-element-found-in__line">648</span>
 
     </aside>
 
@@ -1607,6 +1714,127 @@ or if the 'icons' element is not found in the SVG.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_return_modal_sections">
+        return_modal_sections()
+        <a href="classes/Graphic-Data-Utility.html#method_return_modal_sections" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">848</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Retrieve modal section headers for a given scene.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">return_modal_sections</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Iterates through up to six scene sections, pulling each section's
+post meta and collecting non-empty titles. The resulting array is
+sorted alphabetically and prefixed with a blank entry for use as
+dropdown options.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$scene_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The post ID of the scene.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Associative array keyed by section field name (e.g. 'scene_section1')
+with section titles as values. Includes a leading empty entry.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_return_modal_tabs">
+        return_modal_tabs()
+        <a href="classes/Graphic-Data-Utility.html#method_return_modal_tabs" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">935</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Retrieve tab titles for a given modal.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">return_modal_tabs</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int|string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$modal_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Iterates through up to six tab title meta fields for the specified
+modal post and collects any non-empty titles. The resulting array
+includes a leading empty entry for use as a default dropdown option.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$modal_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int|string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The post ID of the modal.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Associative array keyed by tab number (1-6) with tab titles
+as values. Includes a leading empty entry.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_return_scene_titles">
         return_scene_titles()
         <a href="classes/Graphic-Data-Utility.html#method_return_scene_titles" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1615,7 +1843,7 @@ or if the 'icons' element is not found in the SVG.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">640</span>
+    <span class="phpdocumentor-element-found-in__line">684</span>
 
     </aside>
 
@@ -1671,147 +1899,15 @@ or if the 'icons' element is not found in the SVG.</p>
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_returnFigureIcons">
-        returnFigureIcons()
-        <a href="classes/Graphic-Data-Utility.html#method_returnFigureIcons" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_return_scenes_except_current">
+        return_scenes_except_current()
+        <a href="classes/Graphic-Data-Utility.html#method_return_scenes_except_current" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">857</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">returnFigureIcons</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$scene_id</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-        
-    
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_returnModalSections">
-        returnModalSections()
-        <a href="classes/Graphic-Data-Utility.html#method_returnModalSections" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">793</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">returnModalSections</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$scene_id</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-        
-    
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_returnModalTabs">
-        returnModalTabs()
-        <a href="classes/Graphic-Data-Utility.html#method_returnModalTabs" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">841</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">returnModalTabs</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$modal_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$modal_id</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-        
-    
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_returnScenesExceptCurrent">
-        returnScenesExceptCurrent()
-        <a href="classes/Graphic-Data-Utility.html#method_returnScenesExceptCurrent" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">758</span>
+    <span class="phpdocumentor-element-found-in__line">802</span>
 
     </aside>
 
@@ -1819,7 +1915,7 @@ or if the 'icons' element is not found in the SVG.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">returnScenesExceptCurrent</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+                    <span class="phpdocumentor-signature__name">return_scenes_except_current</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1858,35 +1954,43 @@ or if the 'icons' element is not found in the SVG.</p>
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_returnScenesFigure">
-        returnScenesFigure()
-        <a href="classes/Graphic-Data-Utility.html#method_returnScenesFigure" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_return_scenes_figure">
+        return_scenes_figure()
+        <a href="classes/Graphic-Data-Utility.html#method_return_scenes_figure" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">811</span>
+    <span class="phpdocumentor-element-found-in__line">877</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">Retrieve scene dropdown options for the figure content type.</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">returnScenesFigure</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$location</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">return_scenes_figure</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$location</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-    
+        <section class="phpdocumentor-description"><p>Queries all 'scene' posts whose 'scene_location' meta matches
+the given location and returns their IDs mapped to titles.
+The resulting array includes a leading empty entry for use
+as a default dropdown option.</p>
+</section>
+
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$location</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>The location value to match against the 'scene_location' meta field.</p>
+</section>
+
             </dd>
             </dl>
 
@@ -1894,7 +1998,89 @@ or if the 'icons' element is not found in the SVG.</p>
 
         
     
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Associative array keyed by scene post ID with post titles as values.
+Includes a leading empty entry.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_sanitize_number_or_quotes_field">
+        sanitize_number_or_quotes_field()
+        <a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="admin/class-utility.php"><a href="files/admin-class-utility.html"><abbr title="admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">917</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Sanitize the field value when the option is a whole number or an empty string.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">sanitize_number_or_quotes_field</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
     
+        <section class="phpdocumentor-description"><p>Returns an empty string if the value is empty, otherwise
+converts it to a non-negative integer using absint().</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$value</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The raw field value to sanitize.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string|int</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Empty string if blank, otherwise a non-negative integer.</p>
+</section>
+
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -2094,7 +2280,6 @@ or if the 'icons' element is not found in the SVG.</p>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_create_instance_dropdown_filter">create_instance_dropdown_filter()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_delete_fields_transient">delete_fields_transient()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_display_warning_message_if_new_post_impossible">display_warning_message_if_new_post_impossible()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_dummy_sanitize">dummy_sanitize()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_extract_field_values">extract_field_values()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_fields_to_transient">fields_to_transient()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_get_fields_from_transient">get_fields_from_transient()</a></li>
@@ -2104,17 +2289,19 @@ or if the 'icons' element is not found in the SVG.</p>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_output_transient_to_js">output_transient_to_js()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_post_admin_notice">post_admin_notice()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_register_custom_rest_fields">register_custom_rest_fields()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_render_nonce_field">render_nonce_field()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_retrieve_post_errors_warnings">retrieve_post_errors_warnings()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_retrieve_post_status">retrieve_post_status()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_all_instances">return_all_instances()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_figure_icons">return_figure_icons()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_icons">return_icons()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_instance_scenes">return_instance_scenes()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_modal_sections">return_modal_sections()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_modal_tabs">return_modal_tabs()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scene_titles">return_scene_titles()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_returnFigureIcons">returnFigureIcons()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_returnModalSections">returnModalSections()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_returnModalTabs">returnModalTabs()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_returnScenesExceptCurrent">returnScenesExceptCurrent()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_returnScenesFigure">returnScenesFigure()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scenes_except_current">return_scenes_except_current()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scenes_figure">return_scenes_figure()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field">sanitize_number_or_quotes_field()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_string_truncate">string_truncate()</a></li>
                                     </ul>
             </li>

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Documentation"
-permalink: /classes/Graphic-Data-Settings-Page/
+permalink: /function_documentation/classes/Graphic-Data-Settings-Page/
 ---
 
 
@@ -157,6 +157,13 @@ and provides callback functions for rendering each settings field.</p>
                                 &nbsp;: void    </span>
 </dt>
 <dd>Adds the Graphic Data Settings page to the WordPress admin menu.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Settings-Page.html#method_check_sitewide_footer_status">check_sitewide_footer_status()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Checks the sitewide footer option and initializes it to an empty string if not set.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Settings-Page.html#method_enqueue_admin_interactive_default_bar_styles">enqueue_admin_interactive_default_bar_styles()</a>
@@ -346,6 +353,43 @@ users with administrator capability to configure plugin settings.</p>
                                              
                                     </dd>
                                             </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_check_sitewide_footer_status">
+        check_sitewide_footer_status()
+        <a href="classes/Graphic-Data-Settings-Page.html#method_check_sitewide_footer_status" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="includes/admin-settings-page.php"><a href="files/includes-admin-settings-page.html"><abbr title="includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">793</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Checks the sitewide footer option and initializes it to an empty string if not set.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">check_sitewide_footer_status</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>For some reason, when sitewide footer isn't set, it produces an error in the log. This function corrects that error.</p>
+</section>
+
+    
+    
 
         
     
@@ -1424,6 +1468,7 @@ The value is saved to wp_options as graphic_data_tutorial_content.</p>
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_add_admin_menu">add_admin_menu()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_check_sitewide_footer_status">check_sitewide_footer_status()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_enqueue_admin_interactive_default_bar_styles">enqueue_admin_interactive_default_bar_styles()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_enqueue_admin_interactive_default_line_styles">enqueue_admin_interactive_default_line_styles()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Settings-Page.html#method_get_footer_settings">get_footer_settings()</a></li>
