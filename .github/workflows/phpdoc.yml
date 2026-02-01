@@ -31,6 +31,12 @@ jobs:
             -d /data/plugins/graphic_data_plugin \
             -t /data/docs/function_documentation || true
 
+      - name: Fix file permissions after Docker
+        run: |
+          if [ -d docs/function_documentation ]; then
+            sudo chown -R $(id -u):$(id -g) docs/function_documentation
+          fi
+
       - name: Convert phpDocumentor HTML to Jekyll pages
         run: |
           if [ -d docs/function_documentation ]; then
