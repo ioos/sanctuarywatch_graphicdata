@@ -1,0 +1,105 @@
+﻿2026-02-01T02:35:53.9604071Z ##[group]Run docker run --rm -v "${PWD}":/data phpdoc/phpdoc:3 \
+2026-02-01T02:35:53.9605149Z [36;1mdocker run --rm -v "${PWD}":/data phpdoc/phpdoc:3 \[0m
+2026-02-01T02:35:53.9606032Z [36;1m  -d /data/plugins/graphic_data_plugin \[0m
+2026-02-01T02:35:53.9606824Z [36;1m  -t /data/docs/function_documentation || true[0m
+2026-02-01T02:35:53.9636159Z shell: /usr/bin/bash -e {0}
+2026-02-01T02:35:53.9636691Z ##[endgroup]
+2026-02-01T02:35:54.0721552Z Unable to find image 'phpdoc/phpdoc:3' locally
+2026-02-01T02:35:54.8965569Z 3: Pulling from phpdoc/phpdoc
+2026-02-01T02:35:55.1490475Z 0e4bc2bd6656: Pulling fs layer
+2026-02-01T02:35:55.1491606Z 6fb0a7555bfa: Pulling fs layer
+2026-02-01T02:35:55.1492304Z 6ad4c36519ef: Pulling fs layer
+2026-02-01T02:35:55.1492742Z 626a3e9bc74e: Pulling fs layer
+2026-02-01T02:35:55.1493045Z e034d64b23d3: Pulling fs layer
+2026-02-01T02:35:55.1493353Z 96e6cf5c792d: Pulling fs layer
+2026-02-01T02:35:55.1493818Z edc6f3500bcf: Pulling fs layer
+2026-02-01T02:35:55.1494271Z 3491850fbccb: Pulling fs layer
+2026-02-01T02:35:55.1494762Z 655bb1b813ca: Pulling fs layer
+2026-02-01T02:35:55.1495090Z 054738218147: Pulling fs layer
+2026-02-01T02:35:55.1495490Z cce78e3bd46a: Pulling fs layer
+2026-02-01T02:35:55.1495963Z b3c7dd5a5373: Pulling fs layer
+2026-02-01T02:35:55.1496301Z 948a455abf14: Pulling fs layer
+2026-02-01T02:35:55.1496830Z 34f28dd40e45: Pulling fs layer
+2026-02-01T02:35:55.1497121Z 9a371d9c62fc: Pulling fs layer
+2026-02-01T02:35:55.1497575Z 64b632bb9f44: Pulling fs layer
+2026-02-01T02:35:55.1497840Z 0d59edb1b5b3: Pulling fs layer
+2026-02-01T02:35:55.1498098Z 626a3e9bc74e: Waiting
+2026-02-01T02:35:55.1498323Z 3491850fbccb: Waiting
+2026-02-01T02:35:55.1498553Z 655bb1b813ca: Waiting
+2026-02-01T02:35:55.1498894Z 34f28dd40e45: Waiting
+2026-02-01T02:35:55.1499123Z 054738218147: Waiting
+2026-02-01T02:35:55.1499358Z 9a371d9c62fc: Waiting
+2026-02-01T02:35:55.1499575Z cce78e3bd46a: Waiting
+2026-02-01T02:35:55.1499810Z 64b632bb9f44: Waiting
+2026-02-01T02:35:55.1500058Z b3c7dd5a5373: Waiting
+2026-02-01T02:35:55.1500286Z 948a455abf14: Waiting
+2026-02-01T02:35:55.1500549Z 0d59edb1b5b3: Waiting
+2026-02-01T02:35:55.1500831Z e034d64b23d3: Waiting
+2026-02-01T02:35:55.1501090Z 96e6cf5c792d: Waiting
+2026-02-01T02:35:55.1501324Z edc6f3500bcf: Waiting
+2026-02-01T02:35:55.4264950Z 6fb0a7555bfa: Verifying Checksum
+2026-02-01T02:35:55.4266218Z 6fb0a7555bfa: Download complete
+2026-02-01T02:35:55.6440489Z 0e4bc2bd6656: Verifying Checksum
+2026-02-01T02:35:55.6441343Z 0e4bc2bd6656: Download complete
+2026-02-01T02:35:55.6837714Z 626a3e9bc74e: Verifying Checksum
+2026-02-01T02:35:55.6840003Z 626a3e9bc74e: Download complete
+2026-02-01T02:35:55.9511764Z 96e6cf5c792d: Verifying Checksum
+2026-02-01T02:35:55.9519606Z 96e6cf5c792d: Download complete
+2026-02-01T02:35:56.0596760Z e034d64b23d3: Verifying Checksum
+2026-02-01T02:35:56.0597728Z e034d64b23d3: Download complete
+2026-02-01T02:35:56.1209196Z 6ad4c36519ef: Verifying Checksum
+2026-02-01T02:35:56.1210357Z 6ad4c36519ef: Download complete
+2026-02-01T02:35:56.3241281Z 3491850fbccb: Verifying Checksum
+2026-02-01T02:35:56.3244349Z 3491850fbccb: Download complete
+2026-02-01T02:35:56.3848993Z edc6f3500bcf: Verifying Checksum
+2026-02-01T02:35:56.3849550Z edc6f3500bcf: Download complete
+2026-02-01T02:35:56.3871420Z 655bb1b813ca: Download complete
+2026-02-01T02:35:56.5972337Z 054738218147: Download complete
+2026-02-01T02:35:56.6521876Z 0e4bc2bd6656: Pull complete
+2026-02-01T02:35:56.8691113Z 948a455abf14: Verifying Checksum
+2026-02-01T02:35:56.8692631Z 948a455abf14: Download complete
+2026-02-01T02:35:57.0905708Z cce78e3bd46a: Verifying Checksum
+2026-02-01T02:35:57.0908155Z cce78e3bd46a: Download complete
+2026-02-01T02:35:57.2341813Z 6fb0a7555bfa: Pull complete
+2026-02-01T02:35:57.3560883Z b3c7dd5a5373: Verifying Checksum
+2026-02-01T02:35:57.3568843Z b3c7dd5a5373: Download complete
+2026-02-01T02:35:57.3647082Z 9a371d9c62fc: Download complete
+2026-02-01T02:35:57.4398274Z 34f28dd40e45: Verifying Checksum
+2026-02-01T02:35:57.4398787Z 34f28dd40e45: Download complete
+2026-02-01T02:35:57.6492723Z 0d59edb1b5b3: Verifying Checksum
+2026-02-01T02:35:57.6493669Z 0d59edb1b5b3: Download complete
+2026-02-01T02:35:57.6941739Z 64b632bb9f44: Download complete
+2026-02-01T02:36:01.1475930Z 6ad4c36519ef: Pull complete
+2026-02-01T02:36:01.1661371Z 626a3e9bc74e: Pull complete
+2026-02-01T02:36:01.2620369Z e034d64b23d3: Pull complete
+2026-02-01T02:36:01.2769667Z 96e6cf5c792d: Pull complete
+2026-02-01T02:36:01.8660168Z edc6f3500bcf: Pull complete
+2026-02-01T02:36:01.8810780Z 3491850fbccb: Pull complete
+2026-02-01T02:36:01.8948149Z 655bb1b813ca: Pull complete
+2026-02-01T02:36:01.9089329Z 054738218147: Pull complete
+2026-02-01T02:36:02.5711115Z cce78e3bd46a: Pull complete
+2026-02-01T02:36:04.4122934Z b3c7dd5a5373: Pull complete
+2026-02-01T02:36:04.4297794Z 948a455abf14: Pull complete
+2026-02-01T02:36:05.8476747Z 34f28dd40e45: Pull complete
+2026-02-01T02:36:05.8663226Z 9a371d9c62fc: Pull complete
+2026-02-01T02:36:05.8937219Z 64b632bb9f44: Pull complete
+2026-02-01T02:36:05.9101746Z 0d59edb1b5b3: Pull complete
+2026-02-01T02:36:05.9157085Z Digest: sha256:2b36e4f74937e40246d54ed12dfa4f988f21ed8d19e46f426ac3dc32eac2ff1d
+2026-02-01T02:36:05.9181608Z Status: Downloaded newer image for phpdoc/phpdoc:3
+2026-02-01T02:36:06.4065176Z phpDocumentor 3.9.0-v3.9.1+4d3daed
+2026-02-01T02:36:06.4065627Z 
+2026-02-01T02:36:06.4186898Z Parsing source files
+2026-02-01T02:36:06.4711327Z   0/68 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%
+2026-02-01T02:36:06.5296820Z   7/68 [▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░]  10%
+2026-02-01T02:36:06.5797169Z  14/68 [▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░░]  20%
+2026-02-01T02:36:06.6558903Z  41/68 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░░░░░]  60%
+2026-02-01T02:36:06.6740460Z  62/68 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░]  91%
+2026-02-01T02:36:06.7192738Z 
+2026-02-01T02:36:06.7193237Z Applying transformations (can take a while)
+2026-02-01T02:36:06.8693456Z  68/68 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%  0/22 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%
+2026-02-01T02:36:07.8090466Z   3/22 [▓▓▓░░░░░░░░░░░░░░░░░░░░░░░░░]  13%
+2026-02-01T02:36:07.8671195Z   7/22 [▓▓▓▓▓▓▓▓░░░░░░░░░░░░░░░░░░░░]  31%
+2026-02-01T02:36:07.8769775Z  18/22 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░]  81%
+2026-02-01T02:36:07.8770111Z 
+2026-02-01T02:36:07.8770242Z All done in 1 seconds!
+2026-02-01T02:36:07.9725003Z  22/22 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
