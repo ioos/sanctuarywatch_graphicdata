@@ -34,10 +34,14 @@ def extract_body_inner(html: str) -> str:
     return html
 
 
-def make_front_matter(title: str, rel_path: Path) -> str:
+def make_front_matter(title: str, rel_path: Path, dir_name: str) -> str:
     # create a permalink that mirrors the file path (without .html)
     # use as_posix to get forward-slash separated path on all platforms
-    permalink = "/" + rel_path.with_suffix("").as_posix() + "/"
+    rel_posix = rel_path.with_suffix("").as_posix()
+    if rel_posix == "index":
+        permalink = "/" + dir_name + "/"
+    else:
+        permalink = "/" + dir_name + "/" + rel_posix + "/"
     # quote the title safely for YAML (escape double quotes)
     safe_title = title.replace('"', '\\"')
     fm = (
@@ -61,7 +65,8 @@ def process_file(path: Path, base_dir: Path):
     body = extract_body_inner(text)
 
     rel = path.relative_to(base_dir)
-    fm = make_front_matter(title, rel)
+    dir_name = base_dir.name
+    fm = make_front_matter(title, rel, dir_name)
 
     new_content = fm + "\n" + body + "\n"
 
