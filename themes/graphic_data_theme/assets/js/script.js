@@ -1,6 +1,6 @@
-// Deep clone the childIds object to create childObj, ensuring that modifications to childObj do not affect the original childIds.
-// This is useful for safely manipulating or filtering the childObj data structure later in the script.
-let childObj = {};
+// Deep clone the childIds object to create child_obj, ensuring that modifications to child_obj do not affect the original childIds.
+// This is useful for safely manipulating or filtering the child_obj data structure later in the script.
+let child_obj = {};
 
 //Checking the page title to see if we are in admin edit mode for a scene
 let adminEditTitle;
@@ -12,14 +12,14 @@ try {
 	adminEditTitle = 'none';
 }
 
-//Allows for declaration of childObj variable for theme and for admin side preview mode
+//Allows for declaration of child_obj variable for theme and for admin side preview mode
 if (
 	window.location.href.includes('post.php') ||
 	window.location.href.includes('edit.php')
 ) {
-	childObj = undefined;
+	child_obj = undefined;
 } else {
-	childObj = JSON.parse(JSON.stringify(childIds));
+	child_obj = JSON.parse(JSON.stringify(childIds));
 }
 
 // Convert the svg_url variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
@@ -96,10 +96,10 @@ if (!is_mobile()) {
 	document.head.appendChild(style);
 }
 
-// The lines below from step 1 through step 3 are used for organizing childObj(of modals) when it is fed into the toc as sorted_child_entries. 
+// The lines below from step 1 through step 3 are used for organizing child_obj(of modals) when it is fed into the toc as sorted_child_entries. 
 // If all modals are set to 1 then it now organized alphabetically. other wise it respects the modal order.
 
-process_childObj();
+process_child_obj();
 
 // Step 1: get [key, value] pairs
 
@@ -109,7 +109,7 @@ let sorted_child_entries = {};
 if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')){
 	sorted_child_entries = null;
 } else { 
-	sorted_child_entries = Object.entries(childObj);
+	sorted_child_entries = Object.entries(child_obj);
 }
 
 // Step 2: check if all modal_icon_order are 1 (or missing)
@@ -146,9 +146,9 @@ try {
 } catch {}
 
 // Step 4: extract the objects (no keys) to match your original format
-let sorted_childObjs = null;
+let sorted_child_objs = null;
 if (!window.location.href.includes('post.php')) {
-	sorted_childObjs = sorted_child_entries.map(([_, val]) => val);
+	sorted_child_objs = sorted_child_entries.map(([_, val]) => val);
 }
 
 // Step 5: build childIds_helper for title-to-key mapping
@@ -210,16 +210,16 @@ function hexToRgba(hex, opacity) {
 
 /**
  
- * This function pre-processes the `childObj` dictionary to ensure that each element (scene icon) belongs to the 
+ * This function pre-processes the `child_obj` dictionary to ensure that each element (scene icon) belongs to the 
  * current scene by checking if its scene ID matches the post ID.
  * This ensures that elements from other scenes are excluded, and keys are updated as needed to avoid duplicates.
  *
- * @returns {void} Modifies childObj dictionary in place
+ * @returns {void} Modifies child_obj dictionary in place
  */
-function process_childObj(){
-	for (let key in childObj){
-		if (childObj[key]["scene"]["ID"] !== post_id){
-			delete childObj[key];
+function process_child_obj(){
+	for (let key in child_obj){
+		if (child_obj[key]["scene"]["ID"] !== post_id){
+			delete child_obj[key];
 		}
 		else{
 		   
@@ -230,9 +230,9 @@ function process_childObj(){
 
 			//prevent duplicates:  For example, if there is a separate mobile icon for the icon named "whales", then in the mobile layer, that icon should be named "whales-mobile".
 			if (isNumeric){
-				let newkey = childObj[key]["original_name"];
-				childObj[newkey] = childObj[key];
-				delete childObj[key];
+				let newkey = child_obj[key]["original_name"];
+				child_obj[newkey] = child_obj[key];
+				delete child_obj[key];
 			}
 		}
 	}
