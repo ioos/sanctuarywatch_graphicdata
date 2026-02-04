@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	const rangeInput = document.getElementById('svgIconNumber');
 	const rangeValue = document.getElementById('svgIconNumberValue');
 	const rangeIconNumber = document.getElementById('svgIconNumber');
-	console.log('hello');
 	rangeIconNumber.addEventListener('change', function () {
 		// delete existing field container if it exists
 		let fieldsContainer = document.getElementById('fieldsContainer');

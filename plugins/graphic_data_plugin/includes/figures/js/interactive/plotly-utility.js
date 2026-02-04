@@ -1,21 +1,18 @@
-
-
 // Needed to ensure Plotly is only loaded once
 let plotlyScriptPromise = null;
 
-
 /**
  * Loads the Plotly.js library dynamically if it is not already loaded.
- * 
+ *
  * This function ensures that the Plotly.js library is loaded and available for use.
  * If the library is already loaded, it resolves immediately. If the loading process
  * has already started, it reuses the same Promise to avoid multiple simultaneous loads.
- * 
- * @returns {Promise<void>} A Promise that resolves when the Plotly.js library is successfully loaded.
+ *
+ * @return {Promise<void>} A Promise that resolves when the Plotly.js library is successfully loaded.
  *                          If the library fails to load or initialize, the Promise is rejected with an error.
- * 
+ *
  * @throws {Error} If the Plotly.js library fails to initialize after loading.
- * 
+ *
  * @example
  * loadPlotlyScript()
  *   .then(() => {
@@ -27,44 +24,55 @@ let plotlyScriptPromise = null;
  *   });
  */
 function loadPlotlyScript() {
-    if (window.Plotly) return Promise.resolve();
+	if (window.Plotly) {
+		return Promise.resolve();
+	}
 
-    // Reuse the same Promise if already started
-    if (plotlyScriptPromise) return plotlyScriptPromise;
+	// Reuse the same Promise if already started
+	if (plotlyScriptPromise) {
+		return plotlyScriptPromise;
+	}
 
-    plotlyScriptPromise = new Promise((resolve, reject) => {
-        const existingScript = document.querySelector('script[src="https://cdn.plot.ly/plotly-3.0.0.min.js"]');
-        if (existingScript) {
-            existingScript.onload = () => {
-                if (window.Plotly) resolve();
-                else reject(new Error("Plotly failed to initialize."));
-            };
-            existingScript.onerror = reject;
-            return;
-        }
+	plotlyScriptPromise = new Promise((resolve, reject) => {
+		const existingScript = document.querySelector(
+			'script[src="https://cdn.plot.ly/plotly-3.0.0.min.js"]'
+		);
+		if (existingScript) {
+			existingScript.onload = () => {
+				if (window.Plotly) {
+					resolve();
+				} else {
+					reject(new Error('Plotly failed to initialize.'));
+				}
+			};
+			existingScript.onerror = reject;
+			return;
+		}
 
-        const script = document.createElement('script');
-        script.src = 'https://cdn.plot.ly/plotly-3.0.0.min.js';
-        script.onload = () => {
-            if (window.Plotly) resolve();
-            else reject(new Error("Plotly failed to initialize."));
-        };
-        script.onerror = reject;
-        document.head.appendChild(script);
-    });
+		const script = document.createElement('script');
+		script.src = 'https://cdn.plot.ly/plotly-3.0.0.min.js';
+		script.onload = () => {
+			if (window.Plotly) {
+				resolve();
+			} else {
+				reject(new Error('Plotly failed to initialize.'));
+			}
+		};
+		script.onerror = reject;
+		document.head.appendChild(script);
+	});
 
-    return plotlyScriptPromise;
+	return plotlyScriptPromise;
 }
-
 
 /**
  * Waits for an HTML element with the specified ID to appear in the DOM within a given timeout period.
  * Polls the DOM at regular intervals to check for the presence of the element.
  *
  * @function
- * @param {string} id - The ID of the HTML element to wait for.
+ * @param {string} id             - The ID of the HTML element to wait for.
  * @param {number} [timeout=1000] - The maximum time (in milliseconds) to wait for the element to appear. Defaults to 1000ms.
- * @returns {Promise<HTMLElement>} A promise that resolves with the found HTML element if it appears within the timeout period.
+ * @return {Promise<HTMLElement>} A promise that resolves with the found HTML element if it appears within the timeout period.
  * @throws {Error} If the element with the specified ID is not found within the timeout period.
  *
  * @example
@@ -77,25 +85,28 @@ function loadPlotlyScript() {
  *   });
  */
 function waitForElementById(id, timeout = 1000) {
-    return new Promise((resolve, reject) => {
-        const intervalTime = 50;
-        let elapsedTime = 0;
+	return new Promise((resolve, reject) => {
+		const intervalTime = 50;
+		let elapsedTime = 0;
 
-        const interval = setInterval(() => {
-            const element = document.getElementById(id);
-            if (element) {
-                clearInterval(interval);
-                resolve(element);
-            }
-            elapsedTime += intervalTime;
-            if (elapsedTime >= timeout) {
-                clearInterval(interval);
-                reject(new Error(`Element with id ${id} not found after ${timeout}ms`));
-            }
-        }, intervalTime);
-    });
+		const interval = setInterval(() => {
+			const element = document.getElementById(id);
+			if (element) {
+				clearInterval(interval);
+				resolve(element);
+			}
+			elapsedTime += intervalTime;
+			if (elapsedTime >= timeout) {
+				clearInterval(interval);
+				reject(
+					new Error(
+						`Element with id ${id} not found after ${timeout}ms`
+					)
+				);
+			}
+		}, intervalTime);
+	});
 }
-
 
 /**
  * Computes the standard deviation of an array of numbers.
@@ -105,34 +116,41 @@ function waitForElementById(id, timeout = 1000) {
  * which divides by the number of elements (n) rather than (n - 1).
  *
  * @param {number[]} arr - The array of numbers for which to compute the standard deviation.
- *                          Must be a non-empty array. If the array is empty or not an array,
- *                          the function will return 0.
- * @returns {number} The standard deviation of the numbers in the array. Returns 0 if the input
+ *                       Must be a non-empty array. If the array is empty or not an array,
+ *                       the function will return 0.
+ * @return {number} The standard deviation of the numbers in the array. Returns 0 if the input
  *                   is not a valid array or is empty.
  */
 function computeStandardDeviation(arr) {
-    if (!Array.isArray(arr) || arr.length === 0) return 0;
+	if (!Array.isArray(arr) || arr.length === 0) {
+		return 0;
+	}
 
-    // Filter out invalid or "NA" values
-    const numericValues = arr
-        .filter(val => 
-            val !== null &&
-            val !== undefined &&
-            val !== "" &&
-            !(typeof val === "string" && val.trim().toUpperCase() === "NA") &&
-            !isNaN(val)
-        )
-        .map(val => parseFloat(val));
+	// Filter out invalid or "NA" values
+	const numericValues = arr
+		.filter(
+			(val) =>
+				val !== null &&
+				val !== undefined &&
+				val !== '' &&
+				!(
+					typeof val === 'string' && val.trim().toUpperCase() === 'NA'
+				) &&
+				!isNaN(val)
+		)
+		.map((val) => parseFloat(val));
 
-    if (numericValues.length === 0) return 0;
+	if (numericValues.length === 0) {
+		return 0;
+	}
 
-    const n = numericValues.length;
-    const mean = numericValues.reduce((a, b) => a + b, 0) / n;
-    const variance = numericValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+	const n = numericValues.length;
+	const mean = numericValues.reduce((a, b) => a + b, 0) / n;
+	const variance =
+		numericValues.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
 
-    return Math.sqrt(variance);
+	return Math.sqrt(variance);
 }
-
 
 /**
  * Computes the percentile value from an array of numbers.
@@ -143,9 +161,9 @@ function computeStandardDeviation(arr) {
  * that element is returned. For arrays with more than one element, the function uses linear interpolation
  * between the two nearest ranks if the desired percentile falls between them.
  *
- * @param {number[]} arr - The array of numbers from which to compute the percentile. Should be non-empty.
- * @param {number} percentile - The percentile to compute (between 0 and 100).
- * @returns {number|undefined} The value at the specified percentile, or `undefined` if the array is empty.
+ * @param {number[]} arr        - The array of numbers from which to compute the percentile. Should be non-empty.
+ * @param {number}   percentile - The percentile to compute (between 0 and 100).
+ * @return {number|undefined} The value at the specified percentile, or `undefined` if the array is empty.
  *
  * @example
  * // For arr = [1, 2, 3, 4, 5], percentile = 50
@@ -163,21 +181,25 @@ function computeStandardDeviation(arr) {
  * computePercentile([], 90);
  */
 function computePercentile(arr, percentile) {
-    if (arr.length === 0) return undefined;
-    if (arr.length === 1) return arr[0];
-    const sorted = [...arr].sort((a, b) => a - b);
-    const index = (percentile / 100) * (sorted.length - 1);
-    const lower = Math.floor(index);
-    const upper = Math.ceil(index);
-    if (lower === upper) return sorted[lower];
-    return sorted[lower] + (index - lower) * (sorted[upper] - sorted[lower]);
+	if (arr.length === 0) {
+		return undefined;
+	}
+	if (arr.length === 1) {
+		return arr[0];
+	}
+	const sorted = [...arr].sort((a, b) => a - b);
+	const index = (percentile / 100) * (sorted.length - 1);
+	const lower = Math.floor(index);
+	const upper = Math.ceil(index);
+	if (lower === upper) {
+		return sorted[lower];
+	}
+	return sorted[lower] + (index - lower) * (sorted[upper] - sorted[lower]);
 }
-
-
 
 /**
  * @file This file contains utility functions used for creating javascript figures - both in the display of those figures,
- * as well in getting the figure parameter values from the WordPress user 
+ * as well in getting the figure parameter values from the WordPress user
  * @version 1.0.0
  */
 
@@ -187,7 +209,7 @@ function computePercentile(arr, percentile) {
  * @async
  * @function loadExternalScript
  * @param {string} url - The URL of the external JavaScript file.
- * @returns {Promise<void>} A promise that resolves when the script is loaded
+ * @return {Promise<void>} A promise that resolves when the script is loaded
  *   and appended to the document, or rejects if there's an error.
  * @throws {Error} Throws an error if the script fails to load.
  * @example
@@ -196,32 +218,30 @@ function computePercentile(arr, percentile) {
  *   .catch((error) => console.error('Failed to load Plotly:', error));
  */
 function loadExternalScript(url) {
-    return new Promise((resolve, reject) => {
-        // Check if script is already loaded
-        if (document.querySelector(`script[src="${url}"]`)) {
-            resolve();
-            return;
-        }
+	return new Promise((resolve, reject) => {
+		// Check if script is already loaded
+		if (document.querySelector(`script[src="${url}"]`)) {
+			resolve();
+			return;
+		}
 
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = url;
-        script.async = true;
+		const script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = url;
+		script.async = true;
 
-        script.onload = () => {
-            resolve();
-        };
+		script.onload = () => {
+			resolve();
+		};
 
-        script.onerror = () => {
-            reject(new Error(`Failed to load script: ${url}`));
-        };
+		script.onerror = () => {
+			reject(new Error(`Failed to load script: ${url}`));
+		};
 
-        document.head.appendChild(script);
-    });
+		document.head.appendChild(script);
+	});
 }
 
-
- 
 /**
  * Logs the values of form fields (inputs, selects, etc.) associated with
  * JavaScript figure parameters to a hidden input field, so that they are saved in the WordPress database.
@@ -238,16 +258,16 @@ function loadExternalScript(url) {
  * logFormFieldValues(); // After a change to one of the above plotFields, the hidden input will be updated
  */
 function logFormFieldValues() {
-    const allFields = document.getElementsByName("plotFields");
-    let fieldValues = [];
-    allFields.forEach((uniqueField) => {
-        //console.log([uniqueField.id, uniqueField.value]);
-        fieldValues.push([uniqueField.id, uniqueField.value]);
-    });
-    //console.log('logformfieldvalues', JSON.stringify(fieldValues));
-    document.getElementsByName("figure_interactive_arguments")[0].value = JSON.stringify(fieldValues); 
+	const allFields = document.getElementsByName('plotFields');
+	const fieldValues = [];
+	allFields.forEach((uniqueField) => {
+		//console.log([uniqueField.id, uniqueField.value]);
+		fieldValues.push([uniqueField.id, uniqueField.value]);
+	});
+	//console.log('logformfieldvalues', JSON.stringify(fieldValues));
+	document.getElementsByName('figure_interactive_arguments')[0].value =
+		JSON.stringify(fieldValues);
 }
-
 
 /**
  * Fills in the values of form fields associated with JavaScript figure
@@ -257,7 +277,7 @@ function logFormFieldValues() {
  *
  * @function fillFormFieldValues
  * @param {string} elementID - The ID of the form field to fill.
- * @returns {string|undefined} The value of the form field if found, or
+ * @return {string|undefined} The value of the form field if found, or
  *   `undefined` if the field or its value is not found.
  * @example
  * // Assuming you have the following HTML:
@@ -265,19 +285,21 @@ function logFormFieldValues() {
  * // <input type="hidden" name="figure_interactive_arguments" value="[['xAxisTitle', 'Date'], ['yAxisTitle', 'Value']]">
  * const xAxisTitle = fillFormFieldValues('xAxisTitle'); // xAxisTitle will be set to "Date"
  */
-function fillFormFieldValues(elementID){
-    let interactiveFields = document.getElementsByName("figure_interactive_arguments")[0].value;
+function fillFormFieldValues(elementID) {
+	let interactiveFields = document.getElementsByName(
+		'figure_interactive_arguments'
+	)[0].value;
 
-    // CHECK FOR "\" AND REMOVE IF EXISTS, This is to fix escaping issues for existing figures
-    if (interactiveFields.includes('\\')) {
-        interactiveFields = interactiveFields.replace(/\\/g, '');
-    }
+	// CHECK FOR "\" AND REMOVE IF EXISTS, This is to fix escaping issues for existing figures
+	if (interactiveFields.includes('\\')) {
+		interactiveFields = interactiveFields.replace(/\\/g, '');
+	}
 
-    if (interactiveFields != ""  && interactiveFields != null) {
-        const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
+	if (interactiveFields != '' && interactiveFields != null) {
+		const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
 
-        if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
-            return resultJSON[elementID];
-        }
-    }
+		if (resultJSON[elementID] != undefined && resultJSON[elementID] != '') {
+			return resultJSON[elementID];
+		}
+	}
 }

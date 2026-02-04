@@ -300,7 +300,7 @@ if (previewFigureOrModalElements.length > 0) {
 				}
 
 				// --- WRAP IN OUTER OBJECT USING ICON AS KEY ---
-				const child_obj = {
+				const childObj = {
 					[iconSelected]: {
 						title: modalTitle,
 						modal: true,
@@ -312,9 +312,9 @@ if (previewFigureOrModalElements.length > 0) {
 
 				//console.log('modal_data', modal_data);
 
-				render_modal(iconSelected, child_obj, modal_data);
+				render_modal(iconSelected, childObj, modal_data);
 				modal_data.remove();
-				child_obj.remove();
+				childObj.remove();
 			}
 
 			// --- GATHER FIGURE DATA FROM FORM FIELDS ---
@@ -385,7 +385,7 @@ if (previewFigureOrModalElements.length > 0) {
 					modal_tab_title1: 'Example Modal Tab',
 				};
 
-				const child_obj = {
+				const childObj = {
 					[iconSelected]: {
 						title: 'Example Modal Title',
 						modal: true,
@@ -396,7 +396,7 @@ if (previewFigureOrModalElements.length > 0) {
 				};
 
 				//console.log('modal_data', modal_data);
-				render_modal(iconSelected, child_obj, modal_data);
+				render_modal(iconSelected, childObj, modal_data);
 
 				//FIGURE PREVIEW LOGIC
 				const info_obj = {

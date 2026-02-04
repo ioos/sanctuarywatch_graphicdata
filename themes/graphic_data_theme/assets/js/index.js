@@ -1,3 +1,5 @@
+'use strict';
+
 async function getInstanceInfo() {
 	const protocol = window.location.protocol;
 	const host = window.location.host;

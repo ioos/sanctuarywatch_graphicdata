@@ -1,6 +1,6 @@
 /**
  * @file This file contains utility functions used for creating javascript figures - both in the display of those figures,
- * as well in getting the figure parameter values from the WordPress user 
+ * as well in getting the figure parameter values from the WordPress user
  * @version 1.0.0
  */
 
@@ -10,7 +10,7 @@
  * @async
  * @function loadExternalScript
  * @param {string} url - The URL of the external JavaScript file.
- * @returns {Promise<void>} A promise that resolves when the script is loaded
+ * @return {Promise<void>} A promise that resolves when the script is loaded
  *   and appended to the document, or rejects if there's an error.
  * @throws {Error} Throws an error if the script fails to load.
  * @example
@@ -19,30 +19,30 @@
  *   .catch((error) => console.error('Failed to load Plotly:', error));
  */
 function loadExternalScript(url) {
-    return new Promise((resolve, reject) => {
-      // Check if script is already loaded
-      if (document.querySelector(`script[src="${url}"]`)) {
-          resolve();
-          return;
-      }
-  
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = url;
-      script.async = true;
-  
-      script.onload = () => {
-          resolve();
-      };
-  
-      script.onerror = () => {
-          reject(new Error(`Failed to load script: ${url}`));
-      };
-  
-      document.head.appendChild(script);
-    });
-  }
-  
+	return new Promise((resolve, reject) => {
+		// Check if script is already loaded
+		if (document.querySelector(`script[src="${url}"]`)) {
+			resolve();
+			return;
+		}
+
+		const script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = url;
+		script.async = true;
+
+		script.onload = () => {
+			resolve();
+		};
+
+		script.onerror = () => {
+			reject(new Error(`Failed to load script: ${url}`));
+		};
+
+		document.head.appendChild(script);
+	});
+}
+
 /**
  * Logs the values of form fields (inputs, selects, etc.) associated with
  * JavaScript figure parameters to a hidden input field, so that they are saved in the WordPress database.
@@ -59,12 +59,13 @@ function loadExternalScript(url) {
  * logFormFieldValues(); // After a change to one of the above plotFields, the hidden input will be updated
  */
 function logFormFieldValues() {
-    const allFields = document.getElementsByName("plotFields");
-    let fieldValues = [];
-    allFields.forEach((uniqueField) => {
-        fieldValues.push([uniqueField.id, uniqueField.value]);
-    });
-    document.getElementsByName("figure_interactive_arguments")[0].value = JSON.stringify(fieldValues); 
+	const allFields = document.getElementsByName('plotFields');
+	const fieldValues = [];
+	allFields.forEach((uniqueField) => {
+		fieldValues.push([uniqueField.id, uniqueField.value]);
+	});
+	document.getElementsByName('figure_interactive_arguments')[0].value =
+		JSON.stringify(fieldValues);
 }
 
 /**
@@ -74,8 +75,9 @@ function logFormFieldValues() {
  * form fields.
  *
  * @function fillFormFieldValues
- * @param {string} elementID - The ID of the form field to fill.
- * @returns {string|undefined} The value of the form field if found, or
+ * @param          interactive_arguments
+ * @param {string} elementID             - The ID of the form field to fill.
+ * @return {string|undefined} The value of the form field if found, or
  *   `undefined` if the field or its value is not found.
  * @example
  * // Assuming you have the following HTML:
@@ -83,15 +85,15 @@ function logFormFieldValues() {
  * // <input type="hidden" name="figure_interactive_arguments" value="[['xAxisTitle', 'Date'], ['yAxisTitle', 'Value']]">
  * const xAxisTitle = fillFormFieldValues('xAxisTitle'); // xAxisTitle will be set to "Date"
  */
-function fillFormFieldValues(elementID, interactive_arguments){
-        //const interactiveFields = document.getElementsByName("figure_interactive_arguments")[0].value;
-        interactiveFields = interactive_arguments;
-        console.log('interactiveFields', interactiveFields);
-    if (interactiveFields != ""  && interactiveFields != null) {
-        const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
+function fillFormFieldValues(elementID, interactive_arguments) {
+	//const interactiveFields = document.getElementsByName("figure_interactive_arguments")[0].value;
+	interactiveFields = interactive_arguments;
+	console.log('interactiveFields', interactiveFields);
+	if (interactiveFields != '' && interactiveFields != null) {
+		const resultJSON = Object.fromEntries(JSON.parse(interactiveFields));
 
-        if (resultJSON[elementID] != undefined && resultJSON[elementID] != ""){
-            return resultJSON[elementID];
-        }
-    }
+		if (resultJSON[elementID] != undefined && resultJSON[elementID] != '') {
+			return resultJSON[elementID];
+		}
+	}
 }

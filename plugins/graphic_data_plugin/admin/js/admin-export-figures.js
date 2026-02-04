@@ -40,7 +40,7 @@ function downloadFile() {
 			const fileType = document.querySelector(
 				'input[name="exportFormat"]:checked'
 			).value;
-			if (fileType == 'document') {
+			if (fileType === 'document') {
 				downloadRTF(introSentence, selectedCheckBoxes);
 			} else {
 				downloadPPTX(introSentence, selectedCheckBoxes);

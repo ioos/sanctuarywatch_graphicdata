@@ -1,17 +1,16 @@
+'use strict';
 window.dataLayer = window.dataLayer || [];
 const gaMeasurementID = window.graphicDataSettings.googleAnalyticsMeasurementId;
 
 //FIGURE TRACKING AND ANALYSIS_______________________________________________________________
 /**
- * Tracks a "figureSourceLinkClick" event by pushing data to the dataLayer whenclicked.
+ * Pushes a custom event to the dataLayer for tracking figure science link interactions when clicked.
  *
- * @param {string} title       - The title of the figure or source being tracked.
- * @param {number} postID      - The ID of the post associated with the figure or source.
- *
- * @param          figureID
- * @param          figureTitle
- * @param          scienceText
- * @param          scienceLink
+ * @function figureScienceLinkClick
+ * @param {string} figureID    - The unique identifier of the figure.
+ * @param {string} figureTitle - The title of the figure being tracked.
+ * @param {string} scienceText - The text of the science link that was clicked.
+ * @param {string} scienceLink - The URL of the science link that was clicked.
  */
 function figureScienceLinkClick(
 	figureID,
@@ -30,6 +29,15 @@ function figureScienceLinkClick(
 	});
 }
 
+/**
+ * Attaches click event listeners to all science links to track figure science link interactions.
+ *
+ * @function setupFigureScienceLinkTracking
+ * @param {string} figureID - The unique identifier of the figure to associate with tracked clicks.
+ * @description Finds all anchor elements containing a clipboard-list icon (i.fa.fa-clipboard-list) and
+ *              attaches click listeners that capture the link text, URL, and figure title,
+ *              then forwards them to {@link figureScienceLinkClick} for dataLayer tracking.
+ */
 function setupFigureScienceLinkTracking(figureID) {
 	document.querySelectorAll('a').forEach(function (link) {
 		const hasClipboardIcon = link.querySelector('i.fa.fa-clipboard-list');
@@ -54,15 +62,10 @@ function setupFigureScienceLinkTracking(figureID) {
  * Pushes a custom event to the dataLayer for tracking figure data link interactions when clicked.
  *
  * @function figureDataLinkClick
- * @param {string} title       - The title of the figure or content being tracked.
- * @param          figureID
- * @param          figureTitle
- * @param          dataText
- * @param          dataLink
- * @param {number} postID      - The unique identifier of the post associated with the figure.
- * @description This function is used to send a custom event named 'figureDataLink' to the
- *              Google Tag Manager dataLayer. It includes metadata such as the page section,
- *              title, and post ID for analytics purposes.
+ * @param {string} figureID    - The unique identifier of the figure.
+ * @param {string} figureTitle - The title of the figure being tracked.
+ * @param {string} dataText    - The text of the data link that was clicked.
+ * @param {string} dataLink    - The URL of the data link that was clicked.
  */
 function figureDataLinkClick(figureID, figureTitle, dataText, dataLink) {
 	dataLayer.push({
@@ -76,6 +79,15 @@ function figureDataLinkClick(figureID, figureTitle, dataText, dataLink) {
 	});
 }
 
+/**
+ * Attaches click event listeners to all data links to track figure data link interactions.
+ *
+ * @function setupFigureDataLinkTracking
+ * @param {string} figureID - The unique identifier of the figure to associate with tracked clicks.
+ * @description Finds all anchor elements containing a database icon (i.fa.fa-database) and
+ *              attaches click listeners that capture the link text, URL, and figure title,
+ *              then forwards them to {@link figureDataLinkClick} for dataLayer tracking.
+ */
 function setupFigureDataLinkTracking(figureID) {
 	document.querySelectorAll('a').forEach(function (link) {
 		const hasClipboardIcon = link.querySelector('i.fa.fa-database');
@@ -98,14 +110,13 @@ function setupFigureDataLinkTracking(figureID) {
 
 /**
  * Tracks the loading of an interactive timeseries graph by pushing an event to the dataLayer.
+ *
+ * @function figureTimeseriesGraphLoaded
  * @param {string} title           - The title of the figure.
  * @param {number} figureID        - The ID of the post associated with the figure.
- * @param          gaMeasurementID
- * @description
- * This function is used to log the loading of an interactive timeseries graph by pushing
- * an event to the `dataLayer` object. The event includes metadata such as
- * the figure type and the page section where the image is displayed.
- * It is typically used for analytics purposes.
+ * @param {string} gaMeasurementID - The GA4 measurement ID for the analytics property.
+ * @description Pushes a `figureTimeseriesGraphLoaded` event to the `dataLayer` with metadata
+ *              including figure type (`lineChart`), page section (`figure`), title, and figure ID.
  */
 function figureTimeseriesGraphLoaded(title, figureID, gaMeasurementID) {
 	//console.log('gaMeasurementID figureTimeseriesGraphLoaded', gaMeasurementID);
@@ -121,15 +132,14 @@ function figureTimeseriesGraphLoaded(title, figureID, gaMeasurementID) {
 }
 
 /**
- * Tracks the loading of an internal image and pushes an event to the dataLayer.
+ * Tracks the loading of an internal image by pushing an event to the dataLayer.
+ *
+ * @function figureInternalImageLoaded
  * @param {string} title           - The title of the figure.
  * @param {number} figureID        - The ID of the post associated with the figure.
- * @param          gaMeasurementID
- * @description
- * This function is used to log the loading of an internal image by pushing
- * an event to the `dataLayer` object. The event includes metadata such as
- * the figure type and the page section where the image is displayed.
- * It is typically used for analytics purposes.
+ * @param {string} gaMeasurementID - The GA4 measurement ID for the analytics property.
+ * @description Pushes a `figureInternalImageLoaded` event to the `dataLayer` with metadata
+ *              including figure type (`internalImage`), page section (`figure`), title, and figure ID.
  */
 function figureInternalImageLoaded(title, figureID, gaMeasurementID) {
 	//console.log('gaMeasurementID figureInternalImageLoaded', gaMeasurementID);
@@ -145,15 +155,14 @@ function figureInternalImageLoaded(title, figureID, gaMeasurementID) {
 }
 
 /**
- * Tracks the loading of an external image and pushes an event to the dataLayer.
+ * Tracks the loading of an external image by pushing an event to the dataLayer.
+ *
+ * @function figureExternalImageLoaded
  * @param {string} title           - The title of the figure.
  * @param {number} figureID        - The ID of the post associated with the figure.
- * @param          gaMeasurementID
- * @description
- * This function is used to log the loading of an external image by pushing
- * an event to the `dataLayer` object. The event includes metadata such as
- * the figure type and the page section  where the image is displayed.
- * It is typically used for analytics purposes.
+ * @param {string} gaMeasurementID - The GA4 measurement ID for the analytics property.
+ * @description Pushes a `figureExternalImageLoaded` event to the `dataLayer` with metadata
+ *              including figure type (`externalImage`), page section (`figure`), title, and figure ID.
  */
 function figureExternalImageLoaded(title, figureID, gaMeasurementID) {
 	//console.log('gaMeasurementID figureExternalImageLoaded', gaMeasurementID);
@@ -169,11 +178,14 @@ function figureExternalImageLoaded(title, figureID, gaMeasurementID) {
 }
 
 /**
- * Pushes an event to the dataLayer indicating that a code display has been loaded.
+ * Tracks the loading of a code display by pushing an event to the dataLayer.
  *
+ * @function figureCodeDisplayLoaded
  * @param {string} title           - The title of the figure.
  * @param {number} figureID        - The ID of the post associated with the figure.
- * @param          gaMeasurementID
+ * @param {string} gaMeasurementID - The GA4 measurement ID for the analytics property.
+ * @description Pushes a `figureCodeDisplayLoaded` event to the `dataLayer` with metadata
+ *              including figure type (`codeDisplay`), page section (`figure`), title, and figure ID.
  */
 function figureCodeDisplayLoaded(title, figureID, gaMeasurementID) {
 	//console.log('gaMeasurementID figureCodeDisplayLoaded', gaMeasurementID);

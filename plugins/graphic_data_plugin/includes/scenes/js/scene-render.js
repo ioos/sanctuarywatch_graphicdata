@@ -137,10 +137,10 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
         const sectionOrderMap = {};
         iconsArr.forEach(iconId => {
 
-            if (scene_same_hover_color_sections !== "yes" && child_obj[iconId] !== "None") {
-                let section_num = child_obj[iconId].section_name;
-                let modal_icon_order = child_obj[iconId].modal_icon_order;
-                let modal_title = child_obj[iconId].title;
+            if (scene_same_hover_color_sections !== "yes" && childObj[iconId] !== "None") {
+                let section_num = childObj[iconId].section_name;
+                let modal_icon_order = childObj[iconId].modal_icon_order;
+                let modal_title = childObj[iconId].title;
                 let this_scene_section = `scene_section${section_num}`;
                 let this_scene_section_title = `scene_section_title${section_num}`;
                 let this_color = `scene_section_hover_color${section_num}`;
@@ -168,9 +168,9 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                 grouped[groupTitle].modal_orders.push(modal_icon_order);
             }
             if (scene_same_hover_color_sections == "yes") {
-                let section_num = child_obj[iconId].section_name;
-                let modal_icon_order = child_obj[iconId].modal_icon_order;
-                let modal_title = child_obj[iconId].title;
+                let section_num = childObj[iconId].section_name;
+                let modal_icon_order = childObj[iconId].modal_icon_order;
+                let modal_title = childObj[iconId].title;
                 let this_scene_section = `scene_section${section_num}`;
                 let this_scene_section_title = `scene_section_title${section_num}`;
                 const hoverColor = scene_default_hover_color;
@@ -242,8 +242,8 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
         const sortable = iconsArr.map(iconId => {
             return {
                 iconId,
-                modal_icon_order: parseFloat(child_obj[iconId]?.modal_icon_order) || 0,
-                modal_title: child_obj[iconId]?.title || ''
+                modal_icon_order: parseFloat(childObj[iconId]?.modal_icon_order) || 0,
+                modal_title: childObj[iconId]?.title || ''
             };
         });
 
@@ -325,7 +325,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                         let currIcon = iconIds[idx];
                         let key;
 
-                        if (child_obj[currIcon] && child_obj[currIcon].section_name == sectionNum) {
+                        if (childObj[currIcon] && childObj[currIcon].section_name == sectionNum) {
 
                             // If there is no mobile layer, use the default icon layer
                             if (!has_mobile_layer(mobile_icons, currIcon)) {
@@ -359,10 +359,10 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                             svgClone.append(key);
                             cont.appendChild(svgClone);
 
-                            // Add a caption below the icon using child_obj data
+                            // Add a caption below the icon using childObj data
                             let caption = document.createElement("div");
-                            if (child_obj[currIcon]) {
-                                caption.innerText = child_obj[currIcon].title;
+                            if (childObj[currIcon]) {
+                                caption.innerText = childObj[currIcon].title;
                             } else {
                                 caption.innerText = "not in wp yet, have to add";
                             }
@@ -526,10 +526,10 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                         svgClone.append(key);
 
 
-                        // Add a caption below the icon using child_obj data
+                        // Add a caption below the icon using childObj data
                         let caption = document.createElement("div");
-                        if (child_obj[currIcon]) {
-                            caption.innerText = child_obj[currIcon].title;
+                        if (childObj[currIcon]) {
+                            caption.innerText = childObj[currIcon].title;
                         } else {
                             caption.innerText = "not in wp yet, have to add";
                         }
@@ -991,7 +991,7 @@ async function loadSVG(url, containerId) {
                 }));
             }
 
-            sorted_child_objs = buildVisibleModalsObject(visible_modals, {
+            sortedChildObjs = buildVisibleModalsObject(visible_modals, {
                 sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
                 postAuthor: "1",
                 useGmt: true, // set false if you want local time for both
@@ -1024,7 +1024,7 @@ async function loadSVG(url, containerId) {
             })
 
         }
-        //console.log('sorted_child_objs', sorted_child_objs);
+        //console.log('sortedChildObjs', sortedChildObjs);
       
         // checking if user device is touchscreen
         if (is_touchscreen()){
@@ -1074,7 +1074,7 @@ async function loadSVG(url, containerId) {
                       history.pushState("", document.title, window.location.pathname + window.location.search);
                   }
         
-                mobileBool = true;
+                let mobileBool = true;
                 const iconsElement = svgElement.getElementById("icons");
                 //fix here
                 let mobileIcons = null;
@@ -1082,7 +1082,7 @@ async function loadSVG(url, containerId) {
                     mobileIcons = svgElement.getElementById("mobile").cloneNode(true);
                 } 
 
-                const iconsArr =  Object.keys(child_obj);
+                const iconsArr =  Object.keys(childObj);
                 mobile_helper(svgElement, iconsArr, mobileIcons);
                 
             } else{ //if it gets here, device is a tablet
@@ -1151,14 +1151,14 @@ async function loadSVG(url, containerId) {
 //CHANGE HERE FOR TABLET STUFF
 
 /**
- * Adds hover effects to SVG elements based on `child_obj` keys, meant for PC layout. 
+ * Adds hover effects to SVG elements based on `childObj` keys, meant for PC layout. 
  * Highlights the icon by changing its stroke color and width on mouseover, 
  * using section-specific colors if enabled, and resets the style on mouseout.
  *
  * @returns {void} - `void` Modifies DOM element styles in place.
  */
 function highlight_icons() {
-    for (let key in child_obj) {
+    for (let key in childObj) {
         let elem = document.querySelector('g[id="' + key + '"]');
         elem.addEventListener('mouseover', function (e) {
 
@@ -1168,8 +1168,8 @@ function highlight_icons() {
 
             elemCollection.forEach(subElem => {
                 if (scene_same_hover_color_sections !== "yes" && sectionObj[key] !== "None") {
-                    let section_name = child_obj[key].original_name;
-                    let section_num = child_obj[key].section_name;
+                    let section_name = childObj[key].original_name;
+                    let section_num = childObj[key].section_name;
                     let this_scene_section = `scene_section${section_num}`;
                     let this_color = `scene_section_hover_color${section_num}`;
                     let text_color = `scene_section_hover_text_color${section_num}`;
@@ -1188,7 +1188,7 @@ function highlight_icons() {
             // Create and show the tooltip box
             const tooltip = document.createElement("div");
             tooltip.className = "hover-key-box";
-            tooltip.textContent = child_obj[key].title;
+            tooltip.textContent = childObj[key].title;
             tooltip.style.position = "absolute";
             tooltip.style.padding = "5px 10px";
             tooltip.style.backgroundColor = hoverColor;
@@ -1246,14 +1246,14 @@ function highlight_icons() {
 
 
 /**
- * Adds flicker effects to SVG elements based on `child_obj` keys, meant for tablet layout. 
+ * Adds flicker effects to SVG elements based on `childObj` keys, meant for tablet layout. 
  * Icons flicker their corresponding color on a short time interval
  * using section-specific colors if enabled
  * 
  * @returns {void} - `void` Modifies DOM element styles in place.
  */
 function flicker_highlight_icons() {
-    for (let key in child_obj) {
+    for (let key in childObj) {
         let elem = document.querySelector('g[id="' + key + '"]');
         if (elem) {
             // Add transition for smooth fading
@@ -1512,7 +1512,7 @@ function toggle_text() {
  * This function generates sections dynamically and organizes them in a color-coded way
  * 
  * The function:
- * 1. Extracts unique section names from the `section_name` property of each object in `child_obj`.
+ * 1. Extracts unique section names from the `section_name` property of each object in `childObj`.
  * 2. Sorts the sections and assigns each section a color from the `colors` array. Ensures that consecutive sections don't have the same color.
  * 3. Builds a sectioned table of contents, where each section name is a header and below are its icons,  styled with its assigned color.
  * 4. Appends the generated TOC structure to the `#toc-container` element in the DOM.
@@ -1525,8 +1525,8 @@ function toggle_text() {
 function sectioned_list(){
 
     let sections = [];
-    for (let key in child_obj) {
-        let section = child_obj[key]['section_name'];
+    for (let key in childObj) {
+        let section = childObj[key]['section_name'];
 
         if (!sections.includes(section) && section!='None') {
             sections.push(section);
@@ -1607,7 +1607,7 @@ function sectioned_list(){
  * This function generates sections dynamically and organizes them in an accordion-style layout.
  * 
  * The function:
- * 1. Extracts unique section names from the `section_name` property of each object in `child_obj`.
+ * 1. Extracts unique section names from the `section_name` property of each object in `childObj`.
  * 2. Sorts the sections and assigns each section a color from the `colors` array. Ensures that consecutive sections don't have the same color.
  * 3. Builds an accordion-style TOC, where each section is collapsible and styled with its assigned color.
  * 4. Appends the generated TOC structure to the `#toc-container` element in the DOM.
@@ -1620,8 +1620,8 @@ function sectioned_list(){
 function toc_sections() {
 
     let sections = [];
-    for (let key in child_obj) {
-        let section = child_obj[key]['section_name'];
+    for (let key in childObj) {
+        let section = childObj[key]['section_name'];
         if (!sections.includes(section) && section!='None') {
             sections.push(section);
         }
@@ -1732,8 +1732,8 @@ function toc_sections() {
  *  - "sectioned_list": Organizes content in sections based on their grouping.
  * 
  * For each TOC item:
- * - If `child_obj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
- * - If `child_obj[key]['external_url']` is present, the item will link to an external URL.
+ * - If `childObj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
+ * - If `childObj[key]['external_url']` is present, the item will link to an external URL.
  * 
  * Additional functionality includes:
  * - Mouse hover effects on associated SVG elements, highlighting sections.
@@ -1753,21 +1753,21 @@ function table_of_contents(){
         sectioned_list();
     }       
    
-    for (let obj of sorted_child_objs){
+    for (let obj of sortedChildObjs){
 
         let key = obj.original_name;
 
         if (sectionObj[key]=="None"){
 
         }
-        let elem = document.getElementById(child_obj[key]['section_name']);
+        let elem = document.getElementById(childObj[key]['section_name']);
         let item = document.createElement("li");
-        let title = child_obj[key]['title'];  
+        let title = childObj[key]['title'];  
         let link = document.createElement("a");
         let title_formatted = title.replace(/\s+/g, '_')
         link.setAttribute("id", title_formatted);
 
-        let modal = child_obj[key]['modal'];
+        let modal = childObj[key]['modal'];
         if (modal) {
             link.setAttribute("href", `#`); //just added
             link.classList.add("modal-link"); 
@@ -1808,7 +1808,7 @@ function table_of_contents(){
         }
         
         else{
-            link.href = child_obj[key]['external_url'];
+            link.href = childObj[key]['external_url'];
             link.innerHTML = title;
             item.appendChild(link);
         }
@@ -1824,9 +1824,9 @@ function table_of_contents(){
                 let subElements = svg_elem.querySelectorAll("*");
                 subElements.forEach(subElement => {
 
-                    if (scene_same_hover_color_sections != "yes" && child_obj[key]!="None" ){ //this should be done on the SCENE side of things, will havet o bring this back
+                    if (scene_same_hover_color_sections != "yes" && childObj[key]!="None" ){ //this should be done on the SCENE side of things, will havet o bring this back
 
-                        let section_num = child_obj[key]['section_name'];
+                        let section_num = childObj[key]['section_name'];
                         let this_color = `scene_section_hover_color${section_num}`;
                         let text_color = `scene_section_hover_text_color${section_num}`;
                         let hovercolorfullpath = scene_data[`scene_section${section_num}`][this_color];
@@ -1865,8 +1865,8 @@ function table_of_contents(){
  * The sections are not explicitly displayed, but their colors are used for highlighting.
  * 
  * Each TOC item:
- * - If `child_obj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
- * - If `child_obj[key]['external_url']` is present, the item will link to an external URL.
+ * - If `childObj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
+ * - If `childObj[key]['external_url']` is present, the item will link to an external URL.
  * 
  * Additional functionality:
  * - Mouse hover effects highlight associated SVG elements, using section colors if `thisInstance.instance_colored_sections` is set to "yes".
@@ -1881,8 +1881,8 @@ function table_of_contents(){
 function list_toc(){
     
     let sections = [];
-    for (let key in child_obj) {
-        let section = child_obj[key]['section_name'];
+    for (let key in childObj) {
+        let section = childObj[key]['section_name'];
         if (!sections.includes(section)) {
             sections.push(section);
         }
@@ -1896,7 +1896,7 @@ function list_toc(){
     let i = 0;
     let item;
 
-    for (let obj of sorted_child_objs){
+    for (let obj of sortedChildObjs){
 
         let key = obj.original_name;
 
@@ -1984,15 +1984,15 @@ function list_toc(){
 /**
  * Generates and handles modal windows or external URL redirects when SVG elements are clicked.
  * 
- * This function adds click event listeners to SVG elements (identified by `g[id="key"]`) from `child_obj`.
+ * This function adds click event listeners to SVG elements (identified by `g[id="key"]`) from `childObj`.
  * 
- * - If the `child_obj[key]['modal']` value is true:
+ * - If the `childObj[key]['modal']` value is true:
  *   - Clicking the SVG element or corresponding mobile container (`#key-container`) opens a modal window.
  *   - The `render_modal(key)` function is triggered to load modal content.
  *   - Clicking outside the modal or on the close button hides the modal and clears the content.
  * 
- * - If `child_obj[key]['modal']` is false:
- *   - Clicking the SVG element redirects to the external URL specified in `child_obj[key]['external_url']`.
+ * - If `childObj[key]['modal']` is false:
+ *   - Clicking the SVG element redirects to the external URL specified in `childObj[key]['external_url']`.
  *   - For mobile devices, a similar event is added to the container element (`#key-container`).
  * 
  * Modal close behavior:
@@ -2005,9 +2005,9 @@ function list_toc(){
  * Called in mobile helper, load_svg to actually add modal capabilities to scene element
  */
 function add_modal(){
-    for (let key in child_obj){
+    for (let key in childObj){
         let elem = document.querySelector('g[id="' + key + '"]');
-        if (child_obj[key]['modal']){
+        if (childObj[key]['modal']){
             let modal = document.getElementById("myModal");
             let closeButton = document.getElementById("close");
             
@@ -2053,13 +2053,13 @@ function add_modal(){
     
         } else {
             elem.addEventListener('click', function(event) {    
-                let link =  child_obj[key]['external_url'];
+                let link =  childObj[key]['external_url'];
                 window.location.href = link;
             });
             if (mobileBool){
                 let itemContainer = document.querySelector(`#${key}-container`);
                 itemContainer.addEventListener('click', function() {
-                    let link =  child_obj[key]['external_url'];
+                    let link =  childObj[key]['external_url'];
                     window.location.href = link;
                 });
             }
