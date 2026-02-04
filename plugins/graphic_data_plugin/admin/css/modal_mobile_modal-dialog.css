@@ -11,6 +11,19 @@
   z-index: 9999;
 }
 
+
+a {
+  color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
+  text-decoration: underline;
+  color: #03386c;
+}
+
+ul {
+  list-style: disc;
+  color: rgb(82, 82, 82);
+  fill: rgb(82, 82, 82);
+}
+
 .modal-content{
   border-radius: 0 !important;
   overflow: hidden;
@@ -122,6 +135,7 @@
   background: #fff;
   color: #111;
   padding: 12px 14px;
+  text-align: left;
 }
 
 /* Collapse safety */

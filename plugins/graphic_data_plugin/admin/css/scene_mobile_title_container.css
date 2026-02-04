@@ -14,6 +14,18 @@
   background-color: #f2f2f2;
 }
 
+ul {
+  list-style: disc;
+  color: rgb(82, 82, 82);
+  fill: rgb(82, 82, 82);
+}
+
+a {
+  color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
+  text-decoration: underline;
+  color: #03386c;
+}
+
 #title-container,
 #title-container * {
   box-sizing: border-box;
@@ -107,12 +119,23 @@
   color: var(--bs-accordion-color);
 }
 
+.accordion {
+  --bs-accordion-bg: none;
+}
+
 /* separate “bars”, not pill buttons */
 #title-container .accordion-item {
   border: 2px solid var(--bs-accordion-border-color);
   border-radius: 0px !important;
   overflow: hidden !important;
   margin: 0 0 1px 0 !important;
+}
+
+#more-info-collapse-1 > div {
+  background-color: #f2f2f2;
+}
+#images-collapse-1 > div {
+  background-color: #f2f2f2;
 }
 
 #title-container .accordion-header {
@@ -123,7 +146,7 @@
 #title-container .accordion-button {
   background: #003b71 !important; /* deep navy */
   color: #fff !important;
-  font-weight: 700 !important;
+  font-weight: 500 !important;
   padding: 12px 14px !important;
 
   border: 0 !important;

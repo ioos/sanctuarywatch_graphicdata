@@ -10,6 +10,18 @@
   margin: 5% auto !important;
 }
 
+a {
+  color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
+  text-decoration: underline;
+  color: #03386c;
+}
+
+ul {
+  list-style: disc;
+  color: rgb(82, 82, 82);
+  fill: rgb(82, 82, 82);
+}
+
 .modal-content{
   display: flex;
   flex-direction: column;
