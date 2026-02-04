@@ -163,7 +163,7 @@ if (previewFigureOrModalElements.length > 0) {
             if (el.getAttribute('data-depend-id') === 'modal_preview_mobile' || el.getAttribute('data-depend-id') === 'figure_preview_mobile') {
                 deviceDetector.device = 'phone';
                 if (dialog2) {
-                    dialog2.style.minWidth = '33%';
+                    dialog2.style.minWidth = '22%';
                     dialog2.style.width = '350px';
                     dialog2.style.paddingTop = '2%'; // if you need this
                 }
@@ -279,82 +279,6 @@ if (previewFigureOrModalElements.length > 0) {
                 };
 
                 render_modal(iconSelected, child_obj, modal_data);
-
-                // if (el.getAttribute('data-depend-id') === 'modal_preview_mobile') {
-                //     const color2 = '#ff6600'; // example
-                //     const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='${color2}' d='M1.5 5.5l6 6 6-6'/></svg>`;
-                //     const svgEncoded = encodeURIComponent(svg);
-
-                //     const style = document.createElement('style');
-                //     style.id = 'sw-modal-accordion-btn-css'; // optional: for easy debugging/removal
-                //     style.textContent = `
-
-                //     @media (min-width: 900px) {
-                //     #accordion-container {
-                //         max-width: 100% !important;  /* or unset */
-                //         margin-left: 0 !important;   /* or unset */
-                //         /* min-width can stay if you want */
-                //     }
-                //     }
-                //     /* -----------------------------
-                //     Accordion chevron
-                //     ----------------------------- */
-                //     .accordion-button::after {
-                //     content: "";
-                //     background-image: url("data:image/svg+xml,${svgEncoded}");
-                //     background-repeat: no-repeat;
-                //     background-size: 1.25rem;
-                //     width: 1.25rem;
-                //     height: 1.25rem;
-                //     margin-left: auto;
-                //     transform: rotate(0deg);
-                //     transition: transform .2s ease-in-out;
-                //     }
-                //     .accordion-button:not(.collapsed)::after {
-                //     transform: rotate(180deg);
-                //     }      
-
-                //     @media (min-width: 900px) {
-                //     #accordion-container {
-                //         max-width: 100%;
-                //         min-width: 200px;
-                //         margin-left: -15%;
-                //     }
-                //     }
-
-                //     /* Stack tab "buttons" vertically */
-                //     .nav-tabs {
-                //     display: flex !important;
-                //     flex-direction: column !important;
-                //     width: 100% !important;
-                //     border-bottom: 0 !important; /* optional: remove the bottom tab border line */
-                //     }
-
-                //     /* Make each tab item full width */
-                //     .nav-tabs .nav-item {
-                //     width: 100% !important;
-                //     flex: 0 0 auto !important;
-                //     }
-
-                //     /* Make the clickable area a full-width centered button */
-                //     .nav-tabs .nav-link {
-                //     width: 98% !important;
-                //     text-align: center !important;
-                //     justify-content: center !important; /* helps if link uses flex */
-                //     border-radius: 0.75rem;            /* optional */
-                //     margin: 0 0 0.5rem 0;              /* spacing between "buttons" */
-                //     }
-
-                //     /* Optional: last one no extra gap */
-                //     .nav-tabs .nav-item:last-child .nav-link {
-                //     margin-bottom: 0;
-                //     }
-                //     `;
-
-                //     document.head.appendChild(style);
-                // }
-
-
             }
 
             // --- GATHER FIGURE DATA FROM FORM FIELDS ---
@@ -376,95 +300,7 @@ if (previewFigureOrModalElements.length > 0) {
 
                 render_modal(iconSelected, child_obj, modal_data);
 
-                // if (el.getAttribute('data-depend-id') === 'figure_preview_mobile') {
-                //     const color2 = '#ff6600'; // example
-                //     const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='${color2}' d='M1.5 5.5l6 6 6-6'/></svg>`;
-                //     const svgEncoded = encodeURIComponent(svg);
-
-                //     const style = document.createElement('style');
-                //     style.id = 'sw-modal-accordion-btn-css'; // optional: for easy debugging/removal
-                //     style.textContent = `
-
-                //     @media (min-width: 900px) {
-                //     #accordion-container {
-                //         max-width: 100% !important;  /* or unset */
-                //         margin-left: 0 !important;   /* or unset */
-                //         /* min-width can stay if you want */
-                //     }
-                //     }
-                //     /* -----------------------------
-                //     Accordion chevron
-                //     ----------------------------- */
-                //     .accordion-button::after {
-                //     content: "";
-                //     background-image: url("data:image/svg+xml,${svgEncoded}");
-                //     background-repeat: no-repeat;
-                //     background-size: 1.25rem;
-                //     width: 1.25rem;
-                //     height: 1.25rem;
-                //     margin-left: auto;
-                //     transform: rotate(0deg);
-                //     transition: transform .2s ease-in-out;
-                //     }
-                //     .accordion-button:not(.collapsed)::after {
-                //     transform: rotate(180deg);
-                //     }
-
-                //     @media (min-width: 900px) {
-                //     #accordion-container {
-                //         max-width: 100%;
-                //         min-width: 200px;
-                //         margin-left: -15%;
-                //     }
-                //     }
-
-                //     /* Stack tab "buttons" vertically */
-                //     .nav-tabs {
-                //     display: flex !important;
-                //     flex-direction: column !important;
-                //     width: 100% !important;
-                //     border-bottom: 0 !important; /* optional: remove the bottom tab border line */
-                //     }
-
-                //     /* Make each tab item full width */
-                //     .nav-tabs .nav-item {
-                //     width: 100% !important;
-                //     flex: 0 0 auto !important;
-                //     }
-
-                //     /* Make the clickable area a full-width centered button */
-                //     .nav-tabs .nav-link {
-                //     width: 98% !important;
-                //     text-align: center !important;
-                //     justify-content: center !important; /* helps if link uses flex */
-                //     border-radius: 0.75rem;            /* optional */
-                //     margin: 0 0 0.5rem 0;              /* spacing between "buttons" */
-                //     }
-
-                //     /* Optional: last one no extra gap */
-                //     .nav-tabs .nav-item:last-child .nav-link {
-                //     margin-bottom: 0;
-                //     }
-                //     `;
-                //     document.head.appendChild(style);
-                // }
-
-                // if (el.getAttribute('data-depend-id') === 'figure_preview') {
-                //     // Create a new style element
-                //     const style = document.createElement('style');
-
-                //     // Define CSS for the pseudo-element inside that style block
-                //     style.textContent = `
-                //     .accordion-button::after {
-                //     content: "▼";
-                //     font-size: 1rem;
-                //     width: 1.25rem;
-                //     height: 1.25rem;
-                //     margin-left: auto;
-                //     }
-                //     `;
-                // }
-
+               
                 //FIGURE PREVIEW LOGIC
                 const info_obj = {
                     figure_published: document.getElementsByName("figure_published")[0]?.value,
@@ -498,7 +334,7 @@ if (previewFigureOrModalElements.length > 0) {
 
 
                 const tabContentContainer = document.getElementById('myTabContent');
-                const tabContentElement = document.getElementById('Example_Modal_Title-1-pane');
+                const tabContentElement = document.getElementById('example-modal-title-1-pane');
                 const idx = 0; // Since we are only rendering one figure here, index is 0
                 (async () => {
                     await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
@@ -516,27 +352,23 @@ if (previewFigureOrModalElements.length > 0) {
                 // Only inject CSS if not already loaded
                 if (!document.getElementById('theme-css1') && !document.getElementById('theme-css2')) {
 
-                    // const links = document.querySelectorAll('link[rel="stylesheet"]');
-                    // links.forEach(link => {
-                    //     if (link.href.includes('bootstrap.min.css')) {
-                    //     link.parentNode.removeChild(link);
-                    //     console.log('bootstrap.min.css REMOVED');
-                    //     }
-                    // });
+                    if (el.getAttribute('data-depend-id') === 'modal_preview' || el.getAttribute('data-depend-id') === 'figure_preview') {
+                        const css1 = document.createElement('link');
+                        css1.id = 'theme-css1';
+                        css1.rel = 'stylesheet';
+                        //css1.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.css`;
+                        css1.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/modal_desktop_modal-dialog.css`;
+                        document.head.appendChild(css1);
+                    }
 
-                    const css1 = document.createElement('link');
-                    css1.id = 'theme-css1';
-                    css1.rel = 'stylesheet';
-                    //css1.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.css`;
-                    //css1.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/modal_mobile_modal-dialog.css`;
-                    //document.head.appendChild(css1);
-
-                    const css2 = document.createElement('link');
-                    css2.id = 'theme-css2';
-                    css2.rel = 'stylesheet';
-                    //css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
-                    //css2.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/modal_desktop_modal-dialog.css`;
-                    document.head.appendChild(css2);
+                    if (el.getAttribute('data-depend-id') === 'modal_preview_mobile' || el.getAttribute('data-depend-id') === 'figure_preview_mobile') {
+                        const css2 = document.createElement('link');
+                        css2.id = 'theme-css2';
+                        css2.rel = 'stylesheet';
+                        //css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
+                        css2.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/modal_mobile_modal-dialog.css`;
+                        document.head.appendChild(css2);
+                    }
 
                 //console.log('🎨 Theme CSS injected');
                 } else {
@@ -795,13 +627,6 @@ if (previewSceneElements.length > 0) {
         previewSceneElements.forEach(el => {
             el.addEventListener('click', function() {
 
-                // links.forEach(link => {
-                //     if (link.href.includes('bootstrap.min.css')) {
-                //     link.parentNode.removeChild(link);
-                //     console.log('bootstrap.min.css REMOVED');
-                //     }
-                // });
-
                 // Only inject CSS if not already loaded
                 if (!document.getElementById('theme-css1') && !document.getElementById('theme-css2')) {
 
@@ -823,7 +648,6 @@ if (previewSceneElements.length > 0) {
                         document.head.appendChild(css2);
                     }
 
-                //console.log('🎨 Theme CSS injected');
                 } else {
                 //console.log('🎨 Theme CSS already loaded');
                 }

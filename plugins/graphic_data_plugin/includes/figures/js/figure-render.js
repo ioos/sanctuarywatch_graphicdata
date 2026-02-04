@@ -325,6 +325,8 @@ async function render_interactive_plots(tabContentElement, info_obj) {
  */
 async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
 
+    console.log('tabContentElement', tabContentElement);
+
     //Lets control if the figure is published or not
     let figure_published = info_obj["figure_published"];
     if (figure_published != "published"){

@@ -952,21 +952,21 @@ async function loadSVG(url, containerId) {
             modalHeader.style.textAlign = 'center';
 
             if (modalHeader) {
-                const textNode2 = document.createElement('span');
-                textNode2.textContent = 'It does not replicate all scene functions.';
-                textNode2.style.fontSize = '.8rem';
-                textNode2.style.textAlign = 'center';
-                textNode2.style.color = "red";
-                textNode2.style.paddingLeft = "5%";
-                modalHeader.prepend(textNode2); // or append()
-
                 const textNode1 = document.createElement('span');
-                textNode1.textContent = 'This preview is to validate SVG formatting.';
+                textNode1.textContent = 'This preview is intended to validate SVG formatting';
                 textNode1.style.fontSize = '.8rem';
                 textNode1.style.textAlign = 'center';
                 textNode1.style.color = "red";
                 textNode1.style.paddingLeft = "5%";
-                modalHeader.prepend(textNode1); // or append()
+                modalHeader.append(textNode1); // or append()
+
+                const textNode2 = document.createElement('span');
+                textNode2.textContent = 'and uses the "List" Table of Contents Style.';
+                textNode2.style.fontSize = '.8rem';
+                textNode2.style.textAlign = 'center';
+                textNode2.style.color = "red";
+                textNode2.style.paddingLeft = "5%";
+                modalHeader.append(textNode2); // or append()
             }
             modalHeader.style.borderBottom = "none";
 
@@ -2201,10 +2201,10 @@ function alertIfMissingModal() {
         
             const urlModalGiven = decoded.split("/");
 
-            if (!modalLinks.includes(urlModalGiven[0])) {
-                alert("We couldn't find that content. It may have been, moved, renamed, or deleted.");
+            if (!modalLinks.includes(urlModalGiven[0]) && !window.location.href.includes('post.php')) {
+                alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
             }    
-            if (modalLinks.includes(urlModalGiven[0])) {
+            if (modalLinks.includes(urlModalGiven[0]) && !window.location.href.includes('post.php')) {
                 return;
             } 
     });
