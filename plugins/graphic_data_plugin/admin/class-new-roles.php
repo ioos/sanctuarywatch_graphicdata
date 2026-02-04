@@ -241,17 +241,17 @@ class Graphic_Data_Custom_Roles {
 			// Function to reorder the role options.
 			function reorderRoleOptions() {
 				// Get the role select element.
-				var $roleSelect = $('select#role');
+				const $roleSelect = $('select#role');
 				if (!$roleSelect.length) {
 					$roleSelect = $('select[name="role"]');
 				}
 
 				if ($roleSelect.length) {
 					// Define the desired order.
-					var desiredOrder = ['administrator', 'content_manager', 'content_editor',];
+					const desiredOrder = ['administrator', 'content_manager', 'content_editor',];
 
 					// Get all options
-					var $options = $roleSelect.find('option').get();
+					let $options = $roleSelect.find('option').get();
 
 					// Sort options based on our desired order.
 					$options.sort(function(a, b) {

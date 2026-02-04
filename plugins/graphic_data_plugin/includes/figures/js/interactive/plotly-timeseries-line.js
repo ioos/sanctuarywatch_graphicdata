@@ -249,7 +249,7 @@ async function producePlotlyLineFigure(
 		const rootURL = window.location.origin;
 
 		//Rest call to get uploaded_path_json
-		if (postID == null) {
+		if (postID === null) {
 			// ADMIN SIDE POST ID GRAB
 			figureID = document.getElementsByName('post_ID')[0].value;
 			////console.log("figureID ADMIN:", figureID);
@@ -289,7 +289,7 @@ async function producePlotlyLineFigure(
 		const targetElementpostID =
 			targetElementparts[targetElementparts.length - 1];
 
-		if (figureID == targetElementpostID) {
+		if (figureID === targetElementpostID) {
 			////console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;
 			// const targetElement = document.getElementById(targetFigureElement);
 			const targetElement = await waitForElementById(targetFigureElement);
@@ -437,7 +437,7 @@ async function producePlotlyLineFigure(
 				const showSD_InputValuesOpt =
 					figureArguments[targetLineColumn + 'StdDevInputValues'];
 				//Standard Deviation of dataset based on dataset Y-axis values (AutoCalculated)
-				if (showSD == 'on' && showSD_InputValuesOpt === 'auto') {
+				if (showSD === 'on' && showSD_InputValuesOpt === 'auto') {
 					const plotlyYSanitized = plotlyY.map((val) => {
 						if (
 							val === null ||
@@ -505,7 +505,7 @@ async function producePlotlyLineFigure(
 				}
 				//Standard Deviation (values imported from spreadsheet per point in dataset)
 				//Do we want high and low bounds here?
-				if (showSD == 'on' && showSD_InputValuesOpt != 'auto') {
+				if (showSD === 'on' && showSD_InputValuesOpt != 'auto') {
 					const stdSingleValue =
 						dataToBePlotted[showSD_InputValuesOpt]
 							.filter((item) => item !== 'NA')
