@@ -1,5 +1,3 @@
-
-
 /**
  * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
  *
@@ -10,22 +8,22 @@
  * After constructing the overlays, the function calls `Plotly.react` to update the chart with the overlays and main data traces.
  *
  * @function injectOverlays
- * @param {HTMLElement} plotDiv - The DOM element where the Plotly chart is rendered.
- * @param {Object} layout - The Plotly layout object, which will be modified to include overlay settings.
- * @param {Array} mainDataTraces - The main data traces to be plotted (typically lines).
- * @param {Object} figureArguments - An object containing user-specified arguments for overlays, such as:
- *   - 'EvaluationPeriod': 'on' to enable evaluation period overlay.
- *   - 'EvaluationPeriodStartDate', 'EvaluationPeriodEndDate': Date strings for the evaluation period.
- *   - 'EvaluationPeriodFillColor': Color for the evaluation period overlay.
- *   - 'EvaluationPeriodText': Label for the evaluation period.
- *   - 'EventMarkers': 'on' to enable event markers.
- *   - 'EventMarkersField': Number of event markers.
- *   - 'EventMarkersEventAxis{n}': 'x' or 'y' for each marker.
- *   - 'EventMarkersEventText{n}': Label for each marker.
- *   - 'EventMarkersEventColor{n}': Color for each marker.
- *   - 'EventMarkersEventDate{n}': Date for x-axis marker.
- *   - 'EventMarkersEventYValue{n}': Y value for y-axis marker.
- * @param {Object} dataToBePlotted - The data object containing arrays for each column, used for plotting overlays.
+ * @param {HTMLElement} plotDiv         - The DOM element where the Plotly chart is rendered.
+ * @param {Object}      layout          - The Plotly layout object, which will be modified to include overlay settings.
+ * @param {Array}       mainDataTraces  - The main data traces to be plotted (typically lines).
+ * @param {Object}      figureArguments - An object containing user-specified arguments for overlays, such as:
+ *                                      - 'EvaluationPeriod': 'on' to enable evaluation period overlay.
+ *                                      - 'EvaluationPeriodStartDate', 'EvaluationPeriodEndDate': Date strings for the evaluation period.
+ *                                      - 'EvaluationPeriodFillColor': Color for the evaluation period overlay.
+ *                                      - 'EvaluationPeriodText': Label for the evaluation period.
+ *                                      - 'EventMarkers': 'on' to enable event markers.
+ *                                      - 'EventMarkersField': Number of event markers.
+ *                                      - 'EventMarkersEventAxis{n}': 'x' or 'y' for each marker.
+ *                                      - 'EventMarkersEventText{n}': Label for each marker.
+ *                                      - 'EventMarkersEventColor{n}': Color for each marker.
+ *                                      - 'EventMarkersEventDate{n}': Date for x-axis marker.
+ *                                      - 'EventMarkersEventYValue{n}': Y value for y-axis marker.
+ * @param {Object}      dataToBePlotted - The data object containing arrays for each column, used for plotting overlays.
  *
  * @description
  * - If the evaluation period is enabled, a shaded region is added to the chart between the specified start and end dates.
@@ -40,7 +38,7 @@
  * @example
  * injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted);
  *
- * @returns {void}
+ * @return {void}
  */
 function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted) {
     if (!plotDiv || !layout || !layout.yaxis || !layout.yaxis.range) {
@@ -194,7 +192,6 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
     //Plotly.react(plotDiv, [...mainDataTraces, ...overlays], layout);
 }
 
-
 /**
  * Asynchronously generates and renders a Plotly time series line chart with interactive features and overlays.
  *
@@ -205,9 +202,9 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  *
  * @async
  * @function producePlotlyLineFigure
- * @param {string} targetFigureElement - The ID of the DOM element where the chart should be rendered.
- * @param {string} interactive_arguments - A JSON string (array of key-value pairs) representing user-specified chart configuration.
- * @param {string|number|null} postID - The WordPress post ID for the figure. If null, the function attempts to retrieve it from the admin page.
+ * @param {string}             targetFigureElement   - The ID of the DOM element where the chart should be rendered.
+ * @param {string}             interactive_arguments - A JSON string (array of key-value pairs) representing user-specified chart configuration.
+ * @param {string|number|null} postID                - The WordPress post ID for the figure. If null, the function attempts to retrieve it from the admin page.
  *
  * @description
  * - Ensures Plotly.js is loaded before proceeding.
@@ -750,7 +747,6 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
     }
 }
 
-
 /**
  * Loads and merges default interactive line arguments with the current arguments,
  * ensuring proper handling of line-specific keys and other configuration options.
@@ -794,7 +790,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
  * - `mergedPairs`: The merged arguments as an array of key-value pairs.
  * - `mergedPairs_string`: The merged arguments as a JSON string.
  *
- * @returns {void}
+ * @return {void}
  *
  * @example
  * // Assuming `argumentsDefaultsLine.interactive_line_arguments` contains default arguments
@@ -808,113 +804,140 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
  * - `argumentsDefaultsLine` (optional): A global object containing default arguments
  *   for the interactive line chart.
  */
-function loadDefaultInteractiveLineArguments (jsonColumns) {
-    // ---------- helpers ----------
-    function safeParseJSON(s) { try { return JSON.parse(s); } catch { return null; } }
+function loadDefaultInteractiveLineArguments(jsonColumns) {
+	// ---------- helpers ----------
+	function safeParseJSON(s) {
+		try {
+			return JSON.parse(s);
+		} catch {
+			return null;
+		}
+	}
 
-    function pairsToObject(pairs) {
-        const o = {};
-        if (Array.isArray(pairs)) {
-        for (const p of pairs) {
-            if (Array.isArray(p) && p.length >= 2) o[String(p[0])] = String(p[1] ?? "");
-        }
-        }
-        return o;
-    }
-    function kvStringToObject(str) {
-        const o = {};
-        if (!str) return o;
-        for (const part of str.split(/[;,]/)) {
-        const [k, v] = part.split(/[:=]/).map(s => (s || "").trim());
-        if (k) o[k] = v ?? "";
-        }
-        return o;
-    }
-    function toObjectFlexible(s) {
-        if (!s) return {};
-        const asJSON = safeParseJSON(s);
-        if (asJSON && typeof asJSON === "object") {
-        return Array.isArray(asJSON) ? pairsToObject(asJSON) : asJSON;
-        }
-        return kvStringToObject(s);
-    }
-    function toPairsFlexible(s) {
-        const asJSON = safeParseJSON(s);
-        if (Array.isArray(asJSON)) return asJSON;
-        const obj = toObjectFlexible(s);
-        return Object.entries(obj).map(([k, v]) => [k, v]);
-    }
-    // preserve original order from currentPairs; append unseen keys at the end
-    function objectToPairsPreserveOrder(obj, currentPairs) {
-        const seen = new Set();
-        const out = [];
-        for (const [k] of currentPairs) {
-        if (!seen.has(k) && k in obj) {
-            out.push([k, String(obj[k] ?? "")]);
-            seen.add(k);
-        }
-        }
-        // append any remaining keys (e.g., required keys not in original)
-        for (const k of Object.keys(obj)) {
-        if (!seen.has(k)) out.push([k, String(obj[k] ?? "")]);
-        }
-        return out;
-    }
+	function pairsToObject(pairs) {
+		const o = {};
+		if (Array.isArray(pairs)) {
+			for (const p of pairs) {
+				if (Array.isArray(p) && p.length >= 2) {
+					o[String(p[0])] = String(p[1] ?? '');
+				}
+			}
+		}
+		return o;
+	}
+	function kvStringToObject(str) {
+		const o = {};
+		if (!str) {
+			return o;
+		}
+		for (const part of str.split(/[;,]/)) {
+			const [k, v] = part.split(/[:=]/).map((s) => (s || '').trim());
+			if (k) {
+				o[k] = v ?? '';
+			}
+		}
+		return o;
+	}
+	function toObjectFlexible(s) {
+		if (!s) {
+			return {};
+		}
+		const asJSON = safeParseJSON(s);
+		if (asJSON && typeof asJSON === 'object') {
+			return Array.isArray(asJSON) ? pairsToObject(asJSON) : asJSON;
+		}
+		return kvStringToObject(s);
+	}
+	function toPairsFlexible(s) {
+		const asJSON = safeParseJSON(s);
+		if (Array.isArray(asJSON)) {
+			return asJSON;
+		}
+		const obj = toObjectFlexible(s);
+		return Object.entries(obj).map(([k, v]) => [k, v]);
+	}
+	// preserve original order from currentPairs; append unseen keys at the end
+	function objectToPairsPreserveOrder(obj, currentPairs) {
+		const seen = new Set();
+		const out = [];
+		for (const [k] of currentPairs) {
+			if (!seen.has(k) && k in obj) {
+				out.push([k, String(obj[k] ?? '')]);
+				seen.add(k);
+			}
+		}
+		// append any remaining keys (e.g., required keys not in original)
+		for (const k of Object.keys(obj)) {
+			if (!seen.has(k)) {
+				out.push([k, String(obj[k] ?? '')]);
+			}
+		}
+		return out;
+	}
 
-    // ---------- main ----------
-    const field = document.getElementsByName("figure_interactive_arguments")[0];
-    if (!field) return;
+	// ---------- main ----------
+	const field = document.getElementsByName('figure_interactive_arguments')[0];
+	if (!field) {
+		return;
+	}
 
-    const currentStr  = field.value || "";
-    const defaultsStr = (typeof argumentsDefaultsLine !== "undefined" && argumentsDefaultsLine.interactive_line_arguments)
-                            ? argumentsDefaultsLine.interactive_line_arguments : "";
+	const currentStr = field.value || '';
+	const defaultsStr =
+		typeof argumentsDefaultsLine !== 'undefined' &&
+		argumentsDefaultsLine.interactive_line_arguments
+			? argumentsDefaultsLine.interactive_line_arguments
+			: '';
 
+	// Parse both to objects and keep original pair order from current
+	const currentPairs = toPairsFlexible(currentStr);
+	const currentObj = toObjectFlexible(currentStr);
+	const defaultsObj = toObjectFlexible(defaultsStr);
 
-    // Parse both to objects and keep original pair order from current
-    const currentPairs   = toPairsFlexible(currentStr);
-    const currentObj     = toObjectFlexible(currentStr);
-    const defaultsObj    = toObjectFlexible(defaultsStr);
+	// How many lines should be considered?
+	const numEl = document.getElementById('NumberOfLines');
+	const numberOfLines = numEl && numEl.value ? parseInt(numEl.value, 10) : 0;
+	if (numberOfLines > 0) {
+		currentObj.NumberOfLines = String(numberOfLines);
+	}
 
-    // How many lines should be considered?
-    const numEl = document.getElementById("NumberOfLines");
-    const numberOfLines = numEl && numEl.value ? parseInt(numEl.value, 10) : 0;
-    if (numberOfLines > 0) currentObj.NumberOfLines = String(numberOfLines);
+	// Overwrite ONLY keys that:
+	//  - start with Line1..Line{N}, AND
+	//  - already exist in currentObj, AND
+	//  - also exist in defaultsObj
+	if (numberOfLines > 0) {
+		const linePrefixes = Array.from(
+			{ length: numberOfLines },
+			(_, i) => `Line${i + 1}`
+		);
+		for (const key of Object.keys(currentObj)) {
+			const isWithinLines = linePrefixes.some((prefix) =>
+				key.startsWith(prefix)
+			);
+			if (isWithinLines && key in defaultsObj) {
+				currentObj[key] = defaultsObj[key];
+			}
+		}
+	}
 
-    // Overwrite ONLY keys that:
-    //  - start with Line1..Line{N}, AND
-    //  - already exist in currentObj, AND
-    //  - also exist in defaultsObj
-    if (numberOfLines > 0) {
-        const linePrefixes = Array.from({ length: numberOfLines }, (_, i) => `Line${i + 1}`);
-        for (const key of Object.keys(currentObj)) {
-        const isWithinLines = linePrefixes.some(prefix => key.startsWith(prefix));
-        if (isWithinLines && (key in defaultsObj)) {
-            currentObj[key] = defaultsObj[key];
-        }
-        }
-    }
+	// Ensure/overwrite these non-line keys regardless of line count
+	currentObj.showGrid = defaultsObj.showGrid ?? 'on';
+	currentObj.graphTicks = defaultsObj.graphTicks ?? 'on';
+	currentObj.XAxisFormat = defaultsObj.XAxisFormat ?? 'YYYY';
 
-    // Ensure/overwrite these non-line keys regardless of line count
-    currentObj.showGrid    = (defaultsObj.showGrid    ?? "on");
-    currentObj.graphTicks  = (defaultsObj.graphTicks  ?? "on");
-    currentObj.XAxisFormat = (defaultsObj.XAxisFormat ?? "YYYY");
+	// Convert back to array-of-pairs, preserving the original order from currentPairs
+	const mergedPairs = objectToPairsPreserveOrder(currentObj, currentPairs);
 
-    // Convert back to array-of-pairs, preserving the original order from currentPairs
-    const mergedPairs = objectToPairsPreserveOrder(currentObj, currentPairs);
+	// Write back EXACTLY as array-of-pairs JSON
+	const mergedPairs_string = JSON.stringify(mergedPairs);
 
-    // Write back EXACTLY as array-of-pairs JSON
-    let mergedPairs_string = JSON.stringify(mergedPairs);
+	// console.log('interactive_arguments', currentStr);
+	// console.log('default_interactive_line_arguments', defaultsStr);
+	// console.log('mergedPairs_string', mergedPairs_string);
 
-    // console.log('interactive_arguments', currentStr);
-    // console.log('default_interactive_line_arguments', defaultsStr);
-    // console.log('mergedPairs_string', mergedPairs_string);
+	document.getElementsByName('figure_interactive_arguments')[0].value =
+		mergedPairs_string;
 
-    document.getElementsByName("figure_interactive_arguments")[0].value = mergedPairs_string;
-
-    displayLineFields(numberOfLines, jsonColumns, mergedPairs_string);
-
-    return;
-    
+	displayLineFields(numberOfLines, jsonColumns, mergedPairs_string);
 }
 
 /**
@@ -928,7 +951,7 @@ function loadDefaultInteractiveLineArguments (jsonColumns) {
  * to update the underlying data model when fields are changed.
  *
  * @function plotlyLineParameterFields
- * @param {Object} jsonColumns - An object representing available data columns, where keys are column identifiers and values are column names.
+ * @param {Object}        jsonColumns           - An object representing available data columns, where keys are column identifiers and values are column names.
  * @param {Object|string} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
  *
  * @description
@@ -1161,7 +1184,6 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   displayLineFields(selectNumberLines.value, jsonColumns, interactive_arguments);
 }
 
-
 /**
  * Dynamically generates and appends form fields for configuring line-specific and overlay parameters
  * for a Plotly time series line chart in the UI.
@@ -1175,8 +1197,8 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
  * to update the underlying data model when fields are changed.
  *
  * @function displayLineFields
- * @param {number} numLines - The number of lines to generate configuration fields for.
- * @param {Object} jsonColumns - An object representing available data columns, where keys are column identifiers and values are column names.
+ * @param {number}        numLines              - The number of lines to generate configuration fields for.
+ * @param {Object}        jsonColumns           - An object representing available data columns, where keys are column identifiers and values are column names.
  * @param {Object|string} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
  *
  * @description
@@ -1211,673 +1233,906 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
  * - Assumes the existence of a DOM element with ID 'graphGUI'.
  * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
  */
-function displayLineFields (numLines, jsonColumns, interactive_arguments) {
-  let assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
-  // If the element exists
-  if (assignColumnsToPlot) {
-      // Remove the scene window
-      assignColumnsToPlot.parentNode.removeChild(assignColumnsToPlot);
-  }
-
-  if (numLines > 0) {
-      let newDiv = document.createElement("div");
-      newDiv.id = "assignColumnsToPlot";
-
-      //"EvaluationPeriod" & "EventMarkers"
-      const features = ["EvaluationPeriod", "EventMarkers"];
-      const featureNames = ["Evaluation Period", "Event Markers"];
-      for (let i = 0; i < features.length; i++) {
-        const feature = features[i];
-        const featureName = featureNames[i];
-
-        let newRow = document.createElement("div");
-        newRow.classList.add("row", "fieldPadding");
-
-        let newColumn1 = document.createElement("div");
-        newColumn1.classList.add("col-3");
-        let newColumn2 = document.createElement("div");
-        newColumn2.classList.add("col");
-
-        let label = document.createElement("label");
-        label.for = feature;
-        label.innerHTML = `${featureName}`;
-        let checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = feature;
-        checkbox.name = "plotFields";
-
-        let fieldValueSaved = fillFormFieldValues(checkbox.id, interactive_arguments);
-        checkbox.value = fieldValueSaved === 'on' ? 'on' : "";
-        checkbox.checked = fieldValueSaved === 'on';
-
-        newColumn1.appendChild(label);
-        newColumn2.appendChild(checkbox);
-        newRow.append(newColumn1, newColumn2);
-        newRow.style.marginTop = "20px";
-        newRow.style.marginBottom = "20px"
-        newDiv.append(newRow);
-        
-
-        // === Add dropdowns for feature-specific data ===
-        if (["EvaluationPeriod", "EventMarkers"].includes(feature)) {
-            const dropdownContainer = document.createElement("div");
-            dropdownContainer.classList.add("row", "fieldPadding");
-
-            const dropdownLabelCol = document.createElement("div");
-            dropdownLabelCol.classList.add("col-3");
-            const dropdownInputCol = document.createElement("div");
-            dropdownInputCol.classList.add("col");
-
-            function createDropdown(labelText, selectId) {
-                const label = document.createElement("label");
-                label.innerHTML = labelText;
-                const select = document.createElement("select");
-                select.id = selectId;
-                select.name = "plotFields";
-
-                if (feature === "EventMarkers") {
-
-                    for (let col of [1, 2, 3, 4, 5, 6]) {
-                        const opt = document.createElement("option");
-                        opt.value = col;
-                        opt.innerHTML = col;
-                        select.appendChild(opt);
-                    }
-
-                    const saved = fillFormFieldValues(select.id, interactive_arguments);
-                    if (saved) select.value = saved;
-
-                    select.addEventListener("change", logFormFieldValues);
-                    return { label, select };
-                }
-            }
-
-            function createDatefield(labelText, inputId) {
-                const label = document.createElement("label");
-                label.textContent = labelText;
-                label.htmlFor = inputId; // Link label to input
-
-                const input = document.createElement("input"); // Correct element
-                input.type = "date";
-                input.id = inputId;
-                input.name = "plotFields";
-
-                const saved = fillFormFieldValues(input.id, interactive_arguments);
-                if (saved) input.value = saved;
-
-                input.addEventListener("change", logFormFieldValues);
-                return { label, input };
-            }
-
-            function createTextfield(labelText, inputId) {
-                const label = document.createElement("label");
-                label.textContent = labelText;
-                label.htmlFor = inputId; // Link label to input
-
-                const input = document.createElement("input"); // Correct element
-                input.type = "text";
-                input.id = inputId;
-                input.name = "plotFields";
-                input.style.width = "200px";
-
-
-                const saved = fillFormFieldValues(input.id, interactive_arguments);
-                if (saved) input.value = saved;
-
-                input.addEventListener("change", logFormFieldValues);
-                return { label, input };
-            }
-
-            function createColorfield(labelText, inputId) {
-                const label = document.createElement("label");
-                label.textContent = labelText;
-                label.htmlFor = inputId; // Link label to input
-
-                const input = document.createElement("input"); // Correct element
-                input.type = "color";
-                input.id = inputId;
-                input.name = "plotFields";
-
-                const saved = fillFormFieldValues(input.id, interactive_arguments);
-                if (saved) input.value = saved;
-
-                input.addEventListener("change", logFormFieldValues);
-                return { label, input };
-            }
-
-            const controls = [];
-
-            if (feature === "EvaluationPeriod") {
-                const { label: labelStartDate, input: StartDateValues } = createDatefield(`Start Date`,  feature + "StartDate");
-                const { label: labelEndDate, input: EndDateValues } = createDatefield('End Date', feature + "EndDate");
-                const { label: labelColor, input: ColorValue } = createColorfield(`Fill Color`,  feature + "FillColor");
-                const { label: textLabel, input: textInput }   = createTextfield(`Display Text`, feature + "Text");
-                controls.push(labelStartDate, document.createElement('br'), StartDateValues, document.createElement('br'), document.createElement('br'), labelEndDate, document.createElement('br'), EndDateValues, document.createElement('br'), document.createElement('br'), labelColor, document.createElement('br'), ColorValue, document.createElement('br'), document.createElement('br'), textLabel, document.createElement('br'), textInput, document.createElement('br'));
-            }
-
-            if (feature === "EventMarkers") {
-                const { label, select } = createDropdown("Number of Event Markers", feature + "Field");
-                controls.push(label, select);
-  
-
-                // A wrapper that we'll (re)fill with the N sets of fields
-                const wrapper = document.createElement("div");
-                wrapper.id = feature + "FieldsWrapper";
-                controls.push(wrapper);
-
-                const renderEventMarkerFields = (n) => {
-                wrapper.innerHTML = ""; // Clear previous
-
-                for (let i = 0; i < n; i++) {
-                    // === Axis Selector ===
-                    const axisLabel = document.createElement("label");
-                    axisLabel.textContent = `Event Marker Axis ${i + 1}`;
-                    const axisSelect = document.createElement("select");
-                    axisSelect.id = `${feature}EventAxis${i}`;
-                    axisSelect.name = "plotFields";
-
-                    ["x", "y"].forEach(axis => {
-                    const opt = document.createElement("option");
-                    opt.value = axis;
-                    opt.textContent = axis.toUpperCase() + " Axis";
-                    axisSelect.appendChild(opt);
-                    });
-                    let savedAxis = fillFormFieldValues(axisSelect.id, interactive_arguments);
-                    if (savedAxis) axisSelect.value = savedAxis;
-
-                    // === Shared Inputs ===
-                    const { label: textLabel, input: textInput }   = createTextfield(`Display Text ${i + 1}`, `${feature}EventText${i}`);
-                    const { label: colorLabel, input: colorInput } = createColorfield(`Line Color ${i + 1}`,  `${feature}EventColor${i}`);
-                    fillFormFieldValues(textInput.id, interactive_arguments);
-                    fillFormFieldValues(colorInput.id, interactive_arguments);
-
-                    // === X-axis Fields ===
-                    const xWrapper = document.createElement("div");
-                    const { label: dateLabel, input: dateInput } = createDatefield(`Event Date ${i + 1} (X-Axis)`, `${feature}EventDate${i}`);
-                    fillFormFieldValues(dateInput.id, interactive_arguments);
-                    xWrapper.append(dateLabel, document.createElement("br"), dateInput, document.createElement("br"));
-
-                    // === Y-axis Fields ===
-                    const yWrapper = document.createElement("div");
-                    const { label: yLabel, input: yInput } = createTextfield(`Event Y Value ${i + 1}`, `${feature}EventYValue${i}`);
-                    fillFormFieldValues(yInput.id, interactive_arguments);
-                    yWrapper.append(yLabel, document.createElement("br"), yInput, document.createElement("br"));
-
-                    // === Container & Toggle Logic ===
-                    const block = document.createElement("div");
-                    block.append(
-                    document.createElement("hr"),
-                    axisLabel, document.createElement("br"), axisSelect, document.createElement("br"), document.createElement("br"),
-                    xWrapper, yWrapper, document.createElement("br"),
-                    textLabel, document.createElement("br"), textInput, document.createElement("br"),document.createElement("br"),
-                    colorLabel, document.createElement("br"), colorInput, document.createElement("br")
-                    );
-
-                    // Handle visibility
-                    const toggleAxisFields = (val) => {
-                    xWrapper.style.display = val === 'x' ? "block" : "none";
-                    yWrapper.style.display = val === 'y' ? "block" : "none";
-                    };
-                    toggleAxisFields(axisSelect.value); // Initial state
-                    axisSelect.addEventListener("change", (e) => {
-                    toggleAxisFields(e.target.value);
-                    logFormFieldValues();
-                    });
-
-                    wrapper.appendChild(block);
-                }
-                };
-
-                // Initial render using saved or current value
-                const initialN = parseInt(select.value, 10) || 0;
-                renderEventMarkerFields(initialN);
-
-                // Re-render on change
-                select.addEventListener("change", (e) => {
-                    const n = parseInt(e.target.value, 10) || 0;
-                    renderEventMarkerFields(n);
-                });
-            }
-
-            // Initially hide the dropdown container
-            dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
-
-            controls.forEach(control => dropdownInputCol.appendChild(control));
-            dropdownContainer.append(dropdownLabelCol, dropdownInputCol);
-            newDiv.append(dropdownContainer);
-
-            // Toggle visibility dynamically
-            checkbox.addEventListener('change', function () {
-                checkbox.value = checkbox.checked ? 'on' : "";
-                dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
-                logFormFieldValues();
-            });
-        } else {
-            checkbox.addEventListener('change', function () {
-                checkbox.value = checkbox.checked ? 'on' : "";
-                logFormFieldValues();
-            });
-        }
-        }
-        let newHR = document.createElement("hr");
-        newHR.style = "margin-top:15px";
-        newDiv.append(newHR); 
-        
-        
-        // Create the button for default styles
-        let labelApplyDefaults = document.createElement("label");
-        labelApplyDefaults.for = "ApplyLineDefaults";
-        labelApplyDefaults.innerHTML = "Apply Custom Line Styles to All Lines";
-
-        let btnApplyDefaults = document.createElement("button");
-        btnApplyDefaults.id = "ApplyLineDefaults";
-        btnApplyDefaults.type = "button"; // prevent accidental form submit
-        btnApplyDefaults.classList.add("button", "button-primary"); // WP admin button style
-        btnApplyDefaults.innerHTML = "Click to Apply Styles";
-
-        // Add event listener
-        btnApplyDefaults.addEventListener('click', function() {
-            // Call your function here
-            loadDefaultInteractiveLineArguments(jsonColumns, interactive_arguments);
-        });
-
-        // Wrap in row/col just like your select
-        let newRowBtn = document.createElement("div");
-        newRowBtn.classList.add("row", "fieldPadding");
-        let newColumn1Btn = document.createElement("div");
-        newColumn1Btn.classList.add("col-3");
-        let newColumn2Btn = document.createElement("div");
-        newColumn2Btn.classList.add("col");
-        newColumn1Btn.appendChild(labelApplyDefaults);
-        newColumn2Btn.appendChild(btnApplyDefaults);
-        newRowBtn.append(newColumn1Btn, newColumn2Btn);
-        newDiv.append(newRowBtn);
-
-      let fieldLabels = [["XAxis", "X Axis Column"]];
-      for (let i = 1; i <= numLines; i++){
-          fieldLabels.push(["Line" + i, "Line " + i + " Column"]);
-      }
-
-      fieldLabels.forEach((fieldLabel) => {
-          //Select the data source from dropdown menu  
-          let labelSelectColumn = document.createElement("label");
-          labelSelectColumn.for = fieldLabel[0];
-          labelSelectColumn.innerHTML = fieldLabel[1];
-          let selectColumn = document.createElement("select");
-          selectColumn.id = fieldLabel[0];
-          selectColumn.name = "plotFields";
-          selectColumn.addEventListener('change', function() {
-              logFormFieldValues();
-          });
-
-          let selectColumnOption = document.createElement("option");
-          selectColumnOption.value = "None";
-          selectColumnOption.innerHTML = "None"; 
-          selectColumn.appendChild(selectColumnOption);
-
-          Object.entries(jsonColumns).forEach(([jsonColumnsKey, jsonColumnsValue]) => {
-              selectColumnOption = document.createElement("option");
-              selectColumnOption.value = jsonColumnsValue;// jsonColumnsKey;
-              selectColumnOption.innerHTML = jsonColumnsValue; 
-              selectColumn.appendChild(selectColumnOption);
-          });
-          
-          fieldValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
-          if (fieldValueSaved != undefined){
-              selectColumn.value = fieldValueSaved;
-          }
-
-          let newRow = document.createElement("div");
-          newRow.classList.add("row", "fieldPadding");
-
-          if (fieldLabel[0] != "XAxis"){      
-              fieldLabelNumber = parseInt(fieldLabel[0].slice(-1));
-              if (fieldLabelNumber % 2 != 0 ){
-                  newRow.classList.add("row", "fieldBackgroundColor");
-              }
-          }
-
-          let newColumn1 = document.createElement("div");
-          newColumn1.classList.add("col-3");   
-          let newColumn2 = document.createElement("div");
-          newColumn2.classList.add("col");
-
-          newColumn1.appendChild(labelSelectColumn);
-          newColumn2.appendChild(selectColumn);
-          newRow.append(newColumn1, newColumn2);
-          newDiv.append(newRow);
-          
-
-          
-          // Add line label and color fields, line type, marker type, and marker size
-          if (fieldLabel[0] != "XAxis"){
-              // Add line label field
-              newRow = document.createElement("div");
-              newRow.classList.add("row", "fieldPadding");
-
-              if (fieldLabelNumber % 2 != 0 ){
-                  newRow.classList.add("row", "fieldBackgroundColor");
-              }
-
-              newColumn1 = document.createElement("div");
-              newColumn1.classList.add("col-3");   
-              newColumn2 = document.createElement("div");
-              newColumn2.classList.add("col");
-
-              let labelInputTitle = document.createElement("label");
-              labelInputTitle.for = fieldLabel[0] + "Title";
-              labelInputTitle.innerHTML = fieldLabel[1] + " Title";
-              let inputTitle = document.createElement("input");
-              inputTitle.id = fieldLabel[0] + "Title";
-              inputTitle.size = "70";
-              inputTitle.name = "plotFields";
-              
-              
-              inputTitle.addEventListener('change', function() {
-                  logFormFieldValues();
-              });
-              fieldValueSaved = fillFormFieldValues(inputTitle.id, interactive_arguments);
-              if (fieldValueSaved != undefined){ 
-                inputTitle.value = fieldValueSaved;    
-              }
-              if (fieldValueSaved === undefined){
-                 // Make each line's default title set to the name of the column name that is selected for that line. Only if the line title is not already set.
-                  //const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
-                  if (fieldLabel[0].includes("Line")){
-                    selectColumn.addEventListener('change', function() {
-                        DropdownValueSaved = selectColumn.value;
-                        if (DropdownValueSaved != 'None' && fieldValueSaved === undefined) {
-                            //console.log('fieldValueSaved2', fieldValueSaved);
-                            inputTitle.value = DropdownValueSaved;
-                            //console.log('DropdownValueSaved2', DropdownValueSaved);
-                        } 
-                    });
-                  }
-              }
-
-              newColumn1.appendChild(labelInputTitle);
-              newColumn2.appendChild(inputTitle);
-              newRow.append(newColumn1, newColumn2);
-              newDiv.append(newRow); 
-
-              // Add color field
-              newRow = document.createElement("div");
-              newRow.classList.add("row", "fieldPadding");
-              if (fieldLabelNumber % 2 != 0 ){
-                  newRow.classList.add("row", "fieldBackgroundColor");
-              }
-              newColumn1 = document.createElement("div");
-              newColumn1.classList.add("col-3");   
-              newColumn2 = document.createElement("div");
-              newColumn2.classList.add("col");
-
-              let labelInputColor = document.createElement("label");
-              labelInputColor.for = fieldLabel[0] + "Color";
-              labelInputColor.innerHTML = fieldLabel[1] + " Color";
-              let inputColor = document.createElement("input");
-              inputColor.id = fieldLabel[0] + "Color";
-              inputColor.name = "plotFields";
-              inputColor.type = "color";
-              fieldValueSaved = fillFormFieldValues(inputColor.id, interactive_arguments);
-              if (fieldValueSaved != undefined){
-                  inputColor.value = fieldValueSaved;
-              }
-              inputColor.addEventListener('change', function() {
-                  logFormFieldValues();
-              });
-
-              newColumn1.appendChild(labelInputColor);
-              newColumn2.appendChild(inputColor);
-              newRow.append(newColumn1, newColumn2);
-              newDiv.append(newRow);
-
-              // Add lineType type dropdown
-              const lineTypeRow = document.createElement('div');
-              lineTypeRow.classList.add('row', 'fieldPadding');
-              if (fieldLabelNumber % 2 != 0) lineTypeRow.classList.add('fieldBackgroundColor');
-
-              const lineTypeCol1 = document.createElement('div');
-              lineTypeCol1.classList.add('col-3');
-              const lineTypeCol2 = document.createElement('div');
-              lineTypeCol2.classList.add('col');
-
-              const lineTypeLabel = document.createElement('label');
-              lineTypeLabel.textContent = fieldLabel[1] + ' Line Type';
-              lineTypeLabel.htmlFor = fieldLabel[0] + 'LineType';
-              const lineTypeSelect = document.createElement('select');
-              lineTypeSelect.id = fieldLabel[0] + 'LineType';
-              lineTypeSelect.name = 'plotFields';
-
-              //line types
-              ["solid", "dash", "dot", "dashdot", "longdash", "longdashdot"].forEach(type => {
-              const opt = document.createElement('option');
-              opt.value = type;
-              opt.innerHTML = type.charAt(0).toUpperCase() + type.slice(1);
-              lineTypeSelect.appendChild(opt);
-              });
-
-              const lineTypeSaved = fillFormFieldValues(lineTypeSelect.id, interactive_arguments);
-              if (lineTypeSaved) lineTypeSelect.value = lineTypeSaved;
-
-              lineTypeSelect.addEventListener('change', logFormFieldValues);
-              lineTypeCol1.appendChild(lineTypeLabel);
-              lineTypeCol2.appendChild(lineTypeSelect);
-              lineTypeRow.append(lineTypeCol1, lineTypeCol2);
-              newDiv.append(lineTypeRow);
-
-              // Add marker type dropdown
-              const markerRow = document.createElement('div');
-              markerRow.classList.add('row', 'fieldPadding');
-              if (fieldLabelNumber % 2 != 0) markerRow.classList.add('fieldBackgroundColor');
-
-              const markerCol1 = document.createElement('div');
-              markerCol1.classList.add('col-3');
-              const markerCol2 = document.createElement('div');
-              markerCol2.classList.add('col');
-
-              const markerLabel = document.createElement('label');
-              markerLabel.textContent = fieldLabel[1] + ' Marker Type';
-              markerLabel.htmlFor = fieldLabel[0] + 'MarkerType';
-              const markerSelect = document.createElement('select');
-              markerSelect.id = fieldLabel[0] + 'MarkerType';
-              markerSelect.name = 'plotFields';
-
-              ["circle", "square", "diamond", "x", "triangle-up", "triangle-down", "pentagon", "hexagon", "star", "hourglass", "bowtie", "cross"].forEach(type => {
-                const opt = document.createElement('option');
-                opt.value = type;
-                opt.innerHTML = type.charAt(0).toUpperCase() + type.slice(1);
-                markerSelect.appendChild(opt);
-              });
-
-              const markerSaved = fillFormFieldValues(markerSelect.id, interactive_arguments);
-              if (markerSaved) markerSelect.value = markerSaved;
-
-              markerSelect.addEventListener('change', logFormFieldValues);
-              markerCol1.appendChild(markerLabel);
-              markerCol2.appendChild(markerSelect);
-              markerRow.append(markerCol1, markerCol2);
-              newDiv.append(markerRow);
-
-
-              // Add markerSize type dropdown
-              const markerSizeRow = document.createElement('div');
-              markerSizeRow.classList.add('row', 'fieldPadding');
-              if (fieldLabelNumber % 2 != 0) markerSizeRow.classList.add('fieldBackgroundColor');
-
-              const markerSizeCol1 = document.createElement('div');
-              markerSizeCol1.classList.add('col-3');
-              const markerSizeCol2 = document.createElement('div');
-              markerSizeCol2.classList.add('col');
-
-              const markerSizeLabel = document.createElement('label');
-              markerSizeLabel.textContent = fieldLabel[1] + ' Marker Size';
-              markerSizeLabel.htmlFor = fieldLabel[0] + 'MarkerSize';
-              const markerSizeSelect = document.createElement('select');
-              markerSizeSelect.id = fieldLabel[0] + 'MarkerSize';
-              markerSizeSelect.name = 'plotFields';
-
-              // Sizes 1 through 20
-              [0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20].forEach(size => {
-              const opt = document.createElement('option');
-              opt.value = size;
-              opt.innerHTML = size + ' px';
-              markerSizeSelect.appendChild(opt);
-              });
-
-              markerSizeSelect.value = 10;
-
-              const markerSizeSaved = fillFormFieldValues(markerSizeSelect.id, interactive_arguments);
-              if (markerSizeSaved) markerSizeSelect.value = markerSizeSaved;
-
-              markerSizeSelect.addEventListener('change', logFormFieldValues);
-              markerSizeCol1.appendChild(markerSizeLabel);
-              markerSizeCol2.appendChild(markerSizeSelect);
-              markerSizeRow.append(markerSizeCol1, markerSizeCol2);
-              newDiv.append(markerSizeRow);
-
-
-            //Add checkboxes for error bars, standard deviation, mean, and percentiles
-            const features = ["Legend", "ConnectGaps", "Mean", "StdDev", "ErrorBars", "Percentiles"];
-            const featureNames = ["Add Line to Legend", "Connect Missing Data Gaps","Mean Line", "+-1 Std Dev Lines ", "Symmetric Error Bars", "90th & 10th Percentile Lines"];
-            for (let i = 0; i < features.length; i++) {
-                const feature = features[i];
-                const featureName = featureNames[i];
-
-                let newRow = document.createElement("div");
-                newRow.classList.add("row", "fieldPadding");
-                if (fieldLabelNumber % 2 != 0) {
-                    newRow.classList.add("row", "fieldBackgroundColor");
-                }
-
-                let newColumn1 = document.createElement("div");
-                newColumn1.classList.add("col-3");
-                let newColumn2 = document.createElement("div");
-                newColumn2.classList.add("col");
-
-                let label = document.createElement("label");
-                label.for = fieldLabel[0] + feature;
-                label.innerHTML = `${featureName}`;
-                let checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.id = fieldLabel[0] + feature;
-                checkbox.name = "plotFields";
-
-                let fieldValueSaved = fillFormFieldValues(checkbox.id, interactive_arguments);
-                checkbox.value = fieldValueSaved === 'on' ? 'on' : "";
-                checkbox.checked = fieldValueSaved === 'on';
-
-                newColumn1.appendChild(label);
-                newColumn2.appendChild(checkbox);
-                newRow.append(newColumn1, newColumn2);
-                newDiv.append(newRow);
-                
-
-                // === Add dropdowns for feature-specific data ===
-                if (["Mean", "ErrorBars", "StdDev"].includes(feature)) {
-                    const dropdownContainer = document.createElement("div");
-                    dropdownContainer.classList.add("row", "fieldPadding");
-                    if (fieldLabelNumber % 2 != 0) {
-                        dropdownContainer.classList.add("row", "fieldBackgroundColor");
-                    }
-
-                    const dropdownLabelCol = document.createElement("div");
-                    dropdownLabelCol.classList.add("col-3");
-                    const dropdownInputCol = document.createElement("div");
-                    dropdownInputCol.classList.add("col");
-
-                    function createDropdown(labelText, selectId) {
-                        const label = document.createElement("label");
-                        label.innerHTML = labelText;
-                        const select = document.createElement("select");
-                        select.id = selectId;
-                        select.name = "plotFields";
-
-                        if (feature === "Mean" || feature === "ErrorBars" || feature === "StdDev") {
-                            const autoOpt = document.createElement("option");
-
-                            if (feature != "ErrorBars") {
-                                autoOpt.value = "auto";
-                                autoOpt.innerHTML = "Auto Calculate Based on Line Column Selection";
-                                select.appendChild(autoOpt);
-                            }
-                            if (feature === "ErrorBars") {
-                                autoOpt.value = "auto";
-                                autoOpt.innerHTML = "Example Error Bars";
-                                select.appendChild(autoOpt);
-                            }
-
-                        for (let col of Object.values(jsonColumns)) {
-                            const opt = document.createElement("option");
-                            opt.value = col;
-                            opt.innerHTML = col;
-                            select.appendChild(opt);
-                        }
-
-                        const saved = fillFormFieldValues(select.id, interactive_arguments);
-                        if (saved) select.value = saved;
-
-                        select.addEventListener("change", logFormFieldValues);
-                        return { label, select };
-                        }
-
-                    }
-
-                    function createColorfield(labelText, inputId) {
-                        const label = document.createElement("label");
-                        label.textContent = labelText;
-                        label.htmlFor = inputId; // Link label to input
-
-                        const input = document.createElement("input"); // Correct element
-                        input.type = "color";
-                        input.id = inputId;
-                        input.name = "plotFields";
-
-                        const saved = fillFormFieldValues(input.id, interactive_arguments);
-                        if (saved) input.value = saved;
-
-                        input.addEventListener("change", logFormFieldValues);
-                        return { label, input };
-                    }
-
-                    const controls = [];
-
-                    if (feature === "Mean") {
-                        const { label, select } = createDropdown("Mean Source Column", fieldLabel[0] + feature + "Field");
-                        controls.push(label, select);
-                    }
-
-                    if (feature === "ErrorBars" || feature === "StdDev") {
-                        const { label: labelValues, select: selectValues } = createDropdown(`${featureName} Input Column Values`, fieldLabel[0] + feature + "InputValues");
-                        const { label: labelColor, input: ColorValue } = createColorfield(`Color`, fieldLabel[0] + feature + "Color");
-                        controls.push(labelValues, document.createElement('br'), selectValues, document.createElement('br'), labelColor, document.createElement('br'), ColorValue);
-                    }             
-
-                    // Initially hide the dropdown container
-                    dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
-
-                    controls.forEach(control => dropdownInputCol.appendChild(control));
-                    dropdownContainer.append(dropdownLabelCol, dropdownInputCol);
-                    newDiv.append(dropdownContainer);
-
-                    // Toggle visibility dynamically
-                    checkbox.addEventListener('change', function () {
-                        checkbox.value = checkbox.checked ? 'on' : "";
-                        dropdownContainer.style.display = checkbox.checked ? "flex" : "none";
-                        logFormFieldValues();
-                    });
-                } else {
-                    checkbox.addEventListener('change', function () {
-                        checkbox.value = checkbox.checked ? 'on' : "";
-                        logFormFieldValues();
-                    });
-                }
-            }
-            
-          }
-        
-
-          const targetElement = document.getElementById('graphGUI');
-          targetElement.appendChild(newDiv);
-      });
-  }
+function displayLineFields(numLines, jsonColumns, interactive_arguments) {
+	const assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
+	// If the element exists
+	if (assignColumnsToPlot) {
+		// Remove the scene window
+		assignColumnsToPlot.parentNode.removeChild(assignColumnsToPlot);
+	}
+
+	if (numLines > 0) {
+		const newDiv = document.createElement('div');
+		newDiv.id = 'assignColumnsToPlot';
+
+		//"EvaluationPeriod" & "EventMarkers"
+		const features = ['EvaluationPeriod', 'EventMarkers'];
+		const featureNames = ['Evaluation Period', 'Event Markers'];
+		for (let i = 0; i < features.length; i++) {
+			const feature = features[i];
+			const featureName = featureNames[i];
+
+			const newRow = document.createElement('div');
+			newRow.classList.add('row', 'fieldPadding');
+
+			const newColumn1 = document.createElement('div');
+			newColumn1.classList.add('col-3');
+			const newColumn2 = document.createElement('div');
+			newColumn2.classList.add('col');
+
+			const label = document.createElement('label');
+			label.for = feature;
+			label.innerHTML = `${featureName}`;
+			const checkbox = document.createElement('input');
+			checkbox.type = 'checkbox';
+			checkbox.id = feature;
+			checkbox.name = 'plotFields';
+
+			const fieldValueSaved = fillFormFieldValues(
+				checkbox.id,
+				interactive_arguments
+			);
+			checkbox.value = fieldValueSaved === 'on' ? 'on' : '';
+			checkbox.checked = fieldValueSaved === 'on';
+
+			newColumn1.appendChild(label);
+			newColumn2.appendChild(checkbox);
+			newRow.append(newColumn1, newColumn2);
+			newRow.style.marginTop = '20px';
+			newRow.style.marginBottom = '20px';
+			newDiv.append(newRow);
+
+			// === Add dropdowns for feature-specific data ===
+			if (['EvaluationPeriod', 'EventMarkers'].includes(feature)) {
+				const dropdownContainer = document.createElement('div');
+				dropdownContainer.classList.add('row', 'fieldPadding');
+
+				const dropdownLabelCol = document.createElement('div');
+				dropdownLabelCol.classList.add('col-3');
+				const dropdownInputCol = document.createElement('div');
+				dropdownInputCol.classList.add('col');
+
+				function createDropdown(labelText, selectId) {
+					const label = document.createElement('label');
+					label.innerHTML = labelText;
+					const select = document.createElement('select');
+					select.id = selectId;
+					select.name = 'plotFields';
+
+					if (feature === 'EventMarkers') {
+						for (const col of [1, 2, 3, 4, 5, 6]) {
+							const opt = document.createElement('option');
+							opt.value = col;
+							opt.innerHTML = col;
+							select.appendChild(opt);
+						}
+
+						const saved = fillFormFieldValues(
+							select.id,
+							interactive_arguments
+						);
+						if (saved) {
+							select.value = saved;
+						}
+
+						select.addEventListener('change', logFormFieldValues);
+						return { label, select };
+					}
+				}
+
+				function createDatefield(labelText, inputId) {
+					const label = document.createElement('label');
+					label.textContent = labelText;
+					label.htmlFor = inputId; // Link label to input
+
+					const input = document.createElement('input'); // Correct element
+					input.type = 'date';
+					input.id = inputId;
+					input.name = 'plotFields';
+
+					const saved = fillFormFieldValues(
+						input.id,
+						interactive_arguments
+					);
+					if (saved) {
+						input.value = saved;
+					}
+
+					input.addEventListener('change', logFormFieldValues);
+					return { label, input };
+				}
+
+				function createTextfield(labelText, inputId) {
+					const label = document.createElement('label');
+					label.textContent = labelText;
+					label.htmlFor = inputId; // Link label to input
+
+					const input = document.createElement('input'); // Correct element
+					input.type = 'text';
+					input.id = inputId;
+					input.name = 'plotFields';
+					input.style.width = '200px';
+
+					const saved = fillFormFieldValues(
+						input.id,
+						interactive_arguments
+					);
+					if (saved) {
+						input.value = saved;
+					}
+
+					input.addEventListener('change', logFormFieldValues);
+					return { label, input };
+				}
+
+				function createColorfield(labelText, inputId) {
+					const label = document.createElement('label');
+					label.textContent = labelText;
+					label.htmlFor = inputId; // Link label to input
+
+					const input = document.createElement('input'); // Correct element
+					input.type = 'color';
+					input.id = inputId;
+					input.name = 'plotFields';
+
+					const saved = fillFormFieldValues(
+						input.id,
+						interactive_arguments
+					);
+					if (saved) {
+						input.value = saved;
+					}
+
+					input.addEventListener('change', logFormFieldValues);
+					return { label, input };
+				}
+
+				const controls = [];
+
+				if (feature === 'EvaluationPeriod') {
+					const { label: labelStartDate, input: StartDateValues } =
+						createDatefield(`Start Date`, feature + 'StartDate');
+					const { label: labelEndDate, input: EndDateValues } =
+						createDatefield('End Date', feature + 'EndDate');
+					const { label: labelColor, input: ColorValue } =
+						createColorfield(`Fill Color`, feature + 'FillColor');
+					const { label: textLabel, input: textInput } =
+						createTextfield(`Display Text`, feature + 'Text');
+					controls.push(
+						labelStartDate,
+						document.createElement('br'),
+						StartDateValues,
+						document.createElement('br'),
+						document.createElement('br'),
+						labelEndDate,
+						document.createElement('br'),
+						EndDateValues,
+						document.createElement('br'),
+						document.createElement('br'),
+						labelColor,
+						document.createElement('br'),
+						ColorValue,
+						document.createElement('br'),
+						document.createElement('br'),
+						textLabel,
+						document.createElement('br'),
+						textInput,
+						document.createElement('br')
+					);
+				}
+
+				if (feature === 'EventMarkers') {
+					const { label, select } = createDropdown(
+						'Number of Event Markers',
+						feature + 'Field'
+					);
+					controls.push(label, select);
+
+					// A wrapper that we'll (re)fill with the N sets of fields
+					const wrapper = document.createElement('div');
+					wrapper.id = feature + 'FieldsWrapper';
+					controls.push(wrapper);
+
+					const renderEventMarkerFields = (n) => {
+						wrapper.innerHTML = ''; // Clear previous
+
+						for (let i = 0; i < n; i++) {
+							// === Axis Selector ===
+							const axisLabel = document.createElement('label');
+							axisLabel.textContent = `Event Marker Axis ${i + 1}`;
+							const axisSelect = document.createElement('select');
+							axisSelect.id = `${feature}EventAxis${i}`;
+							axisSelect.name = 'plotFields';
+
+							['x', 'y'].forEach((axis) => {
+								const opt = document.createElement('option');
+								opt.value = axis;
+								opt.textContent = axis.toUpperCase() + ' Axis';
+								axisSelect.appendChild(opt);
+							});
+							const savedAxis = fillFormFieldValues(
+								axisSelect.id,
+								interactive_arguments
+							);
+							if (savedAxis) {
+								axisSelect.value = savedAxis;
+							}
+
+							// === Shared Inputs ===
+							const { label: textLabel, input: textInput } =
+								createTextfield(
+									`Display Text ${i + 1}`,
+									`${feature}EventText${i}`
+								);
+							const { label: colorLabel, input: colorInput } =
+								createColorfield(
+									`Line Color ${i + 1}`,
+									`${feature}EventColor${i}`
+								);
+							fillFormFieldValues(
+								textInput.id,
+								interactive_arguments
+							);
+							fillFormFieldValues(
+								colorInput.id,
+								interactive_arguments
+							);
+
+							// === X-axis Fields ===
+							const xWrapper = document.createElement('div');
+							const { label: dateLabel, input: dateInput } =
+								createDatefield(
+									`Event Date ${i + 1} (X-Axis)`,
+									`${feature}EventDate${i}`
+								);
+							fillFormFieldValues(
+								dateInput.id,
+								interactive_arguments
+							);
+							xWrapper.append(
+								dateLabel,
+								document.createElement('br'),
+								dateInput,
+								document.createElement('br')
+							);
+
+							// === Y-axis Fields ===
+							const yWrapper = document.createElement('div');
+							const { label: yLabel, input: yInput } =
+								createTextfield(
+									`Event Y Value ${i + 1}`,
+									`${feature}EventYValue${i}`
+								);
+							fillFormFieldValues(
+								yInput.id,
+								interactive_arguments
+							);
+							yWrapper.append(
+								yLabel,
+								document.createElement('br'),
+								yInput,
+								document.createElement('br')
+							);
+
+							// === Container & Toggle Logic ===
+							const block = document.createElement('div');
+							block.append(
+								document.createElement('hr'),
+								axisLabel,
+								document.createElement('br'),
+								axisSelect,
+								document.createElement('br'),
+								document.createElement('br'),
+								xWrapper,
+								yWrapper,
+								document.createElement('br'),
+								textLabel,
+								document.createElement('br'),
+								textInput,
+								document.createElement('br'),
+								document.createElement('br'),
+								colorLabel,
+								document.createElement('br'),
+								colorInput,
+								document.createElement('br')
+							);
+
+							// Handle visibility
+							const toggleAxisFields = (val) => {
+								xWrapper.style.display =
+									val === 'x' ? 'block' : 'none';
+								yWrapper.style.display =
+									val === 'y' ? 'block' : 'none';
+							};
+							toggleAxisFields(axisSelect.value); // Initial state
+							axisSelect.addEventListener('change', (e) => {
+								toggleAxisFields(e.target.value);
+								logFormFieldValues();
+							});
+
+							wrapper.appendChild(block);
+						}
+					};
+
+					// Initial render using saved or current value
+					const initialN = parseInt(select.value, 10) || 0;
+					renderEventMarkerFields(initialN);
+
+					// Re-render on change
+					select.addEventListener('change', (e) => {
+						const n = parseInt(e.target.value, 10) || 0;
+						renderEventMarkerFields(n);
+					});
+				}
+
+				// Initially hide the dropdown container
+				dropdownContainer.style.display = checkbox.checked
+					? 'flex'
+					: 'none';
+
+				controls.forEach((control) =>
+					dropdownInputCol.appendChild(control)
+				);
+				dropdownContainer.append(dropdownLabelCol, dropdownInputCol);
+				newDiv.append(dropdownContainer);
+
+				// Toggle visibility dynamically
+				checkbox.addEventListener('change', function () {
+					checkbox.value = checkbox.checked ? 'on' : '';
+					dropdownContainer.style.display = checkbox.checked
+						? 'flex'
+						: 'none';
+					logFormFieldValues();
+				});
+			} else {
+				checkbox.addEventListener('change', function () {
+					checkbox.value = checkbox.checked ? 'on' : '';
+					logFormFieldValues();
+				});
+			}
+		}
+		const newHR = document.createElement('hr');
+		newHR.style = 'margin-top:15px';
+		newDiv.append(newHR);
+
+		// Create the button for default styles
+		const labelApplyDefaults = document.createElement('label');
+		labelApplyDefaults.for = 'ApplyLineDefaults';
+		labelApplyDefaults.innerHTML = 'Apply Custom Line Styles to All Lines';
+
+		const btnApplyDefaults = document.createElement('button');
+		btnApplyDefaults.id = 'ApplyLineDefaults';
+		btnApplyDefaults.type = 'button'; // prevent accidental form submit
+		btnApplyDefaults.classList.add('button', 'button-primary'); // WP admin button style
+		btnApplyDefaults.innerHTML = 'Click to Apply Styles';
+
+		// Add event listener
+		btnApplyDefaults.addEventListener('click', function () {
+			// Call your function here
+			loadDefaultInteractiveLineArguments(
+				jsonColumns,
+				interactive_arguments
+			);
+		});
+
+		// Wrap in row/col just like your select
+		const newRowBtn = document.createElement('div');
+		newRowBtn.classList.add('row', 'fieldPadding');
+		const newColumn1Btn = document.createElement('div');
+		newColumn1Btn.classList.add('col-3');
+		const newColumn2Btn = document.createElement('div');
+		newColumn2Btn.classList.add('col');
+		newColumn1Btn.appendChild(labelApplyDefaults);
+		newColumn2Btn.appendChild(btnApplyDefaults);
+		newRowBtn.append(newColumn1Btn, newColumn2Btn);
+		newDiv.append(newRowBtn);
+
+		const fieldLabels = [['XAxis', 'X Axis Column']];
+		for (let i = 1; i <= numLines; i++) {
+			fieldLabels.push(['Line' + i, 'Line ' + i + ' Column']);
+		}
+
+		fieldLabels.forEach((fieldLabel) => {
+			//Select the data source from dropdown menu
+			const labelSelectColumn = document.createElement('label');
+			labelSelectColumn.for = fieldLabel[0];
+			labelSelectColumn.innerHTML = fieldLabel[1];
+			const selectColumn = document.createElement('select');
+			selectColumn.id = fieldLabel[0];
+			selectColumn.name = 'plotFields';
+			selectColumn.addEventListener('change', function () {
+				logFormFieldValues();
+			});
+
+			let selectColumnOption = document.createElement('option');
+			selectColumnOption.value = 'None';
+			selectColumnOption.innerHTML = 'None';
+			selectColumn.appendChild(selectColumnOption);
+
+			Object.entries(jsonColumns).forEach(
+				([jsonColumnsKey, jsonColumnsValue]) => {
+					selectColumnOption = document.createElement('option');
+					selectColumnOption.value = jsonColumnsValue; // jsonColumnsKey;
+					selectColumnOption.innerHTML = jsonColumnsValue;
+					selectColumn.appendChild(selectColumnOption);
+				}
+			);
+
+			fieldValueSaved = fillFormFieldValues(
+				selectColumn.id,
+				interactive_arguments
+			);
+			if (fieldValueSaved != undefined) {
+				selectColumn.value = fieldValueSaved;
+			}
+
+			let newRow = document.createElement('div');
+			newRow.classList.add('row', 'fieldPadding');
+
+			if (fieldLabel[0] != 'XAxis') {
+				fieldLabelNumber = parseInt(fieldLabel[0].slice(-1));
+				if (fieldLabelNumber % 2 != 0) {
+					newRow.classList.add('row', 'fieldBackgroundColor');
+				}
+			}
+
+			let newColumn1 = document.createElement('div');
+			newColumn1.classList.add('col-3');
+			let newColumn2 = document.createElement('div');
+			newColumn2.classList.add('col');
+
+			newColumn1.appendChild(labelSelectColumn);
+			newColumn2.appendChild(selectColumn);
+			newRow.append(newColumn1, newColumn2);
+			newDiv.append(newRow);
+
+			// Add line label and color fields, line type, marker type, and marker size
+			if (fieldLabel[0] != 'XAxis') {
+				// Add line label field
+				newRow = document.createElement('div');
+				newRow.classList.add('row', 'fieldPadding');
+
+				if (fieldLabelNumber % 2 != 0) {
+					newRow.classList.add('row', 'fieldBackgroundColor');
+				}
+
+				newColumn1 = document.createElement('div');
+				newColumn1.classList.add('col-3');
+				newColumn2 = document.createElement('div');
+				newColumn2.classList.add('col');
+
+				const labelInputTitle = document.createElement('label');
+				labelInputTitle.for = fieldLabel[0] + 'Title';
+				labelInputTitle.innerHTML = fieldLabel[1] + ' Title';
+				const inputTitle = document.createElement('input');
+				inputTitle.id = fieldLabel[0] + 'Title';
+				inputTitle.size = '70';
+				inputTitle.name = 'plotFields';
+
+				inputTitle.addEventListener('change', function () {
+					logFormFieldValues();
+				});
+				fieldValueSaved = fillFormFieldValues(
+					inputTitle.id,
+					interactive_arguments
+				);
+				if (fieldValueSaved != undefined) {
+					inputTitle.value = fieldValueSaved;
+				}
+				if (fieldValueSaved === undefined) {
+					// Make each line's default title set to the name of the column name that is selected for that line. Only if the line title is not already set.
+					//const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
+					if (fieldLabel[0].includes('Line')) {
+						selectColumn.addEventListener('change', function () {
+							DropdownValueSaved = selectColumn.value;
+							if (
+								DropdownValueSaved != 'None' &&
+								fieldValueSaved === undefined
+							) {
+								//console.log('fieldValueSaved2', fieldValueSaved);
+								inputTitle.value = DropdownValueSaved;
+								//console.log('DropdownValueSaved2', DropdownValueSaved);
+							}
+						});
+					}
+				}
+
+				newColumn1.appendChild(labelInputTitle);
+				newColumn2.appendChild(inputTitle);
+				newRow.append(newColumn1, newColumn2);
+				newDiv.append(newRow);
+
+				// Add color field
+				newRow = document.createElement('div');
+				newRow.classList.add('row', 'fieldPadding');
+				if (fieldLabelNumber % 2 != 0) {
+					newRow.classList.add('row', 'fieldBackgroundColor');
+				}
+				newColumn1 = document.createElement('div');
+				newColumn1.classList.add('col-3');
+				newColumn2 = document.createElement('div');
+				newColumn2.classList.add('col');
+
+				const labelInputColor = document.createElement('label');
+				labelInputColor.for = fieldLabel[0] + 'Color';
+				labelInputColor.innerHTML = fieldLabel[1] + ' Color';
+				const inputColor = document.createElement('input');
+				inputColor.id = fieldLabel[0] + 'Color';
+				inputColor.name = 'plotFields';
+				inputColor.type = 'color';
+				fieldValueSaved = fillFormFieldValues(
+					inputColor.id,
+					interactive_arguments
+				);
+				if (fieldValueSaved != undefined) {
+					inputColor.value = fieldValueSaved;
+				}
+				inputColor.addEventListener('change', function () {
+					logFormFieldValues();
+				});
+
+				newColumn1.appendChild(labelInputColor);
+				newColumn2.appendChild(inputColor);
+				newRow.append(newColumn1, newColumn2);
+				newDiv.append(newRow);
+
+				// Add lineType type dropdown
+				const lineTypeRow = document.createElement('div');
+				lineTypeRow.classList.add('row', 'fieldPadding');
+				if (fieldLabelNumber % 2 != 0) {
+					lineTypeRow.classList.add('fieldBackgroundColor');
+				}
+
+				const lineTypeCol1 = document.createElement('div');
+				lineTypeCol1.classList.add('col-3');
+				const lineTypeCol2 = document.createElement('div');
+				lineTypeCol2.classList.add('col');
+
+				const lineTypeLabel = document.createElement('label');
+				lineTypeLabel.textContent = fieldLabel[1] + ' Line Type';
+				lineTypeLabel.htmlFor = fieldLabel[0] + 'LineType';
+				const lineTypeSelect = document.createElement('select');
+				lineTypeSelect.id = fieldLabel[0] + 'LineType';
+				lineTypeSelect.name = 'plotFields';
+
+				//line types
+				[
+					'solid',
+					'dash',
+					'dot',
+					'dashdot',
+					'longdash',
+					'longdashdot',
+				].forEach((type) => {
+					const opt = document.createElement('option');
+					opt.value = type;
+					opt.innerHTML =
+						type.charAt(0).toUpperCase() + type.slice(1);
+					lineTypeSelect.appendChild(opt);
+				});
+
+				const lineTypeSaved = fillFormFieldValues(
+					lineTypeSelect.id,
+					interactive_arguments
+				);
+				if (lineTypeSaved) {
+					lineTypeSelect.value = lineTypeSaved;
+				}
+
+				lineTypeSelect.addEventListener('change', logFormFieldValues);
+				lineTypeCol1.appendChild(lineTypeLabel);
+				lineTypeCol2.appendChild(lineTypeSelect);
+				lineTypeRow.append(lineTypeCol1, lineTypeCol2);
+				newDiv.append(lineTypeRow);
+
+				// Add marker type dropdown
+				const markerRow = document.createElement('div');
+				markerRow.classList.add('row', 'fieldPadding');
+				if (fieldLabelNumber % 2 != 0) {
+					markerRow.classList.add('fieldBackgroundColor');
+				}
+
+				const markerCol1 = document.createElement('div');
+				markerCol1.classList.add('col-3');
+				const markerCol2 = document.createElement('div');
+				markerCol2.classList.add('col');
+
+				const markerLabel = document.createElement('label');
+				markerLabel.textContent = fieldLabel[1] + ' Marker Type';
+				markerLabel.htmlFor = fieldLabel[0] + 'MarkerType';
+				const markerSelect = document.createElement('select');
+				markerSelect.id = fieldLabel[0] + 'MarkerType';
+				markerSelect.name = 'plotFields';
+
+				[
+					'circle',
+					'square',
+					'diamond',
+					'x',
+					'triangle-up',
+					'triangle-down',
+					'pentagon',
+					'hexagon',
+					'star',
+					'hourglass',
+					'bowtie',
+					'cross',
+				].forEach((type) => {
+					const opt = document.createElement('option');
+					opt.value = type;
+					opt.innerHTML =
+						type.charAt(0).toUpperCase() + type.slice(1);
+					markerSelect.appendChild(opt);
+				});
+
+				const markerSaved = fillFormFieldValues(
+					markerSelect.id,
+					interactive_arguments
+				);
+				if (markerSaved) {
+					markerSelect.value = markerSaved;
+				}
+
+				markerSelect.addEventListener('change', logFormFieldValues);
+				markerCol1.appendChild(markerLabel);
+				markerCol2.appendChild(markerSelect);
+				markerRow.append(markerCol1, markerCol2);
+				newDiv.append(markerRow);
+
+				// Add markerSize type dropdown
+				const markerSizeRow = document.createElement('div');
+				markerSizeRow.classList.add('row', 'fieldPadding');
+				if (fieldLabelNumber % 2 != 0) {
+					markerSizeRow.classList.add('fieldBackgroundColor');
+				}
+
+				const markerSizeCol1 = document.createElement('div');
+				markerSizeCol1.classList.add('col-3');
+				const markerSizeCol2 = document.createElement('div');
+				markerSizeCol2.classList.add('col');
+
+				const markerSizeLabel = document.createElement('label');
+				markerSizeLabel.textContent = fieldLabel[1] + ' Marker Size';
+				markerSizeLabel.htmlFor = fieldLabel[0] + 'MarkerSize';
+				const markerSizeSelect = document.createElement('select');
+				markerSizeSelect.id = fieldLabel[0] + 'MarkerSize';
+				markerSizeSelect.name = 'plotFields';
+
+				// Sizes 1 through 20
+				[0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20].forEach(
+					(size) => {
+						const opt = document.createElement('option');
+						opt.value = size;
+						opt.innerHTML = size + ' px';
+						markerSizeSelect.appendChild(opt);
+					}
+				);
+
+				markerSizeSelect.value = 10;
+
+				const markerSizeSaved = fillFormFieldValues(
+					markerSizeSelect.id,
+					interactive_arguments
+				);
+				if (markerSizeSaved) {
+					markerSizeSelect.value = markerSizeSaved;
+				}
+
+				markerSizeSelect.addEventListener('change', logFormFieldValues);
+				markerSizeCol1.appendChild(markerSizeLabel);
+				markerSizeCol2.appendChild(markerSizeSelect);
+				markerSizeRow.append(markerSizeCol1, markerSizeCol2);
+				newDiv.append(markerSizeRow);
+
+				//Add checkboxes for error bars, standard deviation, mean, and percentiles
+				const features = [
+					'Legend',
+					'ConnectGaps',
+					'Mean',
+					'StdDev',
+					'ErrorBars',
+					'Percentiles',
+				];
+				const featureNames = [
+					'Add Line to Legend',
+					'Connect Missing Data Gaps',
+					'Mean Line',
+					'+-1 Std Dev Lines ',
+					'Symmetric Error Bars',
+					'90th & 10th Percentile Lines',
+				];
+				for (let i = 0; i < features.length; i++) {
+					const feature = features[i];
+					const featureName = featureNames[i];
+
+					const newRow = document.createElement('div');
+					newRow.classList.add('row', 'fieldPadding');
+					if (fieldLabelNumber % 2 != 0) {
+						newRow.classList.add('row', 'fieldBackgroundColor');
+					}
+
+					const newColumn1 = document.createElement('div');
+					newColumn1.classList.add('col-3');
+					const newColumn2 = document.createElement('div');
+					newColumn2.classList.add('col');
+
+					const label = document.createElement('label');
+					label.for = fieldLabel[0] + feature;
+					label.innerHTML = `${featureName}`;
+					const checkbox = document.createElement('input');
+					checkbox.type = 'checkbox';
+					checkbox.id = fieldLabel[0] + feature;
+					checkbox.name = 'plotFields';
+
+					const fieldValueSaved = fillFormFieldValues(
+						checkbox.id,
+						interactive_arguments
+					);
+					checkbox.value = fieldValueSaved === 'on' ? 'on' : '';
+					checkbox.checked = fieldValueSaved === 'on';
+
+					newColumn1.appendChild(label);
+					newColumn2.appendChild(checkbox);
+					newRow.append(newColumn1, newColumn2);
+					newDiv.append(newRow);
+
+					// === Add dropdowns for feature-specific data ===
+					if (['Mean', 'ErrorBars', 'StdDev'].includes(feature)) {
+						const dropdownContainer = document.createElement('div');
+						dropdownContainer.classList.add('row', 'fieldPadding');
+						if (fieldLabelNumber % 2 != 0) {
+							dropdownContainer.classList.add(
+								'row',
+								'fieldBackgroundColor'
+							);
+						}
+
+						const dropdownLabelCol = document.createElement('div');
+						dropdownLabelCol.classList.add('col-3');
+						const dropdownInputCol = document.createElement('div');
+						dropdownInputCol.classList.add('col');
+
+						function createDropdown(labelText, selectId) {
+							const label = document.createElement('label');
+							label.innerHTML = labelText;
+							const select = document.createElement('select');
+							select.id = selectId;
+							select.name = 'plotFields';
+
+							if (
+								feature === 'Mean' ||
+								feature === 'ErrorBars' ||
+								feature === 'StdDev'
+							) {
+								const autoOpt =
+									document.createElement('option');
+
+								if (feature != 'ErrorBars') {
+									autoOpt.value = 'auto';
+									autoOpt.innerHTML =
+										'Auto Calculate Based on Line Column Selection';
+									select.appendChild(autoOpt);
+								}
+								if (feature === 'ErrorBars') {
+									autoOpt.value = 'auto';
+									autoOpt.innerHTML = 'Example Error Bars';
+									select.appendChild(autoOpt);
+								}
+
+								for (const col of Object.values(jsonColumns)) {
+									const opt =
+										document.createElement('option');
+									opt.value = col;
+									opt.innerHTML = col;
+									select.appendChild(opt);
+								}
+
+								const saved = fillFormFieldValues(
+									select.id,
+									interactive_arguments
+								);
+								if (saved) {
+									select.value = saved;
+								}
+
+								select.addEventListener(
+									'change',
+									logFormFieldValues
+								);
+								return { label, select };
+							}
+						}
+
+						function createColorfield(labelText, inputId) {
+							const label = document.createElement('label');
+							label.textContent = labelText;
+							label.htmlFor = inputId; // Link label to input
+
+							const input = document.createElement('input'); // Correct element
+							input.type = 'color';
+							input.id = inputId;
+							input.name = 'plotFields';
+
+							const saved = fillFormFieldValues(
+								input.id,
+								interactive_arguments
+							);
+							if (saved) {
+								input.value = saved;
+							}
+
+							input.addEventListener(
+								'change',
+								logFormFieldValues
+							);
+							return { label, input };
+						}
+
+						const controls = [];
+
+						if (feature === 'Mean') {
+							const { label, select } = createDropdown(
+								'Mean Source Column',
+								fieldLabel[0] + feature + 'Field'
+							);
+							controls.push(label, select);
+						}
+
+						if (feature === 'ErrorBars' || feature === 'StdDev') {
+							const { label: labelValues, select: selectValues } =
+								createDropdown(
+									`${featureName} Input Column Values`,
+									fieldLabel[0] + feature + 'InputValues'
+								);
+							const { label: labelColor, input: ColorValue } =
+								createColorfield(
+									`Color`,
+									fieldLabel[0] + feature + 'Color'
+								);
+							controls.push(
+								labelValues,
+								document.createElement('br'),
+								selectValues,
+								document.createElement('br'),
+								labelColor,
+								document.createElement('br'),
+								ColorValue
+							);
+						}
+
+						// Initially hide the dropdown container
+						dropdownContainer.style.display = checkbox.checked
+							? 'flex'
+							: 'none';
+
+						controls.forEach((control) =>
+							dropdownInputCol.appendChild(control)
+						);
+						dropdownContainer.append(
+							dropdownLabelCol,
+							dropdownInputCol
+						);
+						newDiv.append(dropdownContainer);
+
+						// Toggle visibility dynamically
+						checkbox.addEventListener('change', function () {
+							checkbox.value = checkbox.checked ? 'on' : '';
+							dropdownContainer.style.display = checkbox.checked
+								? 'flex'
+								: 'none';
+							logFormFieldValues();
+						});
+					} else {
+						checkbox.addEventListener('change', function () {
+							checkbox.value = checkbox.checked ? 'on' : '';
+							logFormFieldValues();
+						});
+					}
+				}
+			}
+
+			const targetElement = document.getElementById('graphGUI');
+			targetElement.appendChild(newDiv);
+		});
+	}
 }

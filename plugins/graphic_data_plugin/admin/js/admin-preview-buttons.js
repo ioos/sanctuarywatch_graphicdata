@@ -1,80 +1,79 @@
 // FIGURES Admin error handling for missing figure data in preview mode. Operates in figure-render.js
-function errorPreviewHandler(divID, figureType){
-    if (figureType === "Interactive"){
-        //Preview error message in admin
+function errorPreviewHandler(divID, figureType) {
+	if (figureType === 'Interactive') {
+		//Preview error message in admin
 
-        let fileInputElement;
-        let graphTypeInputElement;
-        let lineTypeInputElement;
-        let barTypeInputElement;
-        let existingFileInputElement;
+		let fileInputElement;
+		let graphTypeInputElement;
+		let lineTypeInputElement;
+		let barTypeInputElement;
+		let existingFileInputElement;
 
-        try {
-            fileInputElement = document.getElementById('file-label').value;
-        } catch {}
-        try {
-            existingFileInputElement = document.getElementById('existing-file-name').value;
-            //console.log('existingFileInputElement:', existingFileInputElement);
-        } catch {}
-        try {
-            graphTypeInputElement = document.getElementById('graphType').value;
-        } catch {}
-        try {
-            lineTypeInputElement = document.getElementById('Line1').value;
-         } catch {}
-        try {
-            barTypeInputElement = document.getElementById('Bar1').value;
-        } catch {}
+		try {
+			fileInputElement = document.getElementById('file-label').value;
+		} catch {}
+		try {
+			existingFileInputElement =
+				document.getElementById('existing-file-name').value;
+			//console.log('existingFileInputElement:', existingFileInputElement);
+		} catch {}
+		try {
+			graphTypeInputElement = document.getElementById('graphType').value;
+		} catch {}
+		try {
+			lineTypeInputElement = document.getElementById('Line1').value;
+		} catch {}
+		try {
+			barTypeInputElement = document.getElementById('Bar1').value;
+		} catch {}
 
-        if (window.location.href.includes('post.php') && (fileInputElement === '' || graphTypeInputElement === 'None') || lineTypeInputElement === 'None' || barTypeInputElement === 'None' || existingFileInputElement === '') {
-            const errorMessageSummary = document.createElement("div");
-            errorMessageSummary.style.textAlign = "center";
-            errorMessageSummary.style.color = "red";
-            errorMessageSummary.style.fontWeight = "bold";
-            errorMessageSummary.style.margin = "5%";
-            // Clear any previous error messages if necessary
-            errorMessageSummary.textContent = "Please upload a file, choose a graph type, and make data selections to preview an interactive figure. Be sure to check all options.";
+		if (
+			(window.location.href.includes('post.php') &&
+				(fileInputElement === '' ||
+					graphTypeInputElement === 'None')) ||
+			lineTypeInputElement === 'None' ||
+			barTypeInputElement === 'None' ||
+			existingFileInputElement === ''
+		) {
+			const errorMessageSummary = document.createElement('div');
+			errorMessageSummary.style.textAlign = 'center';
+			errorMessageSummary.style.color = 'red';
+			errorMessageSummary.style.fontWeight = 'bold';
+			errorMessageSummary.style.margin = '5%';
+			// Clear any previous error messages if necessary
+			errorMessageSummary.textContent =
+				'Please upload a file, choose a graph type, and make data selections to preview an interactive figure. Be sure to check all options.';
 
-            // Avoid appending multiple error messages repeatedly
-            if (!divID.contains(errorMessageSummary)) {
-                divID.appendChild(errorMessageSummary);
-            }
-            return;
-        }
-    } else {
-        if (window.location.href.includes('post.php')) {
+			// Avoid appending multiple error messages repeatedly
+			if (!divID.contains(errorMessageSummary)) {
+				divID.appendChild(errorMessageSummary);
+			}
+		}
+	} else if (window.location.href.includes('post.php')) {
+		setTimeout(() => {
+			const figure = document.querySelector('#myTabContent .figure');
+			//.console.log("FOUND FIGURE:", figure);
+			figure.remove();
+		}, 50);
 
-
-            setTimeout(() => {
-                const figure = document.querySelector('#myTabContent .figure');
-                //.console.log("FOUND FIGURE:", figure);
-                figure.remove();
-            }, 50);
-
-            const errorMessageSummary = document.createElement("div");
-            errorMessageSummary.style.textAlign = "center";
-            errorMessageSummary.style.color = "red";
-            errorMessageSummary.style.fontWeight = "bold";
-            errorMessageSummary.style.margin = "5%";
-            // Clear any previous error messages if necessary
-            errorMessageSummary.textContent = "Please make an image selection or input code to preview your figure.  Be sure to check all options.";
-            // Avoid appending multiple error messages repeatedly
-            if (!divID.contains(errorMessageSummary)) {
-                divID.appendChild(errorMessageSummary);
-            }
-            if (figureType === "Code"){
-                codeDiv = document.getElementById("code_display_window");
-                codeDiv.remove();   
-            }
-            return;  
-            
-        }
-    }
-    return;
+		const errorMessageSummary = document.createElement('div');
+		errorMessageSummary.style.textAlign = 'center';
+		errorMessageSummary.style.color = 'red';
+		errorMessageSummary.style.fontWeight = 'bold';
+		errorMessageSummary.style.margin = '5%';
+		// Clear any previous error messages if necessary
+		errorMessageSummary.textContent =
+			'Please make an image selection or input code to preview your figure.  Be sure to check all options.';
+		// Avoid appending multiple error messages repeatedly
+		if (!divID.contains(errorMessageSummary)) {
+			divID.appendChild(errorMessageSummary);
+		}
+		if (figureType === 'Code') {
+			codeDiv = document.getElementById('code_display_window');
+			codeDiv.remove();
+		}
+	}
 }
-
-
-
 
 //PREVIEW BUTTON LOGIC FOR MODALS AND FIGURES
 /**
@@ -91,7 +90,7 @@ function errorPreviewHandler(divID, figureType){
 let previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"]');
 
 if (!previewFigureOrModalElements) {
-    previewFigureOrModalElements = [];
+	previewFigureOrModalElements = [];
 }
 
 if (previewFigureOrModalElements.length > 0) {
@@ -520,7 +519,7 @@ function openSceneInModal(el) {
 // Create scene preview from clicking on the "Scene preview button"
 let previewSceneElements = document.querySelectorAll('[data-depend-id="scene_preview"], [data-depend-id="scene_preview_mobile"]');
 if (!previewSceneElements) {
-    previewSceneElements = [];
+	previewSceneElements = [];
 }
 if (previewSceneElements.length > 0) {
     previewSceneElements.forEach(el => {

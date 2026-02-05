@@ -60,17 +60,6 @@ class Graphic_Data_About {
 	}
 
 	/**
-	 * Add nonce field to About metabox.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param WP_Post $post Current post object.
-	 */
-	public function render_about_nonce_field( $post ) {
-		wp_nonce_field( 'save_about_fields', 'about_nonce' );
-	}
-
-	/**
 	 * Create custom fields, using metaboxes, for About custom content type.
 	 *
 	 * @param bool $return_fields_only If true, only return the custom fields array without registering the metabox (used as part of field validation).

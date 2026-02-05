@@ -1,127 +1,158 @@
 
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
- * @returns {String} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
+ * @return {string} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  *  @throws {Error} - Throws an error if scene data not found or error fetching data
  */
 async function make_title() {
-    const protocol = window.location.protocol;
-    const host = window.location.host;
+	const protocol = window.location.protocol;
+	const host = window.location.host;
 
-    try {
-        scene_data = title_arr;
+	try {
+		scene_data = title_arr;
 
-        let scene_location = scene_data["scene_location"];
-        let title = scene_data['post_title'];
+		const scene_location = scene_data.scene_location;
+		const title = scene_data.post_title;
 
-        let titleDom = document.getElementById("title-container");
-        let titleh1 = document.createElement("h1");
-        titleh1.innerHTML = title;
-        titleDom.appendChild(titleh1);
+		const titleDom = document.getElementById('title-container');
+		const titleh1 = document.createElement('h1');
+		titleh1.innerHTML = title;
+		titleDom.appendChild(titleh1);
 
-        if (is_mobile()) {
-            titleh1.setAttribute("style", "margin-top: 16px; justify-content: center;; align-content: center; display: flex;");
-        } else {}
+		if (is_mobile()) {
+			titleh1.setAttribute(
+				'style',
+				'margin-top: 16px; justify-content: center;; align-content: center; display: flex;'
+			);
+		} else {
+		}
 
-        let accgroup = document.createElement("div");
+		const accgroup = document.createElement('div');
 
-    //     if (!is_mobile()) {
-    //   //      accgroup.setAttribute("style", "margin-top: 2%");
-    //     } else {
-    //         accgroup.setAttribute("style", "margin-top: 16px"); //max-width: 85%
-    //     }
+		//     if (!is_mobile()) {
+		//   //      accgroup.setAttribute("style", "margin-top: 2%");
+		//     } else {
+		//         accgroup.setAttribute("style", "margin-top: 16px"); //max-width: 85%
+		//     }
 
-        accgroup.classList.add("accordion");
+		accgroup.classList.add('accordion');
 
-        if (scene_data["scene_info_entries"]!=0){
-            let acc = make_scene_elements("scene_info", "scene_info_text", "scene_info_url", scene_data, "more-info", "More Info");
-            accgroup.appendChild(acc);
-        }
-        if (scene_data["scene_photo_entries"] != 0){
-            let acc1 = make_scene_elements("scene_photo", "scene_photo_text", "scene_photo_url", scene_data, "images", "Images");
-            accgroup.appendChild(acc1); 
-        }
-   
-        let row = document.createElement("div");
-        row.classList.add("row");
+		if (scene_data.scene_info_entries != 0) {
+			const acc = make_scene_elements(
+				'scene_info',
+				'scene_info_text',
+				'scene_info_url',
+				scene_data,
+				'more-info',
+				'More Info'
+			);
+			accgroup.appendChild(acc);
+		}
+		if (scene_data.scene_photo_entries != 0) {
+			const acc1 = make_scene_elements(
+				'scene_photo',
+				'scene_photo_text',
+				'scene_photo_url',
+				scene_data,
+				'images',
+				'Images'
+			);
+			accgroup.appendChild(acc1);
+		}
 
-        let col1 = document.createElement("div");
-        col1.appendChild(accgroup);
+		const row = document.createElement('div');
+		row.classList.add('row');
 
-        let col2 = document.createElement("div");
+		const col1 = document.createElement('div');
+		col1.appendChild(accgroup);
 
-        if (!is_mobile()) {
+		const col2 = document.createElement('div');
 
+		if (!is_mobile()) {
+			col1.classList.add('col-md-2');
+			col2.classList.add('col-md-10');
 
-            col1.classList.add("col-md-2");
-            col2.classList.add("col-md-10");
+			function adjustTitleContainerMargin() {
+				if (window.innerWidth < 512) {
+					document.querySelector(
+						'#title-container'
+					).style.marginLeft = '0%';
+				}
+			}
+			adjustTitleContainerMargin();
+			window.addEventListener('resize', adjustTitleContainerMargin);
+		} else {
+			col1.classList.add('col-md-2');
+			col2.classList.add('col-md-10');
+		}
 
-            function adjustTitleContainerMargin() {
-                if (window.innerWidth < 512) {
-                    document.querySelector("#title-container").style.marginLeft = '0%';
-                } 
-            }
-            adjustTitleContainerMargin();
-            window.addEventListener('resize', adjustTitleContainerMargin);
+		if (is_mobile()) {
+			col1.setAttribute('style', 'max-width: 85%;');
+			col2.setAttribute(
+				'style',
+				'padding-top: 5%; align-content: center; margin-left: 7%;'
+			);
+		}
 
-        } else {
-            col1.classList.add("col-md-2");
-            col2.classList.add("col-md-10");
-        }
+		const titleTagline = document.createElement('p');
+		titleTagline.innerHTML = scene_data.scene_tagline;
+		titleTagline.style.fontStyle = 'italic';
+		if (is_mobile()) {
+			const item = createAccordionItem(
+				'taglineAccId',
+				'taglineHeaderId',
+				'taglineCollapseId',
+				'Tagline',
+				scene_data.scene_tagline
+			);
+			accgroup.prepend(item);
+		} else {
+			col2.appendChild(titleTagline);
+		}
+		row.appendChild(col2);
+		row.appendChild(col1);
 
-        if (is_mobile()){
-            col1.setAttribute("style", "max-width: 85%;");
-            col2.setAttribute("style", "padding-top: 5%; align-content: center; margin-left: 7%;");
-        }
+		titleDom.append(row);
 
-        let titleTagline = document.createElement("p");
-        titleTagline.innerHTML = scene_data.scene_tagline;
-        titleTagline.style.fontStyle = 'italic';
-        if (is_mobile()){
-            let item = createAccordionItem("taglineAccId", "taglineHeaderId", "taglineCollapseId", "Tagline", scene_data.scene_tagline);
-            accgroup.prepend(item);
+		let instance_overview_scene = scene_data.instance_overview_scene;
+		if (instance_overview_scene == null) {
+			instance_overview_scene = 'None';
+		}
+		// Google Tags
+		sceneLoaded(
+			title,
+			scene_data.post_ID,
+			instance_overview_scene,
+			gaMeasurementID
+		);
+		setupSceneMoreInfoLinkTracking(title, scene_data.post_ID);
+		setupSceneImagesLinkTracking(title, scene_data.post_ID);
 
-        } else {
-            col2.appendChild(titleTagline);
-        }
-        row.appendChild(col2);
-        row.appendChild(col1);
-
-        titleDom.append(row);
- 
-        let instance_overview_scene = scene_data['instance_overview_scene'];
-        if (instance_overview_scene == null){
-            instance_overview_scene = 'None';
-        }
-        // Google Tags
-        sceneLoaded(title, scene_data['post_ID'], instance_overview_scene, gaMeasurementID);
-        setupSceneMoreInfoLinkTracking(title, scene_data['post_ID']);
-        setupSceneImagesLinkTracking(title, scene_data['post_ID']);
-
-        return scene_data;
-
-    } catch (error) {
-        if (!window.location.href.includes('post.php')) {
-            console.error('If this fires you really screwed something up', error);
-        }
-    }
+		return scene_data;
+	} catch (error) {
+		if (!window.location.href.includes('post.php')) {
+			console.error(
+				'If this fires you really screwed something up',
+				error
+			);
+		}
+	}
 }
-
 
 //helper function for creating mobile grid for loadSVG:
 /**
  * Creates a mobile grid layout for displaying icons in an SVG element.
- * 
- * This function removes the outer container (using `remove_outer_div`), clones icons from an SVG element, 
+ *
+ * This function removes the outer container (using `remove_outer_div`), clones icons from an SVG element,
  * and organizes them into a responsive grid based on the screen's width and height. It adjusts the layout
  * when the window is resized, dynamically setting the number of columns and rows.
- * 
- * @param {SVGElement} svgElement - The main SVG element that contains the icons to be displayed.
- * @param {Array} iconsArr - An array of icon objects containing the icon IDs and their metadata.
+ *
+ * @param {SVGElement}  svgElement   - The main SVG element that contains the icons to be displayed.
+ * @param {Array}       iconsArr     - An array of icon objects containing the icon IDs and their metadata.
  * @param {HTMLElement} mobile_icons - A DOM element containing specific mobile versions of icons, if available.
- * 
- * @returns {void}
+ *
+ * @return {void}
  */
 
 function mobile_helper(svgElement, iconsArr, mobile_icons) {
@@ -673,229 +704,240 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
     window.addEventListener("resize", debouncedUpdateNumCols);
 }
 
-
-
 /**
  * Handles the visibility and styling of icons within an SVG element based on their association with modals.
- * 
+ *
  * This function applies specific behaviors to "orphaned" icons (icons not associated with any modal)
  * based on the `scene_orphan_icon_action` and `scene_orphan_icon_color` properties from the `scene_data` object.
  * It also adds a tooltip to orphaned icons when hovered.
- * 
- * @param {SVGElement} svgElement - The SVG element containing the icons to be processed.
- * @param {string[]} visible_modals - An array of modal IDs associated with the icons.
- * 
- * Behavior:
- * - Resets styles for all top-level icons.
- * - Applies specific styles or behaviors to orphaned icons based on the `scene_orphan_icon_action`:
- *   - `"hide"`: Hides the icon by setting its opacity to 0 and disabling pointer events.
- *   - `"translucent"`: Makes the icon partially transparent by setting its opacity to 0.25.
- *   - `"color"`: Changes the fill color of the icon to the value specified in `scene_orphan_icon_color`.
- *   - Default: Logs a warning for unknown modes.
- * - Adds a tooltip to orphaned icons with the message "Not currently available" when hovered.
- * 
- * Notes:
- * - Only top-level icons (direct children of the `g#icons` group) are processed.
- * - The function assumes the presence of a global `scene_data` object with the required properties.
- * 
- * Example Usage:
- * ```javascript
- * const svgElement = document.querySelector('svg#mySvg');
- * const associatedModals = ['modal1', 'modal2'];
- * handleIconVisibility(svgElement, associatedModals);
- * ```
+ *
+ * @param {SVGElement} svgElement     - The SVG element containing the icons to be processed.
+ * @param {string[]}   visible_modals - An array of modal IDs associated with the icons.
+ *
+ *                                    Behavior:
+ *                                    - Resets styles for all top-level icons.
+ *                                    - Applies specific styles or behaviors to orphaned icons based on the `scene_orphan_icon_action`:
+ *                                    - `"hide"`: Hides the icon by setting its opacity to 0 and disabling pointer events.
+ *                                    - `"translucent"`: Makes the icon partially transparent by setting its opacity to 0.25.
+ *                                    - `"color"`: Changes the fill color of the icon to the value specified in `scene_orphan_icon_color`.
+ *                                    - Default: Logs a warning for unknown modes.
+ *                                    - Adds a tooltip to orphaned icons with the message "Not currently available" when hovered.
+ *
+ *                                    Notes:
+ *                                    - Only top-level icons (direct children of the `g#icons` group) are processed.
+ *                                    - The function assumes the presence of a global `scene_data` object with the required properties.
+ *
+ *                                    Example Usage:
+ *                                    ```javascript
+ *                                    const svgElement = document.querySelector('svg#mySvg');
+ *                                    const associatedModals = ['modal1', 'modal2'];
+ *                                    handleIconVisibility(svgElement, associatedModals);
+ *                                    ```
  */
 //original code is documented in issue #243 https://github.com/ioos/sanctuarywatch/issues/243
 function handleIconVisibility(svgElement, visible_modals) {
-    if (!svgElement || !Array.isArray(visible_modals)) return;
+	if (!svgElement || !Array.isArray(visible_modals)) {
+		return;
+	}
 
-    const modalSet = new Set(visible_modals);
-    const mode = scene_data['scene_orphan_icon_action'];
-    const fill_color = scene_data['scene_orphan_icon_color'];
+	const modalSet = new Set(visible_modals);
+	const mode = scene_data.scene_orphan_icon_action;
+	const fill_color = scene_data.scene_orphan_icon_color;
 
-    // Inkscape-compatible: detect top-level icon groups (layers or <g id> inside #icons)
-    let topLevelIcons = [];
+	// Inkscape-compatible: detect top-level icon groups (layers or <g id> inside #icons)
+	let topLevelIcons = [];
 
-    const iconGroup = svgElement.querySelector('g#icons');
-    if (iconGroup) {
-        topLevelIcons = Array.from(iconGroup.children)
-            .filter(el => el.tagName === 'g' && el.id)
-            .map(el => el.id);
-    } else {
-        // Fallback: treat all Inkscape layers as top-level icons
-        topLevelIcons = Array.from(svgElement.querySelectorAll('g[id]'))
-            .filter(el => el.getAttribute('inkscape:groupmode') === 'layer')
-            .map(el => el.id);
-    }
+	const iconGroup = svgElement.querySelector('g#icons');
+	if (iconGroup) {
+		topLevelIcons = Array.from(iconGroup.children)
+			.filter((el) => el.tagName === 'g' && el.id)
+			.map((el) => el.id);
+	} else {
+		// Fallback: treat all Inkscape layers as top-level icons
+		topLevelIcons = Array.from(svgElement.querySelectorAll('g[id]'))
+			.filter((el) => el.getAttribute('inkscape:groupmode') === 'layer')
+			.map((el) => el.id);
+	}
 
-    svgElement.querySelectorAll("g[id]").forEach(icon => {
-        const iconId = icon.id;
-        if (!topLevelIcons.includes(iconId)) return;
+	svgElement.querySelectorAll('g[id]').forEach((icon) => {
+		const iconId = icon.id;
+		if (!topLevelIcons.includes(iconId)) {
+			return;
+		}
 
-        const isAssociated = modalSet.has(iconId);
+		const isAssociated = modalSet.has(iconId);
 
-        // Reset styles
-        icon.style.opacity = "";
-        icon.style.display = "";
-        icon.style.pointerEvents = "";
-        icon.querySelectorAll("*").forEach(el => {
-            el.style.fill = "";
-        });
+		// Reset styles
+		icon.style.opacity = '';
+		icon.style.display = '';
+		icon.style.pointerEvents = '';
+		icon.querySelectorAll('*').forEach((el) => {
+			el.style.fill = '';
+		});
 
-        if (mode === "visible" || isAssociated) return;
+		if (mode === 'visible' || isAssociated) {
+			return;
+		}
 
-        // Apply orphan style
-        switch (mode) {
-            case "hide":
-                icon.style.opacity = "0";
-                icon.style.pointerEvents = "none";
-                break;
-            case "translucent":
-                icon.style.opacity = "0.25";
-                break;
-            case "color":
-                icon.querySelectorAll("*").forEach(el => {
-                    el.style.fill = fill_color;
-                });
-                break;
-            default:
-                console.warn("Unknown orphan icon mode:", mode);
-        }
+		// Apply orphan style
+		switch (mode) {
+			case 'hide':
+				icon.style.opacity = '0';
+				icon.style.pointerEvents = 'none';
+				break;
+			case 'translucent':
+				icon.style.opacity = '0.25';
+				break;
+			case 'color':
+				icon.querySelectorAll('*').forEach((el) => {
+					el.style.fill = fill_color;
+				});
+				break;
+			default:
+				console.warn('Unknown orphan icon mode:', mode);
+		}
 
-        // Tooltip listeners
-        if (!icon.dataset.tooltipBound) {
-            icon.addEventListener("mouseenter", function (e) {
-                const tooltip = document.createElement("div");
-                tooltip.className = "icon-tooltip";
-                tooltip.textContent = "Not currently available";
-                tooltip.style.position = "absolute";
-                tooltip.style.padding = "6px 10px";
-                tooltip.style.backgroundColor = "#333";
-                tooltip.style.color = "#fff";
-                tooltip.style.borderRadius = "4px";
-                tooltip.style.fontSize = "13px";
-                tooltip.style.pointerEvents = "none";
-                tooltip.style.zIndex = "9999";
-                tooltip.style.top = e.pageY + 10 + "px";
-                tooltip.style.left = e.pageX + 10 + "px";
-                tooltip.id = "orphanIconTooltip";
-                document.body.appendChild(tooltip);
-            });
+		// Tooltip listeners
+		if (!icon.dataset.tooltipBound) {
+			icon.addEventListener('mouseenter', function (e) {
+				const tooltip = document.createElement('div');
+				tooltip.className = 'icon-tooltip';
+				tooltip.textContent = 'Not currently available';
+				tooltip.style.position = 'absolute';
+				tooltip.style.padding = '6px 10px';
+				tooltip.style.backgroundColor = '#333';
+				tooltip.style.color = '#fff';
+				tooltip.style.borderRadius = '4px';
+				tooltip.style.fontSize = '13px';
+				tooltip.style.pointerEvents = 'none';
+				tooltip.style.zIndex = '9999';
+				tooltip.style.top = e.pageY + 10 + 'px';
+				tooltip.style.left = e.pageX + 10 + 'px';
+				tooltip.id = 'orphanIconTooltip';
+				document.body.appendChild(tooltip);
+			});
 
-            icon.addEventListener("mousemove", function (e) {
-                const tooltip = document.getElementById("orphanIconTooltip");
-                if (tooltip) {
-                    tooltip.style.top = e.pageY + 10 + "px";
-                    tooltip.style.left = e.pageX + 10 + "px";
-                }
-            });
+			icon.addEventListener('mousemove', function (e) {
+				const tooltip = document.getElementById('orphanIconTooltip');
+				if (tooltip) {
+					tooltip.style.top = e.pageY + 10 + 'px';
+					tooltip.style.left = e.pageX + 10 + 'px';
+				}
+			});
 
-            icon.addEventListener("mouseleave", function () {
-                const tooltip = document.getElementById("orphanIconTooltip");
-                if (tooltip) tooltip.remove();
-            });
+			icon.addEventListener('mouseleave', function () {
+				const tooltip = document.getElementById('orphanIconTooltip');
+				if (tooltip) {
+					tooltip.remove();
+				}
+			});
 
-            // Mark as bound to avoid duplicate tooltips
-            icon.dataset.tooltipBound = "true";
-        }
-    });
+			// Mark as bound to avoid duplicate tooltips
+			icon.dataset.tooltipBound = 'true';
+		}
+	});
 }
 
 /**
  * Creates HTML elements that represent collapsible sections with links to additional scene information.
  * This function generates a list of scene information items (like text and URLs) and wraps them in an accordion component.
- * 
- * @param {string} info - The base name of the field in `scene_data` representing scene information. 
- *                        This value will be concatenated with a number (1 to 6) to create the full field name.
- * @param {string} iText - The base name of the field in `scene_data` representing the text information for the scene. 
- *                         This will be concatenated with a number (1 to 6) to fetch the corresponding text.
- * @param {string} iUrl - The base name of the field in `scene_data` representing the URL information for the scene. 
- *                        This will be concatenated with a number (1 to 6) to fetch the corresponding URL.
- * @param {object} scene_data - The dataset containing information about the scene, which includes fields for text and URL.
- * @param {string} type - The type identifier, used to generate unique HTML element IDs.
- * @param {string} name - The display name for the accordion section header.
- * 
- * @returns {HTMLElement} - Returns an accordion item element (generated via `createAccordionItem`) containing the list of scene links.
  *
- * This function is typically used in `make_title` to generate the "More Info" and "Images" sections for each scene. It iterates through 
- * a predefined set of numbered fields (from 1 to 6) in the `scene_data`, checking for non-empty text and URLs. If valid data is found, 
+ * @param {string} info       - The base name of the field in `scene_data` representing scene information.
+ *                            This value will be concatenated with a number (1 to 6) to create the full field name.
+ * @param {string} iText      - The base name of the field in `scene_data` representing the text information for the scene.
+ *                            This will be concatenated with a number (1 to 6) to fetch the corresponding text.
+ * @param {string} iUrl       - The base name of the field in `scene_data` representing the URL information for the scene.
+ *                            This will be concatenated with a number (1 to 6) to fetch the corresponding URL.
+ * @param {Object} scene_data - The dataset containing information about the scene, which includes fields for text and URL.
+ * @param {string} type       - The type identifier, used to generate unique HTML element IDs.
+ * @param {string} name       - The display name for the accordion section header.
+ *
+ * @return {HTMLElement} - Returns an accordion item element (generated via `createAccordionItem`) containing the list of scene links.
+ *
+ * This function is typically used in `make_title` to generate the "More Info" and "Images" sections for each scene. It iterates through
+ * a predefined set of numbered fields (from 1 to 6) in the `scene_data`, checking for non-empty text and URLs. If valid data is found,
  * it creates a collapsible accordion section with the relevant links and displays them.
  */
-function make_scene_elements(info, iText, iUrl, scene_data, type, name){
-    let collapseListHTML = '<div><ul>';
-    for (let i = 1; i < 7; i++){
-                let info_field = info + i;
-                let info_text = iText + i;
-                let info_url = iUrl + i;
+function make_scene_elements(info, iText, iUrl, scene_data, type, name) {
+	let collapseListHTML = '<div><ul>';
+	for (let i = 1; i < 7; i++) {
+		const info_field = info + i;
+		const info_text = iText + i;
+		const info_url = iUrl + i;
 
-                let scene_info_url;
+		let scene_info_url;
 
-                if (iUrl == "scene_photo_url"){
-                    let photoLoc = "scene_photo_location" + i;
-                    if (scene_data[info_field][photoLoc] == "External"){
-                        scene_info_url = scene_data[info_field][info_url];
-                    } else {
-                        let internal = "scene_photo_internal" + i;
-                        scene_info_url = scene_data[info_field][internal];
-                    }
-                } else {
-                    scene_info_url = scene_data[info_field][info_url];
-                }
+		if (iUrl == 'scene_photo_url') {
+			const photoLoc = 'scene_photo_location' + i;
+			if (scene_data[info_field][photoLoc] == 'External') {
+				scene_info_url = scene_data[info_field][info_url];
+			} else {
+				const internal = 'scene_photo_internal' + i;
+				scene_info_url = scene_data[info_field][internal];
+			}
+		} else {
+			scene_info_url = scene_data[info_field][info_url];
+		}
 
-                let scene_info_text = scene_data[info_field][info_text];
-                
+		const scene_info_text = scene_data[info_field][info_text];
 
-                if ((scene_info_text == '') && (scene_info_url == '')){
-                    continue;
-                }
+		if (scene_info_text == '' && scene_info_url == '') {
+			continue;
+		}
 
-                let listItem = document.createElement('li');
-                let anchor = document.createElement('a');
-                anchor.setAttribute('href', 'test'); 
-                anchor.textContent = 'test';
+		const listItem = document.createElement('li');
+		const anchor = document.createElement('a');
+		anchor.setAttribute('href', 'test');
+		anchor.textContent = 'test';
 
-                listItem.appendChild(anchor);
+		listItem.appendChild(anchor);
 
-                collapseListHTML += `<li> <a href="${scene_info_url}" target="_blank">${scene_info_text}</a> </li>`;
+		collapseListHTML += `<li> <a href="${scene_info_url}" target="_blank">${scene_info_text}</a> </li>`;
+	}
+	collapseListHTML += '</ul></div>';
+	const acc = createAccordionItem(
+		`${type}-item-1`,
+		`${type}-header-1`,
+		`${type}-collapse-1`,
+		name,
+		collapseListHTML
+	);
 
-    }
-    collapseListHTML += '</ul></div>';
-    let acc = createAccordionItem(`${type}-item-1`, `${type}-header-1`, `${type}-collapse-1`, name, collapseListHTML);
-
-    return acc;
+	return acc;
 }
 
 /**
  * Checks whether or not an icon has an associated mobile layer. Looks at mob_icons elementm
- * @returns {Boolean} `Boolean` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
+ * @param  mob_icons
+ * @param  elemname
+ * @return {boolean} `Boolean` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  * * @throws {Error} - Throws an error if scene data not found or error fetching data
  */
-function has_mobile_layer(mob_icons, elemname){
-    if (mob_icons == null){
-        return false;
-    }
-    for (let i = 0; i < mob_icons.children.length; i++) {
-        let child = mob_icons.children[i];
-        let label = child.getAttribute('id');
-        let mobileElemName = elemname + "-mobile";
-        if (label === mobileElemName){
-            return true;
-        }             
-    }
-    return false;
+function has_mobile_layer(mob_icons, elemname) {
+	if (mob_icons == null) {
+		return false;
+	}
+	for (let i = 0; i < mob_icons.children.length; i++) {
+		const child = mob_icons.children[i];
+		const label = child.getAttribute('id');
+		const mobileElemName = elemname + '-mobile';
+		if (label === mobileElemName) {
+			return true;
+		}
+	}
+	return false;
 }
-
 
 // Below is the function that will be used to include SVGs within each scene
 /**
- * Accesses the SVG image for the scene, checks type of device, renders appropriate scene layout by calling other helper functions. 
- * all of the top-level helper functions that render different elements of the DOM are called within here. 
+ * Accesses the SVG image for the scene, checks type of device, renders appropriate scene layout by calling other helper functions.
+ * all of the top-level helper functions that render different elements of the DOM are called within here.
  * based on link_svg from infographiq.js
  *
- * @param {string} url - The URL of the SVG to be fetched, provided from the PHP backend.
+ * @param {string} url         - The URL of the SVG to be fetched, provided from the PHP backend.
  * @param {string} containerId - The ID of the DOM element to which the SVG will be appended.
- * @returns {void} `void` - Modifies the DOM but does not return any value.
+ * @return {void} `void` - Modifies the DOM but does not return any value.
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  */
 async function loadSVG(url, containerId) {
@@ -1230,475 +1272,509 @@ async function loadSVG(url, containerId) {
     }
 }
 
-
-//highlight items on mouseover, remove highlight when off; 
+//highlight items on mouseover, remove highlight when off;
 //CHANGE HERE FOR TABLET STUFF
 
 /**
- * Adds hover effects to SVG elements based on `child_obj` keys, meant for PC layout. 
- * Highlights the icon by changing its stroke color and width on mouseover, 
+ * Adds hover effects to SVG elements based on `childObj` keys, meant for PC layout.
+ * Highlights the icon by changing its stroke color and width on mouseover,
  * using section-specific colors if enabled, and resets the style on mouseout.
  *
- * @returns {void} - `void` Modifies DOM element styles in place.
+ * @return {void} - `void` Modifies DOM element styles in place.
  */
 function highlight_icons() {
-    for (let key in child_obj) {
-        let elem = document.querySelector('g[id="' + key + '"]');
-        elem.addEventListener('mouseover', function (e) {
+	for (const key in childObj) {
+		const elem = document.querySelector('g[id="' + key + '"]');
+		elem.addEventListener('mouseover', function (e) {
+			const elemCollection = elem.querySelectorAll('*');
+			let hoverColor;
+			let hoverTextColor;
 
-            let elemCollection = elem.querySelectorAll("*");
-            let hoverColor;
-            let hoverTextColor;   
+			elemCollection.forEach((subElem) => {
+				if (
+					scene_same_hover_color_sections !== 'yes' &&
+					sectionObj[key] !== 'None'
+				) {
+					const section_name = childObj[key].original_name;
+					const section_num = childObj[key].section_name;
+					const this_scene_section = `scene_section${section_num}`;
+					const this_color = `scene_section_hover_color${section_num}`;
+					const text_color = `scene_section_hover_text_color${section_num}`;
+					hoverColor = scene_data[this_scene_section][this_color];
+					hoverTextColor = scene_data[this_scene_section][text_color];
+					subElem.style.stroke = hoverColor;
+				} else {
+					hoverColor = scene_default_hover_color;
+					hoverTextColor = scene_default_hover_text_color;
+					subElem.style.stroke = hoverColor;
+				}
 
-            elemCollection.forEach(subElem => {
-                if (scene_same_hover_color_sections !== "yes" && sectionObj[key] !== "None") {
-                    let section_name = child_obj[key].original_name;
-                    let section_num = child_obj[key].section_name;
-                    let this_scene_section = `scene_section${section_num}`;
-                    let this_color = `scene_section_hover_color${section_num}`;
-                    let text_color = `scene_section_hover_text_color${section_num}`;
-                    hoverColor = scene_data[this_scene_section][this_color];
-                    hoverTextColor = scene_data[this_scene_section][text_color];
-                    subElem.style.stroke = hoverColor;
-                } else {
-                    hoverColor = scene_default_hover_color;
-                    hoverTextColor = scene_default_hover_text_color;
-                    subElem.style.stroke = hoverColor;
-                }
+				subElem.style.strokeWidth = '3px';
+			});
 
-                subElem.style.strokeWidth = "3px";
-            });
+			// Create and show the tooltip box
+			const tooltip = document.createElement('div');
+			tooltip.className = 'hover-key-box';
+			tooltip.textContent = childObj[key].title;
+			tooltip.style.position = 'absolute';
+			tooltip.style.padding = '5px 10px';
+			tooltip.style.backgroundColor = hoverColor;
+			tooltip.style.color = hoverTextColor;
+			tooltip.style.borderRadius = '4px';
+			tooltip.style.fontSize = '14px';
+			tooltip.style.pointerEvents = 'none';
+			tooltip.style.zIndex = '9999';
+			tooltip.id = 'hoverKeyTooltip';
+			document.body.appendChild(tooltip);
 
-            // Create and show the tooltip box
-            const tooltip = document.createElement("div");
-            tooltip.className = "hover-key-box";
-            tooltip.textContent = child_obj[key].title;
-            tooltip.style.position = "absolute";
-            tooltip.style.padding = "5px 10px";
-            tooltip.style.backgroundColor = hoverColor;
-            tooltip.style.color = hoverTextColor;
-            tooltip.style.borderRadius = "4px";
-            tooltip.style.fontSize = "14px";
-            tooltip.style.pointerEvents = "none";
-            tooltip.style.zIndex = "9999";
-            tooltip.id = "hoverKeyTooltip";
-            document.body.appendChild(tooltip);
+			// Initial position
+			moveTooltip(e, elem, tooltip);
+		});
 
-            // Initial position
-            moveTooltip(e, elem, tooltip);
-        });
+		elem.addEventListener('mousemove', function (e) {
+			const tooltip = document.getElementById('hoverKeyTooltip');
+			if (tooltip) {
+				moveTooltip(e, elem, tooltip);
+			}
+		});
 
-        elem.addEventListener('mousemove', function (e) {
-            const tooltip = document.getElementById("hoverKeyTooltip");
-            if (tooltip) {
-                moveTooltip(e, elem, tooltip);
-            }
-        });
+		elem.addEventListener('mouseout', function () {
+			const elemCollection = elem.querySelectorAll('*');
+			elemCollection.forEach((subElem) => {
+				subElem.style.stroke = '';
+				subElem.style.strokeWidth = '';
+			});
 
-        elem.addEventListener('mouseout', function () {
-            let elemCollection = elem.querySelectorAll("*");
-            elemCollection.forEach(subElem => {
-                subElem.style.stroke = "";
-                subElem.style.strokeWidth = "";
-            });
+			// Remove the tooltip
+			const tooltip = document.getElementById('hoverKeyTooltip');
+			if (tooltip) {
+				tooltip.remove();
+			}
+		});
+	}
 
-            // Remove the tooltip
-            const tooltip = document.getElementById("hoverKeyTooltip");
-            if (tooltip) {
-                tooltip.remove();
-            }
-        });
-    }
+	function moveTooltip(e, elem, tooltip) {
+		const svg = elem.closest('svg');
+		if (!svg) {
+			return;
+		}
 
-    function moveTooltip(e, elem, tooltip) {
-        const svg = elem.closest('svg');
-        if (!svg) return;
+		const svgRect = svg.getBoundingClientRect();
+		const svgMidX = svgRect.left + svgRect.width / 2;
 
-        const svgRect = svg.getBoundingClientRect();
-        const svgMidX = svgRect.left + (svgRect.width / 2);
-
-        if (e.pageX > svgMidX) {
-            // On the right half: show tooltip to the left
-            tooltip.style.left = (e.pageX - tooltip.offsetWidth - 15) + "px";
-        } else {
-            // On the left half: show tooltip to the right
-            tooltip.style.left = (e.pageX + 15) + "px";
-        }
-        tooltip.style.top = (e.pageY + 10) + "px";
-    }
+		if (e.pageX > svgMidX) {
+			// On the right half: show tooltip to the left
+			tooltip.style.left = e.pageX - tooltip.offsetWidth - 15 + 'px';
+		} else {
+			// On the left half: show tooltip to the right
+			tooltip.style.left = e.pageX + 15 + 'px';
+		}
+		tooltip.style.top = e.pageY + 10 + 'px';
+	}
 }
-
 
 /**
- * Adds flicker effects to SVG elements based on `child_obj` keys, meant for tablet layout. 
+ * Adds flicker effects to SVG elements based on `childObj` keys, meant for tablet layout.
  * Icons flicker their corresponding color on a short time interval
  * using section-specific colors if enabled
- * 
- * @returns {void} - `void` Modifies DOM element styles in place.
+ *
+ * @return {void} - `void` Modifies DOM element styles in place.
  */
 function flicker_highlight_icons() {
-    for (let key in child_obj) {
-        let elem = document.querySelector('g[id="' + key + '"]');
-        if (elem) {
-            // Add transition for smooth fading
+	for (const key in childObj) {
+		const elem = document.querySelector('g[id="' + key + '"]');
+		if (elem) {
+			// Add transition for smooth fading
 
-            elem.style.transition = 'stroke-opacity 1s ease-in-out';
-            
-            // Initial state
-            if (scene_same_hover_color_sections != "yes" && sectionObj[key]!="None"){ //this should be done on the SCENE side of things, will havet o bring this back
-                let section_name = sectionObj[key];
-                let section_num = section_name.substring(section_name.length - 1, section_name.length);
+			elem.style.transition = 'stroke-opacity 1s ease-in-out';
 
-                let this_color = `scene_section_hover_color${section_num}`;
-                let text_color = `scene_section_hover_text_color${section_num}`;
-                elem.style.stroke = scene_data[sectionObj[key]][this_color];
-                } else {
-                    elem.style.stroke = scene_default_hover_color;
-                }
+			// Initial state
+			if (
+				scene_same_hover_color_sections != 'yes' &&
+				sectionObj[key] != 'None'
+			) {
+				//this should be done on the SCENE side of things, will havet o bring this back
+				const section_name = sectionObj[key];
+				const section_num = section_name.substring(
+					section_name.length - 1,
+					section_name.length
+				);
 
-            elem.style.strokeWidth = "3";
-            elem.style.strokeOpacity = "0";
+				const this_color = `scene_section_hover_color${section_num}`;
+				const text_color = `scene_section_hover_text_color${section_num}`;
+				elem.style.stroke = scene_data[sectionObj[key]][this_color];
+			} else {
+				elem.style.stroke = scene_default_hover_color;
+			}
 
-            // Create flickering effect
-            let increasing = true;
-            setInterval(() => {
-                if (increasing) {
-                    elem.style.strokeOpacity = "0.5";
-                    increasing = false;
-                } else {
-                    elem.style.strokeOpacity = "0";
-                    increasing = true;
-                }
-            }, 1800); // Change every 1 second
-        }
-    }
+			elem.style.strokeWidth = '3';
+			elem.style.strokeOpacity = '0';
+
+			// Create flickering effect
+			let increasing = true;
+			setInterval(() => {
+				if (increasing) {
+					elem.style.strokeOpacity = '0.5';
+					increasing = false;
+				} else {
+					elem.style.strokeOpacity = '0';
+					increasing = true;
+				}
+			}, 1800); // Change every 1 second
+		}
+	}
 }
-
 
 /**
  * Creates and displays a full-screen button for the scene SVG element.
  * This button allows users to view scene in full screen (and escape to leave)
  *
  * @param {string} svgId - The ID of the SVG element to be made full-screen.
- * 
- * The function performs the following:
- * 1. Checks if the instance allows a full-screen button (within WP) and if the browser supports full-screen functionality.
- * 2. If supported, creates a button with appropriate attributes and prepends it to the container (`#toc-container`).
- * 3. Sets up an event listener on the SVG element to adjust its dimensions when entering or exiting full-screen mode.
- * 4. Defines the `openFullScreen` function to trigger full-screen mode for the SVG and appends a modal to it.
- * 5. Adds a click event to the button that calls the `openFullScreen` function.
- * 
- * Usage: called within load_svg
+ *
+ *                       The function performs the following:
+ *                       1. Checks if the instance allows a full-screen button (within WP) and if the browser supports full-screen functionality.
+ *                       2. If supported, creates a button with appropriate attributes and prepends it to the container (`#toc-container`).
+ *                       3. Sets up an event listener on the SVG element to adjust its dimensions when entering or exiting full-screen mode.
+ *                       4. Defines the `openFullScreen` function to trigger full-screen mode for the SVG and appends a modal to it.
+ *                       5. Adds a click event to the button that calls the `openFullScreen` function.
+ *
+ *                       Usage: called within load_svg
  */
 function full_screen_button(svgId) {
-    if (scene_full_screen_button != "yes") {
-        return;
-    }
+	if (scene_full_screen_button != 'yes') {
+		return;
+	}
 
-    if ((document.fullscreenEnabled || document.webkitFullscreenEnabled)) {
-        const svg = document.querySelector('#svg1 svg');
-        const viewBox = svg.viewBox.baseVal;
+	if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
+		const svg = document.querySelector('#svg1 svg');
+		const viewBox = svg.viewBox.baseVal;
 
-        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        rect.setAttribute("width", "80");
-        rect.setAttribute("height", "20");
-        rect.setAttribute("fill", "#03386c");
-        rect.setAttribute("rx", "5");
+		const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+		const rect = document.createElementNS(
+			'http://www.w3.org/2000/svg',
+			'rect'
+		);
+		rect.setAttribute('width', '80');
+		rect.setAttribute('height', '20');
+		rect.setAttribute('fill', '#03386c');
+		rect.setAttribute('rx', '5');
 
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.textContent = "Full Screen";
-        text.setAttribute("fill", "white");
-        text.setAttribute("font-size", "12");
-        text.setAttribute("text-anchor", "middle");
-        text.setAttribute("dominant-baseline", "middle");
-        text.setAttribute("x", "40");
-        text.setAttribute("y", "10");
+		const text = document.createElementNS(
+			'http://www.w3.org/2000/svg',
+			'text'
+		);
+		text.textContent = 'Full Screen';
+		text.setAttribute('fill', 'white');
+		text.setAttribute('font-size', '12');
+		text.setAttribute('text-anchor', 'middle');
+		text.setAttribute('dominant-baseline', 'middle');
+		text.setAttribute('x', '40');
+		text.setAttribute('y', '10');
 
-        g.appendChild(rect);
-        g.appendChild(text);
-        g.setAttribute("transform", `translate(${viewBox.width - 87}, 10)`);
+		g.appendChild(rect);
+		g.appendChild(text);
+		g.setAttribute('transform', `translate(${viewBox.width - 87}, 10)`);
 
-        svg.appendChild(g);
-        
-        var webkitElem = document.getElementById(svgId);
-        webkitElem.addEventListener('webkitfullscreenchange', (event) => {
+		svg.appendChild(g);
 
-            if (document.webkitFullscreenElement) {
+		const webkitElem = document.getElementById(svgId);
+		webkitElem.addEventListener('webkitfullscreenchange', (event) => {
+			if (document.webkitFullscreenElement) {
+				webkitElem.style.width = window.innerWidth + 'px';
+				webkitElem.style.height = window.innerHeight + 'px';
+			} else {
+				webkitElem.style.width = width;
+				webkitElem.style.height = height;
+			}
+		});
 
-                
-                webkitElem.style.width = (window.innerWidth) + 'px';
-                webkitElem.style.height =  (window.innerHeight) + 'px';
-            } else {
-                webkitElem.style.width =  width;
-                webkitElem.style.height = height;
-            }
-        });
-        
-        function toggleFullScreen() {
-            var elem = document.getElementById(svgId);
-            var svg = elem.querySelector('svg');
+		function toggleFullScreen() {
+			const elem = document.getElementById(svgId);
+			const svg = elem.querySelector('svg');
 
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                // Apply styles for fullscreen with aspect ratio preservation
-                elem.style.backgroundColor = 'black';
-                elem.style.display = 'flex';
-                elem.style.alignItems = 'center';
-                elem.style.justifyContent = 'center';
+			if (
+				!document.fullscreenElement &&
+				!document.webkitFullscreenElement
+			) {
+				// Apply styles for fullscreen with aspect ratio preservation
+				elem.style.backgroundColor = 'black';
+				elem.style.display = 'flex';
+				elem.style.alignItems = 'center';
+				elem.style.justifyContent = 'center';
 
-                // Set SVG to use full viewport with aspect ratio preserved
-                svg.style.width = '100%';
-                svg.style.height = '100%';
-                svg.style.maxWidth = '100vw';
-                svg.style.maxHeight = '100vh';
-                svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+				// Set SVG to use full viewport with aspect ratio preserved
+				svg.style.width = '100%';
+				svg.style.height = '100%';
+				svg.style.maxWidth = '100vw';
+				svg.style.maxHeight = '100vh';
+				svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                }
-                text.textContent = "Exit";
+				if (elem.requestFullscreen) {
+					elem.requestFullscreen();
+				} else if (elem.webkitRequestFullscreen) {
+					elem.webkitRequestFullscreen();
+				}
+				text.textContent = 'Exit';
 
-                let modal = document.getElementById("myModal");
-                elem.prepend(modal);
-            } else {
-                // Remove fullscreen styles
-                elem.style.backgroundColor = '';
-                elem.style.display = '';
-                elem.style.alignItems = '';
-                elem.style.justifyContent = '';
+				const modal = document.getElementById('myModal');
+				elem.prepend(modal);
+			} else {
+				// Remove fullscreen styles
+				elem.style.backgroundColor = '';
+				elem.style.display = '';
+				elem.style.alignItems = '';
+				elem.style.justifyContent = '';
 
-                svg.style.width = '';
-                svg.style.height = '';
-                svg.style.maxWidth = '';
-                svg.style.maxHeight = '';
-                svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+				svg.style.width = '';
+				svg.style.height = '';
+				svg.style.maxWidth = '';
+				svg.style.maxHeight = '';
+				svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                }
-                text.textContent = "Full Screen";
-            }
-        }
+				if (document.exitFullscreen) {
+					document.exitFullscreen();
+				} else if (document.webkitExitFullscreen) {
+					document.webkitExitFullscreen();
+				}
+				text.textContent = 'Full Screen';
+			}
+		}
 
-        g.addEventListener('click', toggleFullScreen);
-        document.addEventListener('fullscreenchange', function() {
-            if (!document.fullscreenElement) {
-                text.textContent = "Full Screen";
-            }
-        });
+		g.addEventListener('click', toggleFullScreen);
+		document.addEventListener('fullscreenchange', function () {
+			if (!document.fullscreenElement) {
+				text.textContent = 'Full Screen';
+			}
+		});
 
-        document.addEventListener('webkitfullscreenchange', function() {
-            if (!document.webkitFullscreenElement) {
-                text.textContent = "Full Screen";
-            }
-        });
+		document.addEventListener('webkitfullscreenchange', function () {
+			if (!document.webkitFullscreenElement) {
+				text.textContent = 'Full Screen';
+			}
+		});
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === "Escape" && (document.fullscreenElement || document.webkitFullscreenElement)) {
-                text.textContent = "Full Screen";
-            }
-        });
-
-    }
+		document.addEventListener('keydown', function (event) {
+			if (
+				event.key === 'Escape' &&
+				(document.fullscreenElement || document.webkitFullscreenElement)
+			) {
+				text.textContent = 'Full Screen';
+			}
+		});
+	}
 }
 
 /**
  * Creates a toggle button that lets user toggle on/off the text within the scene.
- * 
+ *
  * The function performs the following:
  * 1. Checks if the instance wants the toggle button or not (within WP)
  * 2. If supported, creates a button with appropriate attributes and prepends it to the container (`#toc-container`).
- * 3. Based on the user-defined initial state of the toggle (again in WP), either sets toggle to on or off. 
+ * 3. Based on the user-defined initial state of the toggle (again in WP), either sets toggle to on or off.
  * 4. Adds a click event to the button that shows/hides text from element
- * 
+ *
  * Usage: called within load_svg
  */
 function toggle_text() {
-    if (scene_text_toggle == "none"){
-        return;
-    }
+	if (scene_text_toggle == 'none') {
+		return;
+	}
 
-    let initialState = scene_text_toggle === "toggle_on"; //this should be done on the SCENE side of things
-    let svgText = document.querySelector("#text");
+	const initialState = scene_text_toggle === 'toggle_on'; //this should be done on the SCENE side of things
+	const svgText = document.querySelector('#text');
 
-    if (initialState) {
-        svgText.setAttribute("display", "");
-    } else {
-        svgText.setAttribute("display", "None");
-    }
+	if (initialState) {
+		svgText.setAttribute('display', '');
+	} else {
+		svgText.setAttribute('display', 'None');
+	}
 
-    const svg = document.querySelector('#svg1 svg');
-    // Get the SVG's viewBox
-    const viewBox = svg.viewBox.baseVal;
-    // Create a group element to hold our button
-    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    // Create a rect element for the button background
-    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    rect.setAttribute("width", "60");
-    rect.setAttribute("height", "20");
-    rect.setAttribute("fill", "#007bff");
-    rect.setAttribute("rx", "5");
-    // Create a text element for the button label
-    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    text.textContent = "Click";
-    text.setAttribute("fill", "white");
-    text.setAttribute("font-size", "12");
-    text.setAttribute("text-anchor", "middle");
-    text.setAttribute("dominant-baseline", "middle");
-    text.setAttribute("x", "30");
-    text.setAttribute("y", "10");
+	const svg = document.querySelector('#svg1 svg');
+	// Get the SVG's viewBox
+	const viewBox = svg.viewBox.baseVal;
+	// Create a group element to hold our button
+	const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+	// Create a rect element for the button background
+	const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+	rect.setAttribute('width', '60');
+	rect.setAttribute('height', '20');
+	rect.setAttribute('fill', '#007bff');
+	rect.setAttribute('rx', '5');
+	// Create a text element for the button label
+	const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+	text.textContent = 'Click';
+	text.setAttribute('fill', 'white');
+	text.setAttribute('font-size', '12');
+	text.setAttribute('text-anchor', 'middle');
+	text.setAttribute('dominant-baseline', 'middle');
+	text.setAttribute('x', '30');
+	text.setAttribute('y', '10');
 
-    g.appendChild(rect);
-    g.appendChild(text);
-    g.setAttribute("transform", `translate(${viewBox.width - 70}, 10)`);
+	g.appendChild(rect);
+	g.appendChild(text);
+	g.setAttribute('transform', `translate(${viewBox.width - 70}, 10)`);
 
-    const toggleGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+	const toggleGroup = document.createElementNS(
+		'http://www.w3.org/2000/svg',
+		'g'
+	);
 
-    const toggleRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    toggleRect.setAttribute("width", "80");
-    toggleRect.setAttribute("height", "20");
-    toggleRect.setAttribute("fill", "#03386c");
-    toggleRect.setAttribute("rx", "5");
+	const toggleRect = document.createElementNS(
+		'http://www.w3.org/2000/svg',
+		'rect'
+	);
+	toggleRect.setAttribute('width', '80');
+	toggleRect.setAttribute('height', '20');
+	toggleRect.setAttribute('fill', '#03386c');
+	toggleRect.setAttribute('rx', '5');
 
-    const toggleText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    toggleText.setAttribute("fill", "white");
-    toggleText.setAttribute("font-size", "12");
-    toggleText.setAttribute("text-anchor", "middle");
-    toggleText.setAttribute("dominant-baseline", "middle");
-    toggleText.setAttribute("x", "40");
-    toggleText.setAttribute("y", "10");
-    toggleText.textContent = initialState ? "Hide Text" : "Show Text";
+	const toggleText = document.createElementNS(
+		'http://www.w3.org/2000/svg',
+		'text'
+	);
+	toggleText.setAttribute('fill', 'white');
+	toggleText.setAttribute('font-size', '12');
+	toggleText.setAttribute('text-anchor', 'middle');
+	toggleText.setAttribute('dominant-baseline', 'middle');
+	toggleText.setAttribute('x', '40');
+	toggleText.setAttribute('y', '10');
+	toggleText.textContent = initialState ? 'Hide Text' : 'Show Text';
 
-    toggleGroup.appendChild(toggleRect);
-    toggleGroup.appendChild(toggleText);
+	toggleGroup.appendChild(toggleRect);
+	toggleGroup.appendChild(toggleText);
 
-    toggleGroup.setAttribute("transform", `translate(${viewBox.width - 87}, 35)`);
-    svg.appendChild(toggleGroup);
+	toggleGroup.setAttribute(
+		'transform',
+		`translate(${viewBox.width - 87}, 35)`
+	);
+	svg.appendChild(toggleGroup);
 
-    toggleGroup.addEventListener('click', function() {
-        if (svgText.getAttribute("display") === "none") {
-            svgText.setAttribute("display", "");
-            toggleText.textContent = "Hide Text";
-        } else {
-            svgText.setAttribute("display", "none");
-            toggleText.textContent = "Show Text";
-        }
-    });
+	toggleGroup.addEventListener('click', function () {
+		if (svgText.getAttribute('display') === 'none') {
+			svgText.setAttribute('display', '');
+			toggleText.textContent = 'Hide Text';
+		} else {
+			svgText.setAttribute('display', 'none');
+			toggleText.textContent = 'Show Text';
+		}
+	});
 }
-
 
 /**
  * Creates a sectioned list table of contents that is organized based on the user-defined sections in WP for any given scene.
  * This function generates sections dynamically and organizes them in a color-coded way
- * 
+ *
  * The function:
- * 1. Extracts unique section names from the `section_name` property of each object in `child_obj`.
+ * 1. Extracts unique section names from the `section_name` property of each object in `childObj`.
  * 2. Sorts the sections and assigns each section a color from the `colors` array. Ensures that consecutive sections don't have the same color.
  * 3. Builds a sectioned table of contents, where each section name is a header and below are its icons,  styled with its assigned color.
  * 4. Appends the generated TOC structure to the `#toc-container` element in the DOM.
- * 
- * @returns {void} - The function modifies the DOM by adding a dynamically generated TOC.
- * 
- * Usage: 
+ *
+ * @return {void} - The function modifies the DOM by adding a dynamically generated TOC.
+ *
+ * Usage:
  * called in table_of_contents, if user has selected sectioned list option in WP
  */
-function sectioned_list(){
+function sectioned_list() {
+	const sections = [];
+	for (const key in childObj) {
+		const section = childObj[key].section_name;
 
-    let sections = [];
-    for (let key in child_obj) {
-        let section = child_obj[key]['section_name'];
+		if (!sections.includes(section) && section != 'None') {
+			sections.push(section);
+		}
+		sectionObj[key] = section;
+	}
+	sections.sort();
+	sections.push('None');
 
-        if (!sections.includes(section) && section!='None') {
-            sections.push(section);
-        }
-        sectionObj[key] = section;
-    }
-    sections.sort();
-    sections.push('None');
+	const sectionNoneCount = sections.filter((s) => s === 'None').length;
 
-    let sectionNoneCount = sections.filter(s => s === "None").length;
+	const toc_container = document.querySelector('#toc-container');
+	const toc_group = document.createElement('div');
 
+	toc_group.setAttribute('id', 'toc-group');
 
-    let toc_container = document.querySelector("#toc-container");
-    let toc_group = document.createElement("div");
+	for (let i = 0; i < sections.length; i++) {
+		const sect = document.createElement('div');
 
-    toc_group.setAttribute("id", "toc-group");
+		const heading = document.createElement('h5');
+		heading.setAttribute('id', `heading${i}`);
+		if (
+			sections[i] != 'None' &&
+			scene_data.scene_same_hover_color_sections == 'no'
+		) {
+			heading.innerHTML =
+				scene_data[`scene_section${sections[i]}`][
+					`scene_section_title${i + 1}`
+				];
+			const color =
+				scene_data[`scene_section${sections[i]}`][
+					`scene_section_hover_color${i + 1}`
+				];
+			heading.style.backgroundColor = hexToRgba(color, 0.2);
+			heading.style.color = 'black';
+			heading.style.display = 'inline-block';
+			heading.style.padding = '0 5px';
+		}
+		if (
+			sections[i] != 'None' &&
+			scene_data.scene_same_hover_color_sections == 'yes'
+		) {
+			// heading.innerHTML = sections[i];
 
-    for (let i = 0; i < sections.length; i++) {
+			heading.innerHTML =
+				scene_data[`scene_section${sections[i]}`][
+					`scene_section_title${i + 1}`
+				];
+			const color = scene_default_hover_color;
+			heading.style.backgroundColor = hexToRgba(color, 0.2);
+			heading.style.color = 'black';
+			heading.style.display = 'inline-block';
+			heading.style.padding = '0 5px';
+		}
+		if (sections[i] == 'None' && sectionNoneCount > 1) {
+			heading.innerHTML = 'No Section';
+			const color = scene_default_hover_color;
+			heading.style.backgroundColor = hexToRgba(color, 0.2);
+			heading.style.color = 'black';
+			heading.style.display = 'inline-block';
+		} else {
+			//use the section above in here to put it back the way it was before.
+		}
 
-        let sect = document.createElement("div");
+		sect.appendChild(heading);
 
-        let heading = document.createElement("h5");
-        heading.setAttribute("id", `heading${i}`);
-        if (sections[i] != "None" && scene_data['scene_same_hover_color_sections'] == "no"){
+		const tocCollapse = document.createElement('div');
 
-            heading.innerHTML = scene_data[`scene_section${sections[i]}`][`scene_section_title${i+1}`];
-            let color =  scene_data[`scene_section${sections[i]}`][`scene_section_hover_color${i+1}`];
-            heading.style.backgroundColor = hexToRgba(color, 0.2);
-            heading.style.color = 'black';
-            heading.style.display = 'inline-block';
-            heading.style.padding = '0 5px';
-        }
-        if (sections[i] != "None" && scene_data['scene_same_hover_color_sections'] == "yes"){
-            // heading.innerHTML = sections[i];
+		const tocbody = document.createElement('div');
 
-            heading.innerHTML = scene_data[`scene_section${sections[i]}`][`scene_section_title${i+1}`];
-            let color =  scene_default_hover_color;
-            heading.style.backgroundColor = hexToRgba(color, 0.2);
-            heading.style.color = 'black';
-            heading.style.display = 'inline-block';
-            heading.style.padding = '0 5px';
-        }
-        if (sections[i] == "None" && sectionNoneCount > 1){
-            heading.innerHTML = 'No Section';
-            let color = scene_default_hover_color;
-            heading.style.backgroundColor = hexToRgba(color, 0.2);
-            heading.style.color = 'black';
-            heading.style.display = 'inline-block';
-        }   
-        else {
-            //use the section above in here to put it back the way it was before.
-        }
+		const sectlist = document.createElement('ul');
+		sectlist.setAttribute('id', sections[i]);
+		sectlist.setAttribute('style', `color: black`);
 
-        sect.appendChild(heading);
+		tocbody.appendChild(sectlist);
+		tocCollapse.appendChild(tocbody);
 
-        let tocCollapse = document.createElement("div");
-
-        let tocbody = document.createElement("div");
-
-        let sectlist = document.createElement("ul");
-        sectlist.setAttribute("id", sections[i]);
-        sectlist.setAttribute("style", `color: black`);
-
-
-        tocbody.appendChild(sectlist);
-        tocCollapse.appendChild(tocbody);
-
-        sect.appendChild(tocCollapse);
-        toc_group.appendChild(sect);
-    }
-    toc_container.appendChild(toc_group);
+		sect.appendChild(tocCollapse);
+		toc_group.appendChild(sect);
+	}
+	toc_container.appendChild(toc_group);
 }
-
-
 
 /**
  * Creates a collapsible table of contents that is organized based on the user-defined sections in WP for any given scene.
  * This function generates sections dynamically and organizes them in an accordion-style layout.
- * 
+ *
  * The function:
- * 1. Extracts unique section names from the `section_name` property of each object in `child_obj`.
+ * 1. Extracts unique section names from the `section_name` property of each object in `childObj`.
  * 2. Sorts the sections and assigns each section a color from the `colors` array. Ensures that consecutive sections don't have the same color.
  * 3. Builds an accordion-style TOC, where each section is collapsible and styled with its assigned color.
  * 4. Appends the generated TOC structure to the `#toc-container` element in the DOM.
- * 
- * @returns {void} - The function modifies the DOM by adding a dynamically generated TOC.
- * 
- * Usage: 
+ *
+ * @return {void} - The function modifies the DOM by adding a dynamically generated TOC.
+ *
+ * Usage:
  * called in table_of_contents, if user has selected sectioned list option in WP
  */
 function toc_sections() {
@@ -1809,160 +1885,182 @@ function toc_sections() {
     toc_container.appendChild(toc_group);
 }
 
-
 /**
  * Generates a Table of Contents (TOC) for a document, with links that either open modal windows or redirect to external URLs.
  * The TOC style is determined by `thisInstance.instance_toc_style`, which can be:
  *  - "accordion": Generates sections in an accordion layout.
  *  - "list": Uses a simple list layout.
  *  - "sectioned_list": Organizes content in sections based on their grouping.
- * 
+ *
  * For each TOC item:
- * - If `child_obj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
- * - If `child_obj[key]['external_url']` is present, the item will link to an external URL.
- * 
+ * - If `childObj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
+ * - If `childObj[key]['external_url']` is present, the item will link to an external URL.
+ *
  * Additional functionality includes:
  * - Mouse hover effects on associated SVG elements, highlighting sections.
  * - Event listeners for closing the modal window when clicking outside or on the close button.
- * 
- * @returns {void} - Modifies the DOM by generating TOC elements and attaching event listeners.
- * 
+ *
+ * @return {void} - Modifies the DOM by generating TOC elements and attaching event listeners.
+ *
  * Usage:
  * Called in load_svg if user wants to show the sections
  */
 
-function table_of_contents(){
+function table_of_contents() {
+	if (scene_toc_style == 'accordion') {
+		//this should be done on the SCENE side of things
+		toc_sections();
+	} else {
+		sectioned_list();
+	}
 
-    if (scene_toc_style == "accordion"){ //this should be done on the SCENE side of things
-        toc_sections();
-    } else {
-        sectioned_list();
-    }       
-   
-    for (let obj of sorted_child_objs){
+	for (const obj of sortedChildObjs) {
+		const key = obj.original_name;
 
-        let key = obj.original_name;
+		if (sectionObj[key] == 'None') {
+		}
+		const elem = document.getElementById(childObj[key].section_name);
+		const item = document.createElement('li');
+		const title = childObj[key].title;
+		const link = document.createElement('a');
+		const title_formatted = title.replace(/\s+/g, '_');
+		link.setAttribute('id', title_formatted);
 
-        if (sectionObj[key]=="None"){
+		const modal = childObj[key].modal;
+		if (modal) {
+			link.setAttribute('href', `#`); //just added
+			link.classList.add('modal-link');
+			link.innerHTML = title;
 
-        }
-        let elem = document.getElementById(child_obj[key]['section_name']);
-        let item = document.createElement("li");
-        let title = child_obj[key]['title'];  
-        let link = document.createElement("a");
-        let title_formatted = title.replace(/\s+/g, '_')
-        link.setAttribute("id", title_formatted);
+			item.appendChild(link);
+			item.addEventListener('click', function () {
+				const modal = document.getElementById('myModal');
+				modal.style.display = 'block';
+				render_modal(key);
+			});
 
-        let modal = child_obj[key]['modal'];
-        if (modal) {
-            link.setAttribute("href", `#`); //just added
-            link.classList.add("modal-link"); 
-            link.innerHTML = title;
+			const closeButton = document.getElementById('close');
+			closeButton.addEventListener('click', function () {
+				const accordion_container = document.getElementById(
+					'accordion-container'
+				);
+				accordion_container.innerHTML = '';
+				if (!is_mobile()) {
+					const tagline_container =
+						document.getElementById('tagline-container');
+					tagline_container.innerHTML = '';
+				}
 
-            item.appendChild(link);
-            item.addEventListener('click', function() {
-                let modal = document.getElementById("myModal");
-                modal.style.display = "block";
-                render_modal(key);
-            });
+				document.getElementById('myTabContent').innerHTML = '';
 
-            let closeButton = document.getElementById("close");
-            closeButton.addEventListener('click', function() {
-                    
-                let accordion_container = document.getElementById('accordion-container');
-                accordion_container.innerHTML = '';
-                if (!is_mobile()){
-                    let tagline_container = document.getElementById('tagline-container');
-                    tagline_container.innerHTML = '';
-                }
+				history.pushState(
+					'',
+					document.title,
+					window.location.pathname + window.location.search
+				);
+			});
+			window.onclick = function (event) {
+				if (event.target === modal) {
+					// Check if the click is outside the modal content
 
-                document.getElementById("myTabContent").innerHTML = '';
+					document.getElementById('accordion-container').innerHTML =
+						'';
+					if (!is_mobile()) {
+						document.getElementById('tagline-container').innerHTML =
+							'';
+					}
+					document.getElementById('myTabContent').innerHTML = '';
+					history.pushState(
+						'',
+						document.title,
+						window.location.pathname + window.location.search
+					);
+				}
+			};
+		} else {
+			link.href = childObj[key].external_url;
+			link.innerHTML = title;
+			item.appendChild(link);
+		}
 
-                history.pushState("", document.title, window.location.pathname + window.location.search);
-        });
-        window.onclick = function(event) {
-            if (event.target === modal) { // Check if the click is outside the modal content
+		//CHANGE HERE FOR TABLET STUFF
+		link.style.textDecoration = 'none';
 
-                document.getElementById('accordion-container').innerHTML = '';
-                if (!is_mobile()){
-                    document.getElementById('tagline-container').innerHTML = '';
-                }
-                document.getElementById("myTabContent").innerHTML = '';
-                history.pushState("", document.title, window.location.pathname + window.location.search);
-            }
-        };
-        }
-        
-        else{
-            link.href = child_obj[key]['external_url'];
-            link.innerHTML = title;
-            item.appendChild(link);
-        }
+		item.addEventListener(
+			'mouseover',
+			((key) => {
+				return function () {
+					const svg_elem = document.querySelector(
+						'g[id="' + key + '"]'
+					);
 
+					const subElements = svg_elem.querySelectorAll('*');
+					subElements.forEach((subElement) => {
+						if (
+							scene_same_hover_color_sections != 'yes' &&
+							childObj[key] != 'None'
+						) {
+							//this should be done on the SCENE side of things, will havet o bring this back
 
-        //CHANGE HERE FOR TABLET STUFF
-        link.style.textDecoration = 'none';
-        
-        item.addEventListener('mouseover', ((key) => {
-            return function() {
-                let svg_elem = document.querySelector('g[id="' + key + '"]');
+							const section_num = childObj[key].section_name;
+							const this_color = `scene_section_hover_color${section_num}`;
+							const text_color = `scene_section_hover_text_color${section_num}`;
+							const hovercolorfullpath =
+								scene_data[`scene_section${section_num}`][
+									this_color
+								];
+							const hovertextcolorfullpath =
+								scene_data[`scene_section${section_num}`][
+									text_color
+								];
+							subElement.style.stroke = hovercolorfullpath;
+						} else {
+							subElement.style.stroke = scene_default_hover_color;
+						}
 
-                let subElements = svg_elem.querySelectorAll("*");
-                subElements.forEach(subElement => {
+						subElement.style.strokeWidth = '3';
+					});
+				};
+			})(key)
+		);
 
-                    if (scene_same_hover_color_sections != "yes" && child_obj[key]!="None" ){ //this should be done on the SCENE side of things, will havet o bring this back
+		item.addEventListener(
+			'mouseout',
+			((key) => {
+				return function () {
+					const svg_elem = document.querySelector(
+						'g[id="' + key + '"]'
+					);
 
-                        let section_num = child_obj[key]['section_name'];
-                        let this_color = `scene_section_hover_color${section_num}`;
-                        let text_color = `scene_section_hover_text_color${section_num}`;
-                        let hovercolorfullpath = scene_data[`scene_section${section_num}`][this_color];
-                        let hovertextcolorfullpath = scene_data[`scene_section${section_num}`][text_color]
-                        subElement.style.stroke = hovercolorfullpath;
+					const subElements = svg_elem.querySelectorAll('*');
+					subElements.forEach((subElement) => {
+						subElement.style.stroke = '';
+						subElement.style.strokeWidth = '';
+					});
+				};
+			})(key)
+		);
 
-                    } else{
-                        subElement.style.stroke = scene_default_hover_color;
-                    }
-                    
-                    subElement.style.strokeWidth = "3";
-
-                });
-            };
-        })(key));
-
-        item.addEventListener('mouseout', ((key) => {
-            return function() {
-                let svg_elem = document.querySelector('g[id="' + key + '"]');
-
-                let subElements = svg_elem.querySelectorAll("*");
-                subElements.forEach(subElement => {
-                    subElement.style.stroke = "";
-                    subElement.style.strokeWidth = "";
-                });
-            };
-        })(key));
-                
-        elem.appendChild(item);
-    }
+		elem.appendChild(item);
+	}
 }
-
 
 /**
  * Generates a simple list-based Table of Contents (TOC), where items either open modal windows or link to external URLs.
  * The sections are not explicitly displayed, but their colors are used for highlighting.
- * 
+ *
  * Each TOC item:
- * - If `child_obj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
- * - If `child_obj[key]['external_url']` is present, the item will link to an external URL.
- * 
+ * - If `childObj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
+ * - If `childObj[key]['external_url']` is present, the item will link to an external URL.
+ *
  * Additional functionality:
  * - Mouse hover effects highlight associated SVG elements, using section colors if `thisInstance.instance_colored_sections` is set to "yes".
  * - Modal close event handling, including clicking outside the modal window to close it.
- * 
- * @returns {void} - Modifies the DOM by generating TOC list items and attaching event listeners.
- * 
+ *
+ * @return {void} - Modifies the DOM by generating TOC list items and attaching event listeners.
+ *
  * Usage:
  * called in load_svg if user wants a list with no sections displayed/no sections exist
- * 
  */
 function list_toc(){
     
@@ -2067,29 +2165,27 @@ function list_toc(){
     toc_container.appendChild(toc_group);
 }
 
-
-
 /**
  * Generates and handles modal windows or external URL redirects when SVG elements are clicked.
- * 
- * This function adds click event listeners to SVG elements (identified by `g[id="key"]`) from `child_obj`.
- * 
- * - If the `child_obj[key]['modal']` value is true:
+ *
+ * This function adds click event listeners to SVG elements (identified by `g[id="key"]`) from `childObj`.
+ *
+ * - If the `childObj[key]['modal']` value is true:
  *   - Clicking the SVG element or corresponding mobile container (`#key-container`) opens a modal window.
  *   - The `render_modal(key)` function is triggered to load modal content.
  *   - Clicking outside the modal or on the close button hides the modal and clears the content.
- * 
- * - If `child_obj[key]['modal']` is false:
- *   - Clicking the SVG element redirects to the external URL specified in `child_obj[key]['external_url']`.
+ *
+ * - If `childObj[key]['modal']` is false:
+ *   - Clicking the SVG element redirects to the external URL specified in `childObj[key]['external_url']`.
  *   - For mobile devices, a similar event is added to the container element (`#key-container`).
- * 
+ *
  * Modal close behavior:
  * - The modal is closed when the close button is clicked or when a click occurs outside the modal.
  * - Upon closing, various content containers are cleared, and the URL is changed back to the original scene URL
- * 
- * @returns {void} - Directly manipulates the DOM by attaching event listeners for modal display or external URL redirection.
- * 
- * Usage: 
+ *
+ * @return {void} - Directly manipulates the DOM by attaching event listeners for modal display or external URL redirection.
+ *
+ * Usage:
  * Called in mobile helper, load_svg to actually add modal capabilities to scene element
  */
 function add_modal(){

@@ -19,15 +19,19 @@ document.addEventListener('DOMContentLoaded', redText);
 //   based on the selected TOC style.
 //
 // This ensures the scene editor UI is correctly initialized when the page loads.
-let openingSceneSections = document.getElementsByName("scene_section_number")[0].value;
+const openingSceneSections = document.getElementsByName(
+	'scene_section_number'
+)[0].value;
 displaySceneEntries(openingSceneSections);
 tableOfContentsFieldOptions();
 
-// Initialize visibility of orphan icon color field when page loads 
+// Initialize visibility of orphan icon color field when page loads
 orphanColorFieldVisibility();
 
 // Change visibility of orphan icon color field based upon value of field scene_orphan_icon_action
-document.querySelector('[data-depend-id="scene_orphan_icon_action"]').addEventListener('change', orphanColorFieldVisibility);
+document
+	.querySelector('[data-depend-id="scene_orphan_icon_action"]')
+	.addEventListener('change', orphanColorFieldVisibility);
 
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
@@ -69,42 +73,84 @@ document.addEventListener('DOMContentLoaded', redText);
  * - Assumes the existence of the helper function displaySceneEntries.
  */
 // function to show hover color field, based on table of contents type
-function tableOfContentsFieldOptions () {
-	const tocStyle = document.getElementsByName("scene_toc_style")[0].value;
-	let target_color_element = "";
-	let target_color_text_element = "";
+function tableOfContentsFieldOptions() {
+	const tocStyle = document.getElementsByName('scene_toc_style')[0].value;
+	const target_color_element = '';
+	const target_color_text_element = '';
 	// document.getElementsByName("scene_section1[scene_section_hover_color1]")[0].parentElement.parentElement.parentElement;
 
-	if (tocStyle == "list"){
-		document.getElementsByName("scene_same_hover_color_sections")[0].value = "yes";
-		document.getElementsByName("scene_same_hover_color_sections")[0].parentElement.parentElement.style.display = "none";
-		document.getElementsByName("scene_section_number")[0].value = 0;
+	if (tocStyle == 'list') {
+		document.getElementsByName('scene_same_hover_color_sections')[0].value =
+			'yes';
+		document.getElementsByName(
+			'scene_same_hover_color_sections'
+		)[0].parentElement.parentElement.style.display = 'none';
+		document.getElementsByName('scene_section_number')[0].value = 0;
 		displaySceneEntries(0);
-		document.getElementsByName("scene_section_number")[0].parentElement.parentElement.style.display = "none";
-		document.getElementsByName("scene_hover_color")[0].parentElement.parentElement.style.display = "block";
-		document.getElementsByName("scene_hover_text_color")[0].parentElement.parentElement.style.display = "block";
+		document.getElementsByName(
+			'scene_section_number'
+		)[0].parentElement.parentElement.style.display = 'none';
+		document.getElementsByName(
+			'scene_hover_color'
+		)[0].parentElement.parentElement.style.display = 'block';
+		document.getElementsByName(
+			'scene_hover_text_color'
+		)[0].parentElement.parentElement.style.display = 'block';
 	} else {
-		document.getElementsByName("scene_same_hover_color_sections")[0].parentElement.parentElement.style.display = "block";
-		document.getElementsByName("scene_section_number")[0].parentElement.parentElement.style.display = "block";
-		const singleColor = document.getElementsByName("scene_same_hover_color_sections")[0].value;
-		if (singleColor == "no"){
-			document.getElementsByName("scene_hover_text_color")[0].parentElement.parentElement.style.display = "none";
-			document.getElementsByName("scene_hover_color")[0].parentElement.parentElement.style.display = "none";
-			for (let i = 1; i <= 6; i++){
-				document.getElementsByName("scene_section" + i + "[scene_section_hover_color" + i + "]")[0].parentElement.parentElement.parentElement.style.display = "block";
-				document.getElementsByName("scene_section" + i + "[scene_section_hover_text_color" + i + "]")[0].parentElement.parentElement.parentElement.style.display = "block";
+		document.getElementsByName(
+			'scene_same_hover_color_sections'
+		)[0].parentElement.parentElement.style.display = 'block';
+		document.getElementsByName(
+			'scene_section_number'
+		)[0].parentElement.parentElement.style.display = 'block';
+		const singleColor = document.getElementsByName(
+			'scene_same_hover_color_sections'
+		)[0].value;
+		if (singleColor == 'no') {
+			document.getElementsByName(
+				'scene_hover_text_color'
+			)[0].parentElement.parentElement.style.display = 'none';
+			document.getElementsByName(
+				'scene_hover_color'
+			)[0].parentElement.parentElement.style.display = 'none';
+			for (let i = 1; i <= 6; i++) {
+				document.getElementsByName(
+					'scene_section' + i + '[scene_section_hover_color' + i + ']'
+				)[0].parentElement.parentElement.parentElement.style.display =
+					'block';
+				document.getElementsByName(
+					'scene_section' +
+						i +
+						'[scene_section_hover_text_color' +
+						i +
+						']'
+				)[0].parentElement.parentElement.parentElement.style.display =
+					'block';
 			}
 		} else {
-			document.getElementsByName("scene_hover_text_color")[0].parentElement.parentElement.style.display = "block";
-			document.getElementsByName("scene_hover_color")[0].parentElement.parentElement.style.display = "block";
-			for (let i = 1; i <= 6; i++){
-				document.getElementsByName("scene_section" + i + "[scene_section_hover_color" + i + "]")[0].parentElement.parentElement.parentElement.style.display = "none";
-				document.getElementsByName("scene_section" + i + "[scene_section_hover_text_color" + i + "]")[0].parentElement.parentElement.parentElement.style.display = "none";
+			document.getElementsByName(
+				'scene_hover_text_color'
+			)[0].parentElement.parentElement.style.display = 'block';
+			document.getElementsByName(
+				'scene_hover_color'
+			)[0].parentElement.parentElement.style.display = 'block';
+			for (let i = 1; i <= 6; i++) {
+				document.getElementsByName(
+					'scene_section' + i + '[scene_section_hover_color' + i + ']'
+				)[0].parentElement.parentElement.parentElement.style.display =
+					'none';
+				document.getElementsByName(
+					'scene_section' +
+						i +
+						'[scene_section_hover_text_color' +
+						i +
+						']'
+				)[0].parentElement.parentElement.parentElement.style.display =
+					'none';
 			}
 		}
 	}
 }
-
 
 /**
  * Shows or hides scene section fields based on the specified number of sections.
@@ -134,26 +180,35 @@ function tableOfContentsFieldOptions () {
  * - Assumes the parent containers are structured such that setting their style.display property will show/hide the section fields.
  */
 // function to display Scene Section fields
-function displaySceneEntries (entry_number){
+function displaySceneEntries(entry_number) {
 	//console.log("displaySceneEntries");
-	let target_title_element = "";
-	let target_color_element = "";
-	let target_color_text_element = "";
+	let target_title_element = '';
+	let target_color_element = '';
+	let target_color_text_element = '';
 
-	for (let i = 6; i > entry_number; i--){
-		target_title_element = "scene_section" + i + "[scene_section_title" + i + "]";
-		target_color_element = "scene_section" + i + "[scene_section_hover_color" + i + "]";
-		target_color_text_element = "scene_section" + i + "[scene_section_hover_text_color" + i + "]";
-	//	console.log(target_color_element);
-		document.getElementsByName(target_title_element)[0].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.display = "none";
-		document.getElementsByName(target_title_element)[0].value = "";
+	for (let i = 6; i > entry_number; i--) {
+		target_title_element =
+			'scene_section' + i + '[scene_section_title' + i + ']';
+		target_color_element =
+			'scene_section' + i + '[scene_section_hover_color' + i + ']';
+		target_color_text_element =
+			'scene_section' + i + '[scene_section_hover_text_color' + i + ']';
+		//	console.log(target_color_element);
+		document.getElementsByName(
+			target_title_element
+		)[0].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.display =
+			'none';
+		document.getElementsByName(target_title_element)[0].value = '';
 	}
 
-	for (let i = 1; i <= entry_number; i++){
-		target_title_element = "scene_section" + i + "[scene_section_title" + i + "]";
-	//	target_color_element = "scene_section" + i + "[scene_section_hover_color" + i + "]";
-		document.getElementsByName(target_title_element)[0].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.display = "block";
-
+	for (let i = 1; i <= entry_number; i++) {
+		target_title_element =
+			'scene_section' + i + '[scene_section_title' + i + ']';
+		//	target_color_element = "scene_section" + i + "[scene_section_hover_color" + i + "]";
+		document.getElementsByName(
+			target_title_element
+		)[0].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.style.display =
+			'block';
 	}
 }
 
@@ -187,25 +242,31 @@ function displaySceneEntries (entry_number){
  *   elements with data-depend-id="scene_photo_internal{n}" in the DOM, where {n} is the field number.
  */
 // Function to display either URL or image under scene image link
-function displayPhotoPath (fieldNumber){
+function displayPhotoPath(fieldNumber) {
 	//console.log("displayPhotoPath");
-	const targetElement = "scene_photo" + fieldNumber + "[scene_photo_location" + fieldNumber + "]";
+	const targetElement =
+		'scene_photo' +
+		fieldNumber +
+		'[scene_photo_location' +
+		fieldNumber +
+		']';
 	const targetLocation = document.getElementsByName(targetElement)[0];
-	const imageElement = '[data-depend-id="scene_photo_internal' + fieldNumber + '"]';
+	const imageElement =
+		'[data-depend-id="scene_photo_internal' + fieldNumber + '"]';
 	const imageField = document.querySelector(imageElement);
-	const urlElement = "scene_photo" + fieldNumber + "[scene_photo_url" + fieldNumber + "]";
+	const urlElement =
+		'scene_photo' + fieldNumber + '[scene_photo_url' + fieldNumber + ']';
 	const urlField = document.getElementsByName(urlElement)[0];
-	if (targetLocation.value == "Internal"){
-		urlField.value = "";
-		urlField.parentElement.parentElement.style.display = "none";
-		imageField.parentElement.parentElement.style.display="block";
-	} else if (targetLocation.value == "External"){
-		imageField.children[1].value = "";
-		imageField.children[0].children[0].children[1].src="";
-		imageField.children[0].classList.add("hidden");
-		imageField.parentElement.parentElement.style.display = "none";
-		urlField.parentElement.parentElement.style.display="block";
-
+	if (targetLocation.value == 'Internal') {
+		urlField.value = '';
+		urlField.parentElement.parentElement.style.display = 'none';
+		imageField.parentElement.parentElement.style.display = 'block';
+	} else if (targetLocation.value == 'External') {
+		imageField.children[1].value = '';
+		imageField.children[0].children[0].children[1].src = '';
+		imageField.children[0].classList.add('hidden');
+		imageField.parentElement.parentElement.style.display = 'none';
+		urlField.parentElement.parentElement.style.display = 'block';
 	}
 }
 
@@ -236,7 +297,7 @@ function displayPhotoPath (fieldNumber){
  */
 // Function to resize the SVG
 function resizeSvg() {
-	console.log("resizeSvg");
+	console.log('resizeSvg');
 	// Get the SVG element
 	const svg = document.getElementById('previewSvg');
 
@@ -246,7 +307,7 @@ function resizeSvg() {
 	// Set SVG width to match the container width
 	const width = svgContainer.clientWidth;
 	svg.setAttribute('width', width);
-	}
+}
 
 /**
  * Dynamically creates and appends an accordion UI component for displaying lists of info or photo links in the scene preview.
@@ -256,9 +317,9 @@ function resizeSvg() {
  * list of element indices, using the corresponding text and URL values from the scene form fields.
  *
  * @function createAccordion
- * @param {string} accordionType - The type of accordion to create ("info" or "photo"). Determines field names and header text.
- * @param {HTMLElement} parentDiv - The parent DOM element to which the accordion will be appended.
- * @param {Array<number>} listElements - An array of indices representing the info or photo entries to include in the accordion.
+ * @param {string}        accordionType - The type of accordion to create ("info" or "photo"). Determines field names and header text.
+ * @param {HTMLElement}   parentDiv     - The parent DOM element to which the accordion will be appended.
+ * @param {Array<number>} listElements  - An array of indices representing the info or photo entries to include in the accordion.
  *
  * @description
  * - Creates a container div for the accordion item and its header.
@@ -276,156 +337,263 @@ function resizeSvg() {
  * @global
  * - Assumes the existence of scene form fields named "scene_{type}{n}[scene_{type}_text{n}]" and "scene_{type}{n}[scene_{type}_url{n}]" in the DOM.
  */
-function createAccordion(accordionType, parentDiv, listElements){
-	console.log("createAccordion");
-	let accordionItem = document.createElement("div");
-	accordionItem.classList.add("accordion-item");
+function createAccordion(accordionType, parentDiv, listElements) {
+	console.log('createAccordion');
+	const accordionItem = document.createElement('div');
+	accordionItem.classList.add('accordion-item');
 
-	let accordionFirstPart = document.createElement("div");
-	accordionFirstPart.classList.add("accordion-header");
+	const accordionFirstPart = document.createElement('div');
+	accordionFirstPart.classList.add('accordion-header');
 
-	let accordionHeaderButton = document.createElement("button");
-	accordionHeaderButton.classList.add("accordion-button", "accordionTitle");
-	accordionHeaderButton.setAttribute("type", "button");
-	accordionHeaderButton.setAttribute("data-bs-toggle", "collapse");
-	accordionHeaderButton.setAttribute("data-bs-target", "#collapse" + accordionType);
-	accordionHeaderButton.setAttribute("aria-expanded", "true");
-	accordionHeaderButton.setAttribute("aria-controls", "collapse" + accordionType);
-	if (accordionType == "info"){ 
-		accordionHeaderButton.textContent = "More info";
+	const accordionHeaderButton = document.createElement('button');
+	accordionHeaderButton.classList.add('accordion-button', 'accordionTitle');
+	accordionHeaderButton.setAttribute('type', 'button');
+	accordionHeaderButton.setAttribute('data-bs-toggle', 'collapse');
+	accordionHeaderButton.setAttribute(
+		'data-bs-target',
+		'#collapse' + accordionType
+	);
+	accordionHeaderButton.setAttribute('aria-expanded', 'true');
+	accordionHeaderButton.setAttribute(
+		'aria-controls',
+		'collapse' + accordionType
+	);
+	if (accordionType == 'info') {
+		accordionHeaderButton.textContent = 'More info';
 	} else {
-		accordionHeaderButton.textContent = "Images";
+		accordionHeaderButton.textContent = 'Images';
 	}
 	accordionFirstPart.appendChild(accordionHeaderButton);
 	accordionItem.appendChild(accordionFirstPart);
 
-	let accordionSecondPart = document.createElement("div");
-	accordionSecondPart.classList.add("accordion-collapse", "collapse");
-	accordionSecondPart.setAttribute("data-bs-parent", "#accordion" + accordionType);
-	accordionSecondPart.id = "collapse" + accordionType;
+	const accordionSecondPart = document.createElement('div');
+	accordionSecondPart.classList.add('accordion-collapse', 'collapse');
+	accordionSecondPart.setAttribute(
+		'data-bs-parent',
+		'#accordion' + accordionType
+	);
+	accordionSecondPart.id = 'collapse' + accordionType;
 
-	let accordionBody = document.createElement("div");
-	accordionBody.classList.add("accordion_body");
+	const accordionBody = document.createElement('div');
+	accordionBody.classList.add('accordion_body');
 
-	let accordionList = document.createElement("ul");
-	accordionList.classList.add("previewAccordionElements");
-	for (let i = 0; i < listElements.length; i++){
-		let listItem = document.createElement("li");
-		let listLink = document.createElement("a");
+	const accordionList = document.createElement('ul');
+	accordionList.classList.add('previewAccordionElements');
+	for (let i = 0; i < listElements.length; i++) {
+		const listItem = document.createElement('li');
+		const listLink = document.createElement('a');
 
-		let targetElement = listElements[i];	
-		let text_field = document.getElementsByName("scene_" + accordionType + targetElement + "[scene_" + accordionType + "_text" + targetElement + "]")[0].value;
-		let url_field = document.getElementsByName("scene_" + accordionType + targetElement + "[scene_" + accordionType + "_url" + targetElement + "]")[0].value;
+		const targetElement = listElements[i];
+		const text_field = document.getElementsByName(
+			'scene_' +
+				accordionType +
+				targetElement +
+				'[scene_' +
+				accordionType +
+				'_text' +
+				targetElement +
+				']'
+		)[0].value;
+		const url_field = document.getElementsByName(
+			'scene_' +
+				accordionType +
+				targetElement +
+				'[scene_' +
+				accordionType +
+				'_url' +
+				targetElement +
+				']'
+		)[0].value;
 
-		listLink.setAttribute("href", url_field);
+		listLink.setAttribute('href', url_field);
 		listLink.textContent = text_field;
-		listLink.setAttribute("target", "_blank");
+		listLink.setAttribute('target', '_blank');
 		listItem.appendChild(listLink);
 		accordionList.appendChild(listItem);
 	}
 
-	accordionBody.appendChild(accordionList); 
+	accordionBody.appendChild(accordionList);
 	accordionSecondPart.appendChild(accordionBody);
 	accordionItem.appendChild(accordionSecondPart);
 
 	parentDiv.appendChild(accordionItem);
-	
 }
 
 //initialize entries display for info and photo entries on page load
-let opening_scene_info_entries = document.querySelector(".range[data-depend-id='scene_info_entries']").value;
-displayEntries(opening_scene_info_entries, ".text-class[data-depend-id='scene_info_");
-let opening_scene_photo_entries = document.querySelector(".range[data-depend-id='scene_photo_entries']").value;
-displayEntries(opening_scene_photo_entries, ".text-class[data-depend-id='scene_photo_");	
-
+const opening_scene_info_entries = document.querySelector(
+	".range[data-depend-id='scene_info_entries']"
+).value;
+displayEntries(
+	opening_scene_info_entries,
+	".text-class[data-depend-id='scene_info_"
+);
+const opening_scene_photo_entries = document.querySelector(
+	".range[data-depend-id='scene_photo_entries']"
+).value;
+displayEntries(
+	opening_scene_photo_entries,
+	".text-class[data-depend-id='scene_photo_"
+);
 
 //initialize photopath six times and also set it for onchange of dropdown
-for (let i = 1; i < 7; i++){
+for (let i = 1; i < 7; i++) {
 	displayPhotoPath(i);
-	let targetPhotoElementSelector  = 'select[name="scene_photo' + i + '[scene_photo_location' + i + ']"]';
-	let targetPhotoElement = document.querySelector(targetPhotoElementSelector);
-	targetPhotoElement.addEventListener("change", function() {
+	const targetPhotoElementSelector =
+		'select[name="scene_photo' + i + '[scene_photo_location' + i + ']"]';
+	const targetPhotoElement = document.querySelector(
+		targetPhotoElementSelector
+	);
+	targetPhotoElement.addEventListener('change', function () {
 		displayPhotoPath(i);
 	});
 }
 
-document.querySelector('select[name="scene_toc_style"]').addEventListener("change", function() {
-	tableOfContentsFieldOptions();
-});
+document
+	.querySelector('select[name="scene_toc_style"]')
+	.addEventListener('change', function () {
+		tableOfContentsFieldOptions();
+	});
 
-document.querySelector('select[name="scene_same_hover_color_sections"]').addEventListener("change", function() {
-	tableOfContentsFieldOptions();
-});
+document
+	.querySelector('select[name="scene_same_hover_color_sections"]')
+	.addEventListener('change', function () {
+		tableOfContentsFieldOptions();
+	});
 
-document.querySelector('select[name="scene_section_number"]').addEventListener("change", function() {
-	let openingSceneSections = document.getElementsByName("scene_section_number")[0].value;
-	displaySceneEntries(openingSceneSections);
-});
+document
+	.querySelector('select[name="scene_section_number"]')
+	.addEventListener('change', function () {
+		const openingSceneSections = document.getElementsByName(
+			'scene_section_number'
+		)[0].value;
+		displaySceneEntries(openingSceneSections);
+	});
 
-document.querySelector('select[name="scene_toc_style"]').addEventListener("change", function() {
-	tableOfContentsFieldOptions();
-});
+document
+	.querySelector('select[name="scene_toc_style"]')
+	.addEventListener('change', function () {
+		tableOfContentsFieldOptions();
+	});
 
 // Add on change event handlers to the two "scene info number" entry fields
-let sceneInfoRangeElement = document.querySelector(".range[data-depend-id='scene_info_entries']");
-sceneInfoRangeElement.addEventListener("change", function() {
-	let number_of_scene_info_entries = sceneInfoRangeElement.value;
-	displayEntries(number_of_scene_info_entries, ".text-class[data-depend-id='scene_info_");
+const sceneInfoRangeElement = document.querySelector(
+	".range[data-depend-id='scene_info_entries']"
+);
+sceneInfoRangeElement.addEventListener('change', function () {
+	const number_of_scene_info_entries = sceneInfoRangeElement.value;
+	displayEntries(
+		number_of_scene_info_entries,
+		".text-class[data-depend-id='scene_info_"
+	);
 });
 
-let sceneInfoRangeElement2 = sceneInfoRangeElement.nextElementSibling;
-sceneInfoRangeElement2.addEventListener("change", function() {
-	let number_of_scene_info_entries2 = sceneInfoRangeElement2.value;
-	displayEntries(number_of_scene_info_entries2, ".text-class[data-depend-id='scene_info_");
+const sceneInfoRangeElement2 = sceneInfoRangeElement.nextElementSibling;
+sceneInfoRangeElement2.addEventListener('change', function () {
+	const number_of_scene_info_entries2 = sceneInfoRangeElement2.value;
+	displayEntries(
+		number_of_scene_info_entries2,
+		".text-class[data-depend-id='scene_info_"
+	);
 });
 
 // Add on change event handlers to the two "scene photo number" entry fields
-let scenePhotoRangeElement = document.querySelector(".range[data-depend-id='scene_photo_entries']");
-scenePhotoRangeElement.addEventListener("change", function() {
-	let number_of_scene_photo_entries = scenePhotoRangeElement.value;
-	displayEntries(number_of_scene_photo_entries, ".text-class[data-depend-id='scene_photo_");
+const scenePhotoRangeElement = document.querySelector(
+	".range[data-depend-id='scene_photo_entries']"
+);
+scenePhotoRangeElement.addEventListener('change', function () {
+	const number_of_scene_photo_entries = scenePhotoRangeElement.value;
+	displayEntries(
+		number_of_scene_photo_entries,
+		".text-class[data-depend-id='scene_photo_"
+	);
 });
 
-let scenePhotoRangeElement2 = scenePhotoRangeElement.nextElementSibling;
-scenePhotoRangeElement2.addEventListener("change", function() {
-	let number_of_scene_photo_entries2 = scenePhotoRangeElement2.value;
-	displayEntries(number_of_scene_photo_entries2, ".text-class[data-depend-id='scene_photo_");
+const scenePhotoRangeElement2 = scenePhotoRangeElement.nextElementSibling;
+scenePhotoRangeElement2.addEventListener('change', function () {
+	const number_of_scene_photo_entries2 = scenePhotoRangeElement2.value;
+	displayEntries(
+		number_of_scene_photo_entries2,
+		".text-class[data-depend-id='scene_photo_"
+	);
 });
 
-const rangeElement = document.querySelector(".range[data-depend-id='scene_photo_entries']");
-rangeElement.addEventListener("change", function() { 
-	let number_of_scene_info_entries = rangeElement.value;
-	displayEntries(number_of_scene_info_entries, ".text-class[data-depend-id='scene_photo_");
+const rangeElement = document.querySelector(
+	".range[data-depend-id='scene_photo_entries']"
+);
+rangeElement.addEventListener('change', function () {
+	const number_of_scene_info_entries = rangeElement.value;
+	displayEntries(
+		number_of_scene_info_entries,
+		".text-class[data-depend-id='scene_photo_"
+	);
 });
 
-const OnSceneEditPage = document.getElementsByName("scene_tagline").length; //determining if we are on a page where we are editing a scene
-const SceneError = getCookie("scene_post_status");
+const OnSceneEditPage = document.getElementsByName('scene_tagline').length; //determining if we are on a page where we are editing a scene
+const SceneError = getCookie('scene_post_status');
 
-if (OnSceneEditPage === 1 && SceneError === "post_error") {
-	let SceneFields = JSON.parse(getCookie("scene_error_all_fields"));
+if (OnSceneEditPage === 1 && SceneError === 'post_error') {
+	const SceneFields = JSON.parse(getCookie('scene_error_all_fields'));
 
-	const SceneFieldNames =["scene_location", "scene_infographic", "scene_tagline", "scene_info_entries", "scene_photo_entries"];
-	SceneFields["scene_tagline"] = SceneFields["scene_tagline"].replace("\\'","\'");
+	const SceneFieldNames = [
+		'scene_location',
+		'scene_infographic',
+		'scene_tagline',
+		'scene_info_entries',
+		'scene_photo_entries',
+	];
+	SceneFields.scene_tagline = SceneFields.scene_tagline.replace("\\'", "\'");
 
-	SceneFieldNames.forEach((element) => document.getElementsByName(element)[0].value = SceneFields[element]);
+	SceneFieldNames.forEach(
+		(element) =>
+			(document.getElementsByName(element)[0].value =
+				SceneFields[element])
+	);
 
-	document.getElementsByName("scene_info_entries")[0].parentElement.childNodes[1].value = SceneFields["scene_info_entries"];
-	displayEntries(SceneFields["scene_info_entries"], ".text-class[data-depend-id='scene_info_");
+	document.getElementsByName(
+		'scene_info_entries'
+	)[0].parentElement.childNodes[1].value = SceneFields.scene_info_entries;
+	displayEntries(
+		SceneFields.scene_info_entries,
+		".text-class[data-depend-id='scene_info_"
+	);
 
-	document.getElementsByName("scene_photo_entries")[0].parentElement.childNodes[1].value = SceneFields["scene_photo_entries"];
-	displayEntries(SceneFields["scene_photo_entries"], ".text-class[data-depend-id='scene_photo_");
+	document.getElementsByName(
+		'scene_photo_entries'
+	)[0].parentElement.childNodes[1].value = SceneFields.scene_photo_entries;
+	displayEntries(
+		SceneFields.scene_photo_entries,
+		".text-class[data-depend-id='scene_photo_"
+	);
 
 	let elementName;
 	let secondElementName;
-	const fieldClass = ["info", "photo"];
-	for (let i = 1; i < 7; i++){
+	const fieldClass = ['info', 'photo'];
+	for (let i = 1; i < 7; i++) {
 		fieldClass.forEach((array_value) => {
-			elementName = "scene_" + array_value + i + "[scene_" + array_value + "_url" + i + "]";
-			secondElementName = "scene_" + array_value + "_url" + i;
-			document.getElementsByName(elementName)[0].value = SceneFields[secondElementName];
-			elementName = "scene_" + array_value + i + "[scene_" + array_value + "_text" + i + "]";
-			secondElementName = "scene_" + array_value + "_text" + i;
-			document.getElementsByName(elementName)[0].value = SceneFields[secondElementName];
+			elementName =
+				'scene_' +
+				array_value +
+				i +
+				'[scene_' +
+				array_value +
+				'_url' +
+				i +
+				']';
+			secondElementName = 'scene_' + array_value + '_url' + i;
+			document.getElementsByName(elementName)[0].value =
+				SceneFields[secondElementName];
+			elementName =
+				'scene_' +
+				array_value +
+				i +
+				'[scene_' +
+				array_value +
+				'_text' +
+				i +
+				']';
+			secondElementName = 'scene_' + array_value + '_text' + i;
+			document.getElementsByName(elementName)[0].value =
+				SceneFields[secondElementName];
 		});
 	}
 }
@@ -438,7 +606,7 @@ if (OnSceneEditPage === 1 && SceneError === "post_error") {
  *
  * @function getCookie
  * @param {string} cookieName - The name of the cookie to retrieve.
- * @returns {string|null} The decoded value of the cookie if found, or null if not found.
+ * @return {string|null} The decoded value of the cookie if found, or null if not found.
  *
  * @description
  * - Splits the document.cookie string into individual cookies.
@@ -454,21 +622,20 @@ if (OnSceneEditPage === 1 && SceneError === "post_error") {
  * - Uses document.cookie to access browser cookies.
  */
 function getCookie(cookieName) {
-	let cookies = document.cookie;
-	let cookieArray = cookies.split("; ");
-	
+	const cookies = document.cookie;
+	const cookieArray = cookies.split('; ');
+
 	for (let i = 0; i < cookieArray.length; i++) {
-		let cookie = cookieArray[i];
-		let [name, value] = cookie.split("=");
-		
+		const cookie = cookieArray[i];
+		const [name, value] = cookie.split('=');
+
 		if (name === cookieName) {
 			return decodeURIComponent(value);
 		}
 	}
-	
+
 	return null;
 }
-
 
 /**
  * Controls the visibility of the "scene_orphan_icon_color" field based on the selected orphan icon action.
@@ -496,47 +663,89 @@ function getCookie(cookieName) {
  */
 // make the field scene_orphan_icon_color visible or not visible based upon the value for the field scene_orphan_icon_action
 function orphanColorFieldVisibility() {
-	const iconOrphanAction = document.getElementsByName("scene_orphan_icon_action")[0].value;
-	if (iconOrphanAction == "color"){
-		document.getElementsByName("scene_orphan_icon_color")[0].parentElement.parentElement.style.display = "block";
+	const iconOrphanAction = document.getElementsByName(
+		'scene_orphan_icon_action'
+	)[0].value;
+	if (iconOrphanAction == 'color') {
+		document.getElementsByName(
+			'scene_orphan_icon_color'
+		)[0].parentElement.parentElement.style.display = 'block';
 	} else {
-		document.getElementsByName("scene_orphan_icon_color")[0].parentElement.parentElement.style.display = "none";
+		document.getElementsByName(
+			'scene_orphan_icon_color'
+		)[0].parentElement.parentElement.style.display = 'none';
 	}
 }
 
 // This function is the last stop on a field validation path. When a user edits a scene post and hits save, the following happens:
 // 1. The scene post is validated. If there are errors, the field values are not saved to the database but they are saved to a temporary cookie.
 // 2. The user is redirected back to the edit page for the scene post and an error message is displayed.
-// 3. The cookie is read and the field values are written to the fields on the edit page. It is this last step that is done by this function. 
+// 3. The cookie is read and the field values are written to the fields on the edit page. It is this last step that is done by this function.
 function writeCookieValuesToSceneFields() {
-
-	if (onCorrectEditPage("scene") == true) {
-		if (cookieExists("scene_error_all_fields")) {
-			const sceneCookie = getCookie("scene_error_all_fields");
+	if (onCorrectEditPage('scene') == true) {
+		if (cookieExists('scene_error_all_fields')) {
+			const sceneCookie = getCookie('scene_error_all_fields');
 			const sceneCookieValues = JSON.parse(sceneCookie);
 
-			const sceneFieldNames = ["scene_published", "scene_location", "scene_infographic", "scene_tagline", "scene_info_entries", "scene_photo_entries", 
-				"scene_order", "scene_orphan_icon_action", "scene_orphan_icon_color", "scene_toc_style", "scene_same_hover_color_sections", "scene_hover_color", 
-				"scene_full_screen_button", "scene_text_toggle", "scene_section_number", ];
+			const sceneFieldNames = [
+				'scene_published',
+				'scene_location',
+				'scene_infographic',
+				'scene_tagline',
+				'scene_info_entries',
+				'scene_photo_entries',
+				'scene_order',
+				'scene_orphan_icon_action',
+				'scene_orphan_icon_color',
+				'scene_toc_style',
+				'scene_same_hover_color_sections',
+				'scene_hover_color',
+				'scene_full_screen_button',
+				'scene_text_toggle',
+				'scene_section_number',
+			];
 
 			// Fill in values for simple fields
 			sceneFieldNames.forEach((element) => {
-				document.getElementsByName(element)[0].value = sceneCookieValues[element];
+				document.getElementsByName(element)[0].value =
+					sceneCookieValues[element];
 			});
 
 			// Fill in values for complex fieldsets
-			for (let i = 1; i < 7; i++){
-				document.getElementsByName("scene_info" + i + "[scene_info_url" + i + "]")[0].value = sceneCookieValues["scene_info_url" + i];
-				document.getElementsByName("scene_info" + i + "[scene_info_text" + i + "]")[0].value = sceneCookieValues["scene_info_text" + i];
-				document.getElementsByName("scene_photo" + i + "[scene_photo_url" + i + "]")[0].value = sceneCookieValues["scene_photo_url" + i];
-				document.getElementsByName("scene_photo" + i + "[scene_photo_text" + i + "]")[0].value = sceneCookieValues["scene_photo_text" + i];
-				document.getElementsByName("scene_photo" + i + "[scene_photo_location" + i + "]")[0].value = sceneCookieValues["scene_photo_location" + i];
-				document.getElementsByName("scene_photo" + i + "[scene_photo_internal" + i + "]")[0].value = sceneCookieValues["scene_photo_internal" + i];
-				document.getElementsByName("scene_section" + i + "[scene_section_title" + i + "]")[0].value = sceneCookieValues["scene_section_title" + i];
-				document.getElementsByName("scene_section" + i + "[scene_section_hover_color" + i + "]")[0].value = sceneCookieValues["scene_section_hover_color" + i];
-				document.getElementsByName("scene_section" + i + "[scene_section_hover_text_color" + i + "]")[0].value = sceneCookieValues["scene_section_hover_text_color" + i];
+			for (let i = 1; i < 7; i++) {
+				document.getElementsByName(
+					'scene_info' + i + '[scene_info_url' + i + ']'
+				)[0].value = sceneCookieValues['scene_info_url' + i];
+				document.getElementsByName(
+					'scene_info' + i + '[scene_info_text' + i + ']'
+				)[0].value = sceneCookieValues['scene_info_text' + i];
+				document.getElementsByName(
+					'scene_photo' + i + '[scene_photo_url' + i + ']'
+				)[0].value = sceneCookieValues['scene_photo_url' + i];
+				document.getElementsByName(
+					'scene_photo' + i + '[scene_photo_text' + i + ']'
+				)[0].value = sceneCookieValues['scene_photo_text' + i];
+				document.getElementsByName(
+					'scene_photo' + i + '[scene_photo_location' + i + ']'
+				)[0].value = sceneCookieValues['scene_photo_location' + i];
+				document.getElementsByName(
+					'scene_photo' + i + '[scene_photo_internal' + i + ']'
+				)[0].value = sceneCookieValues['scene_photo_internal' + i];
+				document.getElementsByName(
+					'scene_section' + i + '[scene_section_title' + i + ']'
+				)[0].value = sceneCookieValues['scene_section_title' + i];
+				document.getElementsByName(
+					'scene_section' + i + '[scene_section_hover_color' + i + ']'
+				)[0].value = sceneCookieValues['scene_section_hover_color' + i];
+				document.getElementsByName(
+					'scene_section' +
+						i +
+						'[scene_section_hover_text_color' +
+						i +
+						']'
+				)[0].value =
+					sceneCookieValues['scene_section_hover_text_color' + i];
 			}
 		}
 	}
-
 }

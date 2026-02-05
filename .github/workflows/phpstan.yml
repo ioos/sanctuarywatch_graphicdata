@@ -63,7 +63,7 @@ jobs:
       
       - name: Run PHPCS
         if: always()
-        run: vendor/bin/phpcs --report=checkstyle | cs2pr
+        run: vendor/bin/phpcs -q --report=checkstyle | cs2pr
         continue-on-error: true
       
       - name: Generate PHPCS report

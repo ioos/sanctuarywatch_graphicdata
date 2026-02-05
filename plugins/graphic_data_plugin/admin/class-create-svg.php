@@ -2,8 +2,7 @@
 /**
  * Register class that defines Create SVG functions
  */
-
-class Create_SVG {
+class Graphic_Data_Create_SVG {
 
 	/**
 	 * Function to add the "Create SVG" submenu under Tools
@@ -12,27 +11,31 @@ class Create_SVG {
 	 */
 	public function add_create_svg_menu() {
 			add_submenu_page(
-				'tools.php',              // Parent slug - adding it under 'Tools'
-				'Create SVG',         // Page title
-				'Create SVG',         // Menu title
-				'edit_posts',         // Capability required to see the option
-				'create-svg',         // Slug (used in the URL)
-				[ $this, 'create_svg_page' ]     // Callback function to output the page content
+				'tools.php',              // Parent slug - adding it under 'Tools'.
+				'Create SVG',         // Page title.
+				'Create SVG',         // Menu title.
+				'edit_posts',         // Capability required to see the option.
+				'create-svg',         // Slug (used in the URL).
+				[ $this, 'create_svg_page' ]     // Callback function to output the page content.
 			);
 	}
 
 	/**
-	 * Enqueue the JavaScript and CSS files for Create SVG functionality
+	 * Enqueue the JavaScript and CSS files for Create SVG functionality.
 	 *
 	 * Loads the admin-create-svg.js script which handles SVG generation,
 	 * filename prompting, preview display, and file download functionality.
-	 * Also loads the admin-create-svg.css for styling.
+	 * Also loads the admin-create-svg.css for styling. Assets are only
+	 * enqueued on the tools_page_create-svg admin page.
 	 *
-	 * @since    1.0.0
+	 * @since 1.0.0
+	 *
+	 * @param string $hook The current admin page hook suffix.
+	 * @return void
 	 */
 	public function enqueue_admin_svg_script( $hook ) {
-		// Only load on the create-svg page (tools.php?page=create-svg)
-		if ( $hook !== 'tools_page_create-svg' ) {
+		// Only load on the create-svg page (tools.php?page=create-svg).
+		if ( 'tools_page_create-svg' !== $hook ) {
 			return;
 		}
 
@@ -52,7 +55,18 @@ class Create_SVG {
 		);
 	}
 
-	// Callback function to display the content of the "Create SVG" page
+	/**
+	 * Display the content of the Create SVG admin page.
+	 *
+	 * Renders the form interface that allows users to configure and generate
+	 * Graphic-Data-compliant SVG files. The form includes controls for setting
+	 * the SVG title, toggling a text layer, specifying the number of clickable
+	 * icons, and buttons to preview or download the generated SVG.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
 	public function create_svg_page() {
 
 		?>

@@ -2,16 +2,23 @@
 /**
  * Register class that defines the Instance Type functions
  */
+class Graphic_Data_Instance_Type {
 
-class Instance_Type {
-
-
-	// code version for instance.
-	function instance_settings_init() {
-		// Register a new settings group
+	/**
+	 * Register the instance settings group and settings section.
+	 *
+	 * Registers the 'instance_settings' option under the 'theme_settings_group'
+	 * and adds a settings section for the instance configuration page.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function instance_settings_init() {
+		// Register a new settings group.
 		register_setting( 'theme_settings_group', 'instance_settings' );
 
-		// Add a new section
+		// Add a new section.
 		add_settings_section(
 			'instance_settings_section',
 			'Instance Settings',
@@ -20,8 +27,17 @@ class Instance_Type {
 		);
 	}
 
-	// Register the instance_type taxonomy if it doesn't exist.
-	function register_instance_type_taxonomy() {
+	/**
+	 * Register the 'instance_type' custom taxonomy if it does not already exist.
+	 *
+	 * Registers a flat (non-hierarchical) taxonomy with admin UI support,
+	 * an admin column, query var support, and a custom rewrite slug.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function register_instance_type_taxonomy() {
 		if ( ! taxonomy_exists( 'instance_type' ) ) {
 			register_taxonomy(
 				'instance_type',
@@ -49,8 +65,18 @@ class Instance_Type {
 		}
 	}
 
-	// Register the instance order meta field for the taxonomy.
-	function register_instance_type_order_meta() {
+	/**
+	 * Register the 'instance_order' meta field for the 'instance_type' taxonomy.
+	 *
+	 * Registers an integer meta field used to control the display order of
+	 * instance types. The field is exposed in the REST API and sanitized
+	 * with absint.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function register_instance_type_order_meta() {
 		register_meta(
 			'term',
 			'instance_order',
@@ -63,8 +89,17 @@ class Instance_Type {
 		);
 	}
 
-	// Register the instance navbar name meta field for the taxonomy.
-	function register_instance_type_navbar_name_meta() {
+	/**
+	 * Register the 'navbar_name' meta field for the 'instance_type' taxonomy.
+	 *
+	 * Registers a meta field used to store the navigation bar display name
+	 * for each instance type. The field is exposed in the REST API.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function register_instance_type_navbar_name_meta() {
 		register_meta(
 			'term',
 			'navbar_name',
@@ -76,8 +111,15 @@ class Instance_Type {
 		);
 	}
 
-	// Add the admin menu item.
-	function add_instance_type_admin_menu() {
+	/**
+	 * Add the Instance Types admin menu item.
+	 *
+	 * Registers a top-level WordPress admin menu page for managing
+	 * instance types. Requires the 'manage_categories' capability.
+	 *
+	 * @return void
+	 */
+	public function add_instance_type_admin_menu() {
 		add_menu_page(
 			'Manage Instance Types',
 			'Instance Types',
@@ -89,25 +131,41 @@ class Instance_Type {
 		);
 	}
 
-	// Render the admin page.
-	function render_instance_type_admin_page() {
+	/**
+	 * Render the Instance Type taxonomy admin page.
+	 *
+	 * Handles POST submissions for adding, editing, and deleting
+	 * instance_type taxonomy terms (including custom meta fields
+	 * 'instance_order' and 'instance_navbar_name'), then outputs
+	 * the management interface with an add form, existing terms
+	 * table, and a hidden edit form toggled via JavaScript.
+	 *
+	 * @return void
+	 */
+	public function render_instance_type_admin_page() {
+
+		// Verify nonce first.
+		if ( ! isset( $_POST['instance_type_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( 'instance_type_nonce' ) ), 'save_instance_type_fields' ) ) {
+			wp_die( 'Security check failed on Instance Type page.' );
+		}
+
 		// Check if taxonomy exists before proceeding.
 		if ( ! taxonomy_exists( 'instance_type' ) ) {
 			echo '<div class="error"><p>Error: The instance_type taxonomy is not properly registered.</p></div>';
 			return;
 		}
 
-		// Handle form submissions
-		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+		// Handle form submissions.
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( isset( $_POST['action'] ) ) {
 				switch ( $_POST['action'] ) {
 					case 'add':
-						if ( isset( $_POST['term_name'] ) && isset( $_POST['instance_order'] ) && isset( $_POST['instance_navbar_name'] ) ) {
-							$term_name = sanitize_text_field( $_POST['term_name'] );
-							$term_slug = sanitize_title( $_POST['term_slug'] );
-							$term_description = sanitize_textarea_field( $_POST['term_description'] );
+						if ( isset( $_POST['term_name'] ) && isset( $_POST['instance_order'] ) && isset( $_POST['term_description'] ) && isset( $_POST['term_slug'] ) && isset( $_POST['instance_navbar_name'] ) ) {
+							$term_name = sanitize_text_field( wp_unslash( $_POST['term_name'] ) );
+							$term_slug = sanitize_title( wp_unslash( $_POST['term_slug'] ) );
+							$term_description = sanitize_textarea_field( wp_unslash( $_POST['term_description'] ) );
 							$instance_order = absint( $_POST['instance_order'] );
-							$instance_navbar_name = sanitize_text_field( $_POST['instance_navbar_name'] );
+							$instance_navbar_name = sanitize_text_field( wp_unslash( $_POST['instance_navbar_name'] ) );
 
 							$args = array(
 								'slug' => $term_slug,
@@ -125,11 +183,11 @@ class Instance_Type {
 					case 'edit':
 						if ( isset( $_POST['term_id'] ) && isset( $_POST['term_name'] ) && isset( $_POST['instance_order'] ) && isset( $_POST['instance_navbar_name'] ) ) {
 							$term_id = absint( $_POST['term_id'] );
-							$term_name = sanitize_text_field( $_POST['term_name'] );
-							$term_slug = sanitize_title( $_POST['term_slug'] );
-							$term_description = sanitize_textarea_field( $_POST['term_description'] );
+							$term_name = sanitize_text_field( wp_unslash( $_POST['term_name'] ) );
+							$term_slug = sanitize_title( wp_unslash( $_POST['term_slug'] ) );
+							$term_description = sanitize_textarea_field( wp_unslash( $_POST['term_description'] ) );
 							$instance_order = absint( $_POST['instance_order'] );
-							$instance_navbar_name = sanitize_text_field( $_POST['instance_navbar_name'] );
+							$instance_navbar_name = sanitize_text_field( wp_unslash( $_POST['instance_navbar_name'] ) );
 
 							wp_update_term(
 								$term_id,
@@ -155,7 +213,7 @@ class Instance_Type {
 			}
 		}
 
-		// Get all instance_type terms
+		// Get all instance_type terms.
 		$terms = get_terms(
 			[
 				'taxonomy' => 'instance_type',
@@ -163,13 +221,13 @@ class Instance_Type {
 			]
 		);
 
-		// Check if we got an error
+		// Check if we got an error.
 		if ( is_wp_error( $terms ) ) {
 			echo '<div class="error"><p>Error retrieving terms: ' . esc_html( $terms->get_error_message() ) . '</p></div>';
 			return;
 		}
 
-		// Convert terms to array if it's not already (for older WordPress versions)
+		// Convert terms to array if it's not already (for older WordPress versions).
 		$terms = is_array( $terms ) ? $terms : array();
 		?>
 		<div class="wrap">
@@ -223,7 +281,7 @@ class Instance_Type {
 					<tbody>
 						<?php
 						foreach ( $terms as $term ) :
-							// Ensure $term is a WP_Term object
+							// Ensure $term is a WP_Term object.
 							if ( ! is_object( $term ) || ! isset( $term->term_id ) ) {
 								continue;
 							}

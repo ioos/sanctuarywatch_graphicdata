@@ -34,10 +34,15 @@ def extract_body_inner(html: str) -> str:
     return html
 
 
-def make_front_matter(title: str, rel_path: Path) -> str:
-    # create a permalink that mirrors the file path (without .html)
-    # use as_posix to get forward-slash separated path on all platforms
-    permalink = "/" + rel_path.with_suffix("").as_posix() + "/"
+def make_front_matter(title: str, rel_path: Path, dir_name: str) -> str:
+    # Keep .html in permalinks so phpDocumentor's relative links resolve correctly.
+    # e.g. a link from classes/Foo.html to ../namespaces/default.html only works
+    # if the browser sees the page URL as .html (file), not a / (directory).
+    rel_posix = rel_path.as_posix()
+    if rel_posix == "index.html":
+        permalink = "/" + dir_name + "/"
+    else:
+        permalink = "/" + dir_name + "/" + rel_posix
     # quote the title safely for YAML (escape double quotes)
     safe_title = title.replace('"', '\\"')
     fm = (
@@ -57,11 +62,17 @@ def process_file(path: Path, base_dir: Path):
         print(f"Skipping (read error): {path}")
         return
 
+    # Skip files that have already been converted (contain Jekyll front matter)
+    if text.startswith("---"):
+        print(f"Skipping (already converted): {path}")
+        return
+
     title = extract_title(text)
     body = extract_body_inner(text)
 
     rel = path.relative_to(base_dir)
-    fm = make_front_matter(title, rel)
+    dir_name = base_dir.name
+    fm = make_front_matter(title, rel, dir_name)
 
     new_content = fm + "\n" + body + "\n"
 

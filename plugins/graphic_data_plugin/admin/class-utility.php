@@ -30,39 +30,45 @@ class Graphic_Data_Utility {
 	}
 
 	/**
-	 * Add nonce field to about, modal, scene, instance, and figure custom post types.
+	 * Add nonce field to about, modal, scene, instance, and figure custom post types, as well as for the Instance Type page.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param WP_Post $post Current post object.
 	 */
 	public function render_nonce_field( $post ) {
-		$custom_post_type = $post->post_type;
-		switch ( $custom_post_type ) {
-			case 'about':
-				$action = 'save_about_fields';
-				$name   = 'about_nonce';
-				break;
-			case 'modal':
-				$action = 'save_modal_fields';
-				$name   = 'modal_nonce';
-				break;
-			case 'scene':
-				$action = 'save_scene_fields';
-				$name   = 'scene_nonce';
-				break;
-			case 'instance':
-				$action = 'save_instance_fields';
-				$name   = 'instance_nonce';
-				break;
-			case 'figure':
-				$action = 'save_figure_fields';
-				$name   = 'figure_nonce';
-				break;
-			default:
-				return; // No nonce for other post types.
+		if ( null == $post ) {
+			if ( isset( $_GET['page'] ) && 'manage-instance-types' === sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) {
+				wp_nonce_field( 'save_instance_type_fields', 'instance_type_nonce' );
+			}
+		} else {
+			$custom_post_type = $post->post_type;
+			switch ( $custom_post_type ) {
+				case 'about':
+					$action = 'save_about_fields';
+					$name   = 'about_nonce';
+					break;
+				case 'modal':
+					$action = 'save_modal_fields';
+					$name   = 'modal_nonce';
+					break;
+				case 'scene':
+					$action = 'save_scene_fields';
+					$name   = 'scene_nonce';
+					break;
+				case 'instance':
+					$action = 'save_instance_fields';
+					$name   = 'instance_nonce';
+					break;
+				case 'figure':
+					$action = 'save_figure_fields';
+					$name   = 'figure_nonce';
+					break;
+				default:
+					return; // No nonce for other post types.
+			}
+			wp_nonce_field( $action, $name );
 		}
-		wp_nonce_field( $action, $name );
 	}
 
 	/**
@@ -138,7 +144,7 @@ class Graphic_Data_Utility {
 
 		if ( 'array' == $variable_type ) {
 			if ( substr( $key_name, -16 ) === 'error_all_fields' ) {
-				$this->extract_field_values( $fields_config, $all_fields );
+				$this->extract_field_values( $fields_config, $all_fields, $key_name );
 			} else {
 				$all_fields = $fields_config;
 			}
@@ -177,23 +183,6 @@ class Graphic_Data_Utility {
 	}
 
 	/**
-	 * Dummy sanitize function that returns the value as is.
-	 * .
-	 * This sanitize function is used to prevent automatic sanitization of
-	 * URL fields. What is causing the automatic sanitization is unknown but
-	 * exists somewhere deep in the Exopite Framework options. The problem comes up
-	 * with URL escape codes which are not interpreted correctly by whatever
-	 * is doing the automatic sanitization. This function, in contrast, ensures that
-	 * the user input is preserved.
-	 *
-	 * @param string $value The URL field to be returned.
-	 * @return string The URL field.
-	 */
-	public function dummy_sanitize( $value ) {
-		return $value;
-	}
-
-	/**
 	 * Helper function to delete field values from transients
 	 *
 	 * @param string $content_type The custom content type
@@ -207,10 +196,21 @@ class Graphic_Data_Utility {
 	/**
 	 * Recursively extract field values from POST data based on field configuration
 	 *
-	 * @param array $fields The fields configuration array
-	 * @param array &$all_fields Reference to array where field values will be stored
+	 * @param array  $fields The fields configuration array
+	 * @param array  &$all_fields Reference to array where field values will be stored
+	 * @param string $key_name  The base key for the associated transient, used  (e.g., 'modal_error_all_fields').
 	 */
-	public function extract_field_values( $fields, &$all_fields ) {
+	public function extract_field_values( $fields, &$all_fields, $key_name ) {
+
+		$content_type = strstr( $key_name, '_', true );
+		$nonce_action = 'save_' . $content_type . '_fields';
+		$nonce_name = $content_type . '_nonce';
+
+		// Verify nonce first.
+		if ( ! isset( $_POST[ $nonce_name ] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST[ $nonce_name ] ) ), $nonce_action ) ) {
+			wp_die( 'Security check failed during function extract_field_values.' );
+		}
+
 		foreach ( $fields as $field ) {
 			// Skip button type fields.
 			if ( isset( $field['type'] ) && 'button' === $field['type'] ) {
@@ -228,7 +228,7 @@ class Graphic_Data_Utility {
 							$nested_field_id = $nested_field['id'];
 							// For fieldsets, data is nested: $_POST[fieldset_id][field_id].
 							if ( isset( $_POST[ $fieldset_id ][ $nested_field_id ] ) ) {
-								$all_fields[ $nested_field_id ] = $_POST[ $fieldset_id ][ $nested_field_id ];
+								$all_fields[ $nested_field_id ] = sanitize_text_field( wp_unslash( $_POST[ $fieldset_id ][ $nested_field_id ] ) );
 							}
 						}
 					}
@@ -238,13 +238,13 @@ class Graphic_Data_Utility {
 				$field_id = $field['id'];
 				// For regular fields, data is direct: $_POST[field_id].
 				if ( isset( $_POST[ $field_id ] ) ) {
-					$all_fields[ $field_id ] = $_POST[ $field_id ];
+					$all_fields[ $field_id ] = sanitize_text_field( wp_unslash( $_POST[ $field_id ] ) );
 				}
 			}
 
-			// Handle nested field arrays (like your tabFields).
+			// Handle nested field arrays (like tabFields).
 			if ( isset( $field['fields'] ) && is_array( $field['fields'] ) ) {
-				$this->extract_field_values( $field['fields'], $all_fields );
+				$this->extract_field_values( $field['fields'], $all_fields, $key_name );
 			}
 		}
 	}
@@ -521,17 +521,25 @@ class Graphic_Data_Utility {
 			if ( ! empty( $user_instances ) && is_array( $user_instances ) ) {
 				// Sanitize instance IDs.
 				$instance_ids = array_map( 'absint', $user_instances );
-				$instance_ids_sql = implode( ',', $instance_ids );
 
-				// Query only the assigned instances.
-				$instances = $wpdb->get_results(
-					"
+				// Create placeholders for prepare().
+				$placeholders = implode( ', ', array_fill( 0, count( $instance_ids ), '%d' ) );
+
+				// Build query with placeholders.
+				$query = "
 					SELECT ID, post_title
 					FROM {$wpdb->posts}
 					WHERE post_type = 'instance'
 					AND post_status = 'publish'
-					AND ID IN ({$instance_ids_sql})
-					ORDER BY post_title ASC"
+					AND ID IN ($placeholders)
+					ORDER BY post_title ASC";
+
+				// Query only the assigned instances.
+				$instances = $wpdb->get_results(
+					$wpdb->prepare(
+						$query, // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+						...$instance_ids
+					)
 				);
 			}
 			// If content editor has no assigned instances, $instances remains empty, so only "All Instances" shows.
@@ -597,7 +605,7 @@ class Graphic_Data_Utility {
 
 		// --- Role-Based Filtering Logic ---
 		// Check if the current user is a 'content_editor' BUT NOT an 'administrator'.
-		if ( user_can( $current_user, 'content_editor' ) && ! user_can( $current_user, 'administrator' ) ) {
+		if ( user_can( $current_user, 'content_editor' ) && ! user_can( $current_user, 'manage_options' ) ) {
 			// Get the instances assigned to this content editor.
 			$user_assigned_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
@@ -791,10 +799,10 @@ class Graphic_Data_Utility {
 	 * @param int $scene_id The current scene ID to exclude from results.
 	 * @return array Associative array of scene IDs to titles with an empty option first, sorted alphabetically.
 	 */
-	public function returnScenesExceptCurrent( $scene_id ) {
+	public function return_scenes_except_current( $scene_id ) {
 		$potential_scenes = array();
 		$scene_location = get_post_meta( $scene_id, 'scene_location', true );
-		if ( $scene_location == true ) {
+		if ( true == $scene_location ) {
 			$args = array(
 				'post_type' => 'scene',  // Your custom post type.
 				'posts_per_page' => -1,       // Retrieve all matching posts (-1 means no limit).
@@ -825,15 +833,26 @@ class Graphic_Data_Utility {
 		return $potential_scenes;
 	}
 
-	// Potential section headers for icons.
-	public function returnModalSections( $scene_id ) {
+	/**
+	 * Retrieve modal section headers for a given scene.
+	 *
+	 * Iterates through up to six scene sections, pulling each section's
+	 * post meta and collecting non-empty titles. The resulting array is
+	 * sorted alphabetically and prefixed with a blank entry for use as
+	 * dropdown options.
+	 *
+	 * @param int $scene_id The post ID of the scene.
+	 * @return array Associative array keyed by section field name (e.g. 'scene_section1')
+	 *               with section titles as values. Includes a leading empty entry.
+	 */
+	public function return_modal_sections( $scene_id ) {
 		$modal_sections = array();
 		for ( $i = 1; $i < 7; $i++ ) {
 			$field_target = 'scene_section' . $i;
 			$target_section = get_post_meta( $scene_id, $field_target, true );
-			if ( $target_section != null && $target_section != '' & is_array( $target_section ) ) {
+			if ( null != $target_section && '' != $target_section & is_array( $target_section ) ) {
 				$target_title = $target_section[ 'scene_section_title' . $i ];
-				if ( $target_title != null && $target_title != '' ) {
+				if ( null != $target_title && '' != $target_title ) {
 					$modal_sections[ $field_target ] = $target_title;
 				}
 			}
@@ -843,11 +862,22 @@ class Graphic_Data_Utility {
 		return $modal_sections;
 	}
 
-	// Dropdown options for Scene in figure content type.
-	public function returnScenesFigure( $location ) {
+	/**
+	 * Retrieve scene dropdown options for the figure content type.
+	 *
+	 * Queries all 'scene' posts whose 'scene_location' meta matches
+	 * the given location and returns their IDs mapped to titles.
+	 * The resulting array includes a leading empty entry for use
+	 * as a default dropdown option.
+	 *
+	 * @param string $location The location value to match against the 'scene_location' meta field.
+	 * @return array Associative array keyed by scene post ID with post titles as values.
+	 *               Includes a leading empty entry.
+	 */
+	public function return_scenes_figure( $location ) {
 		$potential_scenes[''] = '';
 
-		if ( $location != '' ) {
+		if ( '' != $location ) {
 			$args = array(
 				'post_type' => 'scene',  // Your custom post type.
 				'posts_per_page' => -1,   // Retrieve all matching posts (-1 means no limit).
@@ -869,30 +899,68 @@ class Graphic_Data_Utility {
 				$target_title = get_post_meta( $target_id, 'post_title', true );
 				$potential_scenes[ $target_id ] = $target_title;
 			}
-			// asort($potential_scenes);
 		}
 		return $potential_scenes;
 	}
 
-	public function returnModalTabs( $modal_id ) {
+	/**
+	 * Sanitize the field value when the option is a whole number or an empty string.
+	 *
+	 * Returns an empty string if the value is empty, otherwise
+	 * converts it to a non-negative integer using absint().
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed $value The raw field value to sanitize.
+	 * @return string|int Empty string if blank, otherwise a non-negative integer.
+	 */
+	public function sanitize_number_or_quotes_field( $value ) {
+		if ( '' === $value ) {
+			return '';
+		}
+		return absint( $value );
+	}
+
+	/**
+	 * Retrieve tab titles for a given modal.
+	 *
+	 * Iterates through up to six tab title meta fields for the specified
+	 * modal post and collects any non-empty titles. The resulting array
+	 * includes a leading empty entry for use as a default dropdown option.
+	 *
+	 * @param int|string $modal_id The post ID of the modal.
+	 * @return array Associative array keyed by tab number (1-6) with tab titles
+	 *               as values. Includes a leading empty entry.
+	 */
+	public function return_modal_tabs( $modal_id ) {
 		$potential_tabs[''] = '';
-		if ( $modal_id != '' ) {
+		if ( '' != $modal_id ) {
 			for ( $i = 1; $i < 7; $i++ ) {
 				$target_field = 'modal_tab_title' . $i;
 				$target_title = get_post_meta( $modal_id, $target_field, true );
-				if ( $target_title != '' && $target_title != null ) {
+				if ( '' != $target_title && null != $target_title ) {
 					$potential_tabs[ $i ] = $target_title;
 				}
 			}
-			// asort($potential_tabs);
 		}
 		return $potential_tabs;
 	}
 
-	// Dropdown options for Icon in figure content type.
-	public function returnFigureIcons( $scene_id ) {
+	/**
+	 * Retrieve modal icon dropdown options for the figure content type.
+	 *
+	 * Queries all 'modal' posts that belong to the given scene and have
+	 * an 'icon_function' of 'Modal', then returns their IDs mapped to
+	 * titles. The resulting array includes a leading empty entry for use
+	 * as a default dropdown option.
+	 *
+	 * @param int|string $scene_id The post ID of the scene to retrieve modal icons for.
+	 * @return array Associative array keyed by modal post ID with post titles
+	 *               as values. Includes a leading empty entry.
+	 */
+	public function return_figure_icons( $scene_id ) {
 		$potential_icons[''] = '';
-		if ( $scene_id != '' ) {
+		if ( '' != $scene_id ) {
 
 			$args = array(
 				'post_type' => 'modal',  // Your custom post type.
@@ -923,13 +991,20 @@ class Graphic_Data_Utility {
 				$target_title = get_post_meta( $target_id, 'post_title', true );
 				$potential_icons[ $target_id ] = $target_title;
 			}
-			// asort($potential_icons);
 		}
-
 		return $potential_icons;
 	}
 
-	// Register rest fields for when rest api hook is called.
+	/**
+	 * Register custom meta fields with the REST API for a given post type.
+	 *
+	 * Iterates through the provided field names and registers each one
+	 * as a readable REST API field using the class's meta_get_callback method.
+	 *
+	 * @param string   $post_type   The post type slug to register the fields for.
+	 * @param string[] $rest_fields Array of meta field names to expose via the REST API.
+	 * @return void
+	 */
 	public function register_custom_rest_fields( $post_type, $rest_fields ) {
 		foreach ( $rest_fields as $target_field ) {
 			register_rest_field(
@@ -943,7 +1018,16 @@ class Graphic_Data_Utility {
 		}
 	}
 
-	// Used by register_custom_rest_fields.
+	/**
+	 * REST API get callback for retrieving a post meta value.
+	 *
+	 * Used as the get_callback by register_custom_rest_fields().
+	 *
+	 * @param array           $object     The post data array containing the post 'id'.
+	 * @param string          $field_name The meta field name to retrieve.
+	 * @param WP_REST_Request $request    The current REST API request object.
+	 * @return mixed The single post meta value for the given field.
+	 */
 	public function meta_get_callback( $object, $field_name, $request ) {
 		return get_post_meta( $object['id'], $field_name, true );
 	}
@@ -962,12 +1046,12 @@ class Graphic_Data_Utility {
 	 * @return void  Outputs HTML directly to the admin screen. No return value.
 	 * @since    1.0.0
 	 */
-	function display_warning_message_if_new_post_impossible() {
+	public function display_warning_message_if_new_post_impossible() {
 
 		global $pagenow, $typenow;
 
 		// Check if we're on the instance post type admin page.
-		if ( $pagenow == 'edit.php' && $typenow == 'instance' ) {
+		if ( 'edit.php' == $pagenow && 'instance' == $typenow ) {
 			// Check if there are no terms.
 			$terms = get_terms(
 				array(
@@ -981,7 +1065,7 @@ class Graphic_Data_Utility {
 			if ( is_wp_error( $terms ) || empty( $terms ) ) {
 				?>
 				<div class="notice notice-error is-dismissible">
-					<p><strong>Cannot create Instance posts.</strong> You must create at least one <a href="<?php echo admin_url( 'edit-tags.php?taxonomy=instance_type&post_type=instance' ); ?>">Instance Type</a> before you can add an Instance post. </p>
+					<p><strong>Cannot create Instance posts.</strong> You must create at least one <a href="<?php echo esc_url( admin_url( 'edit-tags.php?taxonomy=instance_type&post_type=instance' ) ); ?>">Instance Type</a> before you can add an Instance post. </p>
 				</div>
 				<?php
 			}

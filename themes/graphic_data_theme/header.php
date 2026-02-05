@@ -142,7 +142,7 @@ if ( ! empty( $graphic_data_customizer_breadcrumb_row_enable ) ) {
 		echo '<div class="site-name-logo-header">';
 		echo '  <a class="navbar-brand" href="' . esc_url( home_url() ) . '">
 					<img class="navbar-emblem" width="55px"
-						src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png' ) ) . '"
+						src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '"
 						alt="Header Emblem">
 					' . esc_html( get_bloginfo( 'name' ) ) . '
 				</a>';

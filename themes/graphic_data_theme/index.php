@@ -63,7 +63,7 @@ if ( $graphic_data_instances_query->have_posts() ) {
 <div class="image-center">
 		<span class="site-branding-logo">
 			<?php
-				echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-512.png' ) ) . '" alt="Navbar Emblem">';
+				echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '" alt="Navbar Emblem">';
 			?>
 		</span>
 		<span class="site-branding-text-container">

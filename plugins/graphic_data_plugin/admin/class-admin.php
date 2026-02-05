@@ -281,7 +281,7 @@ class Graphic_Data_Admin {
 	 */
 	public function add_favicon() {
 		if ( ! has_site_icon() ) {
-			$favicon_url = plugin_dir_url( __FILE__ ) . 'images/onms-logo-80.png';
+			$favicon_url = plugin_dir_url( __FILE__ ) . 'images/graphic_data_logo_80.png';
 			echo '<link rel="shortcut icon" href="' . esc_url( $favicon_url ) . '" />';
 		}
 	}

@@ -1,10 +1,10 @@
 <?php
-
 /**
  * Register all actions and filters for the plugin
  *
  * @link       https://github.com/ioos/sanctuarywatch_graphicdata
  * @since      1.0.0
+ * @package    Graphic_Data_Plugin
  */
 
 /**
@@ -14,7 +14,7 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  */
-class Loader {
+class Graphic_Data_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.

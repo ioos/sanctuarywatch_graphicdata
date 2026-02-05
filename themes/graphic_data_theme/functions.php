@@ -342,8 +342,8 @@ add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_api_script' );
 function graphic_data_set_theme_default_site_icon() {
 	// Only set if no site icon is already configured.
 	if ( ! has_site_icon() ) {
-		$icon_url = get_stylesheet_directory_uri() . '/assets/images/onms-logo-no-text-800.png';
-		$icon_path = get_stylesheet_directory() . '/assets/images/onms-logo-no-text-800.png';
+		$icon_url = get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png';
+		$icon_path = get_stylesheet_directory() . '/assets/images/graphic_data_logo_no_text_340.png';
 
 		// Check if the file exists.
 		if ( file_exists( $icon_path ) ) {

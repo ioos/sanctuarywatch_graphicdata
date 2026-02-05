@@ -1,24 +1,26 @@
 /**
  * Renders a modal dialog for corresponding icon with data fetched from a WordPress REST API endpoint.
- * The modal displays a title, tagline, and two sections of content (more info and images) 
+ * The modal displays a title, tagline, and two sections of content (more info and images)
  * using accordions, along with dynamic tab content based on the modal's data.
  *
- * @param {string} key - The key used to access specific child data in the `child_obj` object,
- *                       which contains modal configuration and content details.
+ * @param {string} key       - The key used to access specific child data in the `childObj` object,
+ *                           which contains modal configuration and content details.
  *
- * This function performs the following steps:
- * 1. Constructs the URL to fetch modal data based on the `modal_id` associated with the provided `key`.
- * 2. Fetches modal data from the WordPress REST API.
- * 3. Updates the modal title and tagline based on the fetched data.
- * 4. Generates two accordion sections:
- *    - A "More Info" section containing a list of items linked to URLs.
- *    - An "Images" section containing a list of image links.
- * 5. Dynamically creates tabs based on the number of tabs specified in the modal data.
- * 6. Adjusts layout and classes for mobile and desktop views.
- * 7. Traps focus within the modal dialog to improve accessibility.
+ *                           This function performs the following steps:
+ *                           1. Constructs the URL to fetch modal data based on the `modal_id` associated with the provided `key`.
+ *                           2. Fetches modal data from the WordPress REST API.
+ *                           3. Updates the modal title and tagline based on the fetched data.
+ *                           4. Generates two accordion sections:
+ *                           - A "More Info" section containing a list of items linked to URLs.
+ *                           - An "Images" section containing a list of image links.
+ *                           5. Dynamically creates tabs based on the number of tabs specified in the modal data.
+ *                           6. Adjusts layout and classes for mobile and desktop views.
+ *                           7. Traps focus within the modal dialog to improve accessibility.
  *
- * Usage:
- * Called in add_modal and table_of_contents; those functions iterate through keys of child_obj(which has all the icons in a scene )
+ *                           Usage:
+ *                           Called in add_modal and table_of_contents; those functions iterate through keys of childObj(which has all the icons in a scene )
+ * @param          obj
+ * @param          modal_obj
  */
 function render_modal(key, obj, modal_obj){
 
@@ -248,40 +250,38 @@ function render_modal(key, obj, modal_obj){
  */
 //After removing tabs that do not contain content or do not contain published figures, we show only the tabs that have content and make the first one active
 function initTabButtons() {
-    // Select all buttons inside nav-item elements
-    const navButtons = document.querySelectorAll('.nav-item button');
+	// Select all buttons inside nav-item elements
+	const navButtons = document.querySelectorAll('.nav-item button');
 
-    let activeButtons = [];
-    let inactiveButtons = [];
+	const activeButtons = [];
+	const inactiveButtons = [];
 
-    // Check if any button is active (e.g., class 'active')
-    const anyActiveButton = Array.from(navButtons).some(button => {
-        const isActiveClass = button.classList.contains('active');
+	// Check if any button is active (e.g., class 'active')
+	const anyActiveButton = Array.from(navButtons).some((button) => {
+		const isActiveClass = button.classList.contains('active');
 
-        if (!isActiveClass) {
-            inactiveButtons.push(button);
-        }
+		if (!isActiveClass) {
+			inactiveButtons.push(button);
+		}
 
-        if (isActiveClass) {
-            let buttonExists = document.getElementById(button.id)
-            //console.log('buttonExists', buttonExists);
-            if (buttonExists) {
-                activeButtons.push(button);
-            }
-        }
+		if (isActiveClass) {
+			const buttonExists = document.getElementById(button.id);
+			//console.log('buttonExists', buttonExists);
+			if (buttonExists) {
+				activeButtons.push(button);
+			}
+		}
+	});
 
-    });
-
-    if (activeButtons.length == 0) {
-        // Activate the first one via Bootstrap API
-        if (inactiveButtons.length > 0) {
-            const firstButton = inactiveButtons[0];
-            const tabTrigger = new bootstrap.Tab(firstButton);
-            tabTrigger.show();  // ✅ Properly displays inside modal
-        }
-    }
+	if (activeButtons.length == 0) {
+		// Activate the first one via Bootstrap API
+		if (inactiveButtons.length > 0) {
+			const firstButton = inactiveButtons[0];
+			const tabTrigger = new bootstrap.Tab(firstButton);
+			tabTrigger.show(); // ✅ Properly displays inside modal
+		}
+	}
 }
-
 
 /**
  * Traps the focus within a specified modal element, ensuring that the user cannot tab out of it.
@@ -291,81 +291,91 @@ function initTabButtons() {
  * It also brings focus back to the modal if the user attempts to focus on an element outside of it.
  *
  * @param {HTMLElement} modalElement - The modal element within which focus should be trapped.
- * @returns {Function} cleanup - A function that removes the event listeners and deactivates the focus trap.
+ * @return {Function} cleanup - A function that removes the event listeners and deactivates the focus trap.
  */
 function trapFocus(modalElement) {
-    function getFocusableElements() {
-        return Array.from(modalElement.querySelectorAll(
-            'button, [href], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])'
-        )).filter(el => !el.hasAttribute('disabled') && el.offsetParent !== null);
-    }
+	function getFocusableElements() {
+		return Array.from(
+			modalElement.querySelectorAll(
+				'button, [href], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])'
+			)
+		).filter(
+			(el) => !el.hasAttribute('disabled') && el.offsetParent !== null
+		);
+	}
 
-    function handleKeydown(e) {
-        const focusableElements = getFocusableElements();
-        const firstFocusableElement = focusableElements[0];
-        const lastFocusableElement = focusableElements[focusableElements.length - 1];
+	function handleKeydown(e) {
+		const focusableElements = getFocusableElements();
+		const firstFocusableElement = focusableElements[0];
+		const lastFocusableElement =
+			focusableElements[focusableElements.length - 1];
 
-        if (e.key === 'Tab' || e.keyCode === 9) {
-            if (e.shiftKey) { // shift + tab
-                if (document.activeElement === firstFocusableElement) {
-                    lastFocusableElement.focus();
-                    e.preventDefault();
-                }
-            } else { // tab
-                if (document.activeElement === lastFocusableElement) {
-                    firstFocusableElement.focus();
-                    e.preventDefault();
-                }
-            }
-        } 
-    }
+		if (e.key === 'Tab' || e.keyCode === 9) {
+			if (e.shiftKey) {
+				// shift + tab
+				if (document.activeElement === firstFocusableElement) {
+					lastFocusableElement.focus();
+					e.preventDefault();
+				}
+			} else {
+				// tab
+				if (document.activeElement === lastFocusableElement) {
+					firstFocusableElement.focus();
+					e.preventDefault();
+				}
+			}
+		}
+	}
 
-    function handleFocus(e) {
-        if (!modalElement.contains(e.target)) {
-            const focusableElements = getFocusableElements();
-            if (focusableElements.length > 0) {
-                focusableElements[0].focus();
-            }
-        }
-    }
+	function handleFocus(e) {
+		if (!modalElement.contains(e.target)) {
+			const focusableElements = getFocusableElements();
+			if (focusableElements.length > 0) {
+				focusableElements[0].focus();
+			}
+		}
+	}
 
-    document.addEventListener('keydown', handleKeydown);
-    document.addEventListener('focus', handleFocus, true);
+	document.addEventListener('keydown', handleKeydown);
+	document.addEventListener('focus', handleFocus, true);
 
-    const initialFocusableElement = getFocusableElements()[0];
-    if (initialFocusableElement) initialFocusableElement.focus();
+	const initialFocusableElement = getFocusableElements()[0];
+	if (initialFocusableElement) {
+		initialFocusableElement.focus();
+	}
 
-    return function cleanup() {
-        document.removeEventListener('keydown', handleKeydown);
-        document.removeEventListener('focus', handleFocus, true);
-    };
+	return function cleanup() {
+		document.removeEventListener('keydown', handleKeydown);
+		document.removeEventListener('focus', handleFocus, true);
+	};
 }
-
 
 /**
  * Fetches tab information from a WordPress REST API endpoint and renders it into the specified tab content element and container.
  * This function retrieves figure data associated with a specific tab label and ID, and then processes and displays the data using the `render_tab_info` function.
- * 
- * @param {HTMLElement} tabContentElement - The HTML element where the individual tab content will be rendered.
+ *
+ * @param {HTMLElement} tabContentElement   - The HTML element where the individual tab content will be rendered.
  * @param {HTMLElement} tabContentContainer - The container element that holds all tab contents.
- * @param {string} tab_label - The label of the tab used to filter data. This parameter is currently unused
- * @param {string} tab_id - The ID of the tab, used to filter the figure data from the fetched results. Is a number but type is string, type casted when used
+ * @param {string}      tab_label           - The label of the tab used to filter data. This parameter is currently unused
+ * @param {string}      tab_id              - The ID of the tab, used to filter the figure data from the fetched results. Is a number but type is string, type casted when used
  *
- * Function Workflow:
- * 1. Constructs the API URL to fetch figure data using the current page's protocol and host.
- * 2. Makes a fetch request to the constructed URL to retrieve figure data in JSON format.
- * 3. Filters the retrieved data based on the provided `tab_id`, looking for figures that match this ID.
- * 4. If no figures match the `tab_id`, the function exits early without rendering any content.
- * 5. If matching figures are found:
- *      a. Iterates through the filtered figure data.
- *      b. Constructs an `info_obj` for each figure, containing URLs, text, image links, and captions.
- *      c. Calls the `render_tab_info` function to render each figure's information into the specified tab content element.
+ *                                          Function Workflow:
+ *                                          1. Constructs the API URL to fetch figure data using the current page's protocol and host.
+ *                                          2. Makes a fetch request to the constructed URL to retrieve figure data in JSON format.
+ *                                          3. Filters the retrieved data based on the provided `tab_id`, looking for figures that match this ID.
+ *                                          4. If no figures match the `tab_id`, the function exits early without rendering any content.
+ *                                          5. If matching figures are found:
+ *                                          a. Iterates through the filtered figure data.
+ *                                          b. Constructs an `info_obj` for each figure, containing URLs, text, image links, and captions.
+ *                                          c. Calls the `render_tab_info` function to render each figure's information into the specified tab content element.
  *
- * Error Handling:
- * - If the fetch request fails, an error message is logged to the console.
+ *                                          Error Handling:
+ *                                          - If the fetch request fails, an error message is logged to the console.
  *
- * Usage:
- * Called at the end of the create_tabs function
+ *                                          Usage:
+ *                                          Called at the end of the create_tabs function
+ * @param               modal_id
+ * @param               buttonID
  */
  function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
     
@@ -495,28 +505,29 @@ function trapFocus(modalElement) {
  * Creates and adds a new tab within modal window. Each tab is associated with specific content that is displayed when the tab is active.
  * The function also sets up event listeners for copying the tab link to the clipboard (modified permalink structure)
  *
- * @param {number} iter - The index of the tab being created. This determines the order of the tabs. From render_modal, when iterating through all tabs
- * @param {string} tab_id - The unique identifier for the tab, generated from the `tab_label`. It is sanitized to replace spaces and special characters.
- * @param {string} tab_label - The label displayed on the tab, which the user clicks to activate the tab content.
+ * @param {number} iter       - The index of the tab being created. This determines the order of the tabs. From render_modal, when iterating through all tabs
+ * @param {string} tab_id     - The unique identifier for the tab, generated from the `tab_label`. It is sanitized to replace spaces and special characters.
+ * @param {string} tab_label  - The label displayed on the tab, which the user clicks to activate the tab content.
  * @param {string} [title=""] - An optional title used to construct the IDs and classes associated with the tab. It is sanitized similarly to `tab_id`.
  *
- * Function Workflow:
- * 1. Sanitizes `tab_id` and `title` by replacing spaces and special characters with underscores to create valid HTML IDs.
- * 2. Constructs the target ID for the tab content and controls using the sanitized `title` and `tab_id`.
- * 3. Creates a new navigation item for the tab, including setting the necessary attributes for Bootstrap styling and functionality.
- * 4. Appends the new tab button to modal window
- * 5. Creates a corresponding tab content pane and sets its attributes for proper display and accessibility.
- * 6. Adds a "Copy Tab Link" button and link to the tab content that allows users to copy the tab's URL to the clipboard.
- * 7. Sets event listeners for the tab button and link/button to handle copying the URL to the clipboard when clicked.
- * 8. Updates the browser's hash in the URL to reflect the currently active tab when it is clicked based on what tab/figure is currently being displayed
- * 9. Calls the `fetch_tab_info` function to fetch and display data relevant to the newly created tab.
+ *                            Function Workflow:
+ *                            1. Sanitizes `tab_id` and `title` by replacing spaces and special characters with underscores to create valid HTML IDs.
+ *                            2. Constructs the target ID for the tab content and controls using the sanitized `title` and `tab_id`.
+ *                            3. Creates a new navigation item for the tab, including setting the necessary attributes for Bootstrap styling and functionality.
+ *                            4. Appends the new tab button to modal window
+ *                            5. Creates a corresponding tab content pane and sets its attributes for proper display and accessibility.
+ *                            6. Adds a "Copy Tab Link" button and link to the tab content that allows users to copy the tab's URL to the clipboard.
+ *                            7. Sets event listeners for the tab button and link/button to handle copying the URL to the clipboard when clicked.
+ *                            8. Updates the browser's hash in the URL to reflect the currently active tab when it is clicked based on what tab/figure is currently being displayed
+ *                            9. Calls the `fetch_tab_info` function to fetch and display data relevant to the newly created tab.
  *
- * Error Handling:
- * - The function handles potential errors during clipboard writing by providing user feedback through alerts.
+ *                            Error Handling:
+ *                            - The function handles potential errors during clipboard writing by providing user feedback through alerts.
  *
- * Usage:
- * Called within render_modal -- each modal has a certain amount of tabs, iterate through each tab and create/render tab info, fix tab permalink
+ *                            Usage:
+ *                            Called within render_modal -- each modal has a certain amount of tabs, iterate through each tab and create/render tab info, fix tab permalink
  *
+ * @param          modal_id
  */
 function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
 
