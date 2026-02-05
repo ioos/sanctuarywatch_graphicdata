@@ -18,7 +18,7 @@ Version: 1.2.1
 
 #top-bar {
   text-align: center;
-  /* padding: 5px; */
+  padding: 2px;
 }
 
 #top-bar img {
@@ -56,8 +56,8 @@ Version: 1.2.1
 
 
 #site-name-logo-banner {
-  padding-top: 7px;
-  padding-bottom: 7px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   text-align: center;
   align-items: center;
   min-height: 25.98px;
@@ -714,7 +714,6 @@ input:checked + .slider:before {
     justify-content: center; /* Horizontally center .navbar-nav (the list of links). */
     width: 100%; /* Ensure .navbar-collapse takes available width to allow centering of its content. */
     /* margin-top: 0.5rem; */
-    margin-top: 0.35rem;
   }
 
   .navbar-nav {

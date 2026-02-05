@@ -1,6 +1,8 @@
-// Deep clone the childIds object to create childObj, ensuring that modifications to childObj do not affect the original childIds.
-// This is useful for safely manipulating or filtering the childObj data structure later in the script.
-let childObj = {};
+
+// Deep clone the child_ids object to create child_obj, ensuring that modifications to child_obj do not affect the original child_ids.
+// This is useful for safely manipulating or filtering the child_obj data structure later in the script.
+let child_obj = {};
+
 
 //Checking the page title to see if we are in admin edit mode for a scene
 let adminEditTitle;
@@ -12,14 +14,12 @@ try {
 	adminEditTitle = 'none';
 }
 
-//Allows for declaration of childObj variable for theme and for admin side preview mode
-if (
-	window.location.href.includes('post.php') ||
-	window.location.href.includes('edit.php')
-) {
-	childObj = undefined;
-} else {
-	childObj = JSON.parse(JSON.stringify(childIds));
+//Allows for declaration of child_obj variable for theme and for admin side preview mode
+if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
+    child_obj = undefined;
+} else { 
+    console.log('child_ids', child_ids);
+    child_obj = JSON.parse(JSON.stringify(child_ids));
 }
 
 // Convert the svg_url variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
@@ -38,14 +38,9 @@ if (
 ) {
 	url1 = undefined;
 }
-if (
-	window.location.href.includes('post.php') &&
-	adminEditTitle === 'Edit Scene'
-) {
-	url = document.getElementsByName('scene_infographic')[0].value;
-} else {
-	const url1 = JSON.stringify(svg_url);
-	url = url1.substring(2, url1.length - 2);
+if (!window.location.href.includes('post.php')) { 
+    let url1 =(JSON.stringify(svg_url));
+    url = url1.substring(2, url1.length - 2);
 }
 
 // Declare variables to hold data and state throughout the script.
@@ -173,6 +168,55 @@ if (!window.location.href.includes('post.php')) {
 // Initially set to false, assuming a non-mobile environment by default.
 const mobileBool = false;
 
+
+// persistent flag (must live outside the function)
+window.mobileBool = window.mobileBool || false;
+
+function admin_preview_condition_checker() {
+    const admin_preview_mobile = document.querySelectorAll(
+        '[data-depend-id="scene_preview_mobile"],[data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"]'
+    );
+
+    const admin_preview_desktop = document.querySelectorAll(
+        '[data-depend-id="scene_preview"],[data-depend-id="modal_preview"],[data-depend-id="figure_preview"]'
+    );
+
+    // Ensure the global exists
+    if (typeof window.mobileBool === 'undefined') {
+        window.mobileBool = false;
+    }
+
+    // Bind mobile preview -> sets true
+    if (admin_preview_mobile.length > 0) {
+        admin_preview_mobile.forEach(el => {
+            if (el.dataset.previewMobileBound === '1') return;
+            el.dataset.previewMobileBound = '1';
+
+            el.addEventListener('click', () => {
+                window.mobileBool = true;
+            });
+        });
+    }
+
+    // Bind desktop preview -> resets false
+    if (admin_preview_desktop.length > 0) {
+        admin_preview_desktop.forEach(el => {
+            if (el.dataset.previewDesktopBound === '1') return;
+            el.dataset.previewDesktopBound = '1';
+
+            el.addEventListener('click', () => {
+                window.mobileBool = false;
+            });
+        });
+    }
+
+    // console.log('window.mobileBool', window.mobileBool);
+
+    // Return the current state *now*
+    return !!window.mobileBool;
+}
+
+
 //Main Initialization of script
 document.addEventListener('DOMContentLoaded', () => {
 	init();
@@ -294,13 +338,17 @@ function remove_outer_div() {
  * Checks if the device being used is touchscreen or not.
  * @return {boolean} `True` if touchscreen else `False`.
  */
-function is_touchscreen() {
-	//check multiple things here: type of device, screen width,
-	return (
-		'ontouchstart' in window ||
-		navigator.maxTouchPoints > 0 ||
-		navigator.msMaxTouchPoints > 0
-	);
+function is_touchscreen(){
+
+    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
+        return true;
+    } else {
+        //check multiple things here: type of device, screen width, 
+        return ( 'ontouchstart' in window ) || 
+            ( navigator.maxTouchPoints > 0 ) || 
+            ( navigator.msMaxTouchPoints > 0 );
+    }
+    
 }
 
 /**
@@ -309,13 +357,19 @@ function is_touchscreen() {
  * @return {boolean} `True` if mobile else `False`.
  */
 function is_mobile() {
-	return (
-		/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-			navigator.userAgent
-		) &&
-		(window.innerWidth < 512 || window.innerHeight < 512)
-	);
-	//(window.innerWidth <= 512 && 'ontouchstart' in window);
+
+    // Admin preview mobile functionality to allow for is_mobile() to return true
+    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
+        //console.log('admin_preview_condition_checker');
+        return true;
+    }
+    // Everything else that isnt admin preview related uses this
+    else {
+        return (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) 
+           && (window.innerWidth < 512 || window.innerHeight < 512);
+           //(window.innerWidth <= 512 && 'ontouchstart' in window);
+    }
+    
 }
 
 /**
@@ -330,36 +384,32 @@ function is_mobile() {
  * - `detect(s)`: Detects the device type from the user agent string `s` (or the current user agent if not provided).
  *     - @returns {string} - The detected device type ('tablet', 'phone', or 'desktop').
  */
-const deviceDetector = (function () {
-	let ua = navigator.userAgent.toLowerCase();
-	const detect = function (s) {
-		if (s === undefined) {
-			s = ua;
-		} else {
-			ua = s.toLowerCase();
-		}
-		if (
-			/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(
-				ua
-			)
-		) {
-			return 'tablet';
-		} else if (
-			/(mobi|ipod|phone|blackberry|opera mini|fennec|minimo|symbian|psp|nintendo ds|archos|skyfire|puffin|blazer|bolt|gobrowser|iris|maemo|semc|teashark|uzard)/.test(
-				ua
-			)
-		) {
-			return 'phone';
-		}
-		return 'desktop';
-	};
-	return {
-		device: detect(),
-		detect,
-		isMobile: detect() !== 'desktop' ? true : false,
-		userAgent: ua,
-	};
-})();
+var deviceDetector = (function ()
+{
+  var ua = navigator.userAgent.toLowerCase();
+  var detect = (function(s)
+  {
+    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
+        return 'phone';
+    }
+
+    if(s===undefined)s=ua;
+    else ua = s.toLowerCase();
+    if(/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(ua))
+                return 'tablet';
+          else
+      if(/(mobi|ipod|phone|blackberry|opera mini|fennec|minimo|symbian|psp|nintendo ds|archos|skyfire|puffin|blazer|bolt|gobrowser|iris|maemo|semc|teashark|uzard)/.test(ua))            
+                    return 'phone';
+                else return 'desktop';
+    });
+    return{
+        device:detect(),
+        detect:detect,
+        isMobile:((detect()!='desktop')?true:false),
+        userAgent:ua
+    };
+}());
+ 
 
 //creates an accordion item w/custom IDs based on input
 /**
@@ -469,68 +519,81 @@ async function waitForElement(selector) {
  * Called after init when DOMcontent loaded.
  */
 async function handleHashNavigation() {
-	//maybe in here check that the scene is/is not an overview
-	if (window.location.hash) {
-		let tabId = window.location.hash.substring(1);
+    //maybe in here check that the scene is/is not an overview
+    if (window.location.hash) {
+        let tabId = window.location.hash.substring(1);
 
-		const modalName = tabId.split('/')[0];
+        let modalName = tabId.split('/')[0];
 
-		tabId = tabId.replace(/\//g, '-');
+        tabId = tabId.replace(/\//g, '-');
 
-		history.pushState(
-			'',
-			document.title,
-			window.location.pathname + window.location.search
-		);
-		let modName;
-		if (is_mobile()) {
-			const modModal = modalName.replace(/_/g, ' ');
-			modName = childIdsHelper[modModal] + '-container';
-		} else {
-			modName = modalName;
-		}
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+        let modName;
+        if (is_mobile()){
+            let modModal =  modalName.replace(/_/g, ' ');
+            modName = child_ids_helper[modModal] + '-container';
+        } else{
+            modName = modalName;
+        }
 
-		const modalButton = await waitForElement(`#${modName}`);
+        let modalButton = await waitForElement(`#${modName}`);
 
-		modalButton.click();
+        // Sometimes a <g tag is sent insteast of an <a tag. This break the way the modal loads. This is a good work around
+        // if <g then change method of waiting for click, if not then proceed as normal
+        if (modalButton.tagName.toLowerCase() === 'g') {
+            modalButton.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+        } else {
+            modalButton.click();
+        }
 
-		const tabButton = await waitForElement(`#${tabId}`);
-		tabButton.click();
-	} else {
-	}
+        let tabButton = await waitForElement(`#${tabId}`);
+        tabButton.click();
+    } else {
+
+    }
 }
 
-// THIS IS POSSIBLY DEPRECATED NOW, MAYBE DELETE LATER
-// /**
-//  * Fetches instance details from the WordPress REST API.
-//  *
-//  * This asynchronous function retrieves data from the WordPress REST API endpoint for instances (`/wp-json/wp/v2/instance`)
-//  * using the current protocol and host. The results are fetched in ascending order.
-//  * It handles network errors and returns the data as a JSON object.
-//  *
-//  * @returns {Promise<Object[]>} - A Promise that resolves to an array of instance objects retrieved from the API.
-//  *
-//  * @throws {Error} - Throws an error if the fetch request fails or the response is not successful (i.e., not OK).
-//  *
-//  * Usage: called in init function to set to global variable testData, which is used to get information about current instance, section/color information
-//  */
-// async function load_instance_details() { //this should be done on the SCENE side of things; might not need this, may replace w scene postmeta call. keep for now
-//     const protocol = window.location.protocol;
-//     const host = window.location.host;
-//     const fetchURL = `${protocol}//${host}/wp-json/wp/v2/instance?&order=asc`;
+/**
+ * Convert an arbitrary string into a URL/DOM-friendly “slug”.
+ *
+ * What it does:
+ * - Converts the input to a string.
+ * - Normalizes Unicode characters (splits accented characters into base + accent marks).
+ * - Removes diacritic marks (accents).
+ * - Lowercases the result.
+ * - Trims leading/trailing whitespace.
+ * - Replaces any run of non-alphanumeric characters with a single hyphen.
+ * - Trims leading/trailing hyphens.
+ *
+ * Common uses:
+ * - Generating safe IDs: `id="my-title-1"`
+ * - Building URL paths: `/posts/my-title-1`
+ * - Creating stable keys for maps/objects
+ *
+ * Notes:
+ * - Output is limited to ASCII `a-z`, `0-9`, and `-`.
+ * - If you need underscores instead of hyphens, change the replacement to `"_"`
+ *   and adjust the trim regex accordingly.
+ *
+ * @param {string} str - Input text to slugify.
+ * @returns {string} A slugified, lowercased, hyphen-separated string.
+ *
+ * @example
+ * slugify("R&D 50% Off — #1!") // "r-d-50-off-1"
+ * slugify("  Crème brûlée  ")  // "creme-brulee"
+ * slugify("Hello   world")     // "hello-world"
+ */
+function slugify(str) {
+    return String(str)
+        .normalize("NFKD")                 // split accents
+        .replace(/[\u0300-\u036f]/g, "")   // remove accents
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")       // non-alnum -> -
+        .replace(/^-+|-+$/g, "");          // trim dashes
+}
 
-//     try {
-//         const response = await fetch(fetchURL);
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         const data = await response.json();
-//         return data;
-//     } catch (error) {
-//         console.error('Error fetching data:', error);
-//         throw error;
-//     }
-// }
+
 
 /**
  * Initializes the application by loading instance details, setting up the scene location,

@@ -22,205 +22,192 @@
  * @param          obj
  * @param          modal_obj
  */
-function render_modal(key, obj, modal_obj) {
-	// Allow passing in a specific childObj from preview mode in admin-modal.js
-	if (typeof childObj === 'undefined') {
-		childObj = obj;
-	}
+function render_modal(key, obj, modal_obj){
 
-	console.log('Rendering modal for key:', key, 'with childObj:', childObj);
 
-	const id = childObj[key].modal_id;
-	console.log('id', id);
+    // Allow passing in a specific child_obj from preview mode in admin-modal.js
+    if (typeof child_obj === 'undefined') {
+        child_obj = obj;
+    }
 
-	//function for rendering the modal content after fetching data
-	function populateModalContent(modal_data, childObj, key) {
-		// --- Title ---
-		const title = childObj[key].title; // or could be modal_data.title
-		const modal_title = document.getElementById('modal-title');
+    //console.log('Rendering modal for key:', key, 'with child_obj:', child_obj);
 
-		// PREVIEW MODE: if title is empty, set to "No Modal Title Set"
-		if (window.location.href.includes('post.php')) {
-			const title_test = document.getElementById('title').value;
-			console.log('title_test', title_test);
-			if (
-				title_test === '' ||
-				title_test === null ||
-				title_test === undefined
-			) {
-				modal_title.innerHTML = 'No Modal Title Set';
-				modal_title.style.fontWeight = 'bold';
-			} else {
-				modal_title.innerHTML = title;
-			}
-		}
-		// FRONTEND MODE: set title normally
-		if (!window.location.href.includes('post.php')) {
-			modal_title.innerHTML = title;
-		}
+    let id = child_obj[key]['modal_id'];
+    //console.log('id', id);
 
-		// --- Tagline container ---
-		const tagline_container = document.getElementById('tagline-container');
-		const modal_tagline = modal_data.modal_tagline;
+    //function for rendering the modal content after fetching data
+    function populateModalContent(modal_data, child_obj, key) {
+        // --- Title ---
+        let title = child_obj[key]['title'];  // or could be modal_data.title
+        let modal_title = document.getElementById("modal-title");
 
-		if (!is_mobile()) {
-			tagline_container.innerHTML = `<em>${modal_tagline}</em>`;
-		}
+        // PREVIEW MODE: if title is empty, set to "No Modal Title Set"
+        if (window.location.href.includes('post.php')) {
+            let title_test = document.getElementById("title").value;
+            console.log('title_test', title_test);
+            if (title_test === '' || title_test === null || title_test === undefined) {
+                modal_title.innerHTML = "No Modal Title Set";
+                modal_title.style.fontWeight = "bold";
+            } else {
+                modal_title.innerHTML = title;
+            }
+        }
+        // FRONTEND MODE: set title normally
+        if (!window.location.href.includes('post.php')) {
+            modal_title.innerHTML = title;
+        }
+   
 
-		// --- Accordion container setup ---
-		const accordion_container = document.getElementById(
-			'accordion-container'
-		);
-		const acc = document.createElement('div');
-		acc.classList.add('accordion');
+        // --- Tagline container ---
+        let tagline_container = document.getElementById('tagline-container');
+        let modal_tagline = modal_data["modal_tagline"];
 
-		const modal_info_entries = modal_data.modal_info_entries;
-		const modal_photo_entries = modal_data.modal_photo_entries;
 
-		if (is_mobile()) {
-			accordion_container.setAttribute('class', '');
-		} else {
-			tagline_container.setAttribute('class', '');
-			accordion_container.setAttribute('class', '');
+        if (!is_mobile()) {
+            tagline_container.innerHTML = `<em>${modal_tagline}</em>`;
+        }
 
-			if (modal_info_entries != 0 || modal_photo_entries != 0) {
-				tagline_container.classList.add('col-9');
-				accordion_container.classList.add('col-3');
-			} else {
-				tagline_container.classList.add('col-12');
-				accordion_container.classList.add('d-none');
-			}
-		}
+        // --- Accordion container setup ---
+        let accordion_container = document.getElementById('accordion-container');
+        let acc = document.createElement("div");
+        acc.classList.add("accordion");
 
-		// --- Info Section ---
-		if (modal_info_entries != 0) {
-			let collapseListHTML = '<div><ul>';
-			for (let i = 1; i < 7; i++) {
-				const info_field = `modal_info${i}`;
-				const info_text = `modal_info_text${i}`;
-				const info_url = `modal_info_url${i}`;
+        let modal_info_entries = modal_data["modal_info_entries"];
+        let modal_photo_entries = modal_data["modal_photo_entries"];
 
-				const modal_info_text =
-					modal_data[info_field]?.[info_text] || '';
-				const modal_info_url = modal_data[info_field]?.[info_url] || '';
+        if (is_mobile()) {
+            accordion_container.setAttribute("class", "");
+        } else {
+            tagline_container.setAttribute("class", "");
+            accordion_container.setAttribute("class", "");
 
-				if (!modal_info_text && !modal_info_url) {
-					continue;
-				}
+            if (modal_info_entries != 0 || modal_photo_entries != 0) {
+                tagline_container.classList.add("col-9");
+                accordion_container.classList.add("col-3");
+            } else {
+                tagline_container.classList.add("col-12");
+                accordion_container.classList.add("d-none");
+            }
+        }
 
-				collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
-			}
-			collapseListHTML += '</ul></div>';
+        // --- Info Section ---
+        if (modal_info_entries != 0) {
+            let collapseListHTML = '<div><ul>';
+            for (let i = 1; i < 7; i++) {
+                let info_field = `modal_info${i}`;
+                let info_text = `modal_info_text${i}`;
+                let info_url = `modal_info_url${i}`;
 
-			const accordionItem1 = createAccordionItem(
-				'accordion-item-1',
-				'accordion-header-1',
-				'accordion-collapse-1',
-				'More Info',
-				collapseListHTML
-			);
-			acc.appendChild(accordionItem1);
-		}
+                let modal_info_text = modal_data[info_field]?.[info_text] || '';
+                let modal_info_url = modal_data[info_field]?.[info_url] || '';
 
-		// --- Photo Section ---
-		const modal_id = modal_data.id;
-		let collapsePhotoHTML = '<div><ul>';
+                if (!modal_info_text && !modal_info_url) continue;
 
-		if (modal_photo_entries != 0) {
-			for (let i = 1; i < 7; i++) {
-				const info_field = `modal_photo${i}`;
-				const info_text = `modal_photo_text${i}`;
-				const loc = `modal_photo_location${i}`;
+                collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
+            }
+            collapseListHTML += '</ul></div>';
 
-				const urlField =
-					modal_data[info_field]?.[loc] === 'External'
-						? `modal_photo_url${i}`
-						: `modal_photo_internal${i}`;
+            let accordionItem1 = createAccordionItem(
+                "accordion-item-1", 
+                "accordion-header-1", 
+                "accordion-collapse-1", 
+                "More Info", 
+                collapseListHTML
+            );
+            acc.appendChild(accordionItem1);
+        }
 
-				const modal_info_text =
-					modal_data[info_field]?.[info_text] || '';
-				const modal_info_url = modal_data[info_field]?.[urlField] || '';
+        // --- Photo Section ---
+        let modal_id = modal_data.id;
+        let collapsePhotoHTML = '<div><ul>';
 
-				if (!modal_info_text && !modal_info_url) {
-					continue;
-				}
+        if (modal_photo_entries != 0) {
+            for (let i = 1; i < 7; i++) {
+                let info_field = `modal_photo${i}`;
+                let info_text = `modal_photo_text${i}`;
+                let loc = `modal_photo_location${i}`;
 
-				collapsePhotoHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
-			}
+                let urlField = modal_data[info_field]?.[loc] === "External" 
+                    ? `modal_photo_url${i}` 
+                    : `modal_photo_internal${i}`;
 
-			collapsePhotoHTML += '</ul></div>';
+                let modal_info_text = modal_data[info_field]?.[info_text] || '';
+                let modal_info_url = modal_data[info_field]?.[urlField] || '';
 
-			const accordionItem2 = createAccordionItem(
-				'accordion-item-2',
-				'accordion-header-2',
-				'accordion-collapse-2',
-				'Images',
-				collapsePhotoHTML
-			);
-			acc.appendChild(accordionItem2);
-		}
+                if (!modal_info_text && !modal_info_url) continue;
 
-		// --- Tagline accordion for mobile ---
-		if (is_mobile()) {
-			const accordionItem3 = createAccordionItem(
-				'accordion-item-3',
-				'accordion-header-3',
-				'accordion-collapse-3',
-				'Tagline',
-				modal_tagline
-			);
-			acc.prepend(accordionItem3);
-		}
+                collapsePhotoHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
+            }
 
-		// Append accordion
-		accordion_container.appendChild(acc);
+            collapsePhotoHTML += '</ul></div>';
 
-		// --- Tabs ---
-		const num_tabs = Number(modal_data.modal_tab_number);
-		for (let i = 1; i <= num_tabs; i++) {
-			const tab_key = `modal_tab_title${i}`;
-			let tab_title = modal_data[tab_key];
+            let accordionItem2 = createAccordionItem(
+                "accordion-item-2",
+                "accordion-header-2",
+                "accordion-collapse-2",
+                "Images",
+                collapsePhotoHTML
+            );
+            acc.appendChild(accordionItem2);
+        }
 
-			if (
-				window.location.href.includes('post.php') &&
-				(tab_title === '' ||
-					tab_title === null ||
-					tab_title === undefined)
-			) {
-				tab_title = 'No Tab Title Set';
-			}
+        // --- Tagline accordion for mobile ---
+        if (is_mobile()) {
+            let accordionItem3 = createAccordionItem(
+                "accordion-item-3",
+                "accordion-header-3",
+                "accordion-collapse-3",
+                "Tagline",
+                modal_tagline
+            );
+            acc.prepend(accordionItem3);
+        }
 
-			create_tabs(i, tab_key, tab_title, title, modal_id);
+        // Append accordion
+        accordion_container.appendChild(acc);
 
-			if (i === num_tabs) {
-				const mdialog = document.querySelector('#myModal > div');
-				trapFocus(mdialog);
-			}
-		}
-		// Google Tags
-		// modalWindowLoaded(title, modal_id, gaMeasurementID);
-	}
+        // --- Tabs ---
+        let num_tabs = Number(modal_data["modal_tab_number"]);
+        for (let i = 1; i <= num_tabs; i++) {
+            let tab_key = `modal_tab_title${i}`;
+            let tab_title = modal_data[tab_key];
 
-	// Fetch modal data and populate content PREVIEW MODE vs FRONTEND MODE
-	if (window.location.href.includes('post.php')) {
-		const modal_data = modal_obj;
-		populateModalContent(modal_data, childObj, key);
-	}
+            if (window.location.href.includes('post.php') && (tab_title === '' || tab_title === null || tab_title === undefined)) {
+                tab_title = "No Tab Title Set";
+            }   
 
-	// Fetch modal data and populate content FRONTEND MODE
-	if (!window.location.href.includes('post.php')) {
-		const protocol = window.location.protocol;
-		const host = window.location.host;
-		const fetchURL = protocol + '//' + host + `/wp-json/wp/v2/modal/${id}`;
-		fetch(fetchURL)
-			.then((response) => response.json())
-			.then((data) => {
-				const modal_data = data; //.find(modal => modal.id === id);
-				console.log('modal_data:', modal_data);
-				populateModalContent(modal_data, childObj, key);
-			})
-			.catch((error) => console.error('Error fetching data:', error));
-	}
+            create_tabs(i, tab_key, tab_title, title, modal_id);
+
+            if (i === num_tabs) {
+                let mdialog = document.querySelector("#myModal > div");
+                trapFocus(mdialog);
+            }
+        }
+        // Google Tags
+        //modalWindowLoaded(title, modal_id, gaMeasurementID);
+    }
+
+    // Fetch modal data and populate content PREVIEW MODE vs FRONTEND MODE
+    if (window.location.href.includes("post.php")) {
+        let modal_data = modal_obj;
+        populateModalContent(modal_data, child_obj, key);  
+    } 
+
+    // Fetch modal data and populate content FRONTEND MODE
+    if (!window.location.href.includes("post.php")) {
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+        const fetchURL  =  protocol + "//" + host  + `/wp-json/wp/v2/modal/${id}`;
+        fetch(fetchURL)
+            .then(response => response.json())
+            .then(data => {
+                let modal_data = data; //.find(modal => modal.id === id);
+                //('modal_data:', modal_data);
+                populateModalContent(modal_data, child_obj, key);
+            })  
+        .catch(error => console.error('Error fetching data:', error));
+    }
+    //dumpComputedCSS('.modal-dialog');
 }
 
 /**
@@ -390,166 +377,127 @@ function trapFocus(modalElement) {
  * @param               modal_id
  * @param               buttonID
  */
-function fetch_tab_info(
-	tabContentElement,
-	tabContentContainer,
-	tab_label,
-	tab_id,
-	modal_id,
-	buttonID
-) {
-	const protocol = window.location.protocol;
-	const host = window.location.host;
-	const fetchURL =
-		protocol +
-		'//' +
-		host +
-		'/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=' +
-		modal_id +
-		'&figure_tab=' +
-		tab_id;
+ function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
+    
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + tab_id;
+    
+    fetch(fetchURL)
+        .then(response => response.json())
+        .then(data => {
 
-	fetch(fetchURL)
-		.then((response) => response.json())
-		.then((data) => {
-			all_figure_data = data.filter(
-				(figure) => Number(figure.figure_tab) === Number(tab_id)
-			);
-			all_figure_data = all_figure_data.filter(
-				(figure) => Number(figure.figure_modal) === Number(modal_id)
-			);
-			//console.log('all_figure_data1', all_figure_data);
+            all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
+            all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id));
+            //console.log('all_figure_data1', all_figure_data);
 
-			// Third filter: If user is not logged in, only show published figures
-			// const isUserLoggedIn = document.body.classList.contains('logged-in');
-			// if (!isUserLoggedIn) {
-			//     all_figure_data = all_figure_data.filter(figure => figure.figure_published === "published");
-			// }
 
-			// Sort with the following priority:
-			// 1. figure_order (ascending; missing/invalid orders go last)
-			// 2. figure_title (alphabetically by first letter, for figures with the same order)
-			// 3. Maintain original order for figures with same order and title
+            // Third filter: If user is not logged in, only show published figures
+           // const isUserLoggedIn = document.body.classList.contains('logged-in');
+           // if (!isUserLoggedIn) {
+           //     all_figure_data = all_figure_data.filter(figure => figure.figure_published === "published");
+           // }
 
-			all_figure_data.sort((a, b) => {
-				// Convert order values to numbers (NaN-safe)
-				const orderA = Number(a.figure_order);
-				const orderB = Number(b.figure_order);
+            // Sort with the following priority:
+            // 1. figure_order (ascending; missing/invalid orders go last)
+            // 2. figure_title (alphabetically by first letter, for figures with the same order)
+            // 3. Maintain original order for figures with same order and title
 
-				const validA = !isNaN(orderA);
-				const validB = !isNaN(orderB);
+            all_figure_data.sort((a, b) => {
+                // Convert order values to numbers (NaN-safe)
+                const orderA = Number(a.figure_order);
+                const orderB = Number(b.figure_order);
 
-				// Normalize title strings
-				const titleA = (a.figure_title || '')
-					.trim()
-					.charAt(0)
-					.toLowerCase();
-				const titleB = (b.figure_title || '')
-					.trim()
-					.charAt(0)
-					.toLowerCase();
+                const validA = !isNaN(orderA);
+                const validB = !isNaN(orderB);
 
-				// Step 1: sort by figure_order (missing/invalid orders go last)
-				if (validA && validB && orderA !== orderB) {
-					return orderA - orderB;
-				}
-				if (validA && !validB) {
-					return -1;
-				}
-				if (!validA && validB) {
-					return 1;
-				}
+                // Normalize title strings
+                const titleA = (a.figure_title || '').trim().charAt(0).toLowerCase();
+                const titleB = (b.figure_title || '').trim().charAt(0).toLowerCase();
 
-				// Step 2: within the same order → sort alphabetically by first letter of title
-				return titleA.localeCompare(titleB);
-			});
+                // Step 1: sort by figure_order (missing/invalid orders go last)
+                if (validA && validB && orderA !== orderB) {
+                    return orderA - orderB;
+                }
+                if (validA && !validB) return -1;
+                if (!validA && validB) return 1;
 
-			//console.log('all_figure_data2', all_figure_data);
+                // Step 2: within the same order → sort alphabetically by first letter of title
+                return titleA.localeCompare(titleB);
+            });
 
-			//filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
-			let total_published_figures = 0;
-			for (let idx = 0; idx < all_figure_data.length; idx++) {
-				const figure_data = all_figure_data[idx];
-				const figure_published = figure_data.figure_published;
-				if (figure_published == 'published') {
-					total_published_figures += 1;
-				}
-			}
-			if (all_figure_data.length > 0 && total_published_figures > 0) {
-				const element = document.getElementById(buttonID);
-				if (element) {
-					element.style.display = 'block';
-				}
-			} else {
-				const element = document.getElementById(buttonID);
-				if (element.style.display == 'none') {
-					console.log('buttonID', buttonID);
-					element.remove();
-				}
-			}
+            //console.log('all_figure_data2', all_figure_data);
 
-			if (!all_figure_data) {
-				//we don't create anything here...
-				//don't have to render any of the info
-			} else {
-				(async () => {
-					for (let idx = 0; idx < all_figure_data.length; idx++) {
-						const figure_data = all_figure_data[idx];
+            //filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
+            let total_published_figures = 0;
+            for (let idx = 0; idx < all_figure_data.length; idx++) {
+                const figure_data = all_figure_data[idx];
+                const figure_published = figure_data['figure_published'];
+                if (figure_published == "published") {
+                    total_published_figures += 1;
+                }
+            }
+            if (all_figure_data.length > 0 && total_published_figures > 0) {
+                const element = document.getElementById(buttonID);
+                if (element) {
+                    element.style.display = "block";
+                }
+            } else {
+                const element = document.getElementById(buttonID);
+                if (element.style.display == "none") {
+                    //console.log('buttonID', buttonID);
+                    element.remove();
+                }
+            }
 
-						let external_alt = '';
-						if (figure_data.figure_path === 'External') {
-							img = figure_data.figure_external_url;
-							external_alt = figure_data.figure_external_alt;
-						} else {
-							img = figure_data.figure_image;
-						}
-
-						const info_obj = {
-							figure_published: figure_data.figure_published,
-							postID: figure_data.id,
-							scienceLink:
-								figure_data.figure_science_info
-									.figure_science_link_url,
-							scienceText:
-								figure_data.figure_science_info
-									.figure_science_link_text,
-							dataLink:
-								figure_data.figure_data_info
-									.figure_data_link_url,
-							dataText:
-								figure_data.figure_data_info
-									.figure_data_link_text,
-							imageLink: img,
-							code: figure_data.figure_code,
-							externalAlt: external_alt,
-							shortCaption: figure_data.figure_caption_short,
-							longCaption: figure_data.figure_caption_long,
-							figureType: figure_data.figure_path,
-							figureTitle: figure_data.figure_title,
-							figure_interactive_arguments:
-								figure_data.figure_interactive_arguments,
-						};
-
-						(async () => {
-							await render_tab_info(
-								tabContentElement,
-								tabContentContainer,
-								info_obj,
-								idx
-							);
-							//await new Promise(resolve => setTimeout(resolve, 1000)); // Stagger each render
-							await render_interactive_plots(
-								tabContentElement,
-								info_obj
-							);
-							initTabButtons();
-						})();
-					}
-				})();
-			}
-		})
-		.catch((error) => console.error('Error fetching data:', error));
-	//new stuff here
+            if (!all_figure_data){
+                //we don't create anything here...
+                //don't have to render any of the info
+                return;
+                
+            } else{
+                (async () => {
+                    for (let idx = 0; idx < all_figure_data.length; idx++) {
+                        const figure_data = all_figure_data[idx];
+                
+                        let external_alt = '';
+                        if (figure_data['figure_path'] === 'External') {
+                            img = figure_data['figure_external_url'];
+                            external_alt = figure_data['figure_external_alt'];
+                        } else {
+                            img = figure_data['figure_image'];
+                        }
+                
+                        const info_obj = {
+                            figure_published: figure_data['figure_published'],
+                            postID: figure_data.id,
+                            scienceLink: figure_data["figure_science_info"]["figure_science_link_url"],
+                            scienceText: figure_data["figure_science_info"]["figure_science_link_text"],
+                            dataLink: figure_data["figure_data_info"]["figure_data_link_url"],
+                            dataText: figure_data["figure_data_info"]["figure_data_link_text"],
+                            imageLink: img,
+                            code: figure_data["figure_code"],
+                            externalAlt: external_alt,
+                            shortCaption: figure_data["figure_caption_short"],
+                            longCaption: figure_data["figure_caption_long"],
+                            figureType: figure_data["figure_path"],
+                            figureTitle: figure_data["figure_title"],
+                            figure_interactive_arguments: figure_data["figure_interactive_arguments"]
+                        };
+                
+                        (async () => {
+                            await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
+                            //await new Promise(resolve => setTimeout(resolve, 1000)); // Stagger each render
+                            await render_interactive_plots(tabContentElement, info_obj);
+                            initTabButtons();
+                        })();
+                    }
+                })();
+            }
+        })
+    .catch(error => console.error('Error fetching data:', error));
+        //new stuff here
+   
 }
 
 //create tabs
@@ -581,118 +529,215 @@ function fetch_tab_info(
  *
  * @param          modal_id
  */
-function create_tabs(iter, tab_id, tab_label, title = '', modal_id) {
-	tab_id = tab_label.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_'); //instead of tab id, it should just be the index (figure_data)
-	title = title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_');
-	tab_id = iter;
+function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
 
-	const tab_target = `#${title}-${tab_id}-pane`;
-	const tab_controls = `${title}-${tab_id}-pane`;
+    tab_id = tab_label.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_'); //instead of tab id, it should just be the index (figure_data)
+    //title = title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_');
+    title  = slugify(title);
+    tab_id = iter;
 
-	const myTab = document.getElementById('myTab');
-	const navItem = document.createElement('li');
-	navItem.classList.add('nav-item');
-	navItem.setAttribute('role', 'presentation');
+    let tab_target = `#${title}-${tab_id}-pane`;
+    let tab_controls = `${title}-${tab_id}-pane`;
 
-	const button = document.createElement('button');
-	button.classList.add('nav-link');
-	button.classList.add('tab-title');
-	if (iter === 1) {
-		button.classList.add('active');
-		button.setAttribute('aria-selected', 'true');
-	} else {
-		button.setAttribute('aria-selected', 'false');
-	}
-	button.id = `${title}-${tab_id}`;
-	button.setAttribute('data-bs-toggle', 'tab');
-	button.setAttribute('data-bs-target', tab_target);
-	button.setAttribute('type', 'button');
-	button.setAttribute('role', 'tab');
-	button.setAttribute('aria-controls', tab_controls);
-	button.textContent = tab_label;
+    let myTab = document.getElementById('myTab');
+    let navItem = document.createElement("li");
+    navItem.classList.add("nav-item");
+    navItem.setAttribute("role", "presentation");
+    
+    const button = document.createElement('button');
+    button.classList.add('nav-link');
+    button.classList.add('tab-title');
+    if (iter === 1) {
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+    } else {
+        button.setAttribute('aria-selected', 'false');
+    }
+    button.id = `${title}-${tab_id}`;
+    button.setAttribute('data-bs-toggle', 'tab');
+    button.setAttribute('data-bs-target', tab_target);
+    button.setAttribute('type', 'button');
+    button.setAttribute('role', 'tab');
+    button.setAttribute('aria-controls', tab_controls);
+    button.textContent = tab_label;
 
-	if (window.location.href.includes('post.php')) {
-		button.style.display = 'block';
-	} else {
-		button.style.display = 'none'; //hide all tabs initially, will show only those that have published figures in fetch_tab_info
-	}
+    if (window.location.href.includes('post.php')) {
+        button.style.display = "block";
+    } else {
+        button.style.display = "none";   //hide all tabs initially, will show only those that have published figures in fetch_tab_info
+    }
 
-	navItem.appendChild(button);
-	myTab.appendChild(navItem);
+    navItem.appendChild(button);
+    myTab.appendChild(navItem);
 
-	const tabContentContainer = document.getElementById('myTabContent');
-	const tabContentElement = document.createElement('div');
-	tabContentElement.classList.add('tab-pane', 'fade');
+    let tabContentContainer = document.getElementById("myTabContent");
+    const tabContentElement = document.createElement('div');
+    tabContentElement.classList.add('tab-pane', 'fade');
 
-	if (iter === 1) {
-		tabContentElement.classList.add('show', 'active');
-	}
 
-	tabContentElement.id = tab_controls;
-	tabContentElement.setAttribute('role', 'tabpanel');
-	tabContentElement.setAttribute('aria-labelledby', `${title}-${tab_id}`);
-	tabContentElement.setAttribute('tabindex', '0');
+    if (iter === 1) {
+        tabContentElement.classList.add('show', 'active');
+    }
+    
+    tabContentElement.id = tab_controls;
+    tabContentElement.setAttribute('role', 'tabpanel');
+    tabContentElement.setAttribute('aria-labelledby', `${title}-${tab_id}`);
+    tabContentElement.setAttribute('tabindex', '0');
 
-	tabContentContainer.appendChild(tabContentElement);
+    tabContentContainer.appendChild(tabContentElement);
+    
+    let linkbutton = document.createElement("button");
+    linkbutton.classList.add("btn", "btn-primary");
+    linkbutton.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Tab Link';
+    linkbutton.type = "button"; 
+    linkbutton.setAttribute('style', 'margin-bottom: 7px');
+    tabContentElement.prepend(linkbutton);
 
-	const linkbutton = document.createElement('button');
-	linkbutton.classList.add('btn', 'btn-primary');
-	linkbutton.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Tab Link';
-	linkbutton.type = 'button';
-	linkbutton.setAttribute('style', 'margin-bottom: 7px');
-	tabContentElement.prepend(linkbutton);
 
-	if (iter === 1) {
-		window.location.hash = `${title}/${tab_id}`;
+    if (iter === 1) {
+        window.location.hash = `${title}/${tab_id}`; 
+    
+        linkbutton.addEventListener("click", (e) => {
+            e.preventDefault(); // Prevent the link from opening
+            writeClipboardText(`${window.location.origin}${window.location.pathname}#${title}/${tab_id}`);
+        });
+    }
 
-		linkbutton.addEventListener('click', (e) => {
-			e.preventDefault(); // Prevent the link from opening
-			writeClipboardText(
-				`${window.location.origin}${window.location.pathname}#${title}/${tab_id}`
-			);
-		});
-	}
+    button.addEventListener('click', function() {
+        window.location.hash = `${title}/${tab_id}`; 
+       
+        linkbutton.addEventListener("click", (e) => {
+            e.preventDefault(); // Prevent the link from opening
+            writeClipboardText(`${window.location.origin}${window.location.pathname}#${title}/${tab_id}`);
+        });      
+        
+    });
+    async function writeClipboardText(text) {
+        try {
+            await navigator.clipboard.writeText(text);
+            alert('Link copied to clipboard!');
+        } catch (error) {
+            console.error('Failed to copy: ', error);
+            alert('Failed to copy link. Please try again.');
+        }
+    }
 
-	button.addEventListener('click', function () {
-		window.location.hash = `${title}/${tab_id}`;
+    // Fetch tab info and render content is not in preview mode from admin side
+    // if (!window.location.href.includes('post.php')) {
+        //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
+    try {
+        (async () => {
+            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id);
+        })();
+    } catch (error) {
+    }
 
-		linkbutton.addEventListener('click', (e) => {
-			e.preventDefault(); // Prevent the link from opening
-			writeClipboardText(
-				`${window.location.origin}${window.location.pathname}#${title}/${tab_id}`
-			);
-		});
-	});
-	async function writeClipboardText(text) {
-		try {
-			await navigator.clipboard.writeText(text);
-			alert('Link copied to clipboard!');
-		} catch (error) {
-			console.error('Failed to copy: ', error);
-			alert('Failed to copy link. Please try again.');
-		}
-	}
 
-	// Fetch tab info and render content is not in preview mode from admin side
-	// if (!window.location.href.includes('post.php')) {
-	//fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
-	try {
-		(async () => {
-			await fetch_tab_info(
-				tabContentElement,
-				tabContentContainer,
-				tab_label,
-				tab_id,
-				modal_id,
-				button.id
-			);
-		})();
-	} catch (error) {}
+    //Google tags triggers
+    try {
+        modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID);
+        setupModalMoreInfoLinkTracking(modal_id);
+        setupModalImagesLinkTracking(modal_id);
+    } catch (error) {
+    }
+    
+    
 
-	//Google tags triggers
-	try {
-		modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID);
-		setupModalMoreInfoLinkTracking(modal_id);
-		setupModalImagesLinkTracking(modal_id);
-	} catch (error) {}
 }
+
+/**
+ * Dump computed CSS for every element under a root selector.
+ * Usage:
+ *   dumpComputedCSS('#myDiv');
+ */
+// function dumpComputedCSS(rootSelector, { includeRoot = true, onlyChangedFromDefault = false } = {}) {
+//     const root = document.querySelector(rootSelector);
+//     if (!root) throw new Error(`Root not found: ${rootSelector}`);
+  
+//     const elements = includeRoot ? [root, ...root.querySelectorAll('*')] : [...root.querySelectorAll('*')];
+  
+//     // Build a "default" computed style map per tag name (optional filter)
+//     const defaultCache = new Map();
+//     function getDefaultComputed(tagName) {
+//       tagName = tagName.toLowerCase();
+//       if (defaultCache.has(tagName)) return defaultCache.get(tagName);
+  
+//       const el = document.createElement(tagName);
+//       // Put it offscreen so it still gets computed styles
+//       el.style.all = 'initial';
+//       el.style.position = 'absolute';
+//       el.style.left = '-99999px';
+//       el.style.top = '-99999px';
+//       document.body.appendChild(el);
+  
+//       const cs = getComputedStyle(el);
+//       const obj = {};
+//       for (const prop of cs) obj[prop] = cs.getPropertyValue(prop);
+  
+//       el.remove();
+//       defaultCache.set(tagName, obj);
+//       return obj;
+//     }
+  
+//     const lines = [];
+  
+//     for (const el of elements) {
+//       const cs = getComputedStyle(el);
+//       const selector = cssPath(el, root);
+  
+//       const defaults = onlyChangedFromDefault ? getDefaultComputed(el.tagName) : null;
+//       const props = [];
+  
+//       for (const prop of cs) {
+//         const val = cs.getPropertyValue(prop);
+//         if (!val) continue;
+//         if (onlyChangedFromDefault && defaults && defaults[prop] === val) continue;
+//         props.push(`  ${prop}: ${val};`);
+//       }
+  
+//       // Skip elements with no properties (possible if filtering)
+//       if (!props.length) continue;
+  
+//       lines.push(`${selector} {`);
+//       lines.push(...props);
+//       lines.push(`}\n`);
+//     }
+  
+//     const cssText = lines.join('\n');
+//     console.log(cssText);
+//     return cssText;
+  
+//     // Builds a stable-ish selector path relative to root
+//     function cssPath(el, rootEl) {
+//       if (el === rootEl) return rootSelector;
+  
+//       const parts = [];
+//       let node = el;
+  
+//       while (node && node.nodeType === 1 && node !== rootEl) {
+//         let part = node.nodeName.toLowerCase();
+  
+//         if (node.id) {
+//           part += `#${CSS.escape(node.id)}`;
+//           parts.unshift(part);
+//           break; // ID is usually unique enough
+//         } else {
+//           // Add nth-of-type for uniqueness among siblings of same tag
+//           const parent = node.parentElement;
+//           if (parent) {
+//             const sameType = [...parent.children].filter(c => c.nodeName === node.nodeName);
+//             if (sameType.length > 1) {
+//               const idx = sameType.indexOf(node) + 1;
+//               part += `:nth-of-type(${idx})`;
+//             }
+//           }
+//         }
+  
+//         parts.unshift(part);
+//         node = node.parentElement;
+//       }
+  
+//       return `${rootSelector} ${parts.join(' > ')}`;
+//     }
+//   }
+

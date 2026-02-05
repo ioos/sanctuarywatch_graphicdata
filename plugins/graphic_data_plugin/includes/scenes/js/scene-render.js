@@ -1,3 +1,4 @@
+
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
  * @return {string} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
@@ -155,614 +156,552 @@ async function make_title() {
  */
 
 function mobile_helper(svgElement, iconsArr, mobile_icons) {
-	// Clear any existing mobile layout DOM container
-	remove_outer_div();
-
-	// Grab the <defs> section of the SVG (symbol definitions, gradients, etc.)
-	const defs = svgElement.firstElementChild;
-	const scene_toc_style = scene_data.scene_toc_style;
-
-	function groupIconsBySection(iconsArr) {
-		const grouped = {};
-		const sectionOrderMap = {};
-		iconsArr.forEach((iconId) => {
-			if (
-				scene_same_hover_color_sections !== 'yes' &&
-				childObj[iconId] !== 'None'
-			) {
-				const section_num = childObj[iconId].section_name;
-				const modal_icon_order = childObj[iconId].modal_icon_order;
-				const modal_title = childObj[iconId].title;
-				const this_scene_section = `scene_section${section_num}`;
-				const this_scene_section_title = `scene_section_title${section_num}`;
-				const this_color = `scene_section_hover_color${section_num}`;
-				const text_color = `scene_section_hover_text_color${section_num}`;
-				const hoverColor = scene_data[this_scene_section][this_color];
-				const sectionTitle =
-					scene_data[this_scene_section][this_scene_section_title];
-				const hoverTextColor =
-					scene_data[this_scene_section][text_color];
-				const groupTitle = sectionTitle || 'Other';
-
-				// Track section_num for sorting later
-				sectionOrderMap[groupTitle] = parseInt(section_num);
-
-				if (!grouped[groupTitle]) {
-					grouped[groupTitle] = {
-						sectionNum: parseInt(section_num),
-						sectionColor: hoverColor,
-						textColor: hoverTextColor,
-						modal_titles: [],
-						modal_orders: [],
-						iconIds: [],
-					};
-				}
-				grouped[groupTitle].iconIds.push(iconId);
-				grouped[groupTitle].modal_titles.push(modal_title);
-				grouped[groupTitle].modal_orders.push(modal_icon_order);
-			}
-			if (scene_same_hover_color_sections == 'yes') {
-				const section_num = childObj[iconId].section_name;
-				const modal_icon_order = childObj[iconId].modal_icon_order;
-				const modal_title = childObj[iconId].title;
-				const this_scene_section = `scene_section${section_num}`;
-				const this_scene_section_title = `scene_section_title${section_num}`;
-				const hoverColor = scene_default_hover_color;
-				const sectionTitle =
-					scene_data[this_scene_section][this_scene_section_title];
-				const hoverTextColor = scene_default_hover_text_color;
-				const groupTitle = sectionTitle || 'Other';
-
-				// Track section_num for sorting later
-				sectionOrderMap[groupTitle] = parseInt(section_num);
-
-				if (!grouped[groupTitle]) {
-					grouped[groupTitle] = {
-						sectionNum: parseInt(section_num),
-						sectionColor: hoverColor,
-						textColor: hoverTextColor,
-						modal_titles: [],
-						modal_orders: [],
-						iconIds: [],
-					};
-				}
-				grouped[groupTitle].iconIds.push(iconId);
-				grouped[groupTitle].modal_titles.push(modal_title);
-				grouped[groupTitle].modal_orders.push(modal_icon_order);
-			}
-		});
-
-		// Sort group titles by section_num
-		const sortedGroupTitles = Object.entries(sectionOrderMap)
-			.sort((a, b) => a[1] - b[1]) // sort by section_num
-			.map((entry) => entry[0]); // get groupTitle
-
-		// Rebuild grouped and hoverColors in sorted order
-		const groupedSorted = {};
-
-		sortedGroupTitles.forEach((groupTitle) => {
-			const group = grouped[groupTitle];
-
-			// Combine icon data into sortable array
-			const combined = group.iconIds.map((iconId, i) => ({
-				iconId,
-				order: group.modal_orders[i] ?? 9999, // fallback for undefined/null
-				title: group.modal_titles[i] ?? '',
-			}));
-
-			// Sort: first by modal_icon_order (numerically), then by title (alphabetically)
-			combined.sort((a, b) => {
-				const orderA = parseInt(a.order, 10);
-				const orderB = parseInt(b.order, 10);
-				if (orderA === orderB) {
-					return a.title.localeCompare(b.title);
-				}
-				return orderA - orderB;
-			});
-
-			// Overwrite iconIds with sorted version
-			group.iconIds = combined.map((item) => item.iconId);
-
-			// Clean up: no need to keep modal_titles/modal_orders unless needed later
-			delete group.modal_titles;
-			delete group.modal_orders;
-
-			groupedSorted[groupTitle] = group;
-		});
-
-		return groupedSorted;
-	}
-
-	function getSortedIconsArr(iconsArr) {
-		const sortable = iconsArr.map((iconId) => {
-			return {
-				iconId,
-				modal_icon_order:
-					parseFloat(childObj[iconId]?.modal_icon_order) || 0,
-				modal_title: childObj[iconId]?.title || '',
-			};
-		});
-
-		sortable.sort((a, b) => {
-			if (a.modal_icon_order !== b.modal_icon_order) {
-				return a.modal_icon_order - b.modal_icon_order;
-			}
-			return a.modal_title.localeCompare(b.modal_title);
-		});
-
-		const sortedIconArr = sortable.map((item) => item.iconId);
-		return sortedIconArr;
-	}
-
-	async function buildAccordionLayout(groupedIcons, numCols, numRows) {
-		const outer_cont = document.querySelector('body > div.container-fluid');
-		outer_cont.innerHTML = '';
-
-		Object.entries(groupedIcons).forEach(
-			([sectionTitle, sectionData], groupIndex) => {
-				const { sectionNum, sectionColor, textColor, iconIds } =
-					sectionData;
-
-				let renderedIcons = 0;
-
-				const accordionWrapper = document.createElement('div');
-				accordionWrapper.classList.add('accordion-group');
-
-				const header = document.createElement('div');
-				header.classList.add('accordion-header');
-				header.textContent = sectionTitle;
-				header.style.cursor = 'pointer';
-				header.style.padding = '12px';
-				header.style.marginRight = '7px';
-				header.style.marginLeft = '7px';
-				header.style.backgroundColor = sectionColor;
-				header.style.fontWeight = 'bold';
-				header.style.color = textColor;
-				//header.style.border = "1px solid #ccc";
-				header.style.borderRadius = '10px';
-				header.style.marginBottom = '16px';
-				header.style.textAlign = 'center';
-				header.innerHTML = `${sectionTitle} <i class="fas fa-chevron-down" style="float: right; padding-right: 12px; padding-top: 5px;"></i>`;
-				header.setAttribute(
-					'data-target',
-					`accordion-body-${groupIndex}`
-				);
-
-				accordionWrapper.appendChild(header);
-
-				const body = document.createElement('div');
-				body.classList.add('accordion-body');
-				body.setAttribute('id', `accordion-body-${groupIndex}`);
-				body.style.display = 'none';
-				//body.style.padding = "10px";
-				body.style.border = '';
-
-				let idx = 0; // Index of current icon in iconsArr
-				// Create the grid rows
-				for (let i = 0; i < numRows; i++) {
-					const row_cont = document.createElement('div');
-					row_cont.classList.add(
-						'row',
-						'flex-wrap',
-						'justify-content-center'
-					);
-					row_cont.setAttribute('id', `row-${i}`);
-
-					// Create the columns in each row
-					for (let j = 0; j < numCols; j++) {
-						if (idx < iconIds.length) {
-							// Create a Bootstrap column container for each icon
-							const cont = document.createElement('div');
-							cont.classList.add('col-4');
-							cont.style.paddingBottom = '10px';
-							cont.style.paddingTop = '10px';
-							cont.style.paddingLeft = '5px';
-							cont.style.paddingRight = '5px';
-							cont.style.fontWeight = 'bold';
-							cont.style.border = '1px solid #000';
-							cont.style.background =
-								instance_color_settings.instance_mobile_tile_background_color;
-							cont.style.color =
-								instance_color_settings.instance_mobile_tile_text_color;
-							cont.style.overflow = 'hidden';
-
-							// Identify the current icon ID
-							const currIcon = iconIds[idx];
-							let key;
-
-							if (
-								childObj[currIcon] &&
-								childObj[currIcon].section_name == sectionNum
-							) {
-								// If there is no mobile layer, use the default icon layer
-								if (!has_mobile_layer(mobile_icons, currIcon)) {
-									key = svgElement
-										.querySelector(`#${currIcon}`)
-										.cloneNode(true);
-								} else {
-									// Try to get the mobile-specific version of the icon
-									const currIconMobile = currIcon + '-mobile';
-									const mobileLayerElement = get_mobile_layer(
-										mobile_icons,
-										currIconMobile
-									);
-
-									if (mobileLayerElement) {
-										key =
-											mobileLayerElement.cloneNode(true);
-									} else {
-										console.warn(
-											`Mobile layer for ${currIcon} expected but not found. Using default.`
-										);
-										key = svgElement
-											.querySelector(`#${currIcon}`)
-											.cloneNode(true);
-									}
-								}
-
-								if (!key) {
-									console.error(
-										`Could not find SVG element for icon: ${currIcon}`
-									);
-									continue; // Skip rendering if the icon couldn't be found
-								}
-								// Set a unique ID for the container
-								cont.setAttribute(
-									'id',
-									`${currIcon}-container`
-								);
-
-								// Create a blank SVG container
-								// Add shared <defs> and icon content to the new SVG
-								const svgClone = document.createElementNS(
-									'http://www.w3.org/2000/svg',
-									'svg'
-								);
-								svgClone.setAttribute(
-									'xmlns',
-									'http://www.w3.org/2000/svg'
-								);
-								svgClone.setAttribute(
-									'xmlns:xlink',
-									'http://www.w3.org/1999/xlink'
-								);
-								svgClone.append(defs.cloneNode(true));
-								svgClone.append(key);
-								cont.appendChild(svgClone);
-
-								// Add a caption below the icon using childObj data
-								const caption = document.createElement('div');
-								if (childObj[currIcon]) {
-									caption.innerText =
-										childObj[currIcon].title;
-								} else {
-									caption.innerText =
-										'not in wp yet, have to add';
-								}
-								caption.style.paddingBottom = '10px';
-								//caption.style.fontSize = "14px";
-								//caption.style.fontSize = "3.15vw";
-								caption.style.overflow = 'hidden';
-
-								const maxChars2 = 30; // your character limit
-								const maxChars3 = 40; // your character limit
-								const maxChars1 = 11; // your character limit
-
-								if (caption.textContent.length <= maxChars1) {
-									// Text is longer than limit — apply a certain style or class
-									caption.style.fontSize = '12px'; // Example: smaller font size
-									// or
-									caption.classList.add('small-text'); // Example: add CSS class controlling size
-								}
-								if (
-									caption.textContent.length > maxChars1 &&
-									caption.textContent.length <= maxChars2
-								) {
-									// Text is longer than limit — apply a certain style or class
-									caption.style.fontSize = '11px'; // Example: smaller font size
-									// or
-									caption.classList.add('small-text'); // Example: add CSS class controlling size
-								}
-								if (
-									caption.textContent.length > maxChars3 &&
-									caption.textContent.length <= maxChars3
-								) {
-									// Text is longer than limit — apply a certain style or class
-									caption.style.fontSize = '10.5px'; // Example: smaller font size
-									// or
-									caption.classList.add('small-text'); // Example: add CSS class controlling size
-								}
-								if (caption.textContent.length > maxChars3) {
-									// Text is longer than limit — apply a certain style or class
-									caption.style.fontSize = '10px'; // Example: smaller font size
-									// or
-									caption.classList.add('small-text'); // Example: add CSS class controlling size
-								} else {
-									// Reset or apply default style
-									caption.style.fontSize = '14px';
-									caption.classList.remove('small-text');
-								}
-
-								// Set to last fitting size
-								//caption.style.maxHeight = '10%'; // Add some space between icon and caption
-								cont.appendChild(caption);
-
-								// Append this icon container to the row
-								row_cont.appendChild(cont);
-
-								// Adjust the <svg>'s viewBox to fit the icon neatly
-
-								body.style.display = 'block'; // temporarily force visible
-								requestAnimationFrame(() => {
-									const bbox = key.getBBox();
-									svgClone.setAttribute(
-										'viewBox',
-										`${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`
-									);
-									renderedIcons++;
-									console.log(
-										`Rendered icon: ${currIcon}, total rendered: ${renderedIcons}`
-									);
-									if (renderedIcons === iconIds.length) {
-										body.style.display = 'none'; // only hide once ALL icons are done
-									}
-								});
-							}
-							idx++; // Move to next icon
-						}
-					}
-					// Apply margin fix for outer container and append the row
-					//body.style.marginLeft = '-1.5%';
-					body.appendChild(row_cont);
-				}
-
-				accordionWrapper.appendChild(body);
-				outer_cont.appendChild(accordionWrapper);
-				outer_cont.style.maxWidth = '95%';
-
-				header.addEventListener('click', () => {
-					const current = document.getElementById(
-						header.getAttribute('data-target')
-					);
-					const isVisible = current.style.display === 'block';
-					current.style.display = isVisible ? 'none' : 'block';
-				});
-			}
-		);
-	}
-
-	/**
-	 * Builds the responsive grid layout of icons using a Bootstrap-style grid.
-	 * For each icon, clones the appropriate layer (standard or mobile), wraps it in a mini <svg>,
-	 * and adds it to a <div> container with caption text.
-	 * @param numCols
-	 * @param numRows
-	 */
-	function updateLayout(numCols, numRows) {
-		// Select and clear the container that will hold all icon rows
-		const outer_cont = document.querySelector('body > div.container-fluid');
-		outer_cont.innerHTML = '';
-
-		if (
-			scene_toc_style === 'accordion' ||
-			scene_toc_style === 'sectioned_list'
-		) {
-			const groupedIcons = groupIconsBySection(iconsArr);
-			buildAccordionLayout(groupedIcons, numCols, numRows);
-			return;
-		}
-
-		if (scene_toc_style === '' || scene_toc_style === 'list') {
-			orderedIcons = getSortedIconsArr(iconsArr);
-			let idx = 0; // Index of current icon in iconsArr
-			// Create the grid rows
-			for (let i = 0; i < numRows; i++) {
-				const row_cont = document.createElement('div');
-				row_cont.classList.add(
-					'row',
-					'flex-wrap',
-					'justify-content-center'
-				);
-				row_cont.setAttribute('id', `row-${i}`);
-
-				// Create the columns in each row
-				for (let j = 0; j < numCols; j++) {
-					if (idx < orderedIcons.length) {
-						// Create a Bootstrap column container for each icon
-						const cont = document.createElement('div');
-						cont.classList.add('col-4');
-						cont.style.paddingBottom = '10px';
-						cont.style.paddingTop = '20px';
-						cont.style.fontWeight = 'bold';
-						cont.style.border = '1px solid #000';
-						cont.style.paddingLeft = '5px';
-						cont.style.paddingRight = '5px';
-						cont.style.background =
-							instance_color_settings.instance_mobile_tile_background_color;
-						cont.style.color =
-							instance_color_settings.instance_mobile_tile_text_color;
-
-						// Create a blank SVG container
-						const svgClone = document.createElementNS(
-							'http://www.w3.org/2000/svg',
-							'svg'
-						);
-						svgClone.setAttribute(
-							'xmlns',
-							'http://www.w3.org/2000/svg'
-						);
-						svgClone.setAttribute(
-							'xmlns:xlink',
-							'http://www.w3.org/1999/xlink'
-						);
-						cont.appendChild(svgClone);
-
-						// Identify the current icon ID
-						const currIcon = orderedIcons[idx];
-						let key;
-
-						// If there is no mobile layer, use the default icon layer
-						if (!has_mobile_layer(mobile_icons, currIcon)) {
-							key = svgElement
-								.querySelector(`#${currIcon}`)
-								.cloneNode(true);
-						} else {
-							// Try to get the mobile-specific version of the icon
-							const currIconMobile = currIcon + '-mobile';
-							const mobileLayerElement = get_mobile_layer(
-								mobile_icons,
-								currIconMobile
-							);
-
-							if (mobileLayerElement) {
-								key = mobileLayerElement.cloneNode(true);
-							} else {
-								console.warn(
-									`Mobile layer for ${currIcon} expected but not found. Using default.`
-								);
-								key = svgElement
-									.querySelector(`#${currIcon}`)
-									.cloneNode(true);
-							}
-						}
-
-						if (!key) {
-							console.error(
-								`Could not find SVG element for icon: ${currIcon}`
-							);
-							continue; // Skip rendering if the icon couldn't be found
-						}
-						// Set a unique ID for the container
-						cont.setAttribute('id', `${currIcon}-container`);
-
-						// Add shared <defs> and icon content to the new SVG
-						svgClone.append(defs.cloneNode(true));
-						svgClone.append(key);
-
-						// Add a caption below the icon using childObj data
-						const caption = document.createElement('div');
-						if (childObj[currIcon]) {
-							caption.innerText = childObj[currIcon].title;
-						} else {
-							caption.innerText = 'not in wp yet, have to add';
-						}
-						caption.style.fontSize = '14px';
-						caption.style.paddingBottom = '10px';
-						cont.appendChild(caption);
-
-						// Append this icon container to the row
-						row_cont.appendChild(cont);
-
-						// Adjust the <svg>'s viewBox to fit the icon neatly
-						setTimeout(() => {
-							const bbox = key.getBBox();
-							svgClone.setAttribute(
-								'viewBox',
-								`${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`
-							);
-						}, 0);
-
-						idx++; // Move to next icon
-					}
-				}
-				// Apply margin fix for outer container and append the row
-				//outer_cont.style.marginLeft = '-1.5%';
-				outer_cont.appendChild(row_cont);
-			}
-		}
-	}
-
-	/**
-	 * Dynamically sets the number of columns and rows depending on screen orientation.
-	 * It also updates layout and adjusts styling for elements on landscape vs portrait.
-	 */
-	function updateNumCols() {
-		console.log('updateNumCols fired (debounced)');
-
-		let numCols;
-		let numRows;
-
-		// Default style values for portrait
-		const ogMobViewImage =
-			'transform: scale(0.3); margin-right: 65%; margin-top: -70%; margin-bottom: -70%';
-		const ogSceneFluid = 'margin-top: 70%;'; //margin-left: -1.5%;
-		const colmd2 = document.querySelector(
-			'#title-container > div > div.col-md-2'
-		);
-		const ogColmd2 = colmd2.getAttribute('style', '');
-
-		// === LANDSCAPE MODE ===
-		if (window.innerWidth > window.innerHeight) {
-			numCols = 4;
-
-			document
-				.querySelector('#mobile-view-image')
-				.setAttribute(
-					'style',
-					'transform: scale(0.5); margin-right: 35%; margin-top: -23%'
-				);
-			document
-				.querySelector('#scene-fluid')
-				.setAttribute('style', 'margin-top: 25%; display: block'); //margin-left: -1.5%;
-			document
-				.querySelector('#title-container > div > div.col-md-2')
-				.setAttribute('style', 'width: 100%');
-			document
-				.querySelector('#mobileModal > div')
-				.setAttribute(
-					'style',
-					'z-index: 9999;margin-top: 5%;max-width: 88%;'
-				);
-			document
-				.querySelector('#myModal > div')
-				.setAttribute(
-					'style',
-					'z-index: 9999;margin-top: 5%;max-width: 88%;'
-				);
-
-			// === PORTRAIT MODE ===
-		} else {
-			numCols = 3;
-
-			const mobViewImage = document.querySelector('#mobile-view-image');
-			mobViewImage.setAttribute('style', ''); // Clear
-			mobViewImage.setAttribute('style', ogMobViewImage);
-
-			const sceneFluid = document.querySelector('#scene-fluid');
-			sceneFluid.setAttribute('style', '');
-			sceneFluid.setAttribute('style', ogSceneFluid);
-
-			colmd2.setAttribute('style', '');
-			colmd2.setAttribute('style', ogColmd2);
-
-			document
-				.querySelector('#mobileModal > div')
-				.setAttribute(
-					'style',
-					'z-index: 9999;margin-top: 5%;max-width: 88%;'
-				);
-			document
-				.querySelector('#myModal > div')
-				.setAttribute(
-					'style',
-					'z-index: 9999;margin-top: 5%;max-width: 88%;'
-				);
-		}
-
-		// Calculate the number of rows based on icon count
-		numRows = Math.ceil(iconsArr.length / numCols);
-
-		// Apply the layout update
-		updateLayout(numCols, numRows);
-		add_modal(); // Reattach modals (tooltip/dialog logic)
-	}
-
-	// === Initial Setup ===
-	updateNumCols(); // Build layout based on current orientation
-
-	// === Listen for window resizes (debounced) ===
-	const debouncedUpdateNumCols = debounce(updateNumCols, 250);
-	window.addEventListener('resize', debouncedUpdateNumCols);
+    // Clear any existing mobile layout DOM container
+    
+    if (!window.location.href.includes('post.php')) {
+        remove_outer_div();
+    }
+    
+    // Grab the <defs> section of the SVG (symbol definitions, gradients, etc.)
+    let defs = svgElement.firstElementChild;
+    let scene_toc_style = scene_data.scene_toc_style;
+
+    function groupIconsBySection(iconsArr) {
+        
+        const grouped = {};
+        const sectionOrderMap = {};
+        iconsArr.forEach(iconId => {
+
+            if (scene_same_hover_color_sections !== "yes" && child_obj[iconId] !== "None") {
+                let section_num = child_obj[iconId].section_name;
+                let modal_icon_order = child_obj[iconId].modal_icon_order;
+                let modal_title = child_obj[iconId].title;
+                let this_scene_section = `scene_section${section_num}`;
+                let this_scene_section_title = `scene_section_title${section_num}`;
+                let this_color = `scene_section_hover_color${section_num}`;
+                let text_color = `scene_section_hover_text_color${section_num}`;
+                const hoverColor = scene_data[this_scene_section][this_color];
+                const sectionTitle = scene_data[this_scene_section][this_scene_section_title];
+                const hoverTextColor = scene_data[this_scene_section][text_color];
+                const groupTitle = sectionTitle || "Other";
+                
+                // Track section_num for sorting later
+                sectionOrderMap[groupTitle] = parseInt(section_num);
+
+                if (!grouped[groupTitle]) {
+                    grouped[groupTitle] = {
+                        sectionNum: parseInt(section_num),
+                        sectionColor: hoverColor,
+                        textColor: hoverTextColor,
+                        modal_titles: [],
+                        modal_orders: [],
+                        iconIds: []
+                    };
+                }
+                grouped[groupTitle].iconIds.push(iconId);
+                grouped[groupTitle].modal_titles.push(modal_title);
+                grouped[groupTitle].modal_orders.push(modal_icon_order);
+            }
+            if (scene_same_hover_color_sections == "yes") {
+                let section_num = child_obj[iconId].section_name;
+                let modal_icon_order = child_obj[iconId].modal_icon_order;
+                let modal_title = child_obj[iconId].title;
+                let this_scene_section = `scene_section${section_num}`;
+                let this_scene_section_title = `scene_section_title${section_num}`;
+                const hoverColor = scene_default_hover_color;
+                const sectionTitle = scene_data[this_scene_section][this_scene_section_title] ;
+                const hoverTextColor = scene_default_hover_text_color;
+                const groupTitle = sectionTitle || "Other";
+
+                // Track section_num for sorting later
+                sectionOrderMap[groupTitle] = parseInt(section_num);
+
+                if (!grouped[groupTitle]) {
+                    grouped[groupTitle] = {
+                        sectionNum: parseInt(section_num),
+                        sectionColor: hoverColor,
+                        textColor: hoverTextColor,
+                        modal_titles: [],
+                        modal_orders: [],
+                        iconIds: []
+                    };
+                }
+                grouped[groupTitle].iconIds.push(iconId);
+                grouped[groupTitle].modal_titles.push(modal_title);
+                grouped[groupTitle].modal_orders.push(modal_icon_order);
+            }
+        });
+
+        // Sort group titles by section_num
+        const sortedGroupTitles = Object.entries(sectionOrderMap)
+            .sort((a, b) => a[1] - b[1]) // sort by section_num
+            .map(entry => entry[0]);     // get groupTitle
+
+        // Rebuild grouped and hoverColors in sorted order
+        const groupedSorted = {};
+
+        sortedGroupTitles.forEach(groupTitle => {
+            const group = grouped[groupTitle];
+
+            // Combine icon data into sortable array
+            const combined = group.iconIds.map((iconId, i) => ({
+                iconId,
+                order: group.modal_orders[i] ?? 9999,  // fallback for undefined/null
+                title: group.modal_titles[i] ?? ""
+            }));
+
+            // Sort: first by modal_icon_order (numerically), then by title (alphabetically)
+            combined.sort((a, b) => {
+                const orderA = parseInt(a.order, 10);
+                const orderB = parseInt(b.order, 10);
+                if (orderA === orderB) {
+                    return a.title.localeCompare(b.title);
+                }
+                return orderA - orderB;
+            });
+
+            // Overwrite iconIds with sorted version
+            group.iconIds = combined.map(item => item.iconId);
+
+            // Clean up: no need to keep modal_titles/modal_orders unless needed later
+            delete group.modal_titles;
+            delete group.modal_orders;
+
+            groupedSorted[groupTitle] = group;
+        });
+
+        return groupedSorted;
+    }
+
+    function getSortedIconsArr(iconsArr) {
+        const sortable = iconsArr.map(iconId => {
+            return {
+                iconId,
+                modal_icon_order: parseFloat(child_obj[iconId]?.modal_icon_order) || 0,
+                modal_title: child_obj[iconId]?.title || ''
+            };
+        });
+
+        sortable.sort((a, b) => {
+            if (a.modal_icon_order !== b.modal_icon_order) {
+                return a.modal_icon_order - b.modal_icon_order;
+            }
+            return a.modal_title.localeCompare(b.modal_title);
+        });
+
+        const sortedIconArr = sortable.map(item => item.iconId);
+        return sortedIconArr;
+    }
+
+    async function buildAccordionLayout(groupedIcons, numCols, numRows) {
+        const outer_cont = document.querySelector("body > div.container-fluid");
+        outer_cont.innerHTML = '';
+
+        Object.entries(groupedIcons).forEach(([sectionTitle, sectionData], groupIndex) => {
+            const { sectionNum, sectionColor, textColor, iconIds } = sectionData;
+
+            let renderedIcons = 0;
+
+            const accordionWrapper = document.createElement("div");
+            accordionWrapper.classList.add("accordion-group");
+
+            const header = document.createElement("div");
+            header.classList.add("accordion-header");
+            header.textContent = sectionTitle;
+            header.style.cursor = "pointer";
+            header.style.padding = "12px";
+            header.style.marginRight = "7px";
+            header.style.marginLeft = "7px";
+            header.style.backgroundColor = sectionColor; 
+            header.style.fontWeight = "bold";
+            header.style.color = textColor;
+            //header.style.border = "1px solid #ccc";
+            header.style.borderRadius = "10px";
+            header.style.marginBottom = "16px";
+            header.style.textAlign = "center";
+            header.innerHTML = `${sectionTitle} <i class="fas fa-chevron-down" style="float: right; padding-right: 12px; padding-top: 5px;"></i>`;
+            header.setAttribute("data-target", `accordion-body-${groupIndex}`);
+
+            accordionWrapper.appendChild(header);
+
+            const body = document.createElement("div");
+            body.classList.add("accordion-body");
+            body.setAttribute("id", `accordion-body-${groupIndex}`);
+            body.style.display = "none";
+            //body.style.padding = "10px";
+            body.style.border = "";
+
+            let idx = 0; // Index of current icon in iconsArr
+            // Create the grid rows
+            for (let i = 0; i < numRows; i++) {
+                let row_cont = document.createElement("div");
+                row_cont.classList.add("row", "flex-wrap", "justify-content-center");
+                row_cont.setAttribute("id", `row-${i}`);
+
+
+                // Create the columns in each row
+                for (let j = 0; j < numCols; j++) {
+                    if (idx < iconIds.length) {
+                        // Create a Bootstrap column container for each icon
+                        let cont = document.createElement("div");
+                        cont.classList.add("col-4");
+                        cont.style.paddingBottom = '10px';
+                        cont.style.paddingTop = '10px';
+                        cont.style.paddingLeft = '5px';
+                        cont.style.paddingRight = '5px';
+                        cont.style.fontWeight = 'bold'; 
+                        cont.style.border = '1px solid #000';
+                        cont.style.background = instance_color_settings["instance_mobile_tile_background_color"];
+                        cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
+                        cont.style.overflow = 'hidden';
+
+
+                        // Identify the current icon ID
+                        let currIcon = iconIds[idx];
+                        let key;
+
+                        if (child_obj[currIcon] && child_obj[currIcon].section_name == sectionNum) {
+
+                            // If there is no mobile layer, use the default icon layer
+                            if (!has_mobile_layer(mobile_icons, currIcon)) {
+                                key = svgElement.querySelector(`#${currIcon}`).cloneNode(true);
+                            } else {
+                                // Try to get the mobile-specific version of the icon
+                                const currIconMobile = currIcon + "-mobile";
+                                const mobileLayerElement = get_mobile_layer(mobile_icons, currIconMobile);
+
+                                if (mobileLayerElement) {
+                                    key = mobileLayerElement.cloneNode(true);
+                                } else {
+                                    console.warn(`Mobile layer for ${currIcon} expected but not found. Using default.`);
+                                    key = svgElement.querySelector(`#${currIcon}`).cloneNode(true);
+                                }
+                            }
+
+                            if (!key) {
+                                console.error(`Could not find SVG element for icon: ${currIcon}`);
+                                continue; // Skip rendering if the icon couldn't be found
+                            }
+                            // Set a unique ID for the container
+                            cont.setAttribute("id", `${currIcon}-container`);
+                            
+                            // Create a blank SVG container
+                            // Add shared <defs> and icon content to the new SVG
+                            let svgClone = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                            svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                            svgClone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+                            svgClone.append(defs.cloneNode(true));
+                            svgClone.append(key);
+                            cont.appendChild(svgClone);
+
+                            // Add a caption below the icon using child_obj data
+                            let caption = document.createElement("div");
+                            if (child_obj[currIcon]) {
+                                caption.innerText = child_obj[currIcon].title;
+                            } else {
+                                caption.innerText = "not in wp yet, have to add";
+                            }
+                            caption.style.paddingBottom = '10px';
+                            //caption.style.fontSize = "14px";
+                            //caption.style.fontSize = "3.15vw";
+                            caption.style.overflow = "hidden";
+
+                            const maxChars2 = 30;  // your character limit
+                            const maxChars3 = 40;  // your character limit
+                            const maxChars1 = 11;  // your character limit
+                        
+                            
+                            if (caption.textContent.length <= maxChars1) {
+                            // Text is longer than limit — apply a certain style or class
+                            caption.style.fontSize = '12px';     // Example: smaller font size
+                            // or
+                            caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            }
+                            if (caption.textContent.length > maxChars1 && caption.textContent.length <= maxChars2) {
+                            // Text is longer than limit — apply a certain style or class
+                            caption.style.fontSize = '11px';     // Example: smaller font size
+                            // or
+                            caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            } 
+                            if (caption.textContent.length > maxChars3 && caption.textContent.length <= maxChars3) {
+                            // Text is longer than limit — apply a certain style or class
+                            caption.style.fontSize = '10.5px';     // Example: smaller font size
+                            // or
+                            caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            } 
+                            if (caption.textContent.length > maxChars3) {
+                            // Text is longer than limit — apply a certain style or class
+                            caption.style.fontSize = '10px';     // Example: smaller font size
+                            // or
+                            caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            } else {
+                            // Reset or apply default style
+                            caption.style.fontSize = '14px';
+                            caption.classList.remove('small-text');
+                            }
+                            
+                            // Set to last fitting size
+                            //caption.style.maxHeight = '10%'; // Add some space between icon and caption
+                            cont.appendChild(caption);
+
+                            // Append this icon container to the row
+                            row_cont.appendChild(cont);
+
+                            // Adjust the <svg>'s viewBox to fit the icon neatly
+                           
+                            body.style.display = "block"; // temporarily force visible
+                            requestAnimationFrame(() => {
+                                const bbox = key.getBBox();
+                                svgClone.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
+                                renderedIcons++;
+                                //console.log(`Rendered icon: ${currIcon}, total rendered: ${renderedIcons}`);
+                                if (renderedIcons === iconIds.length) {
+                                    body.style.display = "none"; // only hide once ALL icons are done
+                                } 
+                            });
+
+                        }
+                    idx++; // Move to next icon
+                    }
+                }
+                // Apply margin fix for outer container and append the row
+                //body.style.marginLeft = '-1.5%';
+                body.appendChild(row_cont);
+            }       
+            
+            accordionWrapper.appendChild(body);
+            outer_cont.appendChild(accordionWrapper);
+            outer_cont.style.maxWidth = "95%";
+
+            header.addEventListener("click", () => {
+                const current = document.getElementById(header.getAttribute("data-target"));
+                const isVisible = current.style.display === "block";
+                current.style.display = isVisible ? "none" : "block";
+            });
+        });
+    }
+
+    /**
+     * Builds the responsive grid layout of icons using a Bootstrap-style grid.
+     * For each icon, clones the appropriate layer (standard or mobile), wraps it in a mini <svg>,
+     * and adds it to a <div> container with caption text.
+     */
+    function updateLayout(numCols, numRows) {
+
+        // Select and clear the container that will hold all icon rows
+
+        let outer_cont;
+        if (window.location.href.includes('post.php')) {
+            outer_cont = document.querySelectorAll(".container-fluid")[0];
+            outer_cont.innerHTML = '';
+        } else {
+            outer_cont = document.querySelector("body > div.container-fluid");
+            outer_cont.innerHTML = '';
+        }
+
+        if (scene_toc_style === "accordion" || scene_toc_style === "sectioned_list") {
+            const groupedIcons = groupIconsBySection(iconsArr);
+            buildAccordionLayout(groupedIcons, numCols, numRows);
+            return;
+        }
+
+        if (scene_toc_style === "" || scene_toc_style === "list") {
+
+            if (window.location.href.includes('post.php')) {
+                orderedIcons = iconsArr;
+            } else {
+                orderedIcons = getSortedIconsArr(iconsArr);
+            }
+
+            let idx = 0; // Index of current icon in iconsArr
+            // Create the grid rows
+            for (let i = 0; i < numRows; i++) {
+                let row_cont = document.createElement("div");
+                row_cont.classList.add("row", "flex-wrap", "justify-content-center");
+                row_cont.setAttribute("id", `row-${i}`);
+
+                // Create the columns in each row
+                for (let j = 0; j < numCols; j++) {
+                    if (idx < orderedIcons.length) {
+                        // Create a Bootstrap column container for each icon
+                        let cont = document.createElement("div");
+                        cont.classList.add("col-4");
+                        cont.style.paddingBottom = '10px';
+                        cont.style.paddingTop = '20px';
+                        cont.style.fontWeight = 'bold'; 
+                        cont.style.border = '1px solid #000';
+                        cont.style.paddingLeft = '5px';
+                        cont.style.paddingRight = '5px';
+
+                        if (window.location.href.includes('post.php')) {
+                            cont.style.background = '#f0f0f0';
+                            cont.style.color = 'inherit';
+                        } else {
+                            cont.style.background = instance_color_settings["instance_mobile_tile_background_color"]; 
+                            cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
+                        }
+
+                        // Create a blank SVG container
+                        let svgClone = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                        svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                        svgClone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+                        cont.appendChild(svgClone);
+
+                        // Identify the current icon ID
+                        let currIcon = orderedIcons[idx];
+                        let key;
+
+                        // If there is no mobile layer, use the default icon layer
+                        if (!has_mobile_layer(mobile_icons, currIcon)) {
+                            key = svgElement.querySelector(`#${currIcon}`).cloneNode(true);
+                        } else {
+                            // Try to get the mobile-specific version of the icon
+                            const currIconMobile = currIcon + "-mobile";
+                            const mobileLayerElement = get_mobile_layer(mobile_icons, currIconMobile);
+
+                            if (mobileLayerElement) {
+                                key = mobileLayerElement.cloneNode(true);
+                            } else {
+                                console.warn(`Mobile layer for ${currIcon} expected but not found. Using default.`);
+                                key = svgElement.querySelector(`#${currIcon}`).cloneNode(true);
+                            }
+                        }
+
+                        if (!key) {
+                            console.error(`Could not find SVG element for icon: ${currIcon}`);
+                            continue; // Skip rendering if the icon couldn't be found
+                        }
+                        // Set a unique ID for the container
+                        cont.setAttribute("id", `${currIcon}-container`);
+
+                        // Add shared <defs> and icon content to the new SVG
+                        svgClone.append(defs.cloneNode(true));
+                        svgClone.append(key);
+
+                        // Mobile admin preview functionality
+                        if (window.location.href.includes('post.php')) {
+                            function buildChildIdsFromTitles(titles) {
+                                const child_ids = {};
+                            
+                                if (!Array.isArray(titles)) return child_ids;
+                            
+                                titles.forEach(title => {
+                                    if (!title) return;
+                            
+                                    child_ids[title] = {
+                                        modal: false,
+                                        modal_icon_order: 1,
+                                        modal_id: 0,
+                                        original_name: title,
+                                        section_name: "1",
+                                        title: title
+                                    };
+                                });
+                            
+                                return child_ids;
+                            }
+                            child_obj = buildChildIdsFromTitles(iconsArr);
+                        }  
+
+                        // Add a caption below the icon using child_obj data
+                        let caption = document.createElement("div");
+                        if (child_obj[currIcon]) {
+                            caption.innerText = child_obj[currIcon].title;
+                        } else {
+                            caption.innerText = "not in wp yet, have to add";
+                        }
+                        caption.style.fontSize = "14px";
+                        caption.style.paddingBottom = '10px';
+                        cont.appendChild(caption);
+
+                        // Append this icon container to the row
+                        row_cont.appendChild(cont);
+
+                        // Adjust the <svg>'s viewBox to fit the icon neatly
+                        setTimeout(() => {
+                            let bbox = key.getBBox(); 
+                            svgClone.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
+                        }, 300);
+
+                        idx++; // Move to next icon
+                    }
+                }
+                // Apply margin fix for outer container and append the row
+                //outer_cont.style.marginLeft = '-1.5%';
+                outer_cont.appendChild(row_cont);
+            }
+        }
+    }
+
+    /**
+     * Dynamically sets the number of columns and rows depending on screen orientation.
+     * It also updates layout and adjusts styling for elements on landscape vs portrait.
+     */
+    function updateNumCols() {
+        let numCols;
+        let numRows;
+
+        // Default style values for portrait
+        let ogMobViewImage = 'transform: scale(0.3); margin-right: 65%; margin-top: -70%; margin-bottom: -70%';
+        let ogSceneFluid = 'margin-top: 70%;'; //margin-left: -1.5%;
+        let colmd2 = document.querySelector("#title-container > div > div.col-md-2");
+        let ogColmd2 = colmd2.getAttribute("style", "");
+
+        // === LANDSCAPE MODE ===
+        if (window.innerWidth > window.innerHeight && !window.location.href.includes('post.php')) {
+            numCols = 4;
+
+            document.querySelector("#mobile-view-image").setAttribute("style", "transform: scale(0.5); margin-right: 35%; margin-top: -23%");
+            document.querySelector("#scene-fluid").setAttribute("style", "margin-top: 25%; display: block"); //margin-left: -1.5%;
+            document.querySelector("#title-container > div > div.col-md-2").setAttribute("style", "width: 100%");
+            document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+            document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+
+        // === PORTRAIT MODE ===
+        } else {
+            numCols = 3;
+
+            if (!window.location.href.includes('post.php')) {
+
+                const mobViewImage = document.querySelector("#mobile-view-image");
+                mobViewImage.setAttribute("style", ''); // Clear
+                mobViewImage.setAttribute("style", ogMobViewImage);
+
+                const sceneFluid = document.querySelector("#scene-fluid");
+                sceneFluid.setAttribute("style", '');
+                sceneFluid.setAttribute("style", ogSceneFluid);
+
+                colmd2.setAttribute("style", '');
+                colmd2.setAttribute("style", ogColmd2);
+
+                document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+                document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+            }
+            if (window.location.href.includes('post.php')) {
+                titleContainer = document.querySelector("#title-container > div > div.col-md-2");
+                titleContainer.style.width = '87%';
+                titleContainer.style.paddingLeft = '0%';
+                document.querySelector("#mobile-view-image").setAttribute("style", "width: 100%; margin-right: 0%; margin-top: 0%; margin-bottom: -70%");
+                // const sceneFluid = document.querySelector("#scene-fluid");
+                // sceneFluid.setAttribute("style", '');
+                document.querySelector("#scene-fluid").setAttribute("style", "width: 88%; margin-top: 70%; display: block"); 
+                document.querySelector("#entire_thing").setAttribute("style", "z-index: 9999;max-width: 100%;");
+            }
+        }
+        // Calculate the number of rows based on icon count
+        numRows = Math.ceil(iconsArr.length / numCols);
+
+        // Apply the layout update
+        updateLayout(numCols, numRows);
+        add_modal(); // Reattach modals (tooltip/dialog logic)
+    }
+
+    // === Initial Setup ===
+    updateNumCols(); // Build layout based on current orientation
+
+    // === Listen for window resizes (debounced) ===
+    const debouncedUpdateNumCols = debounce(updateNumCols, 250);
+    window.addEventListener("resize", debouncedUpdateNumCols);
 }
 
 /**
@@ -1002,324 +941,335 @@ function has_mobile_layer(mob_icons, elemname) {
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  */
 async function loadSVG(url, containerId) {
-	// try {
-	// Step 1: Fetch the SVG content
-	//console.log(url);
-	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error('Network response was not ok');
-	}
+    try {
+        // Step 1: Fetch the SVG content
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
 
-	// Step 2: Parse the SVG content
-	const svgText = await response.text();
-	let svgDoc;
-	let svgElement;
+        // Step 2: Parse the SVG content
+        const svgText = await response.text();
+        let svgDoc;
+        let svgElement;
+        
+        // // Check if the SVG contains Inkscape-specific attributes
+        // if (svgText.includes("inkscape:label") || svgText.includes("inkscape:groupmode")) {
+        //     console.log("Inkscape is detected");
 
-	// // Check if the SVG contains Inkscape-specific attributes
-	// if (svgText.includes("inkscape:label") || svgText.includes("inkscape:groupmode")) {
-	//     console.log("Inkscape is detected");
+        //     // 1) Remove inkscape:groupmode only (do not consume rest of the tag)
+        //     const applyRule1 = svgText.replace(/\s+inkscape:groupmode="layer"(?=\s|>)/g, "");
 
-	//     // 1) Remove inkscape:groupmode only (do not consume rest of the tag)
-	//     const applyRule1 = svgText.replace(/\s+inkscape:groupmode="layer"(?=\s|>)/g, "");
+        //     // 2) If id==label → keep id; else set id to label. Drop the label either way.
+        //     const applyRule2 = applyRule1.replace(
+        //         /id="([^"]+)"\s+inkscape:label="([^"]+)"/g,
+        //         (_, idValue, labelValue) => (idValue === labelValue ? `id="${idValue}"` : `id="${labelValue}"`)
+        //     );
 
-	//     // 2) If id==label → keep id; else set id to label. Drop the label either way.
-	//     const applyRule2 = applyRule1.replace(
-	//         /id="([^"]+)"\s+inkscape:label="([^"]+)"/g,
-	//         (_, idValue, labelValue) => (idValue === labelValue ? `id="${idValue}"` : `id="${labelValue}"`)
-	//     );
+        //     const parser = new DOMParser();
+        //     svgDoc = parser.parseFromString(applyRule2, "image/svg+xml");
+        // } else {
+        //     const parser = new DOMParser();
+        //     svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+        // }
 
-	//     const parser = new DOMParser();
-	//     svgDoc = parser.parseFromString(applyRule2, "image/svg+xml");
-	// } else {
-	//     const parser = new DOMParser();
-	//     svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-	// }
+        const parser = new DOMParser();
+        svgDoc = parser.parseFromString(svgText, "image/svg+xml");
 
-	const parser = new DOMParser();
-	svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+        // Assign (don’t redeclare)
+        svgElement = svgDoc.documentElement;
+        svgElement.setAttribute("id", "svg-elem");
 
-	// Assign (don’t redeclare)
-	svgElement = svgDoc.documentElement;
-	svgElement.setAttribute('id', 'svg-elem');
-	//console.log('svgElement', svgElement);
+        const container = document.getElementById(containerId);
+        container.appendChild(svgElement);
 
-	const container = document.getElementById(containerId);
-	//console.log('container', container);
-	container.appendChild(svgElement);
+        //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
+        if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene') {
 
-	//LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
-	if (
-		window.location.href.includes('post.php') &&
-		adminEditTitle === 'Edit Scene'
-	) {
-		const modalHeader = document.querySelector('.modal-header');
-		if (modalHeader) {
-			const textNode = document.createElement('span');
-			textNode.textContent =
-				'This preview is intended to help validate that the SVG and the icons inside of it are formatted correctly. It is not intended to be a full replication of the way a scene functions when published.';
-			textNode.style.fontSize = '.65rem';
-			textNode.style.textAlign = 'center';
-			textNode.style.color = 'red';
-			textNode.style.paddingLeft = '5%';
-			modalHeader.prepend(textNode); // or append()
-		}
-		modalHeader.style.borderBottom = 'none';
+            const modalHeader = document.querySelector('.modal-header');
+            modalHeader.style.display = 'flex';
+            modalHeader.style.flexDirection = 'column';
+            modalHeader.style.alignItems = 'center';
+            modalHeader.style.justifyContent = 'center';
+            modalHeader.style.textAlign = 'center';
 
-		const modalWindow = document.querySelector(
-			'.modal-dialog.modal-xl.modal-dialog-scrollable'
-		);
-		modalWindow.style.paddingTop = '2%';
+            if (modalHeader) {
+                const textNode1 = document.createElement('span');
+                textNode1.textContent = 'This preview is intended to validate SVG formatting';
+                textNode1.style.fontSize = '.8rem';
+                textNode1.style.textAlign = 'center';
+                textNode1.style.color = "red";
+                textNode1.style.paddingLeft = "5%";
+                modalHeader.append(textNode1); // or append()
 
-		const iconsLayer = document
-			.getElementById('svg-elem')
-			.querySelector('g[id="icons"]');
-		visible_modals = iconsLayer
-			? Array.from(iconsLayer.children)
-					.filter((el) => el.tagName.toLowerCase() === 'g')
-					.map((el) => el.id)
-			: [];
+                const textNode2 = document.createElement('span');
+                textNode2.textContent = 'and uses the "List" Table of Contents Style.';
+                textNode2.style.fontSize = '.8rem';
+                textNode2.style.textAlign = 'center';
+                textNode2.style.color = "red";
+                textNode2.style.paddingLeft = "5%";
+                modalHeader.append(textNode2); // or append()
+            }
+            modalHeader.style.borderBottom = "none";
 
-		svgElement = document.getElementById('svg-elem');
-		svgElement.style.width = '100%';
-		svgElement.style.height = 'auto';
+            const modalWindow = document.querySelector('.modal-dialog.modal-xl.modal-dialog-scrollable');
+            modalWindow.style.paddingTop = "1%";
 
-		sceneRow = document.getElementById('scene-row');
-		sceneRow.style.marginTop = '20px';
+            function toWpDateTimeLocal(d = new Date()) {
+                const pad = (n) => String(n).padStart(2, "0");
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+            }
 
-		scene_text_toggle = title_arr.scene_text_toggle; //"toggle_on";
-		scene_full_screen_button = title_arr.scene_full_screen_button; //"yes";
-		scene_toc_style = 'list';
+            function buildVisibleModalsObject(visible_modals, opts = {}) {
+                const now = new Date();
+                const nowStr = toWpDateTimeLocal(now);
 
-		scene_default_hover_color = title_arr.scene_hover_color;
-		scene_hover_text_color = title_arr.scene_hover_text_color;
-		//scene_default_hover_color = "#FFFF00"; // Gold
+                const sceneId = opts.sceneId ?? 0;
+                const postAuthor = String(opts.postAuthor ?? "1");
 
-		function toWpDateTimeLocal(d = new Date()) {
-			const pad = (n) => String(n).padStart(2, '0');
-			return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-		}
+                // Optional: if you want GMT strings too (WP-style)
+                const nowGmtStr = opts.useGmt
+                    ? toWpDateTimeLocal(new Date(now.getTime() + now.getTimezoneOffset() * 60000))
+                    : nowStr;
 
-		function buildVisibleModalsObject(visible_modals, opts = {}) {
-			const now = new Date();
-			const nowStr = toWpDateTimeLocal(now);
+                return (visible_modals || []).map((name, idx) => ({
+                    title: name,
+                    modal_id: 0,
+                    external_url: "",
+                    modal: true,
+                    scene: {
+                    ID: sceneId,
+                    post_author: postAuthor,
+                    post_date: nowStr,
+                    post_date_gmt: nowGmtStr,
+                    post_content: "",
+                    post_title: "",
+                    post_excerpt: "",
+                    post_status: "publish",
+                    comment_status: "closed",
+                    ping_status: "closed",
+                    post_password: "",
+                    post_name: "",
+                    to_ping: "",
+                    pinged: "",
+                    post_modified: nowStr,
+                    post_modified_gmt: nowGmtStr,
+                    post_content_filtered: "",
+                    post_parent: 0,
+                    guid: "",
+                    menu_order: 0,
+                    post_type: "scene",
+                    post_mime_type: "",
+                    comment_count: "0",
+                    filter: "raw",
+                    },
+                    section_name: "1",
+                    original_name: name,
+                    modal_icon_order: idx + 1, // sequential order
+                }));
+            }
 
-			const sceneId = opts.sceneId ?? 0;
-			const postAuthor = String(opts.postAuthor ?? '1');
+            
+        }
+      
+        // checking if user device is touchscreen
+        if (is_touchscreen()){
+            if (is_mobile() && (deviceDetector.device != 'tablet')){ //a phone and not a tablet; screen will be its own UI here
+                //console.log('Mobile device detected');
+                //smaller image preview here for mobile
+                let fullImgCont = document.querySelector("#mobile-view-image");
+                
+                let titleRowCont = document.querySelector("#title-container > div");
+                titleRowCont.style.display = "flex";
+                titleRowCont.style.justifyContent = "center";
+                titleRowCont.style.alignItems = "center";
+                
+                let sceneButton = document.createElement("button");
+                sceneButton.innerHTML = "<strong>View Full Scene</strong>";
+                if (window.location.href.includes('post.php')) {
+                    sceneButton.setAttribute("style", "margin-top: 16px; max-width: 82%; border-radius: 10px; padding: 10px; margin-left: -.9rem");
+                } else {
+                    sceneButton.setAttribute("style", "margin-top: 16px; max-width: 79%; border-radius: 10px; padding: 10px");
+                }
+                sceneButton.setAttribute("class", "btn ");
+                sceneButton.setAttribute("class", "ViewSceneButton");
+                sceneButton.setAttribute("data-toggle", "modal");
 
-			// Optional: if you want GMT strings too (WP-style)
-			const nowGmtStr = opts.useGmt
-				? toWpDateTimeLocal(
-						new Date(
-							now.getTime() + now.getTimezoneOffset() * 60000
-						)
-					)
-				: nowStr;
+                titleRowCont.appendChild(sceneButton);
+                let svgElementMobileDisplay = svgElement.cloneNode(true);
+                svgElementMobileDisplay.style.height = '10%';
+                svgElementMobileDisplay.style.width = '100%';
 
-			return (visible_modals || []).map((name, idx) => ({
-				title: name,
-				modal_id: 0,
-				external_url: '',
-				modal: true,
-				scene: {
-					ID: sceneId,
-					post_author: postAuthor,
-					post_date: nowStr,
-					post_date_gmt: nowGmtStr,
-					post_content: '',
-					post_title: '',
-					post_excerpt: '',
-					post_status: 'publish',
-					comment_status: 'closed',
-					ping_status: 'closed',
-					post_password: '',
-					post_name: '',
-					to_ping: '',
-					pinged: '',
-					post_modified: nowStr,
-					post_modified_gmt: nowGmtStr,
-					post_content_filtered: '',
-					post_parent: 0,
-					guid: '',
-					menu_order: 0,
-					post_type: 'scene',
-					post_mime_type: '',
-					comment_count: '0',
-					filter: 'raw',
-				},
-				section_name: '1',
-				original_name: name,
-				modal_icon_order: idx + 1, // sequential order
-			}));
-		}
+                let modal;
+                if (window.location.href.includes('post.php')) {
+                    modal = document.getElementById("entire_thing");
+                    modal.appendChild(svgElementMobileDisplay);
+                } else {
+                    modal = document.getElementById("mobileModal");
+                    let modalBody = document.querySelector("#mobileModal > div > div > div.modal-body")
+                    modalBody.appendChild(svgElementMobileDisplay);
+                }
 
-		sortedChildObjs = buildVisibleModalsObject(visible_modals, {
-			sceneId: Number(
-				document.getElementsByName('post_ID')?.[0]?.value || 0
-			),
-			postAuthor: '1',
-			useGmt: true, // set false if you want local time for both
-		});
+                sceneButton.onclick = function() {
+                    modal.style.display = "block";
+                  }
+                        
+                  // When the user clicks anywhere outside of the modal, close it
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                      modal.style.display = "none";
+                      history.pushState("", document.title, window.location.pathname + window.location.search);
+                    }
+                  }
+                // let closeButton = document.querySelector("#mobileModal > div > div > div.modal-footer > button");
+                let closeButton = document.querySelector("#close1");
+                closeButton.onclick = function() {
+                      modal.style.display = "none";
+                      history.pushState("", document.title, window.location.pathname + window.location.search);
+                  }
+        
+                mobileBool = true;
+                const iconsElement = svgElement.getElementById("icons");
+                //fix here
+                let mobileIcons = null;
+                if (svgElement.getElementById("mobile")){
+                    mobileIcons = svgElement.getElementById("mobile").cloneNode(true);
+                } 
 
-		// Initialize an array to hold the sublayers
-		let sublayers = [];
-		// Iterate over the child elements of the "icons" layer
-		iconsLayer.childNodes.forEach((node) => {
-			// Check if the node is an element and push its id to the sublayers array
-			if (node.nodeType === Node.ELEMENT_NODE) {
-				sublayers.push(node.id);
-			}
-		});
-		sublayers = sublayers.sort();
+                let iconsArr;
 
-		// Define hover colors
-		sublayers.forEach((listElement) => {
-			const iconLayer = svgElement.getElementById(listElement);
+                // Logic for admin preview for mobile
+                if (window.location.href.includes('post.php')) {
+                    const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
+                    visible_modals = iconsLayer
+                        ? Array.from(iconsLayer.children)
+                            .filter(el => el.tagName.toLowerCase() === "g")
+                            .map(el => el.id)
+                            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+                        : [];
+                    iconsArr =  visible_modals;
+                } else {
+                    iconsArr =  Object.keys(child_obj);
+                }
+                // console.log('iconsArr',iconsArr);
+                // console.log('mobileIcons',mobileIcons);
+                mobile_helper(svgElement, iconsArr, mobileIcons);
 
-			// Select all child elements
-			const subElements = iconLayer.querySelectorAll('*');
+                if (window.location.href.includes('post.php')) {
+                    document.getElementById('svg-elem').remove()
+                }
+                
+            } else{ //if it gets here, device is a tablet
+                //hide mobile icons
+                
+                // remove_outer_div();
+                window.addEventListener('load', function() {
+                    let mob_icons = document.querySelector("#mobile");
+                    if (mob_icons) {
+                        mob_icons.setAttribute("display", "none");
+                    }
+                });
+                
+                handleIconVisibility(svgElement, visible_modals);
+                container.appendChild(svgElement);
+                toggle_text();
+                full_screen_button('svg1');
+                if (scene_toc_style === "list"){
+                    list_toc();
+                } else {
+                    table_of_contents();
+                }               
+                add_modal();
+                flicker_highlight_icons();
+            }
+        }
+        else{ //device is a PC
+            //hide mobile icons
+            //console.log('PC detected');
+            window.addEventListener('load', function() {
+                let mob_icons = document.querySelector("#mobile");
+                if (mob_icons) {
+                    mob_icons.setAttribte("display", "none");
+                }
+            });
+            try {
+                //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
+                if (window.location.href.includes('post.php')) {
+                    const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
+                    visible_modals = iconsLayer
+                        ? Array.from(iconsLayer.children)
+                            .filter(el => el.tagName.toLowerCase() === "g")
+                            .map(el => el.id)
+                            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+                        : [];
+                    
+                    svgElement = document.getElementById("svg-elem");
+                    svgElement.style.width = "100%";
+                    svgElement.style.height = "auto";
 
-			// Loop through each sub-element and update its stroke-width and color
-			subElements.forEach((element) => {
-				element.style.strokeWidth = '2';
-				element.style.stroke = scene_default_hover_color;
-			});
-		});
-	}
-	//console.log('sortedChildObjs', sortedChildObjs);
+                    sceneRow = document.getElementById("scene-row");
+                    sceneRow.style.marginTop = "20px";
 
-	// checking if user device is touchscreen
-	if (is_touchscreen()) {
-		if (is_mobile() && deviceDetector.device != 'tablet') {
-			//a phone and not a tablet; screen will be its own UI here
-			//console.log('Mobile device detected');
-			//smaller image preview here for mobile
-			const fullImgCont = document.querySelector('#mobile-view-image');
+                    scene_text_toggle = title_arr['scene_text_toggle']; //"toggle_on";
+                    scene_full_screen_button = title_arr['scene_full_screen_button'];//"yes";
+                    scene_toc_style = "list";
+                    scene_default_hover_color = title_arr['scene_hover_color'];
+                    scene_hover_text_color = title_arr['scene_hover_text_color']; 
 
-			const titleRowCont = document.querySelector(
-				'#title-container > div'
-			);
-			titleRowCont.style.display = 'flex';
-			titleRowCont.style.justifyContent = 'center';
-			titleRowCont.style.alignItems = 'center';
+                    sorted_child_objs = buildVisibleModalsObject(visible_modals, {
+                        sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
+                        postAuthor: "1",
+                        useGmt: true, // set false if you want local time for both
+                    });
 
-			const sceneButton = document.createElement('button');
-			sceneButton.innerHTML = '<strong>View Full Scene</strong>';
-			sceneButton.setAttribute(
-				'style',
-				'margin-top: 16px; max-width: 79%; border-radius: 10px; padding: 10px'
-			);
-			sceneButton.setAttribute('class', 'btn ');
-			sceneButton.setAttribute('class', 'ViewSceneButton');
-			sceneButton.setAttribute('data-toggle', 'modal');
+                    // Initialize an array to hold the sublayers
+                    let sublayers = [];
+                    // Iterate over the child elements of the "icons" layer
+                    iconsLayer.childNodes.forEach(node => {
+                        // Check if the node is an element and push its id to the sublayers array
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                        sublayers.push(node.id);
+                        }
+                    });
+                    sublayers = sublayers.sort();
 
-			titleRowCont.appendChild(sceneButton);
-			const svgElementMobileDisplay = svgElement.cloneNode(true);
-			svgElementMobileDisplay.style.height = '10%';
-			svgElementMobileDisplay.style.width = '100%';
+                    // Define hover colors
+                    sublayers.forEach (listElement => {
+                        let iconLayer = svgElement.getElementById(listElement);
+                        // Select all child elements 
+                        let subElements = iconLayer.querySelectorAll("*");          
+                        // Loop through each sub-element and update its stroke-width and color
+                        subElements.forEach(element => {
+                            element.style.strokeWidth = "2";
+                            element.style.stroke = scene_default_hover_color;
+                        });
+                    })
+                    
+                    handleIconVisibility(svgElement, visible_modals);
 
-			const modal = document.getElementById('mobileModal');
-			const modalBody = document.querySelector(
-				'#mobileModal > div > div > div.modal-body'
-			);
-			modalBody.appendChild(svgElementMobileDisplay);
+                } else {
+                    handleIconVisibility(svgElement, visible_modals);
+                }
+            }
+            catch (error) {
+                console.error('Error handling icon visibility:', error);
+            }
+            
+            container.appendChild(svgElement);
 
-			sceneButton.onclick = function () {
-				modal.style.display = 'block';
-			};
-
-			// When the user clicks anywhere outside of the modal, close it
-			window.onclick = function (event) {
-				if (event.target == modal) {
-					modal.style.display = 'none';
-					history.pushState(
-						'',
-						document.title,
-						window.location.pathname + window.location.search
-					);
-				}
-			};
-			// let closeButton = document.querySelector("#mobileModal > div > div > div.modal-footer > button");
-			const closeButton = document.querySelector('#close1');
-			closeButton.onclick = function () {
-				modal.style.display = 'none';
-				history.pushState(
-					'',
-					document.title,
-					window.location.pathname + window.location.search
-				);
-			};
-
-			const mobileBool = true;
-			const iconsElement = svgElement.getElementById('icons');
-			//fix here
-			let mobileIcons = null;
-			if (svgElement.getElementById('mobile')) {
-				mobileIcons = svgElement
-					.getElementById('mobile')
-					.cloneNode(true);
-			}
-
-			const iconsArr = Object.keys(childObj);
-			mobile_helper(svgElement, iconsArr, mobileIcons);
-		} else {
-			//if it gets here, device is a tablet
-			//hide mobile icons
-
-			// remove_outer_div();
-			window.addEventListener('load', function () {
-				const mob_icons = document.querySelector('#mobile');
-				if (mob_icons) {
-					mob_icons.setAttribute('display', 'none');
-				}
-			});
-
-			handleIconVisibility(svgElement, visible_modals);
-			container.appendChild(svgElement);
-			toggle_text();
-			full_screen_button('svg1');
-			if (scene_toc_style === 'list') {
-				list_toc();
-			} else {
-				table_of_contents();
-			}
-			add_modal();
-			flicker_highlight_icons();
-		}
-	} else {
-		//device is a PC
-		//hide mobile icons
-		//console.log('PC detected');
-		window.addEventListener('load', function () {
-			const mob_icons = document.querySelector('#mobile');
-			if (mob_icons) {
-				mob_icons.setAttribute('display', 'none');
-			}
-		});
-		try {
-			handleIconVisibility(svgElement, visible_modals);
-		} catch (error) {
-			console.error('Error handling icon visibility:', error);
-		}
-
-		container.appendChild(svgElement);
-
-		if (!window.location.href.includes('post.php')) {
-			highlight_icons();
-		}
-
-		toggle_text();
-		full_screen_button('svg1');
-		if (scene_toc_style === 'list') {
-			list_toc();
-		} else {
-			table_of_contents();
-		}
-		add_modal();
-	}
-
-	// } catch (error) {
-	//     console.error('Error fetching or parsing the SVG:', error);
-	// }
+            highlight_icons();
+            toggle_text();
+            full_screen_button('svg1');
+            if (scene_toc_style === "list"){
+                list_toc();
+            } else {
+                table_of_contents();
+            }               
+            add_modal();
+        }
+    } catch (error) {
+        console.error('Error fetching or parsing the SVG:', error);
+    }
 }
 
 //highlight items on mouseover, remove highlight when off;
@@ -1828,122 +1778,111 @@ function sectioned_list() {
  * called in table_of_contents, if user has selected sectioned list option in WP
  */
 function toc_sections() {
-	const sections = [];
-	for (const key in childObj) {
-		const section = childObj[key].section_name;
-		if (!sections.includes(section) && section != 'None') {
-			sections.push(section);
-		}
-		sectionObj[key] = section;
-	}
-	sections.sort();
-	sections.push('None');
 
-	const sectionNoneCount = sections.filter((s) => s === 'None').length;
+    let sections = [];
+    for (let key in child_obj) {
+        let section = child_obj[key]['section_name'];
+        if (!sections.includes(section) && section!='None') {
+            sections.push(section);
+        }
+        sectionObj[key] = section;
+    }
+    sections.sort();
+    sections.push('None');
 
-	const toc_container = document.querySelector('#toc-container');
-	const toc_group = document.createElement('div');
-	toc_group.classList.add('accordion');
-	toc_group.setAttribute('id', 'toc-group');
 
-	for (let i = 0; i < sections.length; i++) {
-		const sect = document.createElement('div');
-		sect.classList.add('accordion-item');
-		const heading = document.createElement('h2');
-		heading.classList.add('accordion-header');
-		heading.setAttribute('id', `heading${i}`);
-		const button = document.createElement('button');
-		button.classList.add('accordion-button', 'collapsed');
-		button.setAttribute('type', 'button');
-		button.setAttribute('data-bs-toggle', 'collapse');
-		button.setAttribute('data-bs-target', `#toccollapse${i}`);
-		button.setAttribute('aria-expanded', 'false');
-		button.setAttribute('aria-controls', `toccollapse${i}`);
+    let sectionNoneCount = sections.filter(s => s === "None").length;
 
-		const title_test =
-			scene_data?.[`scene_section${sections[i]}`]?.[
-				`scene_section_title${i + 1}`
-			];
-		if (title_test) {
-			console.log('Title found:', title_test);
-		} else {
-			const title_test = 'None';
-			console.log('Title not found:', title_test);
-		}
+    let toc_container = document.querySelector("#toc-container");
+    let toc_group = document.createElement("div");
+    toc_group.classList.add("accordion");
+    toc_group.setAttribute("id", "toc-group");
 
-		if (sections[i] != 'None' && title_test != 'None') {
-			const scene_section_title =
-				scene_data[`scene_section${sections[i]}`][
-					`scene_section_title${i + 1}`
-				];
-			console.log('scene_section_title', scene_section_title);
-			if (
-				scene_data.scene_same_hover_color_sections == 'no' &&
-				scene_section_title != ''
-			) {
-				button.innerHTML = scene_section_title;
+    for (let i = 0; i < sections.length; i++) {
 
-				const scene_section_color =
-					scene_data[`scene_section${sections[i]}`][
-						`scene_section_hover_color${i + 1}`
-					];
-				button.style.backgroundColor = hexToRgba(
-					scene_section_color,
-					0.2
-				);
-			}
-			if (
-				scene_data.scene_same_hover_color_sections == 'yes' &&
-				scene_section_title != ''
-			) {
-				button.innerHTML = scene_section_title;
-				const color = scene_default_hover_color;
-				button.style.backgroundColor = hexToRgba(color, 0.2);
-			} else {
-			}
-		}
+        let sect = document.createElement("div");
+        sect.classList.add("accordion-item");
+        let heading = document.createElement("h2");
+        heading.classList.add("accordion-header");
+        heading.setAttribute("id", `heading${i}`);
+        let button = document.createElement("button");
+        button.classList.add("accordion-button", "collapsed");
+        button.setAttribute("type", "button");
+        button.setAttribute("data-bs-toggle", "collapse");
+        button.setAttribute("data-bs-target", `#toccollapse${i}`);
+        button.setAttribute("aria-expanded", "false");
+        button.setAttribute("aria-controls", `toccollapse${i}`);
 
-		if (
-			(sectionNoneCount > 1 && sections[i] == 'None') ||
-			title_test == 'None'
-		) {
-			button.innerHTML = 'No Section';
-			const color = scene_default_hover_color;
-			button.style.backgroundColor = hexToRgba(color, 0.2);
-		} else {
-		}
 
-		const arrowSpan = document.createElement('span');
-		arrowSpan.classList.add('arrow');
-		button.appendChild(arrowSpan);
+        let title_test = scene_data?.[`scene_section${sections[i]}`]?.[`scene_section_title${i + 1}`];
+        if (!title_test) {
+            title_test = "None";
+            //console.log("Title not found:", title_test);
+        } 
 
-		if (sections[i].length > 20) {
-			arrowSpan.style.marginRight = '15%';
-		} else {
-			arrowSpan.style.marginRight = '63%';
-		}
 
-		heading.appendChild(button);
-		sect.appendChild(heading);
+        if (sections[i]!="None" && title_test != "None"){
 
-		const tocCollapse = document.createElement('div');
-		tocCollapse.setAttribute('id', `toccollapse${i}`);
-		tocCollapse.classList.add('accordion-collapse', 'collapse');
-		tocCollapse.setAttribute('aria-labelledby', `heading${i}`);
+            let scene_section_title = scene_data[`scene_section${sections[i]}`][`scene_section_title${i+1}`];
+            //console.log('scene_section_title', scene_section_title);
+            if (scene_data['scene_same_hover_color_sections'] == "no" && scene_section_title != ""){
+                button.innerHTML = scene_section_title;
 
-		const tocbody = document.createElement('div');
-		tocbody.classList.add('accordion-body');
+                let scene_section_color =  scene_data[`scene_section${sections[i]}`][`scene_section_hover_color${i+1}`];
+                button.style.backgroundColor = hexToRgba(scene_section_color, 0.2);
+            } 
+            if (scene_data['scene_same_hover_color_sections'] == "yes" && scene_section_title != ""){
+                button.innerHTML = scene_section_title;
+                let color =  scene_default_hover_color;
+                button.style.backgroundColor = hexToRgba(color, 0.2);
+            } else {
+            }
+        }
 
-		const sectlist = document.createElement('ul');
-		sectlist.setAttribute('id', sections[i]);
-		tocbody.appendChild(sectlist);
-		tocCollapse.appendChild(tocbody);
+        if (sectionNoneCount > 1 && (sections[i]=="None" || title_test == "None")){
+            button.innerHTML = 'No Section';
+            let color = scene_default_hover_color;
+            button.style.backgroundColor = hexToRgba(color, 0.2);
+        } else {
+            //console.log('Test 2');
+        }
 
-		sect.appendChild(tocCollapse);
 
-		toc_group.appendChild(sect); //original options creakes blank boxes
-	}
-	toc_container.appendChild(toc_group);
+        if (title_test != "None"){
+        
+            let arrowSpan = document.createElement("span");
+            arrowSpan.classList.add("arrow");
+            button.appendChild(arrowSpan);
+        
+            if (sections[i].length > 20){
+                arrowSpan.style.marginRight = '15%';
+            } else {
+                arrowSpan.style.marginRight = '63%';
+            }
+            
+
+            heading.appendChild(button);
+            sect.appendChild(heading);
+
+            let tocCollapse = document.createElement("div");
+            tocCollapse.setAttribute("id", `toccollapse${i}`);
+            tocCollapse.classList.add("accordion-collapse", "collapse");
+            tocCollapse.setAttribute("aria-labelledby", `heading${i}`);
+
+            let tocbody = document.createElement("div");
+            tocbody.classList.add("accordion-body");
+
+            let sectlist = document.createElement("ul");
+            sectlist.setAttribute("id", sections[i]);
+            tocbody.appendChild(sectlist);
+            tocCollapse.appendChild(tocbody);
+
+            sect.appendChild(tocCollapse);
+
+            toc_group.appendChild(sect); //original options creakes blank boxes
+        }
+    }
+    toc_container.appendChild(toc_group);
 }
 
 /**
@@ -2123,122 +2062,107 @@ function table_of_contents() {
  * Usage:
  * called in load_svg if user wants a list with no sections displayed/no sections exist
  */
-function list_toc() {
-	const sections = [];
-	for (const key in childObj) {
-		const section = childObj[key].section_name;
-		if (!sections.includes(section)) {
-			sections.push(section);
-		}
-		sectionObj[key] = section;
-	}
-	sections.sort();
+function list_toc(){
+    
+    let sections = [];
+    for (let key in child_obj) {
+        let section = child_obj[key]['section_name'];
+        if (!sections.includes(section)) {
+            sections.push(section);
+        }
+        sectionObj[key] = section;
+    }
+    sections.sort();
 
-	const toc_container = document.querySelector('#toc-container');
-	const toc_group = document.createElement('ul');
-	const colorIdx = 0;
-	let i = 0;
-	let item;
+    let toc_container = document.querySelector("#toc-container");
+    let toc_group = document.createElement("ul");
+    let colorIdx = 0;
+    let i = 0;
+    let item;
 
-	for (const obj of sortedChildObjs) {
-		const key = obj.original_name;
+    for (let obj of sorted_child_objs){
 
-		i++;
+        let key = obj.original_name;
 
-		item = document.createElement('li');
+        i++;
 
-		const title = obj.title;
-		const link = document.createElement('a');
-		let modal = obj.modal;
-		const title_formatted = title.replace(/\s+/g, '_');
+        item = document.createElement("li");
+    
+        let title = obj['title']; 
+        let link = document.createElement("a");
+        let modal = obj['modal'];
+        //let title_formatted = title.replace(/\s+/g, '_')
+        let title_formatted= slugify(title);
+        //console.log('title_formatted', title_formatted);
+        
+    
+        if (modal) {
+            link.setAttribute("href", `#`); //just added
+            link.setAttribute("id",title_formatted);
 
-		if (modal) {
-			link.setAttribute('href', `#`); //just added
-			link.setAttribute('id', title_formatted);
+            link.classList.add("modal-link");
+            link.innerHTML = title;
+            item.appendChild(link);
+            item.addEventListener('click', ((key) => {
+                return function() {
+                    modal = document.getElementById("myModal");
+                    modal.style.display = "block";
+                    render_modal(key);
+                };
+            })(key));
+            
+            //only allow the modal close button event listener if the user is on theme. 
+            if (!window.location.href.includes('post.php')) {
+                let closeButton = document.getElementById("close");
+                closeButton.addEventListener('click', function() {
+                    let modal = document.getElementById("myModal");
 
-			link.classList.add('modal-link');
-			link.innerHTML = title;
-			item.appendChild(link);
-			item.addEventListener(
-				'click',
-				((key) => {
-					return function () {
-						modal = document.getElementById('myModal');
-						modal.style.display = 'block';
-						render_modal(key);
-					};
-				})(key)
-			);
+                    modal.style.display = "none";
+                    history.pushState("", document.title, window.location.pathname + window.location.search);
+                });
+            }
+            window.onclick = function(event) {
+                if (event.target === modal) { 
+                    modal.style.display = "none";
+                    history.pushState("", document.title, window.location.pathname + window.location.search);
 
-			//only allow the modal close button event listener if the user is on theme.
-			if (!window.location.href.includes('post.php')) {
-				const closeButton = document.getElementById('close');
-				closeButton.addEventListener('click', function () {
-					const modal = document.getElementById('myModal');
+                }
+            };
+        } else {
+            link.href = obj['external_url'];
+            link.innerHTML = title;
+            item.appendChild(link);
+        }
+        
+        if (!window.location.href.includes('post.php')) {
+            item.addEventListener('mouseover', ((key) => {
+                return function() {
+                    let svg_elem = document.querySelector('g[id="' + key + '"]');
 
-					modal.style.display = 'none';
-					history.pushState(
-						'',
-						document.title,
-						window.location.pathname + window.location.search
-					);
-				});
-			}
-			window.onclick = function (event) {
-				if (event.target === modal) {
-					modal.style.display = 'none';
-					history.pushState(
-						'',
-						document.title,
-						window.location.pathname + window.location.search
-					);
-				}
-			};
-		} else {
-			link.href = obj.external_url;
-			link.innerHTML = title;
-			item.appendChild(link);
-		}
+                    let subElements = svg_elem.querySelectorAll("*");
+                    subElements.forEach(subElement => {
+                        subElement.style.stroke = scene_default_hover_color;
+                        subElement.style.strokeWidth = "3";
+                    });
+                };
+            })(key));
 
-		if (!window.location.href.includes('post.php')) {
-			item.addEventListener(
-				'mouseover',
-				((key) => {
-					return function () {
-						const svg_elem = document.querySelector(
-							'g[id="' + key + '"]'
-						);
+            item.addEventListener('mouseout', ((key) => {
+                return function() {
+                    let svg_elem = document.querySelector('g[id="' + key + '"]');
 
-						const subElements = svg_elem.querySelectorAll('*');
-						subElements.forEach((subElement) => {
-							subElement.style.stroke = scene_default_hover_color;
-							subElement.style.strokeWidth = '3';
-						});
-					};
-				})(key)
-			);
-
-			item.addEventListener(
-				'mouseout',
-				((key) => {
-					return function () {
-						const svg_elem = document.querySelector(
-							'g[id="' + key + '"]'
-						);
-
-						const subElements = svg_elem.querySelectorAll('*');
-						subElements.forEach((subElement) => {
-							subElement.style.stroke = '';
-							subElement.style.strokeWidth = '';
-						});
-					};
-				})(key)
-			);
-		}
-
-		toc_group.appendChild(item);
-	}
-	toc_container.appendChild(toc_group);
+                    let subElements = svg_elem.querySelectorAll("*");
+                    subElements.forEach(subElement => {
+                        subElement.style.stroke = "";
+                        subElement.style.strokeWidth = "";
+                    });
+                };
+            })(key));
+        }
+        //console.log('link', link);
+        toc_group.appendChild(item);
+    }
+    toc_container.appendChild(toc_group);
 }
 
 /**
@@ -2264,78 +2188,121 @@ function list_toc() {
  * Usage:
  * Called in mobile helper, load_svg to actually add modal capabilities to scene element
  */
-function add_modal() {
-	for (const key in childObj) {
-		const elem = document.querySelector('g[id="' + key + '"]');
-		if (childObj[key].modal) {
-			const modal = document.getElementById('myModal');
-			const closeButton = document.getElementById('close');
+function add_modal(){
+    for (let key in child_obj){
+        let elem = document.querySelector('g[id="' + key + '"]');
+        if (child_obj[key]['modal']){
+            let modal = document.getElementById("myModal");
+            let closeButton = document.getElementById("close");
+            
+            if (mobileBool){
+                let itemContainer = document.querySelector(`#${key}-container`);
+                itemContainer.addEventListener('click', function() {
+                    modal.style.display = "block";
 
-			if (mobileBool) {
-				const itemContainer = document.querySelector(
-					`#${key}-container`
-				);
-				itemContainer.addEventListener('click', function () {
-					modal.style.display = 'block';
+                    render_modal(key );
 
-					render_modal(key);
-				});
-			} else {
-				elem.addEventListener('click', function (event) {
-					modal.style.display = 'block';
-					render_modal(key);
-				});
-			}
+            });
+            } else {
+                elem.addEventListener('click', function(event) {
 
-			closeButton.addEventListener('click', function () {
-				modal.style.display = 'none';
-				const accordion_container = document.getElementById(
-					'accordion-container'
-				);
-				accordion_container.innerHTML = '';
+                    modal.style.display = "block";
+                    render_modal(key );
+            });
+            }
+            
+            closeButton.addEventListener('click', function() {
+                    
+                    modal.style.display = "none";
+                    let accordion_container = document.getElementById('accordion-container');
+                    accordion_container.innerHTML = '';
 
-				const myTab = document.getElementById('myTab');
-				myTab.innerHTML = '';
+                    let myTab = document.getElementById('myTab');
+                    myTab.innerHTML = '';
 
-				const tabContentContainer =
-					document.getElementById('myTabContent');
-				tabContentContainer.innerHTML = '';
-				history.pushState(
-					'',
-					document.title,
-					window.location.pathname + window.location.search
-				);
-			});
-			window.onclick = function (event) {
-				if (event.target === modal) {
-					// Check if the click is outside the modal content
-					modal.style.display = 'none';
-					document.getElementById('accordion-container').innerHTML =
-						'';
-					document.getElementById('tagline-container').innerHTML = '';
-					document.getElementById('myTab').innerHTML = '';
-					document.getElementById('myTabContent').innerHTML = '';
-					history.pushState(
-						'',
-						document.title,
-						window.location.pathname + window.location.search
-					);
-				}
-			};
-		} else {
-			elem.addEventListener('click', function (event) {
-				const link = childObj[key].external_url;
-				window.location.href = link;
-			});
-			if (mobileBool) {
-				const itemContainer = document.querySelector(
-					`#${key}-container`
-				);
-				itemContainer.addEventListener('click', function () {
-					const link = childObj[key].external_url;
-					window.location.href = link;
-				});
-			}
-		}
-	}
+                    let tabContentContainer = document.getElementById("myTabContent");
+                    tabContentContainer.innerHTML = '';
+                    history.pushState("", document.title, window.location.pathname + window.location.search);
+            });
+            window.onclick = function(event) {
+                if (event.target === modal) { // Check if the click is outside the modal content
+                    modal.style.display = "none";
+                    document.getElementById('accordion-container').innerHTML = '';
+                    document.getElementById('tagline-container').innerHTML = '';
+                    document.getElementById('myTab').innerHTML = '';
+                    document.getElementById('myTabContent').innerHTML = '';
+                    history.pushState("", document.title, window.location.pathname + window.location.search);
+                }
+            };
+    
+        } else {
+            elem.addEventListener('click', function(event) {   
+                if (!window.location.href.includes('post.php')) { 
+                    let link =  child_obj[key]['external_url'];
+                    window.location.href = link;
+                }
+            });
+            if (mobileBool){
+                let itemContainer = document.querySelector(`#${key}-container`);
+                itemContainer.addEventListener('click', function() {
+                    if (!window.location.href.includes('post.php')) {
+                        let link =  child_obj[key]['external_url'];
+                        window.location.href = link;
+                    }
+                });
+            }
+        }
+    }
+}
+
+
+alertIfMissingModal();
+
+
+
+/**
+ * Alerts the user if the modal section referenced in the URL hash does not exist.
+ *
+ * Expected hash format:
+ *   #<modalSection>/<index>
+ * Example:
+ *   #Marine_spills___discharge/3
+ *
+ * How it works:
+ * - Reads window.location.hash
+ * - Waits until window "load" (so .modal-link elements exist)
+ * - Collects all .modal-link element IDs on the page
+ * - Compares the hash's first segment (<modalSection>) to those IDs
+ * - Alerts if no match is found
+ *
+ * Assumptions:
+ * - Modal links exist in the DOM as elements with class "modal-link"
+ * - Each modal link has an `id` that matches the hash's <modalSection> value
+ *
+ * @returns {void}
+ */
+function alertIfMissingModal() {
+    const raw = location.hash.slice(1);
+    if (!raw) return;
+
+    window.addEventListener("load", () => {
+        const modalLinks = [...document.querySelectorAll(".modal-link")]
+          .map(el => el.id)
+          .filter(Boolean);
+          //console.log('modalLinks', modalLinks);
+
+          let decoded = raw;
+            try { decoded = decodeURIComponent(raw); } catch (_) {}
+            //console.log('decoded', decoded);
+        
+            const urlModalGiven = decoded.split("/");
+
+            if (!modalLinks.includes(urlModalGiven[0]) && !window.location.href.includes('post.php')) {
+                alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+            }    
+            if (modalLinks.includes(urlModalGiven[0]) && !window.location.href.includes('post.php')) {
+                return;
+            } 
+    });
+         
 }

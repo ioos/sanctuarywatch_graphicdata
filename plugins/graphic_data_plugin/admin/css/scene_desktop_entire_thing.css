@@ -1,0 +1,250 @@
+/*!
+ * scene_desktop_entire_thing_RESPONSIVE_PATCH.css
+ *
+ * PURPOSE
+ * Apply AFTER your original "scene_desktop_entire_thing.css" (the one with the correct colors/look).
+ * This patch ONLY fixes layout/responsiveness (no color/theme overrides).
+ *
+ * Key fixes:
+ * - Title row (tagline left + accordion buttons right) stays split and does NOT drift on smaller aspect ratios.
+ * - Scene row (SVG left + TOC right) keeps a stable 2-column layout until a small breakpoint.
+ * - Prevent fixed computed heights (block-size) from clipping background growth.
+ */
+
+.modal-dialog {
+  width: 60%;
+}
+
+/* --- Let the wrapper grow so background color continues with content --- */
+#entire_thing{
+  height: auto !important;
+  block-size: auto !important;   /* overrides computed fixed block-size */
+  max-height: none !important;
+  overflow: visible !important;
+  background-color: #f2f2f2;
+  margin-right: calc(var(--bs-gutter-x) * .6);
+  margin-left: calc(var(--bs-gutter-x) * .6);
+}
+
+.row {
+  --bs-gutter-x: 0;
+  --bs-gutter-y: 0;
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+/* =========================================================
+   1) TITLE AREA: #title-container
+   Expected DOM (from your inspector):
+   #title-container
+     h1
+     .row
+       .col-md-10  (tagline text)
+       .col-md-2   (accordion buttons)
+   ========================================================= */
+#entire_thing #title-container .row{
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  /* gap: 1.25rem !important; */
+  padding-left: 2%;
+  padding-right: 1%;
+}
+
+
+#entire_thing #title-container h1{
+  padding-left: 2%;
+  padding-right: 2%;
+  padding-top: 2%;
+  color: #024880;
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+/* Left: tagline column */
+#entire_thing #title-container .row > .col-md-10{
+  flex: 1 1 auto !important;
+  min-width: 0 !important; /* critical: prevents pushing/right drift */
+}
+
+#entire_thing #title-container .row > .col-md-10 > p{
+  font-size: 15px !important;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+/* Right: buttons column — stay right and sized to the buttons */
+#entire_thing #title-container .row > .col-md-2{
+  flex: 0 0 17% !important;
+  width: 17% !important;
+  max-width: 17% !important;
+  min-width: 17% !important;
+  margin-left: auto !important; /* pin to the right */
+}
+
+.accordion {
+  --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+  --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+}
+
+a {
+  color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
+  text-decoration: underline;
+  color: #03386c;
+}
+
+ul {
+  list-style: disc;
+  color: rgb(82, 82, 82);
+  fill: rgb(82, 82, 82);
+}
+
+.accordion-item:last-of-type {
+  border-bottom-right-radius:  0 !important;
+  border-bottom-left-radius:  0 !important;
+}
+
+.accordion-item:first-of-type {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.accordion-item:first-of-type > .accordion-header .accordion-button {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+.accordion-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x);
+  font-size: 1rem;
+  color: #fff;
+  text-align: left;
+  background-color: var(--bs-accordion-btn-bg);
+  border: 0;
+  border-radius: 0;
+  overflow-anchor: none;
+  transition: var(--bs-accordion-transition);
+}
+
+.accordion-button::after {
+  font-weight: 600;
+  font-size: 20px;
+  color: aliceblue;
+}
+
+#more-info-collapse-1 > div {
+  background-color: #f2f2f2;
+}
+#images-collapse-1 > div {
+  background-color: #f2f2f2;
+}
+
+/* Make the accordion in the title column fill its column */
+#entire_thing #title-container .row > .col-md-2 .accordion,
+#entire_thing #title-container .row > .col-md-2 .accordion-item,
+#entire_thing #title-container .row > .col-md-2 .accordion-button{
+  width: 100% !important;
+  max-width: 100% !important;
+  background-color: #03386c;
+  color:#fff;
+}
+
+/* When the container is actually narrow, stack title buttons under tagline */
+@media (max-width: 900px){
+  #entire_thing #title-container .row{
+    flex-wrap: wrap !important;
+  }
+  #entire_thing #title-container .row > .col-md-10,
+  #entire_thing #title-container .row > .col-md-2{
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* =========================================================
+   2) SCENE AREA: #scene-row (#svg1 + #toc-container)
+   Expected DOM:
+   #scene-fluid
+     #scene-row.row
+       .col-md-10  (contains #svg1)
+       #toc-container.col-md-2  (TOC links)
+   ========================================================= */
+#entire_thing #scene-row{
+  display: flex !important;
+  flex-wrap: nowrap !important;      /* keep SVG + TOC side-by-side */
+  align-items: flex-start !important;
+  /* gap: 1.25rem !important; */
+}
+
+/* SVG column */
+#entire_thing #scene-row > .col-md-10{
+  flex: 1 1 83% !important;
+  min-width: 83% !important;           /* allows SVG to shrink without pushing TOC */
+}
+
+
+/* TOC column */
+#entire_thing #scene-row > #toc-container,
+#entire_thing #scene-row > .col-md-2{
+  flex: 0 0 17% !important;
+  width: 17% !important;
+  max-width: 17% !important;
+  min-width: 17% !important;
+  margin-left: auto !important;
+}
+
+/* Keep TOC from pushing layout; scroll inside if long */
+#entire_thing #toc-container{
+  max-height: 70vh;
+  overflow: auto;
+}
+
+/* SVG itself: scale but never distort */
+#entire_thing #svg1,
+#entire_thing #svg1 svg{
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+}
+
+/* Stack SVG + TOC only when truly narrow */
+@media (max-width: 900px){
+  #entire_thing #scene-row{
+    flex-wrap: wrap !important;
+  }
+  #entire_thing #scene-row > .col-md-10,
+  #entire_thing #scene-row > #toc-container,
+  #entire_thing #scene-row > .col-md-2{
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+  }
+  #entire_thing #toc-container{
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+/* =========================================================
+   3) Guard rails: don't let computed exports freeze these
+   ========================================================= */
+#entire_thing #title-container,
+#entire_thing #scene-fluid,
+#entire_thing #scene-row,
+#entire_thing #toc-container{
+  block-size: auto !important;
+  max-block-size: none !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
