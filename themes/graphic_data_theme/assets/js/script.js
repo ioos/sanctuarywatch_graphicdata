@@ -364,7 +364,7 @@ const deviceDetector = (function () {
 //creates an accordion item w/custom IDs based on input
 /**
  * Creates and returns a fully structured Bootstrap accordion item with a header, button, and collapsible content.
- * Called in scenarios where accordion needs to be created - within `render_modal` (for modal info and modal images), `make_scene_elements` (for scene info and scene photo accordions), and `make_title' (for mobile tagline)
+ * Called in scenarios where accordion needs to be created - within `render_modal` (for modal info and modal images), `make_scene_elements` (for scene info and scene photo accordions), and `makeTitle' (for mobile tagline)
  *
  * @param {string} accordionId     - The unique ID for the accordion item.
  * @param {string} headerId        - The unique ID for the accordion header.
@@ -538,7 +538,7 @@ async function handleHashNavigation() {
  *
  * This asynchronous function serves as the driver for the script. It performs the following tasks:
  * 1. Fetches instance details by calling `load_instance_details()` and stores the data in a global variable.
- * 2. Determines the scene location by calling `make_title()` (which also makes the title, other scene elemsnts) and stores the result in `sceneLoc`, which is also a global variable.
+ * 2. Determines the scene location by calling `makeTitle()` (which also makes the title, other scene elemsnts) and stores the result in `sceneLoc`, which is also a global variable.
  * 3. Finds the instance object corresponding to the scene location and assigns it to `thisInstance`.
  * 4. Extracts the hover colors for the instance and assigns them to a global variable `colors`.
  * 5. Calls `loadSVG(url, "svg1")` to load and render an SVG based on the provided URL.
@@ -554,12 +554,9 @@ async function handleHashNavigation() {
  */
 async function init() {
 	try {
-		// scene_data = title_arr;
-		// console.log('scene_data', scene_data);
-
 		console.log('visible_modals', visible_modals);
 
-		sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
+		sceneLoc = makeTitle(); //this should be done on the SCENE side of things, maybe have makeTitle return scene object instead
 		thisInstance = sceneLoc;
 
 		loadSVG(url, 'svg1'); // Call load_svg with the fetched data

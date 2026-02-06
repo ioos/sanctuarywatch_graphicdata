@@ -244,7 +244,6 @@ async function producePlotlyLineFigure(
 		await loadPlotlyScript(); // ensures Plotly is ready
 
 		const rawField = interactive_arguments;
-		////console.log(rawField);
 		const figureArguments = Object.fromEntries(JSON.parse(rawField));
 		const rootURL = window.location.origin;
 
@@ -252,12 +251,10 @@ async function producePlotlyLineFigure(
 		if (postID === null) {
 			// ADMIN SIDE POST ID GRAB
 			figureID = document.getElementsByName('post_ID')[0].value;
-			////console.log("figureID ADMIN:", figureID);
 		}
 		if (postID != null) {
 			// THEME SIDE POST ID GRAB
 			figureID = postID;
-			////console.log("figureID THEME:", figureID);
 		}
 
 		// in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyLineFigure a chance to finish running before the next one kicked off
@@ -290,8 +287,6 @@ async function producePlotlyLineFigure(
 			targetElementparts[targetElementparts.length - 1];
 
 		if (figureID === targetElementpostID) {
-			////console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;
-			// const targetElement = document.getElementById(targetFigureElement);
 			const targetElement = await waitForElementById(targetFigureElement);
 			targetElement.appendChild(newDiv);
 
@@ -323,9 +318,6 @@ async function producePlotlyLineFigure(
 				var graphTickModeBool = 'auto';
 				var graphTickPositionBool = 'outside';
 			}
-			//console.log('graphTicks', graphTicks);
-			//console.log('graphTickModeBool', graphTickModeBool);
-			//console.log('graphTickPositionBool', graphTickPositionBool);
 
 			// Plotly figure production logic
 			for (let i = 1; i <= figureArguments.NumberOfLines; i++) {
@@ -343,7 +335,6 @@ async function producePlotlyLineFigure(
 				if (lineType === undefined) {
 					const lineType = 'solid';
 				}
-				//console.log('lineType', lineType);
 				const markerType =
 					figureArguments[targetLineColumn + 'MarkerType'];
 				const markerSize = parseInt(
@@ -454,8 +445,6 @@ async function producePlotlyLineFigure(
 					const mean =
 						plotlyYSanitized.reduce((a, b) => a + b, 0) /
 						plotlyYSanitized.length;
-					//console.log('mean', mean);
-					//console.log('stdDev', stdDev);
 					const upperY = plotlyY.map((y) => mean + stdDev);
 					const lowerY = plotlyY.map((y) => mean - stdDev);
 					const filteredX = plotlyX.filter((item) => item !== '');
@@ -511,7 +500,6 @@ async function producePlotlyLineFigure(
 							.filter((item) => item !== 'NA')
 							.reduce((a, b) => a + b, 0) /
 						dataToBePlotted[showSD_InputValuesOpt].length;
-					//console.log('stdSingleValue', stdSingleValue);
 					const plotlyYSanitized = plotlyY.map((val) => {
 						if (
 							val === null ||
@@ -625,8 +613,6 @@ async function producePlotlyLineFigure(
 						});
 					}
 
-					// Calculate mean
-
 					//Calculate mean (Auto Calculated) based on dataset Y-axis values
 					if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
 						const plotlyYSafeArray = plotlyY.map((value) =>
@@ -635,10 +621,7 @@ async function producePlotlyLineFigure(
 						const mean =
 							plotlyYSafeArray.reduce((a, b) => a + b, 0) /
 							plotlyY.length;
-						//console.log('mean', mean);
-						//console.log('plotlyY', plotlyY);
 						const filteredX = plotlyX.filter((item) => item !== '');
-						//console.log('filteredX', filteredX);
 
 						let xMin;
 						let xMax;
@@ -1799,9 +1782,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 								DropdownValueSaved != 'None' &&
 								fieldValueSaved === undefined
 							) {
-								//console.log('fieldValueSaved2', fieldValueSaved);
 								inputTitle.value = DropdownValueSaved;
-								//console.log('DropdownValueSaved2', DropdownValueSaved);
 							}
 						});
 					}

@@ -78,8 +78,6 @@ async function loadJson(targetContainer) {
 
 		targetElement.appendChild(newDiv);
 
-		////console.log('fieldValueSaved', fieldValueSaved);
-
 		//Write button values is the fields do not have any saved values.
 		if (
 			(fieldValueSaved === undefined && interactive_arguments === '') ||
@@ -133,7 +131,6 @@ function logFormFieldValues() {
 	const allFields = document.getElementsByName('plotFields');
 	const fieldValues = [];
 	allFields.forEach((uniqueField) => {
-		////console.log([uniqueField.id, uniqueField.value]);
 		fieldValues.push([uniqueField.id, uniqueField.value]);
 	});
 	document.getElementById('interactive_line_arguments_editor').value =
@@ -162,7 +159,6 @@ function fillFormFieldValues(elementID) {
 		const interactiveFields = document.getElementById(
 			'interactive_line_arguments_value'
 		).dataset.value;
-		////console.log('interactiveFields', interactiveFields);
 		if (interactiveFields != '' && interactiveFields != null) {
 			const resultJSON = Object.fromEntries(
 				JSON.parse(interactiveFields)
@@ -178,7 +174,6 @@ function fillFormFieldValues(elementID) {
 		const interactiveFields = document.getElementById(
 			'interactive_line_arguments_editor'
 		).value;
-		////console.log('interactiveFields', interactiveFields);
 		if (interactiveFields != '' && interactiveFields != null) {
 			const resultJSON = Object.fromEntries(
 				JSON.parse(interactiveFields)

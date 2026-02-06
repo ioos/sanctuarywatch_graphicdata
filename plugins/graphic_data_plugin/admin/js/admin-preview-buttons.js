@@ -15,7 +15,6 @@ function errorPreviewHandler(divID, figureType) {
 		try {
 			existingFileInputElement =
 				document.getElementById('existing-file-name').value;
-			//console.log('existingFileInputElement:', existingFileInputElement);
 		} catch {}
 		try {
 			graphTypeInputElement = document.getElementById('graphType').value;
@@ -103,7 +102,6 @@ if (previewFigureOrModalElements.length > 0) {
 				document.getElementById('myModal') ||
 				document.getElementById('mobileModal')
 			) {
-				//console.log('Modals already exist — showing modal.');
 				const modalEl = document.getElementById('myModal');
 				const mobileModal = document.getElementById('mobileModal');
 				if (modalEl) {
@@ -160,7 +158,6 @@ if (previewFigureOrModalElements.length > 0) {
 
 			// Inject as the first child of #wpcontent
 			wpcontent.insertAdjacentHTML('afterbegin', markup);
-			//console.log('✅ Modals injected into #wpcontent');
 
 			// Wait for DOM update, then show the modal (Bootstrap 5 API)
 			setTimeout(() => {
@@ -181,8 +178,6 @@ if (previewFigureOrModalElements.length > 0) {
 			const hasFigurePreview = document.querySelectorAll(
 				'[data-depend-id="figure_preview"]'
 			);
-			//console.log('hasModalPreview:', hasModalPreview);
-			//console.log('hasFigurePreview:', hasFigurePreview);
 
 			// --- GATHER MODAL DATA FROM FORM FIELDS AND PRODUCE A MODAL PREVIEW---
 			if (hasModalPreview !== null && hasModalPreview.length > 0) {
@@ -310,8 +305,6 @@ if (previewFigureOrModalElements.length > 0) {
 					},
 				};
 
-				//console.log('modal_data', modal_data);
-
 				render_modal(iconSelected, childObj, modal_data);
 				modal_data.remove();
 				childObj.remove();
@@ -395,7 +388,6 @@ if (previewFigureOrModalElements.length > 0) {
 					},
 				};
 
-				//console.log('modal_data', modal_data);
 				render_modal(iconSelected, childObj, modal_data);
 
 				//FIGURE PREVIEW LOGIC
@@ -496,10 +488,6 @@ if (previewFigureOrModalElements.length > 0) {
 				css2.rel = 'stylesheet';
 				css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
 				document.head.appendChild(css2);
-
-				//console.log('🎨 Theme CSS injected');
-			} else {
-				//console.log('🎨 Theme CSS already loaded');
 			}
 		});
 	});
@@ -509,18 +497,6 @@ if (previewFigureOrModalElements.length > 0) {
 
 //LOGIC FOR SCENE PREVIEW MODE
 function openSceneInModal() {
-	// // Load PHP page into modal body
-	// document.getElementById("entire_thing").innerHTML = html;
-	// const modal = new bootstrap.Modal(document.getElementById('entire_thing'));
-	// modal.show();
-
-	// Prevent duplicate injection, remove existing to make way for new.
-	// if (document.getElementById('sceneModal')) {
-	//     //console.log('Modals already exist — showing modal.');
-	//     const modalEl = document.getElementById('sceneModal');
-	//     if (modalEl) modalEl.remove();
-	// }
-
 	// --- INJECT MODAL HTML MARKUP to sceneModalBody---
 	const markup = `
 		<body>
@@ -553,24 +529,11 @@ function openSceneInModal() {
 
 	// Inject as the first child of #wpcontent
 	sceneModalBody.insertAdjacentHTML('afterbegin', markup);
-	//console.log('✅ Modals injected into #wpcontent');
-
-	// Wait for DOM update, then show the modal (Bootstrap 5 API)
-	// setTimeout(() => {
-	//     const modalEl = document.getElementById('sceneModalBody');
-	//     if (modalEl && typeof bootstrap !== 'undefined') {
-	//     const modalInstance = new bootstrap.Modal(modalEl);
-	//     modalInstance.show();
-	//     } else {
-	//     console.warn('Bootstrap not found — modal injected but not activated.');
-	//     }
-	// }, 100);
 }
 
 function buildScenePayloadFromForm() {
 	// Helpers
 	const byIdVal = (id) => document.getElementById(id)?.value ?? '';
-	//console.log('byIdVal("title")', byIdVal("title"));
 	const byNameVal = (name) =>
 		document.getElementsByName(name)?.[0]?.value ?? '';
 
@@ -687,7 +650,6 @@ if (previewSceneElements.length > 0) {
 		el.addEventListener('click', function () {
 			// Prevent duplicate injection, remove existing to make way for new.
 			if (document.getElementById('sceneModal')) {
-				//console.log('Modals already exist — showing modal.');
 				const modalEl = document.getElementById('sceneModal');
 				if (modalEl) {
 					modalEl.remove();
@@ -723,7 +685,6 @@ if (previewSceneElements.length > 0) {
 
 			// Inject as the first child of #wpcontent
 			wpcontent.insertAdjacentHTML('afterbegin', markup);
-			//console.log('✅ Modals injected into #wpcontent');
 
 			// Wait for DOM update, then show the modal (Bootstrap 5 API)
 			setTimeout(() => {
@@ -748,7 +709,7 @@ if (previewSceneElements.length > 0) {
 				if (title_arr.post_title == '') {
 					title_arr.post_title = 'No Scene Title Entered.';
 				}
-				sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
+				sceneLoc = makeTitle(); //this should be done on the SCENE side of things, maybe have makeTitle return scene object instead
 				thisInstance = sceneLoc;
 				url = title_arr.scene_infographic;
 			} catch {}
@@ -1001,10 +962,6 @@ if (previewSceneElements.length > 0) {
 				css2.rel = 'stylesheet';
 				css2.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/style.css`;
 				document.head.appendChild(css2);
-
-				//console.log('🎨 Theme CSS injected');
-			} else {
-				//console.log('🎨 Theme CSS already loaded');
 			}
 		});
 	});

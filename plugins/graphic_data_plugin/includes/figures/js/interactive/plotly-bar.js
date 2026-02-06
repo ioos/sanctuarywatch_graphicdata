@@ -278,12 +278,10 @@ async function producePlotlyBarFigure(
 		if (postID == null) {
 			// ADMIN SIDE POST ID GRAB
 			figureID = document.getElementsByName('post_ID')[0].value;
-			////console.log("figureID ADMIN:", figureID);
 		}
 		if (postID != null) {
 			// THEME SIDE POST ID GRAB
 			figureID = postID;
-			////console.log("figureID THEME:", figureID);
 		}
 
 		// in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyBarFigure a chance to finish running before the next one kicked off
@@ -316,7 +314,6 @@ async function producePlotlyBarFigure(
 			targetElementparts[targetElementparts.length - 1];
 
 		if (figureID == targetElementpostID) {
-			////console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;
 			const targetElement = await waitForElementById(targetFigureElement);
 			targetElement.appendChild(newDiv);
 
@@ -364,8 +361,6 @@ async function producePlotlyBarFigure(
 				const showLegend = figureArguments[targetBarColumn + 'Legend'];
 				const showLegendBool = showLegend === 'on';
 				const fillType = figureArguments[targetBarColumn + 'FillType'];
-
-				//console.log('fillType', fillType);
 
 				function lightenColor(hex, factor = 0.2) {
 					const rgb = parseInt(hex.slice(1), 16);
@@ -517,21 +512,7 @@ async function producePlotlyBarFigure(
 					});
 
 					plotlyX = Object.keys(groupMap);
-					////console.log(plotlyX);
 					plotlyY = Object.values(groupMap);
-					////console.log(plotlyY);
-
-					// allBarsPlotly.push({
-					//     x: plotlyX,
-					//     y: plotlyY,
-					//     type: 'bar',
-					//     name: `${figureArguments[targetBarColumn + 'Title']}`,
-					//     showlegend: showLegendBool,
-					//     // marker: {
-					//     //     color: figureArguments[targetBarColumn + 'Color']
-					//     // },
-					//     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
-					// });
 				}
 
 				//Percentiles and Mean lines
@@ -986,10 +967,6 @@ function loadDefaultInteractiveBarArguments(jsonColumns) {
 
 	// Write back EXACTLY as array-of-pairs JSON
 	const mergedPairs_string = JSON.stringify(mergedPairs);
-
-	//console.log('interactive_arguments', currentStr);
-	//console.log('default_interactive_arguments', defaultsStr);
-	//console.log('mergedPairs_string', mergedPairs_string);
 
 	document.getElementsByName('figure_interactive_arguments')[0].value =
 		mergedPairs_string;
@@ -1830,9 +1807,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 								DropdownValueSaved != 'None' &&
 								fieldValueSaved === undefined
 							) {
-								//console.log('fieldValueSaved2', fieldValueSaved);
 								inputTitle.value = DropdownValueSaved;
-								//console.log('DropdownValueSaved2', DropdownValueSaved);
 							}
 						});
 					}

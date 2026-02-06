@@ -279,7 +279,6 @@ function initTabButtons() {
 
 		if (isActiveClass) {
 			const buttonExists = document.getElementById(button.id);
-			//console.log('buttonExists', buttonExists);
 			if (buttonExists) {
 				activeButtons.push(button);
 			}
@@ -418,13 +417,6 @@ function fetch_tab_info(
 			all_figure_data = all_figure_data.filter(
 				(figure) => Number(figure.figure_modal) === Number(modal_id)
 			);
-			//console.log('all_figure_data1', all_figure_data);
-
-			// Third filter: If user is not logged in, only show published figures
-			// const isUserLoggedIn = document.body.classList.contains('logged-in');
-			// if (!isUserLoggedIn) {
-			//     all_figure_data = all_figure_data.filter(figure => figure.figure_published === "published");
-			// }
 
 			// Sort with the following priority:
 			// 1. figure_order (ascending; missing/invalid orders go last)
@@ -463,8 +455,6 @@ function fetch_tab_info(
 				// Step 2: within the same order → sort alphabetically by first letter of title
 				return titleA.localeCompare(titleB);
 			});
-
-			//console.log('all_figure_data2', all_figure_data);
 
 			//filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
 			let total_published_figures = 0;
