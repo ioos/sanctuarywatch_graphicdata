@@ -1196,6 +1196,11 @@ Search.appendIndex(
             "summary": "Create\u0020example\u0020instances\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instances"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_scenes\u0028\u0029",
+            "name": "create_tutorial_scenes",
+            "summary": "Create\u0020example\u0020scenes\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_scenes"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acopy_image_to_media_library\u0028\u0029",
             "name": "copy_image_to_media_library",
             "summary": "Copies\u0020an\u0020image\u0020file\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020the\u0020WordPress\u0020media\u0020library.",
