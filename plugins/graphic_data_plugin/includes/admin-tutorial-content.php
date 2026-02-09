@@ -196,6 +196,17 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
+	 * Create Front Page Intro and Sitewide Footer content for the tutorial.
+	 *
+	 * These two content types are normally entered via the Settings page for the tutorial.
+	 *
+	 * @return void
+	 */
+	public function create_graphic_data_settings_content() {
+
+	}
+
+	/**
 	 * Create example instances for the tutorial.
 	 *
 	 * @return void

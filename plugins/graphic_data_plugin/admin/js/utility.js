@@ -22,8 +22,8 @@ function replaceFieldValuesWithTransientValues() {
 				element.value = metaValue;
 
 				// range elements need to be set differently
-				if (element.tagName === 'INPUT' && element.type === 'range')
-					{element.nextElementSibling.value = metaValue;} 
+				if (element.tagName === 'INPUT' && element.type === 'range') {
+					element.nextElementSibling.value = metaValue;
 				}
 			}
 		});
