@@ -1196,6 +1196,11 @@ Search.appendIndex(
             "summary": "Create\u0020Front\u0020Page\u0020Intro\u0020and\u0020Sitewide\u0020Footer\u0020content\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_graphic_data_settings_content"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_graphic_data_settings_content\u0028\u0029",
+            "name": "delete_graphic_data_settings_content",
+            "summary": "Delete\u0020Front\u0020Page\u0020Intro\u0020and\u0020Sitewide\u0020Footer\u0020content\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_graphic_data_settings_content"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_instances\u0028\u0029",
             "name": "create_tutorial_instances",
             "summary": "Create\u0020example\u0020instances\u0020for\u0020the\u0020tutorial.",
