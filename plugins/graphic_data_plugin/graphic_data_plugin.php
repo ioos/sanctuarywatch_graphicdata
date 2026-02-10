@@ -109,15 +109,6 @@ function graphic_data_ensure_public_data_dir() {
 	delete_option( 'graphic_data_data_dir_error' );
 }
 
-add_action(
-	'admin_notices',
-	function () {
-		if ( get_option( 'graphic_data_data_dir_error' == $msg ) ) {
-			echo '<div class=\"notice notice-error\"><p>' . esc_html( $msg ) . '</p></div>';
-		}
-	}
-);
-
 /**
  * Begins execution of the plugin.
  *

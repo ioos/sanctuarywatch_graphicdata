@@ -1128,7 +1128,7 @@ async function loadSVG(url, containerId) {
                       history.pushState("", document.title, window.location.pathname + window.location.search);
                   }
         
-                mobileBool = true;
+                let mobileBool = true;
                 const iconsElement = svgElement.getElementById("icons");
                 //fix here
                 let mobileIcons = null;
@@ -1276,14 +1276,14 @@ async function loadSVG(url, containerId) {
 //CHANGE HERE FOR TABLET STUFF
 
 /**
- * Adds hover effects to SVG elements based on `childObj` keys, meant for PC layout.
+ * Adds hover effects to SVG elements based on `child_obj` keys, meant for PC layout.
  * Highlights the icon by changing its stroke color and width on mouseover,
  * using section-specific colors if enabled, and resets the style on mouseout.
  *
  * @return {void} - `void` Modifies DOM element styles in place.
  */
 function highlight_icons() {
-	for (const key in childObj) {
+	for (const key in child_obj) {
 		const elem = document.querySelector('g[id="' + key + '"]');
 		elem.addEventListener('mouseover', function (e) {
 			const elemCollection = elem.querySelectorAll('*');
@@ -1295,8 +1295,8 @@ function highlight_icons() {
 					scene_same_hover_color_sections !== 'yes' &&
 					sectionObj[key] !== 'None'
 				) {
-					const section_name = childObj[key].original_name;
-					const section_num = childObj[key].section_name;
+					const section_name = child_obj[key].original_name;
+					const section_num = child_obj[key].section_name;
 					const this_scene_section = `scene_section${section_num}`;
 					const this_color = `scene_section_hover_color${section_num}`;
 					const text_color = `scene_section_hover_text_color${section_num}`;
@@ -1315,7 +1315,7 @@ function highlight_icons() {
 			// Create and show the tooltip box
 			const tooltip = document.createElement('div');
 			tooltip.className = 'hover-key-box';
-			tooltip.textContent = childObj[key].title;
+			tooltip.textContent = child_obj[key].title;
 			tooltip.style.position = 'absolute';
 			tooltip.style.padding = '5px 10px';
 			tooltip.style.backgroundColor = hoverColor;
@@ -1374,14 +1374,14 @@ function highlight_icons() {
 }
 
 /**
- * Adds flicker effects to SVG elements based on `childObj` keys, meant for tablet layout.
+ * Adds flicker effects to SVG elements based on `child_obj` keys, meant for tablet layout.
  * Icons flicker their corresponding color on a short time interval
  * using section-specific colors if enabled
  *
  * @return {void} - `void` Modifies DOM element styles in place.
  */
 function flicker_highlight_icons() {
-	for (const key in childObj) {
+	for (const key in child_obj) {
 		const elem = document.querySelector('g[id="' + key + '"]');
 		if (elem) {
 			// Add transition for smooth fading
@@ -1665,7 +1665,7 @@ function toggle_text() {
  * This function generates sections dynamically and organizes them in a color-coded way
  *
  * The function:
- * 1. Extracts unique section names from the `section_name` property of each object in `childObj`.
+ * 1. Extracts unique section names from the `section_name` property of each object in `child_obj`.
  * 2. Sorts the sections and assigns each section a color from the `colors` array. Ensures that consecutive sections don't have the same color.
  * 3. Builds a sectioned table of contents, where each section name is a header and below are its icons,  styled with its assigned color.
  * 4. Appends the generated TOC structure to the `#toc-container` element in the DOM.
@@ -1677,8 +1677,8 @@ function toggle_text() {
  */
 function sectioned_list() {
 	const sections = [];
-	for (const key in childObj) {
-		const section = childObj[key].section_name;
+	for (const key in child_obj) {
+		const section = child_obj[key].section_name;
 
 		if (!sections.includes(section) && section != 'None') {
 			sections.push(section);
@@ -1767,7 +1767,7 @@ function sectioned_list() {
  * This function generates sections dynamically and organizes them in an accordion-style layout.
  *
  * The function:
- * 1. Extracts unique section names from the `section_name` property of each object in `childObj`.
+ * 1. Extracts unique section names from the `section_name` property of each object in `child_obj`.
  * 2. Sorts the sections and assigns each section a color from the `colors` array. Ensures that consecutive sections don't have the same color.
  * 3. Builds an accordion-style TOC, where each section is collapsible and styled with its assigned color.
  * 4. Appends the generated TOC structure to the `#toc-container` element in the DOM.
@@ -1893,8 +1893,8 @@ function toc_sections() {
  *  - "sectioned_list": Organizes content in sections based on their grouping.
  *
  * For each TOC item:
- * - If `childObj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
- * - If `childObj[key]['external_url']` is present, the item will link to an external URL.
+ * - If `child_obj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
+ * - If `child_obj[key]['external_url']` is present, the item will link to an external URL.
  *
  * Additional functionality includes:
  * - Mouse hover effects on associated SVG elements, highlighting sections.
@@ -1914,19 +1914,19 @@ function table_of_contents() {
 		sectioned_list();
 	}
 
-	for (const obj of sortedChildObjs) {
+	for (const obj of sortedchild_objs) {
 		const key = obj.original_name;
 
 		if (sectionObj[key] == 'None') {
 		}
-		const elem = document.getElementById(childObj[key].section_name);
+		const elem = document.getElementById(child_obj[key].section_name);
 		const item = document.createElement('li');
-		const title = childObj[key].title;
+		const title = child_obj[key].title;
 		const link = document.createElement('a');
 		const title_formatted = title.replace(/\s+/g, '_');
 		link.setAttribute('id', title_formatted);
 
-		const modal = childObj[key].modal;
+		const modal = child_obj[key].modal;
 		if (modal) {
 			link.setAttribute('href', `#`); //just added
 			link.classList.add('modal-link');
@@ -1978,7 +1978,7 @@ function table_of_contents() {
 				}
 			};
 		} else {
-			link.href = childObj[key].external_url;
+			link.href = child_obj[key].external_url;
 			link.innerHTML = title;
 			item.appendChild(link);
 		}
@@ -1998,11 +1998,11 @@ function table_of_contents() {
 					subElements.forEach((subElement) => {
 						if (
 							scene_same_hover_color_sections != 'yes' &&
-							childObj[key] != 'None'
+							child_obj[key] != 'None'
 						) {
 							//this should be done on the SCENE side of things, will havet o bring this back
 
-							const section_num = childObj[key].section_name;
+							const section_num = child_obj[key].section_name;
 							const this_color = `scene_section_hover_color${section_num}`;
 							const text_color = `scene_section_hover_text_color${section_num}`;
 							const hovercolorfullpath =
@@ -2050,8 +2050,8 @@ function table_of_contents() {
  * The sections are not explicitly displayed, but their colors are used for highlighting.
  *
  * Each TOC item:
- * - If `childObj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
- * - If `childObj[key]['external_url']` is present, the item will link to an external URL.
+ * - If `child_obj[key]['modal']` is true, the item will open a modal window and trigger `render_modal(key)` to load content.
+ * - If `child_obj[key]['external_url']` is present, the item will link to an external URL.
  *
  * Additional functionality:
  * - Mouse hover effects highlight associated SVG elements, using section colors if `thisInstance.instance_colored_sections` is set to "yes".
@@ -2168,15 +2168,15 @@ function list_toc(){
 /**
  * Generates and handles modal windows or external URL redirects when SVG elements are clicked.
  *
- * This function adds click event listeners to SVG elements (identified by `g[id="key"]`) from `childObj`.
+ * This function adds click event listeners to SVG elements (identified by `g[id="key"]`) from `child_obj`.
  *
- * - If the `childObj[key]['modal']` value is true:
+ * - If the `child_obj[key]['modal']` value is true:
  *   - Clicking the SVG element or corresponding mobile container (`#key-container`) opens a modal window.
  *   - The `render_modal(key)` function is triggered to load modal content.
  *   - Clicking outside the modal or on the close button hides the modal and clears the content.
  *
- * - If `childObj[key]['modal']` is false:
- *   - Clicking the SVG element redirects to the external URL specified in `childObj[key]['external_url']`.
+ * - If `child_obj[key]['modal']` is false:
+ *   - Clicking the SVG element redirects to the external URL specified in `child_obj[key]['external_url']`.
  *   - For mobile devices, a similar event is added to the container element (`#key-container`).
  *
  * Modal close behavior:

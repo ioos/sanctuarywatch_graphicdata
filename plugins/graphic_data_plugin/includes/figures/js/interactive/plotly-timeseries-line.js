@@ -248,7 +248,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - config: Plotly configuration object for rendering options.
  */
 async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
-    try {
+    // try {
         await loadPlotlyScript(); // ensures Plotly is ready
 
         const rawField = interactive_arguments;
@@ -260,17 +260,18 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         if (postID == null) {
             // ADMIN SIDE POST ID GRAB
             figureID = document.getElementsByName("post_ID")[0].value;
-            ////console.log("figureID ADMIN:", figureID);
+            console.log("figureID ADMIN:", figureID);
         }
         if (postID != null) {
             // THEME SIDE POST ID GRAB
             figureID = postID;
-            ////console.log("figureID THEME:", figureID);
+            console.log("figureID THEME:", figureID);
         }
 
         // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyLineFigure a chance to finish running before the next one kicked off
         // producePlotlyLineFigure used to fail here because the script was running before the previous iteration finished. 
         const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
+		console.log('figureRestCall', figureRestCall);
         const response = await fetch(figureRestCall);
 
         const data = await response.json();
@@ -742,9 +743,9 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
 
         } else {}
 
-    } catch (error) {
-        console.error('Error loading scripts:', error);
-    }
+    // } catch (error) {
+    //     console.error('Error loading scripts:', error);
+    // }
 }
 
 /**

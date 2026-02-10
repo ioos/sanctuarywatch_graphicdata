@@ -18,7 +18,7 @@ try {
 if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
     child_obj = undefined;
 } else { 
-    console.log('child_ids', child_ids);
+    //console.log('child_ids', child_ids);
     child_obj = JSON.parse(JSON.stringify(child_ids));
 }
 
@@ -96,7 +96,7 @@ if (!is_mobile()) {
 	document.head.appendChild(style);
 }
 
-// The lines below from step 1 through step 3 are used for organizing childObj(of modals) when it is fed into the toc as sortedChildEntries.
+// The lines below from step 1 through step 3 are used for organizing child_obj(of modals) when it is fed into the toc as sortedChildEntries.
 // If all modals are set to 1 then it now organized alphabetically. other wise it respects the modal order.
 
 process_child_obj();
@@ -112,7 +112,7 @@ if (
 ) {
 	sortedChildEntries = null;
 } else {
-	sortedChildEntries = Object.entries(childObj);
+	sortedChildEntries = Object.entries(child_obj);
 }
 
 // Step 2: check if all modal_icon_order are 1 (or missing)
@@ -151,9 +151,9 @@ try {
 } catch {}
 
 // Step 4: extract the objects (no keys) to match your original format
-let sortedChildObjs = null;
+let sorted_child_objs = null;
 if (!window.location.href.includes('post.php')) {
-	sortedChildObjs = sortedChildEntries.map(([_, val]) => val);
+	sorted_child_objs = sortedChildEntries.map(([_, val]) => val);
 }
 
 // Step 5: build childIdsHelper for title-to-key mapping
@@ -268,16 +268,16 @@ function hexToRgba(hex, opacity) {
 
 /**
  
- * This function pre-processes the `childObj` dictionary to ensure that each element (scene icon) belongs to the 
+ * This function pre-processes the `child_obj` dictionary to ensure that each element (scene icon) belongs to the 
  * current scene by checking if its scene ID matches the post ID.
  * This ensures that elements from other scenes are excluded, and keys are updated as needed to avoid duplicates.
  *
- * @returns {void} Modifies childObj dictionary in place
+ * @returns {void} Modifies child_obj dictionary in place
  */
 function process_child_obj() {
-	for (const key in childObj) {
-		if (childObj[key].scene.ID !== post_id) {
-			delete childObj[key];
+	for (const key in child_obj) {
+		if (child_obj[key].scene.ID !== post_id) {
+			delete child_obj[key];
 		} else {
 			const oldkey = String(key);
 			const lastChar = oldkey.charAt(oldkey.length - 1);
@@ -286,9 +286,9 @@ function process_child_obj() {
 
 			//prevent duplicates:  For example, if there is a separate mobile icon for the icon named "whales", then in the mobile layer, that icon should be named "whales-mobile".
 			if (isNumeric) {
-				const newkey = childObj[key].original_name;
-				childObj[newkey] = childObj[key];
-				delete childObj[key];
+				const newkey = child_obj[key].original_name;
+				child_obj[newkey] = child_obj[key];
+				delete child_obj[key];
 			}
 		}
 	}
@@ -619,12 +619,9 @@ async function init() {
 	try {
 		// scene_data = title_arr;
 		// console.log('scene_data', scene_data);
-
-		console.log('visible_modals', visible_modals);
-
+		//console.log('visible_modals', visible_modals);
 		sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
 		thisInstance = sceneLoc;
-
 		loadSVG(url, 'svg1'); // Call load_svg with the fetched data
 	} catch (error) {
 		if (!window.location.href.includes('post.php')) {
