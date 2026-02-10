@@ -1,0 +1,262 @@
+/*!
+ * sw_modal_preview_desktop_v2.css
+ * Desktop preview styles for Estuary modal
+ * Fixes:
+ *  - accordion menu no longer collapses when tab content grows
+ *  - all buttons have square corners (no rounding)
+ */
+
+ .modal-dialog.modal-lg{
+  margin: 5% auto !important;
+}
+
+a {
+  color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
+  text-decoration: underline;
+  color: #03386c;
+}
+
+ul {
+  list-style: disc;
+  color: rgb(82, 82, 82);
+  fill: rgb(82, 82, 82);
+}
+
+.modal-content{
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;              /* body scrolls, not the whole content */
+  border: 1px solid rgba(0,0,0,0.15);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.28);
+  background: #fff;
+}
+
+.modal-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+.modal-title{
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin: 0;
+  color: #024880;
+}
+
+/* Close button square */
+.btn-close{
+  border-radius: 0 !important;
+}
+
+/* Modal body scroll area */
+.modal-body{
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 14px 16px 18px;
+}
+
+/* Two-column layout that stays stable */
+.modal-body > .row{
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  gap: 16px;
+  margin: 0; /* neutralize Bootstrap gutters */
+}
+
+/* Left content area */
+#tagline-container{
+  min-width: 0;
+  padding: 0;
+  flex: 1 1 75%;
+  width: 75%;
+}
+
+/* Right “sections menu” (accordion): DO NOT shrink */
+#accordion-container{
+  min-width: 0;
+  padding: 0;
+  flex: 0 0 25%;
+  width: 25%;
+  flex-shrink: 0 !important;         /* critical */
+  align-self: flex-start !important; /* critical */
+}
+
+/* Keep the sections menu visible inside scrolling body */
+@media (min-width: 901px){
+  #accordion-container{
+    position: sticky;
+    top: 0;
+    max-height: calc(88vh - 110px); /* header + padding allowance */
+    overflow: auto;
+    padding-right: 4px;
+    background: #fff;
+    z-index: 2;
+  }
+}
+
+/* Stack on smaller widths */
+@media (max-width: 900px){
+  .modal-dialog.modal-lg{
+    width: min(700px, 96vw);
+    max-width: 96vw;
+    margin: 3% auto !important;
+  }
+
+  .modal-body > .row{
+    flex-wrap: wrap !important;
+  }
+
+  #tagline-container,
+  #accordion-container{
+    flex: 0 0 100%;
+    width: 100%;
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+/* Tabs */
+#myTab.nav-tabs{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  margin-left: 1% !important;
+  border-bottom: 2px solid rgba(0,0,0,0.12);
+  padding-left: 0;
+}
+
+/* Tabs as square buttons */
+#myTab.nav-tabs .nav-link{
+  /* border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 0 !important;  */
+  /* padding: 8px 12px;
+  font-weight: 600;
+  color: #0b2e4f;
+  background: rgba(0,0,0,0.03); */
+}
+
+#myTab.nav-tabs .nav-link:hover{
+  background: rgba(0,0,0,0.06);
+}
+
+li {
+  margin-bottom: 1px;
+}
+
+.accordion-item {
+  /* color: var(--bs-accordion-color); */
+  /* background-color: var(--bs-accordion-bg); */
+  border: none;
+}
+
+
+#myTab.nav-tabs .nav-link.active{
+  /* background: #fff; */
+  content: "▼";
+  border: 2px solid;
+  border-color: rgba(0,0,0,0.12) rgba(0,0,0,0.12) transparent; 
+  color: #003b71;
+  content: '▼';
+  font-size: 1em;
+  vertical-align: middle;
+  margin-left: 0.3rem;
+  height: 57px;
+  border-radius: 4 !important; 
+  --bs-nav-tabs-border-width: var(--bs-border-width);
+  --bs-nav-tabs-border-color: var(--bs-border-color);
+  --bs-nav-tabs-border-radius: var(--bs-border-radius);
+  --bs-nav-tabs-link-hover-border-color: var(--bs-secondary-bg) var(--bs-secondary-bg) var(--bs-border-color);
+  --bs-nav-tabs-link-active-color: var(--bs-emphasis-color);
+  --bs-nav-tabs-link-active-bg: var(--bs-body-bg);
+  --bs-nav-tabs-link-active-bg2: var(--bs-body-bg2);
+  --bs-nav-tabs-link-active-border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-border-color);
+}
+
+
+#myTab .nav-link::after {
+  content: " ▼";
+  font-size: 1rem;
+  opacity: 0.85;
+
+}
+
+
+
+/* Content panel */
+#myTabContent.tab-content{
+  margin-top: 2% !important;
+  margin-left: 1% !important;
+  margin-right: 1% !important;
+  padding: 12px 12px 14px;
+  /* border: 1px solid rgba(0,0,0,0.12); */
+  border-top: 0;
+  border-radius: 0 !important;
+  background: #fff;
+
+  min-width: 0; /* critical for big injected figures */
+}
+
+/* Accordion menu styling */
+#accordion-container .accordion-item{
+  border-radius: 0 !important;
+  overflow: hidden;
+  /* border: 1px solid rgba(0,0,0,0.12); */
+  /* border-radius: 4 !important;  */
+}
+
+#accordion-container .accordion-button{
+  background: #003b71;
+  color: #fff;
+  font-weight: 400;
+  padding: 12px 14px;
+  border-radius: 4 !important;
+}
+
+#accordion-container .accordion-button::after{
+  filter: brightness(0) invert(1);
+}
+
+.accordian {
+  --bs-accordion-border-width: 0px;
+}
+
+#accordion-container .accordion-body{
+  background: #fff;
+  color: #111;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--bs-accordion-border-color);
+  border-right: 1px solid var(--bs-accordion-border-color);
+  border-left: 1px solid var(--bs-accordion-border-color);
+}
+
+/* Collapse safety */
+.accordion-collapse.collapse{ display: none; }
+.accordion-collapse.collapse.show{ display: block; }
+.accordion-collapse.collapsing{ height: 0; overflow: hidden; transition: height .35s ease; }
+
+/* Copy link button square */
+.copy-tab-link,
+.CopyTabLinkButton,
+button[data-copy-tab-link],
+button.copyTabLink{
+  border-radius: 0 !important;
+}
+
+.btn-primary {
+  background-color: #03386c;  
+}
+
+/* Media safety */
+img,
+iframe,
+video,
+svg{
+  max-width: 100%;
+  height: auto;
+}

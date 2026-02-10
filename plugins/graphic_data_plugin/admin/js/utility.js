@@ -25,10 +25,10 @@ function replaceFieldValuesWithTransientValues() {
 				if (element.tagName === 'INPUT' && element.type === 'range') {
 					element.nextElementSibling.value = metaValue;
 				}
-			}
-		});
-	}
+			});
+		}
 }
+
 
 // Get a cookie with a specified name
 function getCookie(cookieName) {

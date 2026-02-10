@@ -1,0 +1,322 @@
+/* ==========================================================
+   MOBILE LOOK ON DESKTOP — TITLE + ACCORDION + ICON GRID
+   Scope: only inside #title-container and #scene-fluid / #svg1
+   Goal: mimic the *nice* mobile "Overview" layout without breaking
+         Bootstrap collapse behavior or SVG artwork.
+   ========================================================== */
+
+/* ---------- Safety resets: undo "computed CSS export" traps ---------- */
+/* These selectors existed in the computed sheet and can freeze heights/widths,
+   preventing Bootstrap collapse from changing layout. */
+
+
+#entire_thing {
+  background-color: #f2f2f2;
+}
+
+ul {
+  list-style: disc;
+  color: rgb(82, 82, 82);
+  fill: rgb(82, 82, 82);
+}
+
+a {
+  color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
+  text-decoration: underline;
+  color: #03386c;
+}
+
+#title-container,
+#title-container * {
+  box-sizing: border-box;
+}
+
+#title-container div > div:nth-of-type(2),
+#title-container div > div:nth-of-type(2) > div {
+  /* let accordion stack grow/shrink normally */
+  height: auto !important;
+  max-height: none !important;
+  block-size: auto !important;
+
+  width: auto !important;
+  max-width: 100% !important;
+  inline-size: auto !important;
+
+  overflow: visible !important;
+  position: static !important;
+}
+
+/* Kill any weird negative margins that cause overlap with the grid */
+#mobile-view-image {
+  margin: 0 !important;
+}
+
+#scene-fluid {
+  margin-top: 12px !important;
+  margin-bottom: 0 !important;
+}
+
+/* ---------- Title / header ---------- */
+#title-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 12px;
+  margin: 0 auto;
+}
+
+#title-container h1,
+#title-container .sceneTitle {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin: 16px 0 12px;
+  padding-top: 16px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #005a87; /* NOAA-ish blue */
+}
+
+/* ---------- Force "mobile stack" layout in the title container ---------- */
+#title-container > .row,
+#title-container .row {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  margin: 0 !important;
+}
+
+/* The left column is empty in your mobile-mimic markup; keep it from reserving space */
+#title-container .row > .col-md-10 {
+  /* In the mobile-mimic markup this is often empty; just keep it from
+     adding extra horizontal spacing on desktop. */
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  flex: 0 0 auto !important;
+}
+
+/* Accordion column: override inline styles and center as a "mobile card stack" */
+#title-container .row > .col-md-2 {
+  width: 100% !important;
+  max-width: min(320px, 92vw) !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+/* ---------- Accordion (nice mobile look) ---------- */
+#title-container .accordion {
+  width: 100% !important;
+  margin: 0 !important;
+  color: var(--bs-accordion-color);
+}
+
+.accordion {
+  --bs-accordion-bg: none;
+}
+
+/* separate “bars”, not pill buttons */
+#title-container .accordion-item {
+  border: 2px solid var(--bs-accordion-border-color);
+  border-radius: 0px !important;
+  overflow: hidden !important;
+  margin: 0 0 1px 0 !important;
+}
+
+#more-info-collapse-1 > div {
+  background-color: #f2f2f2;
+}
+#images-collapse-1 > div {
+  background-color: #f2f2f2;
+}
+
+#title-container .accordion-header {
+  margin: 0 !important;
+}
+
+/* button bar */
+#title-container .accordion-button {
+  background: #003b71 !important; /* deep navy */
+  color: #fff !important;
+  font-weight: 500 !important;
+  padding: 12px 14px !important;
+
+  border: 0 !important;
+  border-radius: 0 !important; /* bar look */
+  box-shadow: none !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* remove bootstrap focus glow */
+#title-container .accordion-button:focus {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* keep the chevron white */
+#title-container .accordion-button::after {
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.95 !important;
+}
+
+/* body */
+#title-container .accordion-body {
+  background: #fff !important;
+  color: #111 !important;
+  padding: 12px 14px !important;
+}
+
+/* ---------- Critical: let Bootstrap collapse control display/height ---------- */
+/* If any earlier CSS forced display:block/height, this restores collapse. */
+#title-container .accordion-collapse.collapse {
+  display: none !important;
+}
+#title-container .accordion-collapse.collapse.show {
+  display: block !important;
+}
+#title-container .accordion-collapse.collapsing {
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* ---------- View Full Scene button ---------- */
+#title-container .ViewSceneButton {
+  width: 100% !important;
+  max-width: min(320px, 92vw) !important;
+
+  display: block !important;
+  margin: 6px auto 0 !important;
+
+  background: #003b71 !important;
+  color: #fff !important;
+  border: 2px solid rgb(189, 189, 189) !important;
+  border-radius: 12px !important;
+
+  padding: 12px 14px !important;
+  font-weight: 700 !important;
+
+  /* box-shadow: 0 2px 0 rgba(0,0,0,0.20) !important; */
+}
+
+/* ---------- Icon grid (svg tiles) ----------
+/* Constrain the whole scene tile block to “mobile” width */
+#scene-fluid,
+#svg1 {
+  width: min(360px, 92vw) !important;
+  max-width: 92vw !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding: 0 !important;
+}
+
+/* Allow rows to wrap nicely and center */
+#scene-fluid .row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Tile card */
+/* #scene-fluid .col-4 {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: center !important;
+
+  overflow: hidden !important;
+  border: 0.25px solid #ccc !important;
+  border-radius: 10px !important;
+
+  padding: 10px !important;
+  margin: 0 !important;
+
+  background-color: #d8dbe3 !important;
+
+  width: clamp(78px, 28vw, 110px) !important;
+  height: clamp(110px, 38vw, 170px) !important;
+  max-width: 100% !important;
+
+  flex: 0 0 auto !important;
+} */
+
+/* ==============================
+   SVG FIT INSIDE TILE (NO SVG EDITS)
+   ============================== */
+
+/* Keep your tile behavior (you already have most of this) */
+#scene-fluid .col-4{
+  border-radius: 10px !important;
+  border: 0.25px solid #000 !important;
+  overflow: hidden; /* important: prevent any icon bleed */
+  width: 110px;
+  height: 170px;
+  height: clamp(110px, 38vw, 170px) !important;
+  padding-bottom: 10px;
+}
+
+/* Create a consistent icon area at the top of the card */
+#scene-fluid .col-4 svg{
+  /* "icon box" */
+  width: 70px !important;
+  height: 70px !important;
+
+  /* make it behave like a contained image */
+  display: block !important;
+
+  /* center it */
+  margin: 6px auto 10px auto !important;
+
+  /* IMPORTANT: prevents weird stretching if the SVG has internal width/height */
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+/* If your SVG is inside a wrapper (common), center that too */
+#scene-fluid .col-4 > div:first-child,
+#scene-fluid .col-4 .icon,
+#scene-fluid .col-4 .icon-wrap{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* If any SVG children are causing bleed (rare but happens), clip them */
+#scene-fluid .col-4 svg *{
+  vector-effect: non-scaling-stroke; /* keeps strokes from exploding when scaled */
+}
+
+/* Label under the icon */
+#scene-fluid .col-4 > div,
+#scene-fluid .col-4 .tileLabel {
+  width: 100% !important;
+  margin-top: auto !important;
+
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  color: #000 !important;
+
+  /* helps mimic the hyphenated/lowercase look */
+  text-transform: lowercase !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  hyphens: auto !important;
+}

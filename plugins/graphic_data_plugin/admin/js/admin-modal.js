@@ -379,76 +379,50 @@ function iconSceneOutDropdown() {
  *   "modal_info_entries", "modal_photo_entries", "modal_tab_number", and elements with class "modal_preview" in the DOM.
  * - Assumes the existence of helper functions `displayTabEntries` and `displayEntries`.
  */
-function modalWindow() {
-	const iconFunctionValue =
-		document.getElementsByName('icon_function')[0].value;
-	if (iconFunctionValue == 'Modal') {
-		//  document.getElementsByName("icon_out_type")[0].value = "External";
-		document.getElementsByName(
-			'icon_external_url'
-		)[0].parentElement.parentElement.style.display = 'none';
-		document.getElementsByName('icon_external_url')[0].value = '';
-		document.getElementsByName('icon_scene_out')[0].value = '';
-		document.getElementsByName(
-			'icon_scene_out'
-		)[0].parentElement.parentElement.style.display = 'none';
-		document.getElementsByName(
-			'modal_tagline'
-		)[0].parentElement.parentElement.style.display = 'block';
-		document.getElementsByName(
-			'modal_info_entries'
-		)[0].parentElement.parentElement.style.display = 'block';
-		document.getElementsByName(
-			'modal_photo_entries'
-		)[0].parentElement.parentElement.style.display = 'block';
-		document.getElementsByName(
-			'modal_tab_number'
-		)[0].parentElement.parentElement.style.display = 'block';
-		document.getElementsByClassName(
-			'modal_preview'
-		)[0].parentElement.parentElement.style.display = 'block';
-		displayTabEntries(
-			document.getElementsByName('modal_tab_number')[0].value
-		);
-	} else {
-		document.getElementsByName(
-			'modal_tagline'
-		)[0].parentElement.parentElement.style.display = 'none';
+function modalWindow(){
+    const iconFunctionValue = document.getElementsByName("icon_function")[0].value;
+    if (iconFunctionValue == "Modal"){ 
+        //  document.getElementsByName("icon_out_type")[0].value = "External";
+        document.getElementsByName("icon_external_url")[0].parentElement.parentElement.style.display = "none";
+        document.getElementsByName("icon_external_url")[0].value = "";
+        document.getElementsByName("icon_scene_out")[0].value = "";
+        document.getElementsByName("icon_scene_out")[0].parentElement.parentElement.style.display = "none";
+        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.style.display = "block";
+        document.getElementsByName("modal_info_entries")[0].parentElement.parentElement.style.display = "block";
+        document.getElementsByName("modal_photo_entries")[0].parentElement.parentElement.style.display = "block";
+        document.getElementsByName("modal_tab_number")[0].parentElement.parentElement.style.display = "block";
+        document.getElementsByClassName("modal_preview")[0].parentElement.parentElement.style.display = "block";
+        document.getElementsByClassName("modal_preview_mobile")[0].parentElement.parentElement.style.display = "block";
+        displayTabEntries(document.getElementsByName("modal_tab_number")[0].value);
+    } else {
 
-		// Set the Modal Info entries to 0, run displayEntries to hide all of the resulting Modal Info fields
-		// and then hide the Modal Info range
-		document.getElementsByName('modal_info_entries')[0].value = 0;
-		document.getElementsByName('modal_info_entries')[0].nextSibling.value =
-			0;
-		displayEntries(0, ".text-class[data-depend-id='modal_info_");
-		document.getElementsByName(
-			'modal_info_entries'
-		)[0].parentElement.parentElement.style.display = 'none';
+        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.style.display = "none";
 
-		// Set the Modal Photo entries to 0, run displayEntries to hide all of the resulting Modal Photo fields
-		// and then hide the Modal Photo range
-		document.getElementsByName('modal_photo_entries')[0].value = 0;
-		document.getElementsByName('modal_photo_entries')[0].nextSibling.value =
-			0;
-		displayEntries(0, ".text-class[data-depend-id='modal_photo_");
-		document.getElementsByName(
-			'modal_photo_entries'
-		)[0].parentElement.parentElement.style.display = 'none';
+        // Set the Modal Info entries to 0, run displayEntries to hide all of the resulting Modal Info fields 
+        // and then hide the Modal Info range 
+        document.getElementsByName("modal_info_entries")[0].value = 0;
+        document.getElementsByName("modal_info_entries")[0].nextSibling.value = 0;
+        displayEntries(0, ".text-class[data-depend-id='modal_info_");
+        document.getElementsByName("modal_info_entries")[0].parentElement.parentElement.style.display = "none";
 
-		// Set the Modal Tab entries to 0, run displayTabEntries to hide all of the resulting Modal Tab fields
-		// and then hide the Modal Tab range
-		document.getElementsByName('modal_tab_number')[0].value = 1;
-		document.getElementsByName('modal_tab_number')[0].nextSibling.value = 1;
-		displayTabEntries(0);
-		document.getElementsByName(
-			'modal_tab_number'
-		)[0].parentElement.parentElement.style.display = 'none';
+        // Set the Modal Photo entries to 0, run displayEntries to hide all of the resulting Modal Photo fields 
+        // and then hide the Modal Photo range 
+        document.getElementsByName("modal_photo_entries")[0].value = 0;
+        document.getElementsByName("modal_photo_entries")[0].nextSibling.value = 0;
+        displayEntries(0, ".text-class[data-depend-id='modal_photo_");
+        document.getElementsByName("modal_photo_entries")[0].parentElement.parentElement.style.display = "none";
 
-		// Turn off the Modal preview button
-		document.getElementsByClassName(
-			'modal_preview'
-		)[0].parentElement.parentElement.style.display = 'none';
-	}
+        // Set the Modal Tab entries to 0, run displayTabEntries to hide all of the resulting Modal Tab fields 
+        // and then hide the Modal Tab range 
+        document.getElementsByName("modal_tab_number")[0].value = 1;
+        document.getElementsByName("modal_tab_number")[0].nextSibling.value = 1;
+        displayTabEntries(0);
+        document.getElementsByName("modal_tab_number")[0].parentElement.parentElement.style.display = "none";
+
+        // Turn off the Modal preview button
+        document.getElementsByClassName("modal_preview")[0].parentElement.parentElement.style.display = "none";
+        document.getElementsByClassName("modal_preview_mobile")[0].parentElement.parentElement.style.display = "none";
+    }
 }
 
 /**

@@ -144,7 +144,7 @@ $graphic_data_instance = get_post_meta( $graphic_data_post_id, 'scene_location',
 	</div>
   </div>
   <script>
-	let childIds = <?php echo json_encode( $graphic_data_child_ids ); ?>;
+	let child_ids = <?php echo json_encode( $graphic_data_child_ids ); ?>;
 	let post_id =  <?php echo absint( $graphic_data_post_id ); ?>;
 	let svg_url =  <?php echo json_encode( $graphic_data_scene_url ); ?>;
 	let num_sections =  <?php echo json_encode( $graphic_data_num_sections ); ?>;
@@ -233,7 +233,7 @@ $graphic_data_instance_color_settings = array(
  </body>
 <script>
   let title_arr  = <?php echo json_encode( $graphic_data_title_arr ); ?>;
-  let visible_modals  = <?php echo json_encode( $graphic_data_visible_modals ); ?>;
+  let visible_modals  = <?php echo json_encode( $graphic_data_results ); ?>;
   let instance_color_settings  = <?php echo json_encode( $graphic_data_instance_color_settings ); ?>;
 </script>
 
