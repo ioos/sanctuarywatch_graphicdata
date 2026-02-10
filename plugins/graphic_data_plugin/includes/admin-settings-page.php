@@ -96,7 +96,8 @@ class Graphic_Data_Settings_Page {
 		// Register a graphic data settings group.
 		register_setting(
 			'theme_settings_group',
-			'graphic_data_settings', // [ 'sanitize_callback' => [ $this, 'sanitize_graphic_data_settings' ] ]
+			'graphic_data_settings',
+			[ 'sanitize_callback' => [ $this, 'sanitize_graphic_data_settings' ] ]
 		);
 
 		// Tutorial Content section.
@@ -270,7 +271,7 @@ class Graphic_Data_Settings_Page {
 
 		// Sanitize text fields.
 		if ( isset( $input['intro_text'] ) ) {
-			$sanitized['intro_text'] = sanitize_textarea_field( $input['intro_text'] );
+			$sanitized['intro_text'] = wp_kses_post( $input['intro_text'] );
 		}
 
 		if ( isset( $input['sitewide_footer_title'] ) ) {
@@ -298,7 +299,7 @@ class Graphic_Data_Settings_Page {
 		}
 
 		if ( isset( $input['interactive_line_defaults'] ) ) {
-			$sanitized['interactive_line_defaults'] = sanitize_text_field( $input['interactive_line_defaults'] );
+			$sanitized['interactive_line_defaults'] = wp_kses_post( $input['interactive_line_defaults'] );
 		}
 
 		if ( isset( $input['interactive_bar_arguments'] ) ) {
@@ -306,7 +307,7 @@ class Graphic_Data_Settings_Page {
 		}
 
 		if ( isset( $input['interactive_bar_defaults'] ) ) {
-			$sanitized['interactive_bar_defaults'] = sanitize_text_field( $input['interactive_bar_defaults'] );
+			$sanitized['interactive_bar_defaults'] = wp_kses_post( $input['interactive_bar_defaults'] );
 		}
 
 		return $sanitized;

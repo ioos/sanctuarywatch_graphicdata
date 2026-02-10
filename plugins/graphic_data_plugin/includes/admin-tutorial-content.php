@@ -39,6 +39,7 @@ class Graphic_Data_Tutorial_Content {
 					update_option( 'graphic_data_settings', $options );
 					$this->delete_tutorial_images();
 					$this->delete_tutorial_posts();
+					$this->delete_graphic_data_settings_content();
 				}
 				break;
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
@@ -48,6 +49,7 @@ class Graphic_Data_Tutorial_Content {
 					$options['tutorial_content_present'] = 1;
 					update_option( 'graphic_data_settings', $options );
 					$this->create_tutorial_instances();
+					$this->create_graphic_data_settings_content();
 				}
 				break;
 		}
@@ -203,7 +205,26 @@ class Graphic_Data_Tutorial_Content {
 	 * @return void
 	 */
 	public function create_graphic_data_settings_content() {
+		$options = get_option( 'graphic_data_settings' );
+		$options['intro_text'] = 'Ipsum lorem';
+		$options['sitewide_footer_title'] = 'SiteWide Footer Title';
+		$options['sitewide_footer'] = 'SiteWide Footer Content';
+		update_option( 'graphic_data_settings', $options );
+	}
 
+	/**
+	 * Delete Front Page Intro and Sitewide Footer content for the tutorial.
+	 *
+	 * These two content types are normally edited via the Settings page for the tutorial.
+	 *
+	 * @return void
+	 */
+	public function delete_graphic_data_settings_content() {
+		$options = get_option( 'graphic_data_settings' );
+		$options['intro_text'] = '';
+		$options['sitewide_footer_title'] = '';
+		$options['sitewide_footer'] = '';
+		update_option( 'graphic_data_settings', $options );
 	}
 
 	/**
