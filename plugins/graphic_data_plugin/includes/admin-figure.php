@@ -786,7 +786,7 @@ class Graphic_Data_Figure {
 						'btn-class' => 'exopite-sof-btn',
 					),
 				),
-				// Preview button for displaying the internal or external images at the bottom of form
+				// Preview button for displaying the internal or external images at the bottom of form.
 				array(
 					'id'          => 'figure_preview_mobile',
 					'type'        => 'button',
