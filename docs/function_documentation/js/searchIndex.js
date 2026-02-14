@@ -1116,6 +1116,11 @@ Search.appendIndex(
             "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020\u0022Site\u0020footer\u0022\u0020rich\u0020text\u0020editor\u0020field.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_sitewide_footer_field_callback"
         },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Afront_page_code_block_field_callback\u0028\u0029",
+            "name": "front_page_code_block_field_callback",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020\u0022Front\u0020Page\u0020Code\u0020Block\u0022\u0020textarea\u0020field.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_front_page_code_block_field_callback"
+        },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aintro_text_field_callback\u0028\u0029",
             "name": "intro_text_field_callback",
             "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020\u0022Intro\u0020Text\u0022\u0020rich\u0020text\u0020editor\u0020field.",
