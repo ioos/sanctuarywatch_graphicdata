@@ -29,7 +29,7 @@ class Graphic_Data_Settings_Page {
 		add_menu_page(
 			'Graphic Data Settings', // Page title.
 			'Graphic Data Settings', // Menu title.
-			'manage_options', // Capability required.
+			'edit_others_posts', // Capability required.
 			'theme_settings', // Menu slug.
 			[ $this, 'settings_page' ] // Function to display the page.
 		);
@@ -130,6 +130,14 @@ class Graphic_Data_Settings_Page {
 			'Theme Display',
 			null,
 			'theme_settings'
+		);
+
+		add_settings_field(
+			'front_page_code_block',
+			'Front Page Code Block',
+			[ $this, 'front_page_code_block_field_callback' ],
+			'theme_settings',
+			'settings_section'
 		);
 
 		add_settings_field(
@@ -269,7 +277,6 @@ class Graphic_Data_Settings_Page {
 	public function sanitize_graphic_data_settings( $input ) {
 		$sanitized = [];
 
-		// Sanitize text fields.
 		if ( isset( $input['intro_text'] ) ) {
 			$sanitized['intro_text'] = wp_kses_post( $input['intro_text'] );
 		}
@@ -484,6 +491,35 @@ class Graphic_Data_Settings_Page {
 		wp_editor( wp_kses_post( $value ), $editor_id, $settings );
 		?>
 		<p class="description">The content in this field will appear as the first column in the footer across all pages. If you don't want a site-wide footer, then leave this field blank.</p>
+		<?php
+	}
+
+	/**
+	 * Callback function to render the "Front Page Code Block" textarea field.
+	 *
+	 * Displays a code block textarea for entering custom code on the front page.
+	 * Only visible to users with the manage_options capability.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function front_page_code_block_field_callback() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			?>
+			<p class="description">
+				This field is only available to site administrators.
+			</p>
+			<?php
+			return;
+		}
+		$options = get_option( 'graphic_data_settings' );
+		$value = isset( $options['front_page_code_block'] ) ? $options['front_page_code_block'] : '';
+		?>
+		<p class="description">
+			Enter HTML or embed code for the front page code block. This will appear as the first element below the navigation bar on the front page.
+			<br><strong>Warning:</strong> Content entered here will be rendered without security checks or sanitization. Ensure that any code you enter is safe and from a trusted source.
+		</p>
+		<textarea name="graphic_data_settings[front_page_code_block]" rows="10" cols="80" class="large-text code"><?php echo esc_textarea( $value ); ?></textarea>
 		<?php
 	}
 
@@ -759,7 +795,8 @@ class Graphic_Data_Settings_Page {
 	 */
 	public function settings_page() {
 		// Check user capabilities.
-		if ( ! current_user_can( 'manage_options' ) ) {
+		$user = wp_get_current_user();
+		if ( in_array( 'content_editor', (array) $user->roles, true ) ) {
 			return;
 		}
 		?>

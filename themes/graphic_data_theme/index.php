@@ -59,7 +59,15 @@ if ( $graphic_data_instances_query->have_posts() ) {
 
 <div id="entire_thing"> 
 <div class="container-fluid-index">
-
+<?php
+	$options = get_option( 'graphic_data_settings' );
+	$code_block_value = isset( $options['front_page_code_block'] ) ? $options['front_page_code_block'] : '';
+	if ('' !== $code_block_value){
+		echo '<div class="front-page-code-block">';
+		echo $code_block_value;
+		echo '</div>';
+	}
+?>
 <div class="image-center">
 		<span class="site-branding-logo">
 			<?php
