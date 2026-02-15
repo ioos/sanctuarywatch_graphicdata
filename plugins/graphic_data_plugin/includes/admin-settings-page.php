@@ -277,6 +277,10 @@ class Graphic_Data_Settings_Page {
 	public function sanitize_graphic_data_settings( $input ) {
 		$sanitized = [];
 
+		if ( isset( $input['front_page_code_block'] ) ) {
+			$sanitized['front_page_code_block'] = $input['front_page_code_block'];
+		}
+
 		if ( isset( $input['intro_text'] ) ) {
 			$sanitized['intro_text'] = wp_kses_post( $input['intro_text'] );
 		}
