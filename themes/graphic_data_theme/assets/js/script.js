@@ -620,8 +620,10 @@ async function init() {
 		// scene_data = title_arr;
 		// console.log('scene_data', scene_data);
 		//console.log('visible_modals', visible_modals);
+
 		sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
 		thisInstance = sceneLoc;
+
 		loadSVG(url, 'svg1'); // Call load_svg with the fetched data
 	} catch (error) {
 		if (!window.location.href.includes('post.php')) {

@@ -176,6 +176,7 @@ $graphic_data_results = $wpdb->get_results(
 	)
 );
 
+
 $graphic_data_title_arr = [];
 foreach ( $graphic_data_results as $graphic_data_row ) {
 	// Check if the meta_value looks like a serialized string.
@@ -193,32 +194,45 @@ foreach ( $graphic_data_results as $graphic_data_row ) {
 		$graphic_data_title_arr[ $graphic_data_row->meta_key ] = $graphic_data_row->meta_value;
 	}
 
+	// This ties to scripts.js for the function handleIconVisibility(svgElement, visible_modals)?
 	$graphic_data_related_modals_results = $wpdb->get_results(
 		$wpdb->prepare(
-			"SELECT * FROM {$wpdb->posts} 
-			WHERE post_type = 'modal' 
-			AND post_parent = %d 
-			ORDER BY post_title ASC",
+			"
+			SELECT pm2.meta_value AS modal_icons,
+				pm3.meta_value AS modal_published
+			FROM {$wpdb->postmeta} AS pm1
+			INNER JOIN {$wpdb->postmeta} AS pm2
+				ON pm1.post_id = pm2.post_id
+			INNER JOIN {$wpdb->postmeta} AS pm3
+				ON pm1.post_id = pm3.post_id
+			INNER JOIN {$wpdb->posts} AS p
+				ON pm1.post_id = p.ID
+			WHERE pm1.meta_key = 'modal_scene'
+			AND pm1.meta_value = %d
+			AND pm2.meta_key = 'modal_icons'
+			AND pm3.meta_key = 'modal_published'
+			AND p.post_status != 'trash'
+			LIMIT 100
+			",
 			$graphic_data_post_id
 		)
 	);
 
 	// Only include modal_icons if the modal_published value is 'published'.
-	$graphic_data_visible_modals = array_unique(
-		array_reduce(
-			$graphic_data_related_modals_results,
-			function ( $carry, $row ) {
-				if ( 'published' === $row->modal_published ) {
-					$carry[] = $row->modal_icons;
-				}
-				return $carry;
-			},
-			[]
+	$graphic_data_visible_modals = array_values(
+		array_unique(
+			array_reduce(
+				$graphic_data_related_modals_results,
+				function ( $carry, $row ) {
+					if ( isset( $row->modal_published ) && 'published' === $row->modal_published ) {
+						$carry[] = $row->modal_icons ?? null;
+					}
+					return $carry;
+				},
+				[]
+			)
 		)
 	);
-
-
-
 }
 
 // save instance color settings for mobile background and mobile text to page.
@@ -233,7 +247,7 @@ $graphic_data_instance_color_settings = array(
  </body>
 <script>
   let title_arr  = <?php echo json_encode( $graphic_data_title_arr ); ?>;
-  let visible_modals  = <?php echo json_encode( $graphic_data_results ); ?>;
+  let visible_modals  = <?php echo json_encode( $graphic_data_visible_modals ); ?>;
   let instance_color_settings  = <?php echo json_encode( $graphic_data_instance_color_settings ); ?>;
 </script>
 
