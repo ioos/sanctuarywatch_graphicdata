@@ -56,9 +56,7 @@ if ( $graphic_data_instances_query->have_posts() ) {
 }
 
 ?>
-
-<div id="entire_thing"> 
-<div class="container-fluid-index">
+<div id="code-block" style="padding:0 ; margin 0">
 <?php
 $graphic_data_options = get_option( 'graphic_data_settings' );
 $graphic_data_code_block_value = isset( $graphic_data_options['front_page_code_block'] ) ? $graphic_data_options['front_page_code_block'] : '';
@@ -68,24 +66,28 @@ if ( '' !== trim( $graphic_data_code_block_value ) ) {
 	echo '</div>';
 }
 ?>
-<div class="image-center">
-		<span class="site-branding-logo">
-			<?php
-				echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '" alt="Navbar Emblem">';
-			?>
-		</span>
-		<span class="site-branding-text-container">
-
-		<div class="site-title-main"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></div>
-		<?php
-			$graphic_data_site_tagline = get_bloginfo( 'description' );
-		if ( '' != $graphic_data_site_tagline ) {
-			echo "<div class='site-tagline-main'>" . esc_html( $graphic_data_site_tagline ) . '</div>';
-		}
-		?>
-		</span>
-	</div>
 </div>
+<div id="entire_thing"> 
+<?php if ( false ) : ?>
+<div class="image-center">
+	<span class="site-branding-logo">
+	<?php
+		echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '" alt="Navbar Emblem">';
+	?>
+	</span>
+
+	<span class="site-branding-text-container">
+	<div class="site-title-main"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></div>
+
+	<?php
+	$graphic_data_site_tagline = get_bloginfo( 'description' );
+	if ( '' != $graphic_data_site_tagline ) {
+		echo "<div class='site-tagline-main'>" . esc_html( $graphic_data_site_tagline ) . '</div>';
+	}
+	?>
+  </span>
+</div>
+<?php endif; ?>
 <!-- Main container with Bootstrap styling for fluid layout -->
 <?php
 $graphic_data_front_page_intro = '';

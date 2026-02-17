@@ -8,6 +8,12 @@ Version: 1.2.1
 
 @import url('assets/css/bootstrap.css');
 
+#index-frontpage{
+  max-width: none !important;
+  width: 100% !important;
+}
+
+
 #entire_thing { 
   max-width: 1400px !important;
   margin: 0 auto;
@@ -16,14 +22,25 @@ Version: 1.2.1
   padding-top: 1%;
 }
 
+#entire_thing:has(.code-block){
+  max-width: none !important;
+  width: 100% !important;
+}
+
+#entire_thing:has(.main-container){
+  max-width: 1400px !important;
+  width: 100% !important;
+}
+
+
 #top-bar {
   text-align: center;
-  padding: 2px;
+  padding: 5px;
 }
 
 #top-bar img {
   max-width: 100%;
-  height: 27px;
+  height: 30px;
   margin: 5px;
 }
 
@@ -71,7 +88,7 @@ Version: 1.2.1
   margin: 0;
   text-decoration: none;
   vertical-align: middle;
-  font-size: 1.65rem;
+  font-size: 1.95rem;
   justify-self: center;
 }
 
@@ -116,7 +133,7 @@ Version: 1.2.1
 
 
 .navbar-emblem {
-  margin-right: 5px;
+  margin-right: 10px;
   size: 10%;
   display: block;
   height: auto;   
