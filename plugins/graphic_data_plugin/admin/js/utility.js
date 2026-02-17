@@ -13,8 +13,6 @@ function cookieExists(cookieName) {
 function replaceFieldValuesWithTransientValues() {
 	if (typeof allCustomFields !== 'undefined') {
 		Object.entries(allCustomFields).forEach(([metaBoxName, metaValue]) => {
-			console.log(metaBoxName);
-			console.log(metaValue);
 			const element = document.querySelector(
 				`[data-depend-id="${metaBoxName}"]`
 			);
@@ -22,13 +20,13 @@ function replaceFieldValuesWithTransientValues() {
 				element.value = metaValue;
 
 				// range elements need to be set differently
-				if (element.tagName === 'INPUT' && element.type === 'range')
-					{element.nextElementSibling.value = metaValue;} 
+				if (element.tagName === 'INPUT' && element.type === 'range') {
+					element.nextElementSibling.value = metaValue;
 				}
-			});
-		}
+			}
+		});
+	}
 }
-
 
 // Get a cookie with a specified name
 function getCookie(cookieName) {
@@ -50,24 +48,24 @@ function onCorrectEditPage(customPostType) {
 
 	// Get the current URL
 	const currentUrl = window.location.href;
-	
+
 	// Check if the URL indicates we're editing a post
 	const isEditPage = currentUrl.includes('post.php') || currentUrl.includes('post-new.php');
-	
+
 	// Look for the post type parameter in the URL
 	const urlParams = new URLSearchParams(window.location.search);
 	const postType = urlParams.get('post_type') || 'post'; // Default to 'post' if not specified
-	
+
 	// For editing existing posts, the post type might not be in the URL
 	// In that case, we can rely on the global typenow variable
 	const actualPostType = window.typenow || postType;
-	
+
 	// Check if we're editing the right kind of custom content post
 	if (isEditPage && actualPostType === customPostType) {
-		return true;      
-	} 
+		return true;
+	}
 		return false;
-	
+
 }
 
 /**

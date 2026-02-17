@@ -47,7 +47,6 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 	const targetId = `javascript_figure_target_${postID}`;
 	const plotlyDivID = `plotlyFigure${postID}`;
 	const interactive_arguments = info_obj.figure_interactive_arguments;
-	//console.log('interactive_arguments', interactive_arguments);
 
 	//Preview error message in admin
 	if (
@@ -140,20 +139,6 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 					console.log('RIP - PLOT1', postID);
 
 					// Manually trigger for initially active tab
-					// if (tabContentElement.classList.contains("active")) {
-					//     if (!document.getElementById(plotlyDivID)) {
-					//         try {
-					//             await producePlotlyLineFigure(targetId, interactive_arguments, postID);
-					//             await waitForPlotlyDiv(plotlyDivID);
-					//             adjustPlotlyLayoutForMobile(postID);
-					//             //console.log('RIP - PLOT2', postID);
-					//         } catch (err) {
-					//             console.error(`Initial active tab Plotly error (${postID}):`, err);
-					//         }
-					//     }
-					// }
-
-					// Manually trigger for initially active tab
 					const activeTab =
 						document.querySelector('.tab-pane.active');
 					if (activeTab && activeTab.id === tabContentElement.id) {
@@ -178,7 +163,6 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 								if (plotDiv) {
 									setTimeout(() => {
 										Plotly.Plots.resize(plotDiv);
-										//console.log("Bootstrap event triggered resize:", plotlyDivID);
 									}, 150);
 								}
 							});
@@ -222,21 +206,6 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 					);
 					await waitForPlotlyDiv(plotlyDivID);
 					adjustPlotlyLayoutForMobile(postID);
-					//console.log('RIP - PLOT1', postID);
-
-					// // Manually trigger for initially active tab
-					// if (tabContentElement.classList.contains("active")) {
-					//     if (!document.getElementById(plotlyDivID)) {
-					//         try {
-					//             await producePlotlyBarFigure(targetId, interactive_arguments, postID);
-					//             await waitForPlotlyDiv(plotlyDivID);
-					//             adjustPlotlyLayoutForMobile(postID);
-					//             //console.log('RIP - PLOT2', postID);
-					//         } catch (err) {
-					//             console.error(`Initial active tab Plotly error (${postID}):`, err);
-					//         }
-					//     }
-					// }
 
 					// Manually trigger for initially active tab
 					const activeTab =
@@ -263,7 +232,6 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 								if (plotDiv) {
 									setTimeout(() => {
 										Plotly.Plots.resize(plotDiv);
-										//console.log("Bootstrap event triggered resize:", plotlyDivID);
 									}, 150);
 								}
 							});
@@ -307,21 +275,6 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 					);
 					await waitForPlotlyDiv(plotlyDivID);
 					adjustPlotlyLayoutForMobile(postID);
-					//console.log('RIP - PLOT1', postID);
-
-					// // Manually trigger for initially active tab
-					// if (tabContentElement.classList.contains("active")) {
-					//     if (!document.getElementById(plotlyDivID)) {
-					//         try {
-					//             await producePlotlyBarFigure(targetId, interactive_arguments, postID);
-					//             await waitForPlotlyDiv(plotlyDivID);
-					//             adjustPlotlyLayoutForMobile(postID);
-					//             //console.log('RIP - PLOT2', postID);
-					//         } catch (err) {
-					//             console.error(`Initial active tab Plotly error (${postID}):`, err);
-					//         }
-					//     }
-					// }
 
 					// Manually trigger for initially active tab
 					const activeTab =
@@ -348,7 +301,6 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 								if (plotDiv) {
 									setTimeout(() => {
 										Plotly.Plots.resize(plotDiv);
-										//console.log("Bootstrap event triggered resize:", plotlyDivID);
 									}, 150);
 								}
 							});

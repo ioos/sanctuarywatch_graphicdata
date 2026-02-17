@@ -57,11 +57,7 @@ function run_admin_figures() {
 					const tmp = document.createElement('textarea');
 					tmp.innerHTML = targetRow.title.rendered;
 					optionScene.text = tmp.value;
-					//optionScene.text = targetRow['title']['rendered'];
 					figureScene.appendChild(optionScene);
-
-					//console.log('optionScene.value', optionScene.value);
-					//console.log('optionScene.text', optionScene.text)
 				});
 
 				// Reset and update the "figure_modal" dropdown
@@ -130,9 +126,6 @@ function run_admin_figures() {
 						optionIcon.text = tmp.value;
 						//optionIcon.text = tempTitleDiv.textContent;
 						figureModal.appendChild(optionIcon);
-
-						//console.log('optionIcon.value', optionIcon.value);
-						//console.log('optionIcon.text', optionIcon.text);
 					}
 				});
 				const figureTab = document.getElementsByName('figure_tab')[0];
@@ -389,7 +382,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	if (typeof attachPlainTextPasteHandlers === 'function') {
 		// Attempt to attach handlers immediately after DOM is ready
 		if (!attachPlainTextPasteHandlers(figureEditorIds)) {
-			//console.log('Figure Plain Text Paste: Trumbowyg editors not immediately found, setting timeout...');
 			// Retry after a delay if editors weren't found (Trumbowyg might initialize later)
 			setTimeout(
 				() => attachPlainTextPasteHandlers(figureEditorIds),

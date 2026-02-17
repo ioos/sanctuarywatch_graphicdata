@@ -181,7 +181,6 @@ function tableOfContentsFieldOptions() {
  */
 // function to display Scene Section fields
 function displaySceneEntries(entry_number) {
-	//console.log("displaySceneEntries");
 	let target_title_element = '';
 	let target_color_element = '';
 	let target_color_text_element = '';
@@ -243,7 +242,6 @@ function displaySceneEntries(entry_number) {
  */
 // Function to display either URL or image under scene image link
 function displayPhotoPath(fieldNumber) {
-	//console.log("displayPhotoPath");
 	const targetElement =
 		'scene_photo' +
 		fieldNumber +

@@ -59,7 +59,15 @@ if ( $graphic_data_instances_query->have_posts() ) {
 
 <div id="entire_thing"> 
 <div class="container-fluid-index">
-
+<?php
+$graphic_data_options = get_option( 'graphic_data_settings' );
+$graphic_data_code_block_value = isset( $graphic_data_options['front_page_code_block'] ) ? $graphic_data_options['front_page_code_block'] : '';
+if ( '' !== trim( $graphic_data_code_block_value ) ) {
+	echo '<div id="front-page-code-block">';
+	echo $graphic_data_code_block_value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '</div>';
+}
+?>
 <div class="image-center">
 		<span class="site-branding-logo">
 			<?php

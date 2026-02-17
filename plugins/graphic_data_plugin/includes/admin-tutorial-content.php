@@ -39,6 +39,7 @@ class Graphic_Data_Tutorial_Content {
 					update_option( 'graphic_data_settings', $options );
 					$this->delete_tutorial_images();
 					$this->delete_tutorial_posts();
+					$this->delete_graphic_data_settings_content();
 				}
 				break;
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
@@ -48,6 +49,7 @@ class Graphic_Data_Tutorial_Content {
 					$options['tutorial_content_present'] = 1;
 					update_option( 'graphic_data_settings', $options );
 					$this->create_tutorial_instances();
+					$this->create_graphic_data_settings_content();
 				}
 				break;
 		}
@@ -196,11 +198,130 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
+	 * Create Front Page Intro and Sitewide Footer content for the tutorial.
+	 *
+	 * These two content types are normally entered via the Settings page for the tutorial.
+	 *
+	 * @return void
+	 */
+	public function create_graphic_data_settings_content() {
+		$options = get_option( 'graphic_data_settings' );
+		$options['intro_text'] = 'Ipsum lorem';
+		$options['sitewide_footer_title'] = 'SiteWide Footer Title';
+		$options['sitewide_footer'] = 'SiteWide Footer Content';
+		update_option( 'graphic_data_settings', $options );
+	}
+
+	/**
+	 * Delete Front Page Intro and Sitewide Footer content for the tutorial.
+	 *
+	 * These two content types are normally edited via the Settings page for the tutorial.
+	 *
+	 * @return void
+	 */
+	public function delete_graphic_data_settings_content() {
+		$options = get_option( 'graphic_data_settings' );
+		$options['intro_text'] = '';
+		$options['sitewide_footer_title'] = '';
+		$options['sitewide_footer'] = '';
+		update_option( 'graphic_data_settings', $options );
+	}
+
+	/**
 	 * Create example instances for the tutorial.
 	 *
 	 * @return void
 	 */
 	public function create_tutorial_instances() {
+		global $wpdb;
+		// get current user ID or default to first user if no user is logged in.
+		$current_user_id = get_current_user_id();
+		if ( 0 === $current_user_id ) {
+
+			$users = get_users(
+				array(
+					'number'  => 1,
+					'orderby' => 'ID',
+					'order'   => 'ASC',
+				)
+			);
+
+			if ( ! empty( $users ) ) {
+				$current_user_id = $users[0]->ID;
+			}
+		}
+
+		// set up information to be saved as the three tutorial instances.
+		$post_title = [ 'Example Instance 1', 'Example Instance 2', 'Example Instance 3' ];
+		$instance_short_title = [ 'Example 1', 'Example 2', 'Example 3' ];
+		$instance_slug = [ 'example-instance-1', 'example-instance-2', 'example-instance-3' ];
+		$instance_type = [ 1, 1, 2 ];
+		$tutorial_id = [ 3, 4, 5 ];
+		$instance_status = 'Published';
+		$instance_tile  = [ 'example_files/tutorial/balloon_instance_tile.jpg', 'example_files/tutorial/bird_instance_tile.jpg', 'example_files/tutorial/bishwa_instance_tile.jpg' ];
+		$instance_mobile_tile_background_color = '#f0f0f0';
+		$instance_mobile_tile_text_color = '#000000';
+		$instance_footer_columns = 3;
+		$instance_footer_column1 = array(
+			'instance_footer_column_title1' => 'First column',
+			'instance_footer_column_content1' => 'You can have between zero and three footer columns that are unique to each instance. Here is an example of the first column.',
+		);
+		$instance_footer_column2 = array(
+			'instance_footer_column_title2' => 'Second column',
+			'instance_footer_column_content2' => 'Here is an example of the second column.',
+		);
+		$instance_footer_column3 = array(
+			'instance_footer_column_title3' => 'Third column',
+			'instance_footer_column_content3' => 'Here is an example of the third column.',
+		);
+
+		// create the three tutorial instances.
+		for ( $i = 0; $i < 3; $i++ ) {
+			$post_data = array(
+				'post_title'   => $post_title[ $i ],
+				'post_type'    => 'instance',
+				'post_status'  => 'publish',
+				'post_author'  => $current_user_id,
+			);
+
+			// Insert the post and get its ID.
+			$post_id = wp_insert_post( $post_data );
+
+			// Check if post was created successfully.
+			if ( ! is_wp_error( $post_id ) ) {
+				update_post_meta( $post_id, 'instance_short_title', $instance_short_title[ $i ] );
+				update_post_meta( $post_id, 'instance_slug', $instance_slug[ $i ] );
+
+				$tutorial_instance_type_id = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT term_id FROM {$wpdb->termmeta} WHERE meta_key = %s AND meta_value = %s",
+						'tutorial_instance_type_id',
+						$instance_type[ $i ],
+					)
+				);
+				update_post_meta( $post_id, 'instance_type', $tutorial_instance_type_id );
+				update_post_meta( $post_id, 'instance_status', 'Published' );
+
+				$instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ] );
+				update_post_meta( $post_id, 'instance_tile', $instance_tile_url );
+				update_post_meta( $post_id, 'instance_legacy_content', 'no' );
+				update_post_meta( $post_id, 'instance_mobile_tile_background_color', '#f0f0f0' );
+				update_post_meta( $post_id, 'instance_mobile_tile_text_color', '#000000' );
+				update_post_meta( $post_id, 'instance_footer_columns', 3 );
+				update_post_meta( $post_id, 'instance_footer_column1', $instance_footer_column1 );
+				update_post_meta( $post_id, 'instance_footer_column2', $instance_footer_column2 );
+				update_post_meta( $post_id, 'instance_footer_column3', $instance_footer_column3 );
+				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
+			}
+		};
+	}
+
+	/**
+	 * Create example scenes for the tutorial.
+	 *
+	 * @return void
+	 */
+	public function create_tutorial_scenes() {
 		global $wpdb;
 		// get current user ID or default to first user if no user is logged in.
 		$current_user_id = get_current_user_id();

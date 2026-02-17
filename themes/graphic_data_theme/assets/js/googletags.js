@@ -119,8 +119,6 @@ function setupFigureDataLinkTracking(figureID) {
  *              including figure type (`lineChart`), page section (`figure`), title, and figure ID.
  */
 function figureTimeseriesGraphLoaded(title, figureID, gaMeasurementID) {
-	//console.log('gaMeasurementID figureTimeseriesGraphLoaded', gaMeasurementID);
-	//console.log(title, figureID, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureTimeseriesGraphLoaded',
@@ -142,8 +140,6 @@ function figureTimeseriesGraphLoaded(title, figureID, gaMeasurementID) {
  *              including figure type (`internalImage`), page section (`figure`), title, and figure ID.
  */
 function figureInternalImageLoaded(title, figureID, gaMeasurementID) {
-	//console.log('gaMeasurementID figureInternalImageLoaded', gaMeasurementID);
-	//console.log(title, figureID, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureInternalImageLoaded',
@@ -165,8 +161,6 @@ function figureInternalImageLoaded(title, figureID, gaMeasurementID) {
  *              including figure type (`externalImage`), page section (`figure`), title, and figure ID.
  */
 function figureExternalImageLoaded(title, figureID, gaMeasurementID) {
-	//console.log('gaMeasurementID figureExternalImageLoaded', gaMeasurementID);
-	//console.log(title, figureID, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureExternalImageLoaded',
@@ -188,8 +182,6 @@ function figureExternalImageLoaded(title, figureID, gaMeasurementID) {
  *              including figure type (`codeDisplay`), page section (`figure`), title, and figure ID.
  */
 function figureCodeDisplayLoaded(title, figureID, gaMeasurementID) {
-	//console.log('gaMeasurementID figureCodeDisplayLoaded', gaMeasurementID);
-	//console.log(title, figureID, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureCodeDisplayLoaded',
@@ -209,8 +201,6 @@ function figureCodeDisplayLoaded(title, figureID, gaMeasurementID) {
  * @param                 gaMeasurementID
  */
 function modalWindowLoaded(title, modal_id, gaMeasurementID) {
-	//console.log('gaMeasurementID modalWindowLoaded', gaMeasurementID);
-	//console.log(title, modal_id, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'modalWindowLoaded',
@@ -230,8 +220,6 @@ function modalWindowLoaded(title, modal_id, gaMeasurementID) {
  * @param                 gaMeasurementID
  */
 function modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID) {
-	//console.log('gaMeasurementID modalTabLoaded', gaMeasurementID);
-	//console.log(tab_label, modal_id, tab_id, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'modalTabLoaded',
@@ -258,7 +246,6 @@ function modalMoreInfoLinkClicked(
 	modalTitle,
 	gaMeasurementID
 ) {
-	//console.log(linkTitle, modalID, url, modalTitle, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'modalMoreInfoClicked',
@@ -382,7 +369,6 @@ function setupModalImagesLinkTracking(modalID) {
  * @param          gaMeasurementID
  */
 function sceneLoaded(title, sceneID, instance_overview_scene, gaMeasurementID) {
-	//console.log(title, sceneID, instance_overview_scene, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'sceneLoaded',

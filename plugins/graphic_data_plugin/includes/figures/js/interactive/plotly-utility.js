@@ -261,10 +261,8 @@ function logFormFieldValues() {
 	const allFields = document.getElementsByName('plotFields');
 	const fieldValues = [];
 	allFields.forEach((uniqueField) => {
-		//console.log([uniqueField.id, uniqueField.value]);
 		fieldValues.push([uniqueField.id, uniqueField.value]);
 	});
-	//console.log('logformfieldvalues', JSON.stringify(fieldValues));
 	document.getElementsByName('figure_interactive_arguments')[0].value =
 		JSON.stringify(fieldValues);
 }
