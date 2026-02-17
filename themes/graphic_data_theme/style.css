@@ -92,6 +92,13 @@ Version: 1.2.1
   justify-self: center;
 }
 
+@media (max-width: 700px){
+  #header-margin a,
+  #header-margin p{
+    font-size: 1.60rem;
+  }
+}
+
 .site-footer {
   padding-top: 32px;
   font-size: 13px;
