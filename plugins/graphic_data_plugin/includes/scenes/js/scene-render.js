@@ -334,6 +334,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
             let idx = 0; // Index of current icon in iconsArr
             // Create the grid rows
             for (let i = 0; i < numRows; i++) {
+
                 let row_cont = document.createElement("div");
                 row_cont.classList.add("row", "flex-wrap", "justify-content-center");
                 row_cont.setAttribute("id", `row-${i}`);
@@ -1150,6 +1151,7 @@ async function loadSVG(url, containerId) {
                     iconsArr =  visible_modals;
                 } else {
                     iconsArr =  Object.keys(child_obj);
+                    //console.log('iconsArr', iconsArr);
                 }
                 // console.log('iconsArr',iconsArr);
                 // console.log('mobileIcons',mobileIcons);
@@ -2194,8 +2196,10 @@ function add_modal(){
         if (child_obj[key]['modal']){
             let modal = document.getElementById("myModal");
             let closeButton = document.getElementById("close");
+
+            //console.log('is_mobile()', is_mobile());
             
-            if (mobileBool){
+            if (is_mobile()){
                 let itemContainer = document.querySelector(`#${key}-container`);
                 itemContainer.addEventListener('click', function() {
                     modal.style.display = "block";
@@ -2242,7 +2246,7 @@ function add_modal(){
                     window.location.href = link;
                 }
             });
-            if (mobileBool){
+            if (is_mobile()){
                 let itemContainer = document.querySelector(`#${key}-container`);
                 itemContainer.addEventListener('click', function() {
                     if (!window.location.href.includes('post.php')) {
