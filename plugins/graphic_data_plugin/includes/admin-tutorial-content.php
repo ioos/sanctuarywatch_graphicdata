@@ -28,15 +28,23 @@ class Graphic_Data_Tutorial_Content {
 	 * @return void
 	 */
 	public function check_tutorial_content_status() {
+		static $is_running = false;
+		if ( $is_running ) {
+			return;
+		}
+		$is_running = true;
+
 		$options = get_option( 'graphic_data_settings' );
 		$tutorial_content = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : 0;
 		switch ( $tutorial_content ) {
 			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
 			case 0:
 				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
-					$this->delete_tutorial_instance_types();
 					$options['tutorial_content'] = 0;
+					$options['tutorial_content_present'] = 0;
 					update_option( 'graphic_data_settings', $options );
+					$this->delete_tutorial_instance_types();
+
 					$this->delete_tutorial_images();
 					$this->delete_tutorial_posts();
 					$this->delete_graphic_data_settings_content();
@@ -45,14 +53,16 @@ class Graphic_Data_Tutorial_Content {
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
 			case 1:
 				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
-					$this->create_tutorial_instance_types();
 					$options['tutorial_content_present'] = 1;
 					update_option( 'graphic_data_settings', $options );
+					$this->create_tutorial_instance_types();
 					$this->create_tutorial_instances();
+					$this->create_tutorial_scenes();
 					$this->create_graphic_data_settings_content();
 				}
 				break;
 		}
+		$is_running = false;
 	}
 
 	/**
@@ -258,7 +268,8 @@ class Graphic_Data_Tutorial_Content {
 		$instance_type = [ 1, 1, 2 ];
 		$tutorial_id = [ 3, 4, 5 ];
 		$instance_status = 'Published';
-		$instance_tile  = [ 'example_files/tutorial/balloon_instance_tile.jpg', 'example_files/tutorial/bird_instance_tile.jpg', 'example_files/tutorial/bishwa_instance_tile.jpg' ];
+		$tile_prefix = 'example_files/tutorial/';
+		$instance_tile = [ $tile_prefix . 'instance_tile1.jpg', $tile_prefix . 'instance_tile2.jpg', $tile_prefix . 'instance_tile3.jpg' ];
 		$instance_mobile_tile_background_color = '#f0f0f0';
 		$instance_mobile_tile_text_color = '#000000';
 		$instance_footer_columns = 3;
@@ -339,36 +350,41 @@ class Graphic_Data_Tutorial_Content {
 				$current_user_id = $users[0]->ID;
 			}
 		}
+		$tutorial_id = [ 6, 7, 8, 9, 10, 11 ];
+		$post_title = [ 'Overview Scene', 'Default Scene', 'Table Scene', 'Space Scene', 'Space Base', 'Space Dome' ];
+		$scene_location = [ 3, 3, 3, 3, 4, 5 ];
+		$file_prefix = 'example_files/tutorial/';
+		$scene_infographic = [
+			$file_prefix . 'overview-scene.svg',
+			$file_prefix . 'default-scene.svg',
+			$file_prefix . 'table-scene.svg',
+			$file_prefix . 'space-colony-dome-scene.svg',
+			$file_prefix . 'spaceship-scene.svg',
+			$file_prefix . 'space-colony-scene.svg',
+		];
+		$scene_tagline = [
+			'The first one',
+			'The second one',
+			'The third one',
+			'The fourth one',
+			'The fifth one',
+			'The sixth one',
+		];
+		$scene_info_entries = 0;
+		$scene_photo_entries = 0;
+		$scene_order = [ 1, 2, 3, 4, 1, 1 ];
+		$scene_full_screen_button = [ 'yes', 'no', 'no', 'yes', 'yes', 'yes' ];
+		$scene_text_toggle = [ 'toggle_off', 'none', 'none', 'toggle_off', 'toggle_on', 'toggle_on' ];
+		$scene_orphan_icon_action = 'translucent';
+		$scene_toc_style = 'list';
+		$scene_hover_color = '#ffff00';
+		$scene_hover_text_color = '#000000';
 
-		// set up information to be saved as the three tutorial instances.
-		$post_title = [ 'Example Instance 1', 'Example Instance 2', 'Example Instance 3' ];
-		$instance_short_title = [ 'Example 1', 'Example 2', 'Example 3' ];
-		$instance_slug = [ 'example-instance-1', 'example-instance-2', 'example-instance-3' ];
-		$instance_type = [ 1, 1, 2 ];
-		$tutorial_id = [ 3, 4, 5 ];
-		$instance_status = 'Published';
-		$instance_tile  = [ 'example_files/tutorial/balloon_instance_tile.jpg', 'example_files/tutorial/bird_instance_tile.jpg', 'example_files/tutorial/bishwa_instance_tile.jpg' ];
-		$instance_mobile_tile_background_color = '#f0f0f0';
-		$instance_mobile_tile_text_color = '#000000';
-		$instance_footer_columns = 3;
-		$instance_footer_column1 = array(
-			'instance_footer_column_title1' => 'First column',
-			'instance_footer_column_content1' => 'You can have between zero and three footer columns that are unique to each instance. Here is an example of the first column.',
-		);
-		$instance_footer_column2 = array(
-			'instance_footer_column_title2' => 'Second column',
-			'instance_footer_column_content2' => 'Here is an example of the second column.',
-		);
-		$instance_footer_column3 = array(
-			'instance_footer_column_title3' => 'Third column',
-			'instance_footer_column_content3' => 'Here is an example of the third column.',
-		);
-
-		// create the three tutorial instances.
-		for ( $i = 0; $i < 3; $i++ ) {
+		// create the six tutorial scenes.
+		for ( $i = 0; $i < 6; $i++ ) {
 			$post_data = array(
 				'post_title'   => $post_title[ $i ],
-				'post_type'    => 'instance',
+				'post_type'    => 'scene',
 				'post_status'  => 'publish',
 				'post_author'  => $current_user_id,
 			);
@@ -378,28 +394,28 @@ class Graphic_Data_Tutorial_Content {
 
 			// Check if post was created successfully.
 			if ( ! is_wp_error( $post_id ) ) {
-				update_post_meta( $post_id, 'instance_short_title', $instance_short_title[ $i ] );
-				update_post_meta( $post_id, 'instance_slug', $instance_slug[ $i ] );
-
-				$tutorial_instance_type_id = $wpdb->get_var(
+				$tutorial_instance_id = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT term_id FROM {$wpdb->termmeta} WHERE meta_key = %s AND meta_value = %s",
-						'tutorial_instance_type_id',
-						$instance_type[ $i ],
+						'tutorial_id',
+						$scene_location[ $i ],
 					)
 				);
-				update_post_meta( $post_id, 'instance_type', $tutorial_instance_type_id );
-				update_post_meta( $post_id, 'instance_status', 'Published' );
+				update_post_meta( $post_id, 'scene_location', $tutorial_instance_id );
+				update_post_meta( $post_id, 'scene_published', 'Published' );
 
-				$instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ] );
-				update_post_meta( $post_id, 'instance_tile', $instance_tile_url );
-				update_post_meta( $post_id, 'instance_legacy_content', 'no' );
-				update_post_meta( $post_id, 'instance_mobile_tile_background_color', '#f0f0f0' );
-				update_post_meta( $post_id, 'instance_mobile_tile_text_color', '#000000' );
-				update_post_meta( $post_id, 'instance_footer_columns', 3 );
-				update_post_meta( $post_id, 'instance_footer_column1', $instance_footer_column1 );
-				update_post_meta( $post_id, 'instance_footer_column2', $instance_footer_column2 );
-				update_post_meta( $post_id, 'instance_footer_column3', $instance_footer_column3 );
+				$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic [ $i ], $tutorial_id [ $i ] );
+				update_post_meta( $post_id, 'scene_infographic', $scene_infographic_url );
+				update_post_meta( $post_id, 'scene_tagline', $scene_tagline [ $i ] );
+				update_post_meta( $post_id, 'scene_info_entries', $scene_info_entries );
+				update_post_meta( $post_id, 'scene_photo_entries', $scene_photo_entries );
+				update_post_meta( $post_id, 'scene_order', $scene_order [ $i ] );
+				update_post_meta( $post_id, 'scene_full_screen_button', $scene_full_screen_button [ $i ] );
+				update_post_meta( $post_id, 'scene_text_toggle', $scene_text_toggle [ $i ] );
+				update_post_meta( $post_id, 'scene_orphan_icon_action', $scene_orphan_icon_action );
+				update_post_meta( $post_id, 'scene_toc_style', $scene_toc_style );
+				update_post_meta( $post_id, 'scene_hover_color', $scene_hover_color );
+				update_post_meta( $post_id, 'scene_hover_text_color', $scene_hover_text_color );
 				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
 			}
 		};
