@@ -518,17 +518,21 @@ class Graphic_Data_Tutorial_Content {
 		$first_3_modal_icon_order = [ 1, 3, 2 ];
 		$first_3_icon_function = [ 'Scene', 'Scene', 'Scene' ];
 		$first_3_icon_scene_out = [ 7, 8, 9 ];
-		$first_3_modal_tagline = [
-			'',
-			'',
-			'',
-		];
+		$first_3_modal_tagline = [ '', '', '' ];
 
 		$repeat_unit_post_title = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
 		$repeat_unit_modal_location = [ 3, 3, 3, 3, 3, 3 ];
 		$repeat_unit_modal_scene = [ 6, 6, 6, 6, 6, 6 ];
 		$repeat_unit_modal_icons = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
 		$repeat_unit_modal_icon_order = [ 1, 1, 1, 1, 1, 1 ];
+		$repeat_unit_icon_function = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
+		$repeat_unit_modal_tagline = [
+			'',
+			'',
+			'',
+		];
+
+
 		// create the tutorial modals.
 		for ( $i = 0; $i < 3; $i++ ) {
 			$post_data = array(
