@@ -2310,25 +2310,61 @@ alertIfMissingModal();
 function alertIfMissingModal() {
     const raw = location.hash.slice(1);
     if (!raw) return;
-
-    window.addEventListener("load", () => {
-        const modalLinks = [...document.querySelectorAll(".modal-link")]
-          .map(el => el.id)
-          .filter(Boolean);
-          //console.log('modalLinks', modalLinks);
-
-          let decoded = raw;
-            try { decoded = decodeURIComponent(raw); } catch (_) {}
-            //console.log('decoded', decoded);
-        
-            const urlModalGiven = decoded.split("/");
-
-            if (!modalLinks.includes(urlModalGiven[0]) && !window.location.href.includes('post.php')) {
-                alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
-            }    
-            if (modalLinks.includes(urlModalGiven[0]) && !window.location.href.includes('post.php')) {
-                return;
-            } 
+  
+    function getTargetIdFromHash(hashRaw) {
+      let decoded = hashRaw;
+      try { decoded = decodeURIComponent(hashRaw); } catch (_) {}
+      return decoded.split("/")[0] || "";
+    }
+  
+    function collectModalIds() {
+      return [...document.querySelectorAll(".modal-link")]
+        .map(el => el.id)
+        .filter(Boolean);
+    }
+  
+    function runCheck() {
+      const modalLinks = collectModalIds();
+      const targetId = getTargetIdFromHash(raw);
+  
+      if (!targetId) return;
+  
+      // Don't alert in WP admin edit screens
+      if (window.location.href.includes("post.php")) return;
+  
+      if (!modalLinks.includes(targetId)) {
+        alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+      }
+    }
+  
+    function waitForModalLinks({ timeoutMs = 4000 } = {}) {
+      return new Promise(resolve => {
+        // If links already exist, resolve immediately
+        if (document.querySelector(".modal-link")) return resolve();
+  
+        const obs = new MutationObserver(() => {
+          if (document.querySelector(".modal-link")) {
+            obs.disconnect();
+            resolve();
+          }
+        });
+  
+        obs.observe(document.body, { childList: true, subtree: true });
+  
+        // Safety timeout so we don't wait forever
+        setTimeout(() => {
+          obs.disconnect();
+          resolve();
+        }, timeoutMs);
+      });
+    }
+  
+    // 1) wait for full page load
+    window.addEventListener("load", async () => {
+      // 2) then wait for JS-injected modal links (if any)
+      await waitForModalLinks({ timeoutMs: 5000 });
+  
+      // 3) run once
+      runCheck();
     });
-         
-}
+  }
