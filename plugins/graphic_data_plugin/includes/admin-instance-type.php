@@ -145,8 +145,10 @@ class Graphic_Data_Instance_Type {
 	public function render_instance_type_admin_page() {
 
 		// Verify nonce first.
-		if ( ! isset( $_POST['instance_type_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( 'instance_type_nonce' ) ), 'save_instance_type_fields' ) ) {
-			wp_die( 'Security check failed on Instance Type page.' );
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+			if ( ! isset( $_POST['instance_type_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['instance_type_nonce'] ) ), 'save_instance_type_fields' ) ) {
+				wp_die( 'Security check failed on Instance Type page.' );
+			}
 		}
 
 		// Check if taxonomy exists before proceeding.
@@ -236,6 +238,7 @@ class Graphic_Data_Instance_Type {
 			<!-- Add new term form -->
 			<h2>Add New Instance Type</h2>
 			<form method="post" action="">
+				<?php wp_nonce_field( 'save_instance_type_fields', 'instance_type_nonce' ); ?>
 				<input type="hidden" name="action" value="add">
 				<table class="form-table">
 					<tr>

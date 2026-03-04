@@ -30,18 +30,14 @@ class Graphic_Data_Utility {
 	}
 
 	/**
-	 * Add nonce field to about, modal, scene, instance, and figure custom post types, as well as for the Instance Type page.
+	 * Add nonce field to about, modal, scene, instance, and figure custom post types.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param WP_Post $post Current post object.
 	 */
 	public function render_nonce_field( $post ) {
-		if ( null == $post ) {
-			if ( isset( $_GET['page'] ) && 'manage-instance-types' === sanitize_text_field( wp_unslash( $_GET['page'] ) ) ) {
-				wp_nonce_field( 'save_instance_type_fields', 'instance_type_nonce' );
-			}
-		} else {
+		if ( null != $post ) {
 			$custom_post_type = $post->post_type;
 			switch ( $custom_post_type ) {
 				case 'about':
