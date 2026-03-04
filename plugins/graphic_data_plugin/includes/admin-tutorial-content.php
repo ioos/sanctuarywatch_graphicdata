@@ -28,15 +28,22 @@ class Graphic_Data_Tutorial_Content {
 	 * @return void
 	 */
 	public function check_tutorial_content_status() {
+		static $is_running = false;
+		if ( $is_running ) {
+			return;
+		}
+		$is_running = true;
+
 		$options = get_option( 'graphic_data_settings' );
 		$tutorial_content = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : 0;
 		switch ( $tutorial_content ) {
 			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
 			case 0:
 				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
-					$this->delete_tutorial_instance_types();
 					$options['tutorial_content'] = 0;
+					$options['tutorial_content_present'] = 0;
 					update_option( 'graphic_data_settings', $options );
+					$this->delete_tutorial_instance_types();
 					$this->delete_tutorial_images();
 					$this->delete_tutorial_posts();
 					$this->delete_graphic_data_settings_content();
@@ -45,14 +52,34 @@ class Graphic_Data_Tutorial_Content {
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
 			case 1:
 				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
-					$this->create_tutorial_instance_types();
+					// get current user ID or default to first user if no user is logged in.
+					$current_user_id = get_current_user_id();
+					if ( 0 === $current_user_id ) {
+
+						$users = get_users(
+							array(
+								'number'  => 1,
+								'orderby' => 'ID',
+								'order'   => 'ASC',
+							)
+						);
+
+						if ( ! empty( $users ) ) {
+							$current_user_id = $users[0]->ID;
+						}
+					}
+
 					$options['tutorial_content_present'] = 1;
 					update_option( 'graphic_data_settings', $options );
-					$this->create_tutorial_instances();
+					$this->create_tutorial_instance_types();
+					$this->create_tutorial_instances( $current_user_id );
+					$this->create_tutorial_scenes( $current_user_id );
+					$this->create_tutorial_modals( $current_user_id );
 					$this->create_graphic_data_settings_content();
 				}
 				break;
 		}
+		$is_running = false;
 	}
 
 	/**
@@ -72,8 +99,8 @@ class Graphic_Data_Tutorial_Content {
 		$term_slug = [ 'tutorial-instance-example-1', 'tutorial-instance-example-2' ];
 		$term_description = [
 			'This is an example instance type. ' .
-			'You must have at least one instance type and each instance type contains one or more instances.',
-			'This is a second example instance type.',
+			'You must have at least one instance type and each instance type contains one or more instances. This particular instance type contains two instances.',
+			'This is a second example instance type and it contains one instance.',
 		];
 		$instance_navbar_name = [ 'Example 1', 'Example 2' ];
 		// Find current max value of instance order in the database (which really should be called instance type order).
@@ -206,9 +233,96 @@ class Graphic_Data_Tutorial_Content {
 	 */
 	public function create_graphic_data_settings_content() {
 		$options = get_option( 'graphic_data_settings' );
-		$options['intro_text'] = 'Ipsum lorem';
-		$options['sitewide_footer_title'] = 'SiteWide Footer Title';
-		$options['sitewide_footer'] = 'SiteWide Footer Content';
+		$options['intro_text'] = 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.';
+		$options['sitewide_footer_title'] = 'Sitewide Footer Title';
+		$options['site_footer'] = 'This is a column that exists across all pages on the site, called the sitewide footer. It is an optional and you can edit it on the Graphic Data Settings page.';
+		$options['front_page_code_block'] = '  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
+			<style>
+				#starfield-container {
+				position: relative;
+				width: 800px;
+				height: 400px;
+				margin: 0 auto;
+				overflow: hidden;
+				background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+				}
+
+				#starfield-container canvas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				}
+
+				#stars  { animation: animStar  50s linear infinite; }
+				#stars2 { animation: animStar 100s linear infinite; }
+				#stars3 { animation: animStar 150s linear infinite; }
+
+				@keyframes animStar {
+				from { transform: translateY(0px); }
+				to   { transform: translateY(-2000px); }
+				}
+
+				#title {
+				position: absolute;
+				top: 50%;
+				left: 0;
+				right: 0;
+				color: #FFF;
+				text-align: center;
+				font-family: "Lato", sans-serif;
+				font-weight: 300;
+				font-size: 36px;
+				letter-spacing: 10px;
+				transform: translateY(-50%);
+				padding-left: 10px;
+				z-index: 10;
+				}
+
+				#title span {
+				display: block;
+				background: -webkit-linear-gradient(white, #38495a);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+				background-clip: text;
+				}
+			</style>
+			<div id="starfield-container">
+				<canvas id="stars"></canvas>
+				<canvas id="stars2"></canvas>
+				<canvas id="stars3"></canvas>
+				<div id="title">
+				<span>SAMPLE CODE BLOCK</span>
+				<br>
+				<span>Create your own within the Graphic Data settings page.</span>
+				</div>
+			</div>
+
+			<script>
+				function generateStars(canvasId, count, size) {
+				const canvas = document.getElementById(canvasId);
+				const ctx = canvas.getContext("2d");
+				const container = document.getElementById("starfield-container");
+
+				function draw() {
+					canvas.width  = container.offsetWidth;
+					canvas.height = 4000;
+					ctx.fillStyle = "#FFF";
+					for (let i = 0; i < count; i++) {
+					const x = Math.random() * container.offsetWidth;
+					const y = Math.random() * 2000;
+					ctx.fillRect(x, y, size, size);
+					ctx.fillRect(x, y + 2000, size, size);
+					}
+				}
+
+				draw();
+				window.addEventListener("resize", draw);
+				}
+
+				generateStars("stars",  700, 1);
+				generateStars("stars2", 200, 2);
+				generateStars("stars3", 100, 3);
+			</script>';
 		update_option( 'graphic_data_settings', $options );
 	}
 
@@ -223,33 +337,19 @@ class Graphic_Data_Tutorial_Content {
 		$options = get_option( 'graphic_data_settings' );
 		$options['intro_text'] = '';
 		$options['sitewide_footer_title'] = '';
-		$options['sitewide_footer'] = '';
+		$options['site_footer'] = '';
+		$options['front_page_code_block'] = '';
 		update_option( 'graphic_data_settings', $options );
 	}
 
 	/**
 	 * Create example instances for the tutorial.
 	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
 	 * @return void
 	 */
-	public function create_tutorial_instances() {
+	public function create_tutorial_instances( $current_user_id ) {
 		global $wpdb;
-		// get current user ID or default to first user if no user is logged in.
-		$current_user_id = get_current_user_id();
-		if ( 0 === $current_user_id ) {
-
-			$users = get_users(
-				array(
-					'number'  => 1,
-					'orderby' => 'ID',
-					'order'   => 'ASC',
-				)
-			);
-
-			if ( ! empty( $users ) ) {
-				$current_user_id = $users[0]->ID;
-			}
-		}
 
 		// set up information to be saved as the three tutorial instances.
 		$post_title = [ 'Example Instance 1', 'Example Instance 2', 'Example Instance 3' ];
@@ -258,7 +358,8 @@ class Graphic_Data_Tutorial_Content {
 		$instance_type = [ 1, 1, 2 ];
 		$tutorial_id = [ 3, 4, 5 ];
 		$instance_status = 'Published';
-		$instance_tile  = [ 'example_files/tutorial/balloon_instance_tile.jpg', 'example_files/tutorial/bird_instance_tile.jpg', 'example_files/tutorial/bishwa_instance_tile.jpg' ];
+		$tile_prefix = 'example_files/tutorial/';
+		$instance_tile = [ $tile_prefix . 'instance_tile1.jpg', $tile_prefix . 'instance_tile2.jpg', $tile_prefix . 'instance_tile3.jpg' ];
 		$instance_mobile_tile_background_color = '#f0f0f0';
 		$instance_mobile_tile_text_color = '#000000';
 		$instance_footer_columns = 3;
@@ -305,8 +406,8 @@ class Graphic_Data_Tutorial_Content {
 				$instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ] );
 				update_post_meta( $post_id, 'instance_tile', $instance_tile_url );
 				update_post_meta( $post_id, 'instance_legacy_content', 'no' );
-				update_post_meta( $post_id, 'instance_mobile_tile_background_color', '#f0f0f0' );
-				update_post_meta( $post_id, 'instance_mobile_tile_text_color', '#000000' );
+				update_post_meta( $post_id, 'instance_mobile_tile_background_color', $instance_mobile_tile_background_color );
+				update_post_meta( $post_id, 'instance_mobile_tile_text_color', $instance_mobile_tile_text_color );
 				update_post_meta( $post_id, 'instance_footer_columns', 3 );
 				update_post_meta( $post_id, 'instance_footer_column1', $instance_footer_column1 );
 				update_post_meta( $post_id, 'instance_footer_column2', $instance_footer_column2 );
@@ -319,56 +420,47 @@ class Graphic_Data_Tutorial_Content {
 	/**
 	 * Create example scenes for the tutorial.
 	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
 	 * @return void
 	 */
-	public function create_tutorial_scenes() {
+	public function create_tutorial_scenes( $current_user_id ) {
 		global $wpdb;
-		// get current user ID or default to first user if no user is logged in.
-		$current_user_id = get_current_user_id();
-		if ( 0 === $current_user_id ) {
+		$tutorial_id = [ 6, 7, 8, 9, 10, 11 ];
+		$post_title = [ 'Overview Scene', 'Default Scene', 'Table Scene', 'Space Scene', 'Space Base', 'Space Dome' ];
+		$scene_location = [ 3, 3, 3, 3, 4, 5 ];
+		$file_prefix = 'example_files/tutorial/';
+		$scene_infographic = [
+			$file_prefix . 'overview-scene.svg',
+			$file_prefix . 'default-scene.svg',
+			$file_prefix . 'table-scene.svg',
+			$file_prefix . 'space-colony-dome-scene.svg',
+			$file_prefix . 'spaceship-scene.svg',
+			$file_prefix . 'space-colony-scene.svg',
+		];
+		$scene_tagline = [
+			'The first one',
+			'The second one',
+			'The third one',
+			'The fourth one',
+			'The fifth one',
+			'The sixth one',
+		];
+		$scene_info_entries = 0;
+		$scene_photo_entries = 0;
+		$scene_order = [ 1, 2, 3, 4, 1, 1 ];
+		$scene_full_screen_button = [ 'yes', 'no', 'no', 'yes', 'yes', 'yes' ];
+		$scene_text_toggle = [ 'toggle_off', 'none', 'none', 'toggle_off', 'toggle_on', 'toggle_on' ];
+		$scene_orphan_icon_action = 'translucent';
+		$scene_toc_style = 'list';
+		$scene_same_hover_color_sections = [ 'yes', 'yes', 'yes', 'yes', 'yes', 'yes' ];
+		$scene_hover_color = '#ffff00';
+		$scene_hover_text_color = '#000000';
 
-			$users = get_users(
-				array(
-					'number'  => 1,
-					'orderby' => 'ID',
-					'order'   => 'ASC',
-				)
-			);
-
-			if ( ! empty( $users ) ) {
-				$current_user_id = $users[0]->ID;
-			}
-		}
-
-		// set up information to be saved as the three tutorial instances.
-		$post_title = [ 'Example Instance 1', 'Example Instance 2', 'Example Instance 3' ];
-		$instance_short_title = [ 'Example 1', 'Example 2', 'Example 3' ];
-		$instance_slug = [ 'example-instance-1', 'example-instance-2', 'example-instance-3' ];
-		$instance_type = [ 1, 1, 2 ];
-		$tutorial_id = [ 3, 4, 5 ];
-		$instance_status = 'Published';
-		$instance_tile  = [ 'example_files/tutorial/balloon_instance_tile.jpg', 'example_files/tutorial/bird_instance_tile.jpg', 'example_files/tutorial/bishwa_instance_tile.jpg' ];
-		$instance_mobile_tile_background_color = '#f0f0f0';
-		$instance_mobile_tile_text_color = '#000000';
-		$instance_footer_columns = 3;
-		$instance_footer_column1 = array(
-			'instance_footer_column_title1' => 'First column',
-			'instance_footer_column_content1' => 'You can have between zero and three footer columns that are unique to each instance. Here is an example of the first column.',
-		);
-		$instance_footer_column2 = array(
-			'instance_footer_column_title2' => 'Second column',
-			'instance_footer_column_content2' => 'Here is an example of the second column.',
-		);
-		$instance_footer_column3 = array(
-			'instance_footer_column_title3' => 'Third column',
-			'instance_footer_column_content3' => 'Here is an example of the third column.',
-		);
-
-		// create the three tutorial instances.
-		for ( $i = 0; $i < 3; $i++ ) {
+		// create the six tutorial scenes.
+		for ( $i = 0; $i < 6; $i++ ) {
 			$post_data = array(
 				'post_title'   => $post_title[ $i ],
-				'post_type'    => 'instance',
+				'post_type'    => 'scene',
 				'post_status'  => 'publish',
 				'post_author'  => $current_user_id,
 			);
@@ -378,28 +470,119 @@ class Graphic_Data_Tutorial_Content {
 
 			// Check if post was created successfully.
 			if ( ! is_wp_error( $post_id ) ) {
-				update_post_meta( $post_id, 'instance_short_title', $instance_short_title[ $i ] );
-				update_post_meta( $post_id, 'instance_slug', $instance_slug[ $i ] );
-
-				$tutorial_instance_type_id = $wpdb->get_var(
+				$tutorial_instance_id = $wpdb->get_var(
 					$wpdb->prepare(
-						"SELECT term_id FROM {$wpdb->termmeta} WHERE meta_key = %s AND meta_value = %s",
-						'tutorial_instance_type_id',
-						$instance_type[ $i ],
+						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+						'tutorial_id',
+						$scene_location [ $i ],
 					)
 				);
-				update_post_meta( $post_id, 'instance_type', $tutorial_instance_type_id );
-				update_post_meta( $post_id, 'instance_status', 'Published' );
 
-				$instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ] );
-				update_post_meta( $post_id, 'instance_tile', $instance_tile_url );
-				update_post_meta( $post_id, 'instance_legacy_content', 'no' );
-				update_post_meta( $post_id, 'instance_mobile_tile_background_color', '#f0f0f0' );
-				update_post_meta( $post_id, 'instance_mobile_tile_text_color', '#000000' );
-				update_post_meta( $post_id, 'instance_footer_columns', 3 );
-				update_post_meta( $post_id, 'instance_footer_column1', $instance_footer_column1 );
-				update_post_meta( $post_id, 'instance_footer_column2', $instance_footer_column2 );
-				update_post_meta( $post_id, 'instance_footer_column3', $instance_footer_column3 );
+				update_post_meta( $post_id, 'scene_location', $tutorial_instance_id );
+				if ( $i < 1 || $i > 3 ) { // Add an overview scene to each tutorial instance.
+					update_post_meta( $tutorial_instance_id, 'instance_overview_scene', $post_id );
+				}
+				update_post_meta( $post_id, 'scene_published', 'published' );
+				update_post_meta( $post_id, 'post_title', $post_title[ $i ] ); // This line is only needed because post title is added to the post meta table for regular scene posts, where it is used for several operations.
+				$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic [ $i ], $tutorial_id [ $i ] );
+				update_post_meta( $post_id, 'scene_infographic', $scene_infographic_url );
+				update_post_meta( $post_id, 'scene_tagline', $scene_tagline [ $i ] );
+				update_post_meta( $post_id, 'scene_info_entries', $scene_info_entries );
+				update_post_meta( $post_id, 'scene_photo_entries', $scene_photo_entries );
+				update_post_meta( $post_id, 'scene_order', $scene_order [ $i ] );
+				update_post_meta( $post_id, 'scene_full_screen_button', $scene_full_screen_button [ $i ] );
+				update_post_meta( $post_id, 'scene_text_toggle', $scene_text_toggle [ $i ] );
+				update_post_meta( $post_id, 'scene_orphan_icon_action', $scene_orphan_icon_action );
+				update_post_meta( $post_id, 'scene_toc_style', $scene_toc_style );
+				update_post_meta( $post_id, 'scene_hover_color', $scene_hover_color );
+				update_post_meta( $post_id, 'scene_hover_text_color', $scene_hover_text_color );
+				update_post_meta( $post_id, 'scene_same_hover_color_sections', $scene_same_hover_color_sections [ $i ] );
+				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
+			}
+		};
+	}
+
+	/**
+	 * Create example modals for the tutorial.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_tutorial_modals( $current_user_id ) {
+		global $wpdb;
+		$tutorial_id = range( 12, 44 );
+		$first_3_post_title = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
+		$first_3_modal_location = [ 3, 3, 3 ];
+		$first_3_modal_scene = [ 6, 6, 6 ];
+		$first_3_modal_icons = [ 'Default', 'Table', 'Space' ];
+		$first_3_modal_icon_order = [ 1, 3, 2 ];
+		$first_3_icon_function = [ 'Scene', 'Scene', 'Scene' ];
+		$first_3_icon_scene_out = [ 7, 8, 9 ];
+		$first_3_modal_tagline = [ '', '', '' ];
+
+		$repeat_unit_post_title = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
+		$repeat_unit_modal_location = [ 3, 3, 3, 3, 3, 3 ];
+		$repeat_unit_modal_scene = [ 6, 6, 6, 6, 6, 6 ];
+		$repeat_unit_modal_icons = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+		$repeat_unit_modal_icon_order = [ 1, 1, 1, 1, 1, 1 ];
+		$repeat_unit_icon_function = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
+		$repeat_unit_modal_tagline = [
+			'',
+			'',
+			'',
+		];
+
+
+		// create the tutorial modals.
+		for ( $i = 0; $i < 3; $i++ ) {
+			$post_data = array(
+				'post_title'   => $post_title[ $i ],
+				'post_type'    => 'modal',
+				'post_status'  => 'publish',
+				'post_author'  => $current_user_id,
+			);
+
+			// Insert the post and get its ID.
+			$post_id = wp_insert_post( $post_data );
+
+			// Check if post was created successfully.
+			if ( ! is_wp_error( $post_id ) ) {
+				update_post_meta( $post_id, 'modal_published', 'published' );
+				update_post_meta( $post_id, 'post_type', 'modal' ); // needed? Unclear.
+				$tutorial_instance_id = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+						'tutorial_id',
+						$modal_location [ $i ],
+					)
+				);
+				update_post_meta( $post_id, 'modal_location', $tutorial_instance_id );
+
+				$tutorial_instance_id = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+						'tutorial_id',
+						$modal_scene [ $i ],
+					)
+				);
+				update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
+
+				update_post_meta( $post_id, 'modal_icons', $modal_icons[ $i ] );
+				update_post_meta( $post_id, 'modal_icon_order', $modal_icon_order[ $i ] );
+				update_post_meta( $post_id, 'icon_function', $icon_function[ $i ] );
+
+				if ( 'Scene' == $icon_function[ $i ] ) {
+					$tutorial_scene_out_id = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+							'tutorial_id',
+							$icon_scene_out [ $i ],
+						)
+					);
+					update_post_meta( $post_id, 'icon_scene_out', $tutorial_scene_out_id );
+				}
+
+				update_post_meta( $post_id, 'post_title', $post_title[ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
 				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
 			}
 		};
