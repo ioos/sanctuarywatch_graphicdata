@@ -91,7 +91,7 @@ async function make_title() {
 			col1.setAttribute('style', 'max-width: 85%;');
 			col2.setAttribute(
 				'style',
-				'padding-top: 5%; align-content: center; margin-left: 7%;'
+                'padding-top: 5%; align-content: center;'
 			);
 		}
 
@@ -355,7 +355,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                         cont.style.background = instance_color_settings["instance_mobile_tile_background_color"];
                         cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
                         cont.style.overflow = 'hidden';
-
+                        
 
                         // Identify the current icon ID
                         let currIcon = iconIds[idx];
@@ -407,39 +407,44 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                             //caption.style.fontSize = "3.15vw";
                             caption.style.overflow = "hidden";
 
-                            const maxChars2 = 30;  // your character limit
-                            const maxChars3 = 40;  // your character limit
-                            const maxChars1 = 11;  // your character limit
+                            // const maxChars2 = 30;  // your character limit
+                            // const maxChars3 = 40;  // your character limit
+                            // const maxChars1 = 11;  // your character limit
                         
                             
-                            if (caption.textContent.length <= maxChars1) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '12px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            }
-                            if (caption.textContent.length > maxChars1 && caption.textContent.length <= maxChars2) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '11px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } 
-                            if (caption.textContent.length > maxChars3 && caption.textContent.length <= maxChars3) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '10.5px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } 
-                            if (caption.textContent.length > maxChars3) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '10px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } else {
-                            // Reset or apply default style
-                            caption.style.fontSize = '14px';
-                            caption.classList.remove('small-text');
-                            }
+                            // if (caption.textContent.length <= maxChars1) {
+                            //     // Text is longer than limit — apply a certain style or class
+                            //     caption.style.fontSize = '12px';     // Example: smaller font size
+                            //     // or
+                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            //     console.log('test1');
+                            // }
+                            // if (caption.textContent.length > maxChars1 && caption.textContent.length <= maxChars2) {
+                            //     // Text is longer than limit — apply a certain style or class
+                            //     caption.style.fontSize = '11px';     // Example: smaller font size
+                            //     // or
+                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            //     console.log('test2');
+                            // } 
+                            // if (caption.textContent.length > maxChars3 && caption.textContent.length <= maxChars3) {
+                            //     // Text is longer than limit — apply a certain style or class
+                            //     caption.style.fontSize = '10.5px';     // Example: smaller font size
+                            //     // or
+                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            //     console.log('test3');
+                            // } 
+                            // if (caption.textContent.length > maxChars3) {
+                            //     // Text is longer than limit — apply a certain style or class
+                            //     caption.style.fontSize = '10px';     // Example: smaller font size
+                            //     // or
+                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            //     console.log('test4');
+                            // } else {
+                            //     // Reset or apply default style
+                            //     caption.style.fontSize = '14px';
+                            //     caption.classList.remove('small-text');
+                            //     console.log('test4');
+                            // }
                             
                             // Set to last fitting size
                             //caption.style.maxHeight = '10%'; // Add some space between icon and caption
@@ -700,9 +705,26 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
     // === Initial Setup ===
     updateNumCols(); // Build layout based on current orientation
 
-    // === Listen for window resizes (debounced) ===
-    const debouncedUpdateNumCols = debounce(updateNumCols, 250);
-    window.addEventListener("resize", debouncedUpdateNumCols);
+    // // === Listen for window resizes (debounced) ===
+    // const debouncedUpdateNumCols = debounce(updateNumCols, 250);
+    // //The line below was causing blinks or flickers on the page when you scrolled. It was a huge problem.
+    // window.addEventListener("resize", debouncedUpdateNumCols);
+    function getOrientationKey() {
+        return window.matchMedia("(orientation: landscape)").matches ? "landscape" : "portrait";
+    }
+    
+    let lastOrientation = getOrientationKey();
+    
+    function onMaybeOrientationChange() {
+    const now = getOrientationKey();
+    if (now === lastOrientation) return; // ignore resize noise (scroll/address bar)
+        lastOrientation = now;
+        updateNumCols(); // only when portrait <-> landscape changes
+    }
+    
+    window.addEventListener("resize", debounce(onMaybeOrientationChange, 150));
+
+
 }
 
 /**

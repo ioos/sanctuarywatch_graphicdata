@@ -56,7 +56,39 @@ if ( $graphic_data_instances_query->have_posts() ) {
 }
 
 ?>
+<div id="above_entire_thing">
+
+<div class="image-center">
+	<span class="site-branding-logo">
+	<?php if ( false ) : ?>
+		echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '" alt="Navbar Emblem">';
+	?>
+	</span>
+	<?php endif; ?>
+
+	<span class="site-branding-text-container">
+	<!-- <div class="site-title-main"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></div> -->
+
+	<?php
+	$graphic_data_site_tagline = get_bloginfo( 'description' );
+	if ( '' != $graphic_data_site_tagline ) {
+		echo "<div class='site-tagline-main'>" . esc_html( $graphic_data_site_tagline ) . '</div>';
+	}
+	?>
+  </span>
+</div>
+<?php
+$graphic_data_front_page_intro = 'Welcome to Sanctuary Watch, a centralized location for information used in the management of sanctuaries within the National Marine Sanctuary System. Use the tools below to explore the data and track the trends that help us to better understand and manage our sanctuaries together.';
+$graphic_data_settings = get_option( 'graphic_data_settings' );
+if ( $graphic_data_settings && isset( $graphic_data_settings['intro_text'] ) && ! empty( $graphic_data_settings['intro_text'] ) ) {
+	$graphic_data_front_page_intro = $graphic_data_settings['intro_text'];
+}
+echo "<div class='container-fluid-index main-container' style='margin-top: 0px;'><h4 style='color:black'>" . wp_kses_post( $graphic_data_front_page_intro ) . '</h4></div>';
+?>
+</div> 
+
 <div id="code-block" style="padding:0 ; margin 0">
+
 <?php
 $graphic_data_options = get_option( 'graphic_data_settings' );
 $graphic_data_code_block_value = isset( $graphic_data_options['front_page_code_block'] ) ? $graphic_data_options['front_page_code_block'] : '';
@@ -68,26 +100,6 @@ if ( '' !== trim( $graphic_data_code_block_value ) ) {
 ?>
 </div>
 <div id="entire_thing"> 
-<?php if ( false ) : ?>
-<div class="image-center">
-	<span class="site-branding-logo">
-	<?php
-		echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '" alt="Navbar Emblem">';
-	?>
-	</span>
-
-	<span class="site-branding-text-container">
-	<div class="site-title-main"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></div>
-
-	<?php
-	$graphic_data_site_tagline = get_bloginfo( 'description' );
-	if ( '' != $graphic_data_site_tagline ) {
-		echo "<div class='site-tagline-main'>" . esc_html( $graphic_data_site_tagline ) . '</div>';
-	}
-	?>
-  </span>
-</div>
-<?php endif; ?>
 <!-- Main container with Bootstrap styling for fluid layout -->
 <?php
 $graphic_data_front_page_intro = '';

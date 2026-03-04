@@ -14,6 +14,18 @@ Version: 1.2.1
 }
 
 
+#above_entire_thing { 
+  max-width: 1100px !important;
+  margin: 0 auto;
+  padding-top: 3%;
+  padding-bottom: 2.5%;
+  margin-top: -20px;
+  text-align: justify;      /* makes left & right edges align */
+  text-justify: inter-word; 
+  hyphens: auto;            /* helps reduce weird gaps */
+}
+
+
 #entire_thing { 
   max-width: 1400px !important;
   margin: 0 auto;
@@ -60,21 +72,36 @@ Version: 1.2.1
 }
 
 @media (max-width: 992px) {
-  .site-name-logo-header {
+  .site-name-logo-header{
     display: grid;
-    grid-template-columns: 80% 20%;
-    grid-template-rows: auto auto;    
-    align-items: center;
+    grid-template-columns: 1fr auto 1fr;
+    column-gap: 15px;              /* ✅ always at least 5px between columns */
+    align-items: left;
     width: 100%;
     padding: 0.25rem 0.25rem;
     min-height: 3rem;
+  }
+
+  .site-name-logo-header .navbar-brand{
+    grid-column: 2;
+    justify-self: left;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .site-name-logo-header .navbar-toggler{
+    grid-column: 3;
+    justify-self:center;
   }
 }
 
 
 #site-name-logo-banner {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
   text-align: center;
   align-items: center;
   min-height: 25.98px;
@@ -88,14 +115,14 @@ Version: 1.2.1
   margin: 0;
   text-decoration: none;
   vertical-align: middle;
-  font-size: 1.95rem;
+  font-size: 2.2rem;
   justify-self: center;
 }
 
 @media (max-width: 700px){
   #header-margin a,
   #header-margin p{
-    font-size: 1.60rem;
+    font-size: 1.70rem;
   }
 }
 
@@ -146,8 +173,18 @@ Version: 1.2.1
   height: auto;   
 }
 
+@media (max-width: 768px) { /* Tablet and smaller */
+  .navbar-emblem {
+    margin-right: 15px;
+    size: 10%;
+    display: block;
+    height: 50px !important; 
+    width: 50px !important; 
+  }
+}
+
     /* Styles for the header/branding section */
-    .image-center {
+  .image-center {
       display: flex; /* Use flexbox for alignment */
       align-items: center; /* Vertically align items when side-by-side */
       gap: 15px; /* Space between logo and text block */
@@ -172,17 +209,18 @@ Version: 1.2.1
   }
 
   .site-tagline-main {
-    font-size: 1vw; /* Default font size using viewport width */
+    font-size: 1.6vw; /* Default font size using viewport width */
     font-style: italic;
-      font-weight: bold; /* Added to match later rule, ensure consistency */
+    font-weight: bold; /* Added to match later rule, ensure consistency */
 
   }
 
   /* Mobile specific adjustments */
-  @media (max-width: 768px) { /* Tablet and smaller */
+  @media (max-width: 1000px) { /* Tablet and smaller */
       .image-center {
         flex-direction: row; /* Logo and text block side-by-side */
-        justify-content: flex-start; /* Align to the left, or use 'center' to center the group */
+        justify-content: center; /* Align to the left, or use 'center' to center the group */
+        margin-top: 1%;
       }
 
       .image-center img {
@@ -196,14 +234,14 @@ Version: 1.2.1
       }
 
       .site-tagline-main { 
-        font-size: 1.5rem; /* Larger, fixed font size for mobile */
+        font-size: 1.2rem !important; /* Larger, fixed font size for mobile */
        }
 
   }
   @media (max-width: 480px) { /* Smaller mobile devices */
     .image-center img { width: 50px; /* Further adjust logo size if needed */ }
     .site-title-main { font-size: 1.8rem; } /* Slightly smaller for very small screens */
-    .site-tagline-main { font-size: 1.4rem; } /* Slightly smaller for very small screens, fixed typo */
+    .site-tagline-main { font-size: 1rem !important; } /* Slightly smaller for very small screens, fixed typo */
 
   }
 
@@ -253,7 +291,7 @@ body > h1{
 
 .container-fluid-index{
   width: 100%;
-  padding: 15px;
+  padding: 20px;
 }
 
 @media (max-width: 769px) {
@@ -387,23 +425,40 @@ body > h1{
 }
 
 /* Style each column */
-.col-4 {
-  /*display: flex;*/
-  flex-direction: column;
-  align-items: center; /* Center icons vertically */
-  justify-content: center;
-  text-align: center;
-  /* overflow: hidden; */
-  border: 0.25px solid #ccc; /* Border style */
-  border-radius: 10px; /* Rounded corners */
-  /* padding: 10px; */
-  /* margin: 0.25px; */
-  background-color: #d8dbe3;
-  transform: scale(0.9);
-  max-width: 100%; 
-  max-height: 100%; 
-  width: 110px; 
-  height: 170px;
+@media (max-width: 600px) {
+  .col-4 {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center icons vertically */
+    justify-content: flex-start;
+    text-align: center;
+    overflow: hidden;
+    border: 0.25px solid #ccc; /* Border style */
+    border-radius: 10px; /* Rounded corners */
+    background-color: #d8dbe3;
+    transform: scale(0.9);
+    backface-visibility: hidden;
+    width: 29%; 
+    height: 170px;
+  }
+}
+
+@media (min-width: 600px) {
+  .col-4 {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center icons vertically */
+    justify-content: flex-start;
+    text-align: center;
+    overflow: hidden;
+    border: 0.25px solid #ccc; /* Border style */
+    border-radius: 10px; /* Rounded corners */
+    background-color: #d8dbe3;
+    transform: scale(0.9);
+    backface-visibility: hidden;
+    width: 23%;
+    height: 170px;
+  }
 }
 
 /* Ensure SVG icons are a reasonable size */
@@ -411,27 +466,19 @@ body > h1{
   width: 100px;
   height: 100px;
   max-width: 100%; 
-  max-height: 50%; 
+  max-height: 50%;
   overflow: visible;
   display: flex;
   flex-direction: column-reverse;
   align-items: center; /* Center captions horizontally */
   justify-content: flex-start;
-  /* transform: scale(1.55); */
-  /* transform: scale(0.9); */
   transform-origin: center;
-  object-fit: contain;
-  /* transform: scale(1.5); Adjust scale as needed */
-   /* Ensure scaling is centered */
-  /* overflow: hidden; */
-  /* transform: scale(0.95); */
 }
 
 /* Style the captions */
 .col-4 div {
   font-size: 13px; /* Adjust size as needed */
   margin-top: 10px;
-  /*transform: scale(0.95);*/
   word-break: break-word;
   overflow-wrap: break-word;
   display: flex;
@@ -658,7 +705,8 @@ input:checked + .slider:before {
   }
 
   .navbar-brand {
-    display: inline-flex;        
+    display: inline-flex;   
+    text-align: center;     
     /* keep logo + text inline */
     /* align-items: center;          */
     /* vertically center both */
