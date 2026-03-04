@@ -388,7 +388,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Arender_nonce_field\u0028\u0029",
             "name": "render_nonce_field",
-            "summary": "Add\u0020nonce\u0020field\u0020to\u0020about,\u0020modal,\u0020scene,\u0020instance,\u0020and\u0020figure\u0020custom\u0020post\u0020types,\u0020as\u0020well\u0020as\u0020for\u0020the\u0020Instance\u0020Type\u0020page.",
+            "summary": "Add\u0020nonce\u0020field\u0020to\u0020about,\u0020modal,\u0020scene,\u0020instance,\u0020and\u0020figure\u0020custom\u0020post\u0020types.",
             "url": "classes/Graphic-Data-Utility.html#method_render_nonce_field"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Aoutput_transient_to_js\u0028\u0029",
