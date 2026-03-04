@@ -388,7 +388,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Arender_nonce_field\u0028\u0029",
             "name": "render_nonce_field",
-            "summary": "Add\u0020nonce\u0020field\u0020to\u0020about,\u0020modal,\u0020scene,\u0020instance,\u0020and\u0020figure\u0020custom\u0020post\u0020types,\u0020as\u0020well\u0020as\u0020for\u0020the\u0020Instance\u0020Type\u0020page.",
+            "summary": "Add\u0020nonce\u0020field\u0020to\u0020about,\u0020modal,\u0020scene,\u0020instance,\u0020and\u0020figure\u0020custom\u0020post\u0020types.",
             "url": "classes/Graphic-Data-Utility.html#method_render_nonce_field"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Aoutput_transient_to_js\u0028\u0029",
@@ -1215,6 +1215,11 @@ Search.appendIndex(
             "name": "create_tutorial_scenes",
             "summary": "Create\u0020example\u0020scenes\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_scenes"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_modals\u0028\u0029",
+            "name": "create_tutorial_modals",
+            "summary": "Create\u0020example\u0020modals\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_modals"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acopy_image_to_media_library\u0028\u0029",
             "name": "copy_image_to_media_library",
