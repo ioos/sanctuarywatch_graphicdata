@@ -534,7 +534,7 @@ class Graphic_Data_Tutorial_Content {
 		$repeat_unit_modal_tagline = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
 		$repeat_unit_modal_info_entries = [ 0, 0, 0, 0, 0, 0 ];
 		$repeat_unit_modal_photo_entries = [ 0, 0, 0, 0, 0 ];
-		$first_3_modal_tab_number = [ 1, 1, 1 ];
+		$first_3_modal_tab_number = [ 1, 1, 1, 1, 1, 1 ];
 		$first_3_modal_tab_title1 = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
 
 		// create the tutorial modals.
