@@ -510,37 +510,39 @@ class Graphic_Data_Tutorial_Content {
 	 */
 	public function create_tutorial_modals( $current_user_id ) {
 		global $wpdb;
-		$tutorial_id = range( 12, 44 );
-		$first_3_post_title = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
-		$first_3_modal_location = [ 3, 3, 3 ];
-		$first_3_modal_scene = [ 6, 6, 6 ];
-		$first_3_modal_icons = [ 'Default', 'Table', 'Space' ];
-		$first_3_modal_icon_order = [ 1, 3, 2 ];
-		$first_3_icon_function = [ 'Scene', 'Scene', 'Scene' ];
-		$first_3_icon_scene_out = [ 7, 8, 9 ];
-		$first_3_modal_tagline = [ '', '', '' ];
-		$first_3_modal_info_entries = [ 0, 0, 0 ];
-		$first_3_modal_photo_entries = [ 0, 0, 0 ];
-		$first_3_modal_tab_number = [ 1, 1, 1 ];
-		$first_3_modal_tab_title1 = [ '', '', '' ];
+		$holder_array = array();
+		$holder_array['post_title'] = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
+		$holder_array['modal_location'] = [ 3, 3, 3 ];
+		$holder_array['modal_scene'] = [ 6, 6, 6 ];
+		$holder_array['modal_icons'] = [ 'Default', 'Table', 'Space' ];
+		$holder_array['icon_order'] = [ 1, 3, 2 ];
+		$holder_array['icon_function'] = [ 'Scene', 'Scene', 'Scene' ];
+		$holder_array['scene_out'] = [ 7, 8, 9 ];
+		$holder_array['tutorial_id'] = [ 12, 13, 14 ];
 
-		$repeat_unit_post_title = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
-		$repeat_unit_modal_location = [ 3, 3, 3, 3, 3, 3 ];
-		$repeat_unit_modal_scene = [ 6, 6, 6, 6, 6, 6 ];
-		$repeat_unit_modal_icons = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
-		$repeat_unit_modal_icon_order = [ 1, 1, 1, 1, 1, 1 ];
-		$repeat_unit_icon_function = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
-		$repeat_unit_icon_scene_out = [ 1, 1, 1, 1, 1, 1 ];
-		$repeat_unit_modal_tagline = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
-		$repeat_unit_modal_info_entries = [ 0, 0, 0, 0, 0, 0 ];
-		$repeat_unit_modal_photo_entries = [ 0, 0, 0, 0, 0 ];
-		$first_3_modal_tab_number = [ 1, 1, 1, 1, 1, 1 ];
-		$first_3_modal_tab_title1 = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
+	//	$repeat_unit_post_title = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
+	//	$repeat_unit_modal_location = [ 3, 3, 3, 3, 3, 3 ];
+	//	$repeat_unit_modal_scene = [ 6, 6, 6, 6, 6, 6 ];
+	//	$repeat_unit_modal_icons = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+	//	$repeat_unit_modal_icon_order = [ 1, 1, 1, 1, 1, 1 ];
+	//	$repeat_unit_icon_function = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
+	//	$repeat_unit_icon_scene_out = [ 1, 1, 1, 1, 1, 1 ];
+	//	$repeat_unit_modal_tagline = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
+	//	$repeat_unit_modal_info_entries = [ 0, 0, 0, 0, 0, 0 ];
+	//	$repeat_unit_modal_photo_entries = [ 0, 0, 0, 0, 0 ];
+	//	$first_3_modal_tab_number = [ 1, 1, 1, 1, 1, 1 ];
+	//	$first_3_modal_tab_title1 = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
 
-		// create the tutorial modals.
-		for ( $i = 0; $i < 3; $i++ ) {
+
+	}
+
+	// create the tutorial modals.
+	public function write_modals_to_database( $modal_array, $current_user_id ) {
+		$i_max = count( $modal_array['post_title'] );
+
+		for ( $i = 0; $i < $i_max; $i++ ) {
 			$post_data = array(
-				'post_title'   => $post_title[ $i ],
+				'post_title'   => $modal_array['post_title'][ $i ],
 				'post_type'    => 'modal',
 				'post_status'  => 'publish',
 				'post_author'  => $current_user_id,
@@ -553,23 +555,35 @@ class Graphic_Data_Tutorial_Content {
 			if ( ! is_wp_error( $post_id ) ) {
 				update_post_meta( $post_id, 'modal_published', 'published' );
 				update_post_meta( $post_id, 'post_type', 'modal' ); // needed? Unclear.
-				$tutorial_instance_id = $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-						'tutorial_id',
-						$modal_location [ $i ],
-					)
-				);
-				update_post_meta( $post_id, 'modal_location', $tutorial_instance_id );
 
-				$tutorial_instance_id = $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-						'tutorial_id',
-						$modal_scene [ $i ],
-					)
-				);
-				update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
+				foreach ( $holder_array as $key ) {
+					switch ( $key ) {
+						case 'modal_location':
+							$tutorial_instance_id = $wpdb->get_var(
+								$wpdb->prepare(
+									"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+									'tutorial_id',
+									$modal_array['modal_location'][ $i ],
+								)
+							);
+							update_post_meta( $post_id, 'modal_location', $tutorial_instance_id );
+							break;
+						case 'modal_scene':
+							$tutorial_instance_id = $wpdb->get_var(
+								$wpdb->prepare(
+									"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+									'tutorial_id',
+									$modal_array['modal_scene'][ $i ],
+								)
+							);
+							update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
+							break;
+					}
+				}
+
+
+
+
 
 				update_post_meta( $post_id, 'modal_icons', $modal_icons[ $i ] );
 				update_post_meta( $post_id, 'modal_icon_order', $modal_icon_order[ $i ] );
