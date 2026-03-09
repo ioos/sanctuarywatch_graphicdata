@@ -515,11 +515,11 @@ class Graphic_Data_Tutorial_Content {
 		$holder_array['modal_location'] = [ 3, 3, 3 ];
 		$holder_array['modal_scene'] = [ 6, 6, 6 ];
 		$holder_array['modal_icons'] = [ 'Default', 'Table', 'Space' ];
-		$holder_array['icon_order'] = [ 1, 3, 2 ];
+		$holder_array['modal_icon_order'] = [ 1, 3, 2 ];
 		$holder_array['icon_function'] = [ 'Scene', 'Scene', 'Scene' ];
-		$holder_array['scene_out'] = [ 7, 8, 9 ];
+		$holder_array['icon_scene_out'] = [ 7, 8, 9 ];
 		$holder_array['tutorial_id'] = [ 12, 13, 14 ];
-
+		$this->write_modals_to_database( $holder_array, $current_user_id );
 	//	$repeat_unit_post_title = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
 	//	$repeat_unit_modal_location = [ 3, 3, 3, 3, 3, 3 ];
 	//	$repeat_unit_modal_scene = [ 6, 6, 6, 6, 6, 6 ];
@@ -532,11 +532,26 @@ class Graphic_Data_Tutorial_Content {
 	//	$repeat_unit_modal_photo_entries = [ 0, 0, 0, 0, 0 ];
 	//	$first_3_modal_tab_number = [ 1, 1, 1, 1, 1, 1 ];
 	//	$first_3_modal_tab_title1 = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
-
-
 	}
 
-	// create the tutorial modals.
+	/**
+	 * Creates tutorial modal posts and writes their metadata to the database.
+	 *
+	 * Iterates over a structured array of modal data and inserts each entry as a
+	 * WordPress post of type 'modal'. For each successfully created post, sets
+	 * post meta fields based on the keys present in $holder_array. Fields such as
+	 * 'modal_location' and 'modal_scene' are resolved from tutorial IDs to post IDs
+	 * via a postmeta lookup. If 'icon_function' is set and truthy, the associated
+	 * 'icon_scene_out' value is similarly resolved and stored.
+	 *
+	 * @param array $modal_array      Associative array of modal field data, keyed by
+	 *                                field name with indexed sub-arrays per modal entry.
+	 *                                Expected keys include: 'post_title', 'tutorial_id',
+	 *                                'modal_location', 'modal_scene', 'modal_icons',
+	 *                                'modal_icon_order', 'icon_function', 'icon_scene_out'.
+	 * @param int   $current_user_id  The WordPress user ID to set as the post author.
+	 * @return void
+	 */
 	public function write_modals_to_database( $modal_array, $current_user_id ) {
 		$i_max = count( $modal_array['post_title'] );
 
@@ -578,30 +593,34 @@ class Graphic_Data_Tutorial_Content {
 							);
 							update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
 							break;
+						case 'modal_icons':
+							update_post_meta( $post_id, 'modal_icons', $modal_array['modal_scene'][ $i ] );
+							break;
+						case 'modal_icon_order':
+							update_post_meta( $post_id, 'modal_icon_order', $modal_array['modal_icon_order'][ $i ] );
+							break;
+						case 'icon_function':
+							update_post_meta( $post_id, 'icon_function', $modal_array['icon_function'][ $i ] );
+
+							if ( $modal_array['icon_function'][ $i ] ) {
+								$tutorial_scene_out_id = $wpdb->get_var(
+									$wpdb->prepare(
+										"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+										'tutorial_id',
+										$modal_array['icon_scene_out'][ $i ],
+									)
+								);
+								update_post_meta( $post_id, 'icon_scene_out', $tutorial_scene_out_id );
+							}
+							break;
+						case 'post_title':
+							update_post_meta( $post_id, 'post_title', $modal_array['post_title'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
+							break;
+						case 'tutorial_id':
+							update_post_meta( $post_id, 'tutorial_id', $modal_array['tutorial_id'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
+							break;
 					}
 				}
-
-
-
-
-
-				update_post_meta( $post_id, 'modal_icons', $modal_icons[ $i ] );
-				update_post_meta( $post_id, 'modal_icon_order', $modal_icon_order[ $i ] );
-				update_post_meta( $post_id, 'icon_function', $icon_function[ $i ] );
-
-				if ( 'Scene' == $icon_function[ $i ] ) {
-					$tutorial_scene_out_id = $wpdb->get_var(
-						$wpdb->prepare(
-							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-							'tutorial_id',
-							$icon_scene_out [ $i ],
-						)
-					);
-					update_post_meta( $post_id, 'icon_scene_out', $tutorial_scene_out_id );
-				}
-
-				update_post_meta( $post_id, 'post_title', $post_title[ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
-				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
 			}
 		};
 	}
