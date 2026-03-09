@@ -1223,7 +1223,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Awrite_modals_to_database\u0028\u0029",
             "name": "write_modals_to_database",
-            "summary": "",
+            "summary": "Creates\u0020tutorial\u0020modal\u0020posts\u0020and\u0020writes\u0020their\u0020metadata\u0020to\u0020the\u0020database.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_write_modals_to_database"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acopy_image_to_media_library\u0028\u0029",
