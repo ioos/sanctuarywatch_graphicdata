@@ -1221,6 +1221,11 @@ Search.appendIndex(
             "summary": "Create\u0020example\u0020modals\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_modals"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Awrite_modals_to_database\u0028\u0029",
+            "name": "write_modals_to_database",
+            "summary": "",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_write_modals_to_database"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acopy_image_to_media_library\u0028\u0029",
             "name": "copy_image_to_media_library",
             "summary": "Copies\u0020an\u0020image\u0020file\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020the\u0020WordPress\u0020media\u0020library.",
