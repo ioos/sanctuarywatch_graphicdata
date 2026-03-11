@@ -1213,7 +1213,7 @@ async function loadSVG(url, containerId) {
             window.addEventListener('load', function() {
                 let mob_icons = document.querySelector("#mobile");
                 if (mob_icons) {
-                    mob_icons.setAttribte("display", "none");
+                    mob_icons.setAttribute("display", "none");
                 }
             });
             try {
@@ -1294,6 +1294,7 @@ async function loadSVG(url, containerId) {
     } catch (error) {
         console.error('Error fetching or parsing the SVG:', error);
     }
+    document.dispatchEvent(new CustomEvent("sw:modalsRendered"));
 }
 
 //highlight items on mouseover, remove highlight when off;
@@ -1938,7 +1939,7 @@ function table_of_contents() {
 		sectioned_list();
 	}
 
-	for (const obj of sortedchild_objs) {
+	for (const obj of sorted_child_objs) {
 		const key = obj.original_name;
 
 		if (sectionObj[key] == 'None') {
@@ -1947,8 +1948,11 @@ function table_of_contents() {
 		const item = document.createElement('li');
 		const title = child_obj[key].title;
 		const link = document.createElement('a');
-		const title_formatted = title.replace(/\s+/g, '_');
+		// const title_formatted = title.replace(/\s+/g, '_');
+        const title_formatted = slugify(title);
 		link.setAttribute('id', title_formatted);
+
+        console.log('title_formatted', title_formatted);
 
 		const modal = child_obj[key].modal;
 		if (modal) {
@@ -2308,63 +2312,56 @@ alertIfMissingModal();
  * @returns {void}
  */
 function alertIfMissingModal() {
-    const raw = location.hash.slice(1);
+    const raw = window.location.hash.slice(1);
     if (!raw) return;
   
-    function getTargetIdFromHash(hashRaw) {
-      let decoded = hashRaw;
-      try { decoded = decodeURIComponent(hashRaw); } catch (_) {}
+    if (window.location.href.includes("post.php")) return;
+  
+    function getTargetIdFromHash(rawHash) {
+      let decoded = rawHash;
+      try {
+        decoded = decodeURIComponent(rawHash);
+      } catch (_) {}
+  
       return decoded.split("/")[0] || "";
     }
   
     function collectModalIds() {
       return [...document.querySelectorAll(".modal-link")]
-        .map(el => el.id)
+        .map((el) => el.id)
         .filter(Boolean);
     }
-  
-    function runCheck() {
-      const modalLinks = collectModalIds();
-      const targetId = getTargetIdFromHash(raw);
-  
-      if (!targetId) return;
-  
-      // Don't alert in WP admin edit screens
-      if (window.location.href.includes("post.php")) return;
-  
-      if (!modalLinks.includes(targetId)) {
-        alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
-      }
+
+    function expandAccordionForLink(targetLink) {
+        if (!targetLink) return;
+      
+        const bodyEl = targetLink.closest(".accordion-body");
+        const item = bodyEl ? bodyEl.closest(".accordion-item") : null;
+        const button = item
+          ? item.querySelector(".accordion-button, .accordion-toggle, button")
+          : null;
+      
+        if (button && button.getAttribute("aria-expanded") !== "true") {
+          button.click();
+        }
     }
-  
-    function waitForModalLinks({ timeoutMs = 4000 } = {}) {
-      return new Promise(resolve => {
-        // If links already exist, resolve immediately
-        if (document.querySelector(".modal-link")) return resolve();
-  
-        const obs = new MutationObserver(() => {
-          if (document.querySelector(".modal-link")) {
-            obs.disconnect();
-            resolve();
-          }
-        });
-  
-        obs.observe(document.body, { childList: true, subtree: true });
-  
-        // Safety timeout so we don't wait forever
-        setTimeout(() => {
-          obs.disconnect();
-          resolve();
-        }, timeoutMs);
-      });
-    }
-  
-    // 1) wait for full page load
-    window.addEventListener("load", async () => {
-      // 2) then wait for JS-injected modal links (if any)
-      await waitForModalLinks({ timeoutMs: 5000 });
-  
-      // 3) run once
-      runCheck();
+
+    const targetId = getTargetIdFromHash(raw);
+    if (!targetId) return;
+
+    
+    window.addEventListener("load", function () {
+
+        try {
+            expandAccordionForLink(targetId);
+        } catch {}
+        const modalIds = collectModalIds();
+        console.log(modalIds);
+
+        if (!modalIds.includes(targetId)) {
+            alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+        }
+        
     });
-  }
+}
+
