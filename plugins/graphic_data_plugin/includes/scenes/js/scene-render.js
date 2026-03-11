@@ -1,4 +1,7 @@
 
+alertIfMissingModal();
+
+
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
  * @return {string} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
@@ -1294,7 +1297,6 @@ async function loadSVG(url, containerId) {
     } catch (error) {
         console.error('Error fetching or parsing the SVG:', error);
     }
-    document.dispatchEvent(new CustomEvent("sw:modalsRendered"));
 }
 
 //highlight items on mouseover, remove highlight when off;
@@ -1952,7 +1954,7 @@ function table_of_contents() {
         const title_formatted = slugify(title);
 		link.setAttribute('id', title_formatted);
 
-        console.log('title_formatted', title_formatted);
+        // console.log('title_formatted', title_formatted);
 
 		const modal = child_obj[key].modal;
 		if (modal) {
@@ -2286,10 +2288,6 @@ function add_modal(){
 }
 
 
-alertIfMissingModal();
-
-
-
 /**
  * Alerts the user if the modal section referenced in the URL hash does not exist.
  *
@@ -2312,6 +2310,7 @@ alertIfMissingModal();
  * @returns {void}
  */
 function alertIfMissingModal() {
+
     const raw = window.location.hash.slice(1);
     if (!raw) return;
   
@@ -2346,20 +2345,26 @@ function alertIfMissingModal() {
         }
     }
 
-    function waitForElements(selectors, { timeoutMs = 12000, intervalMs = 100 } = {}) {
+    function waitForDomState({ timeoutMs = 10000, intervalMs = 100 } = {}) {
         return new Promise((resolve, reject) => {
           const start = Date.now();
       
           function check() {
-            const allFound = selectors.every((selector) => document.querySelector(selector));
+            const hasModalLinks = document.querySelectorAll(".modal-link").length > 0;
+            const hasSvg = document.querySelectorAll("svg").length > 0;
+            // or: const hasSvg = document.querySelectorAll(".svg-elem").length > 0;
       
-            if (allFound) {
+            if (hasModalLinks && hasSvg) {
               resolve();
               return;
             }
       
             if (Date.now() - start >= timeoutMs) {
-              reject(new Error(`Timed out waiting for: ${selectors.join(", ")}`));
+              reject(
+                new Error(
+                  `Timed out waiting. modal-links: ${document.querySelectorAll(".modal-link").length}, svgs: ${document.querySelectorAll("svg").length}`
+                )
+              );
               return;
             }
       
@@ -2373,26 +2378,24 @@ function alertIfMissingModal() {
     const targetId = getTargetIdFromHash(raw);
     if (!targetId) return;
 
-    
     window.addEventListener("load", function () {
         (async () => {
-            waitForElements(["#modal-link", "#svg-elem"], {
-                timeoutMs: 12000,
-                intervalMs: 100
-            });
+            await waitForDomState();
+
+            try {
+                expandAccordionForLink(targetId);
+            } catch {}
+
+            const modalIds = collectModalIds();
+            // console.log(modalIds);
+            // console.log(targetId);
+    
+            if (!modalIds.includes(targetId)) {
+                alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+            }
         })();
 
-        try {
-            expandAccordionForLink(targetId);
-        } catch {}
 
-        const modalIds = collectModalIds();
-        console.log(modalIds);
-        console.log(targetId);
-
-        if (!modalIds.includes(targetId)) {
-            alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
-        }
     });
 }
 
