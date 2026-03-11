@@ -2346,22 +2346,53 @@ function alertIfMissingModal() {
         }
     }
 
+    function waitForElements(selectors, { timeoutMs = 12000, intervalMs = 100 } = {}) {
+        return new Promise((resolve, reject) => {
+          const start = Date.now();
+      
+          function check() {
+            const allFound = selectors.every((selector) => document.querySelector(selector));
+      
+            if (allFound) {
+              resolve();
+              return;
+            }
+      
+            if (Date.now() - start >= timeoutMs) {
+              reject(new Error(`Timed out waiting for: ${selectors.join(", ")}`));
+              return;
+            }
+      
+            setTimeout(check, intervalMs);
+          }
+      
+          check();
+        });
+    }
+
     const targetId = getTargetIdFromHash(raw);
     if (!targetId) return;
 
     
     window.addEventListener("load", function () {
+        (async () => {
+            waitForElements(["#modal-link", "#svg-elem"], {
+                timeoutMs: 12000,
+                intervalMs: 100
+            });
+        })();
 
         try {
             expandAccordionForLink(targetId);
         } catch {}
+
         const modalIds = collectModalIds();
         console.log(modalIds);
+        console.log(targetId);
 
         if (!modalIds.includes(targetId)) {
             alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
         }
-        
     });
 }
 
