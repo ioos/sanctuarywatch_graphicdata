@@ -509,29 +509,32 @@ class Graphic_Data_Tutorial_Content {
 	 * @return void
 	 */
 	public function create_tutorial_modals( $current_user_id ) {
-		global $wpdb;
-		$holder_array = array();
-		$holder_array['post_title'] = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
-		$holder_array['modal_location'] = [ 3, 3, 3 ];
-		$holder_array['modal_scene'] = [ 6, 6, 6 ];
-		$holder_array['modal_icons'] = [ 'Default', 'Table', 'Space' ];
-		$holder_array['modal_icon_order'] = [ 1, 3, 2 ];
-		$holder_array['icon_function'] = [ 'Scene', 'Scene', 'Scene' ];
-		$holder_array['icon_scene_out'] = [ 7, 8, 9 ];
-		$holder_array['tutorial_id'] = [ 12, 13, 14 ];
-		$this->write_modals_to_database( $holder_array, $current_user_id );
-	//	$repeat_unit_post_title = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
-	//	$repeat_unit_modal_location = [ 3, 3, 3, 3, 3, 3 ];
-	//	$repeat_unit_modal_scene = [ 6, 6, 6, 6, 6, 6 ];
-	//	$repeat_unit_modal_icons = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
-	//	$repeat_unit_modal_icon_order = [ 1, 1, 1, 1, 1, 1 ];
-	//	$repeat_unit_icon_function = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
-	//	$repeat_unit_icon_scene_out = [ 1, 1, 1, 1, 1, 1 ];
-	//	$repeat_unit_modal_tagline = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
-	//	$repeat_unit_modal_info_entries = [ 0, 0, 0, 0, 0, 0 ];
-	//	$repeat_unit_modal_photo_entries = [ 0, 0, 0, 0, 0 ];
-	//	$first_3_modal_tab_number = [ 1, 1, 1, 1, 1, 1 ];
-	//	$first_3_modal_tab_title1 = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
+		$initial_array = array();
+		$initial_array['post_title'] = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
+		$initial_array['modal_location'] = [ 3, 3, 3 ];
+		$initial_array['modal_scene'] = [ 6, 6, 6 ];
+		$initial_array['modal_icons'] = [ 'Default', 'Table', 'Space' ];
+		$initial_array['modal_icon_order'] = [ 1, 3, 2 ];
+		$initial_array['icon_function'] = [ 'Scene', 'Scene', 'Scene' ];
+		$initial_array['icon_scene_out'] = [ 7, 8, 9 ];
+		$initial_array['tutorial_id'] = [ 12, 13, 14 ];
+		$this->write_modals_to_database( $initial_array, $current_user_id );
+
+		// default scene: 12.
+		$repeat_array = array();
+		$repeat_array['post_title'] = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
+		$repeat_array['modal_location'] = [ 3, 3, 3, 3, 3, 3 ];
+		$repeat_array['modal_scene'] = [ 12, 12, 12, 12, 12, 12 ];
+		$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+		$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
+		$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
+		$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
+		$repeat_array['modal_info_entries'] = [ 0, 0, 0, 0, 0, 0 ];
+		$repeat_array['modal_photo_entries'] = [ 0, 0, 0, 0, 0 ];
+		$repeat_array['modal_tab_number'] = [ 1, 1, 1, 1, 1, 1 ];
+		$repeat_array['modal_tab_title1'] = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
+		$repeat_array['tutorial_id'] = range( 15, 20 );
+		$this->write_modals_to_database( $repeat_array, $current_user_id );
 	}
 
 	/**
@@ -539,10 +542,7 @@ class Graphic_Data_Tutorial_Content {
 	 *
 	 * Iterates over a structured array of modal data and inserts each entry as a
 	 * WordPress post of type 'modal'. For each successfully created post, sets
-	 * post meta fields based on the keys present in $holder_array. Fields such as
-	 * 'modal_location' and 'modal_scene' are resolved from tutorial IDs to post IDs
-	 * via a postmeta lookup. If 'icon_function' is set and truthy, the associated
-	 * 'icon_scene_out' value is similarly resolved and stored.
+	 * post meta fields based on the keys present in $modal_array.
 	 *
 	 * @param array $modal_array      Associative array of modal field data, keyed by
 	 *                                field name with indexed sub-arrays per modal entry.
@@ -553,6 +553,7 @@ class Graphic_Data_Tutorial_Content {
 	 * @return void
 	 */
 	public function write_modals_to_database( $modal_array, $current_user_id ) {
+		global $wpdb;
 		$i_max = count( $modal_array['post_title'] );
 
 		for ( $i = 0; $i < $i_max; $i++ ) {
@@ -570,8 +571,8 @@ class Graphic_Data_Tutorial_Content {
 			if ( ! is_wp_error( $post_id ) ) {
 				update_post_meta( $post_id, 'modal_published', 'published' );
 				update_post_meta( $post_id, 'post_type', 'modal' ); // needed? Unclear.
-
-				foreach ( $holder_array as $key ) {
+				$modal_array_keys = array_keys( $modal_array );
+				foreach ( $modal_array_keys as $key ) {
 					switch ( $key ) {
 						case 'modal_location':
 							$tutorial_instance_id = $wpdb->get_var(
@@ -594,7 +595,7 @@ class Graphic_Data_Tutorial_Content {
 							update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
 							break;
 						case 'modal_icons':
-							update_post_meta( $post_id, 'modal_icons', $modal_array['modal_scene'][ $i ] );
+							update_post_meta( $post_id, 'modal_icons', $modal_array['modal_icons'][ $i ] );
 							break;
 						case 'modal_icon_order':
 							update_post_meta( $post_id, 'modal_icon_order', $modal_array['modal_icon_order'][ $i ] );
@@ -615,6 +616,18 @@ class Graphic_Data_Tutorial_Content {
 							break;
 						case 'post_title':
 							update_post_meta( $post_id, 'post_title', $modal_array['post_title'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
+							break;
+						case 'modal_info_entries':
+							update_post_meta( $post_id, 'modal_info_entries', $modal_array['modal_info_entries'][ $i ] );
+							break;
+						case 'modal_photo_entries':
+							update_post_meta( $post_id, 'modal_photo_entries', $modal_array['modal_photo_entries'][ $i ] );
+							break;
+						case 'modal_tab_number':
+							update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );
+							break;
+						case 'modal_tab_title1':
+							update_post_meta( $post_id, 'modal_tab_title1', $modal_array['modal_tab_title1'][ $i ] );
 							break;
 						case 'tutorial_id':
 							update_post_meta( $post_id, 'tutorial_id', $modal_array['tutorial_id'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
