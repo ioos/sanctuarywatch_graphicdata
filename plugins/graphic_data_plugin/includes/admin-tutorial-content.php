@@ -335,7 +335,7 @@ class Graphic_Data_Tutorial_Content {
 	 */
 	public function delete_graphic_data_settings_content() {
 		$options = get_option( 'graphic_data_settings' );
-		$options['intro_text'] = '';
+		$options['intro_text'] = ''; //Welcome to Graphic Data
 		$options['sitewide_footer_title'] = '';
 		$options['site_footer'] = '';
 		$options['front_page_code_block'] = '';
