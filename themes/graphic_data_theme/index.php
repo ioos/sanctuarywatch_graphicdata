@@ -57,6 +57,7 @@ if ( $graphic_data_instances_query->have_posts() ) {
 
 ?>
 <div id="above_entire_thing">
+	
 	<?php if ( false ) : ?>
 	<div class="image-center">
 		<span class="site-branding-logo">
