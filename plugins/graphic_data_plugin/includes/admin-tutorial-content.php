@@ -39,9 +39,9 @@ class Graphic_Data_Tutorial_Content {
 		switch ( $tutorial_content ) {
 			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
 			case 0:
-				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
+				if ( isset( $options['tutorial_content_present'] ) && 'yes' == $options['tutorial_content_present'] ) {
 					$options['tutorial_content'] = 0;
-					$options['tutorial_content_present'] = 0;
+					$options['tutorial_content_present'] = 'no';
 					update_option( 'graphic_data_settings', $options );
 					$this->delete_tutorial_instance_types();
 					$this->delete_tutorial_images();
@@ -51,7 +51,7 @@ class Graphic_Data_Tutorial_Content {
 				break;
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
 			case 1:
-				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
+				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 'no' == $options['tutorial_content_present'] ) {
 					// get current user ID or default to first user if no user is logged in.
 					$current_user_id = get_current_user_id();
 					if ( 0 === $current_user_id ) {
@@ -69,13 +69,15 @@ class Graphic_Data_Tutorial_Content {
 						}
 					}
 
-					$options['tutorial_content_present'] = 1;
+					$options['tutorial_content_present'] = 'yes';
 					update_option( 'graphic_data_settings', $options );
+					$options = get_option( 'graphic_data_settings' );
 					$this->create_tutorial_instance_types();
 					$this->create_tutorial_instances( $current_user_id );
 					$this->create_tutorial_scenes( $current_user_id );
 					$this->create_tutorial_modals( $current_user_id );
 					$this->create_graphic_data_settings_content();
+
 				}
 				break;
 		}
@@ -335,7 +337,7 @@ class Graphic_Data_Tutorial_Content {
 	 */
 	public function delete_graphic_data_settings_content() {
 		$options = get_option( 'graphic_data_settings' );
-		$options['intro_text'] = ''; //Welcome to Graphic Data
+		$options['intro_text'] = '';
 		$options['sitewide_footer_title'] = '';
 		$options['site_footer'] = '';
 		$options['front_page_code_block'] = '';
