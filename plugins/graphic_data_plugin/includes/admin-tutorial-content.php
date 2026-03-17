@@ -27,7 +27,7 @@ class Graphic_Data_Tutorial_Content {
 	 *
 	 * @return void
 	 */
-	public function check_tutorial_content_status() {
+	public function check_tutorial_content_status( $tutorial_content ) {
 		static $is_running = false;
 		if ( $is_running ) {
 			return;
@@ -35,13 +35,12 @@ class Graphic_Data_Tutorial_Content {
 		$is_running = true;
 
 		$options = get_option( 'graphic_data_settings' );
-		$tutorial_content = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : 0;
 		switch ( $tutorial_content ) {
 			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
 			case 0:
-				if ( isset( $options['tutorial_content_present'] ) && 'yes' == $options['tutorial_content_present'] ) {
+				if ( isset( $options['tutorial_content_present'] ) && true == $options['tutorial_content_present'] ) {
 					$options['tutorial_content'] = 0;
-					$options['tutorial_content_present'] = 'no';
+					$options['tutorial_content_present'] = false;
 					update_option( 'graphic_data_settings', $options );
 					$this->delete_tutorial_instance_types();
 					$this->delete_tutorial_images();
@@ -51,7 +50,7 @@ class Graphic_Data_Tutorial_Content {
 				break;
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
 			case 1:
-				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 'no' == $options['tutorial_content_present'] ) {
+				if ( ( ! isset( $options['tutorial_content_present'] ) ) || true == $options['tutorial_content_present'] ) {
 					// get current user ID or default to first user if no user is logged in.
 					$current_user_id = get_current_user_id();
 					if ( 0 === $current_user_id ) {
@@ -69,7 +68,7 @@ class Graphic_Data_Tutorial_Content {
 						}
 					}
 
-					$options['tutorial_content_present'] = 'yes';
+					$options['tutorial_content_present'] = false;
 					update_option( 'graphic_data_settings', $options );
 					$options = get_option( 'graphic_data_settings' );
 					$this->create_tutorial_instance_types();

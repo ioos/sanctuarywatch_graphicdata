@@ -303,6 +303,11 @@ class Graphic_Data_Settings_Page {
 
 		// Sanitize boolean toggle - handles both checked and unchecked states.
 		$sanitized['tutorial_content'] = isset( $input['tutorial_content'] ) ? (bool) $input['tutorial_content'] : false;
+		$sanitized['tutorial_content_present'] = (bool) true;
+		// The class that define the tutorial content for the plugin.
+		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
+		$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
+	 	$plugin_admin_tutorial->check_tutorial_content_status( $sanitized['tutorial_content'] );
 
 		// Sanitize editor fields (allow safe HTML).
 		if ( isset( $input['interactive_line_arguments'] ) ) {
@@ -354,7 +359,10 @@ class Graphic_Data_Settings_Page {
 		$options = get_option( 'graphic_data_settings' );
 		$value = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : false;
 		$checked = $value ? 'checked' : '';
+		$hidden_value = isset( $options['tutorial_content_present'] ) ? $options['tutorial_content_present'] : false;
+		$hidden_checked = $hidden_value ? 'checked' : '';
 		?>
+		<input type="checkbox" name="graphic_data_settings[tutorial_content_present]" value="1" <?php echo esc_attr( $hidden_checked ); ?>>
 		<label class="switch">
 			<input type="checkbox" name="graphic_data_settings[tutorial_content]" value="1" <?php echo esc_attr( $checked ); ?>>
 			<span class="slider"></span>

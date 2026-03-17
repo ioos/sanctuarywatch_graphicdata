@@ -332,8 +332,8 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_menu', $plugin_admin_support, 'add_admin_menu' );
 
 		// Load class and functions connected with tutorial content.
-		$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
-		$this->loader->add_action( 'update_option_graphic_data_settings', $plugin_admin_tutorial, 'check_tutorial_content_status' );
+	//	$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
+//		$this->loader->add_action( 'update_option_graphic_data_settings', $plugin_admin_tutorial, 'check_tutorial_content_status' );
 	}
 
 	/**
