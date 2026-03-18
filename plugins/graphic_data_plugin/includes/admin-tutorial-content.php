@@ -226,14 +226,16 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
-	 * Create Front Page Intro and Sitewide Footer content for the tutorial.
+	 * Populate tutorial default values for Graphic Data settings options.
 	 *
-	 * These two content types are normally entered via the Settings page for the tutorial.
+	 * Sets the intro text, sitewide footer title, sitewide footer body, and
+	 * front page code block to pre-written tutorial content. These values are
+	 * normally configured by the user on the Graphic Data Settings page.
 	 *
-	 * @return void
+	 * @param array $options Existing options array to populate with tutorial content.
+	 * @return array The options array with tutorial content values added.
 	 */
-	public function create_graphic_data_settings_content() {
-		$options = get_option( 'graphic_data_settings' );
+	public function create_graphic_data_settings_content( $options ) {
 		$options['intro_text'] = 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.';
 		$options['sitewide_footer_title'] = 'Sitewide Footer Title';
 		$options['site_footer'] = 'This is a column that exists across all pages on the site, called the sitewide footer. It is an optional and you can edit it on the Graphic Data Settings page.';
@@ -324,23 +326,25 @@ class Graphic_Data_Tutorial_Content {
 				generateStars("stars2", 200, 2);
 				generateStars("stars3", 100, 3);
 			</script>';
-		update_option( 'graphic_data_settings', $options );
+		return $options;
 	}
 
 	/**
-	 * Delete Front Page Intro and Sitewide Footer content for the tutorial.
+	 * Clear tutorial default values from Graphic Data settings options.
 	 *
-	 * These two content types are normally edited via the Settings page for the tutorial.
+	 * Resets the intro text, sitewide footer title, sitewide footer body, and
+	 * front page code block to empty strings, effectively removing the tutorial
+	 * content from the Graphic Data settings.
 	 *
-	 * @return void
+	 * @param array $options Existing options array to clear tutorial content from.
+	 * @return array The options array with tutorial content values emptied.
 	 */
-	public function delete_graphic_data_settings_content() {
-		$options = get_option( 'graphic_data_settings' );
+	public function delete_graphic_data_settings_content( $options ) {
 		$options['intro_text'] = '';
 		$options['sitewide_footer_title'] = '';
 		$options['site_footer'] = '';
 		$options['front_page_code_block'] = '';
-		update_option( 'graphic_data_settings', $options );
+		return $options;
 	}
 
 	/**

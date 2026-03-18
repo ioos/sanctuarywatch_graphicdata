@@ -301,14 +301,6 @@ class Graphic_Data_Settings_Page {
 			$sanitized['google_tags_container_id'] = sanitize_text_field( $input['google_tags_container_id'] );
 		}
 
-		// Sanitize boolean toggle - handles both checked and unchecked states.
-		$sanitized['tutorial_content'] = isset( $input['tutorial_content'] ) ? (bool) $input['tutorial_content'] : false;
-		$sanitized['tutorial_content_present'] = (bool) true;
-		// The class that define the tutorial content for the plugin.
-		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
-		$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
-	 	$plugin_admin_tutorial->check_tutorial_content_status( $sanitized['tutorial_content'] );
-
 		// Sanitize editor fields (allow safe HTML).
 		if ( isset( $input['interactive_line_arguments'] ) ) {
 			$sanitized['interactive_line_arguments'] = wp_kses_post( $input['interactive_line_arguments'] );
@@ -326,6 +318,54 @@ class Graphic_Data_Settings_Page {
 			$sanitized['interactive_bar_defaults'] = wp_kses_post( $input['interactive_bar_defaults'] );
 		}
 
+		// Sanitize boolean toggle - handles both checked and unchecked states.
+		$sanitized['tutorial_content'] = isset( $input['tutorial_content'] ) ? (bool) $input['tutorial_content'] : false;
+		$sanitized['tutorial_content_present'] = true;
+		// The class that define the tutorial content for the plugin.
+		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
+		$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
+
+		$options = get_option( 'graphic_data_settings' );
+		switch ( $sanitized['tutorial_content'] ) {
+			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
+			case 0:
+				if ( isset( $options['tutorial_content_present'] ) && true == $options['tutorial_content_present'] ) {
+					$sanitized['tutorial_content_present'] = false;
+
+					$plugin_admin_tutorial->delete_tutorial_instance_types();
+					$plugin_admin_tutorial->delete_tutorial_images();
+					$plugin_admin_tutorial->delete_tutorial_posts();
+					$sanitized = $plugin_admin_tutorial->delete_graphic_data_settings_content( $sanitized );
+				}
+				break;
+			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
+			case 1:
+				if ( ( ! isset( $options['tutorial_content_present'] ) ) || false == $options['tutorial_content_present'] ) {
+					// get current user ID or default to first user if no user is logged in.
+					$current_user_id = get_current_user_id();
+					if ( 0 === $current_user_id ) {
+						$users = get_users(
+							array(
+								'number'  => 1,
+								'orderby' => 'ID',
+								'order'   => 'ASC',
+							)
+						);
+						if ( ! empty( $users ) ) {
+							$current_user_id = $users[0]->ID;
+						}
+					}
+
+					$sanitized['tutorial_content_present'] = true;
+
+					$plugin_admin_tutorial->create_tutorial_instance_types();
+					$plugin_admin_tutorial->create_tutorial_instances( $current_user_id );
+					$plugin_admin_tutorial->create_tutorial_scenes( $current_user_id );
+					$plugin_admin_tutorial->create_tutorial_modals( $current_user_id );
+					$sanitized = $plugin_admin_tutorial->create_graphic_data_settings_content( $sanitized );
+				}
+				break;
+		}
 		return $sanitized;
 	}
 
@@ -359,10 +399,7 @@ class Graphic_Data_Settings_Page {
 		$options = get_option( 'graphic_data_settings' );
 		$value = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : false;
 		$checked = $value ? 'checked' : '';
-		$hidden_value = isset( $options['tutorial_content_present'] ) ? $options['tutorial_content_present'] : false;
-		$hidden_checked = $hidden_value ? 'checked' : '';
 		?>
-		<input type="checkbox" name="graphic_data_settings[tutorial_content_present]" value="1" <?php echo esc_attr( $hidden_checked ); ?>>
 		<label class="switch">
 			<input type="checkbox" name="graphic_data_settings[tutorial_content]" value="1" <?php echo esc_attr( $checked ); ?>>
 			<span class="slider"></span>
