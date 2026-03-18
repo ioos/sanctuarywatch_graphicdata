@@ -166,9 +166,9 @@ permalink: /function_documentation/classes/Graphic-Data-Tutorial-Content.html
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_graphic_data_settings_content">create_graphic_data_settings_content()</a>
     <span>
-                                &nbsp;: void    </span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
-<dd>Create Front Page Intro and Sitewide Footer content for the tutorial.</dd>
+<dd>Populate tutorial default values for Graphic Data settings options.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instance_types">create_tutorial_instance_types()</a>
@@ -201,9 +201,9 @@ permalink: /function_documentation/classes/Graphic-Data-Tutorial-Content.html
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_graphic_data_settings_content">delete_graphic_data_settings_content()</a>
     <span>
-                                &nbsp;: void    </span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
-<dd>Delete Front Page Intro and Sitewide Footer content for the tutorial.</dd>
+<dd>Clear tutorial default values from Graphic Data settings options.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_images">delete_tutorial_images()</a>
@@ -328,7 +328,7 @@ permalink: /function_documentation/classes/Graphic-Data-Tutorial-Content.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">661</span>
+    <span class="phpdocumentor-element-found-in__line">665</span>
 
     </aside>
 
@@ -416,28 +416,50 @@ the upload process encounters an error.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">235</span>
+    <span class="phpdocumentor-element-found-in__line">238</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Create Front Page Intro and Sitewide Footer content for the tutorial.</p>
+        <p class="phpdocumentor-summary">Populate tutorial default values for Graphic Data settings options.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">create_graphic_data_settings_content</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">create_graphic_data_settings_content</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$options</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>These two content types are normally entered via the Settings page for the tutorial.</p>
+        <section class="phpdocumentor-description"><p>Sets the intro text, sitewide footer title, sitewide footer body, and
+front page code block to pre-written tutorial content. These values are
+normally configured by the user on the Graphic Data Settings page.</p>
 </section>
 
-    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$options</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Existing options array to populate with tutorial content.</p>
+</section>
+
+            </dd>
+            </dl>
+
     
 
         
     
-    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The options array with tutorial content values added.</p>
+</section>
+
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -508,7 +530,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">352</span>
+    <span class="phpdocumentor-element-found-in__line">356</span>
 
     </aside>
 
@@ -555,7 +577,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">512</span>
+    <span class="phpdocumentor-element-found-in__line">516</span>
 
     </aside>
 
@@ -602,7 +624,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">427</span>
+    <span class="phpdocumentor-element-found-in__line">431</span>
 
     </aside>
 
@@ -649,28 +671,50 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">337</span>
+    <span class="phpdocumentor-element-found-in__line">342</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Delete Front Page Intro and Sitewide Footer content for the tutorial.</p>
+        <p class="phpdocumentor-summary">Clear tutorial default values from Graphic Data settings options.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">delete_graphic_data_settings_content</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">delete_graphic_data_settings_content</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$options</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>These two content types are normally edited via the Settings page for the tutorial.</p>
+        <section class="phpdocumentor-description"><p>Resets the intro text, sitewide footer title, sitewide footer body, and
+front page code block to empty strings, effectively removing the tutorial
+content from the Graphic Data settings.</p>
 </section>
 
-    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$options</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Existing options array to clear tutorial content from.</p>
+</section>
+
+            </dd>
+            </dl>
+
     
 
         
     
-    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The options array with tutorial content values emptied.</p>
+</section>
+
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -849,7 +893,7 @@ which handles cleanup of wp_terms, wp_term_taxonomy, and wp_termmeta tables.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">556</span>
+    <span class="phpdocumentor-element-found-in__line">560</span>
 
     </aside>
 
