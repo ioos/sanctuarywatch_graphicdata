@@ -1198,12 +1198,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_graphic_data_settings_content\u0028\u0029",
             "name": "create_graphic_data_settings_content",
-            "summary": "Create\u0020Front\u0020Page\u0020Intro\u0020and\u0020Sitewide\u0020Footer\u0020content\u0020for\u0020the\u0020tutorial.",
+            "summary": "Populate\u0020tutorial\u0020default\u0020values\u0020for\u0020Graphic\u0020Data\u0020settings\u0020options.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_graphic_data_settings_content"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_graphic_data_settings_content\u0028\u0029",
             "name": "delete_graphic_data_settings_content",
-            "summary": "Delete\u0020Front\u0020Page\u0020Intro\u0020and\u0020Sitewide\u0020Footer\u0020content\u0020for\u0020the\u0020tutorial.",
+            "summary": "Clear\u0020tutorial\u0020default\u0020values\u0020from\u0020Graphic\u0020Data\u0020settings\u0020options.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_graphic_data_settings_content"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_instances\u0028\u0029",
