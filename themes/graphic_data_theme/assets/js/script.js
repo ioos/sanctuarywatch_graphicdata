@@ -166,7 +166,7 @@ if (!window.location.href.includes('post.php')) {
 
 // Declare a variable to track if the current environment is mobile.
 // Initially set to false, assuming a non-mobile environment by default.
-const mobileBool = false;
+let mobileBool = false;
 
 
 // persistent flag (must live outside the function)

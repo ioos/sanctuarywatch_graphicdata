@@ -56,38 +56,52 @@ if ( $graphic_data_instances_query->have_posts() ) {
 }
 
 ?>
-<div id="code-block" style="padding:0 ; margin 0">
-<?php
-$graphic_data_options = get_option( 'graphic_data_settings' );
-$graphic_data_code_block_value = isset( $graphic_data_options['front_page_code_block'] ) ? $graphic_data_options['front_page_code_block'] : '';
-if ( '' !== trim( $graphic_data_code_block_value ) ) {
-	echo '<div id="front-page-code-block">';
-	echo $graphic_data_code_block_value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	echo '</div>';
-}
-?>
-</div>
-<div id="entire_thing"> 
-<?php if ( false ) : ?>
-<div class="image-center">
-	<span class="site-branding-logo">
-	<?php
-		echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '" alt="Navbar Emblem">';
-	?>
+<div id="above_entire_thing">
+	
+	<?php if ( false ) : ?>
+	<div class="image-center">
+		<span class="site-branding-logo">
+		<?php
+			echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '" alt="Navbar Emblem">';
+		?>
+		</span>
+
+		<span class="site-branding-text-container">
+		<div class="site-title-main"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></div>
+
+		<?php
+		$graphic_data_site_tagline = get_bloginfo( 'description' );
+		if ( '' != $graphic_data_site_tagline ) {
+			echo "<div class='site-tagline-main'>" . esc_html( $graphic_data_site_tagline ) . '</div>';
+		}
+		?>
 	</span>
-
-	<span class="site-branding-text-container">
-	<div class="site-title-main"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></div>
+	</div>
+	<?php endif; ?>
 
 	<?php
-	$graphic_data_site_tagline = get_bloginfo( 'description' );
-	if ( '' != $graphic_data_site_tagline ) {
-		echo "<div class='site-tagline-main'>" . esc_html( $graphic_data_site_tagline ) . '</div>';
+	$graphic_data_front_page_intro = '';
+	$graphic_data_settings = get_option( 'graphic_data_settings' );
+	if ( $graphic_data_settings && isset( $graphic_data_settings['intro_text'] ) && ! empty( $graphic_data_settings['intro_text'] ) ) {
+		$graphic_data_front_page_intro = $graphic_data_settings['intro_text'];
+	}
+	echo "<div class='container-fluid-index main-container' style='margin-top: 0px;'><h4 style='color:black'>" . wp_kses_post( $graphic_data_front_page_intro ) . '</h4></div>';
+	?>
+</div> 
+
+<div id="code-block" style="padding:0 ; margin 0">
+	<?php
+	$graphic_data_options = get_option( 'graphic_data_settings' );
+	$graphic_data_code_block_value = isset( $graphic_data_options['front_page_code_block'] ) ? $graphic_data_options['front_page_code_block'] : '';
+	if ( '' !== trim( $graphic_data_code_block_value ) ) {
+		echo '<div id="front-page-code-block">';
+		echo $graphic_data_code_block_value; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo '</div>';
 	}
 	?>
-  </span>
 </div>
-<?php endif; ?>
+
+<div id="entire_thing"> 
 <!-- Main container with Bootstrap styling for fluid layout -->
 <?php
 $graphic_data_front_page_intro = '';

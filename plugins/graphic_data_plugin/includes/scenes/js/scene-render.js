@@ -1,4 +1,7 @@
 
+alertIfMissingModal();
+
+
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
  * @return {string} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
@@ -91,7 +94,7 @@ async function make_title() {
 			col1.setAttribute('style', 'max-width: 85%;');
 			col2.setAttribute(
 				'style',
-				'padding-top: 5%; align-content: center; margin-left: 7%;'
+                'padding-top: 5%; align-content: center;'
 			);
 		}
 
@@ -334,6 +337,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
             let idx = 0; // Index of current icon in iconsArr
             // Create the grid rows
             for (let i = 0; i < numRows; i++) {
+
                 let row_cont = document.createElement("div");
                 row_cont.classList.add("row", "flex-wrap", "justify-content-center");
                 row_cont.setAttribute("id", `row-${i}`);
@@ -354,7 +358,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                         cont.style.background = instance_color_settings["instance_mobile_tile_background_color"];
                         cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
                         cont.style.overflow = 'hidden';
-
+                        
 
                         // Identify the current icon ID
                         let currIcon = iconIds[idx];
@@ -406,39 +410,44 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                             //caption.style.fontSize = "3.15vw";
                             caption.style.overflow = "hidden";
 
-                            const maxChars2 = 30;  // your character limit
-                            const maxChars3 = 40;  // your character limit
-                            const maxChars1 = 11;  // your character limit
+                            // const maxChars2 = 30;  // your character limit
+                            // const maxChars3 = 40;  // your character limit
+                            // const maxChars1 = 11;  // your character limit
                         
                             
-                            if (caption.textContent.length <= maxChars1) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '12px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            }
-                            if (caption.textContent.length > maxChars1 && caption.textContent.length <= maxChars2) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '11px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } 
-                            if (caption.textContent.length > maxChars3 && caption.textContent.length <= maxChars3) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '10.5px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } 
-                            if (caption.textContent.length > maxChars3) {
-                            // Text is longer than limit — apply a certain style or class
-                            caption.style.fontSize = '10px';     // Example: smaller font size
-                            // or
-                            caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            } else {
-                            // Reset or apply default style
-                            caption.style.fontSize = '14px';
-                            caption.classList.remove('small-text');
-                            }
+                            // if (caption.textContent.length <= maxChars1) {
+                            //     // Text is longer than limit — apply a certain style or class
+                            //     caption.style.fontSize = '12px';     // Example: smaller font size
+                            //     // or
+                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            //     console.log('test1');
+                            // }
+                            // if (caption.textContent.length > maxChars1 && caption.textContent.length <= maxChars2) {
+                            //     // Text is longer than limit — apply a certain style or class
+                            //     caption.style.fontSize = '11px';     // Example: smaller font size
+                            //     // or
+                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            //     console.log('test2');
+                            // } 
+                            // if (caption.textContent.length > maxChars3 && caption.textContent.length <= maxChars3) {
+                            //     // Text is longer than limit — apply a certain style or class
+                            //     caption.style.fontSize = '10.5px';     // Example: smaller font size
+                            //     // or
+                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            //     console.log('test3');
+                            // } 
+                            // if (caption.textContent.length > maxChars3) {
+                            //     // Text is longer than limit — apply a certain style or class
+                            //     caption.style.fontSize = '10px';     // Example: smaller font size
+                            //     // or
+                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
+                            //     console.log('test4');
+                            // } else {
+                            //     // Reset or apply default style
+                            //     caption.style.fontSize = '14px';
+                            //     caption.classList.remove('small-text');
+                            //     console.log('test4');
+                            // }
                             
                             // Set to last fitting size
                             //caption.style.maxHeight = '10%'; // Add some space between icon and caption
@@ -699,9 +708,26 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
     // === Initial Setup ===
     updateNumCols(); // Build layout based on current orientation
 
-    // === Listen for window resizes (debounced) ===
-    const debouncedUpdateNumCols = debounce(updateNumCols, 250);
-    window.addEventListener("resize", debouncedUpdateNumCols);
+    // // === Listen for window resizes (debounced) ===
+    // const debouncedUpdateNumCols = debounce(updateNumCols, 250);
+    // //The line below was causing blinks or flickers on the page when you scrolled. It was a huge problem.
+    // window.addEventListener("resize", debouncedUpdateNumCols);
+    function getOrientationKey() {
+        return window.matchMedia("(orientation: landscape)").matches ? "landscape" : "portrait";
+    }
+    
+    let lastOrientation = getOrientationKey();
+    
+    function onMaybeOrientationChange() {
+    const now = getOrientationKey();
+    if (now === lastOrientation) return; // ignore resize noise (scroll/address bar)
+        lastOrientation = now;
+        updateNumCols(); // only when portrait <-> landscape changes
+    }
+    
+    window.addEventListener("resize", debounce(onMaybeOrientationChange, 150));
+
+
 }
 
 /**
@@ -1150,6 +1176,7 @@ async function loadSVG(url, containerId) {
                     iconsArr =  visible_modals;
                 } else {
                     iconsArr =  Object.keys(child_obj);
+                    //console.log('iconsArr', iconsArr);
                 }
                 // console.log('iconsArr',iconsArr);
                 // console.log('mobileIcons',mobileIcons);
@@ -1189,7 +1216,7 @@ async function loadSVG(url, containerId) {
             window.addEventListener('load', function() {
                 let mob_icons = document.querySelector("#mobile");
                 if (mob_icons) {
-                    mob_icons.setAttribte("display", "none");
+                    mob_icons.setAttribute("display", "none");
                 }
             });
             try {
@@ -1914,7 +1941,7 @@ function table_of_contents() {
 		sectioned_list();
 	}
 
-	for (const obj of sortedchild_objs) {
+	for (const obj of sorted_child_objs) {
 		const key = obj.original_name;
 
 		if (sectionObj[key] == 'None') {
@@ -1923,8 +1950,11 @@ function table_of_contents() {
 		const item = document.createElement('li');
 		const title = child_obj[key].title;
 		const link = document.createElement('a');
-		const title_formatted = title.replace(/\s+/g, '_');
+		// const title_formatted = title.replace(/\s+/g, '_');
+        const title_formatted = slugify(title);
 		link.setAttribute('id', title_formatted);
+
+        // console.log('title_formatted', title_formatted);
 
 		const modal = child_obj[key].modal;
 		if (modal) {
@@ -2194,8 +2224,10 @@ function add_modal(){
         if (child_obj[key]['modal']){
             let modal = document.getElementById("myModal");
             let closeButton = document.getElementById("close");
+
+            //console.log('is_mobile()', is_mobile());
             
-            if (mobileBool){
+            if (is_mobile()){
                 let itemContainer = document.querySelector(`#${key}-container`);
                 itemContainer.addEventListener('click', function() {
                     modal.style.display = "block";
@@ -2242,7 +2274,7 @@ function add_modal(){
                     window.location.href = link;
                 }
             });
-            if (mobileBool){
+            if (is_mobile()){
                 let itemContainer = document.querySelector(`#${key}-container`);
                 itemContainer.addEventListener('click', function() {
                     if (!window.location.href.includes('post.php')) {
@@ -2254,10 +2286,6 @@ function add_modal(){
         }
     }
 }
-
-
-alertIfMissingModal();
-
 
 
 /**
@@ -2282,27 +2310,92 @@ alertIfMissingModal();
  * @returns {void}
  */
 function alertIfMissingModal() {
-    const raw = location.hash.slice(1);
+
+    const raw = window.location.hash.slice(1);
     if (!raw) return;
+  
+    if (window.location.href.includes("post.php")) return;
+  
+    function getTargetIdFromHash(rawHash) {
+      let decoded = rawHash;
+      try {
+        decoded = decodeURIComponent(rawHash);
+      } catch (_) {}
+  
+      return decoded.split("/")[0] || "";
+    }
+  
+    function collectModalIds() {
+      return [...document.querySelectorAll(".modal-link")]
+        .map((el) => el.id)
+        .filter(Boolean);
+    }
 
-    window.addEventListener("load", () => {
-        const modalLinks = [...document.querySelectorAll(".modal-link")]
-          .map(el => el.id)
-          .filter(Boolean);
-          //console.log('modalLinks', modalLinks);
+    function expandAccordionForLink(targetLink) {
+        if (!targetLink) return;
+      
+        const bodyEl = targetLink.closest(".accordion-body");
+        const item = bodyEl ? bodyEl.closest(".accordion-item") : null;
+        const button = item
+          ? item.querySelector(".accordion-button, .accordion-toggle, button")
+          : null;
+      
+        if (button && button.getAttribute("aria-expanded") !== "true") {
+          button.click();
+        }
+    }
 
-          let decoded = raw;
-            try { decoded = decodeURIComponent(raw); } catch (_) {}
-            //console.log('decoded', decoded);
-        
-            const urlModalGiven = decoded.split("/");
+    function waitForDomState({ timeoutMs = 10000, intervalMs = 100 } = {}) {
+        return new Promise((resolve, reject) => {
+          const start = Date.now();
+      
+          function check() {
+            const hasModalLinks = document.querySelectorAll(".modal-link").length > 0;
+            const hasSvg = document.querySelectorAll("svg").length > 0;
+            // or: const hasSvg = document.querySelectorAll(".svg-elem").length > 0;
+      
+            if (hasModalLinks && hasSvg) {
+              resolve();
+              return;
+            }
+      
+            if (Date.now() - start >= timeoutMs) {
+              reject(
+                new Error(
+                  `Timed out waiting. modal-links: ${document.querySelectorAll(".modal-link").length}, svgs: ${document.querySelectorAll("svg").length}`
+                )
+              );
+              return;
+            }
+      
+            setTimeout(check, intervalMs);
+          }
+      
+          check();
+        });
+    }
 
-            if (!modalLinks.includes(urlModalGiven[0]) && !window.location.href.includes('post.php')) {
+    const targetId = getTargetIdFromHash(raw);
+    if (!targetId) return;
+
+    window.addEventListener("load", function () {
+        (async () => {
+            await waitForDomState();
+
+            try {
+                expandAccordionForLink(targetId);
+            } catch {}
+
+            const modalIds = collectModalIds();
+            // console.log(modalIds);
+            // console.log(targetId);
+    
+            if (!modalIds.includes(targetId)) {
                 alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
-            }    
-            if (modalLinks.includes(urlModalGiven[0]) && !window.location.href.includes('post.php')) {
-                return;
-            } 
+            }
+        })();
+
+
     });
-         
 }
+

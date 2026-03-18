@@ -227,7 +227,7 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3{
   margin-top: 0;
   margin-bottom: 0;
   /* font-weight: 500; */
-  font-weight: 450;
+  font-weight: 400;
   line-height: 1.2;
   /* Make text feel more airy across width */
   letter-spacing: 0.02em;
@@ -330,7 +330,8 @@ h4, .h4 {
 }
 @media (min-width: 1200px) {
   h4, .h4 {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
+    color: #03386c !important;
   }
 }
 
@@ -866,8 +867,8 @@ progress {
   display: flex;
   flex-wrap: wrap;
   margin-top: calc(-1 * var(--bs-gutter-y));
-  margin-right: calc(-0.5 * var(--bs-gutter-x));
-  margin-left: calc(-0.5 * var(--bs-gutter-x));
+  /* margin-right: calc(-0.5 * var(--bs-gutter-x)); */
+  /* margin-left: calc(-0.5 * var(--bs-gutter-x)); */
 }
 .row > * {
   flex-shrink: 0;
