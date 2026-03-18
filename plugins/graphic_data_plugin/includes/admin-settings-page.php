@@ -227,41 +227,6 @@ class Graphic_Data_Settings_Page {
 			'theme_settings',
 			'interactive_figures_defaults_section'
 		);
-
-		// Register settings for REST API access (read-only).
-		register_setting(
-			'theme_settings_group',
-			'sitewide_footer_title',
-			[
-				'show_in_rest' => [
-					'name' => 'sitewide_footer_title',
-					'schema' => [
-						'type' => 'string',
-						'description' => 'Site-wide footer title',
-					],
-				],
-				'type' => 'string',
-				'default' => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			]
-		);
-
-		register_setting(
-			'theme_settings_group',
-			'sitewide_footer',
-			[
-				'show_in_rest' => [
-					'name' => 'sitewide_footer',
-					'schema' => [
-						'type' => 'string',
-						'description' => 'Site-wide footer content',
-					],
-				],
-				'type' => 'string',
-				'default' => '',
-				'sanitize_callback' => 'wp_kses_post', // Allows safe HTML.
-			]
-		);
 	}
 
 	/**
@@ -320,16 +285,18 @@ class Graphic_Data_Settings_Page {
 
 		// Sanitize boolean toggle - handles both checked and unchecked states.
 		$sanitized['tutorial_content'] = isset( $input['tutorial_content'] ) ? (bool) $input['tutorial_content'] : false;
-		$sanitized['tutorial_content_present'] = true;
+
 		// The class that define the tutorial content for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
 		$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
 
 		$options = get_option( 'graphic_data_settings' );
+		$sanitized['tutorial_content_present'] = isset( $$options['tutorial_content'] ) ? (bool) $$options['tutorial_content'] : false;
+
 		switch ( $sanitized['tutorial_content'] ) {
 			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
-			case 0:
-				if ( isset( $options['tutorial_content_present'] ) && true == $options['tutorial_content_present'] ) {
+			case false:
+				if ( true == $options['tutorial_content_present'] ) {
 					$sanitized['tutorial_content_present'] = false;
 
 					$plugin_admin_tutorial->delete_tutorial_instance_types();
@@ -339,8 +306,9 @@ class Graphic_Data_Settings_Page {
 				}
 				break;
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
-			case 1:
-				if ( ( ! isset( $options['tutorial_content_present'] ) ) || false == $options['tutorial_content_present'] ) {
+			case true:
+				if ( false == $options['tutorial_content_present'] ) {
+					$sanitized['tutorial_content_present'] = true;
 					// get current user ID or default to first user if no user is logged in.
 					$current_user_id = get_current_user_id();
 					if ( 0 === $current_user_id ) {
@@ -355,8 +323,6 @@ class Graphic_Data_Settings_Page {
 							$current_user_id = $users[0]->ID;
 						}
 					}
-
-					$sanitized['tutorial_content_present'] = true;
 
 					$plugin_admin_tutorial->create_tutorial_instance_types();
 					$plugin_admin_tutorial->create_tutorial_instances( $current_user_id );
