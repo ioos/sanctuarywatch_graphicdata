@@ -1171,11 +1171,6 @@ Search.appendIndex(
             "summary": "Class\u0020Graphic_Data_Tutorial_Content",
             "url": "classes/Graphic-Data-Tutorial-Content.html"
         },                {
-            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acheck_tutorial_content_status\u0028\u0029",
-            "name": "check_tutorial_content_status",
-            "summary": "Synchronize\u0020tutorial\u0020content\u0020based\u0020on\u0020plugin\u0020settings.",
-            "url": "classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status"
-        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_instance_types\u0028\u0029",
             "name": "create_tutorial_instance_types",
             "summary": "Create\u0020example\u0020instance\u0020type\u0020taxonomy\u0020terms\u0020for\u0020the\u0020tutorial.",
