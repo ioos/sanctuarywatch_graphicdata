@@ -287,51 +287,51 @@ class Graphic_Data_Settings_Page {
 		$sanitized['tutorial_content'] = isset( $input['tutorial_content'] ) ? (bool) $input['tutorial_content'] : false;
 
 		// The class that define the tutorial content for the plugin.
-		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
-		$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
+	//	require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
+	//	$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
 
-		$options = get_option( 'graphic_data_settings' );
-		$sanitized['tutorial_content_present'] = isset( $$options['tutorial_content'] ) ? (bool) $$options['tutorial_content'] : false;
+	//	$options = get_option( 'graphic_data_settings' );
+	//	$sanitized['tutorial_content_present'] = isset( $$options['tutorial_content'] ) ? (bool) $$options['tutorial_content'] : false;
 
-		switch ( $sanitized['tutorial_content'] ) {
-			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
-			case false:
-				if ( true == $options['tutorial_content_present'] ) {
-					$sanitized['tutorial_content_present'] = false;
+	//	switch ( $sanitized['tutorial_content'] ) {
+	//		// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
+	//		case false:
+	//			if ( true == $options['tutorial_content_present'] ) {
+	//				$sanitized['tutorial_content_present'] = false;
 
-					$plugin_admin_tutorial->delete_tutorial_instance_types();
-					$plugin_admin_tutorial->delete_tutorial_images();
-					$plugin_admin_tutorial->delete_tutorial_posts();
-					$sanitized = $plugin_admin_tutorial->delete_graphic_data_settings_content( $sanitized );
-				}
-				break;
+	//				$plugin_admin_tutorial->delete_tutorial_instance_types();
+	//				$plugin_admin_tutorial->delete_tutorial_images();
+	//				$plugin_admin_tutorial->delete_tutorial_posts();
+	//				$sanitized = $plugin_admin_tutorial->delete_graphic_data_settings_content( $sanitized );
+	//			}
+	//			break;
 			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
-			case true:
-				if ( false == $options['tutorial_content_present'] ) {
-					$sanitized['tutorial_content_present'] = true;
-					// get current user ID or default to first user if no user is logged in.
-					$current_user_id = get_current_user_id();
-					if ( 0 === $current_user_id ) {
-						$users = get_users(
-							array(
-								'number'  => 1,
-								'orderby' => 'ID',
-								'order'   => 'ASC',
-							)
-						);
-						if ( ! empty( $users ) ) {
-							$current_user_id = $users[0]->ID;
-						}
-					}
+	//		case true:
+	//			if ( false == $options['tutorial_content_present'] ) {
+	//				$sanitized['tutorial_content_present'] = true;
+	//				// get current user ID or default to first user if no user is logged in.
+	//				$current_user_id = get_current_user_id();
+	//				if ( 0 === $current_user_id ) {
+	//					$users = get_users(
+	//						array(
+	//							'number'  => 1,
+	//							'orderby' => 'ID',
+	//							'order'   => 'ASC',
+	//						)
+	//					);
+	//					if ( ! empty( $users ) ) {
+	//						$current_user_id = $users[0]->ID;
+	//					}
+	//				}
 
-					$plugin_admin_tutorial->create_tutorial_instance_types();
-					$plugin_admin_tutorial->create_tutorial_instances( $current_user_id );
-					$plugin_admin_tutorial->create_tutorial_scenes( $current_user_id );
-					$plugin_admin_tutorial->create_tutorial_modals( $current_user_id );
-					$sanitized = $plugin_admin_tutorial->create_graphic_data_settings_content( $sanitized );
-				}
-				break;
-		}
+	//				$plugin_admin_tutorial->create_tutorial_instance_types();
+	//				$plugin_admin_tutorial->create_tutorial_instances( $current_user_id );
+	//				$plugin_admin_tutorial->create_tutorial_scenes( $current_user_id );
+	//				$plugin_admin_tutorial->create_tutorial_modals( $current_user_id );
+	//				$sanitized = $plugin_admin_tutorial->create_graphic_data_settings_content( $sanitized );
+	//			}
+	//			break;
+	//	}
 		return $sanitized;
 	}
 
