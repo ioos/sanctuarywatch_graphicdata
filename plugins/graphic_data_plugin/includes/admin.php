@@ -139,9 +139,6 @@ class Graphic_Data_Plugin {
 		// The class that defines general utility functions for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
-		// The class that define the tutorial content for the plugin.
-		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
-
 		// Include the GitHub Updater class.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-github-updater.php';
 
@@ -245,7 +242,6 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_settings_page, 'register_rest_settings' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_line_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_settings_page, 'enqueue_admin_interactive_default_bar_styles' );
-		$this->loader->add_action( 'update_option_graphic_data_settings', $plugin_admin_settings_page, 'check_sitewide_footer_status' );
 
 		// Load class and functions associated with Instance Types.
 		$plugin_admin_instance_type = new Graphic_Data_Instance_Type();
@@ -330,10 +326,6 @@ class Graphic_Data_Plugin {
 		// Load class and functions connected with Support page.
 		$plugin_admin_support = new Graphic_Data_Support();
 		$this->loader->add_action( 'admin_menu', $plugin_admin_support, 'add_admin_menu' );
-
-		// Load class and functions connected with tutorial content.
-		$plugin_admin_tutorial = new Graphic_Data_Tutorial_Content();
-		$this->loader->add_action( 'update_option_graphic_data_settings', $plugin_admin_tutorial, 'check_tutorial_content_status' );
 	}
 
 	/**

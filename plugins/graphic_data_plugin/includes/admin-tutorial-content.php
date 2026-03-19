@@ -15,74 +15,6 @@
 class Graphic_Data_Tutorial_Content {
 
 	/**
-	 * Synchronize tutorial content based on plugin settings.
-	 *
-	 * Checks the 'tutorial_content' setting and takes action accordingly:
-	 * - If set to 0 and tutorial content hasn't been deleted, deletes all tutorial instance types.
-	 * - If set to 1 and tutorial content doesn't exist, creates tutorial instance types.
-	 *
-	 * Updates the 'tutorial_content_present' flag to track the current state.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function check_tutorial_content_status() {
-		static $is_running = false;
-		if ( $is_running ) {
-			return;
-		}
-		$is_running = true;
-
-		$options = get_option( 'graphic_data_settings' );
-		$tutorial_content = isset( $options['tutorial_content'] ) ? $options['tutorial_content'] : 0;
-		switch ( $tutorial_content ) {
-			// no tutorial content wanted. If it hasn't been done already, delete all existing tutorial content.
-			case 0:
-				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
-					$options['tutorial_content'] = 0;
-					$options['tutorial_content_present'] = 0;
-					update_option( 'graphic_data_settings', $options );
-					$this->delete_tutorial_instance_types();
-					$this->delete_tutorial_images();
-					$this->delete_tutorial_posts();
-					$this->delete_graphic_data_settings_content();
-				}
-				break;
-			// Tutorial content wanted. If it hasn't been done already, create tutorial content.
-			case 1:
-				if ( ( ! isset( $options['tutorial_content_present'] ) ) || 0 == $options['tutorial_content_present'] ) {
-					// get current user ID or default to first user if no user is logged in.
-					$current_user_id = get_current_user_id();
-					if ( 0 === $current_user_id ) {
-
-						$users = get_users(
-							array(
-								'number'  => 1,
-								'orderby' => 'ID',
-								'order'   => 'ASC',
-							)
-						);
-
-						if ( ! empty( $users ) ) {
-							$current_user_id = $users[0]->ID;
-						}
-					}
-
-					$options['tutorial_content_present'] = 1;
-					update_option( 'graphic_data_settings', $options );
-					$this->create_tutorial_instance_types();
-					$this->create_tutorial_instances( $current_user_id );
-					$this->create_tutorial_scenes( $current_user_id );
-					$this->create_tutorial_modals( $current_user_id );
-					$this->create_graphic_data_settings_content();
-				}
-				break;
-		}
-		$is_running = false;
-	}
-
-	/**
 	 * Create example instance type taxonomy terms for the tutorial.
 	 *
 	 * Creates two sample instance type terms with predefined names, slugs,
@@ -225,14 +157,16 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
-	 * Create Front Page Intro and Sitewide Footer content for the tutorial.
+	 * Populate tutorial default values for Graphic Data settings options.
 	 *
-	 * These two content types are normally entered via the Settings page for the tutorial.
+	 * Sets the intro text, sitewide footer title, sitewide footer body, and
+	 * front page code block to pre-written tutorial content. These values are
+	 * normally configured by the user on the Graphic Data Settings page.
 	 *
-	 * @return void
+	 * @param array $options Existing options array to populate with tutorial content.
+	 * @return array The options array with tutorial content values added.
 	 */
-	public function create_graphic_data_settings_content() {
-		$options = get_option( 'graphic_data_settings' );
+	public function create_graphic_data_settings_content( $options ) {
 		$options['intro_text'] = 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.';
 		$options['sitewide_footer_title'] = 'Sitewide Footer Title';
 		$options['site_footer'] = 'This is a column that exists across all pages on the site, called the sitewide footer. It is an optional and you can edit it on the Graphic Data Settings page.';
@@ -323,23 +257,25 @@ class Graphic_Data_Tutorial_Content {
 				generateStars("stars2", 200, 2);
 				generateStars("stars3", 100, 3);
 			</script>';
-		update_option( 'graphic_data_settings', $options );
+		return $options;
 	}
 
 	/**
-	 * Delete Front Page Intro and Sitewide Footer content for the tutorial.
+	 * Clear tutorial default values from Graphic Data settings options.
 	 *
-	 * These two content types are normally edited via the Settings page for the tutorial.
+	 * Resets the intro text, sitewide footer title, sitewide footer body, and
+	 * front page code block to empty strings, effectively removing the tutorial
+	 * content from the Graphic Data settings.
 	 *
-	 * @return void
+	 * @param array $options Existing options array to clear tutorial content from.
+	 * @return array The options array with tutorial content values emptied.
 	 */
-	public function delete_graphic_data_settings_content() {
-		$options = get_option( 'graphic_data_settings' );
+	public function delete_graphic_data_settings_content( $options ) {
 		$options['intro_text'] = '';
 		$options['sitewide_footer_title'] = '';
 		$options['site_footer'] = '';
 		$options['front_page_code_block'] = '';
-		update_option( 'graphic_data_settings', $options );
+		return $options;
 	}
 
 	/**
@@ -509,34 +445,56 @@ class Graphic_Data_Tutorial_Content {
 	 * @return void
 	 */
 	public function create_tutorial_modals( $current_user_id ) {
+		$initial_array = array();
+		$initial_array['post_title'] = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
+		$initial_array['modal_location'] = [ 3, 3, 3 ];
+		$initial_array['modal_scene'] = [ 6, 6, 6 ];
+		$initial_array['modal_icons'] = [ 'Default', 'Table', 'Space' ];
+		$initial_array['modal_icon_order'] = [ 1, 3, 2 ];
+		$initial_array['icon_function'] = [ 'Scene', 'Scene', 'Scene' ];
+		$initial_array['icon_scene_out'] = [ 7, 8, 9 ];
+		$initial_array['tutorial_id'] = [ 12, 13, 14 ];
+		$this->write_modals_to_database( $initial_array, $current_user_id );
+
+		// default scene: 12.
+		$repeat_array = array();
+		$repeat_array['post_title'] = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
+		$repeat_array['modal_location'] = [ 3, 3, 3, 3, 3, 3 ];
+		$repeat_array['modal_scene'] = [ 12, 12, 12, 12, 12, 12 ];
+		$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+		$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
+		$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
+		$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
+		$repeat_array['modal_info_entries'] = [ 0, 0, 0, 0, 0, 0 ];
+		$repeat_array['modal_photo_entries'] = [ 0, 0, 0, 0, 0 ];
+		$repeat_array['modal_tab_number'] = [ 1, 1, 1, 1, 1, 1 ];
+		$repeat_array['modal_tab_title1'] = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
+		$repeat_array['tutorial_id'] = range( 15, 20 );
+		$this->write_modals_to_database( $repeat_array, $current_user_id );
+	}
+
+	/**
+	 * Creates tutorial modal posts and writes their metadata to the database.
+	 *
+	 * Iterates over a structured array of modal data and inserts each entry as a
+	 * WordPress post of type 'modal'. For each successfully created post, sets
+	 * post meta fields based on the keys present in $modal_array.
+	 *
+	 * @param array $modal_array      Associative array of modal field data, keyed by
+	 *                                field name with indexed sub-arrays per modal entry.
+	 *                                Expected keys include: 'post_title', 'tutorial_id',
+	 *                                'modal_location', 'modal_scene', 'modal_icons',
+	 *                                'modal_icon_order', 'icon_function', 'icon_scene_out'.
+	 * @param int   $current_user_id  The WordPress user ID to set as the post author.
+	 * @return void
+	 */
+	public function write_modals_to_database( $modal_array, $current_user_id ) {
 		global $wpdb;
-		$tutorial_id = range( 12, 44 );
-		$first_3_post_title = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
-		$first_3_modal_location = [ 3, 3, 3 ];
-		$first_3_modal_scene = [ 6, 6, 6 ];
-		$first_3_modal_icons = [ 'Default', 'Table', 'Space' ];
-		$first_3_modal_icon_order = [ 1, 3, 2 ];
-		$first_3_icon_function = [ 'Scene', 'Scene', 'Scene' ];
-		$first_3_icon_scene_out = [ 7, 8, 9 ];
-		$first_3_modal_tagline = [ '', '', '' ];
+		$i_max = count( $modal_array['post_title'] );
 
-		$repeat_unit_post_title = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
-		$repeat_unit_modal_location = [ 3, 3, 3, 3, 3, 3 ];
-		$repeat_unit_modal_scene = [ 6, 6, 6, 6, 6, 6 ];
-		$repeat_unit_modal_icons = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
-		$repeat_unit_modal_icon_order = [ 1, 1, 1, 1, 1, 1 ];
-		$repeat_unit_icon_function = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
-		$repeat_unit_modal_tagline = [
-			'',
-			'',
-			'',
-		];
-
-
-		// create the tutorial modals.
-		for ( $i = 0; $i < 3; $i++ ) {
+		for ( $i = 0; $i < $i_max; $i++ ) {
 			$post_data = array(
-				'post_title'   => $post_title[ $i ],
+				'post_title'   => $modal_array['post_title'][ $i ],
 				'post_type'    => 'modal',
 				'post_status'  => 'publish',
 				'post_author'  => $current_user_id,
@@ -549,41 +507,69 @@ class Graphic_Data_Tutorial_Content {
 			if ( ! is_wp_error( $post_id ) ) {
 				update_post_meta( $post_id, 'modal_published', 'published' );
 				update_post_meta( $post_id, 'post_type', 'modal' ); // needed? Unclear.
-				$tutorial_instance_id = $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-						'tutorial_id',
-						$modal_location [ $i ],
-					)
-				);
-				update_post_meta( $post_id, 'modal_location', $tutorial_instance_id );
+				$modal_array_keys = array_keys( $modal_array );
+				foreach ( $modal_array_keys as $key ) {
+					switch ( $key ) {
+						case 'modal_location':
+							$tutorial_instance_id = $wpdb->get_var(
+								$wpdb->prepare(
+									"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+									'tutorial_id',
+									$modal_array['modal_location'][ $i ],
+								)
+							);
+							update_post_meta( $post_id, 'modal_location', $tutorial_instance_id );
+							break;
+						case 'modal_scene':
+							$tutorial_instance_id = $wpdb->get_var(
+								$wpdb->prepare(
+									"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+									'tutorial_id',
+									$modal_array['modal_scene'][ $i ],
+								)
+							);
+							update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
+							break;
+						case 'modal_icons':
+							update_post_meta( $post_id, 'modal_icons', $modal_array['modal_icons'][ $i ] );
+							break;
+						case 'modal_icon_order':
+							update_post_meta( $post_id, 'modal_icon_order', $modal_array['modal_icon_order'][ $i ] );
+							break;
+						case 'icon_function':
+							update_post_meta( $post_id, 'icon_function', $modal_array['icon_function'][ $i ] );
 
-				$tutorial_instance_id = $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-						'tutorial_id',
-						$modal_scene [ $i ],
-					)
-				);
-				update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
-
-				update_post_meta( $post_id, 'modal_icons', $modal_icons[ $i ] );
-				update_post_meta( $post_id, 'modal_icon_order', $modal_icon_order[ $i ] );
-				update_post_meta( $post_id, 'icon_function', $icon_function[ $i ] );
-
-				if ( 'Scene' == $icon_function[ $i ] ) {
-					$tutorial_scene_out_id = $wpdb->get_var(
-						$wpdb->prepare(
-							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-							'tutorial_id',
-							$icon_scene_out [ $i ],
-						)
-					);
-					update_post_meta( $post_id, 'icon_scene_out', $tutorial_scene_out_id );
+							if ( $modal_array['icon_function'][ $i ] ) {
+								$tutorial_scene_out_id = $wpdb->get_var(
+									$wpdb->prepare(
+										"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+										'tutorial_id',
+										$modal_array['icon_scene_out'][ $i ],
+									)
+								);
+								update_post_meta( $post_id, 'icon_scene_out', $tutorial_scene_out_id );
+							}
+							break;
+						case 'post_title':
+							update_post_meta( $post_id, 'post_title', $modal_array['post_title'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
+							break;
+						case 'modal_info_entries':
+							update_post_meta( $post_id, 'modal_info_entries', $modal_array['modal_info_entries'][ $i ] );
+							break;
+						case 'modal_photo_entries':
+							update_post_meta( $post_id, 'modal_photo_entries', $modal_array['modal_photo_entries'][ $i ] );
+							break;
+						case 'modal_tab_number':
+							update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );
+							break;
+						case 'modal_tab_title1':
+							update_post_meta( $post_id, 'modal_tab_title1', $modal_array['modal_tab_title1'][ $i ] );
+							break;
+						case 'tutorial_id':
+							update_post_meta( $post_id, 'tutorial_id', $modal_array['tutorial_id'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
+							break;
+					}
 				}
-
-				update_post_meta( $post_id, 'post_title', $post_title[ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
-				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
 			}
 		};
 	}

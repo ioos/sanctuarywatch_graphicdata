@@ -1083,7 +1083,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Asanitize_graphic_data_settings\u0028\u0029",
             "name": "sanitize_graphic_data_settings",
-            "summary": "Sanitize\u0020all\u0020plugin\u0020settings\u0020before\u0020saving.",
+            "summary": "Sanitize\u0020all\u0020plugin\u0020settings\u0020before\u0020saving\u0020and\u0020also\u0020activates\/deactivates\u0020tutorial\u0020content.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_description_callback\u0028\u0029",
@@ -1171,11 +1171,6 @@ Search.appendIndex(
             "summary": "Class\u0020Graphic_Data_Tutorial_Content",
             "url": "classes/Graphic-Data-Tutorial-Content.html"
         },                {
-            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acheck_tutorial_content_status\u0028\u0029",
-            "name": "check_tutorial_content_status",
-            "summary": "Synchronize\u0020tutorial\u0020content\u0020based\u0020on\u0020plugin\u0020settings.",
-            "url": "classes/Graphic-Data-Tutorial-Content.html#method_check_tutorial_content_status"
-        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_instance_types\u0028\u0029",
             "name": "create_tutorial_instance_types",
             "summary": "Create\u0020example\u0020instance\u0020type\u0020taxonomy\u0020terms\u0020for\u0020the\u0020tutorial.",
@@ -1198,12 +1193,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_graphic_data_settings_content\u0028\u0029",
             "name": "create_graphic_data_settings_content",
-            "summary": "Create\u0020Front\u0020Page\u0020Intro\u0020and\u0020Sitewide\u0020Footer\u0020content\u0020for\u0020the\u0020tutorial.",
+            "summary": "Populate\u0020tutorial\u0020default\u0020values\u0020for\u0020Graphic\u0020Data\u0020settings\u0020options.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_graphic_data_settings_content"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_graphic_data_settings_content\u0028\u0029",
             "name": "delete_graphic_data_settings_content",
-            "summary": "Delete\u0020Front\u0020Page\u0020Intro\u0020and\u0020Sitewide\u0020Footer\u0020content\u0020for\u0020the\u0020tutorial.",
+            "summary": "Clear\u0020tutorial\u0020default\u0020values\u0020from\u0020Graphic\u0020Data\u0020settings\u0020options.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_graphic_data_settings_content"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_instances\u0028\u0029",
@@ -1220,6 +1215,11 @@ Search.appendIndex(
             "name": "create_tutorial_modals",
             "summary": "Create\u0020example\u0020modals\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_modals"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Awrite_modals_to_database\u0028\u0029",
+            "name": "write_modals_to_database",
+            "summary": "Creates\u0020tutorial\u0020modal\u0020posts\u0020and\u0020writes\u0020their\u0020metadata\u0020to\u0020the\u0020database.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_write_modals_to_database"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acopy_image_to_media_library\u0028\u0029",
             "name": "copy_image_to_media_library",
