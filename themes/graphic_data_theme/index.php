@@ -104,13 +104,6 @@ if ( $graphic_data_instances_query->have_posts() ) {
 <div id="entire_thing"> 
 <!-- Main container with Bootstrap styling for fluid layout -->
 <?php
-$graphic_data_front_page_intro = '';
-$graphic_data_settings = get_option( 'graphic_data_settings' );
-if ( $graphic_data_settings && isset( $graphic_data_settings['intro_text'] ) && ! empty( $graphic_data_settings['intro_text'] ) ) {
-	$graphic_data_front_page_intro = $graphic_data_settings['intro_text'];
-}
-echo "<div class='container-fluid-index main-container' style='margin-top: 0px;'><h4 style='color:black'>" . wp_kses_post( $graphic_data_front_page_intro ) . '</h4></div>';
-
 $graphic_data_terms = get_terms(
 	[
 		'taxonomy'   => 'instance_type',
