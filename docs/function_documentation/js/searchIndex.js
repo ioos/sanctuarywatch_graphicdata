@@ -1083,7 +1083,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Asanitize_graphic_data_settings\u0028\u0029",
             "name": "sanitize_graphic_data_settings",
-            "summary": "Sanitize\u0020all\u0020plugin\u0020settings\u0020before\u0020saving.",
+            "summary": "Sanitize\u0020all\u0020plugin\u0020settings\u0020before\u0020saving\u0020and\u0020also\u0020activates\/deactivates\u0020tutorial\u0020content.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_sanitize_graphic_data_settings"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Atutorial_content_description_callback\u0028\u0029",
