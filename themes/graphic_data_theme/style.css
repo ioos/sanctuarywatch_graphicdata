@@ -125,6 +125,10 @@ Version: 1.2.3
   #header-margin p{
     font-size: 1.70rem;
   }
+
+  #site-name-logo-banner {
+    padding-right: 5% !important;
+  }
 }
 
 .site-footer {
