@@ -102,6 +102,7 @@ Version: 1.2.3
 #site-name-logo-banner {
   padding-top: 15px;
   padding-bottom: 15px;
+  padding-right: 5%;
   text-align: center;
   align-items: center;
   min-height: 25.98px;
@@ -176,10 +177,10 @@ Version: 1.2.3
 @media (max-width: 768px) { /* Tablet and smaller */
   .navbar-emblem {
     margin-right: 15px;
-    size: 10%;
+    size: 10% !important;
     display: block;
-    height: 50px !important; 
-    width: 50px !important; 
+    height: 60px !important; 
+    width: 60px !important; 
   }
 }
 
