@@ -170,12 +170,14 @@ class Graphic_Data_Tutorial_Content {
 		$options['intro_text'] = 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.';
 		$options['sitewide_footer_title'] = 'Sitewide Footer Title';
 		$options['site_footer'] = 'This is a column that exists across all pages on the site, called the sitewide footer. It is an optional and you can edit it on the Graphic Data Settings page.';
-		$options['front_page_code_block'] = '  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
+		$options['front_page_code_block'] = '
 			<style>
+				@import url("https://fonts.googleapis.com/css?family=Lato:300,400,700");
 				#starfield-container {
 				position: relative;
-				width: 800px;
-				height: 400px;
+				width: 100%;
+				max-width: 800px;
+				height: clamp(200px, 40vw, 400px);
 				margin: 0 auto;
 				overflow: hidden;
 				background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
@@ -205,19 +207,19 @@ class Graphic_Data_Tutorial_Content {
 				text-align: center;
 				font-family: "Lato", sans-serif;
 				font-weight: 300;
-				font-size: 36px;
-				letter-spacing: 10px;
+				font-size: clamp(16px, 4vw, 36px);
+				letter-spacing: clamp(2px, 1vw, 10px);
 				transform: translateY(-50%);
 				padding-left: 10px;
 				z-index: 10;
 				}
-
 				#title span {
-				display: block;
-				background: -webkit-linear-gradient(white, #38495a);
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
-				background-clip: text;
+					display: block;
+					background: -webkit-linear-gradient(white, #a8c0d0);
+					-webkit-background-clip: text;
+					-webkit-text-fill-color: transparent;
+					background-clip: text;
+					filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.8));
 				}
 			</style>
 			<div id="starfield-container">

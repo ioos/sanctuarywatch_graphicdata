@@ -39,6 +39,10 @@ Version: 1.2.3
   width: 100% !important;
 }
 
+#front-page-code-block {
+  width:100%;
+}
+
 #entire_thing:has(.main-container){
   max-width: 1400px !important;
   width: 100% !important;
