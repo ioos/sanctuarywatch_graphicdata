@@ -233,7 +233,10 @@ class Graphic_Data_Settings_Page {
 	 * Sanitize all plugin settings before saving and also activates/deactivates tutorial content.
 	 *
 	 * Validates and sanitizes each field in the graphic data settings array to ensure
-	 * data integrity and security before saving to the database. 
+	 * data integrity and security before saving to the database.
+	 *
+	 * Additionally, this function also is the master function controlling tutorial content. It is weird to have this
+	 * stuffed into the sanitization function, but it was the best place to put this.
 	 *
 	 * @since 1.0.0
 	 * @param array $input The raw input values from the settings form.

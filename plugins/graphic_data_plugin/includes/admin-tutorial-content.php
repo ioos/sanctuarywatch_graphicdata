@@ -374,7 +374,7 @@ class Graphic_Data_Tutorial_Content {
 			$file_prefix . 'space-colony-scene.svg',
 		];
 		$scene_tagline = [
-			'The first one',
+			'Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways.',
 			'The second one',
 			'The third one',
 			'The fourth one',
@@ -460,7 +460,7 @@ class Graphic_Data_Tutorial_Content {
 		$repeat_array = array();
 		$repeat_array['post_title'] = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
 		$repeat_array['modal_location'] = [ 3, 3, 3, 3, 3, 3 ];
-		$repeat_array['modal_scene'] = [ 12, 12, 12, 12, 12, 12 ];
+		$repeat_array['modal_scene'] = [ 7, 7, 7, 7, 7, 7 ];
 		$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
 		$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
 		$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
@@ -523,9 +523,10 @@ class Graphic_Data_Tutorial_Content {
 						case 'modal_scene':
 							$tutorial_instance_id = $wpdb->get_var(
 								$wpdb->prepare(
-									"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+									"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
 									'tutorial_id',
 									$modal_array['modal_scene'][ $i ],
+									'scene',
 								)
 							);
 							update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
@@ -539,7 +540,7 @@ class Graphic_Data_Tutorial_Content {
 						case 'icon_function':
 							update_post_meta( $post_id, 'icon_function', $modal_array['icon_function'][ $i ] );
 
-							if ( $modal_array['icon_function'][ $i ] ) {
+							if ( 'Scene' == $modal_array['icon_function'][ $i ] ) {
 								$tutorial_scene_out_id = $wpdb->get_var(
 									$wpdb->prepare(
 										"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
@@ -548,6 +549,8 @@ class Graphic_Data_Tutorial_Content {
 									)
 								);
 								update_post_meta( $post_id, 'icon_scene_out', $tutorial_scene_out_id );
+							} elseif ( 'External URL' == $modal_array['icon_function'][ $i ] ) {
+								update_post_meta( $post_id, 'icon_external_url', 'https://ioos.github.io/sanctuarywatch_graphicdata/' );
 							}
 							break;
 						case 'post_title':
