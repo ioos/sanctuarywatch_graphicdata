@@ -536,6 +536,9 @@ class Graphic_Data_Tutorial_Content {
 						case 'modal_icons':
 							update_post_meta( $post_id, 'modal_icons', $modal_array['modal_icons'][ $i ] );
 							break;
+						case 'modal_tagline':
+							update_post_meta( $post_id, 'modal_tagline', $modal_array['modal_tagline'][ $i ] );
+							break;
 						case 'modal_icon_order':
 							update_post_meta( $post_id, 'modal_icon_order', $modal_array['modal_icon_order'][ $i ] );
 							break;
