@@ -1096,6 +1096,11 @@ Search.appendIndex(
             "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020tutorial\u0020content\u0020toggle\u0020switch.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_tutorial_content_toggle_callback"
         },                {
+            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Alink_behavior_checkbox_callback\u0028\u0029",
+            "name": "link_behavior_checkbox_callback",
+            "summary": "Callback\u0020function\u0020to\u0020render\u0020the\u0020link\u0020behavior\u0020toggle\u0020switch.",
+            "url": "classes/Graphic-Data-Settings-Page.html#method_link_behavior_checkbox_callback"
+        },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aregister_rest_settings\u0028\u0029",
             "name": "register_rest_settings",
             "summary": "Registers\u0020custom\u0020REST\u0020API\u0020routes\u0020for\u0020plugin\u0020settings.",
