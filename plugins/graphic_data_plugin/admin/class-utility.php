@@ -356,7 +356,14 @@ class Graphic_Data_Utility {
 							$warning_message = $warning_message . '<li>' . $warning_list_array[ $i ] . '</li>';
 						}
 						$warning_message = $warning_message . '</ul></p>';
-						echo '<div class="notice notice-warning is-dismissible">' . wp_kses( $warning_message, array( 'p' => array(), 'ul' => array(), 'li' => array() ) ) . '</div>';
+						echo '<div class="notice notice-warning is-dismissible">' . wp_kses(
+							$warning_message,
+							array(
+								'p' => array(),
+								'ul' => array(),
+								'li' => array(),
+							)
+						) . '</div>';
 					}
 				}
 			}
