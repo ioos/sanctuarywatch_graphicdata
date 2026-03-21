@@ -30,9 +30,9 @@ class Graphic_Data_Tutorial_Content {
 		$term_name = [ 'Instance Type Example 1', 'Instance Type Example 2' ];
 		$term_slug = [ 'tutorial-instance-example-1', 'tutorial-instance-example-2' ];
 		$term_description = [
-			'This is an example instance type. ' .
-			'You must have at least one instance type and each instance type contains one or more instances. This particular instance type contains two instances.',
-			'This is a second example instance type and it contains one instance.',
+			'Welcome, Space Captain! The highest level of organization in Graphic Data is the "Instance Type". Right here is an example (Instance Type Example 1). ' .
+			'Instance Types contain Instances. With Graphic Data, you must have at least one Instance Type and each Type must contains one or more Instances. This particular Instance Type contains two Instances.',
+			'This is a second example Instance Type and it contains one Instance.',
 		];
 		$instance_navbar_name = [ 'Example 1', 'Example 2' ];
 		// Find current max value of instance order in the database (which really should be called instance type order).

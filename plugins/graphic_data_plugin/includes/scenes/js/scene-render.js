@@ -100,7 +100,6 @@ async function make_title() {
 
 		const titleTagline = document.createElement('p');
 		titleTagline.innerHTML = scene_data.scene_tagline;
-		titleTagline.style.fontStyle = 'italic';
 		if (is_mobile()) {
 			const item = createAccordionItem(
 				'taglineAccId',

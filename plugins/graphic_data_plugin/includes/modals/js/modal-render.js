@@ -64,7 +64,7 @@ function render_modal(key, obj, modal_obj){
 
 
         if (!is_mobile()) {
-            tagline_container.innerHTML = `<em>${modal_tagline}</em>`;
+            tagline_container.innerHTML = `${modal_tagline}`;
         }
 
         // --- Accordion container setup ---
