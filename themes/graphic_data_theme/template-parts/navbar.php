@@ -41,8 +41,10 @@
 			}
 
 			if ( ! empty( $graphic_data_scene_location ) ) {
-				$graphic_data_title = get_post_meta( $graphic_data_scene_location, 'post_title' )[0];
-				echo "<span class='navbar-brand'>" . esc_html( $graphic_data_title ) . '</span>';
+				$graphic_data_title = get_post_meta( $graphic_data_scene_location, 'post_title' );
+				if ( ! empty( $graphic_data_title ) ) {
+					echo "<span class='navbar-brand'>" . esc_html( $graphic_data_title ) . '</span>';
+				}
 			}
 
 			?>

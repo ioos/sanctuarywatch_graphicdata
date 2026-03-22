@@ -243,12 +243,16 @@ $graphic_data_instance_color_settings = array(
 	'instance_mobile_tile_text_color' => $graphic_data_instance_mobile_tile_text_color,
 );
 
+$graphic_data_options = get_option( 'graphic_data_settings' );
+$graphic_data_new_tab_by_default  = isset( $graphic_data_options['links_new_tab_by_default'] ) ? (bool) $graphic_data_options['links_new_tab_by_default'] : false;
+
 ?>
  </body>
 <script>
   let title_arr  = <?php echo json_encode( $graphic_data_title_arr ); ?>;
   let visible_modals  = <?php echo json_encode( $graphic_data_visible_modals ); ?>;
   let instance_color_settings  = <?php echo json_encode( $graphic_data_instance_color_settings ); ?>;
+  let new_tab_by_default  = <?php echo json_encode( $graphic_data_new_tab_by_default ); ?>;
 </script>
 
   <!-- </body> -->

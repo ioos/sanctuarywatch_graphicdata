@@ -341,7 +341,7 @@ class Graphic_Data_Modal {
 							'External' => 'Outside of this site',
 						),
 						'default'     => 'External',
-						'sanitize'    => 'sanitize_url',
+						'sanitize'    => 'sanitize_text_field',
 					),
 					array(
 						'id'          => 'modal_photo_text' . $i,

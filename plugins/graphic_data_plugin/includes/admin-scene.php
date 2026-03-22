@@ -1008,7 +1008,7 @@ class Graphic_Data_Scene {
 							'External' => 'Outside of this site',
 						),
 						'default'     => 'External',
-						'sanitize'    => 'sanitize_url',
+						'sanitize'    => 'sanitize_text_field',
 					),
 					array(
 						'id'          => 'scene_photo_text' . $i,
