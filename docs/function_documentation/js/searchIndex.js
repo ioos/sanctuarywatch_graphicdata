@@ -76,6 +76,11 @@ Search.appendIndex(
             "summary": "Change\u0020default\u0020favicon\u0020associated\u0020with\u0020site\u0020to\u0020Sanctuary\u0020Watch\u0020logo,\u0020if\u0020there\u0020is\u0020no\u0020site\u0020icon\u0020set\u0020in\u0020the\u0020theme.",
             "url": "classes/Graphic-Data-Admin.html#method_add_favicon"
         },                {
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aenqueue_tinymce_new_tab_script\u0028\u0029",
+            "name": "enqueue_tinymce_new_tab_script",
+            "summary": "Enqueues\u0020the\u0020TinyMCE\u0020new\u002Dtab\u0020default\u0020script\u0020and\u0020passes\u0020configuration\u0020data\u0020to\u0020it.",
+            "url": "classes/Graphic-Data-Admin.html#method_enqueue_tinymce_new_tab_script"
+        },                {
             "fqsen": "\\Graphic_Data_Admin\u003A\u003Amodify_publish_button_text\u0028\u0029",
             "name": "modify_publish_button_text",
             "summary": "Filters\u0020the\u0020text\u0020of\u0020the\u0020Publish\u0020and\u0020Update\u0020buttons\u0020to\u0020display\u0020\u0022Save\u0022\u0020instead.",
