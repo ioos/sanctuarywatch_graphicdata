@@ -98,6 +98,7 @@ class Graphic_Data_Figure {
 			'figure_tab' => 'Tab',
 			'figure_order' => 'Order',
 			'figure_image_location' => 'Image Location',
+			'figure_published' => 'Published',
 			'status' => 'Status',
 		);
 		return $columns;
@@ -141,6 +142,13 @@ class Graphic_Data_Figure {
 
 		if ( 'figure_image_location' === $column ) {
 			echo esc_html( get_post_meta( $post_id, 'figure_path', true ) );
+		}
+
+		if ( 'figure_published' === $column ) {
+			$figure_published = get_post_meta( $post_id, 'figure_published', true );
+			if ( 'published' == $figure_published ) {
+				echo '<span class="dashicons dashicons-yes"></span>';
+			}
 		}
 
 		if ( 'status' === $column ) {
