@@ -178,6 +178,13 @@ enqueue the admin-specific stylesheet and JavaScript.</p>
 <dd>Register the stylesheets for the admin area.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Admin.html#method_enqueue_tinymce_new_tab_script">enqueue_tinymce_new_tab_script()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Enqueues the TinyMCE new-tab default script and passes configuration data to it.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Admin.html#method_hide_permalink">hide_permalink()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -353,7 +360,7 @@ enqueue the admin-specific stylesheet and JavaScript.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-admin.php"><a href="files/plugins-graphic-data-plugin-admin-class-admin.html"><abbr title="plugins/graphic_data_plugin/admin/class-admin.php">class-admin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">398</span>
+    <span class="phpdocumentor-element-found-in__line">479</span>
 
     </aside>
 
@@ -425,7 +432,7 @@ Uses jQuery to dynamically replace the #timestamp element content after DOM read
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-admin.php"><a href="files/plugins-graphic-data-plugin-admin-class-admin.html"><abbr title="plugins/graphic_data_plugin/admin/class-admin.php">class-admin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">338</span>
+    <span class="phpdocumentor-element-found-in__line">419</span>
 
     </aside>
 
@@ -627,6 +634,77 @@ scripts based on the current screen context. Scripts are loaded for:</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_enqueue_tinymce_new_tab_script">
+        enqueue_tinymce_new_tab_script()
+        <a href="classes/Graphic-Data-Admin.html#method_enqueue_tinymce_new_tab_script" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-admin.php"><a href="files/plugins-graphic-data-plugin-admin-class-admin.html"><abbr title="plugins/graphic_data_plugin/admin/class-admin.php">class-admin.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">306</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Enqueues the TinyMCE new-tab default script and passes configuration data to it.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">enqueue_tinymce_new_tab_script</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$hook_suffix</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>When the plugin setting <code class="prettyprint">links_new_tab_by_default</code> is enabled, loads
+<code class="prettyprint">admin-tinymce-new-tab.js</code> on post-edit screens for any of the custom post
+types that contain targeted TinyMCE fields (scene, modal, figure, about).
+Configuration is passed to the script via <code class="prettyprint">wp_localize_script</code> so that the
+JavaScript knows which editor fields should default new links to opening in
+a new tab.</p>
+<p>To add a new field to the targeted list, append its TinyMCE editor ID to
+the <code class="prettyprint">$target_fields</code> array inside this method.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$hook_suffix</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The current admin page hook suffix (e.g. 'post.php').</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Admin.html#method_enqueue_tinymce_new_tab_script#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_hide_permalink">
         hide_permalink()
         <a href="classes/Graphic-Data-Admin.html#method_hide_permalink" class="headerlink"><i class="fas fa-link"></i></a>
@@ -685,7 +763,7 @@ scripts based on the current screen context. Scripts are loaded for:</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-admin.php"><a href="files/plugins-graphic-data-plugin-admin-class-admin.html"><abbr title="plugins/graphic_data_plugin/admin/class-admin.php">class-admin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">306</span>
+    <span class="phpdocumentor-element-found-in__line">387</span>
 
     </aside>
 
@@ -785,7 +863,7 @@ in the WordPress post editor, changing &quot;Publish&quot; and &quot;Update&quot
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-admin.php"><a href="files/plugins-graphic-data-plugin-admin-class-admin.html"><abbr title="plugins/graphic_data_plugin/admin/class-admin.php">class-admin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">365</span>
+    <span class="phpdocumentor-element-found-in__line">446</span>
 
     </aside>
 
@@ -1238,7 +1316,7 @@ warning the user. This function is hooked to 'admin_notices'.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-admin.php"><a href="files/plugins-graphic-data-plugin-admin-class-admin.html"><abbr title="plugins/graphic_data_plugin/admin/class-admin.php">class-admin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">350</span>
+    <span class="phpdocumentor-element-found-in__line">431</span>
 
     </aside>
 
@@ -1309,7 +1387,7 @@ warning the user. This function is hooked to 'admin_notices'.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-admin.php"><a href="files/plugins-graphic-data-plugin-admin-class-admin.html"><abbr title="plugins/graphic_data_plugin/admin/class-admin.php">class-admin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">320</span>
+    <span class="phpdocumentor-element-found-in__line">401</span>
 
     </aside>
 
@@ -1516,6 +1594,7 @@ warning the user. This function is hooked to 'admin_notices'.</p>
                                             <li class=""><a href="classes/Graphic-Data-Admin.html#method_enqueue_bootstrap_admin">enqueue_bootstrap_admin()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Admin.html#method_enqueue_scripts">enqueue_scripts()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Admin.html#method_enqueue_styles">enqueue_styles()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Admin.html#method_enqueue_tinymce_new_tab_script">enqueue_tinymce_new_tab_script()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Admin.html#method_hide_permalink">hide_permalink()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Admin.html#method_modify_publish_button_text">modify_publish_button_text()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Admin.html#method_plugin_check_required_theme">plugin_check_required_theme()</a></li>
