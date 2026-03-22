@@ -106,7 +106,7 @@ class Graphic_Data_Scene {
 			return $upload; // no inkscape tags → leave untouched.
 		}
 
-		$clean = graphic_data_transform_svg_inkscape( $svg );
+		$clean = $this->graphic_data_transform_svg_inkscape( $svg );
 
 		// Write back in-place
 		// You may also want to preserve permissions; WP handles that normally.
