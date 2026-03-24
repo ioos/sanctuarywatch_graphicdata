@@ -64,7 +64,7 @@ function render_modal(key, obj, modal_obj){
 
 
         if (!is_mobile()) {
-            tagline_container.innerHTML = `<em>${modal_tagline}</em>`;
+            tagline_container.innerHTML = `${modal_tagline}`;
         }
 
         // --- Accordion container setup ---
@@ -102,8 +102,11 @@ function render_modal(key, obj, modal_obj){
                 let modal_info_url = modal_data[info_field]?.[info_url] || '';
 
                 if (!modal_info_text && !modal_info_url) continue;
-
-                collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
+		        if (true === new_tab_by_default) {
+                    collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
+                } else {
+                    collapseListHTML += `<li><a href="${modal_info_url}">${modal_info_text}</a></li>`;
+                }
             }
             collapseListHTML += '</ul></div>';
 

@@ -100,7 +100,6 @@ async function make_title() {
 
 		const titleTagline = document.createElement('p');
 		titleTagline.innerHTML = scene_data.scene_tagline;
-		titleTagline.style.fontStyle = 'italic';
 		if (is_mobile()) {
 			const item = createAccordionItem(
 				'taglineAccId',
@@ -918,7 +917,12 @@ function make_scene_elements(info, iText, iUrl, scene_data, type, name) {
 
 		listItem.appendChild(anchor);
 
-		collapseListHTML += `<li> <a href="${scene_info_url}" target="_blank">${scene_info_text}</a> </li>`;
+		if (true === new_tab_by_default) {
+			collapseListHTML += `<li> <a href="${scene_info_url}" target="_blank">${scene_info_text}</a> </li>`;
+		} else {
+            collapseListHTML += `<li> <a href="${scene_info_url}" >${scene_info_text}</a> </li>`;
+        }
+
 	}
 	collapseListHTML += '</ul></div>';
 	const acc = createAccordionItem(

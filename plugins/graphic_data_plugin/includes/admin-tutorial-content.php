@@ -30,9 +30,9 @@ class Graphic_Data_Tutorial_Content {
 		$term_name = [ 'Instance Type Example 1', 'Instance Type Example 2' ];
 		$term_slug = [ 'tutorial-instance-example-1', 'tutorial-instance-example-2' ];
 		$term_description = [
-			'This is an example instance type. ' .
-			'You must have at least one instance type and each instance type contains one or more instances. This particular instance type contains two instances.',
-			'This is a second example instance type and it contains one instance.',
+			'Welcome, Space Captain! The highest level of organization in Graphic Data is the "Instance Type". Right here is an example (Instance Type Example 1). ' .
+			'Instance Types contain Instances. With Graphic Data, you must have at least one Instance Type and each Type must contains one or more Instances. This particular Instance Type contains two Instances.',
+			'This is a second example Instance Type and it contains one Instance.',
 		];
 		$instance_navbar_name = [ 'Example 1', 'Example 2' ];
 		// Find current max value of instance order in the database (which really should be called instance type order).
@@ -170,12 +170,14 @@ class Graphic_Data_Tutorial_Content {
 		$options['intro_text'] = 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.';
 		$options['sitewide_footer_title'] = 'Sitewide Footer Title';
 		$options['site_footer'] = 'This is a column that exists across all pages on the site, called the sitewide footer. It is an optional and you can edit it on the Graphic Data Settings page.';
-		$options['front_page_code_block'] = '  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700" rel="stylesheet">
+		$options['front_page_code_block'] = '
 			<style>
+				@import url("https://fonts.googleapis.com/css?family=Lato:300,400,700");
 				#starfield-container {
 				position: relative;
-				width: 800px;
-				height: 400px;
+				width: 100%;
+				max-width: 800px;
+				height: clamp(200px, 40vw, 400px);
 				margin: 0 auto;
 				overflow: hidden;
 				background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
@@ -205,19 +207,19 @@ class Graphic_Data_Tutorial_Content {
 				text-align: center;
 				font-family: "Lato", sans-serif;
 				font-weight: 300;
-				font-size: 36px;
-				letter-spacing: 10px;
+				font-size: clamp(16px, 4vw, 36px);
+				letter-spacing: clamp(2px, 1vw, 10px);
 				transform: translateY(-50%);
 				padding-left: 10px;
 				z-index: 10;
 				}
-
 				#title span {
-				display: block;
-				background: -webkit-linear-gradient(white, #38495a);
-				-webkit-background-clip: text;
-				-webkit-text-fill-color: transparent;
-				background-clip: text;
+					display: block;
+					background: -webkit-linear-gradient(white, #a8c0d0);
+					-webkit-background-clip: text;
+					-webkit-text-fill-color: transparent;
+					background-clip: text;
+					filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.8));
 				}
 			</style>
 			<div id="starfield-container">
@@ -374,7 +376,7 @@ class Graphic_Data_Tutorial_Content {
 			$file_prefix . 'space-colony-scene.svg',
 		];
 		$scene_tagline = [
-			'The first one',
+			'Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways.',
 			'The second one',
 			'The third one',
 			'The fourth one',
@@ -460,7 +462,7 @@ class Graphic_Data_Tutorial_Content {
 		$repeat_array = array();
 		$repeat_array['post_title'] = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
 		$repeat_array['modal_location'] = [ 3, 3, 3, 3, 3, 3 ];
-		$repeat_array['modal_scene'] = [ 12, 12, 12, 12, 12, 12 ];
+		$repeat_array['modal_scene'] = [ 7, 7, 7, 7, 7, 7 ];
 		$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
 		$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
 		$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
@@ -523,9 +525,10 @@ class Graphic_Data_Tutorial_Content {
 						case 'modal_scene':
 							$tutorial_instance_id = $wpdb->get_var(
 								$wpdb->prepare(
-									"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+									"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
 									'tutorial_id',
 									$modal_array['modal_scene'][ $i ],
+									'scene',
 								)
 							);
 							update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
@@ -533,13 +536,16 @@ class Graphic_Data_Tutorial_Content {
 						case 'modal_icons':
 							update_post_meta( $post_id, 'modal_icons', $modal_array['modal_icons'][ $i ] );
 							break;
+						case 'modal_tagline':
+							update_post_meta( $post_id, 'modal_tagline', $modal_array['modal_tagline'][ $i ] );
+							break;
 						case 'modal_icon_order':
 							update_post_meta( $post_id, 'modal_icon_order', $modal_array['modal_icon_order'][ $i ] );
 							break;
 						case 'icon_function':
 							update_post_meta( $post_id, 'icon_function', $modal_array['icon_function'][ $i ] );
 
-							if ( $modal_array['icon_function'][ $i ] ) {
+							if ( 'Scene' == $modal_array['icon_function'][ $i ] ) {
 								$tutorial_scene_out_id = $wpdb->get_var(
 									$wpdb->prepare(
 										"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
@@ -548,6 +554,8 @@ class Graphic_Data_Tutorial_Content {
 									)
 								);
 								update_post_meta( $post_id, 'icon_scene_out', $tutorial_scene_out_id );
+							} elseif ( 'External URL' == $modal_array['icon_function'][ $i ] ) {
+								update_post_meta( $post_id, 'icon_external_url', 'https://ioos.github.io/sanctuarywatch_graphicdata/' );
 							}
 							break;
 						case 'post_title':

@@ -345,7 +345,7 @@ class Graphic_Data_Utility {
 							$error_message = $error_message . '</ul></p>';
 						}
 
-						echo '<div class="notice notice-error is-dismissible">' . esc_html( $error_message ) . '</div>';
+						echo '<div class="notice notice-error is-dismissible">' . wp_kses_post( $error_message ) . '</div>';
 					}
 					$warning_list_array = $this->retrieve_post_errors_warnings( $post_type, '_warnings' );
 					if ( 'none' != $warning_list_array ) {
@@ -356,7 +356,14 @@ class Graphic_Data_Utility {
 							$warning_message = $warning_message . '<li>' . $warning_list_array[ $i ] . '</li>';
 						}
 						$warning_message = $warning_message . '</ul></p>';
-						echo '<div class="notice notice-warning is-dismissible">' . esc_html( $warning_message ) . '</div>';
+						echo '<div class="notice notice-warning is-dismissible">' . wp_kses(
+							$warning_message,
+							array(
+								'p' => array(),
+								'ul' => array(),
+								'li' => array(),
+							)
+						) . '</div>';
 					}
 				}
 			}

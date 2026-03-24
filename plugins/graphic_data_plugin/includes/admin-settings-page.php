@@ -227,13 +227,32 @@ class Graphic_Data_Settings_Page {
 			'theme_settings',
 			'interactive_figures_defaults_section'
 		);
+
+		// Default link behavior (within same tab or different tab).
+		add_settings_section(
+			'link_behavior_default_section',
+			'Link Behavior Defaults',
+			null,
+			'theme_settings'
+		);
+
+		add_settings_field(
+			'link_behavior_checkbox',
+			'Should all links open in a new tab by default?',
+			[ $this, 'link_behavior_checkbox_callback' ],
+			'theme_settings',
+			'link_behavior_default_section'
+		);
 	}
 
 	/**
 	 * Sanitize all plugin settings before saving and also activates/deactivates tutorial content.
 	 *
 	 * Validates and sanitizes each field in the graphic data settings array to ensure
-	 * data integrity and security before saving to the database. 
+	 * data integrity and security before saving to the database.
+	 *
+	 * Additionally, this function also is the master function controlling tutorial content. It is weird to have this
+	 * stuffed into the sanitization function, but it was the best place to put this.
 	 *
 	 * @since 1.0.0
 	 * @param array $input The raw input values from the settings form.
@@ -283,8 +302,9 @@ class Graphic_Data_Settings_Page {
 			$sanitized['interactive_bar_defaults'] = wp_kses_post( $input['interactive_bar_defaults'] );
 		}
 
-		// Sanitize boolean toggle - handles both checked and unchecked states.
+		// Sanitize boolean toggles - handles both checked and unchecked states.
 		$sanitized['tutorial_content'] = isset( $input['tutorial_content'] ) ? (bool) $input['tutorial_content'] : false;
+		$sanitized['links_new_tab_by_default'] = isset( $input['links_new_tab_by_default'] ) ? (bool) $input['links_new_tab_by_default'] : false;
 
 		// The class that define the tutorial content for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-tutorial-content.php';
@@ -356,7 +376,7 @@ class Graphic_Data_Settings_Page {
 	 * Callback function to render the tutorial content toggle switch.
 	 *
 	 * Displays a checkbox toggle for enabling/disabling tutorial content.
-	 * The value is saved to wp_options as graphic_data_tutorial_content.
+	 * The value is saved to wp_options as tutorial_content.
 	 *
 	 * @since 1.0.0
 	 * @return void
@@ -370,6 +390,81 @@ class Graphic_Data_Settings_Page {
 			<input type="checkbox" name="graphic_data_settings[tutorial_content]" value="1" <?php echo esc_attr( $checked ); ?>>
 			<span class="slider"></span>
 		</label>
+		<style>
+			/* Toggle switch styling */
+			.switch {
+				position: relative;
+				display: inline-block;
+				width: 60px;
+				height: 34px;
+			}
+
+			.switch input {
+				opacity: 0;
+				width: 0;
+				height: 0;
+			}
+
+			.slider {
+				position: absolute;
+				cursor: pointer;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #ccc;
+				transition: .4s;
+				border-radius: 34px;
+			}
+
+			.slider:before {
+				position: absolute;
+				content: "";
+				height: 26px;
+				width: 26px;
+				left: 4px;
+				bottom: 4px;
+				background-color: white;
+				transition: .4s;
+				border-radius: 50%;
+			}
+
+			input:checked + .slider {
+				background-color: #2196F3;
+			}
+
+			input:focus + .slider {
+				box-shadow: 0 0 1px #2196F3;
+			}
+
+			input:checked + .slider:before {
+				transform: translateX(26px);
+			}
+		</style>
+		<?php
+	}
+
+
+	/**
+	 * Callback function to render the link behavior toggle switch.
+	 *
+	 * Displays a checkbox toggle for whether links should open by default in a new tab.
+	 * The value is saved to wp_options as links_new_tab_by_default.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function link_behavior_checkbox_callback() {
+		$options = get_option( 'graphic_data_settings' );
+		$value = isset( $options['links_new_tab_by_default'] ) ? $options['links_new_tab_by_default'] : false;
+		$checked = $value ? 'checked' : '';
+		?>
+		<label class="switch">
+			<input type="checkbox" name="graphic_data_settings[links_new_tab_by_default]" value="1" <?php echo esc_attr( $checked ); ?>>
+			<span class="slider"></span>
+		</label>
+		<br>
+		<p>If checked, all Info and Photo links will open in a new tab. Additionally, if checked, links within taglines and figure captions will open by default in a new tab.<br>For the latter, individual links can still be individually selected to open in the same tab. </p>
 		<style>
 			/* Toggle switch styling */
 			.switch {

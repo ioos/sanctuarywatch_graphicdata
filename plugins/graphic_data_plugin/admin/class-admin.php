@@ -287,6 +287,87 @@ class Graphic_Data_Admin {
 	}
 
 	/**
+	 * Enqueues the TinyMCE new-tab default script and passes configuration data to it.
+	 *
+	 * When the plugin setting `links_new_tab_by_default` is enabled, loads
+	 * `admin-tinymce-new-tab.js` on post-edit screens for any of the custom post
+	 * types that contain targeted TinyMCE fields (scene, modal, figure, about).
+	 * Configuration is passed to the script via `wp_localize_script` so that the
+	 * JavaScript knows which editor fields should default new links to opening in
+	 * a new tab.
+	 *
+	 * To add a new field to the targeted list, append its TinyMCE editor ID to
+	 * the `$target_fields` array inside this method.
+	 *
+	 * @since  1.0.0
+	 * @param  string $hook_suffix The current admin page hook suffix (e.g. 'post.php').
+	 * @return void
+	 */
+	public function enqueue_tinymce_new_tab_script( $hook_suffix ) {
+
+		// Only relevant on post create/edit screens.
+		if ( 'post.php' !== $hook_suffix && 'post-new.php' !== $hook_suffix ) {
+			return;
+		}
+
+		// Only relevant for the custom post types that contain targeted fields.
+		$current_post_type    = get_post_type();
+		$relevant_post_types  = array( 'instance', 'scene', 'modal', 'figure', 'about' );
+
+		if ( ! in_array( $current_post_type, $relevant_post_types, true ) ) {
+			return;
+		}
+
+		// Read the plugin-wide setting.
+		$options             = get_option( 'graphic_data_settings' );
+		$new_tab_by_default  = ! empty( $options['links_new_tab_by_default'] );
+
+		wp_enqueue_script(
+			'gd-tinymce-new-tab',
+			plugin_dir_url( __FILE__ ) . 'js/admin-tinymce-new-tab.js',
+			array(), // No hard JS dependencies; wpLink availability is handled inside the script.
+			GRAPHIC_DATA_PLUGIN_VERSION,
+			array( 'strategy' => 'defer' )
+		);
+
+		/**
+		 * List of TinyMCE editor IDs that should default new links to opening
+		 * in a new tab when `links_new_tab_by_default` is enabled.
+		 *
+		 * Each entry must match the `id` attribute that WordPress / the
+		 * Exopite framework assigns to the underlying <textarea> element for
+		 * that custom field (typically the same as the field's `id` key in the
+		 * field definition array).
+		 *
+		 * @var string[]
+		 */
+		$target_fields = array(
+			'instance_footer_column_content1',
+			'instance_footer_column_content2',
+			'instance_footer_column_content3',
+			'scene_tagline',
+			'modal_tagline',
+			'figure_caption_short',
+			'figure_caption_long',
+			'aboutMain',
+			'aboutDetail',
+		);
+
+		for ( $i = 1; $i < 11;  $i++ ) {
+			array_push( $target_fields, 'aboutBoxMain' . $i, 'aboutBoxDetail' . $i );
+		}
+
+		wp_localize_script(
+			'gd-tinymce-new-tab',
+			'graphicDataNewTab',
+			array(
+				'enabled'      => $new_tab_by_default,
+				'targetFields' => $target_fields,
+			)
+		);
+	}
+
+	/**
 	 * Filters the text of the Publish and Update buttons to display "Save" instead.
 	 *
 	 * This function hooks into the `gettext` filter to modify the button text

@@ -106,7 +106,7 @@ class Graphic_Data_Scene {
 			return $upload; // no inkscape tags → leave untouched.
 		}
 
-		$clean = graphic_data_transform_svg_inkscape( $svg );
+		$clean = $this->graphic_data_transform_svg_inkscape( $svg );
 
 		// Write back in-place
 		// You may also want to preserve permissions; WP handles that normally.
@@ -548,6 +548,7 @@ class Graphic_Data_Scene {
 			'scene_tagline' => 'Tagline',
 			'scene_order' => 'Order',
 			'scene_overview' => 'Overview',
+			'scene_published' => 'Published',
 			'status' => 'Status',
 		);
 		return $columns;
@@ -607,6 +608,13 @@ class Graphic_Data_Scene {
 			$instance_id = get_post_meta( $post_id, 'scene_location', true );
 			$instance_overview_scene = get_post_meta( $instance_id, 'instance_overview_scene', true );
 			if ( $instance_overview_scene == $post_id ) {
+				echo '<span class="dashicons dashicons-yes"></span>';
+			}
+		}
+
+		if ( 'scene_published' === $column ) {
+			$scene_published = get_post_meta( $post_id, 'scene_published', true );
+			if ( 'published' == $scene_published ) {
 				echo '<span class="dashicons dashicons-yes"></span>';
 			}
 		}
@@ -1008,7 +1016,7 @@ class Graphic_Data_Scene {
 							'External' => 'Outside of this site',
 						),
 						'default'     => 'External',
-						'sanitize'    => 'sanitize_url',
+						'sanitize'    => 'sanitize_text_field',
 					),
 					array(
 						'id'          => 'scene_photo_text' . $i,

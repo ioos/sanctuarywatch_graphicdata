@@ -271,7 +271,9 @@ function createAccordion(accordionType, parentDiv, listElements) {
 
 		listLink.setAttribute('href', url_field);
 		listLink.textContent = text_field;
-		listLink.setAttribute('target', '_blank');
+		if (new_tab_by_default) {
+			listLink.setAttribute('target', '_blank');
+		}
 		listItem.appendChild(listLink);
 		accordionList.appendChild(listItem);
 	}

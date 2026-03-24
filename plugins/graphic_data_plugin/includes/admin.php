@@ -212,6 +212,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'plugin_check_required_theme' );
 		$this->loader->add_action( 'admin_footer-post.php', $plugin_admin, 'adjust_admin_post_time_display', 10 );
 		$this->loader->add_action( 'admin_footer-post-new.php', $plugin_admin, 'adjust_admin_post_time_display', 10 );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_tinymce_new_tab_script', 20 );
 
 		// Load  class and functions associated with About custom content type.
 		$plugin_admin_about = new Graphic_Data_About();

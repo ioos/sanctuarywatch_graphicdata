@@ -341,7 +341,7 @@ class Graphic_Data_Modal {
 							'External' => 'Outside of this site',
 						),
 						'default'     => 'External',
-						'sanitize'    => 'sanitize_url',
+						'sanitize'    => 'sanitize_text_field',
 					),
 					array(
 						'id'          => 'modal_photo_text' . $i,
@@ -547,6 +547,7 @@ class Graphic_Data_Modal {
 			'icon_function' => 'Function',
 			'modal_tagline' => 'Tagline',
 			'tabs' => 'Tabs (# of Figures)<br><span style="font-weight:normal; font-size:0.9em; color:#666;"><a href="https://ioos.github.io/sanctuarywatch_graphicdata/figures/#status" target="_blank">Bold = no live figures</a></span>',
+			'modal_published' => 'Published',
 			'status' => 'Status',
 		);
 		return $columns;
@@ -1108,6 +1109,13 @@ class Graphic_Data_Modal {
 
 					echo wp_kses_post( $tab_list );
 				}
+			}
+		}
+
+		if ( 'modal_published' === $column ) {
+			$modal_published = get_post_meta( $post_id, 'modal_published', true );
+			if ( 'published' == $modal_published ) {
+				echo '<span class="dashicons dashicons-yes"></span>';
 			}
 		}
 
