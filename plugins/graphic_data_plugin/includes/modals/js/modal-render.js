@@ -102,6 +102,9 @@ function render_modal(key, obj, modal_obj){
                 let modal_info_url = modal_data[info_field]?.[info_url] || '';
 
                 if (!modal_info_text && !modal_info_url) continue;
+                if (typeof window.new_tab_by_default === "undefined") {
+                    window.new_tab_by_default = false;
+                }
 		        if (true === new_tab_by_default) {
                     collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
                 } else {
