@@ -2328,6 +2328,15 @@ function alertIfMissingModal() {
   
       return decoded.split("/")[0] || "";
     }
+
+    function getTabFromHash(rawHash) {
+        let decoded = rawHash;
+        try {
+          decoded = decodeURIComponent(rawHash);
+        } catch (_) {}
+    
+        return decoded.split("/")[1] || "";
+      }
   
     function collectModalIds() {
       return [...document.querySelectorAll(".modal-link")]
@@ -2379,7 +2388,27 @@ function alertIfMissingModal() {
         });
     }
 
+    function activateCaseLink(wrongLink, correctLink, tab) {
+        if (wrongLink === correctLink) return;
+    
+        const newHash = `#${correctLink}/${tab}`;
+    
+        if (window.location.hash !== newHash) {
+            window.location.hash = newHash;
+        } else {
+            window.dispatchEvent(new Event("hashchange"));
+        }
+
+        const targetLink = document.getElementById(correctLink);
+        targetLink.click();
+    }
+
+    
+
     const targetId = getTargetIdFromHash(raw);
+    const targetId_lowercase = targetId.toLowerCase();
+    const tabNumber = getTabFromHash(raw);
+
     if (!targetId) return;
 
     window.addEventListener("load", function () {
@@ -2387,14 +2416,16 @@ function alertIfMissingModal() {
             await waitForDomState();
 
             try {
-                expandAccordionForLink(targetId);
+                activateCaseLink(targetId, targetId_lowercase, tabNumber);
+            } catch {}
+
+            try {
+                expandAccordionForLink(targetId_lowercase);
             } catch {}
 
             const modalIds = collectModalIds();
-            // console.log(modalIds);
-            // console.log(targetId);
     
-            if (!modalIds.includes(targetId)) {
+            if (!modalIds.includes(targetId_lowercase)) {
                 alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
             }
         })();
