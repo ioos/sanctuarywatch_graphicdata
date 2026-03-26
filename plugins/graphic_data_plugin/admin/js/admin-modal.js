@@ -389,7 +389,7 @@ function modalWindow(){
         document.getElementsByName("icon_external_url")[0].value = "";
         document.getElementsByName("icon_scene_out")[0].value = "";
         document.getElementsByName("icon_scene_out")[0].parentElement.parentElement.style.display = "none";
-        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.style.display = "block";
+        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.parentElement.parentElement.style.display = "block";
         document.getElementsByName("modal_info_entries")[0].parentElement.parentElement.style.display = "block";
         document.getElementsByName("modal_photo_entries")[0].parentElement.parentElement.style.display = "block";
         document.getElementsByName("modal_tab_number")[0].parentElement.parentElement.style.display = "block";
@@ -398,7 +398,7 @@ function modalWindow(){
         displayTabEntries(document.getElementsByName("modal_tab_number")[0].value);
     } else {
 
-        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.style.display = "none";
+        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.parentElement.parentElement.style.display = "none";
 
         // Set the Modal Info entries to 0, run displayEntries to hide all of the resulting Modal Info fields 
         // and then hide the Modal Info range 
