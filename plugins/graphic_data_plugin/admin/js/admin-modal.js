@@ -1242,3 +1242,18 @@ modalPhotoRangeElement2.addEventListener('change', function () {
 		".text-class[data-depend-id='modal_photo_"
 	);
 });
+
+// Ensure that only plain text is pasted into the TinyMCE editor
+// (modal_tagline).
+// Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
+document.addEventListener('DOMContentLoaded', function () {
+	const modalEditorIds = ['modal_tagline'];
+
+	if (typeof applyPlainTextPaste === 'function') {
+		applyPlainTextPaste(modalEditorIds);
+	} else {
+		console.error(
+			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
+		);
+	}
+});

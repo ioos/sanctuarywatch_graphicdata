@@ -749,3 +749,18 @@ function writeCookieValuesToSceneFields() {
 		}
 	}
 }
+
+// Ensure that only plain text is pasted into the TinyMCE editor
+// (scene_tagline).
+// Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
+document.addEventListener('DOMContentLoaded', function () {
+	const sceneEditorIds = ['scene_tagline'];
+
+	if (typeof applyPlainTextPaste === 'function') {
+		applyPlainTextPaste(sceneEditorIds);
+	} else {
+		console.error(
+			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
+		);
+	}
+});
