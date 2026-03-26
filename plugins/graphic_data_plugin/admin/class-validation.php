@@ -244,7 +244,7 @@ class Graphic_Data_Validation {
 
 		for ( $i = 1; $i <= $instance_footer_column_number; $i++ ) {
 			$footer_column = isset( $_POST[ 'instance_footer_column' . $i ] )
-				? wp_kses_post( wp_unslash( $_POST[ 'instance_footer_column' . $i ] ) )
+				? array_map( 'wp_kses_post', wp_unslash( $_POST[ 'instance_footer_column' . $i ] ) )
 				: '';
 			if ( '' == $footer_column[ 'instance_footer_column_title' . $i ] || '' == $footer_column[ 'instance_footer_column_content' . $i ] ) {
 				$save_instance_fields = false;
