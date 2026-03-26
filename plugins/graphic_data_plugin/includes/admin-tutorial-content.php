@@ -356,6 +356,32 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
+	 * Create a blank key-value array for scene/modal accordion links.
+	 *
+	 * All six potential links for the scene/modal info/photo accordions must have values
+	 * (even blank values) in the post meta table for any of them to be visible. When
+	 * entering data via the forms this happens automatically, but tutorial content requires
+	 * some help with this, which this helper generates.
+	 *
+	 * The function splits the given key at its last character to insert `_text` and `_url`
+	 * suffixes before that final character, producing two meta keys with empty string values.
+	 *
+	 * @param string $array_key The base meta key to derive the text and URL keys from.
+	 * @return array Associative array with two entries: a `_text` key and a `_url` key, both set to ''.
+	 */
+	public function create_blank_array( $array_key ) {
+		$key_length = strlen( $array_key );
+		$string_fragment1 = substr( $array_key, 0, $key_length - 1 );
+		$string_fragment2 = substr( $array_key, -1 );
+		$first_key = $string_fragment1 . '_text' . $string_fragment2;
+		$second_key = $string_fragment1 . '_url' . $string_fragment2;
+		return array(
+			$first_key => '',
+			$second_key  => '',
+		);
+	}
+
+	/**
 	 * Create example scenes for the tutorial.
 	 *
 	 * @param int $current_user_id The ID of the user to set as post author.
@@ -383,7 +409,15 @@ class Graphic_Data_Tutorial_Content {
 			'The fifth one',
 			'The sixth one',
 		];
-		$scene_info_entries = 0;
+		$scene_info_entries = 2;
+		$scene_info1 = array(
+			'scene_info_text1' => 'More information about the scene',
+			'scene_info_url1'  => 'https://en.wikipedia.org/wiki/Space_settlement',
+		);
+		$scene_info2 = array(
+			'scene_info_text2' => 'You can have up to 6 links',
+			'scene_info_url2'  => 'https://en.wikipedia.org/wiki/The_Power_of_Six',
+		);
 		$scene_photo_entries = 0;
 		$scene_order = [ 1, 2, 3, 4, 1, 1 ];
 		$scene_full_screen_button = [ 'yes', 'no', 'no', 'yes', 'yes', 'yes' ];
@@ -426,6 +460,12 @@ class Graphic_Data_Tutorial_Content {
 				update_post_meta( $post_id, 'scene_infographic', $scene_infographic_url );
 				update_post_meta( $post_id, 'scene_tagline', $scene_tagline [ $i ] );
 				update_post_meta( $post_id, 'scene_info_entries', $scene_info_entries );
+				update_post_meta( $post_id, 'scene_info1', $scene_info1 );
+				update_post_meta( $post_id, 'scene_info2', $scene_info2 );
+				for ( $q = 3; $q < 7; $q++ ) {
+					$meta_key = 'scene_info' . $q;
+					update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
+				}
 				update_post_meta( $post_id, 'scene_photo_entries', $scene_photo_entries );
 				update_post_meta( $post_id, 'scene_order', $scene_order [ $i ] );
 				update_post_meta( $post_id, 'scene_full_screen_button', $scene_full_screen_button [ $i ] );
