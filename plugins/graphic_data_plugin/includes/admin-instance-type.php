@@ -310,6 +310,7 @@ class Graphic_Data_Instance_Type {
 										Edit
 									</button>
 									<form method="post" action="" style="display: inline;">
+										<?php wp_nonce_field( 'save_instance_type_fields', 'instance_type_nonce' ); ?>
 										<input type="hidden" name="action" value="delete">
 										<input type="hidden" name="term_id" value="<?php echo esc_attr( $term->term_id ); ?>">
 										<button type="submit" class="button" onclick="return confirm('Are you sure you want to delete this term?')">
@@ -327,6 +328,7 @@ class Graphic_Data_Instance_Type {
 			<div id="edit-form" style="display: none;">
 				<h2>Edit Instance Type</h2>
 				<form method="post" action="">
+					<?php wp_nonce_field( 'save_instance_type_fields', 'instance_type_nonce' ); ?>
 					<input type="hidden" name="action" value="edit">
 					<input type="hidden" name="term_id" id="edit_term_id">
 					<table class="form-table">
