@@ -12,7 +12,7 @@
  *                           3. Updates the modal title and tagline based on the fetched data.
  *                           4. Generates two accordion sections:
  *                           - A "More Info" section containing a list of items linked to URLs.
- *                           - An "Images" section containing a list of image links.
+ *                           - A "Media" section containing a list of image links.
  *                           5. Dynamically creates tabs based on the number of tabs specified in the modal data.
  *                           6. Adjusts layout and classes for mobile and desktop views.
  *                           7. Traps focus within the modal dialog to improve accessibility.
@@ -151,7 +151,7 @@ function render_modal(key, obj, modal_obj){
                 "accordion-item-2",
                 "accordion-header-2",
                 "accordion-collapse-2",
-                "Images",
+                "Media",
                 collapsePhotoHTML
             );
             acc.appendChild(accordionItem2);

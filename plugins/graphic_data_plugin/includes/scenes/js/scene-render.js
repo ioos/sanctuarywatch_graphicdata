@@ -59,7 +59,7 @@ async function make_title() {
 				'scene_photo_url',
 				scene_data,
 				'images',
-				'Images'
+				'Media'
 			);
 			accgroup.appendChild(acc1);
 		}
@@ -879,7 +879,7 @@ function handleIconVisibility(svgElement, visible_modals) {
  *
  * @return {HTMLElement} - Returns an accordion item element (generated via `createAccordionItem`) containing the list of scene links.
  *
- * This function is typically used in `make_title` to generate the "More Info" and "Images" sections for each scene. It iterates through
+ * This function is typically used in `make_title` to generate the "More Info" and "Media" sections for each scene. It iterates through
  * a predefined set of numbered fields (from 1 to 6) in the `scene_data`, checking for non-empty text and URLs. If valid data is found,
  * it creates a collapsible accordion section with the relevant links and displays them.
  */

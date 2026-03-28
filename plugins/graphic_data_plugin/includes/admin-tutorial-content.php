@@ -356,29 +356,40 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
-	 * Create a blank key-value array for scene/modal accordion links.
+	 * Build a blank key-value array for a single accordion link slot.
 	 *
-	 * All six potential links for the scene/modal info/photo accordions must have values
-	 * (even blank values) in the post meta table for any of them to be visible. When
-	 * entering data via the forms this happens automatically, but tutorial content requires
-	 * some help with this, which this helper generates.
+	 * All link slots for the scene/modal info and photo accordions must have entries
+	 * in the post meta table (even empty ones) for any slot to be visible. Normal form
+	 * submissions populate these automatically; tutorial content must construct them
+	 * manually, which this helper does.
 	 *
-	 * The function splits the given key at its last character to insert `_text` and `_url`
-	 * suffixes before that final character, producing two meta keys with empty string values.
-	 *
-	 * @param string $array_key The base meta key to derive the text and URL keys from.
-	 * @return array Associative array with two entries: a `_text` key and a `_url` key, both set to ''.
+	 * @param string $array_key Meta key ending in a numeric index (e.g. `scene_info_link1`).
+	 * @return array Associative array of blank sibling meta keys ready for insertion.
 	 */
 	public function create_blank_array( $array_key ) {
 		$key_length = strlen( $array_key );
 		$string_fragment1 = substr( $array_key, 0, $key_length - 1 );
 		$string_fragment2 = substr( $array_key, -1 );
-		$first_key = $string_fragment1 . '_text' . $string_fragment2;
-		$second_key = $string_fragment1 . '_url' . $string_fragment2;
-		return array(
-			$first_key => '',
-			$second_key  => '',
-		);
+		$array_type = strpos( $array_key, 'info' );
+		if ( false != $array_type ) {
+			$first_key = $string_fragment1 . '_text' . $string_fragment2;
+			$second_key = $string_fragment1 . '_url' . $string_fragment2;
+			return array(
+				$first_key => '',
+				$second_key  => '',
+			);
+		} else {
+			$first_key = $string_fragment1 . '_location' . $string_fragment2;
+			$second_key = $string_fragment1 . '_text' . $string_fragment2;
+			$third_key = $string_fragment1 . '_url' . $string_fragment2;
+			$fourth_key = $string_fragment1 . '_internal' . $string_fragment2;
+			return array(
+				$first_key => 'External',
+				$second_key  => '',
+				$third_key  => '',
+				$fourth_key  => '',
+			);
+		}
 	}
 
 	/**
@@ -418,7 +429,26 @@ class Graphic_Data_Tutorial_Content {
 			'scene_info_text2' => 'You can have up to 6 links',
 			'scene_info_url2'  => 'https://en.wikipedia.org/wiki/The_Power_of_Six',
 		);
-		$scene_photo_entries = 0;
+		$scene_photo_entries = 3;
+		$scene_photo1 = array(
+			'scene_photo_location1' => 'External',
+			'scene_photo_text1' => 'An illustrative image outside of the site',
+			'scene_photo_url1'  => 'https://nss.org/settlement/nasa/70sArtHiRes/70sArt/Cylinder_Interior_AC75-1086_1920.jpg',
+			'scene_photo_internal1' => '',
+		);
+		$scene_photo2 = array(
+			'scene_photo_location2' => 'Internal',
+			'scene_photo_text2' => 'An illustrative image within the site',
+			'scene_photo_url2'  => '',
+			'scene_photo_internal2' => '',
+		);
+		$scene_photo3 = array(
+			'scene_photo_location3' => 'External',
+			'scene_photo_text3' => 'You can have up to 6 links here too',
+			'scene_photo_url3'  => 'https://nss.org/settlement/nasa/70sArtHiRes/70sArt/Torus_Cutaway_AC75-1086-1_5725.jpg',
+			'scene_photo_internal3' => '',
+		);
+
 		$scene_order = [ 1, 2, 3, 4, 1, 1 ];
 		$scene_full_screen_button = [ 'yes', 'no', 'no', 'yes', 'yes', 'yes' ];
 		$scene_text_toggle = [ 'toggle_off', 'none', 'none', 'toggle_off', 'toggle_on', 'toggle_on' ];
@@ -467,6 +497,14 @@ class Graphic_Data_Tutorial_Content {
 					update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
 				}
 				update_post_meta( $post_id, 'scene_photo_entries', $scene_photo_entries );
+				update_post_meta( $post_id, 'scene_photo1', $scene_photo1 );
+				$scene_photo2['scene_photo_internal2'] = $this->copy_image_to_media_library( 'example_files/tutorial/tutorial_image1.jpg', $tutorial_id [ $i ] );
+				update_post_meta( $post_id, 'scene_photo2', $scene_photo2 );
+				update_post_meta( $post_id, 'scene_photo3', $scene_photo3 );
+				for ( $q = 4; $q < 7; $q++ ) {
+					$meta_key = 'scene_photo' . $q;
+					update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
+				}
 				update_post_meta( $post_id, 'scene_order', $scene_order [ $i ] );
 				update_post_meta( $post_id, 'scene_full_screen_button', $scene_full_screen_button [ $i ] );
 				update_post_meta( $post_id, 'scene_text_toggle', $scene_text_toggle [ $i ] );
@@ -498,21 +536,30 @@ class Graphic_Data_Tutorial_Content {
 		$initial_array['tutorial_id'] = [ 12, 13, 14 ];
 		$this->write_modals_to_database( $initial_array, $current_user_id );
 
+		$modal_location = [ 3, 3, 3, 4, 5 ];
+		$modal_scene = [ 7, 8, 9, 10, 11 ];
+
 		// default scene: 12.
-		$repeat_array = array();
-		$repeat_array['post_title'] = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
-		$repeat_array['modal_location'] = [ 3, 3, 3, 3, 3, 3 ];
-		$repeat_array['modal_scene'] = [ 7, 7, 7, 7, 7, 7 ];
-		$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
-		$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
-		$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
-		$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
-		$repeat_array['modal_info_entries'] = [ 0, 0, 0, 0, 0, 0 ];
-		$repeat_array['modal_photo_entries'] = [ 0, 0, 0, 0, 0 ];
-		$repeat_array['modal_tab_number'] = [ 1, 1, 1, 1, 1, 1 ];
-		$repeat_array['modal_tab_title1'] = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
-		$repeat_array['tutorial_id'] = range( 15, 20 );
-		$this->write_modals_to_database( $repeat_array, $current_user_id );
+		for ( $q = 0; q < 5; q++ ) {
+
+			$repeat_array = array();
+			$repeat_array['post_title'] = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
+			$repeat_array['modal_location'] = [ 3, 3, 3, 3, 3, 3 ];
+			$repeat_array['modal_scene'] = [ 7, 7, 7, 7, 7, 7 ];
+			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
+			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
+			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
+			$repeat_array['modal_info_entries'] = [ 0, 0, 0, 0, 0, 0 ];
+			$repeat_array['modal_photo_entries'] = [ 0, 0, 0, 0, 0 ];
+			$repeat_array['modal_tab_number'] = [ 1, 1, 1, 1, 1, 1 ];
+			$repeat_array['modal_tab_title1'] = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
+
+			$min_id = ( $q + 1 ) * 6 + 9;
+			$max_id = ( $q + 1 ) * 6 + 14;
+			$repeat_array['tutorial_id'] = range( $min_id, $max_id );
+			$this->write_modals_to_database( $repeat_array, $current_user_id );
+		}
 	}
 
 	/**

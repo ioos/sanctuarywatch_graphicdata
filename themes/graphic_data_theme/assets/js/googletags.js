@@ -335,7 +335,7 @@ function setupModalImagesLinkTracking(modalID) {
 				: null;
 			const buttonText = accordionButton.textContent.trim();
 			// Check if the button has the class "More Info"
-			if (buttonText === 'Images') {
+			if (buttonText === 'Media') {
 				const linkTitle = link.textContent.trim();
 				const url = link.href;
 
@@ -486,7 +486,7 @@ function setupSceneImagesLinkTracking(title, sceneID) {
 				: null;
 			const buttonText = accordionButton.textContent.trim();
 			// Check if the button has the class "More Info"
-			if (buttonText === 'Images') {
+			if (buttonText === 'Media') {
 				const linkTitle = link.textContent.trim();
 				const url = link.href;
 
