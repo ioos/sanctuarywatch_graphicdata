@@ -89,7 +89,7 @@ if ( $graphic_data_instances_query->have_posts() ) {
 	?>
 </div> 
 
-<div id="code-block" style="padding:0 ; margin 0" class="container-fluid-index main-container">
+<div id="code-block" style="padding:0 ; margin 0" class="container-fluid-index code-container">
 	<?php
 	$graphic_data_options = get_option( 'graphic_data_settings' );
 	$graphic_data_code_block_value = isset( $graphic_data_options['front_page_code_block'] ) ? $graphic_data_options['front_page_code_block'] : '';
