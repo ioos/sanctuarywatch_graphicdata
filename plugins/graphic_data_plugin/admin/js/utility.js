@@ -184,100 +184,84 @@ function displayEntries(entry_number, string_prefix) {
 }
 
 /**
- * Attaches a 'paste as plain text' handler to specified Trumbowyg editors.
- * Finds the Trumbowyg editor div associated with the original textarea ID
- * and modifies its paste behavior.
+ * Attaches a paste handler to a single already-initialized TinyMCE editor
+ * instance that strips all formatting and inserts only plain text.
  *
- * Should be called after the DOM is ready, potentially with a delay
- * if Trumbowyg editors initialize late.
+ * Newlines in the pasted content are converted to <br> elements so that
+ * line breaks are preserved visually inside the editor.
  *
- * @param {string[]} editorIds An array of the original textarea IDs for the Trumbowyg editors.
- * @return {boolean} True if handlers were successfully attached to all specified editors, false otherwise.
+ * This is a low-level helper intended to be called by applyPlainTextPaste,
+ * which handles timing and editor discovery. You should not normally need to
+ * call this function directly.
+ *
+ * @param {object} editor A fully initialized TinyMCE editor instance.
+ * @return {void}
  */
-function attachPlainTextPasteHandlers(editorIds) {
-	// Check if editorIds is a valid array
-	if (!Array.isArray(editorIds) || editorIds.length === 0) {
-		console.warn(
-			'attachPlainTextPasteHandlers: No valid editor IDs provided.'
-		);
-		return false;
-	}
-
-	// The actual paste handling logic using Selection API
-	const handlePaste = (event) => {
-		event.preventDefault(); // Prevent default paste
-
-		const text = (event.clipboardData || window.clipboardData).getData(
+function bindPlainTextPaste(editor) {
+	editor.on('paste', function (e) {
+		e.preventDefault();
+		const text = (e.clipboardData || window.clipboardData).getData(
 			'text/plain'
 		);
-		const editorDiv = event.currentTarget; // The element the listener is attached to
-
 		if (text) {
-			const selection = window.getSelection();
-			// Ensure the selection is actually *within* the editorDiv we are targeting
-			if (
-				selection &&
-				selection.rangeCount > 0 &&
-				editorDiv.contains(selection.anchorNode)
-			) {
-				const range = selection.getRangeAt(0);
-				range.deleteContents();
-				const textNode = document.createTextNode(text);
-				range.insertNode(textNode);
-
-				// Move cursor after inserted text
-				range.setStartAfter(textNode);
-				range.setEndAfter(textNode);
-				selection.removeAllRanges();
-				selection.addRange(range);
-			} else if (editorDiv === document.activeElement) {
-				// Fallback: If editor has focus but selection API failed or was outside
-				editorDiv.appendChild(document.createTextNode(text));
-				console.warn(
-					'Could not reliably get selection within editor, appended text instead.'
-				);
-			} else {
-				console.warn(
-					'Paste event occurred but editor might not be focused or selection is elsewhere.'
-				);
-			}
-		}
-	};
-
-	// Function to attach the paste listener to a specific editor div
-	const attachListener = (editorDiv) => {
-		if (editorDiv) {
-			// Remove any existing listener first to prevent duplicates if called multiple times
-			editorDiv.removeEventListener('paste', handlePaste);
-			// Add the new listener
-			editorDiv.addEventListener('paste', handlePaste);
-		}
-	};
-
-	let editorsFoundCount = 0;
-	editorIds.forEach((id) => {
-		// 1. Find the original textarea element by its ID
-		const textarea = document.getElementById(id);
-		if (!textarea) {
-			return; // Skip to the next ID if textarea doesn't exist
-		}
-
-		// 2. Find the closest ancestor wrapper div (adjust selector if needed for different contexts)
-		const fieldWrapper = textarea.closest('.exopite-sof-field'); // Common wrapper class
-		if (fieldWrapper) {
-			// 3. Find the actual editable div created by Trumbowyg within that wrapper
-			const editorDiv = fieldWrapper.querySelector('.trumbowyg-editor');
-			if (editorDiv) {
-				attachListener(editorDiv);
-				editorsFoundCount++;
-			}
-		} else {
-			console.warn(
-				`attachPlainTextPasteHandlers: Field wrapper (.exopite-sof-field) not found via closest() for ID: ${id}`
+			editor.insertContent(
+				editor.dom.encode(text).replace(/\n/g, '<br>')
 			);
 		}
 	});
+}
 
-	// Return true if listeners were attached to *all* expected editors
-	return editorsFoundCount === editorIds.length;
+/**
+ * Ensures plain-text-only paste behavior is applied to a set of TinyMCE
+ * editors identified by their underlying textarea IDs.
+ *
+ * Because TinyMCE editors may not be fully initialized when this function is
+ * first called, it uses two complementary strategies:
+ *
+ * 1. If TinyMCE itself is not yet available, the function retries on a 500 ms
+ *    interval until it is, then proceeds.
+ * 2. For each editor ID, if the editor is already registered with TinyMCE at
+ *    call time, the paste handler is bound immediately via bindPlainTextPaste.
+ *    If it is not yet registered, a one-time listener on TinyMCE's 'AddEditor'
+ *    event binds the handler as soon as that specific editor is added.
+ *
+ * @param {string[]} editorIds An array of textarea IDs corresponding to the
+ *                             TinyMCE editors that should receive plain-text
+ *                             paste behavior.
+ * @return {void}
+ */
+function applyPlainTextPaste(editorIds) {
+	if (!Array.isArray(editorIds) || editorIds.length === 0) {
+		console.warn('applyPlainTextPaste: No valid editor IDs provided.');
+		return;
+	}
+
+	// If TinyMCE is not yet loaded, retry on an interval until it is.
+	if (typeof tinymce === 'undefined') {
+		const waitForTinyMCE = setInterval(function () {
+			if (typeof tinymce !== 'undefined') {
+				clearInterval(waitForTinyMCE);
+				applyPlainTextPaste(editorIds);
+			}
+		}, 500);
+		return;
+	}
+
+	editorIds.forEach(function (id) {
+		const editor = tinymce.get(id);
+		if (editor) {
+			// Editor is already initialized — bind immediately.
+			bindPlainTextPaste(editor);
+		} else {
+			// Editor not yet initialized — bind as soon as TinyMCE adds it.
+			tinymce.on('AddEditor', function onAddEditor(e) {
+				if (e.editor.id === id) {
+					bindPlainTextPaste(e.editor);
+					// Remove this listener so it does not fire again for
+					// subsequent editors added later in the page lifecycle.
+					tinymce.off('AddEditor', onAddEditor);
+				}
+			});
+		}
+	});
 }

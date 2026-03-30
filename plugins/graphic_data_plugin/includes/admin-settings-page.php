@@ -595,7 +595,9 @@ class Graphic_Data_Settings_Page {
 			'textarea_name' => 'graphic_data_settings[site_footer]', // Important for saving.
 			'media_buttons' => true, // Set to false if you don't want media buttons.
 			'textarea_rows' => 10, // Number of rows.
-			'tinymce'       => true, // Use TinyMCE.
+			'tinymce'       => array(
+				'paste_as_text' => true,  // Force plain-text paste.
+			),
 			'quicktags'     => true,  // Enable quicktags.
 		);
 		wp_editor( wp_kses_post( $value ), $editor_id, $settings );
@@ -647,7 +649,9 @@ class Graphic_Data_Settings_Page {
 			'textarea_name' => 'graphic_data_settings[intro_text]', // Important for saving.
 			'media_buttons' => true, // Set to false if you don't want media buttons.
 			'textarea_rows' => 10, // Number of rows.
-			'tinymce'       => true, // Use TinyMCE.
+			'tinymce'       => array(
+				'paste_as_text' => true,  // Force plain-text paste.
+			),
 			'quicktags'     => true,  // Enable quicktags.
 		);
 		wp_editor( wp_kses_post( $value ), $editor_id, $settings );

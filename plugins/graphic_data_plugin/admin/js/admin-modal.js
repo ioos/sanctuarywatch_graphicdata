@@ -188,7 +188,7 @@ for (let i = 1; i < 7; i++) {
  *
  * @description
  * - Creates a container div for the accordion item and its header.
- * - Sets the header text to "More info" for "info" type or "Images" for "photo" type.
+ * - Sets the header text to "More info" for "info" type or "Media" for "photo" type.
  * - Builds a collapsible section containing a list of links, where each link uses the text and URL from the corresponding modal form fields.
  * - Appends the completed accordion item to the specified parent div.
  *
@@ -225,7 +225,7 @@ function createAccordion(accordionType, parentDiv, listElements) {
 	if (accordionType == 'info') {
 		accordionHeaderButton.textContent = 'More info';
 	} else {
-		accordionHeaderButton.textContent = 'Images';
+		accordionHeaderButton.textContent = 'Media';
 	}
 	accordionFirstPart.appendChild(accordionHeaderButton);
 	accordionItem.appendChild(accordionFirstPart);
@@ -389,7 +389,7 @@ function modalWindow(){
         document.getElementsByName("icon_external_url")[0].value = "";
         document.getElementsByName("icon_scene_out")[0].value = "";
         document.getElementsByName("icon_scene_out")[0].parentElement.parentElement.style.display = "none";
-        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.style.display = "block";
+        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.parentElement.parentElement.style.display = "block";
         document.getElementsByName("modal_info_entries")[0].parentElement.parentElement.style.display = "block";
         document.getElementsByName("modal_photo_entries")[0].parentElement.parentElement.style.display = "block";
         document.getElementsByName("modal_tab_number")[0].parentElement.parentElement.style.display = "block";
@@ -398,7 +398,7 @@ function modalWindow(){
         displayTabEntries(document.getElementsByName("modal_tab_number")[0].value);
     } else {
 
-        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.style.display = "none";
+        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.parentElement.parentElement.style.display = "none";
 
         // Set the Modal Info entries to 0, run displayEntries to hide all of the resulting Modal Info fields 
         // and then hide the Modal Info range 
@@ -1241,4 +1241,19 @@ modalPhotoRangeElement2.addEventListener('change', function () {
 		number_of_modal_photo_entries2,
 		".text-class[data-depend-id='modal_photo_"
 	);
+});
+
+// Ensure that only plain text is pasted into the TinyMCE editor
+// (modal_tagline).
+// Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
+document.addEventListener('DOMContentLoaded', function () {
+	const modalEditorIds = ['modal_tagline'];
+
+	if (typeof applyPlainTextPaste === 'function') {
+		applyPlainTextPaste(modalEditorIds);
+	} else {
+		console.error(
+			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
+		);
+	}
 });

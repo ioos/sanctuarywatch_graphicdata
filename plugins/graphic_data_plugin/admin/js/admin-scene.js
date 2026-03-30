@@ -321,7 +321,7 @@ function resizeSvg() {
  *
  * @description
  * - Creates a container div for the accordion item and its header.
- * - Sets the header text to "More info" for "info" type or "Images" for "photo" type.
+ * - Sets the header text to "More info" for "info" type or "Media" for "photo" type.
  * - Builds a collapsible section containing a list of links, where each link uses the text and URL from the corresponding scene form fields.
  * - Appends the completed accordion item to the specified parent div.
  *
@@ -359,7 +359,7 @@ function createAccordion(accordionType, parentDiv, listElements) {
 	if (accordionType == 'info') {
 		accordionHeaderButton.textContent = 'More info';
 	} else {
-		accordionHeaderButton.textContent = 'Images';
+		accordionHeaderButton.textContent = 'Media';
 	}
 	accordionFirstPart.appendChild(accordionHeaderButton);
 	accordionItem.appendChild(accordionFirstPart);
@@ -749,3 +749,18 @@ function writeCookieValuesToSceneFields() {
 		}
 	}
 }
+
+// Ensure that only plain text is pasted into the TinyMCE editor
+// (scene_tagline).
+// Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
+document.addEventListener('DOMContentLoaded', function () {
+	const sceneEditorIds = ['scene_tagline'];
+
+	if (typeof applyPlainTextPaste === 'function') {
+		applyPlainTextPaste(sceneEditorIds);
+	} else {
+		console.error(
+			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
+		);
+	}
+});

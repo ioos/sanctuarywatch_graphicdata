@@ -257,8 +257,8 @@ class Graphic_Data_Customizer_Settings {
                 • Navigation bar background<br>
                 • Footer background<br>
                 • Button background within front page tiles<br>
-                • Background of Scene More Info/Images buttons<br>
-                • Background of Modal More Info/Images buttons<br>
+                • Background of Scene More Info/Media buttons<br>
+                • Background of Modal More Info/Media buttons<br>
                 • Background of "Copy tab link" above figures<br>
                 • "Gray bar" icons appearing above figures',
 					'section'  => 'theme_color_settings',
@@ -290,8 +290,8 @@ class Graphic_Data_Customizer_Settings {
                 • Breadcrumb bar text<br>
                 • Footer text<br>
                 • Button text within front page tiles<br>
-                • Text of Scene More Info/Images buttons<br>
-                • Text of Modal More Info/Images buttons<br>
+                • Text of Scene More Info/Media buttons<br>
+                • Text of Modal More Info/Media buttons<br>
                 • Text of "Copy tab link" above figures',
 					'section'  => 'theme_color_settings',
 					'settings' => 'theme_color_2',

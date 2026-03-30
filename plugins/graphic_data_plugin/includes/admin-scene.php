@@ -997,10 +997,10 @@ class Graphic_Data_Scene {
 					),
 			);
 		}
-		// Step 1: Create an array to hold the new info sub-arrays.
+		// Step 1: Create an array to hold the new photo sub-arrays.
 		$photo_fields = array();
 
-		// Step 2: Use a loop to generate the new info sub-arrays.
+		// Step 2: Use a loop to generate the new photo sub-arrays.
 		for ( $i = 1; $i <= 6; $i++ ) {
 			$photo_fields[] = array(
 				'type' => 'fieldset',

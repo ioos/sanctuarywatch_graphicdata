@@ -262,14 +262,9 @@
     color: #23282d;
 }
 
- /*
- .formLabel {
-  margin-top: 15px !important; 
- }
-
- .formSelect {
-  margin-top: 15px !important; 
-  margin-left: 10px !important;
- }
-
- */
+ /* Fix layout problem with TinyMCE editors in edit post pages */
+.exopite-sof-field-editor .exopite-sof-title p.exopite-sof-description {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
