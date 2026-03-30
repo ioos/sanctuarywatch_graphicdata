@@ -313,57 +313,83 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 			 * @returns {} - Alert a file has been deleted.
 			 */
 			function deleteUploadedFile() {
+				let fileName = '';
+				let fileNameInput = document.getElementById('existing-file-name');
 
-				//Select an existing uploaded file, or the file you just attempted to upload that is not formatted correctly for deletion. 
-				try {
-					var fileNameInput = document.getElementById('existing-file-name');
-					if (!fileNameInput || !fileNameInput.value) {
-						//alert("Error: No file to delete.");
-						console.error("Filename input error:", error);
+				if (fileNameInput && fileNameInput.value) {
+					fileName = fileNameInput.value;
+				} else {
+					const uploadedFileInput = document.getElementById('uploaded-file');
+
+					if (!uploadedFileInput || !uploadedFileInput.files.length) {
+						alert("Error: No file to delete.");
 						return;
 					}
-					var fileName = fileNameInput.value;
-				} catch (error) {
-					var fileNameInput = document.getElementById('uploaded-file');
-					var file = fileNameInput.files[0];
-					var fileName = file.name.toLowerCase();
+
+					fileName = uploadedFileInput.files[0].name.toLowerCase();
 				}
-				
-				//Get the post ID
-				var postIdInput = document.querySelector('[name="post_id"]');
+
+				const postIdInput = document.querySelector('[name="post_id"], [name="post_ID"]');
 				if (!postIdInput || !postIdInput.value) {
 					alert("Error: Post ID is missing in the form!");
 					return;
 				}
 
-				var postId = postIdInput.value;
-				
-				var formData = new FormData();
+				const figureNonceInput = document.querySelector('[name="figure_nonce"]');
+				if (!figureNonceInput || !figureNonceInput.value) {
+					alert("Error: figure_nonce is missing in the form!");
+					return;
+				}
+
+				const postId = postIdInput.value;
+
+				const formData = new FormData();
 				formData.append('post_id', postId);
-				formData.append('file_name', fileName); // Send only the stored filename
-				formData.append('action', 'custom_file_delete'); // Match WordPress AJAX action
+				formData.append('file_name', fileName);
+				formData.append('figure_nonce', figureNonceInput.value);
+				formData.append('action', 'custom_file_delete');
 
-				////console.log("Sending post_id:", postId, "file_name:", fileName); // Debugging
+				console.log("Sending delete request:", {
+					post_id: postId,
+					file_name: fileName,
+					action: 'custom_file_delete'
+				});
 
-				fetch('<?php echo admin_url("admin-ajax.php"); ?>', { // Correct URL
+				fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
 					method: 'POST',
 					body: formData,
 					credentials: 'same-origin'
 				})
-				.then(response => response.json())
-				.then(data => {
-					////console.log("Server response:", data); // Debugging
+				.then(async (response) => {
+					const text = await response.text();
+					console.log("Raw delete response:", text);
+
+					let data;
+					try {
+						data = JSON.parse(text);
+					} catch (error) {
+						throw new Error("Server did not return valid JSON. Raw response: " + text);
+					}
+
+					if (!response.ok) {
+						throw new Error(data?.data?.message || data?.message || "Delete request failed.");
+					}
+
+					return data;
+				})
+				.then((data) => {
+					console.log("Parsed delete response:", data);
+
 					if (data.success) {
-						alert("Success: " + (data.message || "File deleted successfully."));
-						clickUpdateButton(); // Save and reload the page to reflect deletion
+						alert(data.data?.message || "File deleted successfully.");
+						clickUpdateButton();
 					} else {
-						alert("Error: " + (data.message || "Delete failed. Please save or refresh the page to resolve this error."));
+						alert(data.data?.message || "Delete failed. Please save or refresh the page.");
 					}
 				})
-				.catch(error => {
-					console.error("Delete error", error);
-					alert("Delete failed. Please save or refresh the page to resolve this error." + error.message);
-					clickUpdateButton(); // Save and reload the page to reflect deletion
+				.catch((error) => {
+					console.error("Delete error:", error);
+					alert("Delete failed. " + error.message);
 				});
 			}
 			</script>
@@ -436,8 +462,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				var file = fileInput.files[0];
 				var fileName = file.name.toLowerCase();
 
-				// Append uploaded_file to form to send to AJAX
-				formData.append('uploaded_file', file);
+	
 
 				var postIdInput = document.querySelector('[name="post_id"]');
 				if (!postIdInput || !postIdInput.value) {
@@ -450,10 +475,20 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 					alert("Error: Post ID is missing in the form!");
 					return;
 				}
+
+				const figureNonceInput = document.querySelector('[name="figure_nonce"]');
+				if (!figureNonceInput || !figureNonceInput.value) {
+					alert("Error: figure_nonce is missing in the form!");
+					return;
+				}
 				
+				// Append uploaded_file to form to send to AJAX
+				formData.append('uploaded_file', file);
 				// Append post_id and the action to trigger custom_file_upload to form to send to AJAX
 				formData.append('post_id', postId);
 				formData.append('action', 'custom_file_upload'); // Required for WordPress AJAX
+				formData.append('figure_nonce', figureNonceInput.value);
+
 
 				// AJAX processing request
 				//console.log("Sending post_id:", postId);
@@ -498,6 +533,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 								formData_csvtojson.append('uploaded_file', jsonFile);
 								formData_csvtojson.append('post_id', postId);
 								formData_csvtojson.append('action', 'custom_file_upload');
+								formData_csvtojson.append('figure_nonce', figureNonceInput.value);
 
 								//console.log("Sending JSON file to server:", json_fileName);
 

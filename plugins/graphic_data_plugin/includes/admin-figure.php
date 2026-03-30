@@ -944,8 +944,17 @@ class Graphic_Data_Figure {
 		ob_clean(); // Ensure no unwanted output.
 
 		// First, verify nonce.
-		if ( ! isset( $_POST['figure_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ), 'save_figure_fields' ) ) {
-			wp_die( 'Security check failed for post of Figure custom post type.' );
+		if (
+			! isset( $_POST['figure_nonce'] ) ||
+			! wp_verify_nonce(
+				sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ),
+				'save_figure_fields'
+			)
+		) {
+			wp_send_json_error(
+				[ 'message' => 'Security check failed for post of Figure custom post type.' ],
+				403
+			);
 		}
 
 		// Error if no post ID.
@@ -1039,8 +1048,17 @@ class Graphic_Data_Figure {
 		ob_clean(); // Ensure no unwanted output.
 
 		// First, verify nonce.
-		if ( ! isset( $_POST['figure_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ), 'save_figure_fields' ) ) {
-			wp_die( 'Security check failed for post of Figure custom post type.' );
+		if (
+			! isset( $_POST['figure_nonce'] ) ||
+			! wp_verify_nonce(
+				sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ),
+				'save_figure_fields'
+			)
+		) {
+			wp_send_json_error(
+				[ 'message' => 'Security check failed for post of Figure custom post type.' ],
+				403
+			);
 		}
 
 		// Get the post's ID.
@@ -1055,12 +1073,19 @@ class Graphic_Data_Figure {
 
 		// Variable-ize the post's ID & the file's name..
 		$post_id = intval( $_POST['post_id'] );
-		$file_name = basename( urldecode( sanitize_text_field( wp_unslash( $_POST['file_name'] ) ) ) );
+		// $file_name = basename( urldecode( sanitize_text_field( wp_unslash( $_POST['file_name'] ) ) ) );
+		$file_name = sanitize_file_name( wp_unslash( $_POST['file_name'] ) );
+		$file_name = basename( $file_name );
+
+		if ( empty( $file_name ) ) {
+			wp_send_json_error( [ 'message' => 'No saved uploaded file found for this Figure.' ], 404 );
+		}
 
 		// Define the directory where the file is to be deleted.
 		$delete_dir = ABSPATH . 'wp-content/data/figure_' . $post_id . '/';
 		$file_path = $delete_dir . $file_name;
-		$file_path_json = $delete_dir . basename( preg_replace( '/\.csv$/', '.json', $file_name ) );
+		// $file_path_json = $delete_dir . basename( preg_replace( '/\.csv$/', '.json', $file_name ) );
+		$file_path_json = $delete_dir . preg_replace( '/\.csv$/i', '.json', basename( $file_name ) );
 
 		// Check if file exists.
 		if ( ! file_exists( $file_path ) ) {
@@ -1072,6 +1097,7 @@ class Graphic_Data_Figure {
 
 		// Delete the converted json file if it was originally a csv. file.
 		if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'csv' ) {
+			unlink( $file_path_json );
 			update_post_meta( $post_id, 'uploaded_path_csv', '' );
 			update_post_meta( $post_id, 'uploaded_path_json', '' );
 			update_post_meta( $post_id, 'uploaded_file', '' );
@@ -1103,7 +1129,6 @@ class Graphic_Data_Figure {
 			wp_send_json_error( [ 'message' => 'Failed to delete the file.' ], 500 );
 		}
 	}
-
 
 	/**
 	 * Registers a custom REST API route to get alt text by image URL.
