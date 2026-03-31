@@ -211,6 +211,13 @@ Quick Edit validation, and bulk/row action customization.</p>
 <dd>Filter REST API queries for scenes by the &quot;scene_location&quot; meta field.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Scene.html#method_fix_scene_tagline_tinymce">fix_scene_tagline_tinymce()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Fix TinyMCE forced_root_block for the scene_tagline editor.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Scene.html#method_get_scene_filter_value">get_scene_filter_value()</a>
     <span>
                                 &nbsp;: bool|string|int    </span>
@@ -350,7 +357,7 @@ Quick Edit validation, and bulk/row action customization.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1231</span>
+    <span class="phpdocumentor-element-found-in__line">1257</span>
 
     </aside>
 
@@ -580,7 +587,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">753</span>
+    <span class="phpdocumentor-element-found-in__line">773</span>
 
     </aside>
 
@@ -642,7 +649,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">699</span>
+    <span class="phpdocumentor-element-found-in__line">719</span>
 
     </aside>
 
@@ -879,7 +886,7 @@ The CSS is only enqueued when on the edit.php screen for the modal post type.</p
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1206</span>
+    <span class="phpdocumentor-element-found-in__line">1232</span>
 
     </aside>
 
@@ -945,6 +952,70 @@ partial-match filtering on the scene_location post meta value.</p>
                     &mdash;
                 <section class="phpdocumentor-description"><p>Modified query arguments with the meta_query clause appended
 when the scene_location parameter is set.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_fix_scene_tagline_tinymce">
+        fix_scene_tagline_tinymce()
+        <a href="classes/Graphic-Data-Scene.html#method_fix_scene_tagline_tinymce" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">701</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Fix TinyMCE forced_root_block for the scene_tagline editor.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">fix_scene_tagline_tinymce</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$init</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$editor_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$init</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>TinyMCE init settings.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$editor_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The TinyMCE editor ID.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Modified init settings.</p>
 </section>
 
             </section>
@@ -1263,7 +1334,7 @@ row actions on the Scene admin list table. Intended for use with the
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1295</span>
+    <span class="phpdocumentor-element-found-in__line">1321</span>
 
     </aside>
 
@@ -1314,7 +1385,7 @@ or descending order, depending on user selection.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1168</span>
+    <span class="phpdocumentor-element-found-in__line">1194</span>
 
     </aside>
 
@@ -1364,7 +1435,7 @@ or descending order, depending on user selection.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1280</span>
+    <span class="phpdocumentor-element-found-in__line">1306</span>
 
     </aside>
 
@@ -1481,7 +1552,7 @@ or descending order, depending on user selection.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-scene.php"><a href="files/plugins-graphic-data-plugin-includes-admin-scene.html"><abbr title="plugins/graphic_data_plugin/includes/admin-scene.php">admin-scene.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1258</span>
+    <span class="phpdocumentor-element-found-in__line">1284</span>
 
     </aside>
 
@@ -2166,6 +2237,7 @@ It only runs on the Scene post type admin screen and requires a logged-in user.<
                                             <li class=""><a href="classes/Graphic-Data-Scene.html#method_display_overview_scene_notice">display_overview_scene_notice()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Scene.html#method_enqueue_scene_admin_columns_css">enqueue_scene_admin_columns_css()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Scene.html#method_filter_scene_by_scene_location">filter_scene_by_scene_location()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Scene.html#method_fix_scene_tagline_tinymce">fix_scene_tagline_tinymce()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Scene.html#method_get_scene_filter_value">get_scene_filter_value()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Scene.html#method_graphic_data_svg_cleanup_on_upload">graphic_data_svg_cleanup_on_upload()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Scene.html#method_graphic_data_transform_svg_inkscape">graphic_data_transform_svg_inkscape()</a></li>
