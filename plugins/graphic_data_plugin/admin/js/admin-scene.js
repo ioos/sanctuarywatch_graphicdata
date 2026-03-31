@@ -542,7 +542,6 @@ if (OnSceneEditPage === 1 && SceneError === 'post_error') {
 		'scene_photo_entries',
 	];
 	SceneFields.scene_tagline = SceneFields.scene_tagline.replace("\\'", "\'");
-
 	SceneFieldNames.forEach(
 		(element) =>
 			(document.getElementsByName(element)[0].value =

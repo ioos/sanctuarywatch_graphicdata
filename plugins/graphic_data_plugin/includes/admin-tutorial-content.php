@@ -422,7 +422,7 @@ class Graphic_Data_Tutorial_Content {
 		];
 		$scene_info_entries = 2;
 		$scene_info1 = array(
-			'scene_info_text1' => 'More information about the scene',
+			'scene_info_text1' => 'More information',
 			'scene_info_url1'  => 'https://en.wikipedia.org/wiki/Space_settlement',
 		);
 		$scene_info2 = array(
@@ -453,8 +453,8 @@ class Graphic_Data_Tutorial_Content {
 		$scene_full_screen_button = [ 'yes', 'no', 'no', 'yes', 'yes', 'yes' ];
 		$scene_text_toggle = [ 'toggle_off', 'none', 'none', 'toggle_off', 'toggle_on', 'toggle_on' ];
 		$scene_orphan_icon_action = 'translucent';
-		$scene_toc_style = 'list';
-		$scene_same_hover_color_sections = [ 'yes', 'yes', 'yes', 'yes', 'yes', 'yes' ];
+		$scene_toc_style = [ 'list', 'list', 'list', 'list', 'sectioned_list', 'accordion' ];
+		$scene_same_hover_color_sections = [ 'yes', 'yes', 'yes', 'yes', 'no', 'no' ];
 		$scene_hover_color = '#ffff00';
 		$scene_hover_text_color = '#000000';
 
@@ -509,7 +509,7 @@ class Graphic_Data_Tutorial_Content {
 				update_post_meta( $post_id, 'scene_full_screen_button', $scene_full_screen_button [ $i ] );
 				update_post_meta( $post_id, 'scene_text_toggle', $scene_text_toggle [ $i ] );
 				update_post_meta( $post_id, 'scene_orphan_icon_action', $scene_orphan_icon_action );
-				update_post_meta( $post_id, 'scene_toc_style', $scene_toc_style );
+				update_post_meta( $post_id, 'scene_toc_style', $scene_toc_style [ $i ] );
 				update_post_meta( $post_id, 'scene_hover_color', $scene_hover_color );
 				update_post_meta( $post_id, 'scene_hover_text_color', $scene_hover_text_color );
 				update_post_meta( $post_id, 'scene_same_hover_color_sections', $scene_same_hover_color_sections [ $i ] );
@@ -525,10 +525,11 @@ class Graphic_Data_Tutorial_Content {
 	 * @return void
 	 */
 	public function create_tutorial_modals( $current_user_id ) {
+		global $wpdb;
 		$initial_array = array();
 		$initial_array['post_title'] = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
-		$initial_array['modal_location'] = [ 3, 3, 3 ];
-		$initial_array['modal_scene'] = [ 6, 6, 6 ];
+		$initial_array['modal_location'] = 3;
+		$initial_array['modal_scene'] = 6;
 		$initial_array['modal_icons'] = [ 'Default', 'Table', 'Space' ];
 		$initial_array['modal_icon_order'] = [ 1, 3, 2 ];
 		$initial_array['icon_function'] = [ 'Scene', 'Scene', 'Scene' ];
@@ -540,18 +541,27 @@ class Graphic_Data_Tutorial_Content {
 		$modal_scene = [ 7, 8, 9, 10, 11 ];
 
 		// default scene: 12.
-		for ( $q = 0; q < 5; q++ ) {
-
+		for ( $q = 0; $q < 5; $q++ ) {
 			$repeat_array = array();
-			$repeat_array['post_title'] = [ 'Image Modal', 'Video Modal', 'Interactive Line Chart Modal', 'Interactive Bar Chart Modal', 'External Link Modal', 'Code Block Modal' ];
-			$repeat_array['modal_location'] = [ 3, 3, 3, 3, 3, 3 ];
-			$repeat_array['modal_scene'] = [ 7, 7, 7, 7, 7, 7 ];
+
+			$tutorial_instance_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
+					'tutorial_id',
+					$modal_scene[ $q ],
+					'scene',
+				)
+			);
+			$scene_title = get_the_title( $tutorial_instance_id );
+			$repeat_array['post_title'] = [ $scene_title . ' Image', $scene_title . ' Video', $scene_title . ' Interactive Line Chart', $scene_title . ' Interactive Bar Chart', $scene_title . ' External Link', $scene_title . ' Code Block' ];
+			$repeat_array['modal_location'] = $modal_location[ $q ];
+			$repeat_array['modal_scene'] = $modal_scene[ $q ];
 			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
 			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
 			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
 			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
-			$repeat_array['modal_info_entries'] = [ 0, 0, 0, 0, 0, 0 ];
-			$repeat_array['modal_photo_entries'] = [ 0, 0, 0, 0, 0 ];
+			$repeat_array['modal_info_entries'] = 2;
+			$repeat_array['modal_photo_entries'] = 3;
 			$repeat_array['modal_tab_number'] = [ 1, 1, 1, 1, 1, 1 ];
 			$repeat_array['modal_tab_title1'] = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
 
@@ -579,6 +589,34 @@ class Graphic_Data_Tutorial_Content {
 	 */
 	public function write_modals_to_database( $modal_array, $current_user_id ) {
 		global $wpdb;
+
+		$modal_info1 = array(
+			'modal_info_text1' => 'More information',
+			'modal_info_url1'  => 'https://en.wikipedia.org/wiki/Space_settlement',
+		);
+		$modal_info2 = array(
+			'modal_info_text2' => 'You can have up to 6 links',
+			'modal_info_url2'  => 'https://en.wikipedia.org/wiki/The_Power_of_Six',
+		);
+		$modal_photo1 = array(
+			'modal_photo_location1' => 'External',
+			'modal_photo_text1' => 'An illustrative image outside of the site',
+			'modal_photo_url1'  => 'https://nss.org/settlement/nasa/70sArtHiRes/70sArt/Cylinder_Interior_AC75-1086_1920.jpg',
+			'modal_photo_internal1' => '',
+		);
+		$modal_photo2 = array(
+			'modal_photo_location2' => 'Internal',
+			'modal_photo_text2' => 'An illustrative image within the site',
+			'modal_photo_url2'  => '',
+			'modal_photo_internal2' => '',
+		);
+		$modal_photo3 = array(
+			'modal_photo_location3' => 'External',
+			'modal_photo_text3' => 'You can have up to 6 links here too',
+			'modal_photo_url3'  => 'https://nss.org/settlement/nasa/70sArtHiRes/70sArt/Torus_Cutaway_AC75-1086-1_5725.jpg',
+			'modal_photo_internal3' => '',
+		);
+
 		$i_max = count( $modal_array['post_title'] );
 
 		for ( $i = 0; $i < $i_max; $i++ ) {
@@ -604,7 +642,7 @@ class Graphic_Data_Tutorial_Content {
 								$wpdb->prepare(
 									"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
 									'tutorial_id',
-									$modal_array['modal_location'][ $i ],
+									$modal_array['modal_location'],
 								)
 							);
 							update_post_meta( $post_id, 'modal_location', $tutorial_instance_id );
@@ -614,7 +652,7 @@ class Graphic_Data_Tutorial_Content {
 								$wpdb->prepare(
 									"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
 									'tutorial_id',
-									$modal_array['modal_scene'][ $i ],
+									$modal_array['modal_scene'],
 									'scene',
 								)
 							);
@@ -649,10 +687,25 @@ class Graphic_Data_Tutorial_Content {
 							update_post_meta( $post_id, 'post_title', $modal_array['post_title'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
 							break;
 						case 'modal_info_entries':
-							update_post_meta( $post_id, 'modal_info_entries', $modal_array['modal_info_entries'][ $i ] );
+							update_post_meta( $post_id, 'modal_info_entries', $modal_array['modal_info_entries'] );
+							update_post_meta( $post_id, 'modal_info1', $modal_info1 );
+							update_post_meta( $post_id, 'modal_info2', $modal_info2 );
+							for ( $q = 3; $q < 7; $q++ ) {
+								$meta_key = 'modal_info' . $q;
+								update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
+							}
 							break;
 						case 'modal_photo_entries':
-							update_post_meta( $post_id, 'modal_photo_entries', $modal_array['modal_photo_entries'][ $i ] );
+							update_post_meta( $post_id, 'modal_photo_entries', $modal_array['modal_photo_entries'] );
+
+							update_post_meta( $post_id, 'modal_photo1', $modal_photo1 );
+							$modal_photo2['modal_photo_internal2'] = $this->copy_image_to_media_library( 'example_files/tutorial/tutorial_image1.jpg', $modal_array['tutorial_id'][ $i ] );
+							update_post_meta( $post_id, 'modal_photo2', $modal_photo2 );
+							update_post_meta( $post_id, 'modal_photo3', $modal_photo3 );
+							for ( $q = 4; $q < 7; $q++ ) {
+								$meta_key = 'modal_photo' . $q;
+								update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
+							}
 							break;
 						case 'modal_tab_number':
 							update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );

@@ -692,6 +692,26 @@ class Graphic_Data_Scene {
 	}
 
 	/**
+	 * Fix TinyMCE forced_root_block for the scene_tagline editor.
+	 *
+	 * @param array  $init    TinyMCE init settings.
+	 * @param string $editor_id The TinyMCE editor ID.
+	 * @return array Modified init settings.
+	 */
+	public function fix_scene_tagline_tinymce( array $init, string $editor_id ): array {
+		// Match the editor ID Exopite generates for scene_tagline.
+		// Typically it will be something like 'graphic_data_plugin_scene_tagline'
+		// or just 'scene_tagline' — inspect the DOM to confirm.
+		if ( str_contains( $editor_id, 'scene_tagline' ) ) {
+			$init['forced_root_block']        = 'p';
+			$init['force_br_newlines']        = false;
+			$init['force_p_newlines']         = true;
+			$init['convert_newlines_to_brs']  = false;
+		}
+		return $init;
+	}
+
+	/**
 	 * Create Scene custom content type.
 	 *
 	 * @since    1.0.0
@@ -801,6 +821,12 @@ class Graphic_Data_Scene {
 				'title'       => 'Tagline',
 				'description' => 'What is the tagline for the scene?',
 				'sanitize'    => 'wp_kses_post',
+				'tinymce'     => array(
+					'forced_root_block' => 'p',   // Wrap Enter-key output in <p> tags.
+					'force_br_newlines' => false,
+					'force_p_newlines'  => true,
+					'convert_newlines_to_brs' => false,
+				),
 			),
 			array(
 				'id'          => 'scene_info_entries',
