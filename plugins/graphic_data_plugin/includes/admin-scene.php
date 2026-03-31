@@ -676,6 +676,36 @@ class Graphic_Data_Scene {
 	}
 
 	/**
+	 * Inject a style tag into TinyMCE editor iframes on the scene post type screen
+	 * to override the default serif font with a sans-serif font.
+	 *
+	 * @since 1.0.0
+	 */
+	public function inject_tinymce_font_style() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'scene' !== $screen->post_type ) {
+			return;
+		}
+		?>
+		<script>
+		jQuery( document ).on( 'tinymce-editor-setup', function( event, editor ) {
+			if ( editor.settings.id !== 'scene_tagline' ) return;
+
+			editor.settings.toolbar1 = 'bold,italic,underline,link,unlink';
+			editor.settings.toolbar2 = '';
+
+			editor.on( 'init', function() {
+				var doc = this.getDoc();
+				var style = doc.createElement( 'style' );
+				style.textContent = 'body { font-family: Arial, Helvetica, sans-serif !important; }';
+				doc.head.appendChild( style );
+			} );
+		} );
+		</script>
+		<?php
+	}
+
+	/**
 	 * Remove Quick Edit links from Scene admin screen.
 	 *
 	 * @param string[] $actions An array of row action links.
@@ -689,26 +719,6 @@ class Graphic_Data_Scene {
 			unset( $actions['inline hide-if-no-js'] );
 		}
 		return $actions;
-	}
-
-	/**
-	 * Fix TinyMCE forced_root_block for the scene_tagline editor.
-	 *
-	 * @param array  $init    TinyMCE init settings.
-	 * @param string $editor_id The TinyMCE editor ID.
-	 * @return array Modified init settings.
-	 */
-	public function fix_scene_tagline_tinymce( array $init, string $editor_id ): array {
-		// Match the editor ID Exopite generates for scene_tagline.
-		// Typically it will be something like 'graphic_data_plugin_scene_tagline'
-		// or just 'scene_tagline' — inspect the DOM to confirm.
-		if ( str_contains( $editor_id, 'scene_tagline' ) ) {
-			$init['forced_root_block']        = 'p';
-			$init['force_br_newlines']        = false;
-			$init['force_p_newlines']         = true;
-			$init['convert_newlines_to_brs']  = false;
-		}
-		return $init;
 	}
 
 	/**
@@ -821,12 +831,6 @@ class Graphic_Data_Scene {
 				'title'       => 'Tagline',
 				'description' => 'What is the tagline for the scene?',
 				'sanitize'    => 'wp_kses_post',
-				'tinymce'     => array(
-					'forced_root_block' => 'p',   // Wrap Enter-key output in <p> tags.
-					'force_br_newlines' => false,
-					'force_p_newlines'  => true,
-					'convert_newlines_to_brs' => false,
-				),
 			),
 			array(
 				'id'          => 'scene_info_entries',
