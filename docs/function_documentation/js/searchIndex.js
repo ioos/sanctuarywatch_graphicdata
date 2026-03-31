@@ -391,10 +391,10 @@ Search.appendIndex(
             "summary": "Shorten\u0020string\u0020without\u0020cutting\u0020words\u0020midword.",
             "url": "classes/Graphic-Data-Utility.html#method_string_truncate"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003Ainject_tinymce_font_style\u0028\u0029",
-            "name": "inject_tinymce_font_style",
-            "summary": "Inject\u0020a\u0020style\u0020tag\u0020into\u0020TinyMCE\u0020editor\u0020iframes\u0020on\u0020various\u0020screens\nto\u0020override\u0020the\u0020default\u0020serif\u0020font\u0020with\u0020a\u0020sans\u002Dserif\u0020font.\u0020Also,\u0020this\u0020function\ngreatly\u0020simplifies\u0020the\u0020number\u0020of\u0020buttons\u0020available.",
-            "url": "classes/Graphic-Data-Utility.html#method_inject_tinymce_font_style"
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Ainject_tinymce_changes\u0028\u0029",
+            "name": "inject_tinymce_changes",
+            "summary": "Customizes\u0020TinyMCE\u0020editors\u0020for\u0020specific\u0020post\u0020types.",
+            "url": "classes/Graphic-Data-Utility.html#method_inject_tinymce_changes"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Arender_nonce_field\u0028\u0029",
             "name": "render_nonce_field",
