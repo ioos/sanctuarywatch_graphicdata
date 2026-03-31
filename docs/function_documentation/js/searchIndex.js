@@ -391,6 +391,11 @@ Search.appendIndex(
             "summary": "Shorten\u0020string\u0020without\u0020cutting\u0020words\u0020midword.",
             "url": "classes/Graphic-Data-Utility.html#method_string_truncate"
         },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Ainject_tinymce_font_style\u0028\u0029",
+            "name": "inject_tinymce_font_style",
+            "summary": "Inject\u0020a\u0020style\u0020tag\u0020into\u0020TinyMCE\u0020editor\u0020iframes\u0020on\u0020various\u0020screens\nto\u0020override\u0020the\u0020default\u0020serif\u0020font\u0020with\u0020a\u0020sans\u002Dserif\u0020font.\u0020Also,\u0020this\u0020function\ngreatly\u0020simplifies\u0020the\u0020number\u0020of\u0020buttons\u0020available.",
+            "url": "classes/Graphic-Data-Utility.html#method_inject_tinymce_font_style"
+        },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Arender_nonce_field\u0028\u0029",
             "name": "render_nonce_field",
             "summary": "Add\u0020nonce\u0020field\u0020to\u0020about,\u0020modal,\u0020scene,\u0020instance,\u0020and\u0020figure\u0020custom\u0020post\u0020types.",
@@ -1015,11 +1020,6 @@ Search.appendIndex(
             "name": "remove_bulk_actions",
             "summary": "Remove\u0020Bulk\u0020Actions\u0020dropdown\u0020from\u0020Scene,\u0020Modal,\u0020Figure,\u0020and\u0020Instance\u0020admin\u0020screens.",
             "url": "classes/Graphic-Data-Scene.html#method_remove_bulk_actions"
-        },                {
-            "fqsen": "\\Graphic_Data_Scene\u003A\u003Ainject_tinymce_font_style\u0028\u0029",
-            "name": "inject_tinymce_font_style",
-            "summary": "Inject\u0020a\u0020style\u0020tag\u0020into\u0020TinyMCE\u0020editor\u0020iframes\u0020on\u0020the\u0020scene\u0020post\u0020type\u0020screen\nto\u0020override\u0020the\u0020default\u0020serif\u0020font\u0020with\u0020a\u0020sans\u002Dserif\u0020font.",
-            "url": "classes/Graphic-Data-Scene.html#method_inject_tinymce_font_style"
         },                {
             "fqsen": "\\Graphic_Data_Scene\u003A\u003Ascene_remove_quick_edit_link\u0028\u0029",
             "name": "scene_remove_quick_edit_link",
