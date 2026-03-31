@@ -676,36 +676,6 @@ class Graphic_Data_Scene {
 	}
 
 	/**
-	 * Inject a style tag into TinyMCE editor iframes on the scene post type screen
-	 * to override the default serif font with a sans-serif font.
-	 *
-	 * @since 1.0.0
-	 */
-	public function inject_tinymce_font_style() {
-		$screen = get_current_screen();
-		if ( ! $screen || 'scene' !== $screen->post_type ) {
-			return;
-		}
-		?>
-		<script>
-		jQuery( document ).on( 'tinymce-editor-setup', function( event, editor ) {
-			if ( editor.settings.id !== 'scene_tagline' ) return;
-
-			editor.settings.toolbar1 = 'bold,italic,underline,link,unlink';
-			editor.settings.toolbar2 = '';
-
-			editor.on( 'init', function() {
-				var doc = this.getDoc();
-				var style = doc.createElement( 'style' );
-				style.textContent = 'body { font-family: Arial, Helvetica, sans-serif !important; }';
-				doc.head.appendChild( style );
-			} );
-		} );
-		</script>
-		<?php
-	}
-
-	/**
 	 * Remove Quick Edit links from Scene admin screen.
 	 *
 	 * @param string[] $actions An array of row action links.

@@ -30,6 +30,43 @@ class Graphic_Data_Utility {
 	}
 
 	/**
+	 * Inject a style tag into TinyMCE editor iframes on various screens
+	 * to override the default serif font with a sans-serif font. Also, this function
+	 * greatly simplifies the number of buttons available.
+	 *
+	 * @since 1.0.0
+	 */
+	public function inject_tinymce_font_style() {
+		$screen = get_current_screen();
+		$allowed_post_types = [ 'instance', 'scene', 'modal', 'figure', 'about' ];
+		if ( ! $screen || in_array( $screen->post_type, $allowed_post_types, true ) ) {
+			return;
+		}
+		?>
+		<script>
+		jQuery( document ).on( 'tinymce-editor-setup', function( event, editor ) {
+			let allowedFields = [ 'instance_footer_column_content1', 'instance_footer_column_content2', 'instance_footer_column_content3', 'scene_tagline', 'modal_tagline', 'figure_caption_short', 'figure_caption_short', 'aboutMain', 'aboutDetail']
+			for (let i = 1; i < 11; i++) {
+				text += "The number is " + i + "<br>";
+			}
+
+			if ( editor.settings.id !== 'scene_tagline' ) return;
+
+			editor.settings.toolbar1 = 'bold,italic,underline,link,unlink';
+			editor.settings.toolbar2 = '';
+
+			editor.on( 'init', function() {
+				var doc = this.getDoc();
+				var style = doc.createElement( 'style' );
+				style.textContent = 'body { font-family: Arial, Helvetica, sans-serif !important; }';
+				doc.head.appendChild( style );
+			} );
+		} );
+		</script>
+		<?php
+	}
+
+	/**
 	 * Add nonce field to about, modal, scene, instance, and figure custom post types.
 	 *
 	 * @since 1.0.0
