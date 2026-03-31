@@ -1016,15 +1016,15 @@ Search.appendIndex(
             "summary": "Remove\u0020Bulk\u0020Actions\u0020dropdown\u0020from\u0020Scene,\u0020Modal,\u0020Figure,\u0020and\u0020Instance\u0020admin\u0020screens.",
             "url": "classes/Graphic-Data-Scene.html#method_remove_bulk_actions"
         },                {
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Ainject_tinymce_font_style\u0028\u0029",
+            "name": "inject_tinymce_font_style",
+            "summary": "Inject\u0020a\u0020style\u0020tag\u0020into\u0020TinyMCE\u0020editor\u0020iframes\u0020on\u0020the\u0020scene\u0020post\u0020type\u0020screen\nto\u0020override\u0020the\u0020default\u0020serif\u0020font\u0020with\u0020a\u0020sans\u002Dserif\u0020font.",
+            "url": "classes/Graphic-Data-Scene.html#method_inject_tinymce_font_style"
+        },                {
             "fqsen": "\\Graphic_Data_Scene\u003A\u003Ascene_remove_quick_edit_link\u0028\u0029",
             "name": "scene_remove_quick_edit_link",
             "summary": "Remove\u0020Quick\u0020Edit\u0020links\u0020from\u0020Scene\u0020admin\u0020screen.",
             "url": "classes/Graphic-Data-Scene.html#method_scene_remove_quick_edit_link"
-        },                {
-            "fqsen": "\\Graphic_Data_Scene\u003A\u003Afix_scene_tagline_tinymce\u0028\u0029",
-            "name": "fix_scene_tagline_tinymce",
-            "summary": "Fix\u0020TinyMCE\u0020forced_root_block\u0020for\u0020the\u0020scene_tagline\u0020editor.",
-            "url": "classes/Graphic-Data-Scene.html#method_fix_scene_tagline_tinymce"
         },                {
             "fqsen": "\\Graphic_Data_Scene\u003A\u003Acustom_content_type_scene\u0028\u0029",
             "name": "custom_content_type_scene",
