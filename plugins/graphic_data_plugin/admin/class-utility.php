@@ -30,29 +30,53 @@ class Graphic_Data_Utility {
 	}
 
 	/**
-	 * Inject a style tag into TinyMCE editor iframes on various screens
-	 * to override the default serif font with a sans-serif font. Also, this function
-	 * greatly simplifies the number of buttons available.
+	 * Customizes TinyMCE editors for specific post types.
+	 *
+	 * Runs on admin screens for 'instance', 'scene', 'modal', 'figure', and 'about'
+	 * post types. For a defined set of field IDs, restricts the toolbar to bold,
+	 * italic, underline, link, and unlink, and injects a style tag into the editor
+	 * iframe to render body text in a sans-serif font.
 	 *
 	 * @since 1.0.0
+	 * @return void Returns early if not on an allowed post type screen or if the
+	 *              editor ID is not in the allowed fields list.
 	 */
-	public function inject_tinymce_font_style() {
+	public function inject_tinymce_changes() {
 		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+
 		$allowed_post_types = [ 'instance', 'scene', 'modal', 'figure', 'about' ];
-		if ( ! $screen || in_array( $screen->post_type, $allowed_post_types, true ) ) {
+		$on_post_type_screen = in_array( $screen->post_type, $allowed_post_types, true );
+		$on_theme_settings   = ( 'toplevel_page_theme_settings' === $screen->id );
+
+		if ( ! $on_post_type_screen && ! $on_theme_settings ) {
 			return;
 		}
 		?>
 		<script>
 		jQuery( document ).on( 'tinymce-editor-setup', function( event, editor ) {
-			let allowedFields = [ 'instance_footer_column_content1', 'instance_footer_column_content2', 'instance_footer_column_content3', 'scene_tagline', 'modal_tagline', 'figure_caption_short', 'figure_caption_short', 'aboutMain', 'aboutDetail']
+			let allowedFields = [
+				'instance_footer_column_content1',
+				'instance_footer_column_content2',
+				'instance_footer_column_content3',
+				'scene_tagline',
+				'modal_tagline',
+				'figure_caption_short',
+				'figure_caption_long',
+				'aboutMain',
+				'aboutDetail',
+				'site_footer_editor',
+				'graphic_data_intro_text_editor',
+			];
 			for (let i = 1; i < 11; i++) {
-				text += "The number is " + i + "<br>";
+				allowedFields.push( 'aboutBoxMain' + i , 'aboutBoxDetail' + i )
 			}
 
-			if ( editor.settings.id !== 'scene_tagline' ) return;
+			if ( ! allowedFields.includes( editor.settings.id ) ) return;
 
-			editor.settings.toolbar1 = 'bold,italic,underline,link,unlink';
+			editor.settings.toolbar1 = 'bold,italic,underline,link,unlink,bullist,numlist';
 			editor.settings.toolbar2 = '';
 
 			editor.on( 'init', function() {

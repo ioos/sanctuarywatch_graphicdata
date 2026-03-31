@@ -169,7 +169,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'display_warning_message_if_new_post_impossible', 10 );
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'check_draft_overview_scene', 40 );
 		$this->loader->add_action( 'edit_form_after_title', $plugin_utility, 'render_nonce_field' );
-		$this->loader->add_action( 'admin_footer', $plugin_utility, 'inject_tinymce_font_style' );
+		$this->loader->add_action( 'admin_footer', $plugin_utility, 'inject_tinymce_changes' );
 
 		// Load class and functions associated with new user roles.
 		$plugin_custom_roles = new Graphic_Data_Custom_Roles();
