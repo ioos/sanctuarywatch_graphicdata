@@ -602,7 +602,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     //CREATE PARAGRAPH ELEMENT UNDER "myTabContent" > div class="figure"
     const caption = document.createElement('p');
     caption.classList.add('caption');
-    caption.innerHTML = info_obj['shortCaption'];
+    tempShortCaption = info_obj['shortCaption'];
+    tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p>');
+    caption.innerHTML = tempShortCaption;
     caption.style.marginTop = '10px';
     figureDiv.appendChild(caption);
     tabContentElement.appendChild(figureDiv);
@@ -634,7 +636,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     summary.textContent = 'Click for Details';
 
     let longCaption = document.createElement("p");
-    longCaption.innerHTML = info_obj['longCaption'];
+    tempLongCaption = info_obj['longCaption'];
+    tempLongCaption = tempLongCaption.replace(/\r\n\r\n/g, '<p>');
+    longCaption.innerHTML = tempLongCaption;
     if (info_obj['longCaption'] != ''){
         details.appendChild(summary);
         details.appendChild(longCaption);

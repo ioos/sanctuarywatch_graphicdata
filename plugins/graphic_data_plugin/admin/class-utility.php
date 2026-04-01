@@ -30,6 +30,67 @@ class Graphic_Data_Utility {
 	}
 
 	/**
+	 * Customizes TinyMCE editors for specific post types.
+	 *
+	 * Runs on admin screens for 'instance', 'scene', 'modal', 'figure', and 'about'
+	 * post types. For a defined set of field IDs, restricts the toolbar to bold,
+	 * italic, underline, link, and unlink, and injects a style tag into the editor
+	 * iframe to render body text in a sans-serif font.
+	 *
+	 * @since 1.0.0
+	 * @return void Returns early if not on an allowed post type screen or if the
+	 *              editor ID is not in the allowed fields list.
+	 */
+	public function inject_tinymce_changes() {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+
+		$allowed_post_types = [ 'instance', 'scene', 'modal', 'figure', 'about' ];
+		$on_post_type_screen = in_array( $screen->post_type, $allowed_post_types, true );
+		$on_theme_settings   = ( 'toplevel_page_theme_settings' === $screen->id );
+
+		if ( ! $on_post_type_screen && ! $on_theme_settings ) {
+			return;
+		}
+		?>
+		<script>
+		jQuery( document ).on( 'tinymce-editor-setup', function( event, editor ) {
+			let allowedFields = [
+				'instance_footer_column_content1',
+				'instance_footer_column_content2',
+				'instance_footer_column_content3',
+				'scene_tagline',
+				'modal_tagline',
+				'figure_caption_short',
+				'figure_caption_long',
+				'aboutMain',
+				'aboutDetail',
+				'site_footer_editor',
+				'graphic_data_intro_text_editor',
+			];
+			for (let i = 1; i < 11; i++) {
+				allowedFields.push( 'aboutBoxMain' + i , 'aboutBoxDetail' + i )
+			}
+
+			if ( ! allowedFields.includes( editor.settings.id ) ) return;
+
+			editor.settings.toolbar1 = 'bold,italic,underline,link,unlink,bullist,numlist';
+			editor.settings.toolbar2 = '';
+
+			editor.on( 'init', function() {
+				var doc = this.getDoc();
+				var style = doc.createElement( 'style' );
+				style.textContent = 'body { font-family: Arial, Helvetica, sans-serif !important; }';
+				doc.head.appendChild( style );
+			} );
+		} );
+		</script>
+		<?php
+	}
+
+	/**
 	 * Add nonce field to about, modal, scene, instance, and figure custom post types.
 	 *
 	 * @since 1.0.0

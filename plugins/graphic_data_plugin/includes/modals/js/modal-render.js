@@ -61,7 +61,7 @@ function render_modal(key, obj, modal_obj){
         // --- Tagline container ---
         let tagline_container = document.getElementById('tagline-container');
         let modal_tagline = modal_data["modal_tagline"];
-
+        modal_tagline = modal_tagline.replace(/\r\n\r\n/g, '<p>');
 
         if (!is_mobile()) {
             tagline_container.innerHTML = `${modal_tagline}`;
