@@ -428,6 +428,9 @@ body > h1{
 /*   padding: 20px; */
 }
 
+.code-container {
+  max-width: 100%;
+}
 
 /* Style each row */
 .row {
