@@ -11,10 +11,9 @@ alertIfMissingModal();
 async function make_title() {
 	const protocol = window.location.protocol;
 	const host = window.location.host;
-
 	try {
 		scene_data = title_arr;
-
+        scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p>');
 		const scene_location = scene_data.scene_location;
 		const title = scene_data.post_title;
 

@@ -12,6 +12,8 @@ $graphic_data_settings = get_option( 'graphic_data_settings', [] );
 
 $graphic_data_sitewide_footer_title = ( ! empty( $graphic_data_settings['sitewide_footer_title'] ?? '' ) ) ? $graphic_data_settings['sitewide_footer_title'] : '';
 $graphic_data_sitewide_footer = ( ! empty( $graphic_data_settings['site_footer'] ?? '' ) ) ? $graphic_data_settings['site_footer'] : '';
+$graphic_data_sitewide_footer = wpautop( $graphic_data_sitewide_footer );
+
 if ( '' == $graphic_data_sitewide_footer_title || '' == $graphic_data_sitewide_footer ) {
 	$graphic_data_sitewide_footer_present = false;
 } else {
@@ -37,7 +39,7 @@ if ( ( $graphic_data_instance_footer > 0 ) || ( true == $graphic_data_sitewide_f
 					echo '  <div class="footer-content-wrapper">';
 					echo '    <h6 class="footer-column-title">' . esc_html( $graphic_data_instance_footer[ 'instance_footer_column_title' . $graphic_data_i ] ) . '</h6>';
 					echo '    <div class="footer_component">';
-					echo wp_kses_post( $graphic_data_instance_footer[ 'instance_footer_column_content' . $graphic_data_i ] );
+					echo wp_kses_post( wpautop( $graphic_data_instance_footer[ 'instance_footer_column_content' . $graphic_data_i ] ) );
 					echo '    </div>';
 					echo '  </div>'; // Closing footer-content-wrapper.
 					echo '</div>';

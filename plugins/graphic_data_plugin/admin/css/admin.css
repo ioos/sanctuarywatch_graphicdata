@@ -125,24 +125,6 @@
     border-color: #dee2e6;
   }
 
-  /* Hide some TinyMCE button options within Figure editing screens. VERY HACKY - FIX   */
-  /*
-  .mce-toolbar .mce-btn-group .mce-btn.mce-listbox {
-    display: none;
-  }
-*/
-  /* Hide some TinyMCE button options within Figure editing screens - short caption. VERY HACKY - FIX   */
-  /*
- #mceu_3,  #mceu_4, #mceu_5, #mceu_6, #mceu_7, #mceu_8, #mceu_10, #mceu_11, #mceu_12 {
-  display: none;
-}
-*/
-  /* Hide some TinyMCE button options within Figure editing screens - long caption. VERY HACKY - FIX   */
-  /*
-  #mceu_64,  #mceu_65, #mceu_66, #mceu_67, #mceu_68, #mceu_69, #mceu_71, #mceu_72, #mceu_73 {
-    display: none;
-  }
-*/
     /* Formatting for figure preview */
 
 .figure_preview {
@@ -262,9 +244,10 @@
     color: #23282d;
 }
 
- /* Fix layout problem with TinyMCE editors in edit post pages */
+ /* Fix layout problem with TinyMCE editors in edit post pages 
 .exopite-sof-field-editor .exopite-sof-title p.exopite-sof-description {
     display: block;
     margin: 0;
     padding: 0;
-}
+} */
+

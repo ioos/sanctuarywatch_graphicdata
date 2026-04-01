@@ -161,7 +161,7 @@ permalink: /function_documentation/classes/Graphic-Data-Tutorial-Content.html
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
-<dd>Create a blank key-value array for scene/modal accordion links.</dd>
+<dd>Build a blank key-value array for a single accordion link slot.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_graphic_data_settings_content">create_graphic_data_settings_content()</a>
@@ -261,7 +261,7 @@ permalink: /function_documentation/classes/Graphic-Data-Tutorial-Content.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">644</span>
+    <span class="phpdocumentor-element-found-in__line">744</span>
 
     </aside>
 
@@ -349,11 +349,11 @@ the upload process encounters an error.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">372</span>
+    <span class="phpdocumentor-element-found-in__line">369</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Create a blank key-value array for scene/modal accordion links.</p>
+        <p class="phpdocumentor-summary">Build a blank key-value array for a single accordion link slot.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -362,12 +362,10 @@ the upload process encounters an error.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>All six potential links for the scene/modal info/photo accordions must have values
-(even blank values) in the post meta table for any of them to be visible. When
-entering data via the forms this happens automatically, but tutorial content requires
-some help with this, which this helper generates.</p>
-<p>The function splits the given key at its last character to insert <code class="prettyprint">_text</code> and <code class="prettyprint">_url</code>
-suffixes before that final character, producing two meta keys with empty string values.</p>
+        <section class="phpdocumentor-description"><p>All link slots for the scene/modal info and photo accordions must have entries
+in the post meta table (even empty ones) for any slot to be visible. Normal form
+submissions populate these automatically; tutorial content must construct them
+manually, which this helper does.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -377,7 +375,7 @@ suffixes before that final character, producing two meta keys with empty string 
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>The base meta key to derive the text and URL keys from.</p>
+                    <section class="phpdocumentor-description"><p>Meta key ending in a numeric index (e.g. <code class="prettyprint">scene_info_link1</code>).</p>
 </section>
 
             </dd>
@@ -391,7 +389,7 @@ suffixes before that final character, producing two meta keys with empty string 
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Associative array with two entries: a <code class="prettyprint">_text</code> key and a <code class="prettyprint">_url</code> key, both set to ''.</p>
+                <section class="phpdocumentor-description"><p>Associative array of blank sibling meta keys ready for insertion.</p>
 </section>
 
             </section>
@@ -572,7 +570,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">489</span>
+    <span class="phpdocumentor-element-found-in__line">527</span>
 
     </aside>
 
@@ -619,7 +617,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">390</span>
+    <span class="phpdocumentor-element-found-in__line">401</span>
 
     </aside>
 
@@ -888,7 +886,7 @@ which handles cleanup of wp_terms, wp_term_taxonomy, and wp_termmeta tables.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">533</span>
+    <span class="phpdocumentor-element-found-in__line">590</span>
 
     </aside>
 
