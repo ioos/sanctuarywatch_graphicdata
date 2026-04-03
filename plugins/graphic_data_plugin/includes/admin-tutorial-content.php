@@ -457,6 +457,19 @@ class Graphic_Data_Tutorial_Content {
 		$scene_same_hover_color_sections = [ 'yes', 'yes', 'yes', 'yes', 'no', 'no' ];
 		$scene_hover_color = '#ffff00';
 		$scene_hover_text_color = '#000000';
+		$scene_section_number = [ 0, 0, 0, 0, 2, 2 ];
+		$scene_section_details = array(
+			array(
+				'scene_section_title1' => 'First Section',
+				'scene_section_hover_color1' => '#eb4034',
+				'scene_section_hover_text_color1' => '#125496',
+			),
+			array(
+				'scene_section_title2' => 'Second Section',
+				'scene_section_hover_color2' => '#29d646',
+				'scene_section_hover_text_color2' => '#ad1897',
+			),
+		);
 
 		// create the six tutorial scenes.
 		for ( $i = 0; $i < 6; $i++ ) {
@@ -513,9 +526,147 @@ class Graphic_Data_Tutorial_Content {
 				update_post_meta( $post_id, 'scene_hover_color', $scene_hover_color );
 				update_post_meta( $post_id, 'scene_hover_text_color', $scene_hover_text_color );
 				update_post_meta( $post_id, 'scene_same_hover_color_sections', $scene_same_hover_color_sections [ $i ] );
+				update_post_meta( $post_id, 'scene_section_number', $scene_section_number [ $i ] );
+				if ( $i > 3 ) {
+					update_post_meta( $post_id, 'scene_section1', $scene_section_details[0] );
+					update_post_meta( $post_id, 'scene_section2', $scene_section_details[1] );
+				}
 				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
 			}
 		};
+	}
+
+	/**
+	 * Create example figures for the tutorial.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_tutorial_figures( $current_user_id ) {
+
+// NASA SDO "The Sun Now" — updates every few minutes, date/time stamped on the image:
+// This is a real-time image of the Sun in the 193Å extreme ultraviolet wavelength (showing the corona in false color). The date and UTC time are burned directly into the image, it's hosted on NASA's GSFC servers, and the URL never changes.
+// https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg
+
+
+		global $wpdb;
+		$target_icon_array = [ 'Image', 'Video', 'Interactive Line Chart', 'Interactive Bar Chart', 'External Link', 'Code Block' ];
+		$figure_tutorial_id = 45;
+		$modal_tutorial_id_array = [ 15, 21, 27, 33, 39 ]; // Image.
+		$figure_details = array(
+			'Image' => array(
+				'title' => [ 'Illustration', 'Chart', 'External image' ],
+				'tab' => [ 1, 1, 2 ],
+				'order' => [ 1, 2, 1 ],
+				'figure_science_info' => array(
+					array(
+						'figure_science_link_text' => 'Monitoring link',
+						'figure_science_link_url' => 'https://www.wikipedia.org/',
+					),
+					array(
+						'figure_science_link_text' => 'Monitoring link',
+						'figure_science_link_url' => 'https://www.wikipedia.org/',
+					),
+					array(
+						'figure_science_link_text' => 'Monitoring link',
+						'figure_science_link_url' => 'https://www.wikipedia.org/',
+					),
+				),
+				'figure_data_info' => array(
+					array(
+						'figure_science_link_text' => 'Monitoring link',
+						'figure_science_link_url' => 'https://www.wikipedia.org/',
+					),
+					array(
+						'figure_science_link_text' => 'Monitoring link',
+						'figure_science_link_url' => 'https://www.wikipedia.org/',
+					),
+					array(
+						'figure_science_link_text' => 'Monitoring link',
+						'figure_science_link_url' => 'https://www.wikipedia.org/',
+					),
+				),
+				'figure_path' => [ 'Internal', 'Internal', 'External' ],
+
+			),
+		);
+	
+		for ( $q = 0; $q < 6; $q++ ) {
+			$target_icon = $target_icon_array[ $q ];
+			$target_tutorial_id_array = array_map( fn( $id ) => $id + $q, $modal_tutorial_id_array );
+
+			$tutorial_modal_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+					'tutorial_id',
+					$modal_tutorial_id_array[ $i ],
+				)
+			);
+			$tutorial_scene_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+					'modal_scene',
+					$tutorial_modal_id,
+				)
+			);
+			$tutorial_instance_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+					'scene_location',
+					$tutorial_scene_id,
+				)
+			);
+
+
+		}
+
+		$modal_tutorial_id_array = [ 16, 22, 28, 34, 40 ]; // Video.
+		// create the six tutorial scenes.
+		for ( $i = 0; $i < 5; $i++ ) {
+			$post_data = array(
+				'post_title'   => 'Total Recall Video',
+				'post_type'    => 'figure',
+				'post_status'  => 'publish',
+				'post_author'  => $current_user_id,
+			);
+
+			// Insert the post and get its ID.
+			$post_id = wp_insert_post( $post_data );
+
+			// Check if post was created successfully.
+			if ( ! is_wp_error( $post_id ) ) {
+				update_post_meta( $post_id, 'figure_published', 'published' );
+				update_post_meta( $post_id, 'figure_modal', $tutorial_modal_id );
+				update_post_meta( $post_id, 'figure_scene', $tutorial_scene_id );
+				update_post_meta( $post_id, 'location', $tutorial_instance_id );
+				update_post_meta( $post_id, 'figure_tab', '1' );
+				update_post_meta( $post_id, 'figure_order', '1' );
+				$figure_science_info = array(
+					'figure_science_link_text' => 'Monitoring link',
+					'figure_science_link_url' => 'https://www.wikipedia.org/',
+				);
+				update_post_meta( $post_id, 'figure_science_info', $figure_science_info );
+				$figure_data_info = array(
+					'figure_data_link_text' => 'Data link',
+					'figure_data_link_url' => 'https://www.wikipedia.org/',
+				);
+				update_post_meta( $post_id, 'figure_data_info', $figure_data_info );
+				update_post_meta( $post_id, 'figure_path', 'Code' );
+				$figure_code = '<iframe
+					style="width: 100%; height: auto; aspect-ratio: 16 / 9;"
+					src="https://www.youtube.com/embed/mhfrL9ku1uA?si=37T91dTbcEfrja48"
+					title="YouTube video player"
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					referrerpolicy="strict-origin-when-cross-origin"
+					allowfullscreen
+					></iframe>';
+				update_post_meta( $post_id, 'figure_code', $figure_code );
+				update_post_meta( $post_id, 'figure_caption_short', 'ipsum lorem short' );
+				update_post_meta( $post_id, 'figure_caption_long', 'ipsum lorem long' );
+				update_post_meta( $post_id, 'tutorial_id', 45 + $i );
+			}
+		}
 	}
 
 	/**
@@ -553,10 +704,13 @@ class Graphic_Data_Tutorial_Content {
 				)
 			);
 			$scene_title = get_the_title( $tutorial_instance_id );
-			$repeat_array['post_title'] = [ $scene_title . ' Image', $scene_title . ' Video', $scene_title . ' Interactive Line Chart', $scene_title . ' Interactive Bar Chart', $scene_title . ' External Link', $scene_title . ' Code Block' ];
+			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Line Chart', 'Interactive Bar Chart', 'External Link', 'Code Block' ];
 			$repeat_array['modal_location'] = $modal_location[ $q ];
 			$repeat_array['modal_scene'] = $modal_scene[ $q ];
 			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+			if ( $q > 2 ) {
+				$repeat_array['icon_toc_section'] = [ 1, 2, 1, 2, 1, 2 ];
+			}
 			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
 			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
 			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
@@ -708,10 +862,17 @@ class Graphic_Data_Tutorial_Content {
 							}
 							break;
 						case 'modal_tab_number':
-							update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );
+							if ( 4 != $i ) { // We don't want modal tab recorded for link out modals.
+								update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );
+							}
 							break;
 						case 'modal_tab_title1':
-							update_post_meta( $post_id, 'modal_tab_title1', $modal_array['modal_tab_title1'][ $i ] );
+							if ( 4 != $i ) { // We don't want modal tab title recorded for link out modals.
+								update_post_meta( $post_id, 'modal_tab_title1', $modal_array['modal_tab_title1'][ $i ] );
+							}
+							break;
+						case 'icon_toc_section':
+							update_post_meta( $post_id, 'icon_toc_section', $modal_array['icon_toc_section'][ $i ] );
 							break;
 						case 'tutorial_id':
 							update_post_meta( $post_id, 'tutorial_id', $modal_array['tutorial_id'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.

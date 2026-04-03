@@ -1072,7 +1072,7 @@ class Graphic_Data_Scene {
 						'type'     => 'color',
 						'title'    => 'Section Hover Text Color',
 						'picker'   => 'html5',
-						'default'  => '#00000',
+						'default'  => '#000000',
 						'sanitize' => 'sanitize_hex_color',
 					),
 				),
