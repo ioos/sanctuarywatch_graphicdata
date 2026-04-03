@@ -1231,6 +1231,11 @@ Search.appendIndex(
             "summary": "Create\u0020example\u0020scenes\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_scenes"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_figures\u0028\u0029",
+            "name": "create_tutorial_figures",
+            "summary": "Create\u0020example\u0020figures\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_figures"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_modals\u0028\u0029",
             "name": "create_tutorial_modals",
             "summary": "Create\u0020example\u0020modals\u0020for\u0020the\u0020tutorial.",
