@@ -547,7 +547,7 @@ class Graphic_Data_Tutorial_Content {
 // NASA SDO "The Sun Now" — updates every few minutes, date/time stamped on the image:
 // This is a real-time image of the Sun in the 193Å extreme ultraviolet wavelength (showing the corona in false color). The date and UTC time are burned directly into the image, it's hosted on NASA's GSFC servers, and the URL never changes.
 // https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg
-
+// image from https://www.researchgate.net/publication/334155727_Coronal_Mass_Ejections_over_Solar_Cycles_23_and_24
 
 		global $wpdb;
 		$target_icon_array = [ 'Image', 'Video', 'Interactive Line Chart', 'Interactive Bar Chart', 'External Link', 'Code Block' ];
@@ -556,8 +556,8 @@ class Graphic_Data_Tutorial_Content {
 		$figure_details = array(
 			'Image' => array(
 				'title' => [ 'Illustration', 'Chart', 'External image' ],
-				'tab' => [ 1, 1, 2 ],
-				'order' => [ 1, 2, 1 ],
+				'figure_tab' => [ 1, 1, 2 ],
+				'figure_order' => [ 1, 2, 1 ],
 				'figure_science_info' => array(
 					array(
 						'figure_science_link_text' => 'Monitoring link',
@@ -587,7 +587,9 @@ class Graphic_Data_Tutorial_Content {
 					),
 				),
 				'figure_path' => [ 'Internal', 'Internal', 'External' ],
-
+				'figure_image' => array(
+					'/example_files/tutorial'
+				),
 			),
 		);
 	
