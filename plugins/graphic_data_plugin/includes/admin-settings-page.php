@@ -318,7 +318,7 @@ class Graphic_Data_Settings_Page {
 			case false:
 				if ( true == $options['tutorial_content_present'] ) {
 					$sanitized['tutorial_content_present'] = false;
-
+					$plugin_admin_tutorial->delete_data_json_files();
 					$plugin_admin_tutorial->delete_tutorial_instance_types();
 					$plugin_admin_tutorial->delete_tutorial_images();
 					$plugin_admin_tutorial->delete_tutorial_posts();

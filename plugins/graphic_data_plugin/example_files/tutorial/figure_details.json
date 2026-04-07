@@ -1,0 +1,95 @@
+{
+    "Image": [
+        {
+            "title": "Illustration",
+            "figure_tab": 1,
+            "figure_order": 1,
+            "figure_path": "Internal",
+            "figure_image": "example_files/tutorial/tutorial_image2.jpg",
+            "figure_caption_short": "ipsum lorem short 1",
+            "figure_caption_long": "ipsum lorem long 5",
+            "figure_science_info": {
+                "figure_science_link_text": "Monitoring link A",
+                "figure_science_link_url": "https://www.wikipedia.org/IK"
+            },
+            "figure_data_info": {
+                "figure_data_link_text": "Monitoring link X",
+                "figure_data_link_url": "https://www.wikipedia.org/"
+            }
+        },
+        {
+            "title": "Chart",
+            "figure_tab": 1,
+            "figure_order": 2,
+            "figure_path": "Internal",
+            "figure_image": "example_files/tutorial/tutorial_image3.png",
+            "figure_caption_short": "ipsum lorem short A",
+            "figure_caption_long": "ipsum lorem long S",
+            "figure_science_info": {
+                "figure_science_link_text": "Monitoring link W",
+                "figure_science_link_url": "https://www.wikipedia.org/PO"
+            },
+            "figure_data_info": {
+                "figure_data_link_text": "Monitoring link Q",
+                "figure_data_link_url": "https://www.wikipedia.org/LK"
+            }
+        },
+        {
+            "title": "External image",
+            "figure_tab": 2,
+            "figure_order": 1,
+            "figure_path": "External",
+            "figure_external_url": "https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg",
+			"figure_external_alt": "An image of the sun taken by the Solar Dynamics Observatory.",
+            "figure_caption_short": "ipsum lorem short Q",
+            "figure_caption_long": "ipsum lorem long P",
+            "figure_science_info": {
+                "figure_science_link_text": "Monitoring link Z",
+                "figure_science_link_url": "https://www.wikipedia.org/OK"
+            },
+            "figure_data_info": {
+                "figure_data_link_text": "Monitoring link B",
+                "figure_data_link_url": "https://www.wikipedia.org/IK"
+            }
+        }
+    ],
+    "Video": [
+        {
+            "title": "Video",
+            "figure_tab": 1,
+            "figure_order": 1,
+            "figure_path": "Code",
+            "figure_code": "<iframe style=\"width: 100%; height: auto; aspect-ratio: 16 / 9;\" src=\"https://www.youtube.com/embed/mhfrL9ku1uA?si=37T91dTbcEfrja48\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
+            "figure_caption_short": "ipsum lorem short",
+            "figure_caption_long": "ipsum lorem long",
+            "figure_science_info": {
+                "figure_science_link_text": "Monitoring link",
+                "figure_science_link_url": "https://www.wikipedia.org/"
+            },
+            "figure_data_info": {
+                "figure_data_link_text": "Monitoring link",
+                "figure_data_link_url": "https://www.wikipedia.org/"
+            }
+        }
+    ],
+    "Interactive Bar Chart": [
+        {
+            "title": "Interactive Bar Chart",
+            "figure_tab": 1,
+            "figure_order": 1,
+            "figure_path": "Interactive",
+            "figure_interactive_arguments": [["graphType","Plotly bar graph"],["showGrid",""],["graphTicks",""],["XAxisTitle","Year"],["XAxisLowBound",""],["XAxisHighBound",""],["YAxisTitle","Hectares"],["YAxisLowBound",""],["YAxisHighBound",""],["NumberOfBars","7"],["XAxisFormat","YYYY"],["StackedBarColumns","on"],["XAxis","Year"],["Bar1","Saltwater"],["Bar1Title","Saltwater Channel"],["Bar1Color","#0c7d83"],["Bar1FillType",""],["Bar1Legend","on"],["Bar1Mean",""],["Bar1MeanField","auto"],["Bar1ErrorBars",""],["Bar1ErrorBarsInputValues","auto"],["Bar1ErrorBarsColor","#000000"],["Bar1Percentiles",""],["Bar1Stacked",""],["Bar1StackedSeparatorLineColor","#000000"],["Bar2","Mud"],["Bar2Title","Mud Salt Marsh (less than 25% cover)"],["Bar2Color","#ab6426"],["Bar2FillType",""],["Bar2Legend","on"],["Bar2Mean",""],["Bar2MeanField","auto"],["Bar2ErrorBars",""],["Bar2ErrorBarsInputValues","auto"],["Bar2ErrorBarsColor","#000000"],["Bar2Percentiles",""],["Bar2Stacked",""],["Bar2StackedSeparatorLineColor","#000000"],["Bar3","Salt_Marsh_Mud"],["Bar3Title","Salt Marsh / Mud (25% - 75% cover)"],["Bar3Color","#91b027"],["Bar3FillType","/"],["Bar3Legend","on"],["Bar3Mean",""],["Bar3MeanField","auto"],["Bar3ErrorBars",""],["Bar3ErrorBarsInputValues","auto"],["Bar3ErrorBarsColor","#000000"],["Bar3Percentiles",""],["Bar3Stacked",""],["Bar3StackedSeparatorLineColor","#000000"],["Bar4","Salt_Marsh"],["Bar4Title","Salt Marsh (more than 75% cover)"],["Bar4Color","#91b027"],["Bar4FillType",""],["Bar4Legend","on"],["Bar4Mean",""],["Bar4MeanField","auto"],["Bar4ErrorBars",""],["Bar4ErrorBarsInputValues","auto"],["Bar4ErrorBarsColor","#000000"],["Bar4Percentiles",""],["Bar4Stacked",""],["Bar4StackedSeparatorLineColor","#000000"],["Bar5","Reclaimed"],["Bar5Title","Reclaimed Wetland"],["Bar5Color","#deda6e"],["Bar5FillType",""],["Bar5Legend","on"],["Bar5Mean",""],["Bar5MeanField","auto"],["Bar5ErrorBars",""],["Bar5ErrorBarsInputValues","auto"],["Bar5ErrorBarsColor","#000000"],["Bar5Percentiles",""],["Bar5Stacked",""],["Bar5StackedSeparatorLineColor","#000000"],["Bar6","Fresh_Brackish_Marsh"],["Bar6Title","Fresh / Brackish Marsh"],["Bar6Color","#a7fea7"],["Bar6FillType",""],["Bar6Legend","on"],["Bar6Mean",""],["Bar6MeanField","auto"],["Bar6ErrorBars",""],["Bar6ErrorBarsInputValues","auto"],["Bar6ErrorBarsColor","#000000"],["Bar6Percentiles",""],["Bar6Stacked",""],["Bar6StackedSeparatorLineColor","#000000"],["Bar7","Riparian"],["Bar7Title","Riparian Woodland"],["Bar7Color","#02dc01"],["Bar7FillType",""],["Bar7Legend","on"],["Bar7Mean",""],["Bar7MeanField","auto"],["Bar7ErrorBars",""],["Bar7ErrorBarsInputValues","auto"],["Bar7ErrorBarsColor","#000000"],["Bar7Percentiles",""],["Bar7Stacked",""],["Bar7StackedSeparatorLineColor","#000000"]],
+            "uploaded_path_json": "example_files/tutorial/bar_chart.json",
+            "figure_caption_short": "ipsum lorem short",
+            "figure_caption_long": "ipsum lorem long",
+            "figure_science_info": {
+                "figure_science_link_text": "Monitoring link",
+                "figure_science_link_url": "https://www.wikipedia.org/"
+            },
+            "figure_data_info": {
+                "figure_data_link_text": "Monitoring link",
+                "figure_data_link_url": "https://www.wikipedia.org/"
+            }
+        }
+    ]
+}
