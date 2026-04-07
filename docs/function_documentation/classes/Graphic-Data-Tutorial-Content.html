@@ -157,6 +157,13 @@ permalink: /function_documentation/classes/Graphic-Data-Tutorial-Content.html
 <dd>Copies an image file from the plugin directory to the WordPress media library.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_copy_json_file_to_data_folder">copy_json_file_to_data_folder()</a>
+    <span>
+                                &nbsp;: string|false    </span>
+</dt>
+<dd>Copy a JSON file from within the plugin directory to the data/tutorial folder.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_create_blank_array">create_blank_array()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
@@ -204,6 +211,13 @@ permalink: /function_documentation/classes/Graphic-Data-Tutorial-Content.html
                                 &nbsp;: void    </span>
 </dt>
 <dd>Create example scenes for the tutorial.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_data_json_files">delete_data_json_files()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Delete the data/tutorial folder and its contents, and remove data/ if empty.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Tutorial-Content.html#method_delete_graphic_data_settings_content">delete_graphic_data_settings_content()</a>
@@ -268,7 +282,7 @@ permalink: /function_documentation/classes/Graphic-Data-Tutorial-Content.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">907</span>
+    <span class="phpdocumentor-element-found-in__line">944</span>
 
     </aside>
 
@@ -348,6 +362,66 @@ the upload process encounters an error.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_copy_json_file_to_data_folder">
+        copy_json_file_to_data_folder()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_copy_json_file_to_data_folder" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">72</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Copy a JSON file from within the plugin directory to the data/tutorial folder.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">copy_json_file_to_data_folder</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$json_path</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|false</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Creates the data/ and data/tutorial/ directories inside the wp-content directory
+if they do not already exist, then copies the file at the given relative path
+to that folder. If the file is already present at the destination, no copy is
+performed.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$json_path</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Relative path to the source file within the plugin directory (e.g. 'example_files/tutorial/data.json').</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string|false</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Relative path to the copied file (e.g. 'data/tutorial/data.json') on success or if the file already exists, false on copy failure.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_create_blank_array">
         create_blank_array()
         <a href="classes/Graphic-Data-Tutorial-Content.html#method_create_blank_array" class="headerlink"><i class="fas fa-link"></i></a>
@@ -356,7 +430,7 @@ the upload process encounters an error.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">369</span>
+    <span class="phpdocumentor-element-found-in__line">431</span>
 
     </aside>
 
@@ -416,7 +490,7 @@ manually, which this helper does.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">169</span>
+    <span class="phpdocumentor-element-found-in__line">231</span>
 
     </aside>
 
@@ -475,7 +549,7 @@ normally configured by the user on the Graphic Data Settings page.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">545</span>
+    <span class="phpdocumentor-element-found-in__line">607</span>
 
     </aside>
 
@@ -577,7 +651,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">289</span>
+    <span class="phpdocumentor-element-found-in__line">351</span>
 
     </aside>
 
@@ -624,7 +698,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">680</span>
+    <span class="phpdocumentor-element-found-in__line">714</span>
 
     </aside>
 
@@ -671,7 +745,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">401</span>
+    <span class="phpdocumentor-element-found-in__line">463</span>
 
     </aside>
 
@@ -710,6 +784,45 @@ and navbar names.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_delete_data_json_files">
+        delete_data_json_files()
+        <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_data_json_files" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">107</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Delete the data/tutorial folder and its contents, and remove data/ if empty.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">delete_data_json_files</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Deletes all files inside the data/tutorial/ directory within the plugin directory,
+then removes the tutorial/ directory itself. If the parent data/ directory is then
+empty, it is also removed.</p>
+</section>
+
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_delete_graphic_data_settings_content">
         delete_graphic_data_settings_content()
         <a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_graphic_data_settings_content" class="headerlink"><i class="fas fa-link"></i></a>
@@ -718,7 +831,7 @@ and navbar names.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">275</span>
+    <span class="phpdocumentor-element-found-in__line">337</span>
 
     </aside>
 
@@ -777,7 +890,7 @@ content from the Graphic Data settings.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">107</span>
+    <span class="phpdocumentor-element-found-in__line">169</span>
 
     </aside>
 
@@ -827,7 +940,7 @@ content from the Graphic Data settings.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">74</span>
+    <span class="phpdocumentor-element-found-in__line">136</span>
 
     </aside>
 
@@ -890,7 +1003,7 @@ which handles cleanup of wp_terms, wp_term_taxonomy, and wp_termmeta tables.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">136</span>
+    <span class="phpdocumentor-element-found-in__line">198</span>
 
     </aside>
 
@@ -940,7 +1053,7 @@ which handles cleanup of wp_terms, wp_term_taxonomy, and wp_termmeta tables.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php"><a href="files/plugins-graphic-data-plugin-includes-admin-tutorial-content.html"><abbr title="plugins/graphic_data_plugin/includes/admin-tutorial-content.php">admin-tutorial-content.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">746</span>
+    <span class="phpdocumentor-element-found-in__line">780</span>
 
     </aside>
 
@@ -1106,6 +1219,7 @@ Expected keys include: 'post_title', 'tutorial_id',
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_copy_image_to_media_library">copy_image_to_media_library()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_copy_json_file_to_data_folder">copy_json_file_to_data_folder()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_blank_array">create_blank_array()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_graphic_data_settings_content">create_graphic_data_settings_content()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_figures">create_tutorial_figures()</a></li>
@@ -1113,6 +1227,7 @@ Expected keys include: 'post_title', 'tutorial_id',
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instances">create_tutorial_instances()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_modals">create_tutorial_modals()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_scenes">create_tutorial_scenes()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_data_json_files">delete_data_json_files()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_graphic_data_settings_content">delete_graphic_data_settings_content()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_images">delete_tutorial_images()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Tutorial-Content.html#method_delete_tutorial_instance_types">delete_tutorial_instance_types()</a></li>
