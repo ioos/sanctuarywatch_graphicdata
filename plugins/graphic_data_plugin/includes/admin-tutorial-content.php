@@ -59,17 +59,19 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
-	 * Copy a JSON file from within the plugin directory to the data/tutorial folder.
+	 * Copies a pair of .json and .csv files from the plugin directory to the data/tutorial folder.
 	 *
-	 * Creates the data/ and data/tutorial/ directories inside the wp-content directory
-	 * if they do not already exist, then copies the file at the given relative path
-	 * to that folder. If the file is already present at the destination, no copy is
-	 * performed.
+	 * Creates the wp-content/data/ and wp-content/data/tutorial/ directories if they do not
+	 * already exist. For each extension (.json, .csv), appends the extension to $file_path to
+	 * resolve the source file and copies it to the tutorial folder. Skips any file that already
+	 * exists at the destination. Returns false immediately if any copy operation fails.
 	 *
-	 * @param string $json_path Relative path to the source file within the plugin directory (e.g. 'example_files/tutorial/data.json').
-	 * @return string|false Relative path to the copied file (e.g. 'data/tutorial/data.json') on success or if the file already exists, false on copy failure.
+	 * @param string $file_path Relative path (without extension) to the source file within the
+	 *                          plugin directory (e.g. 'example_files/tutorial/data').
+	 * @return string|false The relative destination path shared by both files
+	 *                      (e.g. 'data/tutorial/data') on success, or false if a copy fails.
 	 */
-	public function copy_json_file_to_data_folder( $json_path ) {
+	public function copy_files_to_data_folder( $file_path ) {
 		$data_folder = WP_CONTENT_DIR . '/data';
 		if ( ! file_exists( $data_folder ) ) {
 			wp_mkdir_p( $data_folder );
@@ -80,27 +82,27 @@ class Graphic_Data_Tutorial_Content {
 			wp_mkdir_p( $tutorial_folder );
 		}
 
-		$source_path = GRAPHIC_DATA_PLUGIN_DIR . $json_path;
-		$destination_path = $tutorial_folder . '/' . basename( $json_path );
-		$relative_path = 'data/tutorial/' . basename( $json_path );
+		$initial_source_path = GRAPHIC_DATA_PLUGIN_DIR . $file_path;
+		$initial_destination_path = $tutorial_folder . '/' . basename( $file_path );
 
-		if ( file_exists( $destination_path ) ) {
-			return $relative_path;
+		$file_extension_array = [ '.json', '.csv' ];
+		foreach ( $file_extension_array as $file_extension ) {
+			$final_destination_path = $initial_destination_path . $file_extension;
+			$final_source_path = $initial_source_path . $file_extension;
+			if ( ! file_exists( $final_destination_path ) ) {
+				if ( ! copy( $final_source_path, $final_destination_path ) ) {
+					return false;
+				}
+			}
 		}
-
-		if ( ! copy( $source_path, $destination_path ) ) {
-			return false;
-		}
-
-		return $relative_path;
+		return $initial_destination_path;
 	}
 
 	/**
-	 * Delete the data/tutorial folder and its contents, and remove data/ if empty.
+	 * Delete the data/tutorial folder and its contents.
 	 *
 	 * Deletes all files inside the data/tutorial/ directory within the plugin directory,
-	 * then removes the tutorial/ directory itself. If the parent data/ directory is then
-	 * empty, it is also removed.
+	 * then removes the tutorial/ directory itself.
 	 *
 	 * @return void
 	 */
@@ -112,11 +114,6 @@ class Graphic_Data_Tutorial_Content {
 				wp_delete_file( $file );
 			}
 			rmdir( $tutorial_folder );
-		}
-
-		$data_folder = WP_CONTENT_DIR . '/data';
-		if ( file_exists( $data_folder ) && count( glob( $data_folder . '/*' ) ) === 0 ) {
-			rmdir( $data_folder );
 		}
 	}
 
@@ -691,10 +688,12 @@ class Graphic_Data_Tutorial_Content {
 								update_post_meta( $post_id, 'figure_image', $figure_image );
 								break;
 							case 'Interactive':
-								$figure_json_path = $this->copy_json_file_to_data_folder( $target_figure_details_element['uploaded_path_json'] );
-								if ( false != $figure_json_path ) {
-									update_post_meta( $post_id, 'uploaded_path_json', $figure_json_path );
-									update_post_meta( $post_id, 'figure_interactive_arguments', $target_figure_details_element['figure_interactive_arguments'] );
+								$figure_file_path = $this->copy_files_to_data_folder( $target_figure_details_element['uploaded_file_path'] );
+								if ( false != $figure_file_path ) {
+									update_post_meta( $post_id, 'uploaded_path_json', $figure_file_path . '.json' );
+									update_post_meta( $post_id, 'uploaded_path_csv', $figure_file_path . '.csv' );
+									update_post_meta( $post_id, 'uploaded_file', basename( $figure_file_path ) . '.csv' );
+									update_post_meta( $post_id, 'figure_interactive_arguments', wp_json_encode( $target_figure_details_element['figure_interactive_arguments'] ) );
 								}
 								break;
 						}
