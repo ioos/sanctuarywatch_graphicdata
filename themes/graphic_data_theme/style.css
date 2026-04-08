@@ -393,6 +393,10 @@ body > h1{
     margin-top: 20px;
   }
 
+  .code-container {
+    max-width: 100%;
+  }
+
    /*   #scene-row {
   display: flex;
     justify-content: center;
@@ -424,6 +428,9 @@ body > h1{
 /*   padding: 20px; */
 }
 
+.code-container {
+  max-width: 100%;
+}
 
 /* Style each row */
 .row {
