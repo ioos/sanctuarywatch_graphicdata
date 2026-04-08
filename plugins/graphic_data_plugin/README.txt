@@ -1,5 +1,8 @@
 === Plugin Name ===
-Contributors: (this should be a list of wordpress.org userid's)
+Contributors:
+    Lead Developer - Jai Ranganathan - https://github.com/superjai
+    Developer - Robert (Robbie) Carroll - https://github.com/robbiecarroll or robbiecarroll.com
+    Developer - Skanda Vasishta - https://github.com/skanda-vasishta
 Donate link: https://www.noaa.gov
 Tags: comments, spam
 Requires at least: 3.0.1

@@ -26,8 +26,7 @@ We use the [MIT license](LICENSE.md).
 
 ## Credits
 Graphic Data was developed by:
-Jai Ranganathan - Lead Developer
-Robert (Robbie) Carroll - Developer - robbiecarroll.com
-Skanda Vasishta - Developer
-
+Lead Developer - Jai Ranganathan - https://github.com/superjai
+Developer - Robert (Robbie) Carroll - https://github.com/robbiecarroll or robbiecarroll.com
+Developer - Skanda Vasishta - https://github.com/skanda-vasishta
 
