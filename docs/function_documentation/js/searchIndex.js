@@ -1191,6 +1191,16 @@ Search.appendIndex(
             "summary": "Create\u0020example\u0020instance\u0020type\u0020taxonomy\u0020terms\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_instance_types"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acopy_files_to_data_folder\u0028\u0029",
+            "name": "copy_files_to_data_folder",
+            "summary": "Copies\u0020a\u0020pair\u0020of\u0020.json\u0020and\u0020.csv\u0020files\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020the\u0020data\/tutorial\u0020folder.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_copy_files_to_data_folder"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_data_json_files\u0028\u0029",
+            "name": "delete_data_json_files",
+            "summary": "Delete\u0020the\u0020data\/tutorial\u0020folder\u0020and\u0020its\u0020contents.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_data_json_files"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_tutorial_instance_types\u0028\u0029",
             "name": "delete_tutorial_instance_types",
             "summary": "Deletes\u0020all\u0020tutorial\u0020instance\u0020type\u0020terms\u0020from\u0020the\u0020database.",
@@ -1230,6 +1240,11 @@ Search.appendIndex(
             "name": "create_tutorial_scenes",
             "summary": "Create\u0020example\u0020scenes\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_scenes"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_figures\u0028\u0029",
+            "name": "create_tutorial_figures",
+            "summary": "Create\u0020example\u0020figures\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_figures"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_modals\u0028\u0029",
             "name": "create_tutorial_modals",

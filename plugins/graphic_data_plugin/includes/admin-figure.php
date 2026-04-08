@@ -348,7 +348,7 @@ class Graphic_Data_Figure {
 
 				foreach ( $scenes as $scene ) {
 					$selected = $current_scene == $scene->ID ? 'selected="selected"' : '';
-					echo '<option value="' . esc_attr( $scene->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( $scene->post_title ) . '</option>';
+					echo '<option value="' . esc_attr( $scene->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( get_the_title( $scene->ID ) ) . '</option>';
 				}
 			}
 			echo '</select>';
@@ -376,7 +376,7 @@ class Graphic_Data_Figure {
 
 				foreach ( $icons as $icon ) {
 					$selected = $current_icon == $icon->ID ? 'selected="selected"' : '';
-					echo '<option value="' . esc_attr( $icon->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( $icon->post_title ) . '</option>';
+					echo '<option value="' . esc_attr( $icon->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( get_the_title( $icon->ID ), ENT_QUOTES, 'UTF-8' ) . '</option>';
 				}
 			}
 			echo '</select>';

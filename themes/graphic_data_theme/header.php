@@ -128,44 +128,29 @@ if ( true == $graphic_data_ioos_bar_replacement ) {
  * SEO by structuring the site hierarchy.
  */
 
-// Get the customizer value.
-$graphic_data_customizer_breadcrumb_row_enable = get_theme_mod( 'breadcrumb_row_enable', '' );
-$graphic_data_breadcrumb_row_replacement = true;
+echo '<div id="site-name-logo-banner">';
+echo '	<span id="header-margin">';
 
-if ( ! empty( $graphic_data_customizer_breadcrumb_row_enable ) ) {
-	if ( 1 == $graphic_data_customizer_breadcrumb_row_enable ) {
-		$graphic_data_breadcrumb_row_replacement = false;
-		echo '<div id="site-name-logo-banner">';
-		echo '	<span id="header-margin">';
+// NEW LOGO AND SITE NAME DISPLAY LOGIC.
+echo '<div class="site-name-logo-header">';
+echo '  <a class="navbar-brand" href="' . esc_url( home_url() ) . '">
+			<img class="navbar-emblem" width="65px"
+				src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '"
+				alt="Header Emblem">
+			' . esc_html( get_bloginfo( 'name' ) ) . '
+		</a>';
 
-		// NEW LOGO AND SITE NAME DISPLAY LOGIC.
-		echo '<div class="site-name-logo-header">';
-		echo '  <a class="navbar-brand" href="' . esc_url( home_url() ) . '">
-					<img class="navbar-emblem" width="65px"
-						src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '"
-						alt="Header Emblem">
-					' . esc_html( get_bloginfo( 'name' ) ) . '
-				</a>';
+echo '  <button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse"
+				data-bs-target="#navbarColor01"
+				aria-controls="navbarColor01"
+				aria-expanded="false"
+				aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>';
+echo '</div>';
 
-		echo '  <button class="navbar-toggler" type="button"
-						data-bs-toggle="collapse"
-						data-bs-target="#navbarColor01"
-						aria-controls="navbarColor01"
-						aria-expanded="false"
-						aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>';
-		echo '</div>';
-
-		echo '	</span>';
-		echo '</div>';
-
-	}
-}
-
-if ( true == $graphic_data_breadcrumb_row_replacement ) {
-	echo '<div style="padding-top:20px">';
-	echo '</div>';
-}
+echo '	</span>';
+echo '</div>';
 
 get_template_part( 'template-parts/navbar' );

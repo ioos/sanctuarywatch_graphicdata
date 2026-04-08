@@ -27,10 +27,10 @@ class Graphic_Data_Tutorial_Content {
 	public function create_tutorial_instance_types() {
 		global $wpdb;
 
-		$term_name = [ 'Instance Type Example 1', 'Instance Type Example 2' ];
+		$term_name = [ 'First Instance Type', 'Second Instance Type' ];
 		$term_slug = [ 'tutorial-instance-example-1', 'tutorial-instance-example-2' ];
 		$term_description = [
-			'Welcome, Space Captain! The highest level of organization in Graphic Data is the "Instance Type". Right here is an example (Instance Type Example 1). ' .
+			'Welcome, Space Captain! The highest level of organization in Graphic Data is the "Instance Type". Right here is an example (First Instance Type). ' .
 			'Instance Types contain Instances. With Graphic Data, you must have at least one Instance Type and each Type must contains one or more Instances. This particular Instance Type contains two Instances.',
 			'This is a second example Instance Type and it contains one Instance.',
 		];
@@ -55,6 +55,65 @@ class Graphic_Data_Tutorial_Content {
 				update_term_meta( $term['term_id'], 'instance_navbar_name', $instance_navbar_name [ $i ] );
 				update_term_meta( $term['term_id'], 'tutorial_instance_type_id', $i + 1 );
 			}
+		}
+	}
+
+	/**
+	 * Copies a pair of .json and .csv files from the plugin directory to the data/tutorial folder.
+	 *
+	 * Creates the wp-content/data/ and wp-content/data/tutorial/ directories if they do not
+	 * already exist. For each extension (.json, .csv), appends the extension to $file_path to
+	 * resolve the source file and copies it to the tutorial folder. Skips any file that already
+	 * exists at the destination. Returns false immediately if any copy operation fails.
+	 *
+	 * @param string $file_path Relative path (without extension) to the source file within the
+	 *                          plugin directory (e.g. 'example_files/tutorial/data').
+	 * @return string|false The relative destination path shared by both files
+	 *                      (e.g. 'data/tutorial/data') on success, or false if a copy fails.
+	 */
+	public function copy_files_to_data_folder( $file_path ) {
+		$data_folder = WP_CONTENT_DIR . '/data';
+		if ( ! file_exists( $data_folder ) ) {
+			wp_mkdir_p( $data_folder );
+		}
+
+		$tutorial_folder = $data_folder . '/tutorial';
+		if ( ! file_exists( $tutorial_folder ) ) {
+			wp_mkdir_p( $tutorial_folder );
+		}
+
+		$initial_source_path = GRAPHIC_DATA_PLUGIN_DIR . $file_path;
+		$initial_destination_path = $tutorial_folder . '/' . basename( $file_path );
+
+		$file_extension_array = [ '.json', '.csv' ];
+		foreach ( $file_extension_array as $file_extension ) {
+			$final_destination_path = $initial_destination_path . $file_extension;
+			$final_source_path = $initial_source_path . $file_extension;
+			if ( ! file_exists( $final_destination_path ) ) {
+				if ( ! copy( $final_source_path, $final_destination_path ) ) {
+					return false;
+				}
+			}
+		}
+		return $initial_destination_path;
+	}
+
+	/**
+	 * Delete the data/tutorial folder and its contents.
+	 *
+	 * Deletes all files inside the data/tutorial/ directory within the plugin directory,
+	 * then removes the tutorial/ directory itself.
+	 *
+	 * @return void
+	 */
+	public function delete_data_json_files() {
+		$tutorial_folder = WP_CONTENT_DIR . '/data/tutorial';
+
+		if ( file_exists( $tutorial_folder ) ) {
+			foreach ( glob( $tutorial_folder . '/*' ) as $file ) {
+				wp_delete_file( $file );
+			}
+			rmdir( $tutorial_folder );
 		}
 	}
 
@@ -457,6 +516,19 @@ class Graphic_Data_Tutorial_Content {
 		$scene_same_hover_color_sections = [ 'yes', 'yes', 'yes', 'yes', 'no', 'no' ];
 		$scene_hover_color = '#ffff00';
 		$scene_hover_text_color = '#000000';
+		$scene_section_number = [ 0, 0, 0, 0, 2, 2 ];
+		$scene_section_details = array(
+			array(
+				'scene_section_title1' => 'First Section',
+				'scene_section_hover_color1' => '#eb4034',
+				'scene_section_hover_text_color1' => '#125496',
+			),
+			array(
+				'scene_section_title2' => 'Second Section',
+				'scene_section_hover_color2' => '#29d646',
+				'scene_section_hover_text_color2' => '#ad1897',
+			),
+		);
 
 		// create the six tutorial scenes.
 		for ( $i = 0; $i < 6; $i++ ) {
@@ -513,9 +585,123 @@ class Graphic_Data_Tutorial_Content {
 				update_post_meta( $post_id, 'scene_hover_color', $scene_hover_color );
 				update_post_meta( $post_id, 'scene_hover_text_color', $scene_hover_text_color );
 				update_post_meta( $post_id, 'scene_same_hover_color_sections', $scene_same_hover_color_sections [ $i ] );
+				update_post_meta( $post_id, 'scene_section_number', $scene_section_number [ $i ] );
+				if ( $i > 3 ) {
+					update_post_meta( $post_id, 'scene_section1', $scene_section_details[0] );
+					update_post_meta( $post_id, 'scene_section2', $scene_section_details[1] );
+				}
 				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
 			}
 		};
+	}
+
+	/**
+	 * Create example figures for the tutorial.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_tutorial_figures( $current_user_id ) {
+
+		// NASA SDO "The Sun Now" — updates every few minutes, date/time stamped on the image:
+		// This is a real-time image of the Sun in the 193Å extreme ultraviolet wavelength (showing the corona in false color). The date and UTC time are burned directly into the image, it's hosted on NASA's GSFC servers, and the URL never changes.
+		// https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg
+		// image from https://www.researchgate.net/publication/334155727_Coronal_Mass_Ejections_over_Solar_Cycles_23_and_24 .
+
+		global $wpdb;
+		$target_icon_array = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'External Link', 'Code Block' ];
+		$figure_tutorial_id = 45;
+		$modal_tutorial_id_array = [ 15, 21, 27, 33, 39 ]; // Image.
+
+		// Load the details of the figures to be saved as tutorial figures from a json.
+		$figure_details_json_path = GRAPHIC_DATA_PLUGIN_DIR . 'example_files/tutorial/figure_details.json';
+		$figure_details_json = file_get_contents( $figure_details_json_path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$figure_details_data = json_decode( $figure_details_json, true );
+
+		// Iterate through each type of figure.
+		for ( $a = 0; $a < 3; $a++ ) {
+			$target_icon = $target_icon_array[ $a ];
+			$target_figure_details = $figure_details_data[ $target_icon ];
+			$target_array_length = count( $target_figure_details );
+			$target_tutorial_id_array = array_map( fn( $id ) => $id + $a, $modal_tutorial_id_array );
+			// Iterate through every figure in each figure type.
+			for ( $b = 0; $b < $target_array_length; $b++ ) {
+				$target_figure_details_element = $target_figure_details[ $b ];
+				// Make a copy of each figure for every scene to which it is to be attached.
+				for ( $q = 0; $q < 5; $q++ ) {
+					$tutorial_modal_id = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+							'tutorial_id',
+							$target_tutorial_id_array[ $q ],
+						)
+					);
+					$tutorial_scene_id = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND post_id = %d",
+							'modal_scene',
+							$tutorial_modal_id,
+						)
+					);
+					$tutorial_instance_id = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s AND post_id = %d",
+							'modal_location',
+							$tutorial_modal_id,
+						)
+					);
+
+					$post_data = array(
+						'post_title'   => $target_figure_details_element['title'],
+						'post_type'    => 'figure',
+						'post_status'  => 'publish',
+						'post_author'  => $current_user_id,
+					);
+
+					// Insert the post and get its ID.
+					$post_id = wp_insert_post( $post_data );
+
+					// Check if post was created successfully.
+					if ( ! is_wp_error( $post_id ) ) {
+						update_post_meta( $post_id, 'figure_published', 'published' );
+						update_post_meta( $post_id, 'figure_modal', $tutorial_modal_id );
+						update_post_meta( $post_id, 'figure_scene', $tutorial_scene_id );
+						update_post_meta( $post_id, 'location', $tutorial_instance_id );
+						update_post_meta( $post_id, 'figure_tab', $target_figure_details_element['figure_tab'] );
+						update_post_meta( $post_id, 'figure_order', $target_figure_details_element['figure_order'] );
+						update_post_meta( $post_id, 'figure_science_info', $target_figure_details_element['figure_science_info'] );
+						update_post_meta( $post_id, 'figure_data_info', $target_figure_details_element['figure_data_info'] );
+						update_post_meta( $post_id, 'figure_caption_short', $target_figure_details_element['figure_caption_short'] );
+						update_post_meta( $post_id, 'figure_caption_long', $target_figure_details_element['figure_caption_long'] );
+						update_post_meta( $post_id, 'figure_path', $target_figure_details_element['figure_path'] );
+						update_post_meta( $post_id, 'tutorial_id', $figure_tutorial_id );
+						switch ( $target_figure_details_element['figure_path'] ) {
+							case 'Code':
+								update_post_meta( $post_id, 'figure_code', $target_figure_details_element['figure_code'] );
+								break;
+							case 'External':
+								update_post_meta( $post_id, 'figure_external_url', $target_figure_details_element['figure_external_url'] );
+								update_post_meta( $post_id, 'figure_external_alt', $target_figure_details_element['figure_external_alt'] );
+								break;
+							case 'Internal':
+								$figure_image = $this->copy_image_to_media_library( $target_figure_details_element['figure_image'], $figure_tutorial_id );
+								update_post_meta( $post_id, 'figure_image', $figure_image );
+								break;
+							case 'Interactive':
+								$figure_file_path = $this->copy_files_to_data_folder( $target_figure_details_element['uploaded_file_path'] );
+								if ( false != $figure_file_path ) {
+									update_post_meta( $post_id, 'uploaded_path_json', $figure_file_path . '.json' );
+									update_post_meta( $post_id, 'uploaded_path_csv', $figure_file_path . '.csv' );
+									update_post_meta( $post_id, 'uploaded_file', basename( $figure_file_path ) . '.csv' );
+									update_post_meta( $post_id, 'figure_interactive_arguments', wp_json_encode( $target_figure_details_element['figure_interactive_arguments'] ) );
+								}
+								break;
+						}
+						++$figure_tutorial_id;
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -553,18 +739,21 @@ class Graphic_Data_Tutorial_Content {
 				)
 			);
 			$scene_title = get_the_title( $tutorial_instance_id );
-			$repeat_array['post_title'] = [ $scene_title . ' Image', $scene_title . ' Video', $scene_title . ' Interactive Line Chart', $scene_title . ' Interactive Bar Chart', $scene_title . ' External Link', $scene_title . ' Code Block' ];
+			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Line Chart', 'Interactive Bar Chart', 'External Link', 'Code Block' ];
 			$repeat_array['modal_location'] = $modal_location[ $q ];
 			$repeat_array['modal_scene'] = $modal_scene[ $q ];
 			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+			if ( $q > 2 ) {
+				$repeat_array['icon_toc_section'] = [ 1, 2, 1, 2, 1, 2 ];
+			}
 			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
 			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
 			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
 			$repeat_array['modal_info_entries'] = 2;
 			$repeat_array['modal_photo_entries'] = 3;
-			$repeat_array['modal_tab_number'] = [ 1, 1, 1, 1, 1, 1 ];
-			$repeat_array['modal_tab_title1'] = [ 'Image', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
-
+			$repeat_array['modal_tab_number'] = [ 2, 1, 1, 1, 1, 1 ];
+			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
+			$repeat_array['modal_tab_title2'] = [ 'External link', '', '', '', '', '' ];
 			$min_id = ( $q + 1 ) * 6 + 9;
 			$max_id = ( $q + 1 ) * 6 + 14;
 			$repeat_array['tutorial_id'] = range( $min_id, $max_id );
@@ -708,10 +897,20 @@ class Graphic_Data_Tutorial_Content {
 							}
 							break;
 						case 'modal_tab_number':
-							update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );
+							if ( 4 != $i ) { // We don't want modal tab recorded for link out modals.
+								update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );
+							}
 							break;
 						case 'modal_tab_title1':
-							update_post_meta( $post_id, 'modal_tab_title1', $modal_array['modal_tab_title1'][ $i ] );
+							if ( 4 != $i ) { // We don't want modal tab title recorded for link out modals.
+								update_post_meta( $post_id, 'modal_tab_title1', $modal_array['modal_tab_title1'][ $i ] );
+								if ( '' != $modal_array['modal_tab_title2'] ) {
+									update_post_meta( $post_id, 'modal_tab_title2', $modal_array['modal_tab_title2'][ $i ] );
+								}
+							}
+							break;
+						case 'icon_toc_section':
+							update_post_meta( $post_id, 'icon_toc_section', $modal_array['icon_toc_section'][ $i ] );
 							break;
 						case 'tutorial_id':
 							update_post_meta( $post_id, 'tutorial_id', $modal_array['tutorial_id'][ $i ] ); // This line is only needed because post title is added to the post meta table for regular posts, where it is used for several operations.
