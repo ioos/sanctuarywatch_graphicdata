@@ -54,6 +54,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 			$existing_file = get_post_meta($post_id, 'uploaded_file', true);
 			$file_label = $existing_file ? 'Current File: ' . basename($existing_file) : '';
 
+			error_log('$existing_file UPLOAD ' . $existing_file );
+			error_log('$file_label UPLOAD ' . $file_label );
+
 
 			// Style for the .custom-div where the light grey text is located. 
 			echo '<style>
@@ -329,6 +332,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 					fileName = uploadedFileInput.files[0].name.toLowerCase();
 				}
 
+				// console.log('fileName', fileName);
+
 				const postIdInput = document.querySelector('[name="post_id"], [name="post_ID"]');
 				if (!postIdInput || !postIdInput.value) {
 					alert("Error: Post ID is missing in the form!");
@@ -343,17 +348,21 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 
 				const postId = postIdInput.value;
 
+				// console.log('post_id', postId);
+				// console.log('file_name', fileName);
+				// console.log('figure_nonce', figureNonceInput.value);
+
 				const formData = new FormData();
 				formData.append('post_id', postId);
 				formData.append('file_name', fileName);
 				formData.append('figure_nonce', figureNonceInput.value);
 				formData.append('action', 'custom_file_delete');
 
-				console.log("Sending delete request:", {
-					post_id: postId,
-					file_name: fileName,
-					action: 'custom_file_delete'
-				});
+				// console.log("Sending delete request:", {
+				// 	post_id: postId,
+				// 	file_name: fileName,
+				// 	action: 'custom_file_delete'
+				// });
 
 				fetch('<?php echo admin_url("admin-ajax.php"); ?>', {
 					method: 'POST',
@@ -362,7 +371,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				})
 				.then(async (response) => {
 					const text = await response.text();
-					console.log("Raw delete response:", text);
+					// console.log("Raw delete response:", text);
 
 					let data;
 					try {
@@ -378,7 +387,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 					return data;
 				})
 				.then((data) => {
-					console.log("Parsed delete response:", data);
+					// console.log("Parsed delete response:", data);
 
 					if (data.success) {
 						alert(data.data?.message || "File deleted successfully.");
@@ -462,7 +471,6 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				var file = fileInput.files[0];
 				var fileName = file.name.toLowerCase();
 
-	
 
 				var postIdInput = document.querySelector('[name="post_id"]');
 				if (!postIdInput || !postIdInput.value) {
