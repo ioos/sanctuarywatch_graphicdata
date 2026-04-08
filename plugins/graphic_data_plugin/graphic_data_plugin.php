@@ -106,6 +106,19 @@ function graphic_data_ensure_public_data_dir() {
 		@chmod( $index, 0644 );
 	}
 
+	// Copy README file into data directory if it does not already exist.
+	$readme_source      = GRAPHIC_DATA_PLUGIN_DIR . 'example_files/readme_about_data.md';
+	$readme_destination = GRAPHIC_DATA_DATA_DIR . '/readme_about_data.md';
+
+	if ( file_exists( $readme_source ) && ! file_exists( $readme_destination ) ) {
+		if ( ! copy( $readme_source, $readme_destination ) ) {
+			update_option( 'graphic_data_data_dir_error', 'Could not copy readme_about_data.md into ' . GRAPHIC_DATA_DATA_DIR . '.' );
+			return;
+		}
+
+		@chmod( $readme_destination, 0644 );
+	}
+
 	delete_option( 'graphic_data_data_dir_error' );
 }
 

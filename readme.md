@@ -22,3 +22,12 @@ Please contact Jai Ranganathan at jai.ranganathan@noaa.gov with any questions yo
 
 ## License
 We use the [MIT license](LICENSE.md).
+
+
+## Credits
+Graphic Data was developed by:
+Jai Ranganathan - Lead Developer
+Robert (Robbie) Carroll - Developer - robbiecarroll.com
+Skanda Vasishta - Developer
+
+
