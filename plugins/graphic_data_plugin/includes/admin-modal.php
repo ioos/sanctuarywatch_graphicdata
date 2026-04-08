@@ -758,7 +758,7 @@ class Graphic_Data_Modal {
 				);
 
 				foreach ( $scenes as $scene ) {
-					echo '<option value="' . esc_attr( $scene->ID ) . '" ' . selected( $selected_scene, $scene->ID, false ) . '>' . esc_html( $scene->post_title ) . '</option>';
+					echo '<option value="' . esc_attr( $scene->ID ) . '" ' . selected( $selected_scene, $scene->ID, false ) . '>' . esc_html( get_the_title( $scene->ID ) ) . '</option>';
 				}
 			}
 			echo '</select>';

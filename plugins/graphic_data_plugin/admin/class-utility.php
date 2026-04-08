@@ -633,7 +633,7 @@ class Graphic_Data_Utility {
 				// Ensure $instance is an object with ID and post_title properties.
 				if ( is_object( $instance ) && isset( $instance->ID ) && isset( $instance->post_title ) ) {
 					$selected = selected( $current_selection, $instance->ID, false ); // Use selected() helper.
-					echo '<option value="' . esc_attr( $instance->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( $instance->post_title ) . '</option>';
+					echo '<option value="' . esc_attr( $instance->ID ) . '" ' . esc_attr( $selected ) . '>' . esc_html( get_the_title( $instance->ID ) ) . '</option>';
 				}
 			}
 		}
@@ -731,8 +731,7 @@ class Graphic_Data_Utility {
 		// Get the array of post IDs.
 		$scene_post_ids = $query->posts;
 		foreach ( $scene_post_ids as $target_id ) {
-			$target_title = get_post_meta( $target_id, 'post_title', true );
-			$scene_titles[ $target_id ] = $target_title;
+			$scene_titles[ $target_id ] = get_the_title( $target_id );
 		}
 		asort( $scene_titles );
 		return $scene_titles;
@@ -749,8 +748,6 @@ class Graphic_Data_Utility {
 		$final_scene_titles = array( ' ' => '' );
 		if ( array_key_exists( 'post', $_GET ) ) {
 			$scene_location = get_post_meta( $modal_id, 'modal_location', true );
-			$scene_name = get_post_meta( $scene_id, 'post_title', true );
-			$scenes[ $scene_id ] = $scene_name;
 
 			$args = array(
 				'post_type' => 'scene',  // Your custom post type.
@@ -773,8 +770,7 @@ class Graphic_Data_Utility {
 
 			$scene_titles = array();
 			foreach ( $scene_post_ids as $target_id ) {
-				$target_title = get_post_meta( $target_id, 'post_title', true );
-				$scene_titles[ $target_id ] = $target_title;
+				$scene_titles[ $target_id ] = get_the_title( $target_id );
 			}
 			asort( $scene_titles );
 
@@ -887,8 +883,7 @@ class Graphic_Data_Utility {
 			$scene_post_ids = $query->posts;
 			foreach ( $scene_post_ids as $target_id ) {
 				if ( $target_id != $scene_id ) {
-					$target_title = get_post_meta( $target_id, 'post_title', true );
-					$potential_scenes[ $target_id ] = $target_title;
+					$potential_scenes[ $target_id ] = get_the_title( $target_id );
 				}
 			}
 			asort( $potential_scenes );
@@ -960,8 +955,7 @@ class Graphic_Data_Utility {
 			// Get the array of post IDs.
 			$scene_post_ids = $query->posts;
 			foreach ( $scene_post_ids as $target_id ) {
-				$target_title = get_post_meta( $target_id, 'post_title', true );
-				$potential_scenes[ $target_id ] = $target_title;
+				$potential_scenes[ $target_id ] = get_the_title( $target_id );
 			}
 		}
 		return $potential_scenes;
@@ -1052,8 +1046,7 @@ class Graphic_Data_Utility {
 
 			$modal_titles = array();
 			foreach ( $modal_post_ids as $target_id ) {
-				$target_title = get_post_meta( $target_id, 'post_title', true );
-				$potential_icons[ $target_id ] = $target_title;
+				$potential_icons[ $target_id ] = get_the_title( $target_id );
 			}
 		}
 		return $potential_icons;
