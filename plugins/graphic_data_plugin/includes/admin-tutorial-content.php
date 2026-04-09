@@ -71,13 +71,13 @@ class Graphic_Data_Tutorial_Content {
 	 * @return string|false The relative destination path shared by both files
 	 *                      (e.g. 'data/tutorial/data') on success, or false if a copy fails.
 	 */
-	public function copy_files_to_data_folder( $file_path ) {
+	public function copy_files_to_data_folder( $file_path, $post_id ) {
 		$data_folder = WP_CONTENT_DIR . '/data';
 		if ( ! file_exists( $data_folder ) ) {
 			wp_mkdir_p( $data_folder );
 		}
 
-		$tutorial_folder = $data_folder . '/tutorial';
+		$tutorial_folder = $data_folder . '/figure_' . $post_id;
 		if ( ! file_exists( $tutorial_folder ) ) {
 			wp_mkdir_p( $tutorial_folder );
 		}
@@ -95,26 +95,75 @@ class Graphic_Data_Tutorial_Content {
 				}
 			}
 		}
+		// Save post ID to wp_options.
+		$option_name = 'graphic_data_tutorial_figure_post_ids';
+		$post_ids    = get_option( $option_name, [] );
+
+		if ( ! is_array( $post_ids ) ) {
+			$post_ids = [];
+		}
+
+		$post_id = (int) $post_id;
+
+		if ( ! in_array( $post_id, $post_ids, true ) ) {
+			$post_ids[] = $post_id;
+			update_option( $option_name, $post_ids, false );
+		}
 		return $initial_destination_path;
 	}
 
 	/**
-	 * Delete the data/tutorial folder and its contents.
+	 * Delete the data/figure_postID folders and contents inside for each folder in the figures.
 	 *
 	 * Deletes all files inside the data/tutorial/ directory within the plugin directory,
 	 * then removes the tutorial/ directory itself.
 	 *
-	 * @return void
+	 * @ return void
 	 */
 	public function delete_data_json_files() {
-		$tutorial_folder = WP_CONTENT_DIR . '/data/tutorial';
-
-		if ( file_exists( $tutorial_folder ) ) {
-			foreach ( glob( $tutorial_folder . '/*' ) as $file ) {
-				wp_delete_file( $file );
-			}
-			rmdir( $tutorial_folder );
+		$option_name = 'graphic_data_tutorial_figure_post_ids';
+		$post_ids    = get_option( $option_name, [] );
+		if ( ! is_array( $post_ids ) || empty( $post_ids ) ) {
+			return false;
 		}
+		$data_folder = WP_CONTENT_DIR . '/data';
+		$deleted_ids = [];
+		foreach ( $post_ids as $post_id ) {
+			$post_id         = (int) $post_id;
+			$tutorial_folder = $data_folder . '/figure_' . $post_id;
+			// Skip if folder does not exist.
+			if ( ! file_exists( $tutorial_folder ) || ! is_dir( $tutorial_folder ) ) {
+				continue;
+			}
+			$files = glob( $tutorial_folder . '/*' );
+			if ( false !== $files ) {
+				foreach ( $files as $file ) {
+					if ( is_file( $file ) ) {
+						if ( ! unlink( $file ) ) {
+							return false;
+						}
+					}
+				}
+			}
+			// Remove the now-empty folder.
+			if ( ! rmdir( $tutorial_folder ) ) {
+				return false;
+			}
+			$deleted_ids[] = $post_id;
+		}
+		// Remove deleted IDs from the option.
+		if ( ! empty( $deleted_ids ) ) {
+			$remaining_ids = array_values(
+				array_filter(
+					$post_ids,
+					function ( $id ) use ( $deleted_ids ) {
+						return ! in_array( (int) $id, $deleted_ids, true );
+					}
+				)
+			);
+			update_option( $option_name, $remaining_ids, false );
+		}
+		return true;
 	}
 
 	/**
@@ -623,7 +672,9 @@ class Graphic_Data_Tutorial_Content {
 			$target_icon = $target_icon_array[ $a ];
 			$target_figure_details = $figure_details_data[ $target_icon ];
 			$target_array_length = count( $target_figure_details );
-			$target_tutorial_id_array = array_map( fn( $id ) => $id + $a, $modal_tutorial_id_array );
+			//THE COMMENTED OUT FUNCTION IF THE CORRECT ONE AS PER JAI AND ROBBIE FIXING AN ISSUE
+			//$target_tutorial_id_array = array_map( fn( $id ) => $id + $a, $modal_tutorial_id_array );
+			$target_tutorial_id_array = array_map(function( $id ) use ( $a ) { return $id + $a; }, $modal_tutorial_id_array);
 			// Iterate through every figure in each figure type.
 			for ( $b = 0; $b < $target_array_length; $b++ ) {
 				$target_figure_details_element = $target_figure_details[ $b ];
@@ -688,7 +739,7 @@ class Graphic_Data_Tutorial_Content {
 								update_post_meta( $post_id, 'figure_image', $figure_image );
 								break;
 							case 'Interactive':
-								$figure_file_path = $this->copy_files_to_data_folder( $target_figure_details_element['uploaded_file_path'] );
+								$figure_file_path = $this->copy_files_to_data_folder( $target_figure_details_element['uploaded_file_path'], $post_id );
 								if ( false != $figure_file_path ) {
 									update_post_meta( $post_id, 'uploaded_path_json', $figure_file_path . '.json' );
 									update_post_meta( $post_id, 'uploaded_path_csv', $figure_file_path . '.csv' );
