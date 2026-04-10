@@ -1198,7 +1198,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_data_json_files\u0028\u0029",
             "name": "delete_data_json_files",
-            "summary": "Delete\u0020the\u0020data\/tutorial\u0020folder\u0020and\u0020its\u0020contents.",
+            "summary": "Delete\u0020the\u0020data\/figure_postID\u0020folders\u0020and\u0020contents\u0020inside\u0020for\u0020each\u0020folder\u0020in\u0020the\u0020figures.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_data_json_files"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_tutorial_instance_types\u0028\u0029",
