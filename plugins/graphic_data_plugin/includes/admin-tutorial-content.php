@@ -59,17 +59,19 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
-	 * Copies a pair of .json and .csv files from the plugin directory to the data/tutorial folder.
+	 * Copies a pair of .json and .csv files from the plugin directory to a per-post data folder.
 	 *
-	 * Creates the wp-content/data/ and wp-content/data/tutorial/ directories if they do not
-	 * already exist. For each extension (.json, .csv), appends the extension to $file_path to
-	 * resolve the source file and copies it to the tutorial folder. Skips any file that already
-	 * exists at the destination. Returns false immediately if any copy operation fails.
+	 * Creates wp-content/data/ and wp-content/data/figure_{$post_id}/ if they do not already
+	 * exist. For each extension (.json, .csv), appends the extension to $file_path to resolve the
+	 * source file and copies it to the figure folder. Skips any file that already exists at the
+	 * destination. Returns false immediately if any copy operation fails. On success, records the
+	 * post ID in the 'graphic_data_tutorial_figure_post_ids' option.
 	 *
 	 * @param string $file_path Relative path (without extension) to the source file within the
 	 *                          plugin directory (e.g. 'example_files/tutorial/data').
-	 * @return string|false The relative destination path shared by both files
-	 *                      (e.g. 'data/tutorial/data') on success, or false if a copy fails.
+	 * @param int    $post_id   ID of the post whose figure folder will receive the copied files.
+	 * @return string|false The absolute destination path shared by both files
+	 *                      (e.g. '.../data/figure_42/data') on success, or false if a copy fails.
 	 */
 	public function copy_files_to_data_folder( $file_path, $post_id ) {
 		$data_folder = WP_CONTENT_DIR . '/data';
@@ -672,9 +674,14 @@ class Graphic_Data_Tutorial_Content {
 			$target_icon = $target_icon_array[ $a ];
 			$target_figure_details = $figure_details_data[ $target_icon ];
 			$target_array_length = count( $target_figure_details );
-			//THE COMMENTED OUT FUNCTION IF THE CORRECT ONE AS PER JAI AND ROBBIE FIXING AN ISSUE
-			//$target_tutorial_id_array = array_map( fn( $id ) => $id + $a, $modal_tutorial_id_array );
-			$target_tutorial_id_array = array_map(function( $id ) use ( $a ) { return $id + $a; }, $modal_tutorial_id_array);
+			// THE COMMENTED OUT FUNCTION IF THE CORRECT ONE AS PER JAI AND ROBBIE FIXING AN ISSUE.
+			// $target_tutorial_id_array = array_map( fn( $id ) => $id + $a, $modal_tutorial_id_array );.
+			$target_tutorial_id_array = array_map(
+				function ( $id ) use ( $a ) {
+					return $id + $a;
+				},
+				$modal_tutorial_id_array
+			);
 			// Iterate through every figure in each figure type.
 			for ( $b = 0; $b < $target_array_length; $b++ ) {
 				$target_figure_details_element = $target_figure_details[ $b ];
@@ -743,7 +750,7 @@ class Graphic_Data_Tutorial_Content {
 								if ( false != $figure_file_path ) {
 									update_post_meta( $post_id, 'uploaded_path_json', $figure_file_path . '.json' );
 									update_post_meta( $post_id, 'uploaded_path_csv', $figure_file_path . '.csv' );
-									update_post_meta( $post_id, 'uploaded_file', basename( $figure_file_path ) . '.csv' );
+									update_post_meta( $post_id, 'uploaded_file', basename( $figure_file_path ) . '.json' );
 									update_post_meta( $post_id, 'figure_interactive_arguments', wp_json_encode( $target_figure_details_element['figure_interactive_arguments'] ) );
 								}
 								break;
@@ -790,20 +797,20 @@ class Graphic_Data_Tutorial_Content {
 				)
 			);
 			$scene_title = get_the_title( $tutorial_instance_id );
-			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Line Chart', 'Interactive Bar Chart', 'External Link', 'Code Block' ];
+			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'External Link', 'Code Block' ];
 			$repeat_array['modal_location'] = $modal_location[ $q ];
 			$repeat_array['modal_scene'] = $modal_scene[ $q ];
-			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Bar-Chart', 'Interactive-Line-Chart', 'External-Link', 'Code-Block' ];
 			if ( $q > 2 ) {
 				$repeat_array['icon_toc_section'] = [ 1, 2, 1, 2, 1, 2 ];
 			}
 			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
 			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
-			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
+			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive bar tagline', 'the interactive line tagline', '', 'the code block tagline' ];
 			$repeat_array['modal_info_entries'] = 2;
 			$repeat_array['modal_photo_entries'] = 3;
 			$repeat_array['modal_tab_number'] = [ 2, 1, 1, 1, 1, 1 ];
-			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
+			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Bar Chart', 'Line Chart', 'External Link', 'Code Block' ];
 			$repeat_array['modal_tab_title2'] = [ 'External link', '', '', '', '', '' ];
 			$min_id = ( $q + 1 ) * 6 + 9;
 			$max_id = ( $q + 1 ) * 6 + 14;
