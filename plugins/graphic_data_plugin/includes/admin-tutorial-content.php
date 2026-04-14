@@ -660,7 +660,7 @@ class Graphic_Data_Tutorial_Content {
 		// image from https://www.researchgate.net/publication/334155727_Coronal_Mass_Ejections_over_Solar_Cycles_23_and_24 .
 
 		global $wpdb;
-		$target_icon_array = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'External Link', 'Code Block' ];
+		$target_icon_array = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block' ];
 		$figure_tutorial_id = 45;
 		$modal_tutorial_id_array = [ 15, 21, 27, 33, 39 ]; // Image.
 
@@ -670,7 +670,7 @@ class Graphic_Data_Tutorial_Content {
 		$figure_details_data = json_decode( $figure_details_json, true );
 
 		// Iterate through each type of figure.
-		for ( $a = 0; $a < 3; $a++ ) {
+		for ( $a = 0; $a < 5; $a++ ) {
 			$target_icon = $target_icon_array[ $a ];
 			$target_figure_details = $figure_details_data[ $target_icon ];
 			$target_array_length = count( $target_figure_details );
