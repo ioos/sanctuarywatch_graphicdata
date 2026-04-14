@@ -797,20 +797,20 @@ class Graphic_Data_Tutorial_Content {
 				)
 			);
 			$scene_title = get_the_title( $tutorial_instance_id );
-			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'External Link', 'Code Block' ];
+			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block', 'External Link' ];
 			$repeat_array['modal_location'] = $modal_location[ $q ];
 			$repeat_array['modal_scene'] = $modal_scene[ $q ];
-			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Bar-Chart', 'Interactive-Line-Chart', 'External-Link', 'Code-Block' ];
+			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Bar-Chart', 'Interactive-Line-Chart', 'Code-Block', 'External-Link' ];
 			if ( $q > 2 ) {
 				$repeat_array['icon_toc_section'] = [ 1, 2, 1, 2, 1, 2 ];
 			}
 			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
-			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
-			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive bar tagline', 'the interactive line tagline', '', 'the code block tagline' ];
+			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'Modal', 'External URL' ];
+			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive bar tagline', 'the interactive line tagline', 'the code block tagline', '' ];
 			$repeat_array['modal_info_entries'] = 2;
 			$repeat_array['modal_photo_entries'] = 3;
 			$repeat_array['modal_tab_number'] = [ 2, 1, 1, 1, 1, 1 ];
-			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Bar Chart', 'Line Chart', 'External Link', 'Code Block' ];
+			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Bar Chart', 'Line Chart', 'Code Block', 'External Link' ];
 			$repeat_array['modal_tab_title2'] = [ 'External link', '', '', '', '', '' ];
 			$min_id = ( $q + 1 ) * 6 + 9;
 			$max_id = ( $q + 1 ) * 6 + 14;
@@ -955,12 +955,12 @@ class Graphic_Data_Tutorial_Content {
 							}
 							break;
 						case 'modal_tab_number':
-							if ( 4 != $i ) { // We don't want modal tab recorded for link out modals.
+							if ( 5 != $i ) { // We don't want modal tab recorded for link out modals.
 								update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );
 							}
 							break;
 						case 'modal_tab_title1':
-							if ( 4 != $i ) { // We don't want modal tab title recorded for link out modals.
+							if ( 5 != $i ) { // We don't want modal tab title recorded for link out modals.
 								update_post_meta( $post_id, 'modal_tab_title1', $modal_array['modal_tab_title1'][ $i ] );
 								if ( '' != $modal_array['modal_tab_title2'] ) {
 									update_post_meta( $post_id, 'modal_tab_title2', $modal_array['modal_tab_title2'][ $i ] );
