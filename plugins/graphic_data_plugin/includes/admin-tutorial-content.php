@@ -115,6 +115,132 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
+	 * Create tutorial content within a WordPress playground context.
+	 *
+	 * This method is only called by the blueprint json file to autopopulate the 
+	 * WordPress Playground used as a demo/tutorial for Graphic Data.
+	 *
+	 * @ return void
+	 */
+	public function create_playground_tutorial_content(){
+		$current_user_id = get_current_user_id();
+		if ( 0 === $current_user_id ) {
+			$users = get_users(
+				array(
+					'number'  => 1,
+					'orderby' => 'ID',
+					'order'   => 'ASC',
+				)
+			);
+			if ( ! empty( $users ) ) {
+				$current_user_id = $users[0]->ID;
+			}
+		}
+
+		$this->create_tutorial_instance_types();
+		$this->create_tutorial_instances( $current_user_id );
+		$this->create_tutorial_scenes( $current_user_id );
+		$this->create_tutorial_modals( $current_user_id );
+		$this->create_tutorial_figures( $current_user_id );
+
+		$graphic_data_settings = array (
+			'intro_text' => 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.',
+			'sitewide_footer_title' => 'Sitewide Footer Title',
+			'site_footer' => 'This is a column that exists across all pages on the site, called the sitewide footer. It is an optional and you can edit it on the Graphic Data Settings page.',
+			'front_page_code_block' => '
+			<style>
+				@import url("https://fonts.googleapis.com/css?family=Lato:300,400,700");
+				#starfield-container {
+				position: relative;
+				width: 100%;
+				max-width: 800px;
+				height: clamp(200px, 40vw, 400px);
+				margin: 0 auto;
+				overflow: hidden;
+				background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+				}
+
+				#starfield-container canvas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				}
+
+				#stars  { animation: animStar  50s linear infinite; }
+				#stars2 { animation: animStar 100s linear infinite; }
+				#stars3 { animation: animStar 150s linear infinite; }
+
+				@keyframes animStar {
+				from { transform: translateY(0px); }
+				to   { transform: translateY(-2000px); }
+				}
+
+				#title {
+				position: absolute;
+				top: 50%;
+				left: 0;
+				right: 0;
+				color: #FFF;
+				text-align: center;
+				font-family: "Lato", sans-serif;
+				font-weight: 300;
+				font-size: clamp(16px, 4vw, 36px);
+				letter-spacing: clamp(2px, 1vw, 10px);
+				transform: translateY(-50%);
+				padding-left: 10px;
+				z-index: 10;
+				}
+				#title span {
+					display: block;
+					background: -webkit-linear-gradient(white, #a8c0d0);
+					-webkit-background-clip: text;
+					-webkit-text-fill-color: transparent;
+					background-clip: text;
+					filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.8));
+				}
+			</style>
+			<div id="starfield-container">
+				<canvas id="stars"></canvas>
+				<canvas id="stars2"></canvas>
+				<canvas id="stars3"></canvas>
+				<div id="title">
+				<span>SAMPLE CODE BLOCK</span>
+				<br>
+				<span>Create your own within the Graphic Data settings page.</span>
+				</div>
+			</div>
+
+			<script>
+				function generateStars(canvasId, count, size) {
+				const canvas = document.getElementById(canvasId);
+				const ctx = canvas.getContext("2d");
+				const container = document.getElementById("starfield-container");
+
+				function draw() {
+					canvas.width  = container.offsetWidth;
+					canvas.height = 4000;
+					ctx.fillStyle = "#FFF";
+					for (let i = 0; i < count; i++) {
+					const x = Math.random() * container.offsetWidth;
+					const y = Math.random() * 2000;
+					ctx.fillRect(x, y, size, size);
+					ctx.fillRect(x, y + 2000, size, size);
+					}
+				}
+
+				draw();
+				window.addEventListener("resize", draw);
+				}
+
+				generateStars("stars",  700, 1);
+				generateStars("stars2", 200, 2);
+				generateStars("stars3", 100, 3);
+			</script>',
+		);
+		update_option( 'graphic_data_settings', $graphic_data_settings );
+	}
+
+	/**
 	 * Delete the data/figure_postID folders and contents inside for each folder in the figures.
 	 *
 	 * Deletes all files inside the data/tutorial/ directory within the plugin directory,
