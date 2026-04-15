@@ -59,7 +59,11 @@
     },
     {
       "step": "runPHP",
-      "code": "<?php define('WP_USE_THEMES', false); require_once 'wordpress/wp-load.php'; do_action('plugins_loaded'); do_action('init'); require_once 'wordpress/wp-content/plugins/graphic_data_plugin/includes/admin-tutorial-content.php'; if (class_exists('Graphic_Data_Tutorial_Content')) { $tutorial = new Graphic_Data_Tutorial_Content(); if (method_exists($tutorial, 'create_playground_tutorial_content')) { $tutorial->create_playground_tutorial_content(); update_option('blueprint_setup_notice', 'success'); } else { update_option('blueprint_setup_notice', 'error: Method create_playground_tutorial_content not found on Graphic_Data_Tutorial_Content.'); } } else { update_option('blueprint_setup_notice', 'error: Class Graphic_Data_Tutorial_Content not found. Plugin may not be active.'); } ?>"
+      "code": "<?php define('WP_USE_THEMES', false); require_once '/wordpress/wp-load.php'; do_action('plugins_loaded'); do_action('init'); try { if (!file_exists('/wordpress/wp-content/plugins/graphic_data_plugin/includes/admin-tutorial-content.php')) { update_option('blueprint_setup_notice', 'error: File admin-tutorial-content.php not found.'); } else { require_once '/wordpress/wp-content/plugins/graphic_data_plugin/includes/admin-tutorial-content.php'; if (class_exists('Graphic_Data_Tutorial_Content')) { $tutorial = new Graphic_Data_Tutorial_Content(); if (method_exists($tutorial, 'create_playground_tutorial_content')) { $tutorial->create_playground_tutorial_content(); update_option('blueprint_setup_notice', 'success'); } else { update_option('blueprint_setup_notice', 'error: Method create_playground_tutorial_content not found.'); } } else { update_option('blueprint_setup_notice', 'error: Class Graphic_Data_Tutorial_Content not found after require.'); } } } catch (Throwable $e) { update_option('blueprint_setup_notice', 'error: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine()); } ?>"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php define('WP_USE_THEMES', false); require_once '/wordpress/wp-load.php'; $notice = get_option('blueprint_setup_notice', 'OPTION NOT SET'); file_put_contents('/wordpress/wp-content/blueprint-debug.txt', $notice); ?>"
     },
     {
       "step": "writeFile",
