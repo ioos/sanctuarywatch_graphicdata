@@ -1196,6 +1196,11 @@ Search.appendIndex(
             "summary": "Copies\u0020a\u0020pair\u0020of\u0020.json\u0020and\u0020.csv\u0020files\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020a\u0020per\u002Dpost\u0020data\u0020folder.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_copy_files_to_data_folder"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_playground_tutorial_content\u0028\u0029",
+            "name": "create_playground_tutorial_content",
+            "summary": "Create\u0020tutorial\u0020content\u0020within\u0020a\u0020WordPress\u0020playground\u0020context.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_playground_tutorial_content"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_data_json_files\u0028\u0029",
             "name": "delete_data_json_files",
             "summary": "Delete\u0020the\u0020data\/figure_postID\u0020folders\u0020and\u0020contents\u0020inside\u0020for\u0020each\u0020folder\u0020in\u0020the\u0020figures.",
