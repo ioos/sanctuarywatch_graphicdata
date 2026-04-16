@@ -117,12 +117,12 @@ class Graphic_Data_Tutorial_Content {
 	/**
 	 * Create tutorial content within a WordPress playground context.
 	 *
-	 * This method is only called by the blueprint json file to autopopulate the 
+	 * This method is only called by the blueprint json file to autopopulate the
 	 * WordPress Playground used as a demo/tutorial for Graphic Data.
 	 *
 	 * @ return void
 	 */
-	public function create_playground_tutorial_content(){
+	public function create_playground_tutorial_content() {
 		$current_user_id = get_current_user_id();
 		if ( 0 === $current_user_id ) {
 			$users = get_users(
@@ -140,7 +140,7 @@ class Graphic_Data_Tutorial_Content {
 		// Change theme colors to make them more Mars-like.
 		set_theme_mod( 'theme_color_1', '#451804' );
 		set_theme_mod( 'theme_color_3', '#451804' );
-		set_theme_mod( 'theme_color_1', '#c1440e' );
+		set_theme_mod( 'theme_color_4', '#c1440e' );
 		set_theme_mod( 'theme_color_5', '#451804' );
 
 		$this->create_tutorial_instance_types();
@@ -149,7 +149,7 @@ class Graphic_Data_Tutorial_Content {
 		$this->create_tutorial_modals( $current_user_id );
 		$this->create_tutorial_figures( $current_user_id );
 
-		$graphic_data_settings = array (
+		$graphic_data_settings = array(
 			'intro_text' => 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.',
 			'sitewide_footer_title' => 'Sitewide Footer Title',
 			'site_footer' => 'This is a column that exists across all pages on the site, called the sitewide footer. It is an optional and you can edit it on the Graphic Data Settings page.',
