@@ -137,6 +137,12 @@ class Graphic_Data_Tutorial_Content {
 			}
 		}
 
+		// Change theme colors to make them more Mars-like.
+		set_theme_mod( 'theme_color_1', '#451804' );
+		set_theme_mod( 'theme_color_3', '#451804' );
+		set_theme_mod( 'theme_color_1', '#c1440e' );
+		set_theme_mod( 'theme_color_5', '#451804' );
+
 		$this->create_tutorial_instance_types();
 		$this->create_tutorial_instances( $current_user_id );
 		$this->create_tutorial_scenes( $current_user_id );
@@ -643,7 +649,7 @@ class Graphic_Data_Tutorial_Content {
 		$scene_infographic = [
 			$file_prefix . 'overview-scene.svg',
 			$file_prefix . 'default-scene.svg',
-			$file_prefix . 'table-scene.svg',
+			$file_prefix . 'table-scene2.svg',
 			$file_prefix . 'space-colony-dome-scene.svg',
 			$file_prefix . 'spaceship-scene.svg',
 			$file_prefix . 'space-colony-scene.svg',
