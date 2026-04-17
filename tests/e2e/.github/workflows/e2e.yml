@@ -1,0 +1,83 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  playwright:
+    name: Playwright E2E (PHP ${{ matrix.php }} / WP ${{ matrix.wp }})
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    strategy:
+      # fail-fast off: we want to see failures across the whole matrix, not
+      # abort at the first red square.
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.1'
+            wp: '6.5'
+          - php: '8.3'
+            wp: 'latest'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: tests/e2e/package-lock.json
+
+      - name: Install dependencies
+        working-directory: tests/e2e
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: pw-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-pw-${{ hashFiles('tests/e2e/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        working-directory: tests/e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Pin versions in blueprint
+        working-directory: tests/e2e
+        run: |
+          # Override preferredVersions in the blueprint with the matrix values
+          # by emitting a matrix-specific copy. jq is preinstalled on ubuntu.
+          jq --arg php "${{ matrix.php }}" --arg wp "${{ matrix.wp }}" \
+             '.preferredVersions = {php: $php, wp: $wp}' \
+             blueprints/blueprint.test.json > blueprints/blueprint.matrix.json
+          mv blueprints/blueprint.matrix.json blueprints/blueprint.test.json
+
+      - name: Run Playwright tests
+        working-directory: tests/e2e
+        run: npm test
+        env:
+          CI: 'true'
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-php${{ matrix.php }}-wp${{ matrix.wp }}
+          path: tests/e2e/playwright-report/
+          retention-days: 14
+
+      - name: Upload test results (traces, screenshots)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-php${{ matrix.php }}-wp${{ matrix.wp }}
+          path: tests/e2e/test-results/
+          retention-days: 14

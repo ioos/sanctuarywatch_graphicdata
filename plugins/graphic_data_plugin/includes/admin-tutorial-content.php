@@ -31,7 +31,7 @@ class Graphic_Data_Tutorial_Content {
 		$term_slug = [ 'tutorial-instance-example-1', 'tutorial-instance-example-2' ];
 		$term_description = [
 			'Welcome, Space Captain! The highest level of organization in Graphic Data is the "Instance Type". Right here is an example (First Instance Type). ' .
-			'Instance Types contain Instances. With Graphic Data, you must have at least one Instance Type and each Type must contains one or more Instances. This particular Instance Type contains two Instances.',
+			'Instance Types contain Instances. With Graphic Data, you must have at least one Instance Type and each Type must contains one or more Instances. This particular Instance Type contains two Instances. You can check out your Instances and Instance Types in the WordPress admin dashboard (they are options in the left panel).',
 			'This is a second example Instance Type and it contains one Instance.',
 		];
 		$instance_navbar_name = [ 'Example 1', 'Example 2' ];
@@ -643,7 +643,7 @@ class Graphic_Data_Tutorial_Content {
 	public function create_tutorial_scenes( $current_user_id ) {
 		global $wpdb;
 		$tutorial_id = [ 6, 7, 8, 9, 10, 11 ];
-		$post_title = [ 'Overview Scene', 'Default Scene', 'Table Scene', 'Space Scene', 'Space Base', 'Space Dome' ];
+		$post_title = [ 'Overview', 'Example Scene 1 (Default)', 'Example Scene 2 (Table)', 'Example Scene 3 (Space)', 'Space Base', 'Space Dome' ];
 		$scene_location = [ 3, 3, 3, 3, 4, 5 ];
 		$file_prefix = 'example_files/tutorial/';
 		$scene_infographic = [
@@ -655,12 +655,12 @@ class Graphic_Data_Tutorial_Content {
 			$file_prefix . 'space-colony-scene.svg',
 		];
 		$scene_tagline = [
-			'Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways.',
-			'The second one',
-			'The third one',
-			'The fourth one',
-			'The fifth one',
-			'The sixth one',
+			'Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways. To see how this Scene is put together, just hit the Edit Scene button at the top of the screen.',
+			'<p>Here we are, Orbital Lieutenant, in the Default Scene! The central mechanic of Graphic Data is the clickable image. The thing is that the clickable image needs to be created in a very particular way. We have <a href="https://ioos.github.io/sanctuarywatch_graphicdata/creating_svg_files/">extensive documentation</a> on how to create the image so that it is ready for Graphic Data. But maybe you don\'t like to read (Who does? Reading is the worst). Not to worry Jack (Space Jack), we\'ve got your back on this one. We have built a tool, within the Graphic Data plugin itself to help you build a clickable image that is formatted in just the right way. You can find this tool - "Create SVG" - under, well, Tools in the admin dashboard.</p><p>The tool will build an image that will look remarkably like what you see below - a scalable vector graphic (or SVG) that will work great with Graphic Data. This image looks admittedly a little plain, but stop with the complaining. All you will need to do from here is to bring the SVG into your vector graphic editing software and swap out the artwork elements (while holding onto the image formatting) so that your clickable image sings. To see examples of what you can do, check out the two scintillating other scene examples in this instance.</p><p>In the scene below, you\'ll see six options. These are the major categories of things you can do with a clickable image within Graphic Data. Click around and be prepared to be floored in wonderment and awe. And, dear space traveler, you might just be wondering how this scene is put together. Well, put your mind at ease: just hit the Edit Scene button at the top of the screen.</p>',
+			'We have arrived at the Table Scene and what a galactic journey it has been. The content within the clickable image below is exactly the same as in the two other example scenes in this instance. The only difference is that the content is arranged in a report card form. And, just as with the other example scenes, the options below show all of the magical things you can do in a scene. Want to know how this scene was created? Hit Edit Scene above!',
+			'<p>Using all of our cunning and - a little worryingly - all of our remaining rocket fuel, we have landed at the Space Scene. All of the example scenes in this instance have the same content, showing the six things you can do with a clickable image. Did I say six? Then how come there are <em>seven</em> clickable icons in the image? Well, that is an excellent eye - nicely done! The semi-transparent drone in the foreground is a non-clickable icon - it represents an icon that has yet to be wired up to do anything. It shows yet another way that the master software designers behind Graphic Data have got you covered - you don\'t have to have the content for a given scene completely ready when you go live. You can go live with what you\'ve got and work to completion over time.</p><p>You\'ll notice in the image that there are no captions. You can change that though by clicking the small "Show Text" button in the upper right of the image. Whether this button is turned on or off is an adjustable parameter in the scene.</p>',
+			'<p>They say in space, no one can hear you scream - but they\'ve never heard <em>me</em> scream. Where was I? Right, talking (screaming) about Graphic Data. Okay, here we are in an instance (Instance 2) that contains only one scene. This scene contains all of the same fabulous clickable options as the other scenes, PLUS a special bonus non-clickable option (the helmeted fellow to the right). What\'s that guy\'s deal? We\'ll never know, but check out the Edit Scene above to see how this page is put together.</p><p>You\'ll notice that the clickable icons in this scene are organized into what we\'re calling a sectioned list, with two categories. This is yet another way that the kind authors of Graphic Data provide you with content options.</p>',
+			'Here on the surface of a planet cruel and merciless, we find another instance (Instance 3) that contains a single scene. This scene contains the same clickable options as the other scenes in this demo, BUT with a (lemon lime) twist. You\'ll see that the icons are organized into two categories that we\'re calling accordions. Now these accordions are great at organizing content, but they are not very good at playing music - but in the vacuum of space it is hard to play a jig in the first place, so you are fine. You\'ll notice the small "Hide Text" button in the upper right of the image. Whether this button is turned on or off is an adjustable parameter in the scene.',
 		];
 		$scene_info_entries = 2;
 		$scene_info1 = array(
@@ -703,13 +703,13 @@ class Graphic_Data_Tutorial_Content {
 		$scene_section_details = array(
 			array(
 				'scene_section_title1' => 'First Section',
-				'scene_section_hover_color1' => '#eb4034',
-				'scene_section_hover_text_color1' => '#125496',
+				'scene_section_hover_color1' => '#ff1100',
+				'scene_section_hover_text_color1' => '#ffffff',
 			),
 			array(
 				'scene_section_title2' => 'Second Section',
-				'scene_section_hover_color2' => '#29d646',
-				'scene_section_hover_text_color2' => '#ad1897',
+				'scene_section_hover_color2' => '#2200ff',
+				'scene_section_hover_text_color2' => '#ffffff',
 			),
 		);
 
@@ -903,11 +903,11 @@ class Graphic_Data_Tutorial_Content {
 	public function create_tutorial_modals( $current_user_id ) {
 		global $wpdb;
 		$initial_array = array();
-		$initial_array['post_title'] = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
+		$initial_array['post_title'] = [ 'Example Scene 1 (Default)', 'Example Scene 2 (Table)', 'Example Scene 3 (Space)' ];
 		$initial_array['modal_location'] = 3;
 		$initial_array['modal_scene'] = 6;
 		$initial_array['modal_icons'] = [ 'Default', 'Table', 'Space' ];
-		$initial_array['modal_icon_order'] = [ 1, 3, 2 ];
+		$initial_array['modal_icon_order'] = [ 1, 2, 3 ];
 		$initial_array['icon_function'] = [ 'Scene', 'Scene', 'Scene' ];
 		$initial_array['icon_scene_out'] = [ 7, 8, 9 ];
 		$initial_array['tutorial_id'] = [ 12, 13, 14 ];
@@ -938,7 +938,14 @@ class Graphic_Data_Tutorial_Content {
 			}
 			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
 			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'Modal', 'External URL' ];
-			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive bar tagline', 'the interactive line tagline', 'the code block tagline', '' ];
+			$repeat_array['modal_tagline'] = [ 
+				'Within the iron fist of the Graphic Data organizational structure, Scenes contain multiple Modals. A modal defines what happens when you click on an icon in the scene. One option is for a modal window, which is this pop out box that has opened on the screen. This particular box is the Image Modal, which is here to show you - with humbleness and grace - various ways you can display images. You\'ll also notice that this particular window contains mutiple tabs. To see out how all of this is put together, check out this modal in Modals within the WordPress admin dashboard (it is an option in the left panel).', 
+				'If you remember one thing about the mind-bending vastness of Graphic Data (and also space), remember this: Scenes contain multiple Modals. Modals define what happens with clickable icons. In this case, we\'re highlighting Graphic Data\'s ability to show videos. This particular implementation of the video is just a special case of the Code Block, another modal option in this scene.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).', 
+				'Despite all of our technological progress, there are no bars in space (that we know of, anyway). It is for this reason (and solely for this reason) that we have included the ability to show interactive bar charts within Graphic Data. There are only a billion different options we have available for the bar charts, so the one below is just an example - though it is a mighty example. To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).', 
+				'If I have said it once, I have said it a thousand times - Scenes contain Modals. Modals can do all kind of things: open a new web page, open a new scene, open a new line of credit, etc. (we\'re still working on the last one). This particular modal opens a window that shows a handy-dandy interactive line chart. Graphic Data has a lot of options available for line charts. See below for more information, but only if you dare!', 
+				'Okay, time for some real talk. We, the fastidious creators of Graphic Data, have done our absolute best to anticipate what users of our humble software might need. But have we thought of everything? Well, almost everything. But for everything else, we have created something called the Code Block, which allows you to inject your own custom web magic into a modal window.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).', 
+				''
+				];
 			$repeat_array['modal_info_entries'] = 2;
 			$repeat_array['modal_photo_entries'] = 3;
 			$repeat_array['modal_tab_number'] = [ 2, 1, 1, 1, 1, 1 ];
