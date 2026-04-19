@@ -50,6 +50,11 @@
       "themeFolderName": "graphic_data_theme"
     },
     {
+      "step": "writeFile",
+      "path": "/wordpress/wp-content/mu-plugins/gd-playground-overrides.php",
+      "data": "<?php\n/**\n * Playground-specific overrides for the Graphic Data plugin.\n *\n * This mu-plugin is written into Playground by blueprint.json and is NOT\n * shipped with the plugin. It disables behaviors that assume reliable\n * outbound HTTP, which Playground does not provide.\n *\n * The plugin's validators call check_url_is_accessible() via raw curl\n * during post save. In Playground, curl's output is routed through a\n * fetch-based network shim that strictly enforces HTTP semantics; the\n * shim throws on follow-redirect responses that real curl would happily\n * accept. The request then hangs and the browser falls back to its\n * generic \"this page might be temporarily down\" error.\n *\n * Until check_url_is_accessible() is converted to use wp_remote_head(),\n * we short-circuit it here so tutorial posts can be saved in Playground.\n */\nadd_filter('graphic_data_skip_url_accessibility_check', '__return_true');\n"
+    },
+    {
       "step": "setSiteOptions",
       "options": {
         "graphic_data_settings": {

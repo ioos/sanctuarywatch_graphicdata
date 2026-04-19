@@ -828,36 +828,48 @@ class Graphic_Data_Validation {
 	/**
 	 * Return HTTP status code for a given URL to check if it's accessible.
 	 *
-	 * Uses cURL to perform a HEAD request to the specified URL and retrieves
-	 * the HTTP status code. The URL should already be validated for correct
-	 * syntax before calling this method.
+	 * Uses WordPress's HTTP API to perform a HEAD request. Falls back to GET
+	 * if the server rejects HEAD (some hosts do). The URL should already be
+	 * validated for correct syntax before calling this method.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $url_to_be_checked The URL to be checked for accessibility.
-	 * @return int The HTTP status code for the URL (e.g., 200 for accessible, 404 for not found).
+	 * @return int The HTTP status code (e.g. 200, 404), or 0 on connection failure.
 	 */
 	public function check_url_is_accessible( $url_to_be_checked ) {
+		// In environments without reliable outbound HTTP (e.g. WordPress Playground),
+		// treat every syntactically valid URL as accessible. Skipping the check
+		// prevents save hooks from hanging or crashing when outbound HTTP is
+		// unavailable. The `graphic_data_skip_url_accessibility_check` filter lets tests
+		// and demo environments opt in.
+		if ( apply_filters( 'graphic_data_skip_url_accessibility_check', false, $url_to_be_checked ) ) {
+			return 200;
+		}
+		$args = array(
+			'timeout'     => 5,
+			'redirection' => 5,
+			'user-agent'  => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) '
+				. 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+			'sslverify'   => true,
+		);
 
-		// Set cURL options.
-		$ch = curl_init( $url_to_be_checked );
-		$user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );  // Return the transfer as a string.
-		curl_setopt( $ch, CURLOPT_NOBODY, true );  // Exclude the body from the output.
-		curl_setopt( $ch, CURLOPT_HEADER, true );  // Include the header in the output.
-		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );  // Follow redirects.
-		curl_setopt( $ch, CURLOPT_USERAGENT, $user_agent );  // Set User-Agent header.
+		$response = wp_remote_head( $url_to_be_checked, $args );
 
-		// Execute cURL session.
-		curl_exec( $ch );
-		// Get the headers.
-		$headers = curl_getinfo( $ch );
+		// Some servers (and some WAFs) reject HEAD with 405 or 403.
+		// Retry as GET in that case.
+		if ( ! is_wp_error( $response ) ) {
+			$code = wp_remote_retrieve_response_code( $response );
+			if ( in_array( $code, array( 405, 403 ), true ) ) {
+				$response = wp_remote_get( $url_to_be_checked, $args );
+			}
+		}
 
-		// Close cURL session.
-		curl_close( $ch );
+		if ( is_wp_error( $response ) ) {
+			return 0;
+		}
 
-		// return the HTTP code for url that is being checked (note anything other than 200 is a problem).
-		return $headers['http_code'];
+		return (int) wp_remote_retrieve_response_code( $response );
 	}
 
 	/**
