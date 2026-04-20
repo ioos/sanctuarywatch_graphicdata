@@ -476,6 +476,11 @@ Search.appendIndex(
             "summary": "Get\u0020scene\u0020titles\u0020for\u0020scenes\u0020sharing\u0020the\u0020same\u0020instance\u0020as\u0020a\u0020modal.",
             "url": "classes/Graphic-Data-Utility.html#method_return_scene_titles"
         },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Asite_url_to_filesystem_path\u0028\u0029",
+            "name": "site_url_to_filesystem_path",
+            "summary": "Convert\u0020a\u0020URL\u0020pointing\u0020into\u0020the\u0020current\u0020site\u0027s\u0020public\u0020tree\u0020to\u0020the\nabsolute\u0020filesystem\u0020path\u0020it\u0020maps\u0020to,\u0020or\u0020null\u0020if\u0020the\u0020URL\u0020does\u0020not\nresolve\u0020to\u0020a\u0020file\u0020inside\u0020this\u0020installation.",
+            "url": "classes/Graphic-Data-Utility.html#method_site_url_to_filesystem_path"
+        },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_icons\u0028\u0029",
             "name": "return_icons",
             "summary": "Retrieves\u0020icon\u0020IDs\u0020from\u0020an\u0020SVG\u0020infographic\u0020associated\u0020with\u0020a\u0020scene.",
