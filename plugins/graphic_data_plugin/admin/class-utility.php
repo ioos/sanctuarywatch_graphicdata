@@ -785,6 +785,75 @@ class Graphic_Data_Utility {
 	}
 
 	/**
+	 * Convert a URL pointing into the current site's public tree to the
+	 * absolute filesystem path it maps to, or null if the URL does not
+	 * resolve to a file inside this installation.
+	 *
+	 * This is the single source of truth for "given a URL the editor pasted
+	 * in, where is the actual file on disk?" It is intentionally strict:
+	 *   - URLs pointing to a different host return null (never silently
+	 *     resolve them to some unrelated local file).
+	 *   - The site's URL path prefix (if any) is stripped before the path
+	 *     is appended to ABSPATH. This is what handles WordPress Playground,
+	 *     where the public URL contains a /scope:xxx/ segment that is NOT
+	 *     part of the filesystem layout, as well as subdirectory installs
+	 *     where home and siteurl differ.
+	 *
+	 * The helper uses ABSPATH rather than get_home_path() because
+	 * get_home_path() is only defined after wp-admin/includes/file.php is
+	 * loaded, returns inconsistent results when home != siteurl, and is
+	 * documented as not working on the front end. ABSPATH is always
+	 * defined and always points at the WordPress root.
+	 *
+	 * @since 1.3.7
+	 *
+	 * @param string $url A URL, typically from a custom field or post meta.
+	 * @return string|null Absolute filesystem path if the URL maps onto a
+	 *                     file within this install, null otherwise.
+	 */
+	public function site_url_to_filesystem_path( $url ) {
+		$url = (string) $url;
+		if ( '' === $url ) {
+			return null;
+		}
+
+		$parsed_target = wp_parse_url( $url );
+		if ( empty( $parsed_target['path'] ) ) {
+			return null;
+		}
+
+		// If the URL is absolute (has a host), verify it belongs to this site
+		// before resolving it to a local path. Relative URLs and path-only
+		// inputs skip this check.
+		if ( ! empty( $parsed_target['host'] ) ) {
+			$site_host = wp_parse_url( home_url(), PHP_URL_HOST );
+			if ( $site_host && 0 !== strcasecmp( $parsed_target['host'], $site_host ) ) {
+				return null;
+			}
+		}
+
+		$url_path  = $parsed_target['path'];
+		$site_path = wp_parse_url( home_url(), PHP_URL_PATH );
+
+		// Strip the site's URL path prefix if present. In Playground the
+		// site URL is https://playground.wordpress.net/scope:x, so
+		// $site_path is '/scope:x' and URL paths start with it. On a
+		// plain install, $site_path is empty and nothing is stripped.
+		if ( is_string( $site_path ) && '' !== $site_path ) {
+			$site_path_trailing = trailingslashit( $site_path );
+			$url_path_check     = trailingslashit( $url_path );
+			if ( 0 === stripos( $url_path_check, $site_path_trailing ) ) {
+				$url_path = substr( $url_path, strlen( $site_path ) );
+			}
+		}
+
+		$relative = ltrim( $url_path, '/' );
+		$abspath  = rtrim( ABSPATH, '/\\' );
+
+		return $abspath . '/' . $relative;
+	}
+
+	/**
 	 * Retrieves icon IDs from an SVG infographic associated with a scene.
 	 *
 	 * Parses the SVG file linked to the scene's infographic meta field and extracts
@@ -798,57 +867,61 @@ class Graphic_Data_Utility {
 	public function return_icons( $scene_id ) {
 		$modal_icons = array( '' => '' );
 		$scene_infographic = get_post_meta( $scene_id, 'scene_infographic', true );
-		if ( true == $scene_infographic ) {
-			$relative_path = ltrim( parse_url( $scene_infographic )['path'], '/' );
+		if ( ! $scene_infographic ) {
+			return $modal_icons;
+		}
 
-			$full_path = get_home_path() . $relative_path;
+		$full_path = $this->site_url_to_filesystem_path( $scene_infographic );
+		if ( null === $full_path || ! is_readable( $full_path ) ) {
+			error_log( "Utility::return_icons - Could not locate SVG on disk for URL: {$scene_infographic}" );
+			return $modal_icons;
+		}
 
-			$svg_content = file_get_contents( $full_path );
+		$svg_content = file_get_contents( $full_path );
+		if ( false === $svg_content ) {
+			error_log( "Utility::return_icons - file_get_contents failed for: {$full_path}" );
+			return $modal_icons;
+		}
 
-			if ( false === $svg_content ) {
-				die( 'Failed to load SVG file.' );
-			}
+		// Create a new DOMDocument instance and load the SVG content.
+		$dom = new DOMDocument();
+		libxml_use_internal_errors( true );
+		$dom->loadXML( $svg_content );
+		libxml_clear_errors();
 
-			// Create a new DOMDocument instance and load the SVG content.
-			$dom = new DOMDocument();
-			libxml_use_internal_errors( true ); // Suppress errors related to invalid XML.
-			$dom->loadXML( $svg_content );
-			libxml_clear_errors();
+		// Create a new DOMXPath instance.
+		$xpath = new DOMXPath( $dom );
 
-			// Create a new DOMXPath instance.
-			$xpath = new DOMXPath( $dom );
+		// Find the element with the ID "icons" (case-insensitive).
+		// XPath 1.0 doesn't have lower-case(), so we use translate().
+		$query = "//*[translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'icons']";
+		$icons_element = $xpath->query( $query )->item( 0 );
 
-			// Find the element with the ID "icons" (case-insensitive).
-			// XPath 1.0 doesn't have lower-case(), so we use translate().
-			$query = "//*[translate(@id, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'icons']";
-			$icons_element = $xpath->query( $query )->item( 0 );
+		if ( null === $icons_element ) {
+			error_log( "Utility::return_icons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path );
+			return $modal_icons; // Element not found.
+		}
 
-			if ( null === $icons_element ) {
-				error_log( "Utility::return_icons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path );
-				return $modal_icons; // Element not found.
-			}
+		// Get all child elements of the "icons" element.
+		// The phpcs ignore command on the next line is needed to suppress a php code sniffer error.
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		$child_elements = $icons_element->childNodes;
 
-			// Get all child elements of the "icons" element.
-			// The phpcs ignore command on the next line is needed to suppress a php code sniffer error.
+		// Initialize an array to hold the IDs.
+		$child_ids = array();
+
+		// Loop through the child elements and extract their IDs.
+		foreach ( $child_elements as $child ) {
+			// The phpcs ignore command on the next two lines is needed to suppress a php code sniffer error.
 			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-			$child_elements = $icons_element->childNodes;
-
-			// Initialize an array to hold the IDs.
-			$child_ids = array();
-
-			// Loop through the child elements and extract their IDs.
-			foreach ( $child_elements as $child ) {
-				// The phpcs ignore command on the next two lines is needed to suppress a php code sniffer error.
+			if ( XML_ELEMENT_NODE === $child->nodeType && $child instanceof DOMElement && $child->hasAttribute( 'id' ) ) {
 				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-				if ( XML_ELEMENT_NODE === $child->nodeType && $child instanceof DOMElement && $child->hasAttribute( 'id' ) ) {
-					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-					$child_ids[] = $child->getAttribute( 'id' );
-				}
+				$child_ids[] = $child->getAttribute( 'id' );
 			}
-			asort( $child_ids );
-			foreach ( $child_ids as $single_icon ) {
-				$modal_icons[ $single_icon ] = $single_icon;
-			}
+		}
+		asort( $child_ids );
+		foreach ( $child_ids as $single_icon ) {
+			$modal_icons[ $single_icon ] = $single_icon;
 		}
 		return $modal_icons;
 	}

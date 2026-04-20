@@ -731,19 +731,19 @@ class Graphic_Data_Validation {
 			array_push( $scene_errors, 'The Infographic field cannot be left blank.' );
 			$save_scene_fields = false;
 		} else {
-			// Parse the URL to extract the path.
-			$parsed_url = parse_url( $scene_infographic );
+			$content_path = $function_utilities->site_url_to_filesystem_path( $scene_infographic );
 
-			// Get the path from the parsed URL.
-			$path_url = $parsed_url['path'];
-			$content_path = rtrim( get_home_path(), '/' ) . $path_url;
-
-			$infographic_svg_validate = new Graphic_Data_SVG_Validator();
-			$svg_analyze = $infographic_svg_validate->validate_svg_file( $content_path );
-
-			if ( false == $svg_analyze['valid'] ) {
-				array_push( $scene_errors, $svg_analyze['error'] );
+			if ( null === $content_path ) {
+				array_push( $scene_errors, 'The Infographic URL does not appear to reference a file on this site.' );
 				$save_scene_fields = false;
+			} else {
+				$infographic_svg_validate = new Graphic_Data_SVG_Validator();
+				$svg_analyze = $infographic_svg_validate->validate_svg_file( $content_path );
+
+				if ( false == $svg_analyze['valid'] ) {
+					array_push( $scene_errors, $svg_analyze['error'] );
+					$save_scene_fields = false;
+				}
 			}
 		}
 

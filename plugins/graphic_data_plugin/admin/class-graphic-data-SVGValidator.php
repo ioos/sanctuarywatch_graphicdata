@@ -17,8 +17,18 @@ class Graphic_Data_SVG_Validator {
 		);
 
 		// Step 1: Check if file exists and is readable.
-		if ( ! file_exists( $file_path ) || ! is_readable( $file_path ) ) {
-			$result['error'] = 'The infographic SVG does not exist or is not readable.';
+		if ( ! file_exists( $file_path ) ) {
+			$result['error'] = sprintf(
+				'Infographic SVG not found on disk: %s',
+				esc_html( $file_path )
+			);
+			return $result;
+		}
+		if ( ! is_readable( $file_path ) ) {
+			$result['error'] = sprintf(
+				'Infographic SVG is not readable (permissions): %s',
+				esc_html( $file_path )
+			);
 			return $result;
 		}
 
