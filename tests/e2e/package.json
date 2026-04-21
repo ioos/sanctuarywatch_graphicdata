@@ -13,12 +13,11 @@
     "test:admin-js": "playwright test specs/admin-js",
     "test:frontend": "playwright test specs/frontend",
     "test:report": "playwright show-report",
-    "playground:serve": "wp-playground server --blueprint=./blueprints/blueprint.test.json --mount=../../:/wordpress/wp-content/plugins/graphic_data_plugin",
     "install:browsers": "playwright install chromium"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.0",
-    "@wp-playground/cli": "^1.0.0",
+    "@wp-playground/cli": "^3.1.0",
     "@types/node": "^20.0.0",
     "typescript": "^5.4.0"
   }

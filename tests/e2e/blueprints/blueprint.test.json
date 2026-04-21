@@ -1,9 +1,8 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
-  "landingPage": "/wp-admin/",
   "preferredVersions": {
     "php": "8.3",
-    "wp": "latest"
+    "wp": "6.8"
   },
   "login": true,
   "steps": [
@@ -13,7 +12,6 @@
         "blogname": "Graphic Data test"
       }
     },
-
     {
       "step": "installPlugin",
       "pluginData": {
@@ -25,9 +23,7 @@
       "step": "activatePlugin",
       "pluginPath": "svg-support/svg-support.php"
     },
-
     {
-      "//": "The plugin and theme are mounted into /wordpress/wp-content/... via the --mount flag in runCLI, so no installPlugin/installTheme step is needed here. We only need to activate them.",
       "step": "activatePlugin",
       "pluginPath": "graphic_data_plugin/graphic_data_plugin.php"
     },
@@ -35,7 +31,11 @@
       "step": "activateTheme",
       "themeFolderName": "graphic_data_theme"
     },
-
+    {
+      "step": "writeFile",
+      "path": "/wordpress/wp-content/mu-plugins/gd-playground-overrides.php",
+      "data": "<?php\nadd_filter('gd_skip_url_accessibility_check', '__return_true');\n"
+    },
     {
       "step": "setSiteOptions",
       "options": {
@@ -44,18 +44,14 @@
         }
       }
     },
-
     {
-      "//": "Seed tutorial content. Mirrors the logic in blueprint.json but writes the result to an option that tests can assert on via the WP REST API or by loading a debug page.",
       "step": "runPHP",
       "code": "<?php define('WP_USE_THEMES', false); require_once '/wordpress/wp-load.php'; do_action('plugins_loaded'); do_action('init'); try { if (!file_exists('/wordpress/wp-content/plugins/graphic_data_plugin/includes/admin-tutorial-content.php')) { update_option('blueprint_setup_notice', 'error: File admin-tutorial-content.php not found.'); } else { require_once '/wordpress/wp-content/plugins/graphic_data_plugin/includes/admin-tutorial-content.php'; if (class_exists('Graphic_Data_Tutorial_Content')) { $tutorial = new Graphic_Data_Tutorial_Content(); if (method_exists($tutorial, 'create_playground_tutorial_content')) { $tutorial->create_playground_tutorial_content(); update_option('blueprint_setup_notice', 'success'); } else { update_option('blueprint_setup_notice', 'error: Method create_playground_tutorial_content not found.'); } } else { update_option('blueprint_setup_notice', 'error: Class Graphic_Data_Tutorial_Content not found after require.'); } } } catch (Throwable $e) { update_option('blueprint_setup_notice', 'error: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine()); } ?>"
     },
-
     {
-      "//": "Drop a tiny mu-plugin that (a) exposes blueprint setup status at a known URL for tests to assert, and (b) makes PHP errors loud during tests by enabling WP_DEBUG display.",
       "step": "writeFile",
       "path": "/wordpress/wp-content/mu-plugins/graphic-data-test-helpers.php",
-      "data": "<?php\n// Test-only helpers. Do NOT ship in production.\n\n// Fail loud on PHP errors during tests.\nif (!defined('WP_DEBUG'))         define('WP_DEBUG', true);\nif (!defined('WP_DEBUG_DISPLAY'))  define('WP_DEBUG_DISPLAY', true);\nif (!defined('WP_DEBUG_LOG'))      define('WP_DEBUG_LOG', true);\n@ini_set('display_errors', '1');\nerror_reporting(E_ALL);\n\n// Endpoint: /?graphic_data_test_status=1 -> JSON { setup: 'success'|'error: ...' }\nadd_action('init', function () {\n    if (!isset($_GET['graphic_data_test_status'])) return;\n    header('Content-Type: application/json');\n    echo json_encode([\n        'setup'        => get_option('blueprint_setup_notice', 'MISSING'),\n        'active_plugins' => get_option('active_plugins', []),\n        'stylesheet'   => get_option('stylesheet'),\n        'template'     => get_option('template'),\n    ]);\n    exit;\n});\n"
+      "data": "<?php\n// Test-only helpers. Do NOT ship in production.\n\nif (!defined('WP_DEBUG'))         define('WP_DEBUG', true);\nif (!defined('WP_DEBUG_DISPLAY'))  define('WP_DEBUG_DISPLAY', true);\nif (!defined('WP_DEBUG_LOG'))      define('WP_DEBUG_LOG', true);\n@ini_set('display_errors', '1');\nerror_reporting(E_ALL);\n\n// Endpoint: /?graphic_data_test_status=1 -> JSON { setup: 'success'|'error: ...' }\n// Hooks muplugins_loaded (NOT init) so the response fires before WordPress's\n// canonical-redirect logic runs. Using init caused an infinite redirect\n// loop in Playground's server mode.\nadd_action('muplugins_loaded', function () {\n    if (!isset($_GET['graphic_data_test_status'])) return;\n    header('Content-Type: application/json');\n    echo json_encode([\n        'setup'          => get_option('blueprint_setup_notice', 'MISSING'),\n        'active_plugins' => get_option('active_plugins', []),\n        'stylesheet'     => get_option('stylesheet'),\n        'template'       => get_option('template'),\n    ]);\n    exit;\n});\n"
     }
   ]
 }

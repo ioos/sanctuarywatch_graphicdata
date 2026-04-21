@@ -1,36 +1,34 @@
 import { test as base, expect, Page, ConsoleMessage } from '@playwright/test';
 import { runCLI } from '@wp-playground/cli';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
- * Absolute paths to the plugin and theme on the host filesystem.
- * This file lives at <repo-root>/tests/e2e/fixtures/playground.ts, so the
- * plugin is two directories up, and the theme is a sibling of the plugin's
- * parent directory.
+ * Host-side paths for the plugin and theme.
  *
- * Adjust these if you restructure the repo.
+ * The sanctuarywatch_graphicdata repo is organized as a wp-content overlay:
+ * the repo root contains `plugins/`, `themes/`, `tests/`, etc. side-by-side,
+ * exactly as a WordPress wp-content directory is laid out. This file lives
+ * at <repo-root>/tests/e2e/fixtures/playground.ts, so three directories up
+ * from __dirname is the repo root (= the virtual wp-content).
  */
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
-const PLUGIN_HOST_PATH = REPO_ROOT;                                  // /.../sanctuarywatch_graphicdata
-const THEME_HOST_PATH = path.resolve(REPO_ROOT, '..', 'graphic_data_theme');
+const PLUGIN_HOST_PATH = path.resolve(REPO_ROOT, 'plugins', 'graphic_data_plugin');
+const THEME_HOST_PATH = path.resolve(REPO_ROOT, 'themes', 'graphic_data_theme');
 
 /**
  * Extended test with Playground-aware fixtures.
  *
  * Fixtures exposed:
- *   - serverUrl: base URL of the Playground HTTP server for this worker.
- *   - adminPage: a Page already logged in as admin, with console/pageerror
- *                listeners attached. Any JS error or `console.error` fails
- *                the test at teardown unless explicitly allowed.
- *   - allowConsoleErrors: call to opt out of strict JS-error assertion for
- *                         known-noisy tests (e.g. tests that intentionally
- *                         trigger an error).
- *
- * Scope: all fixtures are `worker`-scoped where possible so Playground boots
- * once per worker, not once per test. Individual tests get fresh pages.
+ *   - serverUrl:          Base URL of the Playground HTTP server.
+ *   - adminPage:          Logged-in admin Page with console/pageerror
+ *                         listeners attached. Any JS error or
+ *                         console.error fails the test at teardown.
+ *   - allowConsoleErrors: Opt out of strict JS-error assertion for
+ *                         known-noisy tests.
  */
 
 type PlaygroundFixtures = {
@@ -46,8 +44,16 @@ type WorkerFixtures = {
 export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
     /**
      * Worker-scoped: one Playground server per parallel worker.
-     * The blueprint mounts the local plugin and theme directories so edits
-     * to PHP/JS are picked up on the next test run (no rebuild needed).
+     *
+     * @wp-playground/cli v3.x API notes:
+     *   - `blueprint` is a parsed JSON object (NOT a filepath).
+     *   - `mount` is an ARRAY of { hostPath, vfsPath } pairs. (In v2.x it
+     *     was an object; they flipped it.)
+     *   - `php` and `wp` must be passed as top-level options; the CLI
+     *     does NOT read preferredVersions from the blueprint at boot.
+     *   - `wp: 'latest'` worked on a 2.x CLI bug where it resolved to
+     *     the 2014 7.0-RC2 beta. Pinning a real version is more reliable
+     *     across CLI updates anyway.
      */
     playgroundServer: [
         async ({}, use) => {
@@ -57,13 +63,29 @@ export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
                 'blueprints',
                 'blueprint.test.json',
             );
+            const blueprint = JSON.parse(fs.readFileSync(blueprintPath, 'utf8'));
+
+            // Fail fast with a clear error if either host path is missing.
+            if (!fs.existsSync(PLUGIN_HOST_PATH)) {
+                throw new Error(
+                    `Plugin directory not found at ${PLUGIN_HOST_PATH}. ` +
+                        `Edit PLUGIN_HOST_PATH in fixtures/playground.ts if your ` +
+                        `graphic_data_plugin lives somewhere else.`,
+                );
+            }
+            if (!fs.existsSync(THEME_HOST_PATH)) {
+                throw new Error(
+                    `Theme directory not found at ${THEME_HOST_PATH}. ` +
+                        `Edit THEME_HOST_PATH in fixtures/playground.ts if your ` +
+                        `graphic_data_theme lives somewhere else.`,
+                );
+            }
 
             const cli = await runCLI({
                 command: 'server',
-                blueprint: blueprintPath,
-                // Mount local working tree into Playground filesystem. Paths on
-                // the left are host paths; paths on the right are inside the
-                // Playground's virtual /wordpress tree.
+                php: '8.3',
+                wp: '6.8',
+                blueprint,
                 mount: [
                     {
                         hostPath: PLUGIN_HOST_PATH,
@@ -74,16 +96,29 @@ export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
                         vfsPath: '/wordpress/wp-content/themes/graphic_data_theme',
                     },
                 ],
-                // Bind to a random free port; runCLI returns the actual URL.
-                port: 0,
             });
 
-            // Sanity-check blueprint success before running any tests. If
-            // tutorial content seeding failed, every downstream test will fail
-            // mysteriously — better to catch it here with a clear message.
+            // Sanity-check blueprint success before running any tests.
+            //
+            // We disable redirect-following so an infinite redirect loop
+            // (which previously happened when the helper hooked `init`
+            // instead of `muplugins_loaded`) surfaces as a clear HTTP
+            // status rather than a 20-deep "redirect count exceeded" from
+            // undici.
             const statusUrl = `${cli.serverUrl}/?graphic_data_test_status=1`;
-            const res = await fetch(statusUrl);
-            const status = await res.json();
+            const res = await fetch(statusUrl, { redirect: 'manual' });
+
+            if (res.status !== 200) {
+                await cli.server?.close();
+                throw new Error(
+                    `Status endpoint returned HTTP ${res.status} (expected 200). ` +
+                        `Location header: ${res.headers.get('location') ?? 'none'}. ` +
+                        `This usually means the helper mu-plugin isn't being loaded, ` +
+                        `or WordPress is canonicalizing the URL before our handler runs.`,
+                );
+            }
+
+            const status: any = await res.json();
             if (status.setup !== 'success') {
                 await cli.server?.close();
                 throw new Error(
@@ -104,21 +139,15 @@ export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
         { scope: 'worker', timeout: 180_000 },
     ],
 
-    /**
-     * Test-scoped: expose just the URL string for convenience.
-     */
+    /** Convenience: just the URL string. */
     serverUrl: async ({ playgroundServer }, use) => {
         await use(playgroundServer.serverUrl);
     },
 
     /**
      * Test-scoped: a Page that's already logged in as admin and wired with
-     * JS error listeners. At teardown we assert zero console errors and zero
-     * uncaught page errors — unless the test called `allowConsoleErrors`.
-     *
-     * This is the single most important feature of the harness for catching
-     * the "small JS change produces an unanticipated bug" pattern mentioned
-     * in the planning discussion.
+     * JS error listeners. At teardown we assert zero console errors and
+     * zero uncaught page errors — unless the test opted out.
      */
     adminPage: async ({ browser, serverUrl }, use, testInfo) => {
         const context = await browser.newContext({ baseURL: serverUrl });
@@ -126,10 +155,8 @@ export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
 
         const errors: string[] = [];
         const allowedPatterns: RegExp[] = [
-            // Known WordPress-core admin noise that isn't our bug. Add to taste.
             /heartbeat\.php/i,
             /wp-emoji-release/i,
-            // Playground-specific warnings about missing wp-cron etc.
             /cron\.php/i,
         ];
 
@@ -145,31 +172,23 @@ export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
             errors.push(`pageerror: ${text}`);
         });
 
-        // Attach a helper on the page for tests that want to opt out of strict
-        // checking. Tests call: allowConsoleErrors([/expected noise/]).
         const allowConsoleErrors = (patterns: RegExp[] = []) => {
             allowedPatterns.push(...patterns);
-            // Retroactively clear matches that were captured before opt-out.
             for (let i = errors.length - 1; i >= 0; i--) {
                 if (patterns.some((re) => re.test(errors[i]))) errors.splice(i, 1);
             }
         };
         (page as any).__allowConsoleErrors = allowConsoleErrors;
 
-        // Log in through wp-login.php so the session cookie is real.
         await loginAsAdmin(page, serverUrl);
 
         await use(page);
 
-        // Teardown assertion. Attach errors to the test report before throwing
-        // so the Playwright HTML report shows them cleanly.
         if (errors.length > 0) {
             await testInfo.attach('js-errors.txt', {
                 body: errors.join('\n'),
                 contentType: 'text/plain',
             });
-            // Throw only if the test didn't explicitly allow errors. We signal
-            // that by checking for a known flag on the page object.
             if (!(page as any).__consoleErrorsAllowedAll) {
                 throw new Error(
                     `Test produced ${errors.length} unexpected JS error(s):\n` +
@@ -196,16 +215,12 @@ export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
 export { expect };
 
 /**
- * Log in as admin via wp-login.php. The blueprint's `login: true` flag
- * creates a logged-in session only in the initial request used to apply the
- * blueprint; tests launch fresh browser contexts so we re-auth here.
- *
- * Default Playground credentials are admin/password.
+ * Log in as admin via wp-login.php. The blueprint's `login: true` creates
+ * a session only for the request that applied the blueprint; test pages
+ * launch fresh browser contexts with no cookies, so we re-auth here.
  */
 async function loginAsAdmin(page: Page, serverUrl: string): Promise<void> {
     await page.goto(`${serverUrl}/wp-login.php`);
-    // If already logged in (unlikely but possible if cookies carried over),
-    // wp-login redirects to /wp-admin/ and the form won't be present.
     const loginForm = page.locator('#loginform');
     if (await loginForm.isVisible().catch(() => false)) {
         await page.locator('#user_login').fill('admin');

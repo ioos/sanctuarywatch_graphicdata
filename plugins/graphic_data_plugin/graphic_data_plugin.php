@@ -7,12 +7,12 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://github.com/ioos/sanctuarywatch_graphicdata
+ * @link              https://ç
  * @package           Graphic_Data_Plugin
  *
  * @wordpress-plugin
  * Plugin Name:       Graphic Data Plugin
- * Plugin URI:        hhttps://github.com/ioos/sanctuarywatch_graphicdata
+ * Plugin URI:        https://github.com/ioos/sanctuarywatch_graphicdata
  * Description:       This plugin customizes a Wordpress installation for the requirements of the Graphic Data framework.
  * Version:           1.4.0
  * Author:            Graphic Data Team
