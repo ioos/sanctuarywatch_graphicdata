@@ -24,7 +24,7 @@
             "figure_path": "Internal",
             "figure_image": "example_files/tutorial/tutorial_image3.png",
             "figure_caption_short": "You can also use Figures to show data, like for example this actual chart of solar activity from a scientific paper.",
-            "figure_caption_long": "You'll notice above in the gray bar that there is a link (the science link) and you have the option for an additional link (the data link). Image credit: <a href='https://link.springer.com/article/10.1007/s11214-019-0605-y?utm_source=researchgate.net&utm_medium=article' target='_blank'>Lamy et al. 2019, Space Science Reviews.</a>.",
+            "figure_caption_long": "You'll notice above in the gray bar that there is a link (the science link) and you have the option for an additional link (the data link). Image credit: <a href='https://link.springer.com/article/10.1007/s11214-019-0605-y?utm_source=researchgate.net&utm_medium=article' target='_blank'>Lamy et al. 2019, Space Science Reviews</a>.",
             "figure_science_info": {
                 "figure_science_link_text": "Coronal Mass Ejections over Solar Cycles 23 and 24",
                 "figure_science_link_url": "https://link.springer.com/article/10.1007/s11214-019-0605-y?utm_source=researchgate.net&utm_medium=article"
@@ -60,7 +60,7 @@
             "figure_order": 1,
             "figure_path": "Code",
             "figure_code": "<iframe style=\"width: 100%; height: auto; aspect-ratio: 16 / 9;\" src=\"https://www.youtube.com/embed/mhfrL9ku1uA?si=37T91dTbcEfrja48\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen></iframe>",
-            "figure_caption_short": "Within Graphic Data, Modals contain Figures. You are looking at an example of a Figure right here. To edit this Figure, just select this figure in the WordPress admin dashboard (Figures are in the left-most column of the dashboard). If there is to be a space colony on Mars, Arnold Schwarzenegger must be on it. Hence, this clip from the classic movie Total Recall (the good original, not the bad remake).",
+            "figure_caption_short": "Within Graphic Data, Modals contain Figures. You are looking at an example of a Figure right here. To edit this Figure, just select this figure in the WordPress admin dashboard (Figures are in the left-most column of the dashboard). If there is to be a space colony on Mars, Arnold Schwarzenegger must be on it. Hence, this clip from the classic movie Total Recall (the good original, not the bad remake). The video option is a just special case of the code block figure.",
             "figure_caption_long": "Unlike the other figures in this tutorial, you'll notice that there is no gray bar above this one. That is because both the science and data links contained within the gray bar are optional.",
             "figure_science_info": {
                 "figure_science_link_text": "",
@@ -79,7 +79,7 @@
             "figure_order": 1,
             "figure_path": "Code",
             "figure_code": "<div style=\"width:100%; height:60vh; min-height:600px; position:relative;\"><iframe src=\"https://codepen.io/soju22/embed/OYvjMp?default-tab=result\" style=\"position:absolute; inset:0; width:100%; height:100%; border:0;\"  loading=\"lazy\" allowfullscreen title=\"Procedural Low Poly Planet\"></iframe></div>",
-            "figure_caption_short": "Code Block figures allow you to add practically any HTML, CSS, and Javascript elements into a modal window. Practically, this allows you to do practically anything within the window (of course, with great power comes great responsibility - code block figures are restricted to administrators due to the potential for misuse).",
+            "figure_caption_short": "Code Block figures allow you to add practically any HTML, CSS, and Javascript elements into a modal window. Practically, this allows you to do almost anything within the window (of course, with great power comes great responsibility - code block figures are restricted to administrators due to the potential for misuse).",
             "figure_caption_long": "This figure was <a href='https://codepen.io/soju22/pen/OYvjMp' target='_blank'>created on CodePen</a> by <a href='https://codepen.io/soju22' target='_blank'>Kevin Levron</a>.",
             "figure_science_info": {
                 "figure_science_link_text": "",
@@ -99,15 +99,15 @@
             "figure_path": "Interactive",
             "figure_interactive_arguments": [["graphType","Plotly bar graph"],["showGrid",""],["graphTicks",""],["XAxisTitle","Year"],["XAxisLowBound",""],["XAxisHighBound",""],["YAxisTitle","Alien Visitation"],["YAxisLowBound",""],["YAxisHighBound",""],["NumberOfBars","7"],["XAxisFormat","YYYY"],["StackedBarColumns","on"],["XAxis","Year"],["Bar1","Sorox_Palatinate"],["Bar1Title","Sorox Palatinate"],["Bar1Color","#0c7d83"],["Bar1FillType",""],["Bar1Legend","on"],["Bar1Mean",""],["Bar1MeanField","auto"],["Bar1ErrorBars",""],["Bar1ErrorBarsInputValues","auto"],["Bar1ErrorBarsColor","#000000"],["Bar1Percentiles",""],["Bar1Stacked",""],["Bar1StackedSeparatorLineColor","#000000"],["Bar2","Proxima_Centuri_B"],["Bar2Title","Proxima Centuri B"],["Bar2Color","#ab6426"],["Bar2FillType",""],["Bar2Legend","on"],["Bar2Mean",""],["Bar2MeanField","auto"],["Bar2ErrorBars",""],["Bar2ErrorBarsInputValues","auto"],["Bar2ErrorBarsColor","#000000"],["Bar2Percentiles",""],["Bar2Stacked",""],["Bar2StackedSeparatorLineColor","#000000"],["Bar3","Wolf_359"],["Bar3Title","Wolf 359"],["Bar3Color","#91b027"],["Bar3FillType","/"],["Bar3Legend","on"],["Bar3Mean",""],["Bar3MeanField","auto"],["Bar3ErrorBars",""],["Bar3ErrorBarsInputValues","auto"],["Bar3ErrorBarsColor","#000000"],["Bar3Percentiles",""],["Bar3Stacked",""],["Bar3StackedSeparatorLineColor","#000000"],["Bar4","Keplox_Imperium"],["Bar4Title","Keplox Imperium"],["Bar4Color","#91b027"],["Bar4FillType",""],["Bar4Legend","on"],["Bar4Mean",""],["Bar4MeanField","auto"],["Bar4ErrorBars",""],["Bar4ErrorBarsInputValues","auto"],["Bar4ErrorBarsColor","#000000"],["Bar4Percentiles",""],["Bar4Stacked",""],["Bar4StackedSeparatorLineColor","#000000"],["Bar5","Zeta_Empire"],["Bar5Title","Zeta Empire"],["Bar5Color","#deda6e"],["Bar5FillType",""],["Bar5Legend","on"],["Bar5Mean",""],["Bar5MeanField","auto"],["Bar5ErrorBars",""],["Bar5ErrorBarsInputValues","auto"],["Bar5ErrorBarsColor","#000000"],["Bar5Percentiles",""],["Bar5Stacked",""],["Bar5StackedSeparatorLineColor","#000000"],["Bar6","Zarklon_5"],["Bar6Title","Zarklon 5"],["Bar6Color","#a7fea7"],["Bar6FillType",""],["Bar6Legend","on"],["Bar6Mean",""],["Bar6MeanField","auto"],["Bar6ErrorBars",""],["Bar6ErrorBarsInputValues","auto"],["Bar6ErrorBarsColor","#000000"],["Bar6Percentiles",""],["Bar6Stacked",""],["Bar6StackedSeparatorLineColor","#000000"],["Bar7","Arkanoid_Collective"],["Bar7Title","Arkanoid Collective"],["Bar7Color","#02dc01"],["Bar7FillType",""],["Bar7Legend","on"],["Bar7Mean",""],["Bar7MeanField","auto"],["Bar7ErrorBars",""],["Bar7ErrorBarsInputValues","auto"],["Bar7ErrorBarsColor","#000000"],["Bar7Percentiles",""],["Bar7Stacked",""],["Bar7StackedSeparatorLineColor","#000000"]],
             "uploaded_file_path": "example_files/tutorial/bar_chart",
-            "figure_caption_short": "ipsum lorem short",
-            "figure_caption_long": "ipsum lorem long",
+            "figure_caption_short": "This figure shows an example of what you can do with bar charts in Graphic Data, but there are loads of other options. To see more options, just select this figure in the WordPress admin dashboard (Figures are in the left-most column of the dashboard).",
+            "figure_caption_long": "Bar charts are implemented within Graphic Data using the <a href='https://plotly.com/javascript/bar-charts/' target='_blank'>Plotly Javascript library</a>.",
             "figure_science_info": {
-                "figure_science_link_text": "Monitoring link",
-                "figure_science_link_url": "https://www.wikipedia.org/"
+                "figure_science_link_text": "First Contact",
+                "figure_science_link_url": "https://en.wikipedia.org/wiki/Star_Trek:_First_Contact"
             },
             "figure_data_info": {
-                "figure_data_link_text": "Monitoring link",
-                "figure_data_link_url": "https://www.wikipedia.org/"
+                "figure_data_link_text": "",
+                "figure_data_link_url": ""
             }
         }
     ],
@@ -119,15 +119,15 @@
         "figure_path": "Interactive",
         "figure_interactive_arguments": [["graphType","Plotly line graph (time series)"],["showGrid",""],["graphTicks",""],["XAxisTitle",""],["XAxisLowBound",""],["XAxisHighBound",""],["YAxisTitle","Invasion threat"],["YAxisLowBound","0"],["YAxisHighBound","100"],["NumberOfLines","7"],["XAxisFormat","YYYY"],["EvaluationPeriod",""],["EvaluationPeriodStartDate",""],["EvaluationPeriodEndDate",""],["EvaluationPeriodFillColor","#000000"],["EvaluationPeriodText",""],["EventMarkers",""],["EventMarkersField","1"],["EventMarkersEventAxis0","x"],["EventMarkersEventDate0",""],["EventMarkersEventYValue0",""],["EventMarkersEventText0",""],["EventMarkersEventColor0","#000000"],["XAxis","Date"],["Line1","Zarklon_5"],["Line1Title","Zarklon 5"],["Line1Color","#003087"],["Line1LineType","solid"],["Line1MarkerType","circle"],["Line1MarkerSize","10"],["Line1Legend","on"],["Line1ConnectGaps",""],["Line1Mean",""],["Line1MeanField","auto"],["Line1StdDev",""],["Line1StdDevInputValues","auto"],["Line1StdDevColor","#000000"],["Line1ErrorBars",""],["Line1ErrorBarsInputValues","auto"],["Line1ErrorBarsColor","#000000"],["Line1Percentiles",""],["Line2","Proxima_Centuri_B"],["Line2Title","Proxima Centuri B"],["Line2Color","#0fa6b8"],["Line2LineType","solid"],["Line2MarkerType","square"],["Line2MarkerSize","10"],["Line2Legend","on"],["Line2ConnectGaps",""],["Line2Mean",""],["Line2MeanField","auto"],["Line2StdDev",""],["Line2StdDevInputValues","auto"],["Line2StdDevColor","#000000"],["Line2ErrorBars",""],["Line2ErrorBarsInputValues","auto"],["Line2ErrorBarsColor","#000000"],["Line2Percentiles",""],["Line3","Zeta_Empire"],["Line3Title","Zeta Empire"],["Line3Color","#9c4a92"],["Line3LineType","solid"],["Line3MarkerType","diamond"],["Line3MarkerSize","10"],["Line3Legend","on"],["Line3ConnectGaps",""],["Line3Mean",""],["Line3MeanField","auto"],["Line3StdDev",""],["Line3StdDevInputValues","auto"],["Line3StdDevColor","#000000"],["Line3ErrorBars",""],["Line3ErrorBarsInputValues","auto"],["Line3ErrorBarsColor","#000000"],["Line3Percentiles",""],["Line4","Arkanoid_Collective"],["Line4Title","Arkanoid Collective"],["Line4Color","#ff7f00"],["Line4LineType","solid"],["Line4MarkerType","cross"],["Line4MarkerSize","10"],["Line4Legend","on"],["Line4ConnectGaps",""],["Line4Mean",""],["Line4MeanField","auto"],["Line4StdDev",""],["Line4StdDevInputValues","auto"],["Line4StdDevColor","#000000"],["Line4ErrorBars",""],["Line4ErrorBarsInputValues","auto"],["Line4ErrorBarsColor","#000000"],["Line4Percentiles",""],["Line5","Keplox_Imperium"],["Line5Title","Keplox Imperium"],["Line5Color","#61a021"],["Line5LineType","solid"],["Line5MarkerType","x"],["Line5MarkerSize","10"],["Line5Legend","on"],["Line5ConnectGaps",""],["Line5Mean",""],["Line5MeanField","auto"],["Line5StdDev",""],["Line5StdDevInputValues","auto"],["Line5StdDevColor","#000000"],["Line5ErrorBars",""],["Line5ErrorBarsInputValues","auto"],["Line5ErrorBarsColor","#000000"],["Line5Percentiles",""],["Line6","Wolf_359"],["Line6Title","Wolf 359"],["Line6Color","#5761c0"],["Line6LineType","solid"],["Line6MarkerType","triangle-up"],["Line6MarkerSize","10"],["Line6Legend","on"],["Line6ConnectGaps",""],["Line6Mean",""],["Line6MeanField","auto"],["Line6StdDev",""],["Line6StdDevInputValues","auto"],["Line6StdDevColor","#000000"],["Line6ErrorBars",""],["Line6ErrorBarsInputValues","auto"],["Line6ErrorBarsColor","#000000"],["Line6Percentiles",""],["Line7","Sorox_Palatinate"],["Line7Title","Sorox Palatinate"],["Line7Color","#b08c1f"],["Line7LineType","solid"],["Line7MarkerType","triangle-down"],["Line7MarkerSize","10"],["Line7Legend","on"],["Line7ConnectGaps",""],["Line7Mean",""],["Line7MeanField","auto"],["Line7StdDev",""],["Line7StdDevInputValues","auto"],["Line7StdDevColor","#000000"],["Line7ErrorBars",""],["Line7ErrorBarsInputValues","auto"],["Line7ErrorBarsColor","#000000"],["Line7Percentiles",""]],
         "uploaded_file_path": "example_files/tutorial/line_chart",
-        "figure_caption_short": "ipsum lorem short",
-        "figure_caption_long": "ipsum lorem long",
+        "figure_caption_short": "This figure shows an example of what you can do with line charts in Graphic Data, but there are loads of other options. To see more options, just select this figure in the WordPress admin dashboard (Figures are in the left-most column of the dashboard).",
+        "figure_caption_long": "Bar charts are implemented within Graphic Data using the <a href='https://plotly.com/javascript/line-charts/' target='_blank'>Plotly Javascript library</a>.",
         "figure_science_info": {
-            "figure_science_link_text": "Monitoring link",
-            "figure_science_link_url": "https://www.wikipedia.org/"
+            "figure_science_link_text": "Alien Invasion",
+            "figure_science_link_url": "https://en.wikipedia.org/wiki/Alien_invasion"
         },
         "figure_data_info": {
-            "figure_data_link_text": "Monitoring link",
-            "figure_data_link_url": "https://www.wikipedia.org/"
+            "figure_data_link_text": "",
+            "figure_data_link_url": ""
         }
     }
 ]
