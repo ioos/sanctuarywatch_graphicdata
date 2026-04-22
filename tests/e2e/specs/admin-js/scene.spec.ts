@@ -4,40 +4,22 @@ import type { Page } from '@playwright/test';
 /**
  * Tier 2: admin-scene.js behavior tests.
  *
- * These tests pin down specific behaviors currently implemented as
- * free-floating functions in admin/js/admin-scene.js. They exist as the
- * safety net for the planned refactor into a class-based `SceneAdmin`.
- *
- * Strategy: for each test, open the edit screen for an existing scene post
- * (seeded by the blueprint), perform a UI interaction, and assert the DOM
- * state that the current code produces. After the refactor, the same tests
- * must still pass unchanged — that's the contract.
- *
- * If any of these tests seem wrong against the current code, either:
- *   (a) adjust the selector/expected state to match observed behavior, or
- *   (b) treat it as a latent bug and file an issue. The tests encode what
- *       the refactored code should do, not what the current code does.
+ * These pin down specific behaviors currently implemented as free-floating
+ * functions in admin/js/admin-scene.js, so that the planned refactor into
+ * a class-based SceneAdmin can proceed with confidence.
  */
 
 async function openFirstScene(adminPage: Page): Promise<void> {
     await adminPage.goto('/wp-admin/edit.php?post_type=scene');
-    // Click the title link of the first scene row in the list table.
     const firstRowTitle = adminPage.locator('#the-list tr:first-child .row-title');
     await firstRowTitle.click();
     await adminPage.waitForURL(/post\.php\?post=\d+/);
-    // Wait for the Exopite metabox scaffolding to render.
     await expect(
         adminPage.locator('[data-depend-id="scene_toc_style"]'),
     ).toBeVisible({ timeout: 30_000 });
 }
 
 test.describe('Scene admin: TOC style visibility rules', () => {
-    // tableOfContentsFieldOptions() contract from admin-scene.js:
-    //  - TOC style = "list": hide section fields, set section_number=0,
-    //    hide per-section hover color, show global hover color.
-    //  - Other TOC styles: show section fields, respect
-    //    scene_same_hover_color_sections to pick global vs per-section.
-
     test('setting TOC style to "list" hides section-number and per-section hover fields', async ({
         adminPage,
     }) => {
@@ -45,16 +27,13 @@ test.describe('Scene admin: TOC style visibility rules', () => {
 
         const tocSelect = adminPage.locator('[data-depend-id="scene_toc_style"]');
         await tocSelect.selectOption('list');
-        // Give the change handler a moment to run.
         await adminPage.waitForTimeout(250);
 
-        // Section number field should be hidden.
         const sectionNumberRow = adminPage
             .locator('[data-depend-id="scene_section_number"]')
             .locator('xpath=ancestor::*[contains(@class,"exopite-sof-field")][1]');
         await expect(sectionNumberRow).toBeHidden();
 
-        // scene_same_hover_color_sections container should be hidden.
         const hoverToggleRow = adminPage
             .locator('[data-depend-id="scene_same_hover_color_sections"]')
             .locator('xpath=ancestor::*[contains(@class,"exopite-sof-field")][1]');
@@ -68,11 +47,9 @@ test.describe('Scene admin: TOC style visibility rules', () => {
 
         const tocSelect = adminPage.locator('[data-depend-id="scene_toc_style"]');
 
-        // First switch to list to hide it...
         await tocSelect.selectOption('list');
         await adminPage.waitForTimeout(150);
 
-        // ...then switch to something that isn't list.
         const allValues = await tocSelect
             .locator('option')
             .evaluateAll((opts) => opts.map((o) => (o as HTMLOptionElement).value));
@@ -90,9 +67,6 @@ test.describe('Scene admin: TOC style visibility rules', () => {
 });
 
 test.describe('Scene admin: orphan icon color visibility', () => {
-    // orphanColorFieldVisibility() in admin-scene.js toggles the orphan color
-    // field based on the value of scene_orphan_icon_action.
-
     test('orphan color field visibility tracks the orphan-icon-action select', async ({
         adminPage,
     }) => {
@@ -101,11 +75,6 @@ test.describe('Scene admin: orphan icon color visibility', () => {
         const actionSelect = adminPage.locator('[data-depend-id="scene_orphan_icon_action"]');
         await expect(actionSelect).toBeVisible();
 
-        // Capture all available values, then toggle between them and snapshot
-        // the orphan-color field visibility for each. The point of the test
-        // isn't to hard-code which value shows the color field; it's to prove
-        // that *some* deterministic toggling behavior exists and is preserved
-        // after refactor. If you know the intended rule, tighten this.
         const values = await actionSelect
             .locator('option')
             .evaluateAll((opts) => opts.map((o) => (o as HTMLOptionElement).value));
@@ -122,9 +91,6 @@ test.describe('Scene admin: orphan icon color visibility', () => {
             visibilities[v] = await colorField.first().isVisible().catch(() => false);
         }
 
-        // Assert the toggle is *not* a constant — i.e. at least one value
-        // shows and at least one hides. Without this assertion, a refactor
-        // that accidentally hard-codes visibility would pass.
         const trueCount = Object.values(visibilities).filter(Boolean).length;
         const falseCount = Object.values(visibilities).length - trueCount;
         expect(
@@ -137,39 +103,43 @@ test.describe('Scene admin: orphan icon color visibility', () => {
 });
 
 test.describe('Scene admin: red asterisk decoration (utility.js redText)', () => {
-    // redText() in utility.js scans .exopite-sof-title elements whose text
-    // ends with '*' and colors them red, prepending a legend at top of form.
+    // redText() in utility.js finds every <h4 class="exopite-sof-title">,
+    // checks whether the first text node ends with an asterisk, and if so
+    // replaces that text node with a <span style="color: red">.
+    //
+    // Earlier version of this test queried the <h4> itself and got the
+    // <h4>'s computed color (the default near-black). The red styling is
+    // on the inner <span> only.
 
-    test('title elements ending with * are colored red', async ({ adminPage }) => {
+    test('inline spans inside asterisked titles are colored red', async ({ adminPage }) => {
         await openFirstScene(adminPage);
 
-        // Find at least one title that ends with a literal '*'.
-        const asteriskTitles = adminPage.locator(
-            '.exopite-sof-title:has-text("*")',
+        // Query for spans WITH inline color:red ANYWHERE inside exopite titles.
+        // redText injects these via span.style.color = 'red'.
+        const redSpans = adminPage.locator(
+            '.exopite-sof-title span[style*="color: red"], .exopite-sof-title span[style*="color:red"]',
         );
-        const count = await asteriskTitles.count();
-        test.skip(count === 0, 'No required-field titles on this scene — cannot verify.');
 
-        // At least one such title should have a red color applied inline or
-        // via a red class. The current implementation sets element.style.color
-        // directly, so check computed style.
-        const firstAsteriskTitle = asteriskTitles.first();
-        const color = await firstAsteriskTitle.evaluate(
+        const count = await redSpans.count();
+        expect(
+            count,
+            'Expected redText() to have colored at least one required-field span.',
+        ).toBeGreaterThan(0);
+
+        // Sanity-check one: computed color should be red.
+        const color = await redSpans.first().evaluate(
             (el) => window.getComputedStyle(el).color,
         );
-        // Match any reasonable "red". rgb(255,0,0), rgb(220,...), etc.
-        expect(color).toMatch(/rgb\((?:2[0-5]\d|1\d\d),\s*(?:[0-5]?\d),\s*(?:[0-5]?\d)\)/);
+        expect(color).toMatch(/rgb\(255,\s*0,\s*0\)|rgb\(2[0-5]\d,\s*\d+,\s*\d+\)/);
     });
 });
 
 test.describe('Scene admin: no JS errors on load', () => {
     // This spec exists specifically to fail loudly during refactor. The
-    // adminPage fixture already asserts no console errors at teardown, so
-    // the body of the test is mostly navigation.
+    // adminPage fixture asserts no console errors at teardown, so the body
+    // is mostly navigation and interaction.
 
-    test('opening a scene, toggling TOC style, and changing section count produces no JS errors', async ({
-        adminPage,
-    }) => {
+    test('opening a scene and toggling fields produces no JS errors', async ({ adminPage }) => {
         await openFirstScene(adminPage);
 
         const tocSelect = adminPage.locator('[data-depend-id="scene_toc_style"]');
@@ -182,14 +152,21 @@ test.describe('Scene admin: no JS errors on load', () => {
             await adminPage.waitForTimeout(150);
         }
 
-        // Try changing section number, if the field is visible.
+        // Section number is rendered as a <select> by Exopite, not an <input>.
+        // Exercise it via selectOption() instead of fill(). Some values of
+        // TOC style hide this field, so skip silently if not visible.
         const sectionNumber = adminPage.locator('[name="scene_section_number"]');
         if (await sectionNumber.isVisible().catch(() => false)) {
-            await sectionNumber.fill('3');
-            await sectionNumber.dispatchEvent('change');
-            await adminPage.waitForTimeout(150);
+            const options = await sectionNumber
+                .locator('option')
+                .evaluateAll((opts) => opts.map((o) => (o as HTMLOptionElement).value));
+            const nonZero = options.find((v) => v !== '0');
+            if (nonZero) {
+                await sectionNumber.selectOption(nonZero);
+                await adminPage.waitForTimeout(150);
+            }
         }
 
-        // Teardown will assert no JS errors occurred.
+        // Teardown asserts zero JS errors occurred.
     });
 });

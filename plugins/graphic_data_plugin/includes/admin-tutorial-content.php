@@ -148,6 +148,7 @@ class Graphic_Data_Tutorial_Content {
 		$this->create_tutorial_scenes( $current_user_id );
 		$this->create_tutorial_modals( $current_user_id );
 		$this->create_tutorial_figures( $current_user_id );
+		$this->create_tutorial_about_page( $current_user_id );
 
 		$graphic_data_settings = array(
 			'intro_text' => 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.',
@@ -380,7 +381,7 @@ class Graphic_Data_Tutorial_Content {
 		// Get all posts with the tutorial_id meta key.
 		$posts_to_be_deleted = get_posts(
 			array(
-				'post_type'      => array( 'instance', 'scene', 'modal', 'figure' ),
+				'post_type'      => array( 'instance', 'scene', 'modal', 'figure', 'about' ),
 				'post_status'    => 'any',
 				'posts_per_page' => -1,
 				'meta_query'     => array(
@@ -890,6 +891,59 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
+	 * Create an example about page for the tutorial, if such a page does not already exist.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_tutorial_about_page( $current_user_id ) {
+		global $wpdb;
+		$about_page_count = $wpdb->get_var(
+			"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'about' AND post_status IN ('publish', 'draft', 'trash')"
+		);
+		if ( $about_page_count > 0 ) {
+			return;
+		}
+
+		$post_data = array(
+			'post_title'   => 'About Graphic Data',
+			'post_type'    => 'about',
+			'post_status'  => 'publish',
+			'post_author'  => $current_user_id,
+		);
+
+		$central_about_box = array(
+			'aboutMain' => 'Graphic Data is an open-source framework for combining artwork with data in a way that is: 1) easy (and attractive!) to use by web users and 2) easy to use by those tasked with entering content. This framework is intended for the small-yet-mighty organizations and people who have big website ambitions, but don\'t necessarily have big website capacity.',
+			'aboutDetail' => 'This is an example of what you can do with an About page. Want to edit it? Just hit the "Edit About Page" above.',
+		);
+
+		$about_box_1 = array(
+			'aboutBoxTitle1' => 'Graphic Data Credits',
+			'aboutBoxMain1' => 'You can have up to ten boxes of additional information within the About page. In this box, we\'ll delve into the mysterious yet intriguing creators of the Graphic Data software. The lead Software Dude is mighty <a href="https://github.com/superjai" target="_blank">Jai Ranganathan</a> with the other Software Dude being crafty <a href="https://github.com/robbiecarroll" target="_blank">Robbie Carroll</a>. There have been additional contributions by the stealthy <a href="https://github.com/skanda-vasishta" target="_blank">Skanda Vasishta</a>.',
+			'aboutBoxDetail1' => 'Any questions or comments? You can get a hold of Jai at jai.ranganathan@noaa.gov.',
+		);
+		$about_box_2 = array(
+			'aboutBoxTitle2' => 'Learn More',
+			'aboutBoxMain2' => 'Want to learn more about Graphic Data? Well, you are in luck, because we have a ton of handy-dandy training materials that you can find <a href="https://ioos.github.io/sanctuarywatch_graphicdata/" target="_blank">here!</a>',
+			'aboutBoxDetail2' => '',
+		);
+
+		// Insert the post and get its ID.
+		$post_id = wp_insert_post( $post_data );
+
+		// Check if post was created successfully.
+		if ( ! is_wp_error( $post_id ) ) {
+			update_post_meta( $post_id, 'about_published', 'published' );
+			update_post_meta( $post_id, 'post_type', 'about' ); // needed? Unclear.
+			update_post_meta( $post_id, 'centralAbout', $central_about_box );
+			update_post_meta( $post_id, 'numberAboutBoxes', 2 );
+			update_post_meta( $post_id, 'aboutBox1', $about_box_1 );
+			update_post_meta( $post_id, 'aboutBox2', $about_box_2 );
+			update_post_meta( $post_id, 'tutorial_id', '1000' ); // An arbitary number that is clearly higher than any other tutorial post id.
+		}
+	}
+
+	/**
 	 * Create example modals for the tutorial.
 	 *
 	 * @param int $current_user_id The ID of the user to set as post author.
@@ -933,14 +987,14 @@ class Graphic_Data_Tutorial_Content {
 			}
 			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
 			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'Modal', 'External URL' ];
-			$repeat_array['modal_tagline'] = [ 
-				'Within the iron fist of the Graphic Data organizational structure, Scenes contain multiple Modals. A modal defines what happens when you click on an icon in the scene. One option is for a modal window, which is this pop out box that has opened on the screen. This particular box is the Image Modal, which is here to show you - with humbleness and grace - various ways you can display images. You\'ll also notice that this particular window contains mutiple tabs. To see out how all of this is put together, check out this modal in Modals within the WordPress admin dashboard (it is an option in the left panel).', 
-				'If you remember one thing about the mind-bending vastness of Graphic Data (and also space), remember this: Scenes contain multiple Modals. Modals define what happens with clickable icons. In this case, we\'re highlighting Graphic Data\'s ability to show videos. This particular implementation of the video is just a special case of the Code Block, another modal option in this scene.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).', 
-				'Despite all of our technological progress, there are no bars in space (that we know of, anyway). It is for this reason (and solely for this reason) that we have included the ability to show interactive bar charts within Graphic Data. There are only a billion different options we have available for the bar charts, so the one below is just an example - though it is a mighty example. To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).', 
-				'If I have said it once, I have said it a thousand times - Scenes contain Modals. Modals can do all kind of things: open a new web page, open a new scene, open a new line of credit, etc. (we\'re still working on the last one). This particular modal opens a window that shows a handy-dandy interactive line chart. Graphic Data has a lot of options available for line charts. See below for more information, but only if you dare!', 
-				'Okay, time for some real talk. We, the fastidious creators of Graphic Data, have done our absolute best to anticipate what users of our humble software might need. But have we thought of everything? Well, almost everything. But for everything else, we have created something called the Code Block, which allows you to inject your own custom web magic into a modal window.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).', 
-				''
-				];
+			$repeat_array['modal_tagline'] = [
+				'Within the iron fist of the Graphic Data organizational structure, Scenes contain multiple Modals. A modal defines what happens when you click on an icon in the scene. One option is for a modal window, which is this pop out box that has opened on the screen. This particular box is the Image Modal, which is here to show you - with humbleness and grace - various ways you can display images. You\'ll also notice that this particular window contains mutiple tabs. To see out how all of this is put together, check out this modal in Modals within the WordPress admin dashboard (it is an option in the left panel).',
+				'If you remember one thing about the mind-bending vastness of Graphic Data (and also space), remember this: Scenes contain multiple Modals. Modals define what happens with clickable icons. In this case, we\'re highlighting Graphic Data\'s ability to show videos. This particular implementation of the video is just a special case of the Code Block, another modal option in this scene.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).',
+				'Despite all of our technological progress, there are no bars in space (that we know of, anyway). It is for this reason (and solely for this reason) that we have included the ability to show interactive bar charts within Graphic Data. There are only a billion different options we have available for the bar charts, so the one below is just an example - though it is a mighty example. To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).',
+				'If I have said it once, I have said it a thousand times - Scenes contain Modals. Modals can do all kind of things: open a new web page, open a new scene, open a new line of credit, etc. (we\'re still working on the last one). This particular modal opens a window that shows a handy-dandy interactive line chart. Graphic Data has a lot of options available for line charts. See below for more information, but only if you dare!',
+				'Okay, time for some real talk. We, the fastidious creators of Graphic Data, have done our absolute best to anticipate what users of our humble software might need. But have we thought of everything? Well, almost everything. But for everything else, we have created something called the Code Block, which allows you to inject your own custom web magic into a modal window.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).',
+				'',
+			];
 			$repeat_array['modal_info_entries'] = 2;
 			$repeat_array['modal_photo_entries'] = 3;
 			$repeat_array['modal_tab_number'] = [ 2, 1, 1, 1, 1, 1 ];
