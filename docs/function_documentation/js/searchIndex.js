@@ -1256,6 +1256,11 @@ Search.appendIndex(
             "summary": "Create\u0020example\u0020figures\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_figures"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_about_page\u0028\u0029",
+            "name": "create_tutorial_about_page",
+            "summary": "Create\u0020an\u0020example\u0020about\u0020page\u0020for\u0020the\u0020tutorial,\u0020if\u0020such\u0020a\u0020page\u0020does\u0020not\u0020already\u0020exist.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_about_page"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_modals\u0028\u0029",
             "name": "create_tutorial_modals",
             "summary": "Create\u0020example\u0020modals\u0020for\u0020the\u0020tutorial.",
