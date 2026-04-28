@@ -452,7 +452,7 @@ function graphic_data_modal_helper( $child_post_id, $child_ids, $child_id, $idx 
 
 		}
 		$scene_id = get_post_meta( $child_post_id, 'modal_scene' );
-		$scene_post = get_post( $scene_id[0] );
+		$scene_post = get_post( $scene_id[0] )->ID;
 
 		$section_name = isset( get_post_meta( $child_post_id, 'icon_toc_section' )[0] ) ? get_post_meta( $child_post_id, 'icon_toc_section' )[0] : '';
 		$child = $child_id;

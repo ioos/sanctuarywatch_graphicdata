@@ -18,7 +18,6 @@ try {
 if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
     child_obj = undefined;
 } else { 
-    //console.log('child_ids', child_ids);
     child_obj = JSON.parse(JSON.stringify(child_ids));
 }
 
@@ -276,7 +275,7 @@ function hexToRgba(hex, opacity) {
  */
 function process_child_obj() {
 	for (const key in child_obj) {
-		if (child_obj[key].scene.ID !== post_id) {
+		if (child_obj[key].scene !== post_id) {
 			delete child_obj[key];
 		} else {
 			const oldkey = String(key);

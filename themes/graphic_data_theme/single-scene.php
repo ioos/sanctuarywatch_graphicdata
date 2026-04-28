@@ -143,21 +143,6 @@ $graphic_data_instance = get_post_meta( $graphic_data_post_id, 'scene_location',
 
 	</div>
   </div>
-  <script>
-	let child_ids = <?php echo json_encode( $graphic_data_child_ids ); ?>;
-	let post_id =  <?php echo absint( $graphic_data_post_id ); ?>;
-	let svg_url =  <?php echo json_encode( $graphic_data_scene_url ); ?>;
-	let num_sections =  <?php echo json_encode( $graphic_data_num_sections ); ?>;
-	let scene_sections =  <?php echo json_encode( $graphic_data_scene_sections ); ?>;
-	let scene_same_hover_color_sections = <?php echo json_encode( $graphic_data_scene_same_hover_color_sections ); ?>;
-
-	let scene_default_hover_color =  <?php echo json_encode( $graphic_data_scene_default_hover_color ); ?>;
-	let scene_default_hover_text_color =  <?php echo json_encode( $graphic_data_scene_default_hover_text_color ); ?>;
-	let scene_text_toggle =  <?php echo json_encode( $graphic_data_scene_text_toggle ); ?>;
-	let scene_toc_style =  <?php echo json_encode( $graphic_data_scene_toc_style ); ?>;
-	let scene_full_screen_button  = <?php echo json_encode( $graphic_data_scene_full_screen_button ); ?>;    
-  </script>
-
 </div>
 </div>
 <?php
@@ -249,10 +234,21 @@ $graphic_data_new_tab_by_default  = isset( $graphic_data_options['links_new_tab_
 ?>
  </body>
 <script>
-  let title_arr  = <?php echo json_encode( $graphic_data_title_arr ); ?>;
-  let visible_modals  = <?php echo json_encode( $graphic_data_visible_modals ); ?>;
-  let instance_color_settings  = <?php echo json_encode( $graphic_data_instance_color_settings ); ?>;
-  let new_tab_by_default  = <?php echo json_encode( $graphic_data_new_tab_by_default ); ?>;
+	let child_ids = <?php echo json_encode( $graphic_data_child_ids ); ?>;
+	let post_id =  <?php echo absint( $graphic_data_post_id ); ?>;
+	let svg_url =  <?php echo json_encode( $graphic_data_scene_url ); ?>;
+	let num_sections =  <?php echo json_encode( $graphic_data_num_sections ); ?>;
+	let scene_sections =  <?php echo json_encode( $graphic_data_scene_sections ); ?>;
+	let scene_same_hover_color_sections = <?php echo json_encode( $graphic_data_scene_same_hover_color_sections ); ?>;
+	let scene_default_hover_color =  <?php echo json_encode( $graphic_data_scene_default_hover_color ); ?>;
+	let scene_default_hover_text_color =  <?php echo json_encode( $graphic_data_scene_default_hover_text_color ); ?>;
+	let scene_text_toggle =  <?php echo json_encode( $graphic_data_scene_text_toggle ); ?>;
+	let scene_toc_style =  <?php echo json_encode( $graphic_data_scene_toc_style ); ?>;
+	let scene_full_screen_button  = <?php echo json_encode( $graphic_data_scene_full_screen_button ); ?>;    
+	let title_arr  = <?php echo json_encode( $graphic_data_title_arr ); ?>;
+	let visible_modals  = <?php echo json_encode( $graphic_data_visible_modals ); ?>;
+	let instance_color_settings  = <?php echo json_encode( $graphic_data_instance_color_settings ); ?>;
+	let new_tab_by_default  = <?php echo json_encode( $graphic_data_new_tab_by_default ); ?>;
 </script>
 
   <!-- </body> -->
