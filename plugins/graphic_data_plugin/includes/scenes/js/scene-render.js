@@ -12,7 +12,7 @@ async function make_title() {
 	const protocol = window.location.protocol;
 	const host = window.location.host;
 	try {
-		scene_data = title_arr;
+		scene_data = graphicDataSceneData.titleArr;
         scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p>');
 		const scene_location = scene_data.scene_location;
 		const title = scene_data.post_title;
@@ -173,7 +173,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
         const sectionOrderMap = {};
         iconsArr.forEach(iconId => {
 
-            if (scene_same_hover_color_sections !== "yes" && child_obj[iconId] !== "None") {
+            if (graphicDataSceneData.sceneSameHoverColorSections !== "yes" && child_obj[iconId] !== "None") {
                 let section_num = child_obj[iconId].section_name;
                 let modal_icon_order = child_obj[iconId].modal_icon_order;
                 let modal_title = child_obj[iconId].title;
@@ -203,15 +203,15 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                 grouped[groupTitle].modal_titles.push(modal_title);
                 grouped[groupTitle].modal_orders.push(modal_icon_order);
             }
-            if (scene_same_hover_color_sections == "yes") {
+            if (graphicDataSceneData.sceneSameHoverColorSections == "yes") {
                 let section_num = child_obj[iconId].section_name;
                 let modal_icon_order = child_obj[iconId].modal_icon_order;
                 let modal_title = child_obj[iconId].title;
                 let this_scene_section = `scene_section${section_num}`;
                 let this_scene_section_title = `scene_section_title${section_num}`;
-                const hoverColor = scene_default_hover_color;
+                const hoverColor = graphicDataSceneData.sceneDefaultHoverColor;
                 const sectionTitle = scene_data[this_scene_section][this_scene_section_title] ;
-                const hoverTextColor = scene_default_hover_text_color;
+                const hoverTextColor = graphicDataSceneData.sceneDefaultHoverTextColor;
                 const groupTitle = sectionTitle || "Other";
 
                 // Track section_num for sorting later
@@ -353,8 +353,8 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                         cont.style.paddingRight = '5px';
                         cont.style.fontWeight = 'bold'; 
                         cont.style.border = '1px solid #000';
-                        cont.style.background = instance_color_settings["instance_mobile_tile_background_color"];
-                        cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
+                        cont.style.background = graphicDataSceneData.instanceColorSettings["instance_mobile_tile_background_color"];
+                        cont.style.color = graphicDataSceneData.instanceColorSettings["instance_mobile_tile_text_color"]; 
                         cont.style.overflow = 'hidden';
                         
 
@@ -544,8 +544,8 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                             cont.style.background = '#f0f0f0';
                             cont.style.color = 'inherit';
                         } else {
-                            cont.style.background = instance_color_settings["instance_mobile_tile_background_color"]; 
-                            cont.style.color = instance_color_settings["instance_mobile_tile_text_color"]; 
+                            cont.style.background = graphicDataSceneData.instanceColorSettings["instance_mobile_tile_background_color"]; 
+                            cont.style.color = graphicDataSceneData.instanceColorSettings["instance_mobile_tile_text_color"]; 
                         }
 
                         // Create a blank SVG container
@@ -916,7 +916,7 @@ function make_scene_elements(info, iText, iUrl, scene_data, type, name) {
 
 		listItem.appendChild(anchor);
 
-		if (true === new_tab_by_default) {
+		if (true === graphicDataSceneData.newTabByDefault) {
 			collapseListHTML += `<li> <a href="${scene_info_url}" target="_blank">${scene_info_text}</a> </li>`;
 		} else {
             collapseListHTML += `<li> <a href="${scene_info_url}" >${scene_info_text}</a> </li>`;
@@ -1240,11 +1240,11 @@ async function loadSVG(url, containerId) {
                     sceneRow = document.getElementById("scene-row");
                     sceneRow.style.marginTop = "20px";
 
-                    scene_text_toggle = title_arr['scene_text_toggle']; //"toggle_on";
-                    scene_full_screen_button = title_arr['scene_full_screen_button'];//"yes";
+                    scene_text_toggle = graphicDataSceneData.titleArr['scene_text_toggle']; //"toggle_on";
+                    scene_full_screen_button = graphicDataSceneData.titleArr['scene_full_screen_button'];//"yes";
                     scene_toc_style = "list";
-                    scene_default_hover_color = title_arr['scene_hover_color'];
-                    scene_hover_text_color = title_arr['scene_hover_text_color']; 
+                    scene_default_hover_color = graphicDataSceneData.titleArr['scene_hover_color'];
+                    scene_hover_text_color = graphicDataSceneData.titleArr['scene_hover_text_color']; 
 
                     sorted_child_objs = buildVisibleModalsObject(visible_modals, {
                         sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
@@ -1271,7 +1271,7 @@ async function loadSVG(url, containerId) {
                         // Loop through each sub-element and update its stroke-width and color
                         subElements.forEach(element => {
                             element.style.strokeWidth = "2";
-                            element.style.stroke = scene_default_hover_color;
+                            element.style.stroke = graphicDataSceneData.sceneDefaultHoverColor;
                         });
                     })
                     
@@ -1322,7 +1322,7 @@ function highlight_icons() {
 
 			elemCollection.forEach((subElem) => {
 				if (
-					scene_same_hover_color_sections !== 'yes' &&
+					graphicDataSceneData.sceneSameHoverColorSections !== 'yes' &&
 					sectionObj[key] !== 'None'
 				) {
 					const section_name = child_obj[key].original_name;
@@ -1334,8 +1334,8 @@ function highlight_icons() {
 					hoverTextColor = scene_data[this_scene_section][text_color];
 					subElem.style.stroke = hoverColor;
 				} else {
-					hoverColor = scene_default_hover_color;
-					hoverTextColor = scene_default_hover_text_color;
+					hoverColor = graphicDataSceneData.sceneDefaultHoverColor;
+					hoverTextColor = graphicDataSceneData.sceneDefaultHoverTextColor;
 					subElem.style.stroke = hoverColor;
 				}
 
@@ -1420,7 +1420,7 @@ function flicker_highlight_icons() {
 
 			// Initial state
 			if (
-				scene_same_hover_color_sections != 'yes' &&
+				graphicDataSceneData.sceneSameHoverColorSections != 'yes' &&
 				sectionObj[key] != 'None'
 			) {
 				//this should be done on the SCENE side of things, will havet o bring this back
@@ -1434,7 +1434,7 @@ function flicker_highlight_icons() {
 				const text_color = `scene_section_hover_text_color${section_num}`;
 				elem.style.stroke = scene_data[sectionObj[key]][this_color];
 			} else {
-				elem.style.stroke = scene_default_hover_color;
+				elem.style.stroke = graphicDataSceneData.sceneDefaultHoverColor;
 			}
 
 			elem.style.strokeWidth = '3';
@@ -1757,7 +1757,7 @@ function sectioned_list() {
 				scene_data[`scene_section${sections[i]}`][
 					`scene_section_title${i + 1}`
 				];
-			const color = scene_default_hover_color;
+			const color = graphicDataSceneData.sceneDefaultHoverColor;
 			heading.style.backgroundColor = hexToRgba(color, 0.2);
 			heading.style.color = 'black';
 			heading.style.display = 'inline-block';
@@ -1765,7 +1765,7 @@ function sectioned_list() {
 		}
 		if (sections[i] == 'None' && sectionNoneCount > 1) {
 			heading.innerHTML = 'No Section';
-			const color = scene_default_hover_color;
+			const color = graphicDataSceneData.sceneDefaultHoverColor;
 			heading.style.backgroundColor = hexToRgba(color, 0.2);
 			heading.style.color = 'black';
 			heading.style.display = 'inline-block';
@@ -1863,7 +1863,7 @@ function toc_sections() {
             } 
             if (scene_data['scene_same_hover_color_sections'] == "yes" && scene_section_title != ""){
                 button.innerHTML = scene_section_title;
-                let color =  scene_default_hover_color;
+                let color =  graphicDataSceneData.sceneDefaultHoverColor;
                 button.style.backgroundColor = hexToRgba(color, 0.2);
             } else {
             }
@@ -1871,7 +1871,7 @@ function toc_sections() {
 
         if (sectionNoneCount > 1 && (sections[i]=="None" || title_test == "None")){
             button.innerHTML = 'No Section';
-            let color = scene_default_hover_color;
+            let color = graphicDataSceneData.sceneDefaultHoverColor;
             button.style.backgroundColor = hexToRgba(color, 0.2);
         } else {
             //console.log('Test 2');
@@ -2030,7 +2030,7 @@ function table_of_contents() {
 					const subElements = svg_elem.querySelectorAll('*');
 					subElements.forEach((subElement) => {
 						if (
-							scene_same_hover_color_sections != 'yes' &&
+							graphicDataSceneData.sceneSameHoverColorSections != 'yes' &&
 							child_obj[key] != 'None'
 						) {
 							//this should be done on the SCENE side of things, will havet o bring this back
@@ -2048,7 +2048,7 @@ function table_of_contents() {
 								];
 							subElement.style.stroke = hovercolorfullpath;
 						} else {
-							subElement.style.stroke = scene_default_hover_color;
+							subElement.style.stroke = graphicDataSceneData.sceneDefaultHoverColor;
 						}
 
 						subElement.style.strokeWidth = '3';
@@ -2174,7 +2174,7 @@ function list_toc(){
 
                     let subElements = svg_elem.querySelectorAll("*");
                     subElements.forEach(subElement => {
-                        subElement.style.stroke = scene_default_hover_color;
+                        subElement.style.stroke = graphicDataSceneData.sceneDefaultHoverColor;
                         subElement.style.strokeWidth = "3";
                     });
                 };
