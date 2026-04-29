@@ -36,6 +36,7 @@ if (
 }
 if (!window.location.href.includes('post.php')) { 
     let url1 =(JSON.stringify(graphicDataSceneData.svgUrl));
+	debugger;
     url = url1.substring(2, url1.length - 2);
 }
 

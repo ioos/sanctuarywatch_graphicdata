@@ -1097,8 +1097,6 @@ async function loadSVG(url, containerId) {
                     modal_icon_order: idx + 1, // sequential order
                 }));
             }
-
-            
         }
       
         // checking if user device is touchscreen
@@ -1204,7 +1202,7 @@ async function loadSVG(url, containerId) {
                 container.appendChild(svgElement);
                 toggle_text();
                 full_screen_button('svg1');
-                if (scene_toc_style === "list"){
+                if (graphicDataSceneData.sceneTocStyle === "list"){
                     list_toc();
                 } else {
                     table_of_contents();
@@ -1215,7 +1213,7 @@ async function loadSVG(url, containerId) {
         }
         else{ //device is a PC
             //hide mobile icons
-            //console.log('PC detected');
+            console.log('PC detected');
             window.addEventListener('load', function() {
                 let mob_icons = document.querySelector("#mobile");
                 if (mob_icons) {
@@ -1275,10 +1273,10 @@ async function loadSVG(url, containerId) {
                         });
                     })
                     
-                    handleIconVisibility(svgElement, visible_modals);
+                    handleIconVisibility(svgElement, graphicDataSceneData.visibleModals);
 
                 } else {
-                    handleIconVisibility(svgElement, visible_modals);
+                    handleIconVisibility(svgElement, graphicDataSceneData.visibleModals);
                 }
             }
             catch (error) {
@@ -1290,7 +1288,7 @@ async function loadSVG(url, containerId) {
             highlight_icons();
             toggle_text();
             full_screen_button('svg1');
-            if (scene_toc_style === "list"){
+            if (graphicDataSceneData.sceneTocStyle === "list"){
                 list_toc();
             } else {
                 table_of_contents();
@@ -1471,7 +1469,7 @@ function flicker_highlight_icons() {
  *                       Usage: called within load_svg
  */
 function full_screen_button(svgId) {
-	if (scene_full_screen_button != 'yes') {
+	if (graphicDataSceneData.sceneFullScreenButton != 'yes') {
 		return;
 	}
 
@@ -1606,11 +1604,11 @@ function full_screen_button(svgId) {
  * Usage: called within load_svg
  */
 function toggle_text() {
-	if (scene_text_toggle == 'none') {
+	if (graphicDataSceneData.sceneTextToggle == 'none') {
 		return;
 	}
 
-	const initialState = scene_text_toggle === 'toggle_on'; //this should be done on the SCENE side of things
+	const initialState = graphicDataSceneData.sceneTextToggle === 'toggle_on'; //this should be done on the SCENE side of things
 	const svgText = document.querySelector('#text');
 
 	if (initialState) {
@@ -1937,7 +1935,8 @@ function toc_sections() {
  */
 
 function table_of_contents() {
-	if (scene_toc_style == 'accordion') {
+    debugger;
+	if (graphicDataSceneData.sceneTocStyle == 'accordion') {
 		//this should be done on the SCENE side of things
 		toc_sections();
 	} else {

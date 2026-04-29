@@ -686,7 +686,7 @@ function graphic_data_enqueue_scripts() {
 		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js',
 		array(),
 		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( 'strategy' => 'defer', 'in_footer' => true )
 	);
 
 	// Enqueue the modal render script.
