@@ -476,6 +476,11 @@ Search.appendIndex(
             "summary": "Get\u0020scene\u0020titles\u0020for\u0020scenes\u0020sharing\u0020the\u0020same\u0020instance\u0020as\u0020a\u0020modal.",
             "url": "classes/Graphic-Data-Utility.html#method_return_scene_titles"
         },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Asite_url_to_filesystem_path\u0028\u0029",
+            "name": "site_url_to_filesystem_path",
+            "summary": "Convert\u0020a\u0020URL\u0020pointing\u0020into\u0020the\u0020current\u0020site\u0027s\u0020public\u0020tree\u0020to\u0020the\nabsolute\u0020filesystem\u0020path\u0020it\u0020maps\u0020to,\u0020or\u0020null\u0020if\u0020the\u0020URL\u0020does\u0020not\nresolve\u0020to\u0020a\u0020file\u0020inside\u0020this\u0020installation.",
+            "url": "classes/Graphic-Data-Utility.html#method_site_url_to_filesystem_path"
+        },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_icons\u0028\u0029",
             "name": "return_icons",
             "summary": "Retrieves\u0020icon\u0020IDs\u0020from\u0020an\u0020SVG\u0020infographic\u0020associated\u0020with\u0020a\u0020scene.",
@@ -1193,12 +1198,17 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acopy_files_to_data_folder\u0028\u0029",
             "name": "copy_files_to_data_folder",
-            "summary": "Copies\u0020a\u0020pair\u0020of\u0020.json\u0020and\u0020.csv\u0020files\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020the\u0020data\/tutorial\u0020folder.",
+            "summary": "Copies\u0020a\u0020pair\u0020of\u0020.json\u0020and\u0020.csv\u0020files\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020a\u0020per\u002Dpost\u0020data\u0020folder.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_copy_files_to_data_folder"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_playground_tutorial_content\u0028\u0029",
+            "name": "create_playground_tutorial_content",
+            "summary": "Create\u0020tutorial\u0020content\u0020within\u0020a\u0020WordPress\u0020playground\u0020context.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_playground_tutorial_content"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_data_json_files\u0028\u0029",
             "name": "delete_data_json_files",
-            "summary": "Delete\u0020the\u0020data\/tutorial\u0020folder\u0020and\u0020its\u0020contents.",
+            "summary": "Delete\u0020the\u0020data\/figure_postID\u0020folders\u0020and\u0020contents\u0020inside\u0020for\u0020each\u0020folder\u0020in\u0020the\u0020figures.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_delete_data_json_files"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Adelete_tutorial_instance_types\u0028\u0029",
@@ -1245,6 +1255,11 @@ Search.appendIndex(
             "name": "create_tutorial_figures",
             "summary": "Create\u0020example\u0020figures\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_figures"
+        },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_about_page\u0028\u0029",
+            "name": "create_tutorial_about_page",
+            "summary": "Create\u0020an\u0020example\u0020about\u0020page\u0020for\u0020the\u0020tutorial,\u0020if\u0020such\u0020a\u0020page\u0020does\u0020not\u0020already\u0020exist.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_about_page"
         },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_modals\u0028\u0029",
             "name": "create_tutorial_modals",

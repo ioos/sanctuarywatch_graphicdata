@@ -312,7 +312,16 @@ class Graphic_Data_About {
 	 */
 	public function handle_about_template() {
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		if ( '/about/' === $request_uri || '/about' === $request_uri ) {
+
+		// Strip query string and resolve relative to the WP home path so this
+		// works in subdirectory installs and Playground's scoped subpath.
+		$home_path   = rtrim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
+		$request_path = rtrim( strtok( $request_uri, '?' ), '/' );
+		if ( $home_path && 0 === strpos( $request_path, $home_path ) ) {
+			$request_path = substr( $request_path, strlen( $home_path ) );
+		}
+
+		if ( '/about' === $request_path ) {
 			$about_posts = get_posts(
 				array(
 					'post_type'      => 'about',
@@ -355,7 +364,7 @@ class Graphic_Data_About {
 	 */
 	public function custom_about_permalink( $post_link, $post ) {
 		if ( 'about' === $post->post_type ) {
-			return home_url( 'about' );
+			return user_trailingslashit( home_url( 'about' ) );
 		}
 		return $post_link;
 	}

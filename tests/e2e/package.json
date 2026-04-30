@@ -1,0 +1,24 @@
+{
+  "name": "graphic-data-e2e",
+  "version": "0.1.0",
+  "description": "End-to-end tests for the Graphic Data WordPress plugin and theme, run against WordPress Playground.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:smoke": "playwright test specs/smoke",
+    "test:admin-js": "playwright test specs/admin-js",
+    "test:frontend": "playwright test specs/frontend",
+    "test:report": "playwright show-report",
+    "install:browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@wp-playground/cli": "^3.1.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}

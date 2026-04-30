@@ -61,7 +61,7 @@ function render_modal(key, obj, modal_obj){
         // --- Tagline container ---
         let tagline_container = document.getElementById('tagline-container');
         let modal_tagline = modal_data["modal_tagline"];
-        modal_tagline = modal_tagline.replace(/\r\n\r\n/g, '<p>');
+        modal_tagline = '<p>' + modal_tagline.replace(/(\r\n|\n){2}/g, '</p><p>') + '</p>';
 
         if (!is_mobile()) {
             tagline_container.innerHTML = `${modal_tagline}`;
@@ -105,7 +105,7 @@ function render_modal(key, obj, modal_obj){
                 if (typeof window.new_tab_by_default === "undefined") {
                     window.new_tab_by_default = false;
                 }
-		        if (true === new_tab_by_default) {
+		        if (true === graphicDataSceneData.newTabByDefault) {
                     collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
                 } else {
                     collapseListHTML += `<li><a href="${modal_info_url}">${modal_info_text}</a></li>`;

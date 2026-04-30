@@ -1,5 +1,5 @@
 
-// Deep clone the child_ids object to create child_obj, ensuring that modifications to child_obj do not affect the original child_ids.
+// Deep clone the childIds object to create child_obj, ensuring that modifications to child_obj do not affect the original childIds.
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
 let child_obj = {};
 
@@ -18,15 +18,11 @@ try {
 if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
     child_obj = undefined;
 } else { 
-    //console.log('child_ids', child_ids);
-    child_obj = JSON.parse(JSON.stringify(child_ids));
+    child_obj = JSON.parse(JSON.stringify(graphicDataSceneData.childIds));
 }
 
-// Convert the svg_url variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
+// Convert the svgUrl variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
 // This is likely done to strip extra quotes or escape characters from the serialized string.
-
-// let url1 =(JSON.stringify(svg_url));
-// url = url1.substring(2, url1.length - 2);
 
 let url1 = {};
 
@@ -39,7 +35,7 @@ if (
 	url1 = undefined;
 }
 if (!window.location.href.includes('post.php')) { 
-    let url1 =(JSON.stringify(svg_url));
+    let url1 =(JSON.stringify(graphicDataSceneData.svgUrl));
     url = url1.substring(2, url1.length - 2);
 }
 
@@ -276,7 +272,7 @@ function hexToRgba(hex, opacity) {
  */
 function process_child_obj() {
 	for (const key in child_obj) {
-		if (child_obj[key].scene.ID !== post_id) {
+		if (child_obj[key].scene !== parseInt(graphicDataSceneData.postId)) {
 			delete child_obj[key];
 		} else {
 			const oldkey = String(key);
@@ -617,9 +613,6 @@ function slugify(str) {
  */
 async function init() {
 	try {
-		// scene_data = title_arr;
-		// console.log('scene_data', scene_data);
-		//console.log('visible_modals', visible_modals);
 
 		sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
 		thisInstance = sceneLoc;

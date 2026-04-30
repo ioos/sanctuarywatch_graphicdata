@@ -271,9 +271,9 @@ accessibility, and stores errors/warnings in transients for display after page r
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Uses cURL to perform a HEAD request to the specified URL and retrieves
-the HTTP status code. The URL should already be validated for correct
-syntax before calling this method.</p>
+        <section class="phpdocumentor-description"><p>Uses WordPress's HTTP API to perform a HEAD request. Falls back to GET
+if the server rejects HEAD (some hosts do). The URL should already be
+validated for correct syntax before calling this method.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -312,7 +312,7 @@ syntax before calling this method.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>The HTTP status code for the URL (e.g., 200 for accessible, 404 for not found).</p>
+                <section class="phpdocumentor-description"><p>The HTTP status code (e.g. 200, 404), or 0 on connection failure.</p>
 </section>
 
             </section>
@@ -332,7 +332,7 @@ syntax before calling this method.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">900</span>
+    <span class="phpdocumentor-element-found-in__line">912</span>
 
     </aside>
 
@@ -490,7 +490,7 @@ Accepts 'about', 'scene', 'modal', 'figure', or 'instance'.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">879</span>
+    <span class="phpdocumentor-element-found-in__line">891</span>
 
     </aside>
 

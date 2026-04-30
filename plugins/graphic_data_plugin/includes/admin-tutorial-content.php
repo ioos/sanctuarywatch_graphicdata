@@ -31,7 +31,7 @@ class Graphic_Data_Tutorial_Content {
 		$term_slug = [ 'tutorial-instance-example-1', 'tutorial-instance-example-2' ];
 		$term_description = [
 			'Welcome, Space Captain! The highest level of organization in Graphic Data is the "Instance Type". Right here is an example (First Instance Type). ' .
-			'Instance Types contain Instances. With Graphic Data, you must have at least one Instance Type and each Type must contains one or more Instances. This particular Instance Type contains two Instances.',
+			'Instance Types contain Instances. With Graphic Data, you must have at least one Instance Type and each Type must contains one or more Instances. This particular Instance Type contains two Instances. You can check out your Instances and Instance Types in the WordPress admin dashboard (they are options in the left panel).',
 			'This is a second example Instance Type and it contains one Instance.',
 		];
 		$instance_navbar_name = [ 'Example 1', 'Example 2' ];
@@ -59,17 +59,19 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
-	 * Copies a pair of .json and .csv files from the plugin directory to the data/tutorial folder.
+	 * Copies a pair of .json and .csv files from the plugin directory to a per-post data folder.
 	 *
-	 * Creates the wp-content/data/ and wp-content/data/tutorial/ directories if they do not
-	 * already exist. For each extension (.json, .csv), appends the extension to $file_path to
-	 * resolve the source file and copies it to the tutorial folder. Skips any file that already
-	 * exists at the destination. Returns false immediately if any copy operation fails.
+	 * Creates wp-content/data/ and wp-content/data/figure_{$post_id}/ if they do not already
+	 * exist. For each extension (.json, .csv), appends the extension to $file_path to resolve the
+	 * source file and copies it to the figure folder. Skips any file that already exists at the
+	 * destination. Returns false immediately if any copy operation fails. On success, records the
+	 * post ID in the 'graphic_data_tutorial_figure_post_ids' option.
 	 *
 	 * @param string $file_path Relative path (without extension) to the source file within the
 	 *                          plugin directory (e.g. 'example_files/tutorial/data').
-	 * @return string|false The relative destination path shared by both files
-	 *                      (e.g. 'data/tutorial/data') on success, or false if a copy fails.
+	 * @param int    $post_id   ID of the post whose figure folder will receive the copied files.
+	 * @return string|false The absolute destination path shared by both files
+	 *                      (e.g. '.../data/figure_42/data') on success, or false if a copy fails.
 	 */
 	public function copy_files_to_data_folder( $file_path, $post_id ) {
 		$data_folder = WP_CONTENT_DIR . '/data';
@@ -110,6 +112,139 @@ class Graphic_Data_Tutorial_Content {
 			update_option( $option_name, $post_ids, false );
 		}
 		return $initial_destination_path;
+	}
+
+	/**
+	 * Create tutorial content within a WordPress playground context.
+	 *
+	 * This method is only called by the blueprint json file to autopopulate the
+	 * WordPress Playground used as a demo/tutorial for Graphic Data.
+	 *
+	 * @ return void
+	 */
+	public function create_playground_tutorial_content() {
+		$current_user_id = get_current_user_id();
+		if ( 0 === $current_user_id ) {
+			$users = get_users(
+				array(
+					'number'  => 1,
+					'orderby' => 'ID',
+					'order'   => 'ASC',
+				)
+			);
+			if ( ! empty( $users ) ) {
+				$current_user_id = $users[0]->ID;
+			}
+		}
+
+		// Change theme colors to make them more Mars-like.
+		set_theme_mod( 'theme_color_1', '#451804' );
+		set_theme_mod( 'theme_color_3', '#451804' );
+		set_theme_mod( 'theme_color_4', '#c1440e' );
+		set_theme_mod( 'theme_color_5', '#451804' );
+
+		$this->create_tutorial_instance_types();
+		$this->create_tutorial_instances( $current_user_id );
+		$this->create_tutorial_scenes( $current_user_id );
+		$this->create_tutorial_modals( $current_user_id );
+		$this->create_tutorial_figures( $current_user_id );
+		$this->create_tutorial_about_page( $current_user_id );
+
+		$graphic_data_settings = array(
+			'intro_text' => 'Welcome to Graphic Data, a WordPress plugin and theme that connects graphic design with data display. Here, you will find examples of what Graphic Data can do as well as instructions on how to use Graphic Data.',
+			'sitewide_footer_title' => 'Sitewide Footer Title',
+			'site_footer' => 'This is a column that exists across all pages on the site, called the sitewide footer. It is an optional and you can edit it on the Graphic Data Settings page.',
+			'front_page_code_block' => '
+			<style>
+				@import url("https://fonts.googleapis.com/css?family=Lato:300,400,700");
+				#starfield-container {
+				position: relative;
+				width: 100%;
+				max-width: 800px;
+				height: clamp(200px, 40vw, 400px);
+				margin: 0 auto;
+				overflow: hidden;
+				background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+				}
+
+				#starfield-container canvas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				}
+
+				#stars  { animation: animStar  50s linear infinite; }
+				#stars2 { animation: animStar 100s linear infinite; }
+				#stars3 { animation: animStar 150s linear infinite; }
+
+				@keyframes animStar {
+				from { transform: translateY(0px); }
+				to   { transform: translateY(-2000px); }
+				}
+
+				#title {
+				position: absolute;
+				top: 50%;
+				left: 0;
+				right: 0;
+				color: #FFF;
+				text-align: center;
+				font-family: "Lato", sans-serif;
+				font-weight: 300;
+				font-size: clamp(16px, 4vw, 36px);
+				letter-spacing: clamp(2px, 1vw, 10px);
+				transform: translateY(-50%);
+				padding-left: 10px;
+				z-index: 10;
+				}
+				#title span {
+					display: block;
+					background: -webkit-linear-gradient(white, #a8c0d0);
+					-webkit-background-clip: text;
+					-webkit-text-fill-color: transparent;
+					background-clip: text;
+					filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.8));
+				}
+			</style>
+			<div id="starfield-container">
+				<canvas id="stars"></canvas>
+				<canvas id="stars2"></canvas>
+				<canvas id="stars3"></canvas>
+				<div id="title">
+				<span>SAMPLE CODE BLOCK</span>
+				<br>
+				<span>Create your own within the Graphic Data settings page.</span>
+				</div>
+			</div>
+
+			<script>
+				function generateStars(canvasId, count, size) {
+				const canvas = document.getElementById(canvasId);
+				const ctx = canvas.getContext("2d");
+				const container = document.getElementById("starfield-container");
+
+				function draw() {
+					canvas.width  = container.offsetWidth;
+					canvas.height = 4000;
+					ctx.fillStyle = "#FFF";
+					for (let i = 0; i < count; i++) {
+					const x = Math.random() * container.offsetWidth;
+					const y = Math.random() * 2000;
+					ctx.fillRect(x, y, size, size);
+					ctx.fillRect(x, y + 2000, size, size);
+					}
+				}
+
+				draw();
+				window.addEventListener("resize", draw);
+				}
+
+				generateStars("stars",  700, 1);
+				generateStars("stars2", 200, 2);
+				generateStars("stars3", 100, 3);
+			</script>',
+		);
+		update_option( 'graphic_data_settings', $graphic_data_settings );
 	}
 
 	/**
@@ -246,7 +381,7 @@ class Graphic_Data_Tutorial_Content {
 		// Get all posts with the tutorial_id meta key.
 		$posts_to_be_deleted = get_posts(
 			array(
-				'post_type'      => array( 'instance', 'scene', 'modal', 'figure' ),
+				'post_type'      => array( 'instance', 'scene', 'modal', 'figure', 'about' ),
 				'post_status'    => 'any',
 				'posts_per_page' => -1,
 				'meta_query'     => array(
@@ -509,24 +644,24 @@ class Graphic_Data_Tutorial_Content {
 	public function create_tutorial_scenes( $current_user_id ) {
 		global $wpdb;
 		$tutorial_id = [ 6, 7, 8, 9, 10, 11 ];
-		$post_title = [ 'Overview Scene', 'Default Scene', 'Table Scene', 'Space Scene', 'Space Base', 'Space Dome' ];
+		$post_title = [ 'Overview', 'Example Scene 1 (Default)', 'Example Scene 2 (Table)', 'Example Scene 3 (Space)', 'Space Base', 'Space Dome' ];
 		$scene_location = [ 3, 3, 3, 3, 4, 5 ];
 		$file_prefix = 'example_files/tutorial/';
 		$scene_infographic = [
 			$file_prefix . 'overview-scene.svg',
 			$file_prefix . 'default-scene.svg',
-			$file_prefix . 'table-scene.svg',
+			$file_prefix . 'table-scene2.svg',
 			$file_prefix . 'space-colony-dome-scene.svg',
 			$file_prefix . 'spaceship-scene.svg',
 			$file_prefix . 'space-colony-scene.svg',
 		];
 		$scene_tagline = [
-			'Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways.',
-			'The second one',
-			'The third one',
-			'The fourth one',
-			'The fifth one',
-			'The sixth one',
+			'Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways. To see how this Scene is put together, just hit the Edit Scene button at the top of the screen.',
+			'<p>Here we are, Orbital Lieutenant, in the Default Scene! The central mechanic of Graphic Data is the clickable image. The thing is that the clickable image needs to be created in a very particular way. We have <a href="https://ioos.github.io/sanctuarywatch_graphicdata/creating_svg_files/">extensive documentation</a> on how to create the image so that it is ready for Graphic Data. But maybe you don\'t like to read (Who does? Reading is the worst). Not to worry Jack (Space Jack), we\'ve got your back on this one. We have built a tool, within the Graphic Data plugin itself to help you build a clickable image that is formatted in just the right way. You can find this tool - "Create SVG" - under, well, Tools in the admin dashboard.</p><p>The tool will build an image that will look remarkably like what you see below - a scalable vector graphic (or SVG) that will work great with Graphic Data. This image looks admittedly a little plain, but stop with the complaining. All you will need to do from here is to bring the SVG into your vector graphic editing software and swap out the artwork elements (while holding onto the image formatting) so that your clickable image sings. To see examples of what you can do, check out the two scintillating other scene examples in this instance.</p><p>In the scene below, you\'ll see six options. These are the major categories of things you can do with a clickable image within Graphic Data. Click around and be prepared to be floored in wonderment and awe. And, dear space traveler, you might just be wondering how this scene is put together. Well, put your mind at ease: just hit the Edit Scene button at the top of the screen.</p>',
+			'We have arrived at the Table Scene and what a galactic journey it has been. The content within the clickable image below is exactly the same as in the two other example scenes in this instance. The only difference is that the content is arranged in a report card form. And, just as with the other example scenes, the options below show all of the magical things you can do in a scene. Want to know how this scene was created? Hit Edit Scene above!',
+			'<p>Using all of our cunning and - a little worryingly - all of our remaining rocket fuel, we have landed at the Space Scene. All of the example scenes in this instance have the same content, showing the six things you can do with a clickable image. Did I say six? Then how come there are <em>seven</em> clickable icons in the image? Well, that is an excellent eye - nicely done! The semi-transparent drone in the foreground is a non-clickable icon - it represents an icon that has yet to be wired up to do anything. It shows yet another way that the master software designers behind Graphic Data have got you covered - you don\'t have to have the content for a given scene completely ready when you go live. You can go live with what you\'ve got and work to completion over time.</p><p>You\'ll notice in the image that there are no captions. You can change that though by clicking the small "Show Text" button in the upper right of the image. Whether this button is turned on or off is an adjustable parameter in the scene.</p>',
+			'<p>They say in space, no one can hear you scream - but they\'ve never heard <em>me</em> scream. Where was I? Right, talking (screaming) about Graphic Data. Okay, here we are in an instance (Instance 2) that contains only one scene. This scene contains all of the same fabulous clickable options as the other scenes, PLUS a special bonus non-clickable option (the helmeted fellow to the right). What\'s that guy\'s deal? We\'ll never know, but check out the Edit Scene above to see how this page is put together.</p><p>You\'ll notice that the clickable icons in this scene are organized into what we\'re calling a sectioned list, with two categories. This is yet another way that the kind authors of Graphic Data provide you with content options.</p>',
+			'Here on the surface of a planet cruel and merciless, we find another instance (Instance 3) that contains a single scene. This scene contains the same clickable options as the other scenes in this demo, BUT with a (lemon lime) twist. You\'ll see that the icons are organized into two categories that we\'re calling accordions. Now these accordions are great at organizing content, but they are not very good at playing music - but in the vacuum of space it is hard to play a jig in the first place, so you are fine. You\'ll notice the small "Hide Text" button in the upper right of the image. Whether this button is turned on or off is an adjustable parameter in the scene.',
 		];
 		$scene_info_entries = 2;
 		$scene_info1 = array(
@@ -569,13 +704,13 @@ class Graphic_Data_Tutorial_Content {
 		$scene_section_details = array(
 			array(
 				'scene_section_title1' => 'First Section',
-				'scene_section_hover_color1' => '#eb4034',
-				'scene_section_hover_text_color1' => '#125496',
+				'scene_section_hover_color1' => '#ff1100',
+				'scene_section_hover_text_color1' => '#ffffff',
 			),
 			array(
 				'scene_section_title2' => 'Second Section',
-				'scene_section_hover_color2' => '#29d646',
-				'scene_section_hover_text_color2' => '#ad1897',
+				'scene_section_hover_color2' => '#2200ff',
+				'scene_section_hover_text_color2' => '#ffffff',
 			),
 		);
 
@@ -652,13 +787,8 @@ class Graphic_Data_Tutorial_Content {
 	 */
 	public function create_tutorial_figures( $current_user_id ) {
 
-		// NASA SDO "The Sun Now" — updates every few minutes, date/time stamped on the image:
-		// This is a real-time image of the Sun in the 193Å extreme ultraviolet wavelength (showing the corona in false color). The date and UTC time are burned directly into the image, it's hosted on NASA's GSFC servers, and the URL never changes.
-		// https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg
-		// image from https://www.researchgate.net/publication/334155727_Coronal_Mass_Ejections_over_Solar_Cycles_23_and_24 .
-
 		global $wpdb;
-		$target_icon_array = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'External Link', 'Code Block' ];
+		$target_icon_array = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block' ];
 		$figure_tutorial_id = 45;
 		$modal_tutorial_id_array = [ 15, 21, 27, 33, 39 ]; // Image.
 
@@ -668,13 +798,18 @@ class Graphic_Data_Tutorial_Content {
 		$figure_details_data = json_decode( $figure_details_json, true );
 
 		// Iterate through each type of figure.
-		for ( $a = 0; $a < 3; $a++ ) {
+		for ( $a = 0; $a < 5; $a++ ) {
 			$target_icon = $target_icon_array[ $a ];
 			$target_figure_details = $figure_details_data[ $target_icon ];
 			$target_array_length = count( $target_figure_details );
-			//THE COMMENTED OUT FUNCTION IF THE CORRECT ONE AS PER JAI AND ROBBIE FIXING AN ISSUE
-			//$target_tutorial_id_array = array_map( fn( $id ) => $id + $a, $modal_tutorial_id_array );
-			$target_tutorial_id_array = array_map(function( $id ) use ( $a ) { return $id + $a; }, $modal_tutorial_id_array);
+			// THE COMMENTED OUT FUNCTION IF THE CORRECT ONE AS PER JAI AND ROBBIE FIXING AN ISSUE.
+			// $target_tutorial_id_array = array_map( fn( $id ) => $id + $a, $modal_tutorial_id_array );.
+			$target_tutorial_id_array = array_map(
+				function ( $id ) use ( $a ) {
+					return $id + $a;
+				},
+				$modal_tutorial_id_array
+			);
 			// Iterate through every figure in each figure type.
 			for ( $b = 0; $b < $target_array_length; $b++ ) {
 				$target_figure_details_element = $target_figure_details[ $b ];
@@ -743,7 +878,7 @@ class Graphic_Data_Tutorial_Content {
 								if ( false != $figure_file_path ) {
 									update_post_meta( $post_id, 'uploaded_path_json', $figure_file_path . '.json' );
 									update_post_meta( $post_id, 'uploaded_path_csv', $figure_file_path . '.csv' );
-									update_post_meta( $post_id, 'uploaded_file', basename( $figure_file_path ) . '.csv' );
+									update_post_meta( $post_id, 'uploaded_file', basename( $figure_file_path ) . '.json' );
 									update_post_meta( $post_id, 'figure_interactive_arguments', wp_json_encode( $target_figure_details_element['figure_interactive_arguments'] ) );
 								}
 								break;
@@ -756,6 +891,59 @@ class Graphic_Data_Tutorial_Content {
 	}
 
 	/**
+	 * Create an example about page for the tutorial, if such a page does not already exist.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_tutorial_about_page( $current_user_id ) {
+		global $wpdb;
+		$about_page_count = $wpdb->get_var(
+			"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'about' AND post_status IN ('publish', 'draft', 'trash')"
+		);
+		if ( $about_page_count > 0 ) {
+			return;
+		}
+
+		$post_data = array(
+			'post_title'   => 'About Graphic Data',
+			'post_type'    => 'about',
+			'post_status'  => 'publish',
+			'post_author'  => $current_user_id,
+		);
+
+		$central_about_box = array(
+			'aboutMain' => 'Graphic Data is an open-source framework for combining artwork with data in a way that is: 1) easy (and attractive!) to use by web users and 2) easy to use by those tasked with entering content. This framework is intended for the small-yet-mighty organizations and people who have big website ambitions, but don\'t necessarily have big website capacity.',
+			'aboutDetail' => 'This is an example of what you can do with an About page. Want to edit it? Just hit the "Edit About Page" above.',
+		);
+
+		$about_box_1 = array(
+			'aboutBoxTitle1' => 'Graphic Data Credits',
+			'aboutBoxMain1' => 'You can have up to ten boxes of additional information within the About page. In this box, we\'ll delve into the mysterious yet intriguing creators of the Graphic Data software. The lead Software Dude is mighty <a href="https://github.com/superjai" target="_blank">Jai Ranganathan</a> with the other Software Dude being crafty <a href="https://github.com/robbiecarroll" target="_blank">Robbie Carroll</a>. There have been additional contributions by the stealthy <a href="https://github.com/skanda-vasishta" target="_blank">Skanda Vasishta</a>.',
+			'aboutBoxDetail1' => 'Any questions or comments? You can get a hold of Jai at jai.ranganathan@noaa.gov.',
+		);
+		$about_box_2 = array(
+			'aboutBoxTitle2' => 'Learn More',
+			'aboutBoxMain2' => 'Want to learn more about Graphic Data? Well, you are in luck, because we have a ton of handy-dandy training materials that you can find <a href="https://ioos.github.io/sanctuarywatch_graphicdata/" target="_blank">here!</a>',
+			'aboutBoxDetail2' => '',
+		);
+
+		// Insert the post and get its ID.
+		$post_id = wp_insert_post( $post_data );
+
+		// Check if post was created successfully.
+		if ( ! is_wp_error( $post_id ) ) {
+			update_post_meta( $post_id, 'about_published', 'published' );
+			update_post_meta( $post_id, 'post_type', 'about' ); // needed? Unclear.
+			update_post_meta( $post_id, 'centralAbout', $central_about_box );
+			update_post_meta( $post_id, 'numberAboutBoxes', 2 );
+			update_post_meta( $post_id, 'aboutBox1', $about_box_1 );
+			update_post_meta( $post_id, 'aboutBox2', $about_box_2 );
+			update_post_meta( $post_id, 'tutorial_id', '1000' ); // An arbitary number that is clearly higher than any other tutorial post id.
+		}
+	}
+
+	/**
 	 * Create example modals for the tutorial.
 	 *
 	 * @param int $current_user_id The ID of the user to set as post author.
@@ -764,11 +952,11 @@ class Graphic_Data_Tutorial_Content {
 	public function create_tutorial_modals( $current_user_id ) {
 		global $wpdb;
 		$initial_array = array();
-		$initial_array['post_title'] = [ 'Default Scene', 'Table Scene', 'Space Scene' ];
+		$initial_array['post_title'] = [ 'Example Scene 1 (Default)', 'Example Scene 2 (Table)', 'Example Scene 3 (Space)' ];
 		$initial_array['modal_location'] = 3;
 		$initial_array['modal_scene'] = 6;
 		$initial_array['modal_icons'] = [ 'Default', 'Table', 'Space' ];
-		$initial_array['modal_icon_order'] = [ 1, 3, 2 ];
+		$initial_array['modal_icon_order'] = [ 1, 2, 3 ];
 		$initial_array['icon_function'] = [ 'Scene', 'Scene', 'Scene' ];
 		$initial_array['icon_scene_out'] = [ 7, 8, 9 ];
 		$initial_array['tutorial_id'] = [ 12, 13, 14 ];
@@ -790,20 +978,27 @@ class Graphic_Data_Tutorial_Content {
 				)
 			);
 			$scene_title = get_the_title( $tutorial_instance_id );
-			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Line Chart', 'Interactive Bar Chart', 'External Link', 'Code Block' ];
+			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block', 'External Link' ];
 			$repeat_array['modal_location'] = $modal_location[ $q ];
 			$repeat_array['modal_scene'] = $modal_scene[ $q ];
-			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Line-Chart', 'Interactive-Bar-Chart', 'External-Link', 'Code-Block' ];
+			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Bar-Chart', 'Interactive-Line-Chart', 'Code-Block', 'External-Link' ];
 			if ( $q > 2 ) {
 				$repeat_array['icon_toc_section'] = [ 1, 2, 1, 2, 1, 2 ];
 			}
 			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
-			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Modal' ];
-			$repeat_array['modal_tagline'] = [ 'The image tagline', 'The video tagline', 'the interactive line tagline', 'the interactive bar tagline', '', 'the code block tagline' ];
+			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'Modal', 'External URL' ];
+			$repeat_array['modal_tagline'] = [
+				'Within the iron fist of the Graphic Data organizational structure, Scenes contain multiple Modals. A modal defines what happens when you click on an icon in the scene. One option is for a modal window, which is this pop out box that has opened on the screen. This particular box is the Image Modal, which is here to show you - with humbleness and grace - various ways you can display images. You\'ll also notice that this particular window contains mutiple tabs. To see out how all of this is put together, check out this modal in Modals within the WordPress admin dashboard (it is an option in the left panel).',
+				'If you remember one thing about the mind-bending vastness of Graphic Data (and also space), remember this: Scenes contain multiple Modals. Modals define what happens with clickable icons. In this case, we\'re highlighting Graphic Data\'s ability to show videos. This particular implementation of the video is just a special case of the Code Block, another modal option in this scene.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).',
+				'Despite all of our technological progress, there are no bars in space (that we know of, anyway). It is for this reason (and solely for this reason) that we have included the ability to show interactive bar charts within Graphic Data. There are only a billion different options we have available for the bar charts, so the one below is just an example - though it is a mighty example. To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).',
+				'If I have said it once, I have said it a thousand times - Scenes contain Modals. Modals can do all kind of things: open a new web page, open a new scene, open a new line of credit, etc. (we\'re still working on the last one). This particular modal opens a window that shows a handy-dandy interactive line chart. Graphic Data has a lot of options available for line charts. See below for more information, but only if you dare!',
+				'Okay, time for some real talk. We, the fastidious creators of Graphic Data, have done our absolute best to anticipate what users of our humble software might need. But have we thought of everything? Well, almost everything. But for everything else, we have created something called the Code Block, which allows you to inject your own custom web magic into a modal window.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).',
+				'',
+			];
 			$repeat_array['modal_info_entries'] = 2;
 			$repeat_array['modal_photo_entries'] = 3;
 			$repeat_array['modal_tab_number'] = [ 2, 1, 1, 1, 1, 1 ];
-			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Line Chart', 'Bar Chart', 'External Link', 'Code Block' ];
+			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Bar Chart', 'Line Chart', 'Code Block', 'External Link' ];
 			$repeat_array['modal_tab_title2'] = [ 'External link', '', '', '', '', '' ];
 			$min_id = ( $q + 1 ) * 6 + 9;
 			$max_id = ( $q + 1 ) * 6 + 14;
@@ -948,12 +1143,12 @@ class Graphic_Data_Tutorial_Content {
 							}
 							break;
 						case 'modal_tab_number':
-							if ( 4 != $i ) { // We don't want modal tab recorded for link out modals.
+							if ( 5 != $i ) { // We don't want modal tab recorded for link out modals.
 								update_post_meta( $post_id, 'modal_tab_number', $modal_array['modal_tab_number'][ $i ] );
 							}
 							break;
 						case 'modal_tab_title1':
-							if ( 4 != $i ) { // We don't want modal tab title recorded for link out modals.
+							if ( 5 != $i ) { // We don't want modal tab title recorded for link out modals.
 								update_post_meta( $post_id, 'modal_tab_title1', $modal_array['modal_tab_title1'][ $i ] );
 								if ( '' != $modal_array['modal_tab_title2'] ) {
 									update_post_meta( $post_id, 'modal_tab_title2', $modal_array['modal_tab_title2'][ $i ] );

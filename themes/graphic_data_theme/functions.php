@@ -452,7 +452,7 @@ function graphic_data_modal_helper( $child_post_id, $child_ids, $child_id, $idx 
 
 		}
 		$scene_id = get_post_meta( $child_post_id, 'modal_scene' );
-		$scene_post = get_post( $scene_id[0] );
+		$scene_post = get_post( $scene_id[0] )->ID;
 
 		$section_name = isset( get_post_meta( $child_post_id, 'icon_toc_section' )[0] ) ? get_post_meta( $child_post_id, 'icon_toc_section' )[0] : '';
 		$child = $child_id;
@@ -499,12 +499,22 @@ function graphic_data_modal_helper( $child_post_id, $child_ids, $child_id, $idx 
 function graphic_data_get_modal_array( $svg_url ) {
 	// From original function - just preprocessing of the svg url, etc.
 	if ( $svg_url ) {
-		// Find the path to the SVG file.
-		$relative_path = ltrim( parse_url( $svg_url )['path'], '/' );
-		$full_path = ABSPATH . $relative_path;
 
-		// Get the contents from the SVG file.
-		$svg_content = file_get_contents( $full_path );
+		// Translate URL to filesystem path using WP's own upload dir info.
+		$upload_dir  = wp_upload_dir();
+		$upload_url  = trailingslashit( $upload_dir['baseurl'] );
+		$upload_path = trailingslashit( $upload_dir['basedir'] );
+
+		if ( str_starts_with( $svg_url, $upload_url ) ) {
+			// File is in the uploads directory — use WP's known path.
+			$full_path = $upload_path . substr( $svg_url, strlen( $upload_url ) );
+		} else {
+			// Fall back to the ABSPATH method for plugin/theme assets.
+			$relative_path = ltrim( parse_url( $svg_url )['path'], '/' );
+			$full_path = ABSPATH . $relative_path;
+		}
+
+        $svg_content = file_get_contents( $full_path ); // phpcs:ignore
 
 		// If the SVG content could not be loaded, terminate with an error message.
 		if ( ! $svg_content ) {
@@ -676,7 +686,7 @@ function graphic_data_enqueue_scripts() {
 		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js',
 		array(),
 		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( 'strategy' => 'defer', 'in_footer' => true )
 	);
 
 	// Enqueue the modal render script.
