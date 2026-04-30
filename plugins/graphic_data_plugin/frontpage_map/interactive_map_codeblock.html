@@ -1,0 +1,4634 @@
+<!-- sections in order for all the functionalities -->
+<!-- Type anyone of these with number in the finder to go to the section
+1) CSS
+2) HTML + CALL LEAFLET SCRIPTS
+3) MISC SUPPORTING FUNCTIONS
+4) SANCTUARY INFORMATION + GEOJSONS + URL ROOT
+5) CREATE LEAFLET MAP + ADD BASE MAPS
+6) ADD DOTS AND LABELS
+7) ADD SIDEBAR
+8) ADD THE GEOJSONS FROM THE SANCTUARIES DICT TO THE MAP  (Probably most important section)
+9) ADD DISTANCE SCALE & MOUSE COORDINATES
+10) ADD MAP LEGEND
+11) ADD FLASH INSTRUCTION ON FRONT SCREEN
+12) REFRESH SCREEN ON DEVICE ORIENTATION CHANGE
+13) FORWARD SANCTUARY SELECT TO TOP OF PAGE ON MOBILE
+14) PAGE WIDTH THRESHOLD WATCH @ 768px, NOT EVERY RESIZE EVENT
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sanctuary Watch Map</title>
+
+  <!-- Leaflet CSS (free, CDN) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+
+  <style>
+    /* -----------------------------
+    1) CSS 
+    ------------------------------ */
+
+    html, body {
+    margin: 0;
+    padding: 0;
+    }
+
+    /* #app is now the map wrapper */
+    #app{
+    position:relative;
+    width: 100%;
+    height: 75vh;
+    margin-left: 0;
+    margin-right: 0;
+    /* border: 1px solid #ccc; */
+    /* border-radius: 10px; */
+    overflow: hidden; 
+    }
+
+    #app.is-loading {
+        pointer-events: none;
+        user-select: none;
+    }
+
+    #app-loader.loader-wrapper {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: rgba(26, 26, 26, 0.82);
+        z-index: 99999;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    #app-loader.loader-wrapper.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    #app-loader .spinner {
+        width: 60px;
+        height: 60px;
+        border: 6px solid #444;
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+
+    #app-loader .loading-text {
+        color: #fff;
+        font-size: 1.5rem;
+        animation: fadeInOut 2s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes fadeInOut {
+        0%, 100% { opacity: 0.45; }
+        50% { opacity: 1; }
+    }
+
+    /* Leaflet map fills the wrapper */
+    #map{
+    width: 100%;
+    height: 100%;
+    }
+
+    /* Sidebar OVERLAY inside the map (right side, full height) */
+    #sidebar{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 16%;
+    width: 30%;
+    min-height: 105px;      /* prevents too wide */
+    box-sizing: border-box;
+    z-index: 1000;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+    }
+
+    /* EFFECTS MOBILE LANDSCAPE */
+    @media (max-width: 1000px){
+        #sidebar{
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        height: 16%;
+        width: 40%;
+        min-height: 105px; 
+        box-sizing: border-box;
+        z-index: 1000;
+        font-family: Arial, Helvetica, sans-serif;
+        overflow: hidden;
+        } 
+    }
+
+    /* #sidebar.sidebar-panel-open {
+        height: 100%;
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+    } */
+
+    /* Dropdown */
+    #sanctuarySelect{
+    width: 100%;
+    padding: 12px 2.8rem; /* extra room for arrow */
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.15);
+    background: #fff;
+    color: #043161;
+    font-weight: 600;
+    box-sizing: border-box;
+    outline: none;
+    font-size: 1.6rem;
+    text-align: center;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* padding-right: 3rem; */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='28' height='28' fill='none' stroke='%23043161' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 1.8rem;
+    }
+
+    /* Optional helper text */
+    #sidebarHint{
+    margin-top: 5px;
+    font-size: 13px;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    padding-bottom: 10px;
+    }
+
+    #sidebarHint .sidebar-hint-list{
+    margin: 6px 0 0;
+    padding-left: 12px;        /* smaller indent */
+    list-style-position: inside; /* brings bullet closer to text */
+    list-style-type: disc;
+    }
+
+    #sidebarHint .sidebar-hint-list li{
+    margin: 4px 0;
+    }
+
+    /* Mobile top selector bar (hidden on desktop) */
+    #mobile-topbar{
+    display: none;
+    }
+    
+    /* MOBILE VIEW LANDSCAPE */
+    @media (max-height: 500px) {
+        #app{
+        /* position:relative; */
+        display: flex;
+        flex-direction: column;
+        height: auto;          /* allow panel below map */
+        overflow: visible;
+        /* background-color:#008da8; */
+        margin-top: 10px !important;
+        /* margin-bottom: 10px; */
+        background-color: #03386c;
+        }
+
+        /* Keep map at 50vh */
+        #map{
+            height: 75vh;
+            width: 100%;
+            order: 2;
+            margin-top: 20px !important;
+        }
+
+        /* Hide desktop sidebar */
+        /* Sidebar OVERLAY inside the map (right side, full height) */
+        #sidebar{
+        
+        order: 1;
+        width: 90% !important;
+        position:relative;
+        top: 15px;
+        bottom: 15px;
+        right: 0px;
+        left: 0px;
+        align-items: center;
+        height: auto;
+        min-height: 70px;
+        box-sizing: border-box;
+        margin: 0 auto;
+
+        /* background: #f2f2f2;
+        border: 1px solid rgba(0,0,0,0.15); */
+        /* backdrop-filter: blur(6px); */
+        z-index: 1000;
+
+        font-family: Arial, Helvetica, sans-serif;
+        overflow: hidden;
+        }
+
+        /* Dropdown */
+        #sanctuarySelect{
+        width: 100%;
+        padding: 12px 2rem; /* extra room for arrow */
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.15);
+        background: #fff;
+        color: #043161;
+        font-weight: 600;
+        box-sizing: border-box;
+        outline: none;
+        font-size: 1.5rem !important;
+        text-align: center !important;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='28' height='28' fill='none' stroke='%23043161' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 0.1rem center;
+        background-size: 1.8rem;
+        text-align-last: center;
+        }
+
+        /* Optional helper text */
+        #sidebarHint{
+        display: none;
+        margin-top: 10px;
+        font-size: 13px;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 15px !important;
+        }
+
+        .leaflet-top.leaflet-left {
+            /* top: 20%; */
+            width: 50%;
+        }
+
+        .sw-reset-btn {
+            padding: 0 !important;
+        }
+
+        .sw-reset-text {
+            font-size: .75rem;
+        }
+
+        .leaflet-bottom {
+            width: 100%;
+
+        }
+
+        /* Dot Labels___________________________________________*/
+        /* Remove default tooltip bubble styling */
+        .sw-dot-tooltip.leaflet-tooltip {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 10px !important;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+        white-space: nowrap;
+        }
+
+        /* Remove the little tooltip tip/arrow */
+        .sw-dot-tooltip.leaflet-tooltip:before {
+        display: none;
+        }
+
+        .leaflet-touch .leaflet-control-attribution {
+            box-shadow: none;
+            display: none !important;
+        }
+
+        .leaflet-right .leaflet-control {
+        margin-right: 5px;
+        }
+
+        .leaflet-control-scale {
+            padding-bottom: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-wrap: nowrap;
+            margin: 0 !important;
+
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .leaflet-control-scale-line {
+        position: relative;
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid #fff !important;
+        color: #fff !important;
+        font-size: .6rem !important; 
+        line-height: 1.1;
+        height: 18px;
+        box-sizing: border-box;
+        overflow: visible;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-weight: 400 !important;
+        font-style: normal !important;
+        letter-spacing: normal !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+        filter: none !important;
+        text-align: center;
+        }
+
+        .map-legend{
+        width: 100%;
+        max-width: 100%;
+        /* min-height: 70px; */
+        box-sizing: border-box;
+        /* backdrop-filter: blur(6px);  */
+        /* margin: 0 auto 20px auto !important;      */
+        /* background: #fff; */
+        color: #fff !important;
+        border-radius: 12px;
+
+        display: flex;
+        flex-direction: column;         /* ✅ title above rows */
+        align-items: center;            /* ✅ center everything horizontally */
+        justify-content: center;        /* ✅ center vertically within min-height */
+        gap: 5px;
+
+        padding: 10px 10px !important;  
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: .55rem !important;           /* "auto" isn't valid for font-size */
+        }
+
+        .map-legend .legend-title{
+        width: 100%;
+        height: 20px;
+        text-align: center;
+        margin: 0;
+        font-weight: 700;
+        font-size: 16px;
+        white-space: nowrap;
+        margin-bottom: 0px !important;
+        }
+
+        .map-legend .legend-rowline{
+        display: inline-flex;           /* ✅ all legend rows in ONE line */
+        align-items: center;
+        justify-content: center;        /* ✅ centered line */
+        gap: 14px;
+        flex-wrap: nowrap;              /* keep one line (will overflow if too many) */
+        backdrop-filter: blur(30px);
+        border-radius: 12px;
+        padding-left: 10px;
+        padding-right: 10px;
+        background-color: #ffffff49;
+        }
+
+        /* each item */
+        .map-legend .legend-row{
+        display: inline-flex;
+        align-items: center;
+        gap: 5px !important;
+        margin: 0;
+        white-space: nowrap;
+        }
+
+
+        .legend-dot{
+        width: 9px;
+        height: 9px;
+        margin-right: none;
+        border-radius: 50%;
+        background: #6DE0FF;           /* dot fill */
+        border: 1px solid deepskyblue;     /* dot outline */
+        display: inline-block;
+        align-items: center;
+        }
+
+        .legend-dot-inactive{
+        width: 9px;
+        height: 9px;
+        margin-right: none;
+        border-radius: 50%;
+        background: #979797;           /* dot fill */
+        border: 1px solid grey;     /* dot outline */
+        display: inline-block;
+        align-items: center;
+        }
+
+
+        .legend-poly{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(0,191,255,0.12); /* deepskyblue fill @ ~0.12 */
+        border: 2px solid deepskyblue;    /* boundary line */
+        display: inline-block;
+        }
+
+        .legend-poly-active{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(255,255,0,0.25);
+        border: 2px solid yellow;
+        display: inline-block;
+        }
+
+        .legend-poly-inactive{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(255,255,0,0.25);
+        border: 2px solid rgb(224, 224, 224);
+        display: inline-block;
+        }
+
+        .legend-label{
+        /* line-height: 1.2; */
+        }
+
+        /* Panel container (bottom-left overlay) */
+        #info-panel{
+            margin-top: 20px !important;
+            margin-bottom: 20px !important;
+            position: static !important;
+            width: 70% !important;
+            max-width: 70% !important;
+            margin-left: auto !important;   /* ✅ center the panel */
+            margin-right: auto !important;  /* ✅ center the panel */
+            /* or shorthand: margin: 10px auto 0 auto !important; */
+            order: 3;
+            z-index: auto;
+            display: flex;
+            justify-content: center;
+            bottom: 11% !important;
+            top: none !important;
+            transform: none !important;
+        }
+
+        .dot-label{
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: #043161;
+            font-weight: 600;
+            font-size: small !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+            pointer-events: none; /* doesn't block clicks on dots */
+            white-space: nowrap;
+        }
+
+        .sw-panel-banner{
+        display: block;
+        padding: 30px 12px !important;
+        /* border-radius: 12px; */
+        color: #fff;
+        text-align: center;
+        font-weight: 600 !important;
+        font-size: 1rem;
+        line-height: 1.25;
+        text-decoration: none; /* important for <a> */
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: medium;
+        text-justify: auto;
+        }
+
+        .sw-panel-banner.has-url {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: medium;
+            background: #042242 !important;
+            cursor: pointer;
+            font-size: 1.7rem;
+        }
+
+        .sw-panel-card{
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            /* background: #042242 !important; */
+            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+            border: 2px solid yellow !important;
+        }
+
+
+        .sw-panel-close{
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 40px;
+        height: 40px;
+
+        display: grid;          /* ✅ perfect centering */
+        place-items: center;
+
+        padding: 0;             /* avoid default button padding */
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.15);
+        background: rgba(255,255,255,0.92);
+
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1;         /* fine now, but not required */
+        cursor: pointer;
+        z-index: 5;
+        appearance: none;
+        -webkit-appearance: none;
+        }
+
+        .sw-onboard{
+        position: absolute;
+        inset: 0;
+        z-index: 5000;
+        display: flex;
+        flex-direction: column;
+        place-items: center;
+        height: 100%; 
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(3px);
+        font-size: 20px;
+        }
+
+        .sw-onboard-card{
+        width: min(700px, calc(100% - 24px));
+        background: rgba(255,255,255,1);
+        border: 1px solid rgba(0,0,0,0.15);
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.30);
+        padding: 20px 20px 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #043161;
+        font-size: 20px;
+        height: 100% !important;
+        margin: auto 0;
+        display: flex;
+        flex-direction: column;
+        place-items: center;
+
+        }
+
+        .sw-onboard-title{ font-weight: 900; font-size: 2.5rem; margin-bottom: 10px; text-align: center !important; }
+        .sw-onboard-list{ margin: auto 0; padding: 0; line-height: 1.5; font-weight: 600; font-size: 1.4rem;}
+        .sw-onboard-btn{
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-weight: 700;
+        font-size: 2rem;
+        cursor: pointer;
+        background: #043161;
+        color: #fff;
+        margin-top: auto;
+        text-align: center;
+        }
+        .sw-onboard.fadeout{ animation: swFade 260ms ease forwards; }
+        @keyframes swFade{ to { opacity: 0; transform: translateY(4px); } }
+
+
+        .leaflet-left .leaflet-control {
+            margin-left: 5px !important;
+        }
+
+
+        .leaflet-bottom .leaflet-control {
+            margin-bottom: 0px !important;
+        }
+
+        .leaflet-top .leaflet-control {
+        margin-top: 3px !important;
+        margin-left: 15px !important;
+        }
+
+        .leaflet-touch .leaflet-bar a:first-child {
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+        width: 50px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        text-align: center;
+        }
+
+        .leaflet-control-zoom-in {
+            padding-left: 7px;
+            padding-right: 7px;
+        }
+
+        .leaflet-touch .leaflet-bar a:last-child {
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+        width: 40px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        text-align: center;
+        width: 100% !important;
+        }
+        .leaflet-right {
+        right: 0;
+        padding-right: 15px;
+        }
+
+        .sw-dot-tooltip-active.leaflet-tooltip {
+        font-size: .55rem !important;
+        }
+
+        .sw-dot-tooltip-inactive.leaflet-tooltip {
+        font-size: .55rem !important;
+        }
+    }
+
+    /* MOBILE VIEW PORTRAIT */
+    @media (max-width: 768px){
+
+        #app{
+        /* position:relative; */
+        display: flex;
+        flex-direction: column;
+        height: auto;          /* allow panel below map */
+        overflow: visible;
+        /* background-color:#008da8; */
+        margin-top: 10px;
+        /* margin-bottom: 10px; */
+        background-color: #03386c;
+        }
+
+        /* Keep map at 50vh */
+        #map{
+            height: 50vh;
+            width: 100%;
+            order: 2;
+            margin-top: 20px !important;
+        }
+
+        /* Hide desktop sidebar */
+        /* Sidebar OVERLAY inside the map (right side, full height) */
+        #sidebar{
+        order: 1;
+        width: 90% !important;
+        position:relative;
+        top: 15px;
+        right: 0px;
+        left: 0px;
+        align-items: center;
+        height: auto;
+        min-height: 70px;
+        box-sizing: border-box;
+        margin: 0 auto;
+
+        /* background: #f2f2f2;
+        border: 1px solid rgba(0,0,0,0.15); */
+        /* backdrop-filter: blur(6px); */
+        z-index: 1000;
+
+        font-family: Arial, Helvetica, sans-serif;
+        overflow: hidden;
+        }
+
+        /* Dropdown */
+        #sanctuarySelect{
+        width: 100%;
+        padding: 12px 2rem; /* extra room for arrow */
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.15);
+        background: #fff;
+        color: #043161;
+        font-weight: 600;
+        box-sizing: border-box;
+        outline: none;
+        font-size: 1.5rem !important;
+        text-align: center !important;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='28' height='28' fill='none' stroke='%23043161' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 0.1rem center;
+        background-size: 1.8rem;
+        text-align-last: center;
+        }
+
+        /* Optional helper text */
+        #sidebarHint{
+        display: none;
+        margin-top: 10px;
+        font-size: 13px;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 15px !important;
+        }
+
+        .leaflet-top.leaflet-left {
+            /* top: 20%; */
+            width: 50%;
+        }
+
+        .sw-reset-btn {
+            /* padding: 0 !important; */
+        }
+
+        .sw-reset-text {
+            font-size: .75rem;
+        }
+
+        .leaflet-bottom {
+            width: 100%;
+
+        }
+
+        /* Dot Labels___________________________________________*/
+        /* Remove default tooltip bubble styling */
+        .sw-dot-tooltip.leaflet-tooltip {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 10px !important;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+        white-space: nowrap;
+        }
+
+        /* Remove the little tooltip tip/arrow */
+        .sw-dot-tooltip.leaflet-tooltip:before {
+        display: none;
+        }
+
+        .leaflet-touch .leaflet-control-attribution {
+            box-shadow: none;
+            display: none !important;
+        }
+
+        .leaflet-right .leaflet-control {
+        margin-right: 5px;
+        }
+
+        .leaflet-control-scale {
+            padding-bottom: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-wrap: nowrap;
+            margin: 0 !important;
+
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .leaflet-control-scale-line {
+        position: relative;
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid #fff !important;
+        color: #fff !important;
+        font-size: .6rem !important; 
+        line-height: 1.1;
+        height: 18px;
+        box-sizing: border-box;
+        overflow: visible;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-weight: 400 !important;
+        font-style: normal !important;
+        letter-spacing: normal !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+        filter: none !important;
+        text-align: center;
+        }
+
+        .map-legend{
+        width: 100%;
+        max-width: 100%;
+        /* min-height: 70px; */
+        box-sizing: border-box;
+        /* backdrop-filter: blur(6px);  */
+        /* margin: 0 auto 20px auto !important;      */
+        /* background: #fff; */
+        color: #fff !important;
+        border-radius: 12px;
+
+        display: flex;
+        flex-direction: column;         /* ✅ title above rows */
+        align-items: center;            /* ✅ center everything horizontally */
+        justify-content: center;        /* ✅ center vertically within min-height */
+        gap: 5px;
+
+        padding: 10px 10px !important;  
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: .55rem !important;           /* "auto" isn't valid for font-size */
+        }
+
+        .map-legend .legend-title{
+        width: 100%;
+        height: 20px;
+        text-align: center;
+        margin: 0;
+        font-weight: 700;
+        font-size: 16px;
+        white-space: nowrap;
+        margin-bottom: 0px !important;
+        }
+
+        .map-legend .legend-rowline{
+        display: inline-flex;           /* ✅ all legend rows in ONE line */
+        align-items: center;
+        justify-content: center;        /* ✅ centered line */
+        gap: 14px;
+        flex-wrap: nowrap;              /* keep one line (will overflow if too many) */
+        backdrop-filter: blur(30px);
+        border-radius: 12px;
+        padding-left: 10px;
+        padding-right: 10px;
+        background-color: #ffffff49;
+        }
+
+        /* each item */
+        .map-legend .legend-row{
+        display: inline-flex;
+        align-items: center;
+        gap: 5px !important;
+        margin: 0;
+        white-space: nowrap;
+        }
+
+
+        .legend-dot{
+        width: 9px;
+        height: 9px;
+        margin-right: none;
+        border-radius: 50%;
+        background: #6DE0FF;           /* dot fill */
+        border: 1px solid deepskyblue;     /* dot outline */
+        display: inline-block;
+        align-items: center;
+        }
+
+        .legend-dot-inactive{
+        width: 9px;
+        height: 9px;
+        margin-right: none;
+        border-radius: 50%;
+        background: #979797;           /* dot fill */
+        border: 1px solid grey;     /* dot outline */
+        display: inline-block;
+        align-items: center;
+        }
+
+
+        .legend-poly{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(0,191,255,0.12); /* deepskyblue fill @ ~0.12 */
+        border: 2px solid deepskyblue;    /* boundary line */
+        display: inline-block;
+        }
+
+        .legend-poly-active{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(255,255,0,0.25);
+        border: 2px solid yellow;
+        display: inline-block;
+        }
+
+        .legend-poly-inactive{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(255,255,0,0.25);
+        border: 2px solid rgb(224, 224, 224);
+        display: inline-block;
+        }
+
+        .legend-label{
+        /* line-height: 1.2; */
+        }
+
+        /* Panel container (bottom-left overlay) */
+        #info-panel{
+            margin-top: 20px !important;
+            margin-bottom: 20px !important;
+            position: static !important;
+            width: 90% !important;
+            max-width: 90% !important;
+            margin-left: auto !important;   /* ✅ center the panel */
+            margin-right: auto !important;  /* ✅ center the panel */
+            /* or shorthand: margin: 10px auto 0 auto !important; */
+            order: 3;
+            z-index: auto;
+            display: flex;
+            justify-content: center;
+            bottom: 11% !important;
+            top: none !important;
+            transform: none !important;
+        }
+
+        .dot-label{
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: #043161;
+            font-weight: 600;
+            font-size: small !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+            pointer-events: none; /* doesn't block clicks on dots */
+            white-space: nowrap;
+        }
+
+        .sw-panel-banner{
+        display: block;
+        padding: 30px 12px !important;
+        /* border-radius: 12px; */
+        color: #fff;
+        text-align: center;
+        font-weight: 600 !important;
+        font-size: 1rem;
+        line-height: 1.25;
+        text-decoration: none; /* important for <a> */
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: medium;
+        text-justify: auto;
+        }
+
+        .sw-panel-banner.has-url {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: medium;
+            background: #042242 !important;
+            cursor: pointer;
+            font-size: 1.7rem;
+        }
+
+        .sw-panel-card{
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            /* background: #042242 !important; */
+            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+            border: 2px solid yellow !important;
+        }
+        
+
+        .sw-panel-close{
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 40px;
+        height: 40px;
+
+        display: grid;          /* ✅ perfect centering */
+        place-items: center;
+
+        padding: 0;             /* avoid default button padding */
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.15);
+        background: rgba(255,255,255,0.92);
+
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1;         /* fine now, but not required */
+        cursor: pointer;
+        z-index: 5;
+        appearance: none;
+        -webkit-appearance: none;
+        }
+
+        .sw-onboard{
+        position: absolute;
+        inset: 0;
+        z-index: 5000;
+        display: flex;
+        flex-direction: column;
+        place-items: center;
+        height: 100%; 
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(3px);
+        font-size: 20px !important;
+        }
+
+        .sw-onboard-card{
+        width: 95% !important;
+        background: rgba(255,255,255,1) !important;
+        border: 1px solid rgba(0,0,0,0.15) !important;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.30);
+        padding: 20px 20px 20px;
+        font-family: Arial, Helvetica, sans-serif !important;
+        color: #043161;
+        font-size: 20px;
+        height: 95% !important;
+        margin: auto 0;
+        display: flex;
+        flex-direction: column;
+        place-items: center;
+
+        }
+
+        .sw-onboard-title{ font-weight: 900; font-size: 2.2rem !important; margin-bottom: 10px !important; text-align: center !important; }
+        .sw-onboard-list{ margin: auto 0; padding: 0; line-height: 1.5; font-weight: 600; font-size: 1.1rem !important;}
+        .sw-onboard-btn{
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-weight: 700;
+        font-size: 2rem !important;
+        cursor: pointer;
+        background: #043161;
+        color: #fff;
+        margin-top: auto;
+        text-align: center;
+        }
+        .sw-onboard.fadeout{ animation: swFade 260ms ease forwards; }
+        @keyframes swFade{ to { opacity: 0; transform: translateY(4px); } }
+
+
+        .leaflet-left .leaflet-control {
+            margin-left: 5px !important;
+        }
+
+
+        .leaflet-bottom .leaflet-control {
+            margin-bottom: 0px !important;
+        }
+
+        .leaflet-top .leaflet-control {
+        margin-top: 3px !important;
+        margin-left: 15px !important;
+        }
+
+        .leaflet-control-zoom-in {
+            padding-left: 7px;
+            padding-right: 7px;
+        }
+
+        .leaflet-touch .leaflet-bar a:first-child {
+        border-top-left-radius: 2px !important;
+        border-bottom-left-radius: 2px !important;
+        width: 50px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        text-align: center;
+        }
+
+        .leaflet-touch .leaflet-bar a:last-child {
+        border-top-right-radius: 2px !important;
+        border-bottom-right-radius: 2px !important;
+        width: 50px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        text-align: center;
+        width: 100% !important;
+        }
+        .leaflet-right {
+        right: 0;
+        padding-right: 15px;
+        }
+
+        .sw-dot-tooltip-active.leaflet-tooltip {
+        font-size: .55rem !important;
+        }
+
+        .sw-dot-tooltip-inactive.leaflet-tooltip {
+        font-size: .55rem !important;
+        }
+    }
+
+
+    @media (min-height: 960px) and (max-width: 1024px){
+
+        #app{
+        /* position:relative; */
+        display: flex;
+        flex-direction: column;
+        height: auto;          /* allow panel below map */
+        overflow: visible;
+        /* background-color:#008da8; */
+        margin-top: 10px;
+        /* margin-bottom: 10px; */
+        background-color: #03386c;
+        }
+
+        /* Keep map at 50vh */
+        #map{
+            height: 50vh;
+            width: 100%;
+            order: 2;
+        }
+
+        /* Hide desktop sidebar */
+        /* Sidebar OVERLAY inside the map (right side, full height) */
+        #sidebar{
+        order: 1;
+        width: 90% !important;
+        position:relative;
+        top: 15px;
+        right: 0px;
+        left: 0px;
+        align-items: center;
+        height: auto;
+        min-height: 70px;
+        box-sizing: border-box;
+        margin: 0 auto;
+
+        /* background: #f2f2f2;
+        border: 1px solid rgba(0,0,0,0.15); */
+        /* backdrop-filter: blur(6px); */
+        z-index: 1000;
+
+        font-family: Arial, Helvetica, sans-serif;
+        overflow: hidden;
+        }
+
+        /* Dropdown */
+        #sanctuarySelect{
+        width: 100%;
+        padding: 12px 2rem; /* extra room for arrow */
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.15);
+        background: #fff;
+        color: #043161;
+        font-weight: 600;
+        box-sizing: border-box;
+        outline: none;
+        font-size: 1.5rem !important;
+        text-align: center;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='28' height='28' fill='none' stroke='%23043161' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 0.1rem center;
+        background-size: 1.8rem;
+        text-align-last: center;
+        }
+
+        /* Optional helper text */
+        #sidebarHint{
+        /* display: none; */
+        margin-top: 10px;
+        font-size: 13px;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 15px !important;
+        }
+
+        .leaflet-top.leaflet-left {
+            /* top: 20%; */
+            width: 50%;
+        }
+
+        .sw-reset-btn {
+            padding: 0 !important;
+        }
+
+        .sw-reset-text {
+            font-size: .75rem;
+        }
+
+        .leaflet-bottom {
+            width: 100%;
+
+        }
+
+        /* Dot Labels___________________________________________*/
+        /* Remove default tooltip bubble styling */
+        .sw-dot-tooltip.leaflet-tooltip {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 10px !important;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+        white-space: nowrap;
+        }
+
+        /* Remove the little tooltip tip/arrow */
+        .sw-dot-tooltip.leaflet-tooltip:before {
+        display: none;
+        }
+
+        .leaflet-touch .leaflet-control-attribution {
+            box-shadow: none;
+            display: none !important;
+        }
+
+        .leaflet-right .leaflet-control {
+        margin-right: 5px;
+        }
+
+        .leaflet-control-scale {
+            padding-bottom: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-wrap: nowrap;
+            margin: 0 !important;
+
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .leaflet-control-scale-line {
+        position: relative;
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid #fff !important;
+        color: #fff !important;
+        font-size: .6rem !important; 
+        line-height: 1.1;
+        height: 18px;
+        box-sizing: border-box;
+        overflow: visible;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-weight: 400 !important;
+        font-style: normal !important;
+        letter-spacing: normal !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+        filter: none !important;
+        text-align: center;
+        }
+
+        .map-legend{
+        width: 100%;
+        max-width: 100%;
+        /* min-height: 70px; */
+        box-sizing: border-box;
+        /* backdrop-filter: blur(6px);  */
+        /* margin: 0 auto 20px auto !important;      */
+        /* background: #fff; */
+        color: #fff !important;
+        border-radius: 12px;
+
+        display: flex;
+        flex-direction: column;         /* ✅ title above rows */
+        align-items: center;            /* ✅ center everything horizontally */
+        justify-content: center;        /* ✅ center vertically within min-height */
+        gap: 5px;
+
+        padding: 10px 10px !important;  
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: .7rem !important;           /* "auto" isn't valid for font-size */
+        }
+
+        .map-legend .legend-title{
+        width: 100%;
+        height: 20px;
+        text-align: center;
+        margin: 0;
+        font-weight: 700;
+        font-size: 16px;
+        white-space: nowrap;
+        margin-bottom: 0px !important;
+        }
+
+        .map-legend .legend-rowline{
+        display: inline-flex;           /* ✅ all legend rows in ONE line */
+        align-items: center;
+        justify-content: center;        /* ✅ centered line */
+        gap: 14px;
+        flex-wrap: nowrap;              /* keep one line (will overflow if too many) */
+        backdrop-filter: blur(30px);
+        border-radius: 12px;
+        padding: 10px;
+        background-color: #ffffff49;
+        }
+
+        /* each item */
+        .map-legend .legend-row{
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        margin: 0 !important;
+        white-space: nowrap;
+        }
+
+
+        .legend-dot{
+        width: 9px;
+        height: 9px;
+        margin-right: none;
+        border-radius: 50%;
+        background: #6DE0FF;           /* dot fill */
+        border: 1px solid deepskyblue;     /* dot outline */
+        display: inline-block;
+        align-items: center;
+        }
+
+        .legend-dot-inactive{
+        width: 9px;
+        height: 9px;
+        margin-right: none;
+        border-radius: 50%;
+        background: #979797;           /* dot fill */
+        border: 1px solid grey;     /* dot outline */
+        display: inline-block;
+        align-items: center;
+        }
+
+
+        .legend-poly{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(0,191,255,0.12); /* deepskyblue fill @ ~0.12 */
+        border: 2px solid deepskyblue;    /* boundary line */
+        display: inline-block;
+        }
+
+        .legend-poly-active{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(255,255,0,0.25);
+        border: 2px solid yellow;
+        display: inline-block;
+        }
+
+        .legend-poly-inactive{
+        width: 12px;
+        height: 10px;
+        border-radius: 3px;
+        background: rgba(255,255,0,0.25);
+        border: 2px solid rgb(224, 224, 224);
+        display: inline-block;
+        }
+
+        .legend-label{
+        /* line-height: 1.2; */
+        }
+
+        /* Panel container (bottom-left overlay) */
+        #info-panel{
+            margin-top: 20px !important;
+            margin-bottom: 20px !important;
+            position: static !important;
+            width: 90% !important;
+            max-width: 90% !important;
+            margin-left: auto !important;   /* ✅ center the panel */
+            margin-right: auto !important;  /* ✅ center the panel */
+            /* or shorthand: margin: 10px auto 0 auto !important; */
+            order: 3;
+            z-index: auto;
+            /* display: flex; */
+            justify-content: center;
+            bottom: 11% !important;
+            top: none !important;
+            transform: none !important;
+        }
+
+        .dot-label{
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 5px 10px;
+            color: #043161;
+            font-weight: 600;
+            font-size: small !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+            pointer-events: none; /* doesn't block clicks on dots */
+            white-space: nowrap;
+        }
+
+        .sw-panel-banner{
+        display: block;
+        padding: 30px 12px !important;
+        /* border-radius: 12px; */
+        color: #fff;
+        text-align: center;
+        font-weight: 600 !important;
+        font-size: 1rem;
+        line-height: 1.25;
+        text-decoration: none; /* important for <a> */
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: medium;
+        text-justify: auto;
+        }
+
+        .sw-panel-banner.has-url {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: medium;
+            background: #042242 !important;
+            cursor: pointer;
+            font-size: 1.7rem;
+        }
+
+        .sw-panel-card{
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            /* background: #042242 !important; */
+            box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+            border: 2px solid yellow !important;
+        }
+
+
+        .sw-panel-close{
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 40px;
+        height: 40px;
+
+        display: grid;          /* ✅ perfect centering */
+        place-items: center;
+
+        padding: 0;             /* avoid default button padding */
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.15);
+        background: rgba(255,255,255,0.92);
+
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1;         /* fine now, but not required */
+        cursor: pointer;
+        z-index: 5;
+        appearance: none;
+        -webkit-appearance: none;
+        }
+
+        .sw-onboard{
+        position: absolute;
+        inset: 0;
+        z-index: 5000;
+        display: flex;
+        flex-direction: column;
+        place-items: center;
+        height: 100%; 
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(3px);
+        font-size: 20px;
+        }
+
+        .sw-onboard-card{
+        width: min(700px, calc(100% - 24px));
+        background: rgba(255,255,255,1);
+        border: 1px solid rgba(0,0,0,0.15);
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.30);
+        padding: 20px 20px 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #043161;
+        font-size: 20px;
+        height: 50% !important;
+        margin: auto 0;
+        display: flex;
+        flex-direction: column;
+        place-items: center;
+
+        }
+
+        .sw-onboard-title{ font-weight: 900; font-size: 2.5rem; margin-bottom: 10px; text-align: center !important; }
+        .sw-onboard-list{ margin: auto 0; padding: 0; line-height: 1.5; font-weight: 600; font-size: 1.4rem;}
+        .sw-onboard-btn{
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-weight: 700;
+        font-size: 2rem;
+        cursor: pointer;
+        background: #043161;
+        color: #fff;
+        margin-top: auto;
+        text-align: center;
+        }
+        .sw-onboard.fadeout{ animation: swFade 260ms ease forwards; }
+        @keyframes swFade{ to { opacity: 0; transform: translateY(4px); } }
+
+
+        .leaflet-left .leaflet-control {
+            margin-left: 5px !important;
+        }
+
+
+        .leaflet-bottom .leaflet-control {
+            margin-bottom: 0px !important;
+        }
+
+        .leaflet-top .leaflet-control {
+        margin-top: 3px !important;
+        margin-left: 15px !important;
+        }
+
+        .leaflet-control-zoom-in {
+            padding-left: 7px;
+            padding-right: 7px;
+        }
+
+        .leaflet-touch .leaflet-bar a:first-child {
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+        width: 50px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        text-align: center;
+        }
+
+        .leaflet-touch .leaflet-bar a:last-child {
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+        width: 50px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        text-align: center;
+        width: 100% !important;
+        }
+
+        .leaflet-right {
+        right: 0;
+        padding-right: 15px;
+        }
+
+        .sw-dot-tooltip-active.leaflet-tooltip {
+        font-size: .9rem !important;
+        }
+
+        .sw-dot-tooltip-inactive.leaflet-tooltip {
+        font-size: .9rem !important;
+        }
+    }
+
+    /* Panel container (bottom-left overlay) */
+    #info-panel{
+        position: absolute;
+        right: 1.9%;
+        /* bottom: 11%; */
+        top: calc(50% + 30px);
+        transform: translateY(-50%);
+        width: 27%;
+        /* max-width: calc(100% - 20px); */
+        z-index: 2200;
+    }
+
+    #dot-panel.hidden{ display:none; }
+
+    .sw-panel-card{
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid rgba(0,0,0,0.12);
+        /* background: #fff; */
+        box-shadow: 0 4px 18px rgba(0,0,0,0.18);
+        /* border-color: rgb(242, 242, 8); */
+        /* background: rgb(242, 242, 8); */
+    }
+
+    .sw-panel-card:hover{
+        border-color: rgb(242, 242, 8);
+        background: rgb(242, 242, 8);
+    }
+
+    .sw-panel-close{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        position: absolute;
+        top: 8px;
+        right: 8px;
+
+        width: 1.8rem;
+        height: 1.8rem;
+
+        padding: 0;                /* 🔑 remove default button padding */
+        
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.15);
+        background: rgba(255,255,255,0.92);
+
+        font-weight: 900;
+        font-size: 1.2rem;         /* control visual centering */
+        line-height: 1;            /* keep tight */
+
+        cursor: pointer;
+        z-index: 5;
+
+        appearance: none;          /* 🔑 removes browser button quirks */
+        -webkit-appearance: none;
+    }
+
+    .sw-panel-img{
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    /* Make linked images feel clickable */
+    .sw-panel-img-link{
+        display: block;
+        cursor: pointer;
+    }
+
+    /* Banner above image */
+    .sw-panel-banner{
+    display: block;
+    padding: 1.875rem 0.75rem;
+    /* border-radius: 10px; */
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    text-decoration: none; /* important for <a> */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+    }
+    .sw-panel-banner.has-url{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+    background: #043161;
+    cursor: pointer;
+    font-size: 1.5rem;
+    }
+    .sw-panel-card:has(.sw-panel-img:hover) .sw-panel-banner.has-url {
+    background: rgb(156, 156, 10);
+    }
+    .sw-panel-banner.has-url:hover{
+    filter: brightness(1.06);
+    background: rgb(156, 156, 10);
+    }
+    .sw-panel-banner.no-url{
+    background: #777;
+    cursor: default;
+    font-size: 1.5rem;
+    }
+
+
+
+    .leaflet-top.leaflet-left {
+        width: 200px;
+    }
+
+    .leaflet-bar.leaflet-control {
+        width: auto;
+        /* padding-right: 10px;; */
+    }
+
+    .leaflet-bottom.leaflet-right {
+    right: auto !important;
+    left: 0 !important;
+    }
+
+    .leaflet-control-attribution {
+    margin-left: 0 !important;
+    }
+
+    .leaflet-control-zoom {
+    display: flex;
+    flex-direction: row;
+    border-radius: none;
+    }
+
+    .leaflet-control-zoom a {
+    float: none !important;
+    }
+
+    .leaflet-touch .leaflet-bar a:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    width: 45px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    }
+
+    .leaflet-touch .leaflet-bar a:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    width: 45px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    }
+
+    .leaflet-bar a {
+    border-bottom: 0px solid #ccc !important;
+    }
+
+    /* Nice reset control button */
+    .sw-reset-control{
+    border: none; /* leaflet-bar already has styling; we'll control within */
+    }
+
+    .sw-reset-btn{
+
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+
+    width: auto !important;
+    height: 40px !important;
+    padding: 0 10px !important;
+    line-height: 30px;
+
+    font-size: 17px;
+    font-weight: 400;
+    color: #043161;
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none !important;
+    white-space: nowrap;      /* <-- keep icon + text on ONE line */
+
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    border-radius: 6px;
+    box-sizing: border-box;
+    }
+
+    .sw-reset-btn:hover{
+    background: rgba(255,255,255,1);
+    }
+
+    .leaflet-bar.leaflet-control:has(.sw-reset-btn) {
+    width: auto !important;
+    height: auto !important;
+    overflow: hidden;
+    border-radius: 6px;
+    }
+
+    .sw-reset-icon{
+    font-size: 16px;
+    line-height: 1;
+    padding-right: 5px;
+    }
+
+    .sw-reset-text{
+    line-height: normal;      /* <-- stop forcing line-height: 1 */
+    display: inline-block;
+    }
+
+
+    .dot-label{
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.15);
+        border-radius: 8px;
+        padding: 5px 10px;
+        color: #043161;
+        font-weight: 600;
+        font-size: 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+        pointer-events: none; /* doesn't block clicks on dots */
+        white-space: nowrap;
+    }
+
+    /* Remove tooltip little arrow */
+    .dot-label.leaflet-tooltip-left:before,
+    .dot-label.leaflet-tooltip-right:before,
+    .dot-label.leaflet-tooltip-top:before,
+    .dot-label.leaflet-tooltip-bottom:before {
+        display: none !important;
+    }
+
+    .hidden { display: none !important; }
+
+    .map-legend{
+    /* background: rgba(255,255,255,0.92); */
+    /* backdrop-filter: blur(6px); */
+    /* border: 1px solid rgba(0,0,0,0.15); */
+    border-radius: 12px;
+    padding: 10px 5px;
+    /* box-shadow: 0 2px 12px rgba(0,0,0,0.18); */
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: .9rem;
+    color: #fff;
+    min-width: 160px;
+    }
+
+    .map-legend .legend-title{
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .map-legend .legend-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+    }
+
+    .legend-dot{
+    width: 10px;
+    height: 10px;
+    margin-right: none;
+    border-radius: 50%;
+    background: #6DE0FF;           /* dot fill */
+    border: 1px solid deepskyblue;     /* dot outline */
+    display: inline-block;
+    align-items: center;
+    }
+
+    .legend-dot-designation{
+    width: 10px;
+    height: 10px;
+    margin-right: none;
+    border-radius: 50%;
+    background: #FF8F8F;           /* dot fill */
+    border: 1px solid #FF7575;     /* dot outline */
+    display: inline-block;
+    align-items: center;
+    }
+
+    .legend-dot-selected{
+    width: 10px;
+    height: 10px;
+    margin-right: none;
+    border-radius: 50%;
+    background: yellow;           /* dot fill */
+    border: 1px solid yellow;     /* dot outline */
+    display: inline-block;
+    align-items: center;
+    }
+
+    .legend-dot-inactive{
+    width: 10px;
+    height: 10px;
+    margin-right: none;
+    border-radius: 50%;
+    background: #979797;           /* dot fill */
+    border: 1px solid grey;     /* dot outline */
+    display: inline-block;
+    align-items: center;
+    }
+
+    .legend-poly{
+    width: 12px;
+    height: 10px;
+    border-radius: 3px;
+    background: rgba(0,191,255,0.12); /* deepskyblue fill @ ~0.12 */
+    border: 2px solid deepskyblue;    /* boundary line */
+    display: inline-block;
+    }
+
+    .legend-poly-designation{
+    width: 12px;
+    height: 10px;
+    border-radius: 3px;
+    background: rgba(0,191,255,0.12); /* deepskyblue fill @ ~0.12 */
+    border: 2px solid #FF7575;    /* boundary line */
+    display: inline-block;
+    }
+
+    .legend-poly-active{
+    width: 12px;
+    height: 10px;
+    border-radius: 3px;
+    background: rgba(255,255,0,0.25);
+    border: 2px solid yellow;
+    display: inline-block;
+    }
+
+    .legend-poly-inactive{
+    width: 12px;
+    height: 10px;
+    border-radius: 3px;
+    background: rgba(255,255,0,0.25);
+    border: 2px solid rgb(173, 173, 173);
+    display: inline-block;
+    }
+
+    .legend-label{
+    /* line-height: 1.2; */
+    }
+
+    .map-legend .legend-compass {
+    /* margin-top: 10px; */
+    /* padding-top: 10px; */
+    /* border-top: 1px solid rgba(0,0,0,0.12); */
+    }
+
+    .map-legend .compass-wrap {
+    display: flex;
+    align-items: left;
+    gap: 5px;
+    }
+
+    .map-legend .compass-icon {
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    margin-left: -5px;
+    /* border-radius: 10px; */
+    /* background: rgba(255,255,255,0.65); */
+    /* border: 1px solid #ffffff; */
+    }
+
+    .map-legend .compass-icon svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+
+    }
+
+    /* Optional: make the arrow match your text color */
+    .map-legend .compass-icon svg path {
+    fill: #ffffff;
+    }
+
+    .map-mouse-coords{
+    /* background: rgba(255,255,255,0.92); */
+    /* backdrop-filter: blur(6px); */
+    /* border: 1px solid rgba(0,0,0,0.15); */
+    /* border-radius: 10px; */
+    /* padding: 8px 10px; */
+    /* box-shadow: 0 2px 12px rgba(0,0,0,0.18); */
+    padding-left: 5px;
+    padding-bottom: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #fff;
+    line-height: 1.2;
+
+    }
+
+
+    /* Dot Labels___________________________________________*/
+    /* Remove default tooltip bubble styling */
+    .sw-dot-tooltip-active.leaflet-tooltip {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+    white-space: nowrap;
+    }
+
+    /* Dot Labels___________________________________________*/
+    /* Remove default tooltip bubble styling */
+    .sw-dot-tooltip-inactive.leaflet-tooltip {
+    /* display: none;     */
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    color: #939393;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+    white-space: nowrap;
+    }
+
+    /* Remove the little tooltip tip/arrow */
+    .sw-dot-tooltip-active.leaflet-tooltip:before {
+    display: none;
+    }
+    
+
+    /* Remove the little tooltip tip/arrow */
+    .sw-dot-tooltip-inactive.leaflet-tooltip:before {
+    display: none;
+    }
+
+    .sw-onboard{
+    position: absolute;
+    inset: 0;
+    z-index: 5000;
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    height: 100%; 
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(3px);
+    font-size: 20px;
+    margin-bottom: 1%;
+    }
+
+    .sw-onboard-card{
+    width: min(700px, calc(100% - 24px));
+    background: rgba(255,255,255,1);
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.30);
+    padding: 20px 20px 20px 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #043161;
+    font-size: 20px;
+    height: auto;
+    top: calc(50% - 30px);
+    /* transform: translateY(40%); */
+    /* margin: auto 0; */
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    margin: 5%;
+
+    }
+
+    .sw-onboard-title{ font-weight: 900; font-size: 2.5rem; margin-bottom: 20px; }
+    .sw-onboard-list{ margin: auto 20; padding-bottom: 20px; line-height: 1.5; font-weight: 600; font-size: 1.4rem;}
+    .sw-onboard-btn{
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-weight: 700;
+    font-size: 2rem;
+    cursor: pointer;
+    background: #043161;
+    color: #fff;
+    margin-top: auto;
+    text-align: center;
+    }
+    .sw-onboard.fadeout{ animation: swFade 260ms ease forwards; }
+    @keyframes swFade{ to { opacity: 0; transform: translateY(4px); } }
+
+    #systemwide-topics-teaser {
+    width: 100%;
+    background: #008da8;
+    color: #fff;
+    padding: 100px 28px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    }
+
+    #systemwide-topics-teaser::before {
+    content: "";
+    }
+
+    .systemwide-topics-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    }
+
+    .systemwide-topics-kicker {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 18px;
+    }
+
+    .systemwide-topics-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) auto;
+    gap: 28px;
+    align-items: start;
+    }
+
+    .systemwide-topics-copy h2 {
+    margin: 0 0 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 2.5rem;
+    line-height: 1.05;
+    font-weight: 700;
+    }
+
+    .systemwide-topics-copy p {
+    margin: 0;
+    max-width: 720px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.94);
+    }
+
+    .systemwide-topics-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    align-items: center;
+    }
+
+    .systemwide-topics-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    white-space: nowrap;
+    }
+
+    .systemwide-topics-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    }
+
+    .sound-icon,
+    .sound-icon-img {
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
+    }
+
+    .systemwide-topics-button:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.22);
+    }
+
+    .systemwide-topics-badge {
+        display: inline-block;
+        width: 100%;
+        color: #fff;
+        text-align: center;
+        padding: 14px 22px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.14);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        font-style: italic;
+        line-height: 1.1;
+        white-space: nowrap;
+        max-width: 100%;
+        box-sizing: border-box;
+        text-decoration: none;
+        }
+
+    .leaflet-control-scale {
+    padding-left: 5%;
+    padding-bottom: 30px;
+    }
+
+    .leaflet-control-scale-line {
+    position: relative;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #fff !important;
+    color: #fff !important;
+    font-size: .75rem;
+    line-height: 1.1;
+    height: 18px;
+    box-sizing: border-box;
+    overflow: visible;
+    font-family: inherit !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    letter-spacing: normal !important;
+    text-shadow: none !important;
+    -webkit-text-stroke: 0 !important;
+    filter: none !important;
+    text-align: center;
+    }
+
+    /* left tick */
+    .leaflet-control-scale-line::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 0;
+    height: 10px;
+    border-left: 1px solid #fff;
+    }
+
+    /* right tick */
+    .leaflet-control-scale-line::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -1px;
+    width: 0;
+    height: 10px;
+    border-left: 1px solid #fff;
+    }
+
+    @media (max-width: 768px) {
+        .systemwide-topics-badge {
+            display: flex;
+            width: 100% !important;
+            color: #fff;
+            width: fit-content;
+            margin: 0 auto;
+            padding: 10px 16px;
+            font-size: 1.2rem;
+            white-space: normal;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    @media (max-width: 800px) {
+        #systemwide-topics-teaser {
+            padding: 42px 20px;
+        }
+
+        #systemwide-topics-teaser::before {
+            left: 20px;
+            width: 100px;
+        }
+
+        .systemwide-topics-grid {
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .systemwide-topics-copy h2 {
+            font-size: 1.8rem;
+        }
+
+        .systemwide-topics-side {
+            align-items: center;
+        }
+    }
+
+
+  </style>
+</head>
+
+<body>
+  <!-- 2) HTML + CALL LEAFLET SCRIPTS  -->
+  <div id="app">
+    <div id="app-loader" class="loader-wrapper" aria-live="polite" aria-busy="true">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading…</p>
+      </div>
+
+    <div id="info-panel" class="hidden"></div>
+    <div id="sidebar">
+      <!-- <div class="sidebar-title">Zoom To Sanctuary</div> -->
+      <select id="sanctuarySelect">
+        <option value="">Select a sanctuary…</option>
+      </select>
+      <div id="sidebarHint">
+        <ul class="sidebar-hint-list">
+          <!-- <li>Click to open</li> -->
+        </ul>
+      </div>
+    </div>
+    <div id="map"></div>
+  </div>
+  <!-- <div id="systemwide-topics-teaser">
+    <div class="systemwide-topics-shell">
+      <div class="systemwide-topics-kicker">Sanctuary Watch</div>
+      <div class="systemwide-topics-grid">
+        <div class="systemwide-topics-copy">
+          <h2>System-Wide Topics</h2>
+          <p>
+            Cross-sanctuary themes, shared indicators, and broader stories will appear here as this experience expands.
+          </p>
+        </div>
+  
+        <div class="systemwide-topics-side">
+            <a
+            class="systemwide-topics-badge systemwide-topics-button"
+            href="https://sanctsound.ioos.us/"
+            target="_blank"
+            rel="noopener"
+            >
+            <span class="systemwide-topics-icon" aria-hidden="true">
+                <svg viewBox="0 0 64 64" class="sound-icon" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 24h12l16-12v40L20 40H8z" fill="currentColor"></path>
+                <path d="M44 22c4 3 6 6 6 10s-2 7-6 10" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+                <path d="M50 16c6 4 10 10 10 16s-4 12-10 16" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+                </svg>
+            </span>
+            <span>Visit Sanctuary Sound</span>
+            </a>
+          
+            <span class="systemwide-topics-kicker">More to come...</span>
+          </div>
+      </div>
+    </div> -->
+  </div>
+
+  <!-- NEW: mobile-only panel mount below map -->
+  <div id="info-panel-mobile" class="hidden"></div>
+
+
+  <!-- Leaflet JS (free, CDN) -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+
+  <script>
+
+    /**
+     * -------------------------------------------------------------------------
+     * WHAT THIS SCRIPT DOES
+     * -------------------------------------------------------------------------
+     * 1) Creates a Leaflet map.
+     * 2) Adds the free EOX Sentinel-2 Cloudless basemap (XYZ tiles).
+     * 3) Adds clickable sanctuary markers with a popup containing an image + link.
+     * 4) Loads MULTIPLE GeoJSON files (polygons) and draws them with styling.
+     *
+     * NOTE ON "SATELLITE" FOR FREE
+     * - EOX S2 Cloudless is a global mosaic that looks like satellite imagery.
+     * - It's delivered as standard XYZ tiles in Web Mercator (EPSG:3857),
+     *   which Leaflet supports directly.
+     *
+     * IMPORTANT LOCAL DEV NOTE
+     * - If you open this file as file://..., fetch() will fail in Firefox.
+     *   Use a local server:
+     *     python3 -m http.server 8000
+     *   Then open via:
+     *     http://localhost:8000/interactive_map.html
+     * -------------------------------------------------------------------------
+     */
+
+
+    // ----------------------------
+    // 3) MISC SUPPORTING FUNCTIONS
+    // ----------------------------
+
+    function resetAllDots() {
+        if (!dotsLayer) return;
+
+        dotsLayer.eachLayer((layer) => {
+
+            if (layer.sanctuaryData.status === 'active') {
+                if (layer && typeof layer.setStyle === "function") {
+
+                    if (layer.sanctuaryData.type === 'sanctuary'){
+                        layer.setStyle({
+                            color: dotStyleActive.color,
+                            fillColor: dotStyleActive.fillColor,
+                            weight: dotStyleActive.weight,
+                            fillOpacity: dotStyleActive.fillOpacity
+                        });
+                    }
+                    if (layer.sanctuaryData.type === 'designation'){
+                        layer.setStyle({
+                            color: dotStyleDesignation.color,
+                            fillColor: dotStyleDesignation.fillColor,
+                            weight: dotStyleDesignation.weight,
+                            fillOpacity: dotStyleDesignation.fillOpacity
+                        });
+                    }
+                }
+            }
+            if (layer.sanctuaryData.status === 'inactive') {
+                if (layer && typeof layer.setStyle === "function") {
+                    layer.setStyle({
+                        color: dotStyleInactive.color,
+                        fillColor: dotStyleInactive.fillColor,
+                        weight: dotStyleInactive.weight,
+                        fillOpacity: dotStyleInactive.fillOpacity
+                    });
+                }
+            }
+        });
+
+        // if you're tracking an active dot elsewhere
+        if (typeof activeDot !== "undefined") activeDot = null;
+    }
+
+    function bindGroupTooltip(group, text) {
+        group.eachLayer((layer) => {
+            if (!layer.bindTooltip) return;
+
+            layer.unbindTooltip();
+
+            layer.bindTooltip(text, {
+                permanent: false,
+                direction: "relative",
+                offset: L.point(-10, 0),
+                opacity: 0.95,
+                className: "dot-label",
+                sticky: true
+            });
+        });
+    }
+
+    function applyGroupStyle(group, s, tooltipText = null) {
+        group.eachLayer((l) => {
+            if (l.setStyle) {
+                l.setStyle(s);
+            }
+        });
+
+        if (tooltipText) {
+            bindGroupTooltip(group, tooltipText);
+        }
+    }
+
+    function activeStyleFrom(base) {
+        return {
+            color: "yellow",
+            fillColor: "yellow",
+            weight: 2.5,
+            fillOpacity: Math.max(base.fillOpacity ?? 0.09, 0.09)
+        };
+    }
+
+    function inactiveStyleFrom(base) {
+        return {
+            color: "white",
+            fillColor: "white",
+            weight: 2.5,
+            fillOpacity: Math.max(base.fillOpacity ?? 0.09, 0.09)
+        };
+    }
+
+    function clearActiveSanctuary() {
+        if (activeSanctuaryName && sanctuaryLayers.has(activeSanctuaryName)) {
+            const prev = sanctuaryLayers.get(activeSanctuaryName);
+
+            prev.group.eachLayer((l) => {
+                if (l.setStyle) {
+                    l.setStyle(prev.style);
+                }
+            });
+
+            bindGroupTooltip(prev.group, `Select ${prev.sanctuary.name}`);
+        }
+
+        activeSanctuaryName = null;
+
+        const sel = document.getElementById("sanctuarySelect");
+        if (sel) sel.value = "";
+
+        const panel = document.getElementById("info-panel");
+        if (panel) panel.classList.add("hidden");
+
+        selectedSanctuary = undefined;
+        resetAllDots();
+
+        const sidebar = document.getElementById("sidebar");
+        sidebar.style.backdropFilter = "";
+        sidebar.style.webkitBackdropFilter = "";
+        sidebar.style.backgroundColor = "";
+        sidebar.style.height = "";
+        sidebar.style.width = "";
+        sidebar.style.borderRadius = "";
+        sidebar.style.backgroundColor = "";
+    }
+
+
+    function renderGeojsonList(name, { triggerChange = false } = {}) {
+        if (!name) return;
+
+        activeSanctuaryName = name;
+
+        // Update dropdown UI
+        if (sanctuarySelect) sanctuarySelect.value = name;
+
+        // If you also have a mobile select, keep it in sync
+        const mobileSelect = document.getElementById("mobileSelect");
+        if (mobileSelect) mobileSelect.value = name;
+
+        // Optionally run the same behavior as manual dropdown selection
+        if (triggerChange && sanctuarySelect) {
+            sanctuarySelect.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+    }
+
+
+    function dotsAreVisible() {
+        return typeof dotsLayer !== "undefined" && map.hasLayer(dotsLayer);
+    }
+
+
+    function setActiveSanctuary(name) {
+
+        if (!name || !sanctuaryLayers.has(name)) return;
+
+        // Reset old
+        if (activeSanctuaryName && activeSanctuaryName !== name) {
+            const prev = sanctuaryLayers.get(activeSanctuaryName);
+            if (prev) applyGroupStyle(prev.group, prev.style, `Select ${activeSanctuaryName}`);
+        }
+
+        // Set new
+        const entry = sanctuaryLayers.get(name);
+
+        if (entry.sanctuary.url != '') {
+            applyGroupStyle(entry.group, activeStyleFrom(entry.style), `Open ${name}`);
+        }
+        if (entry.sanctuary.url === '') {
+            applyGroupStyle(entry.group, activeStyleFrom(entry.style), `${name} is coming soon`);
+        }
+        // applyGroupStyle(entry.group, activeStyleFrom(entry.style));
+        // entry.group.bringToFront();
+        renderGeojsonList(name); // update active state in sidebar
+
+        let entryLat = entry.sanctuary.lat;
+        let entryLon = entry.sanctuary.lon;
+        let entryZoom;
+        if (!isMobile()) {
+            entryZoom = entry.sanctuary.zoom;
+        }
+        if (isMobile()) {
+            try {
+                entryZoom = entry.sanctuary.mobileZoom;
+            } catch {
+                entryZoom = sanctuary.mobileZoom;
+            }
+        }
+
+        requestAnimationFrame(() => {
+            map.invalidateSize();
+
+            requestAnimationFrame(() => {
+                map.setView([entryLat, entryLon], entryZoom, { animate: true });
+            });
+        });
+
+        activeSanctuaryName = name;
+        selectedSanctuary = name;
+
+        return selectedSanctuary, activeSanctuaryName;
+    }
+
+    function openPanel(sanctuary) {
+        const status = sanctuary.status;
+        const imgUrl = (sanctuary.image || "").trim();
+        const rawUrl = sanctuary.url ?? "";
+        const url = String(rawUrl).trim();
+        const type = sanctuary.type;
+
+        const hasUrl =
+            url.length > 0 &&
+            url !== "#" &&
+            url.toLowerCase() !== "null" &&
+            url.toLowerCase() !== "undefined";
+
+        const isInactive = status === "inactive";
+
+        const imageHtml = isInactive
+            ? ``
+            : imgUrl
+                ? (hasUrl
+                    ? `
+                    <a class="sw-panel-img-link" href="${url}" target="_self" rel="noopener">
+                        <img
+                            class="sw-panel-img"
+                            src="${imgUrl}"
+                            alt="${sanctuary.name}"
+                            loading="lazy"
+                            referrerpolicy="no-referrer"
+                            onerror="this.style.display='none';"
+                        />
+                    </a>
+                    `
+                    : `
+                    <img
+                        class="sw-panel-img"
+                        src="${imgUrl}"
+                        alt="${sanctuary.name}"
+                        loading="lazy"
+                        referrerpolicy="no-referrer"
+                        onerror="this.style.display='none';"
+                    />
+                    `
+                )
+                : `
+                <div style="padding:18px; font-weight:700; color:#043161;">
+                    No image provided
+                </div>
+                `;
+
+                let bannerHtml = "";
+
+                if (isInactive) {
+                    bannerHtml = `
+                        <div class="sw-panel-banner no-url">
+                            ${sanctuary.name}<br><em>Tool is unavailable</em>
+                        </div>
+                    `;
+                } else if (type === "sanctuary") {
+                    bannerHtml = hasUrl
+                        ? `
+                        <a class="sw-panel-banner has-url"
+                            href="${url}"
+                            target="_self"
+                            rel="noopener">
+                            Condition Tracking Tool
+                        </a>
+                        `
+                        : `
+                        <div class="sw-panel-banner no-url">
+                            Condition Tracking Tool<br><em>Coming Soon</em>
+                        </div>
+                        `;
+                } else if (type === "designation") {
+                    bannerHtml = hasUrl
+                        ? `
+                        <a class="sw-panel-banner has-url"
+                            href="${url}"
+                            target="_self"
+                            rel="noopener">
+                            New Sanctuary Tool
+                        </a>
+                        `
+                        : `
+                        <div class="sw-panel-banner no-url">
+                            New Sanctuary Tool<br><em>Coming Soon</em>
+                        </div>
+                        `;
+                }
+
+       
+        infoPanel.innerHTML = `
+            <div class="sw-panel-card">
+                <button class="sw-panel-close" type="button" aria-label="Close">x</button>
+                ${bannerHtml}
+                ${imageHtml}
+            </div>
+        `;
+    
+
+        infoPanel.classList.remove("hidden");
+
+        const panelCard = document.getElementsByClassName("sw-panel-card")[0];
+
+        // console.log('window.innerWidth', window.innerWidth);
+
+        if (!isMobile() &&window.innerWidth > 768) {
+
+            if (sanctuary.status === "inactive") {
+                infoPanel.style.setProperty("top", "calc(50% + 30px);", "important");
+                panelCard.style.background = "#fff";
+            }
+
+            const sidebar = document.getElementById("sidebar");
+            sidebar.style.backdropFilter = "blur(15px)";
+            sidebar.style.webkitBackdropFilter = "blur(15px)";
+            sidebar.style.height = "97%";
+            sidebar.style.width = "30%";
+            sidebar.style.backgroundColor = "rgba(255, 255, 255, 0.4)";
+            sidebar.style.borderRadius = "12px";
+        }
+
+
+        const mapDiv = document.getElementById("map");
+        if (isMobile() || window.innerWidth < 768) {
+
+            const entryLat = Number(sanctuary.lat);
+            const entryLon = Number(sanctuary.lon);
+            const entryZoom = Number(sanctuary.mobileZoom);
+
+            mapDiv.style.setProperty("height", "23vh", "important");
+
+            if (mobileState.byHeightLess500) {
+                mapDiv.style.setProperty("height", "45vh", "important");
+            }
+
+            requestAnimationFrame(() => {
+                map.invalidateSize();
+
+                requestAnimationFrame(() => {
+                    map.setView([entryLat, entryLon], entryZoom, { animate: true });
+                });
+            });
+                        
+        }
+
+        infoPanel.querySelector(".sw-panel-close").onclick = (e) => {
+            e.stopPropagation();
+
+            infoPanel.classList.add("hidden");
+            sidebar.style.backdropFilter = "";
+            sidebar.style.webkitBackdropFilter = "";
+            sidebar.style.backgroundColor = "";
+            sidebar.style.height = "";
+            sidebar.style.width = "";
+            sidebar.style.borderRadius = "";
+            if (isMobile() ||window.innerWidth < 768) {
+                infoPanel.style.setProperty("bottom", "11%", "important");
+            } else {
+                infoPanel.style.setProperty("top", "calc(50% + 30px);", "important");
+                infoPanel.style.setProperty("transform", "translateY(-50%)", "important");
+            }
+            panelCard.style.background = "rgb(242, 242, 8)";
+            if (mobileState.hasTouch && (mobileState.byHeightGreater960 || mobileState.byWidthLess768)) {
+                mapDiv.style.setProperty("height", "50vh", "important");      
+            }
+            if (mobileState.byWidthLess768) {
+                mapDiv.style.setProperty("height", "50vh", "important");      
+            }
+            if (mobileState.byHeightLess500) {
+                mapDiv.style.setProperty("height", "75vh", "important");
+            }
+            requestAnimationFrame(() => {
+                map.invalidateSize();
+
+                requestAnimationFrame(() => {
+                    map.setView(DEFAULT_CENTER, DEFAULT_ZOOM, { animate: false });
+                });
+
+            });
+            clearActiveSanctuary();
+        };
+
+        if (setActiveSanctuary(sanctuary.name)) {
+            if (isMobile() ||window.innerWidth < 768) {
+                infoPanel.style.setProperty("bottom", "11%", "important");
+            } else {
+                infoPanel.style.setProperty("top", "calc(50% + 30px);", "important");
+                infoPanel.style.setProperty("transform", "translateY(-50%)", "important");
+            }
+            panelCard.style.background = "rgb(242, 242, 8)";
+        }
+    }
+
+    function syncSanctuaryDropdown() {
+        if (!sanctuarySelect) return;
+
+        const current = sanctuarySelect.value;
+
+        sanctuarySelect.innerHTML = `<option value="">Select a sanctuary…</option>`;
+
+        const items = [...sanctuaryLayers.entries()]
+            .map(([name, obj]) => {
+            const raw = obj?.sanctuary?.url ?? "";
+            const visitUrl = String(raw).trim();
+
+            const hasUrl =
+                visitUrl.length > 0 &&
+                visitUrl !== "#" &&
+                visitUrl.toLowerCase() !== "null" &&
+                visitUrl.toLowerCase() !== "undefined";
+
+            return { name, displayName: name, hasUrl };
+            })
+            .sort((a, b) => a.displayName.localeCompare(b.displayName));
+
+        items.forEach(item => {
+            const opt = document.createElement("option");
+            opt.value = item.name;
+            opt.textContent = item.hasUrl ? item.displayName : `${item.displayName}`;
+            sanctuarySelect.appendChild(opt);
+        });
+
+        // restore selection if still valid
+        if ([...sanctuaryLayers.keys()].includes(current)) sanctuarySelect.value = current;
+    }
+
+    function getMobileState() {
+        const byWidthLess768 = window.matchMedia("(max-width: 768px)").matches;
+        const byHeightLess500 = window.matchMedia("(max-height: 500px)").matches;
+        const byHeightGreater960 = window.matchMedia("(min-height: 960px) and (max-width: 1024px)").matches;
+        const hasTouch = navigator.maxTouchPoints > 0 || "ontouchstart" in window;
+        const mobileType = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+
+        return {
+            byWidthLess768,
+            byHeightLess500,
+            byHeightGreater960,
+            hasTouch,
+            mobileType,
+            isMobile: hasTouch && (byWidthLess768 || byHeightLess500 || byHeightGreater960)
+        };
+    }
+
+    function isMobile() {
+        return getMobileState().isMobile;
+    }
+
+    const mobileState = getMobileState();
+
+    function getTabletState() {
+        const byWidthTablet = window.matchMedia("(min-width: 601px) and (max-width: 1100px)").matches;
+        const byHeightTablet = window.matchMedia("(min-height: 500px) and (max-height: 1400px)").matches;
+        const hasTouch = navigator.maxTouchPoints > 0 || "ontouchstart" in window;
+
+        return {
+            byWidthTablet,
+            byHeightTablet,
+            hasTouch,
+            isTablet: !isMobile() && hasTouch && byWidthTablet && byHeightTablet
+        };
+    }
+
+    function isTablet() {
+        return getTabletState().isTablet;
+    }
+    const tabletState = getTabletState();
+
+
+    // ----------------------------
+    // 13) FORWARD SANCTUARY SELECT TO TOP OF PAGE ON MOBILE
+    // ----------------------------
+
+    if (isMobile() && mobileState.hasTouch && (mobileState.byWidthLess768 || mobileState.byHeightGreater960 || mobileState.byHeightLess500)) {
+        const sanctuarySelect = document.getElementById("sanctuarySelect");
+        const headerOffset = 40;
+
+        if (sanctuarySelect) {
+            sanctuarySelect.addEventListener("change", function () {
+                if (this.value !== "") {
+                    const y = sanctuarySelect.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: y,
+                        behavior: "smooth"
+                    });
+                }
+            });
+        }
+    }
+
+    if (isMobile() && (mobileState.byWidthLess768 || mobileState.byHeightGreater960 || mobileState.byHeightLess500)) {
+        const sanctuarySelect = document.getElementById("sanctuarySelect");
+        const headerOffset = 40;
+
+        document.addEventListener("touchend", function (e) {
+            const closeBtn = e.target.closest(".sw-panel-close");
+            if (!closeBtn || !sanctuarySelect) return;
+
+            const y = sanctuarySelect.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+
+            setTimeout(function () {
+                window.scrollTo({
+                    top: y,
+                    behavior: "smooth"
+                });
+            }, 50);
+        }, true);
+
+        document.addEventListener("touchend", function (e) {
+            const resetBtn = e.target.closest(".sw-reset-btn");
+            if (!resetBtn || !sanctuarySelect) return;
+
+            const y = sanctuarySelect.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+
+            setTimeout(function () {
+                window.scrollTo({
+                    top: y,
+                    behavior: "smooth"
+                });
+            }, 50);
+        }, true);
+    }
+
+
+
+    // -------------------------------------------------------------------------
+    // 4) SANCTUARY INFORMATION + GEOJSONS + URL ROOT
+    // -------------------------------------------------------------------------
+
+    // Global base (works anywhere this script runs)
+    //const SITE_BASE = ".";
+    //const SITE_BASE = "https://noaaswlocal.local/wp-content/data/frontpage_map_geojson";
+    //const SITE_BASE = "https://sw-dev.ioos.us/wp-content/data/frontpage_map_geojson";
+    const SITE_BASE = "https://sanctuarywatch.ioos.us/wp-content/data/frontpage_map_geojson";
+
+
+    //Three Sanctuary States:
+    // 1) Active = has a url and status = active 
+    // 2) Coming Soon = does not have a url and status = active 
+    // 3) Inactive = status = inactive 
+
+    // Be sure to add all of the information: image, lat, lon, zooms, colors, etc.
+
+    // The geojson files in the jsonUrl field reference the "SITE_BASE" above asa root path.
+    // They need to be manually uploaded using the "scp" command in terminal to the wp-content//where-ever-you-put-them.
+    // All of the sanctuaries should be here already, for now. Add another to the dict if needed.
+
+    const sanctuaries = [
+      {
+        name: "Channel Islands",
+        labelName: "Channel Islands", 
+        buttonName: "Channel Islands",
+        type: "sanctuary",
+        zoom: 7,
+        mobileZoom: 6,
+        status: 'active',
+        lat: 33.7,
+        lon: -119.4,
+        zoomlat: 33.7,
+        zoomlon: -119.4,
+        url: "https://noaa-onms.github.io/cinms/",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2026/01/CINMS-Overview-12192025-v2.png",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 2,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/cinms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "deepskyblue",
+          weight: 2,
+          fillColor: "deepskyblue",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Chumash Heritage",
+        labelName: "Chumash Heritage",
+        buttonName: "Chumash Heritage",
+        type: "designation",
+        zoom: 7,
+        mobileZoom: 5,
+        status: 'active',
+        lat: 34.73,
+        lon: -121.07,
+        zoomlat: 34.73,
+        zoomlon: -121.07,
+        url: "",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/03/chnms.png",
+        labelSide: "left",  // "left" | "right"
+        labelXOffset: 0,
+        labelYOffset: 15,
+        labelXOffsetMobile: -1,
+        labelYOffsetMobile: 7,
+        pane: "polygonsPane",
+        jsonUrl: `${SITE_BASE}/chnms_py.geojson`,
+        style: {
+          color: "#FF7575",      // outline color
+          weight: 2,            // outline width
+          fillColor: "#FF7575",  // interior fill color
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Cordell Bank",
+        labelName: "Cordell Bank",
+        buttonName: "Cordell Bank",
+        type: "sanctuary",
+        status: 'inactive',
+        zoom: 7,
+        mobileZoom: 5,
+        lat: 37.8,
+        lon: -123.58,
+        zoomlat: 37.8,
+        zoomlon: -123.58,
+        url: "",
+        image: "",
+        labelSide: "left",  // "left" | "right"
+        labelXOffset: 7,
+        labelYOffset: -3,
+        labelXOffsetMobile: 2,
+        labelYOffsetMobile: -2,
+        pane: "polygonsPane",
+        jsonUrl: `${SITE_BASE}/cbnms_py.geojson`,
+        style: {
+          color: "lightgrey",      // outline color
+          weight: 2,            // outline width
+          fillColor: "lightgrey",  // interior fill color
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Florida Keys",
+        labelName: "Florida Keys",
+        buttonName: "Florida Keys",
+        type: "sanctuary",
+        zoom: 8,
+        mobileZoom: 6,
+        status: 'active',
+        lat: 24.5,
+        lon: -81.2,
+        zoomlat: 24.5,
+        zoomlon: -81.2,
+        url: "https://noaa-iea.github.io/fk-esr-info/infographic.html",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/12/FKNMS_scene_DRAFT_tile_JAB-01-smaller.png",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 2,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/fknms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "deepskyblue",
+          weight: 2,
+          fillColor: "deepskyblue",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Flower Garden Banks",
+        status: 'active',
+        labelName: "Flower Garden Banks", 
+        buttonName: "Flower Garden Banks",
+        type: "sanctuary",
+        zoom: 7,
+        mobileZoom: 5,
+        lat: 27.865764191749676,
+        lon: -92.83185900089937,
+        zoomlat: 27.865764191749676,
+        zoomlon: -92.83185900089937,
+        url: "https://sanctuarywatch.ioos.us/flower-garden/fgbnms-overview/",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2026/01/FGBNMS-homepage-tile-2.png",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 2,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/fgbnms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "deepskyblue",
+          weight: 2,
+          fillColor: "deepskyblue",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Gray's Reef",
+        labelName: "Gray's Reef",
+        buttonName: "Gray's Reef",
+        type: "sanctuary",
+        zoom: 7,
+        mobileZoom: 7,
+        status: 'active',
+        lat: 31.3918895902973,
+        lon: -80.87466984778008,
+        zoomlat: 31.3918895902973,
+        zoomlon: -80.87466984778008,
+        url: "https://sanctuarywatch.ioos.us/grays-reef/grnms-overview/",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2026/01/GRNMS-live-tile.png",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 2,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/grnms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "deepskyblue",
+          weight: 2,
+          fillColor: "deepskyblue",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Greater Farallones",
+        labelName: "Greater Farallones",
+        buttonName: "Greater Farallones",
+        type: "sanctuary",
+        zoom: 7,
+        mobileZoom: 6,
+        status: 'inactive',
+        lat: 39.5,
+        lon: -124.2,
+        zoomlat: 39.5,
+        zoomlon: -124.2,
+        url: "",
+        image: "",
+        labelSide: "left",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: -12,
+        labelXOffsetMobile: 1,
+        labelYOffsetMobile: -7,
+        pane: "polygonsPane",
+        jsonUrl: `${SITE_BASE}/gfnms_py.geojson`,
+        style: {
+          color: "lightgrey",      // outline color
+          weight: 2,            // outline width
+          fillColor: "lightgrey",  // interior fill color
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Hawaiian Islands Humpback Whale",
+        labelName: "Hawaiian Islands Humpback Whale",
+        buttonName: "Hawaiian Islands Humpback Whale",
+        type: "sanctuary",
+        zoom: 7,
+        mobileZoom: 6,
+        status: 'inactive',
+        lat: 21,
+        lon: -157.0,
+        zoomlat: 21,
+        zoomlon: -157.0,
+        url: "",
+        image: "",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: 0,
+        pane: "polygonsPane",
+        jsonUrl: `${SITE_BASE}/hihwnms_py.geojson`,
+        style: {
+          color: "lightgrey",      // outline color
+          weight: 2,            // outline width
+          fillColor: "lightgrey",  // interior fill color
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Lake Ontario",
+        labelName: "Lake Ontario",
+        buttonName: "Lake Ontario",
+        type: "designation",
+        zoom: 8,
+        mobileZoom: 6,
+        status: 'active',
+        lat: 43.61067548934814,
+        lon: -76.72834965510089,
+        zoomlat: 43.61067548934814,
+        zoomlon: -76.72834965510089,
+        url: "",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/03/lonms.png",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: -15,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: -8,
+        jsonUrl: `${SITE_BASE}/lonms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "#FF7575",
+          weight: 2,
+          fillColor: "#FF7575",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Mallows Bay-Potomac River",
+        labelName: "Mallows Bay-Potomac River",
+        buttonName: "Mallows Bay-Potomac River",
+        type: "sanctuary",
+        zoom: 9,
+        mobileZoom: 7,
+        status: 'inactive',
+        lat: 38.47,
+        lon: -77.29,
+        zoomlat: 38.47,
+        zoomlon: -77.29,
+        url: "",
+        image: "",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/mbpr_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "lightgrey",
+          weight: 2,
+          fillColor: "lightgrey",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Monitor",
+        labelName: "Monitor",
+        buttonName: "Monitor",
+        type: "sanctuary",
+        zoom: 9,
+        mobileZoom: 7,
+        status: 'inactive',
+        lat: 35.00,
+        lon: -75.414,
+        zoomlat: 35.00,
+        zoomlon: -75.414,
+        url: "",
+        image: "",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/mnms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "lightgrey",
+          weight: 2,
+          fillColor: "lightgrey",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Monterey Bay",
+        labelName: "Monterey Bay",
+        buttonName: "Monterey Bay",
+        type: "sanctuary",
+        zoom: 7,
+        mobileZoom: 5,
+        status: 'active',
+        lat: 36.25,
+        lon: -122.5,
+        zoomlat: 36.25,
+        zoomlon: -122.5,
+        url: "https://sanctuarywatch.ioos.us/monterey-bay/mbnms-overview",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/12/MBNMS-Overview-tile_12192025-JAB-01.png",
+        labelSide: "left",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 5,
+        labelXOffsetMobile: 2,
+        labelYOffsetMobile: 2,
+        jsonUrl: `${SITE_BASE}/mbnms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "deepskyblue",
+          weight: 2,
+          fillColor: "deepskyblue",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Olympic Coast",
+        labelName: "Olympic Coast",
+        buttonName: "Olympic Coast",
+        type: "sanctuary",
+        zoom: 7,
+        mobileZoom: 5,
+        status: 'active',
+        lat: 47.81764367207799,
+        lon: -124.88140270574128,
+        zoomlat: 47.81764367207799,
+        zoomlon: -124.88140270574128,
+        url: "https://noaa-onms.github.io/ocnms/",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/12/OCNMS-Overview-JAB-v2-orca-01.png",
+        labelSide: "left",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/ocnms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "deepskyblue",
+          weight: 2,
+          fillColor: "deepskyblue",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Papahānaumokuākea",
+        labelName: "Papahānaumokuākea",
+        buttonName: "Papahānaumokuākea",
+        type: "sanctuary",
+        zoom: 6,
+        mobileZoom: 5,
+        status: 'inactive',
+        lat: 25.94,
+        lon: -169.70,
+        zoomlat: 25.94,
+        zoomlon: -169.70,
+        url: "",
+        image: "",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/pmnm_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "lightgrey",
+          weight: 2,
+          fillColor: "lightgrey",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Stellwagen Bank",
+        labelName: "Stellwagen Bank",
+        buttonName: "Stellwagen Bank",
+        type: "sanctuary",
+        zoom: 8,
+        mobileZoom: 6,
+        status: 'active',
+        lat: 42.40373538829303,
+        lon: -70.32129561180588,
+        zoomlat: 42.40373538829303,
+        zoomlon: -70.32129561180588,
+        url: "",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/08/SBNMS_no_icons.png",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/sbnms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "deepskyblue",
+          weight: 2,
+          fillColor: "deepskyblue",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "American Samoa",
+        labelName: "American Samoa",
+        buttonName: "American Samoa",
+        type: "sanctuary",
+        zoom: 6,
+        mobileZoom:5,
+        status: 'active',
+        lat: -14.539228299110261,
+        lon: -168.15176096002115,
+        zoomlat: -14.539228299110261,
+        zoomlon: -168.15176096002115,
+        url: "https://sanctuarywatch.ioos.us/american-samoa/nmsas-overview/",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2026/02/nmsas-tile-new.png",
+        labelSide: "right",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 1,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/nmsas_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "deepskyblue",
+          weight: 2,
+          fillColor: "deepskyblue",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Thunder Bay",
+        labelName: "Thunder Bay",
+        buttonName: "Thunder Bay",
+        type: "sanctuary",
+        zoom: 8,
+        mobileZoom: 6,
+        status: 'inactive',
+        lat: 45.22,
+        lon: -82.96,
+        zoomlat: 45.22,
+        zoomlon: -82.96,
+        url: "",
+        image: "",
+        labelSide: "left",  // "left" | "right"
+        labelXOffset: -3,
+        labelYOffset: -15,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: -7,
+        jsonUrl: `${SITE_BASE}/tbnms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "lightgrey",
+          weight: 2,
+          fillColor: "lightgrey",
+          fillOpacity: 0.05
+        }
+      },
+      {
+        name: "Wisconsin Shipwreck Coast",
+        labelName: "Wisconsin Shipwreck Coast",
+        buttonName: "Wisconsin Shipwreck Coast",
+        type: "sanctuary",
+        zoom: 8,
+        mobileZoom: 6,
+        status: 'inactive',
+        lat: 43.85,
+        lon: -87.63,
+        zoomlat: 43.85,
+        zoomlon: -87.63,
+        url: "",
+        image: "",
+        labelSide: "left",  // "left" | "right"
+        labelXOffset: 5,
+        labelYOffset: 0,
+        labelXOffsetMobile: 0,
+        labelYOffsetMobile: 0,
+        jsonUrl: `${SITE_BASE}/wscnms_py.geojson`,
+        pane: "polygonsPane",
+        style: {
+          color: "lightgrey",
+          weight: 2,
+          fillColor: "lightgrey",
+          fillOpacity: 0.05
+        }
+      }
+    ];
+
+
+    // -------------------------------------------------------------------------
+    // 5) CREATE LEAFLET MAP + ADD BASE MAPS
+    // -------------------------------------------------------------------------
+    // Start; center map and adjust zoom as desired.
+
+    let defaultButtonPosition = "topleft";
+    if (isMobile() ||window.innerWidth < 768) {
+        defaultButtonPosition = "topright";
+    }
+    //Reset the view button
+    const ResetViewControl = L.Control.extend({
+    options: { position: defaultButtonPosition }, // same corner as zoom controls
+    onAdd: function () {
+
+        let container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
+        // container.style.width = "75%";
+        // container.style.height = "50%";
+
+        const btn = L.DomUtil.create("a", "sw-reset-btn", container);
+        // btn.style.width = "100%";
+        // btn.style.height = "100%";
+        btn.href = "#";
+        btn.title = "Reset";
+        // icon + label
+
+        if (!isMobile() &&window.innerWidth > 768) {
+            btn.innerHTML = `<span class="sw-reset-icon">⟲</span><span class="sw-reset-text">Reset Map</span>`;
+        }
+        if (isMobile() ||window.innerWidth < 768) {
+            btn.innerHTML = `<span class="sw-reset-icon">⟲</span><span class="sw-reset-text">Reset</span>`;
+        } 
+
+        // Prevent click from dragging/zooming the map
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.on(btn, "click", (e) => {
+        L.DomEvent.preventDefault(e);
+
+        const mapDiv = document.getElementById("map");
+        if (isMobile() ||window.innerWidth < 768) {
+            mapDiv.style.setProperty("height", "50vh", "important");
+        }
+        if (mobileState.byHeightLess500) {
+            mapDiv.style.setProperty("height", "75vh", "important");
+        }
+        
+        // Reset to your default
+        requestAnimationFrame(() => {
+            map.invalidateSize();
+
+            // then re-center after Leaflet recalculates size
+            map.setView(DEFAULT_CENTER, DEFAULT_ZOOM, { animate: false });
+
+            clearActiveSanctuary();
+            resetAllDots();;
+
+        });
+
+        // Optional: also clear selected polygon highlight
+        const sidebar = document.getElementById("sidebar");
+        sidebar.style.backdropFilter = "";
+        sidebar.style.webkitBackdropFilter = "";
+        sidebar.style.backgroundColor = "";
+
+        const sanctuarySelect = document.getElementById("sanctuarySelect");
+        const headerOffset = 40;
+        });
+
+        return container;
+    }
+    });
+
+    //Define default height and zoom level for the maps
+    let DEFAULT_CENTER = [20, -104];
+    let DEFAULT_ZOOM = 3;
+
+    if (!isMobile() || window.innerWidth > 768){
+        DEFAULT_ZOOM = 3;
+    }
+
+    if (isMobile() || window.innerWidth < 768){
+        DEFAULT_CENTER = [20, -107];
+        DEFAULT_ZOOM = 2;
+        if (mobileState.byWidthLess768) {
+            DEFAULT_ZOOM = 2;
+        }
+
+        if (mobileState.byHeightGreater960 && mobileState.hasTouch) {
+            DEFAULT_ZOOM = 3;
+        }
+
+        if (mobileState.byHeightLess500) {
+            DEFAULT_CENTER = [15, -105];
+        }
+    }
+
+    let map;
+
+    if (!isMobile()) {
+        map = L.map("map", {
+        center: DEFAULT_CENTER,
+        minZoom: DEFAULT_ZOOM,
+        zoom: DEFAULT_ZOOM,
+        zoomControl: false,
+        zoomSnap: 0.25,
+        zoomDelta: 1,     // buttons: 1 level
+        scrollWheelZoom: false
+
+        });
+    }
+
+    if (isMobile() && (mobileState.byWidthLess768 || mobileState.byHeightLess500)) {
+        map = L.map("map", {
+            center: DEFAULT_CENTER,
+            minZoom: DEFAULT_ZOOM,
+            zoom: DEFAULT_ZOOM,
+            zoomControl: false,
+            zoomSnap: 1,
+            zoomDelta: 1,
+            scrollWheelZoom: false,
+            dragging: false
+        });
+    }
+
+    if (isMobile() && mobileState.byHeightGreater960 && mobileState.hasTouch) {
+        map = L.map("map", {
+            center: DEFAULT_CENTER,
+            minZoom: DEFAULT_ZOOM,
+            zoom: DEFAULT_ZOOM,
+            zoomControl: false,
+            zoomSnap: 1,
+            zoomDelta: 1,
+            scrollWheelZoom: false,
+            dragging: true
+        });
+    }
+
+    // map.setView(DEFAULT_CENTER, DEFAULT_ZOOM, { animate: false });
+    map.addControl(new ResetViewControl());
+    map.attributionControl.setPrefix('');
+    L.control.zoom({ position: "topleft" }).addTo(map);
+
+
+    // Lower pane for polygons
+    map.createPane("polygonsPane");
+    map.getPane("polygonsPane").style.zIndex = 400;
+
+    // Higher pane for points
+    map.createPane("pointsPane");
+    map.getPane("pointsPane").style.zIndex = 650;
+
+    // Clear selection when user clicks empty map or starts dragging the map
+    map.on("click", clearActiveSanctuary);
+    map.on("dragstart", clearActiveSanctuary);
+
+
+    // -------------------------------------------------------------------------
+    // Add the base maps
+    // -------------------------------------------------------------------------
+
+    // 1) EOX Sentinel-2 Cloudless (satellite-like)
+    const eoxCloudless = L.tileLayer(
+    "https://a.tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/GoogleMapsCompatible/{z}/{y}/{x}.jpg",
+    {
+        maxZoom: 19,
+        attribution:
+        'Imagery &copy; <a href="https://s2maps.eu/" target="_blank" rel="noopener">EOX / Sentinel-2 cloudless</a>'
+    }
+    );
+
+
+    const usgsImageryOnly = L.tileLayer(
+    "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}",
+    {
+        maxZoom: 23,
+        attribution: "USGS The National Map"
+    }
+    );
+
+
+    usgsImageryOnly.addTo(map);
+
+    const SWITCH_TO_EOX_AT_ZOOM = 9; // >= this zoom -> eox, below -> usgs
+
+    function updateBaseLayerByZoom() {
+        const z = map.getZoom();
+
+        if (z >= SWITCH_TO_EOX_AT_ZOOM) {
+            if (map.hasLayer(usgsImageryOnly)) map.removeLayer(usgsImageryOnly);
+            if (!map.hasLayer(eoxCloudless)) map.addLayer(eoxCloudless);
+        } else {
+            if (map.hasLayer(eoxCloudless)) map.removeLayer(eoxCloudless);
+            if (!map.hasLayer(usgsImageryOnly)) map.addLayer(usgsImageryOnly);
+        }
+    }
+
+    map.on("zoomend", updateBaseLayerByZoom);
+    updateBaseLayerByZoom(); // run once at start
+
+
+
+
+    // -------------------------------------------------------------------------
+    // 6) ADD DOTS AND LABELS
+    // -------------------------------------------------------------------------
+   
+    // -------------------------------------------------------
+    // Dots layer + bottom-left info panel
+    // -------------------------------------------------------
+    const dotsLayer = L.layerGroup().addTo(map);
+    const dotByName = new Map(); // name -> { sanctuary, dot }
+
+    // Panel (exists in your HTML: <div id="info-panel" class="hidden"></div>)
+    const infoPanel = document.getElementById("info-panel");
+
+
+    // Close the panel when user clicks/drag-starts on the map background
+    map.on("click", () => infoPanel.classList.add("hidden"));
+    map.on("dragstart", () => infoPanel.classList.add("hidden"));
+
+    /**
+     * Create one dot per sanctuary and wire click behavior:
+     * click -> zoom in -> open bottom-left panel
+     */
+    // --- One-time config ---
+
+    let dotStyleActive;
+    let dotStyleInactive;
+    let dotStyleDesignation;
+
+    if (mobileState.byWidthLess768 || mobileState.byHeightLess500 ||window.innerWidth < 768) {
+        dotStyleActive = {
+        pane: "pointsPane",
+        radius: 3.25,
+        color: "deepskyblue",
+        weight: 1,
+        fillColor: "#6DE0FF",
+        fillOpacity: 1
+        };
+
+        dotStyleDesignation = {
+        pane: "pointsPane",
+        radius: 3.25,
+        color: "#FF8F8F",
+        weight: 1,
+        fillColor: "#FF8F8F",
+        fillOpacity: 1
+        };
+
+        dotStyleInactive = {
+        pane: "pointsPane",
+        radius: 3.25,
+        color: "#979797",
+        weight: 1,
+        fillColor: "#A8A8A8",
+        fillOpacity: 1
+        };
+    } else {
+        dotStyleActive = {
+        pane: "pointsPane",
+        radius: 5,
+        // color: "#008da8",
+        color: "deepskyblue",
+        weight: 1,
+        fillColor: "#6DE0FF",
+        fillOpacity: 1
+        };
+
+        dotStyleDesignation = {
+        pane: "pointsPane",
+        radius: 5,
+        // color: "#008da8",
+        color: "#FF7575",
+        weight: 1,
+        fillColor: "#FF8F8F",
+        fillOpacity: 1
+        };
+
+        // Other colors I like: Purple "#C412FF", dark blue #1A1D7A
+
+        dotStyleInactive = {
+        pane: "pointsPane",
+        radius: 4.5,
+        color: "#979797",
+        weight: 1,
+        fillColor: "#A8A8A8",
+        fillOpacity: 1
+        };
+    }
+
+    // hover: outline only (keep fill white). If you want fill too, add fillColor:"yellow"
+    const dotHoverStyle = { 
+        color: "yellow",
+        weight: 3.5,
+        fillColor: "#FAF38F",
+        fillOpacity: 1
+    };
+
+    const LABEL_SIDE = "right";   // default
+    const LABEL_Y_OFFSET = 0;     // px
+    const LABEL_X_OFFSET = 12;    // px
+
+    function addSanctuaryDot(sanctuary) {
+
+        let dot;
+
+        if (sanctuary.status === 'active') {
+
+            if (sanctuary.type === 'sanctuary') {
+                dot = L.circleMarker([sanctuary.lat, sanctuary.lon], dotStyleActive).addTo(dotsLayer);
+                // Hover color
+                dot.on("mouseover", () => dot.setStyle(dotHoverStyle));
+                dot.on("mouseout", () => dot.setStyle({ color: dotStyleActive.color, fillColor: dotStyleActive.fillColor, weight: dotStyleActive.weight }));
+            }
+
+            if (sanctuary.type === 'designation') {
+                dot = L.circleMarker([sanctuary.lat, sanctuary.lon], dotStyleDesignation).addTo(dotsLayer);
+                // Hover color
+                dot.on("mouseover", () => dot.setStyle(dotHoverStyle));
+                dot.on("mouseout", () => dot.setStyle({ color: dotStyleDesignation.color, fillColor: dotStyleDesignation.fillColor, weight: dotStyleDesignation.weight }));
+            }
+        }
+        if (sanctuary.status === 'inactive') {
+            dot = L.circleMarker([sanctuary.lat, sanctuary.lon], dotStyleInactive).addTo(dotsLayer);
+            dot.on("mouseover", () => dot.setStyle(dotStyleInactive));
+            dot.on("mouseout", () => dot.setStyle({ color: dotStyleInactive.color, fillColor: dotStyleInactive.fillColor, weight: dotStyleInactive.weight }));
+        }
+
+        // One shared click handler (dot + label)
+        const handleSelect = (e) => {
+            if (e) L.DomEvent.stopPropagation(e);
+
+            if (sanctuary.status === 'inactive') {
+                map.setView([sanctuary.lat, sanctuary.lon], sanctuary.zoom, { animate: true });
+            } else {
+                setActiveSanctuary(sanctuary.name);
+            }
+
+            // If dots are showing, do not open polygon popups / DO NOT navigate
+            // if (dotsAreVisible()) return;
+
+            if (sanctuary.status === 'active') {
+                openPanel(sanctuary);
+            }
+            if (sanctuary.status === "inactive") {
+                openPanel(sanctuary);
+                let entryLat = sanctuary.lat;
+                let entryLon = sanctuary.lon;
+                let entryZoom;
+                if (!isMobile()) {
+                    entryZoom = sanctuary.zoom;
+                }
+                if (isMobile()) {
+                    entryZoom = sanctuary.mobileZoom;
+                }
+                map.setView([entryLat, entryLon], entryZoom, { animate: true });
+            }
+        };
+
+        // Permanent label
+        const side = sanctuary.labelSide ?? LABEL_SIDE;
+
+        let xOff;
+        let yOff;
+
+        if (mobileState.byHeightLess500 || mobileState.byWidthLess768) {
+            xOff = sanctuary.labelXOffsetMobile ?? LABEL_X_OFFSET;
+            yOff = sanctuary.labelYOffsetMobile  ?? LABEL_Y_OFFSET;
+        } else {
+            xOff = sanctuary.labelXOffset ?? LABEL_X_OFFSET;
+            yOff = sanctuary.labelYOffset ?? LABEL_Y_OFFSET;
+        }
+
+        const x = (side === "left" ? -xOff : xOff);
+        const direction = (side === "left" ? "left" : "right");
+
+        const labelText = (sanctuary.labelName ?? sanctuary.name ?? "").trim();
+
+        if (labelText) {
+
+            if (!isMobile()) {
+                if (sanctuary.status === 'active') {
+                    dot.bindTooltip(labelText, {
+                    permanent: true,
+                    direction,
+                    offset: L.point(x, yOff),
+                    opacity: 1,
+                    interactive: true, // IMPORTANT: allow clicks
+                    className: "sw-dot-tooltip-active"
+                    });
+                }
+                if (sanctuary.status === 'inactive') {
+                    dot.bindTooltip(labelText, {
+                    permanent: true,
+                    direction,
+                    offset: L.point(x, yOff),
+                    opacity: 1,
+                    interactive: true, // IMPORTANT: allow clicks
+                    className: "sw-dot-tooltip-inactive"
+                    });
+                }
+                // if (sanctuary.status === 'inactive') {
+                //     dot.bindTooltip(labelText, {
+                //     permanent: true,
+                //     direction,
+                //     offset: L.point(x, yOff),
+                //     opacity: 1,
+                //     interactive: true, // IMPORTANT: allow clicks
+                //     className: "sw-dot-tooltip-inactive"
+                //     });
+                // }
+            }
+            if (isMobile() && mobileState.hasTouch && (mobileState.byHeightGreater960 || mobileState.byHeightLess500 || mobileState.byWidthLess768)) {
+                if (sanctuary.status === 'active') {
+                    dot.bindTooltip(labelText, {
+                    permanent: true,
+                    direction,
+                    offset: L.point(x, yOff),
+                    opacity: 1,
+                    interactive: true, // IMPORTANT: allow clicks
+                    className: "sw-dot-tooltip-active"
+                    });
+                }
+                if (sanctuary.status === 'inactive') {
+                    dot.bindTooltip(labelText, {
+                    permanent: true,
+                    direction,
+                    offset: L.point(x, yOff),
+                    opacity: 1,
+                    interactive: true, // IMPORTANT: allow clicks
+                    className: "sw-dot-tooltip-inactive"
+                    });
+                }
+            }
+
+            // When the tooltip DOM exists, make it behave like the dot
+            dot.on("tooltipopen", () => {
+            const el = dot.getTooltip()?.getElement();
+            if (!el) return;
+
+            el.style.cursor = "pointer";
+
+            // prevent double-binding if Leaflet reuses/refreshes the tooltip element
+            if (el.dataset.swClickBound === "1") return;
+            el.dataset.swClickBound = "1";
+
+            el.addEventListener("click", (evt) => handleSelect(evt));
+            });
+        }
+
+        // Dot click
+        dot.on("click", handleSelect);
+
+        dot.sanctuaryData = sanctuary;
+        dotByName.set(sanctuary.name, { sanctuary, dot });
+
+        return dot;
+          
+       
+    }
+
+
+    // --- Create dots ONCE ---
+    sanctuaries.forEach(addSanctuaryDot);
+
+    // --- Hide dots above a zoom threshold ---
+    let HIDE_DOTS_AT_ZOOM = 5;
+    if (isMobile()) {
+        HIDE_DOTS_AT_ZOOM = 5;
+    } 
+
+    function updateDotsVisibility() {
+        const z = map.getZoom();
+        if (z >= HIDE_DOTS_AT_ZOOM) {
+            if (map.hasLayer(dotsLayer)) map.removeLayer(dotsLayer);
+        } else {
+            if (!map.hasLayer(dotsLayer)) map.addLayer(dotsLayer);
+        }
+    }
+
+    map.on("zoomend", updateDotsVisibility);
+    updateDotsVisibility();
+
+
+
+
+    // ----------------------------
+    // 7) ADD SIDEBAR
+    // ----------------------------
+    const listEl = document.getElementById("list");
+
+    const sanctuaryLayers = new Map();
+    let activeSanctuaryName = null;
+
+    const sanctuarySelect = document.getElementById("sanctuarySelect");
+
+    // dropdown -> zoom + highlight + open panel
+    sanctuarySelect.addEventListener("change", () => {
+        const name = sanctuarySelect.value;
+        if (!name) {
+
+            const mapDiv = document.getElementById("map");
+            if (isMobile()) {
+                mapDiv.style.setProperty("height", "50vh", "important");
+            }
+            if (mobileState.byHeightLess500) {
+                mapDiv.style.setProperty("height", "75vh", "important");
+            }
+    
+            requestAnimationFrame(() => {
+            map.invalidateSize();
+
+                requestAnimationFrame(() => {
+                    map.setView(DEFAULT_CENTER, DEFAULT_ZOOM, { animate: false });
+                });
+
+            });
+            clearActiveSanctuary();
+            return;
+        }
+
+        const entry = sanctuaryLayers.get(name);
+        if (!entry) return;
+
+        setActiveSanctuary(name);
+        openPanel(entry.sanctuary);
+    
+    });
+
+    // ----------------------------
+    // 8) ADD THE GEOJSONS FROM THE SANCTUARIES DICT TO THE MAP
+    // ----------------------------
+    async function addGeojsonLayer({ name, jsonUrl, pane, style, image, url, buttonName, status, lat, lon, zoom, mobileZoom, type }) {
+        const res = await fetch(jsonUrl);
+        if (!res.ok) throw new Error(`Failed to load ${jsonUrl} (HTTP ${res.status})`);
+        const geojson = await res.json();
+
+        const displayName = name;
+
+        // Create the group for this GeoJSON file
+        const group = L.geoJSON(geojson, {
+            pane,
+            style: () => style
+        }).addTo(map);
+
+        let sanctuary = {name, jsonUrl, pane, style, image, url, buttonName, status, lat, lon, zoom, mobileZoom, type};
+
+        // REGISTER THIS GROUP so sidebar can render it
+        if (status === 'active') {
+            sanctuaryLayers.set(displayName, { group, style, jsonUrl, sanctuary });
+            syncSanctuaryDropdown();
+        }
+
+        // Helper: apply style to all polygons in this GeoJSON group
+        const setGroupStyle = (s) => {
+            group.eachLayer(layer => layer.setStyle && layer.setStyle(s));
+        };
+
+        // Hover styles
+        const hoverStyle = {
+            color: "yellow",
+            fillColor: "yellow",
+            weight: 2.5,
+            fillOpacity: Math.max(style.fillOpacity ?? 0.05, 0.05)
+        };
+        const hoverStyleInactive = {
+            color: "white",
+            fillColor: "white",
+            weight: 2.5,
+            fillOpacity: Math.max(style.fillOpacity ?? 0.05, 0.05)
+        };
+
+        let resetTimer = null;
+
+
+
+        // Helper Functions
+        const highlightGroup = () => {
+            if (resetTimer) { clearTimeout(resetTimer); resetTimer = null; }
+            setGroupStyle(hoverStyle);
+            // group.bringToFront();
+        };
+
+        const highlightGroupInactive = () => {
+            if (resetTimer) { clearTimeout(resetTimer); resetTimer = null; }
+            setGroupStyle(hoverStyleInactive);
+            // group.bringToFront();
+        };
+
+        const scheduleReset = () => {
+            if (resetTimer) clearTimeout(resetTimer);
+
+            // If this group is "active"/selected in the sidebar, don't reset on mouseout
+            if (activeSanctuaryName === displayName) return;
+
+            resetTimer = setTimeout(() => setGroupStyle(style), 60);
+        };
+
+
+        // LOOP THROUGH THE DICT OF SANCTUARIES
+        // Attach events to EACH feature layer, but operate on the GROUP
+        group.eachLayer(featureLayer => {
+
+            // bind popup once (safe) — but we will conditionally OPEN it
+
+            //LOGIC FOR DICT ENTRIES WITH A URL
+            if (sanctuary.url != "") {
+
+                let selectedSanctuary;
+
+                //DESKTOP LOGIC
+                if (!isMobile()) {
+
+
+                    featureLayer.bindTooltip(`Select ${sanctuary.name}`, {
+                        permanent: false,        // not always on
+                        direction: "relative",
+                        offset: L.point(-10, 0),
+                        opacity: 0.95,
+                        className: "dot-label",
+                        sticky: true  
+                    });
+
+                    
+                    // Show name to the LEFT of the dot
+                    featureLayer.on("mouseover", (e) => {
+                        highlightGroup();
+                    });
+
+                    featureLayer.on("mouseout", () => {
+                        if (activeSanctuaryName !=  sanctuary.name) {
+                            // Only close if we opened (safe either way)
+                            scheduleReset();
+                        }
+                    });
+                                           
+
+                    featureLayer.on("click", (e) => {
+
+                        if (activeSanctuaryName === sanctuary.name) {
+                            // Prevent map click from clearing selection
+                            L.DomEvent.stopPropagation(e);
+
+                            // Select sanctuary (keep highlighted)
+                            setActiveSanctuary(displayName);
+                            renderGeojsonList(displayName); // update sidebar as each layer loads
+
+
+                            if (setActiveSanctuary && status === 'active') {
+                                openPanel(sanctuary);
+                                // Optional: open link on click (only if you want)
+                                if (sanctuary?.url) window.open(sanctuary.url, "_self");
+                            }
+
+                            // If dots are showing, DO NOT open polygon popups / DO NOT navigate
+                            if (dotsAreVisible()) return;
+                        } else {
+                            // Prevent map click from clearing selection
+                            L.DomEvent.stopPropagation(e);
+
+                            // Select sanctuary (keep highlighted)
+                            setActiveSanctuary(displayName);
+                            renderGeojsonList(displayName); // update sidebar as each layer loads
+
+                            if (setActiveSanctuary && status === 'active') {
+                                openPanel(sanctuary);
+                            }
+
+                            // If dots are showing, DO NOT open polygon popups / DO NOT navigate
+                            if (dotsAreVisible()) return;
+
+                        }
+                    });
+                }
+
+                //MOBILE LOGIC
+                
+                if (isMobile()) {
+                    featureLayer.on("click", (e) => {
+                        L.DomEvent.stopPropagation(e);
+
+                        // If dots are showing, do not open polygon popups / do not navigate
+                        if (dotsAreVisible()) return;
+
+                        const alreadyActive = activeSanctuaryName === displayName;
+
+                        highlightGroup();
+                        setActiveSanctuary(displayName);
+                        openPanel(sanctuary);
+
+                        // First tap = select only
+                        // Second tap on the same active feature = navigate
+                        if (alreadyActive && sanctuary?.url) {
+                            window.location.href = sanctuary.url;
+                        }
+                    });
+                }
+
+            //LOGIC FOR DICT ENTRIES WITHOUT A URL
+            } else {
+                //COMING SOON SANCTUARIES
+                if (status === 'active') {
+
+                    featureLayer.bindTooltip(`${sanctuary.name} is coming soon`, {
+                        permanent: false,        // not always on
+                        direction: "relative",
+                        offset: L.point(-10, 0),
+                        opacity: 0.95,
+                        className: "dot-label"
+                    });
+
+                    // Show name to the LEFT of the dot
+                    featureLayer.on("mouseover", (e) => {
+                        highlightGroup();
+                    });
+
+                    featureLayer.on("mouseout", () => {
+                        // Only close if we opened (safe either way)
+                        scheduleReset();
+                    });
+
+                    featureLayer.on("click", (e) => {
+                        // Prevent map click from clearing selection
+                        L.DomEvent.stopPropagation(e);
+
+                        // Select sanctuary (keep highlighted)
+                        setActiveSanctuary(displayName);
+                        renderGeojsonList(displayName); // update sidebar as each layer loads
+
+
+                        if (setActiveSanctuary && status === 'active') {
+                            openPanel(sanctuary);
+                            // Optional: open link on click (only if you want)
+                            // if (sanctuary?.url) window.open(sanctuary.url, "_self");
+                        }
+
+                        // ✅ If dots are showing, DO NOT open polygon popups / DO NOT navigate
+                        if (dotsAreVisible()) return;
+                    });
+                }
+                //UNAVAILABLE SANCTUARIES
+                if (status === "inactive") {
+
+                    // Show name to the LEFT of the dot
+                    featureLayer.on("mouseover", (e) => {
+                        highlightGroupInactive();
+                    });
+
+                    featureLayer.on("mouseout", () => {
+                        // Only close if we opened (safe either way)
+                        scheduleReset();
+                        // clearActiveSanctuary()
+                    });
+
+                    featureLayer.on("click", (e) => {
+
+                        // Prevent map click from clearing selection
+                        L.DomEvent.stopPropagation(e);
+                        clearActiveSanctuary();
+                    
+                        openPanel(sanctuary);
+
+                        // ✅ If dots are showing, DO NOT open polygon popups / DO NOT navigate
+                        if (dotsAreVisible()) return;
+
+                        let entryLat = lat;
+                        let entryLon = lon;
+                        let entryZoom;
+                        if (!isMobile()) {
+                            entryZoom = zoom;
+                        }
+                        if (isMobile()) {
+                            entryZoom = mobileZoom;
+                        }
+
+                        const sanctuarySelect = document.getElementById('sanctuarySelect');
+                        sanctuarySelect.value = '';
+                        
+                        map.setView([entryLat, entryLon], entryZoom, { animate: true });
+                        
+                    });
+
+                    featureLayer.bindTooltip(`${sanctuary.name} is unavailable`, {
+                        permanent: false,        // not always on
+                        direction: "relative",
+                        offset: L.point(-10, 0),
+                        opacity: 0.95,
+                        className: "dot-label"
+                    });
+                    
+                }
+
+            }
+        });
+
+
+        //Hide the GEOJSON after a certain zoom levels
+        let HIDE_GEOJSON_AT_ZOOM = 5;
+
+        if (isMobile()) {
+            HIDE_GEOJSON_AT_ZOOM = 5;
+        }
+
+        function updateBoudaryVisibility() {
+            const z = map.getZoom();
+            if (z < HIDE_GEOJSON_AT_ZOOM) {
+                if (map.hasLayer(group)) map.removeLayer(group);
+            } else {
+                if (!map.hasLayer(group)) map.addLayer(group);
+            }
+        }
+        map.on("zoomend", updateBoudaryVisibility);
+        updateBoudaryVisibility(); // run once at start
+
+        return group;
+    }
+
+    // ----------------------------
+    // 7) Load all GeoJSONs and zoom to combined bounds (your original)
+    // ----------------------------
+    // (async () => {
+    //     const layers = [];
+    //     for (const src of sanctuaries) {
+    //         try {
+    //         const layer = await addGeojsonLayer(src);
+    //         layers.push(layer);
+    //         } catch (err) {
+    //         console.error("GeoJSON load failed:", src.url, err);
+    //         }
+    //     }
+
+    //     if (layers.length > 0) {
+    //         const group = L.featureGroup(layers);
+    //     }
+    // })();
+
+    function showAppLoader() {
+        const loader = document.getElementById("app-loader");
+        const app = document.getElementById("app");
+
+        if (loader) {
+            loader.classList.remove("is-hidden");
+            loader.setAttribute("aria-busy", "true");
+        }
+
+        if (app) {
+            app.classList.add("is-loading");
+        }
+    }
+
+    function hideAppLoader() {
+        const loader = document.getElementById("app-loader");
+        const app = document.getElementById("app");
+
+        if (loader) {
+            loader.classList.add("is-hidden");
+            loader.setAttribute("aria-busy", "false");
+        }
+
+        if (app) {
+            app.classList.remove("is-loading");
+        }
+    }
+
+    (async () => {
+        showAppLoader();
+
+        map.dragging.disable();
+        map.touchZoom.disable();
+        map.doubleClickZoom.disable();
+        map.scrollWheelZoom.disable();
+        map.boxZoom.disable();
+        map.keyboard.disable();
+        if (map.tap) map.tap.disable();
+
+        const layers = [];
+
+        try {
+            for (const src of sanctuaries) {
+                try {
+                    const layer = await addGeojsonLayer(src);
+                    layers.push(layer);
+                } catch (err) {
+                    console.error("GeoJSON load failed:", src.url, err);
+                }
+            }
+
+            if (layers.length > 0) {
+                const group = L.featureGroup(layers);
+            }
+        } finally {
+            map.dragging.enable();
+            map.touchZoom.enable();
+            map.doubleClickZoom.enable();
+            map.scrollWheelZoom.enable();
+            map.boxZoom.enable();
+            map.keyboard.enable();
+            if (map.tap) map.tap.enable();
+
+            hideAppLoader();
+        }
+    })();
+
+
+    // ----------------------------
+    // 9) ADD DISTANCE SCALE & MOUSE COORDINATES
+    // ----------------------------
+
+
+    let scaleControl = null;
+
+    function buildScale() {
+        if (scaleControl) {
+            map.removeControl(scaleControl);
+            scaleControl = null;
+        }
+
+        if (isMobile() || mobileState.byHeightGreater960 || mobileState.byHeightLess500 || mobileState.byWidthLess768) return;
+
+        scaleControl = L.control.scale({
+            position: "bottomleft",
+            metric: false,
+            imperial: true
+        });
+
+        scaleControl.addTo(map);
+    }
+
+    buildScale();
+    window.addEventListener("resize", buildScale);
+
+
+    const MouseCoords = L.Control.extend({
+    options: { position: "bottomleft" },
+
+    onAdd: function () {
+        const div = L.DomUtil.create("div", "leaflet-control map-mouse-coords");
+        div.innerHTML = `Lat: <span class="lat">—</span><br>Lon: <span class="lng">—</span>`;
+        L.DomEvent.disableClickPropagation(div);
+        return div;
+    }
+    });
+
+    const mouseCoords = new MouseCoords();
+    if (!isMobile() &&window.innerWidth > 768){
+        map.addControl(mouseCoords);
+        const coordsEl = document.querySelector(".map-mouse-coords");
+        const latEl = coordsEl.querySelector(".lat");
+        const lngEl = coordsEl.querySelector(".lng");
+
+        map.on("mousemove", (e) => {
+        latEl.textContent = e.latlng.lat.toFixed(5);
+        lngEl.textContent = e.latlng.lng.toFixed(5);
+        });
+
+        // Optional: clear when mouse leaves map
+        map.getContainer().addEventListener("mouseleave", () => {
+        latEl.textContent = "—";
+        lngEl.textContent = "—";
+        });
+    }
+
+    
+
+    // ----------------------------
+    // 10) ADD MAP LEGEND
+    // ----------------------------
+    let legendPosition = "bottomleft";
+    let legendControl = null;
+
+    function buildLegend() {
+        const z = map.getZoom();
+
+        if (legendControl) {
+            map.removeControl(legendControl);
+            legendControl = null;
+        }
+
+        const LegendControl = L.Control.extend({
+            options: { position: legendPosition },
+            onAdd: function () {
+                const div = L.DomUtil.create("div", "map-legend leaflet-control");
+
+                if (!isMobile() &&window.innerWidth > 768 && z < 5) {
+                    div.innerHTML = `
+                    <div class="legend-title">Legend</div>
+
+                    <div class="legend-row">
+                        <span class="legend-dot"></span>
+                        <span class="legend-label">Condition Tracking</span>
+                    </div>
+
+                    <div class="legend-row">
+                        <span class="legend-dot-designation"></span>
+                        <span class="legend-label">New Sanctuary</span>
+                    </div>
+
+                    <div class="legend-row">
+                        <span class="legend-dot-inactive"></span>
+                        <span class="legend-label">Unavailable</span>
+                    </div>
+                    <div class="legend-compass">
+                    <div class="compass-wrap">
+                        <span class="compass-icon" title="North" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="img" focusable="false">
+                            <path
+                            d="M12 3 L18 10 H14 V21 H10 V10 H6 Z"
+                            fill="currentColor"
+                            ></path>
+                        </svg>
+                        </span>
+                        <span class="legend-label">North</span>
+                    </div>
+                    </div>
+                    `;
+                }
+
+                if (!isMobile() &&window.innerWidth > 768 && z >= 5) {
+                    div.innerHTML = `
+                    <div class="legend-title">Legend</div>
+
+                    <div class="legend-row">
+                        <span class="legend-poly"></span>
+                        <span class="legend-label">Condition Tracking</span>
+                    </div>
+
+                    <div class="legend-row">
+                        <span class="legend-poly-designation"></span>
+                        <span class="legend-label">New Sanctuary</span>
+                    </div>
+
+                    <div class="legend-row">
+                        <span class="legend-poly-inactive"></span>
+                        <span class="legend-label">Unavailable</span>
+                    </div>
+                    <div class="legend-compass">
+                        <div class="compass-wrap">
+                            <span class="compass-icon" title="North">
+                                <svg viewBox="0 0 64 64" aria-hidden="true">
+                                    <path d="M32 6 L44 34 L32 28 L20 34 Z"></path>
+                                    <path d="M31 28 H33 V58 H31 Z"></path>
+                                </svg>
+                            </span>
+                            <span class="legend-label">North</span>
+                        </div>
+                    </div>
+                    `;
+                }
+
+                if (z < 5 && (isMobile() ||window.innerWidth < 768)) {
+                    div.innerHTML = `
+                    <div class="legend-rowline">
+                        <div class="legend-row">
+                            <span class="legend-dot"></span>
+                            <span class="legend-label">Condition Tracking</span>
+                        </div>
+
+                        <div class="legend-row">
+                            <span class="legend-dot-designation"></span>
+                            <span class="legend-label">New Sanctuary</span>
+                        </div>
+
+
+                        <div class="legend-row">
+                            <span class="legend-dot-inactive"></span>
+                            <span class="legend-label">Unavailable</span>
+                        </div>
+                    </div>
+                    `;
+                }
+
+                if (z >= 5 && (isMobile() ||window.innerWidth < 768)) {
+                    div.innerHTML = `
+                    <div class="legend-rowline">
+                        <div class="legend-row">
+                            <span class="legend-poly"></span>
+                            <span class="legend-label">Condition Tracking</span>
+                        </div>
+
+                        <div class="legend-row">
+                            <span class="legend-poly-designation"></span>
+                            <span class="legend-label">New Sanctuary</span>
+                        </div>
+
+                        <div class="legend-row">
+                            <span class="legend-poly-inactive"></span>
+                            <span class="legend-label">Unavailable</span>
+                        </div>
+                    </div>
+                    `;
+                }
+
+                L.DomEvent.disableClickPropagation(div);
+                L.DomEvent.disableScrollPropagation(div);
+
+                return div;
+            }
+        });
+
+        legendControl = new LegendControl();
+        map.addControl(legendControl);
+    }
+
+    buildLegend();
+
+    map.on("zoomend", buildLegend);
+    window.addEventListener("resize", buildLegend);
+
+    
+
+
+    // ----------------------------
+    // 11) ADD FLASH INSTRUCTION ON FRONT SCREEN
+    // ----------------------------
+    function showOnboardingOnce() {
+        const key = "sw_onboard_seen";
+        if (sessionStorage.getItem(key) === "1") return;
+
+        const app = document.getElementById("app");
+        if (!app) {
+            console.warn("[onboard] #app not found yet");
+            return;
+        }
+
+        // build overlay
+        const overlay = document.createElement("div");
+        overlay.id = "sw-onboard";
+        overlay.className = "sw-onboard";
+        overlay.innerHTML = `
+            <div class="sw-onboard-card">
+            <div class="sw-onboard-title">Sanctuary Explorer</div>
+            <ul class="sw-onboard-list">
+                <li>Select a sanctuary</li>
+                <li>Open selected tool</li>
+            </ul>
+            <button id="sw-onboard-btn" class="sw-onboard-btn" type="button">START EXPLORING</button>
+            </div>
+        `;
+
+        app.appendChild(overlay);
+
+        // OPTIONAL: block Leaflet interactions if map exists
+        if (window.map && typeof map.dragging?.disable === "function") {
+            map.dragging.disable();
+            map.doubleClickZoom.disable();
+            map.boxZoom.disable();
+            map.keyboard.disable();
+            if (map.tap) map.tap.disable();
+            map.touchZoom.disable();
+            // keep scrollWheel disabled if you already disable it globally
+        }
+
+        const close = () => {
+            sessionStorage.setItem(key, "1");
+            overlay.classList.add("fadeout");
+            setTimeout(() => overlay.remove(), 260);
+
+            if (window.map && typeof map.dragging?.enable === "function") {
+            map.dragging.enable();
+            map.doubleClickZoom.enable();
+            map.boxZoom.enable();
+            map.keyboard.enable();
+            if (map.tap) map.tap.enable();
+            map.touchZoom.enable();
+            }
+        };
+
+        overlay.querySelector("#sw-onboard-btn")?.addEventListener("click", close);
+        overlay.addEventListener("click", close);
+ 
+    }
+
+    showOnboardingOnce();
+
+    // ----------------------------
+    // 12) REFRESH SCREEN ON DEVICE ORIENTATION CHANGE 
+    // ----------------------------
+    function getOrientationKey() {
+    return window.matchMedia("(orientation: portrait)").matches
+        ? "portrait"
+        : "landscape";
+    }
+
+    function reloadOnOrientationChange() {
+    let lastOrientation = getOrientationKey();
+
+    window.addEventListener("resize", function () {
+        const currentOrientation = getOrientationKey();
+
+        if (currentOrientation !== lastOrientation) {
+        lastOrientation = currentOrientation;
+        window.location.reload();
+        }
+    });
+    }
+
+    reloadOnOrientationChange();
+
+    // 14) PAGE WIDTH THRESHOLD WATCH @ 768px, NOT EVERY RESIZE EVENT
+    if (!isMobile()) {
+        let wasAbove768 = window.innerWidth > 768;
+        window.addEventListener("resize", function () {
+            const isAbove768 = window.innerWidth > 768;
+
+            if (isAbove768 !== wasAbove768) {
+                window.location.reload();
+            }
+            if (isAbove768 === wasAbove768) {
+                window.location.reload();
+            }
+
+            wasAbove768 = isAbove768;
+        });
+    }
+
+  </script>
+
+</body>

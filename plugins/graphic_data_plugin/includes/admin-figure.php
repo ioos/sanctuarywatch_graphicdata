@@ -981,10 +981,9 @@ class Graphic_Data_Figure {
 			wp_send_json_error( array( 'message' => 'No file uploaded.' ), 400 );
 		}
 
-
 		// Get the file extension and check it to make sure it is of the type that are allowed.
 		$file_ext = pathinfo( $file_name, PATHINFO_EXTENSION );
-		$allowed_types = [ 'json', 'csv', 'geojson' ];
+		$allowed_types = [ 'json', 'csv', 'geojson', 'html' ];
 		if ( ! in_array( $file_ext, $allowed_types ) ) {
 			wp_send_json_error( [ 'message' => 'Invalid file type.' ], 400 );
 		}
@@ -1027,6 +1026,10 @@ class Graphic_Data_Figure {
 				update_post_meta( $post_id, 'uploaded_path_geojson', $destination );
 				update_post_meta( $post_id, 'uploaded_path_json', $destination );
 				update_post_meta( $post_id, 'uploaded_file', $file_name );
+			}
+			if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'html' ) {
+				update_post_meta( $post_id, 'uploaded_path_html', $destination );
+				update_post_meta( $post_id, 'uploaded_html_file', $file_name );
 			}
 			// Send a success response with the file path.
 			wp_send_json_success(

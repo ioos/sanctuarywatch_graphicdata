@@ -1223,8 +1223,9 @@ async function loadSVG(url, containerId) {
             try {
                 //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
                 if (window.location.href.includes('post.php')) {
+
                     const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
-                    visible_modals = iconsLayer
+                    graphicDataSceneData.visible_modals = iconsLayer
                         ? Array.from(iconsLayer.children)
                             .filter(el => el.tagName.toLowerCase() === "g")
                             .map(el => el.id)
@@ -1238,13 +1239,13 @@ async function loadSVG(url, containerId) {
                     sceneRow = document.getElementById("scene-row");
                     sceneRow.style.marginTop = "20px";
 
-                    scene_text_toggle = graphicDataSceneData.titleArr['scene_text_toggle']; //"toggle_on";
-                    scene_full_screen_button = graphicDataSceneData.titleArr['scene_full_screen_button'];//"yes";
-                    scene_toc_style = "list";
-                    scene_default_hover_color = graphicDataSceneData.titleArr['scene_hover_color'];
-                    scene_hover_text_color = graphicDataSceneData.titleArr['scene_hover_text_color']; 
+                    graphicDataSceneData.sceneTextToggle = graphicDataSceneData.titleArr['scene_text_toggle']; //"toggle_on";
+                    graphicDataSceneData.sceneFullScreenButton = graphicDataSceneData.titleArr['scene_full_screen_button'];//"yes";
+                    graphicDataSceneData.sceneTocStyle = "list";
+                    graphicDataSceneData.sceneDefaultHoverColor = graphicDataSceneData.titleArr['scene_hover_color'];
+                    graphicDataSceneData.sceneDefaultHoverTextColor = graphicDataSceneData.titleArr['scene_hover_text_color']; 
 
-                    sorted_child_objs = buildVisibleModalsObject(visible_modals, {
+                    sorted_child_objs = buildVisibleModalsObject(graphicDataSceneData.visible_modals, {
                         sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
                         postAuthor: "1",
                         useGmt: true, // set false if you want local time for both
