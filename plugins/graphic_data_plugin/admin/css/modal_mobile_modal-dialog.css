@@ -214,14 +214,17 @@ ul {
 
 
 /* Media safety */
+/* Media safety */
 img,
-iframe,
 video,
 svg{
   max-width: 100%;
   height: auto;
 }
 
+iframe{
+  max-width: 100%;
+}
 .btn-primary {
   background-color: #03386c;
   margin-left: 4%;
