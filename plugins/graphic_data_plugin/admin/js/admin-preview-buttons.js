@@ -591,14 +591,14 @@ if (previewSceneElements.length > 0) {
             let url;
             try {
                 openSceneInModal(el);
-                title_arr = buildScenePayloadFromForm();
-                //console.log('title_arr', title_arr);
-                if (title_arr['post_title'] == '') {
-                    title_arr['post_title'] = "No Scene Title Entered.";
+                graphicDataSceneData.titleArr = buildScenePayloadFromForm();
+                //console.log('titleArr', titleArr);
+                if (graphicDataSceneData.titleArr['post_title'] == '') {
+                    graphicDataSceneData.titleArr['post_title'] = "No Scene Title Entered.";
                 }
                 sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
                 thisInstance = sceneLoc;
-                url = title_arr['scene_infographic'];
+                url = graphicDataSceneData.titleArr['scene_infographic'];
 
             } catch {}
 
