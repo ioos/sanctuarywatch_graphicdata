@@ -36,7 +36,6 @@ if (
 }
 if (!window.location.href.includes('post.php')) { 
     let url1 =(JSON.stringify(graphicDataSceneData.svgUrl));
-	debugger;
     url = url1.substring(2, url1.length - 2);
 }
 
@@ -273,7 +272,7 @@ function hexToRgba(hex, opacity) {
  */
 function process_child_obj() {
 	for (const key in child_obj) {
-		if (child_obj[key].scene !== graphicDataSceneData.postId) {
+		if (child_obj[key].scene !== parseInt(graphicDataSceneData.postId)) {
 			delete child_obj[key];
 		} else {
 			const oldkey = String(key);

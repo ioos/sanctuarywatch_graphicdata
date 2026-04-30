@@ -244,7 +244,7 @@ wp_localize_script(
 		'sceneDefaultHoverColor'       => $graphic_data_scene_default_hover_color,
 		'sceneDefaultHoverTextColor'  => $graphic_data_scene_default_hover_text_color,
 		'sceneTextToggle'               => $graphic_data_scene_text_toggle,
-//		'scene_toc_style'                 => $graphic_data_scene_toc_style,
+		'sceneTocStyle'                 => $graphic_data_scene_toc_style,
 		'sceneFullScreenButton'        => $graphic_data_scene_full_screen_button,
 		'titleArr'                       => $graphic_data_title_arr,
 		'visibleModals'                  => $graphic_data_visible_modals,

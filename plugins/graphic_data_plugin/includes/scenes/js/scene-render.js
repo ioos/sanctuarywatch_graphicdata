@@ -166,7 +166,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
     // Grab the <defs> section of the SVG (symbol definitions, gradients, etc.)
     let defs = svgElement.firstElementChild;
     let scene_toc_style = scene_data.scene_toc_style;
-
+    
     function groupIconsBySection(iconsArr) {
         
         const grouped = {};
@@ -511,7 +511,6 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
             buildAccordionLayout(groupedIcons, numCols, numRows);
             return;
         }
-
         if (scene_toc_style === "" || scene_toc_style === "list") {
 
             if (window.location.href.includes('post.php')) {
@@ -1198,11 +1197,12 @@ async function loadSVG(url, containerId) {
                     }
                 });
                 
-                handleIconVisibility(svgElement, visible_modals);
+                handleIconVisibility(svgElement, graphicDataSceneData.visibleModals);
                 container.appendChild(svgElement);
                 toggle_text();
                 full_screen_button('svg1');
                 if (graphicDataSceneData.sceneTocStyle === "list"){
+
                     list_toc();
                 } else {
                     table_of_contents();
@@ -1935,7 +1935,6 @@ function toc_sections() {
  */
 
 function table_of_contents() {
-    debugger;
 	if (graphicDataSceneData.sceneTocStyle == 'accordion') {
 		//this should be done on the SCENE side of things
 		toc_sections();
