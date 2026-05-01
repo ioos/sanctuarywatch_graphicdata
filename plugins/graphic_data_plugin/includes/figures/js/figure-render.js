@@ -603,7 +603,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     const caption = document.createElement('p');
     caption.classList.add('caption');
     tempShortCaption = info_obj['shortCaption'];
-    tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p>');
+    tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     caption.innerHTML = tempShortCaption;
     caption.style.marginTop = '10px';
     figureDiv.appendChild(caption);
@@ -637,7 +637,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
     let longCaption = document.createElement("p");
     tempLongCaption = info_obj['longCaption'];
-    tempLongCaption = tempLongCaption.replace(/\r\n\r\n/g, '<p>');
+    tempLongCaption = tempLongCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     longCaption.innerHTML = tempLongCaption;
     if (info_obj['longCaption'] != ''){
         details.appendChild(summary);

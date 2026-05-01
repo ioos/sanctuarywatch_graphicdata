@@ -12,7 +12,7 @@ async function make_title() {
 	const host = window.location.host;
 	try {
 		scene_data = graphicDataSceneData.titleArr;
-        scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p>');
+        scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
 		const scene_location = scene_data.scene_location;
 		const title = scene_data.post_title;
 
