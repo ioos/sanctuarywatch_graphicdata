@@ -338,80 +338,82 @@ class Graphic_Data_Custom_Roles {
 		}
 
 		// Display the fields.
-		?>
-		<h3>Instance Assignments</h3>
-		<?php wp_nonce_field( 'save_assigned_instances_' . $user->ID, 'assigned_instances_nonce' ); ?>
-		<table class="form-table">
-			<tr>
-				<th><label>Assigned Instances</label></th>
-				<td>
-					<?php if ( ! empty( $instances ) ) : ?>
-						<fieldset>
-							<legend class="screen-reader-text">Assigned Instances</legend>
-							<?php foreach ( $instances as $instance ) : ?>
-								<label>
-									<input type="checkbox"
-										   name="assigned_instances[]"
-										   value="<?php echo esc_attr( $instance->ID ); ?>"
-										   <?php checked( in_array( $instance->ID, $selected_instances ) ); ?>>
-									<?php echo esc_html( $instance->post_title ); ?>
-								</label><br>
-							<?php endforeach; ?>
-						</fieldset>
-						<p class="description">Select the instances this content editor can manage.</p>
-					<?php else : ?>
-						<p>No instances found.</p>
-					<?php endif; ?>
-					
+		if ( "content_editor" == $selected_user_role ) {
+			?>
+			<h3>Instance Assignments</h3>
+			<?php wp_nonce_field( 'save_assigned_instances_' . $user->ID, 'assigned_instances_nonce' ); ?>
+			<table class="form-table">
+				<tr>
+					<th><label>Assigned Instances</label></th>
+					<td>
+						<?php if ( ! empty( $instances ) ) : ?>
+							<fieldset>
+								<legend class="screen-reader-text">Assigned Instances</legend>
+								<?php foreach ( $instances as $instance ) : ?>
+									<label>
+										<input type="checkbox"
+											name="assigned_instances[]"
+											value="<?php echo esc_attr( $instance->ID ); ?>"
+											<?php checked( in_array( $instance->ID, $selected_instances ) ); ?>>
+										<?php echo esc_html( $instance->post_title ); ?>
+									</label><br>
+								<?php endforeach; ?>
+							</fieldset>
+							<p class="description">Select the instances this content editor can manage.</p>
+						<?php else : ?>
+							<p>No instances found.</p>
+						<?php endif; ?>
+						
 
-					<!-- Script below makes sure that this only shows if we're editing a content manager.  -->
-					<script>
-					document.addEventListener('DOMContentLoaded', function () {
-						const roleDropdown = document.getElementById('role');
-						if (!roleDropdown) {
-							console.warn('Role dropdown not found. Instance visibility toggle skipped.');
-							return;
-						}
-
-						const headings = document.querySelectorAll('h3');
-						let instanceHeading = null;
-						let instanceTable = null;
-
-						// Locate the specific <h3> and its following .form-table
-						headings.forEach(function (heading) {
-							if (heading.textContent.trim() === 'Instance Assignments') {
-								const table = heading.nextElementSibling;
-								if (table && table.classList.contains('form-table')) {
-									instanceHeading = heading;
-									instanceTable = table;
-								}
+						<!-- Script below makes sure that this only shows if we're editing a content manager.  -->
+						<script>
+						document.addEventListener('DOMContentLoaded', function () {
+							const roleDropdown = document.getElementById('role');
+							if (!roleDropdown) {
+								console.warn('Role dropdown not found. Instance visibility toggle skipped.');
+								return;
 							}
+
+							const headings = document.querySelectorAll('h3');
+							let instanceHeading = null;
+							let instanceTable = null;
+
+							// Locate the specific <h3> and its following .form-table
+							headings.forEach(function (heading) {
+								if (heading.textContent.trim() === 'Instance Assignments') {
+									const table = heading.nextElementSibling;
+									if (table && table.classList.contains('form-table')) {
+										instanceHeading = heading;
+										instanceTable = table;
+									}
+								}
+							});
+
+							if (!instanceHeading || !instanceTable) {
+								console.warn('Instance Assignments section not found.');
+								return;
+							}
+
+							function toggleInstanceSection() {
+								const selectedRole = roleDropdown.value;
+								const show = selectedRole === 'content_editor';
+
+								instanceHeading.style.display = show ? '' : 'none';
+								instanceTable.style.display = show ? '' : 'none';
+							}
+
+							// Initial check on load.
+							toggleInstanceSection();
+
+							// Re-check on dropdown change.
+							roleDropdown.addEventListener('change', toggleInstanceSection);
 						});
-
-						if (!instanceHeading || !instanceTable) {
-							console.warn('Instance Assignments section not found.');
-							return;
-						}
-
-						function toggleInstanceSection() {
-							const selectedRole = roleDropdown.value;
-							const show = selectedRole === 'content_editor';
-
-							instanceHeading.style.display = show ? '' : 'none';
-							instanceTable.style.display = show ? '' : 'none';
-						}
-
-						// Initial check on load.
-						toggleInstanceSection();
-
-						// Re-check on dropdown change.
-						roleDropdown.addEventListener('change', toggleInstanceSection);
-					});
-					</script>
-				</td>
-			</tr>
-		</table>
-		<?php
+						</script>
+					</td>
+				</tr>
+			</table>
+			<?php
+		}
 	}
 
 	/**
