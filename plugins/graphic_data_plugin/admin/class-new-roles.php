@@ -338,7 +338,7 @@ class Graphic_Data_Custom_Roles {
 		}
 
 		// Display the fields.
-		if ( "content_editor" == $selected_user_role ) {
+		if ( 'content_editor' == $selected_user_role ) {
 			?>
 			<h3>Instance Assignments</h3>
 			<?php wp_nonce_field( 'save_assigned_instances_' . $user->ID, 'assigned_instances_nonce' ); ?>
