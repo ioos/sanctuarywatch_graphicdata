@@ -1,7 +1,6 @@
 
 alertIfMissingModal();
 
-
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
  * @return {string} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
@@ -13,7 +12,7 @@ async function make_title() {
 	const host = window.location.host;
 	try {
 		scene_data = graphicDataSceneData.titleArr;
-        scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p>');
+        scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
 		const scene_location = scene_data.scene_location;
 		const title = scene_data.post_title;
 
@@ -1013,7 +1012,6 @@ async function loadSVG(url, containerId) {
 
         //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
         if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene') {
-
             const modalHeader = document.querySelector('.modal-header');
             modalHeader.style.display = 'flex';
             modalHeader.style.flexDirection = 'column';
@@ -1223,7 +1221,6 @@ async function loadSVG(url, containerId) {
             try {
                 //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
                 if (window.location.href.includes('post.php')) {
-
                     const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
                     graphicDataSceneData.visible_modals = iconsLayer
                         ? Array.from(iconsLayer.children)
