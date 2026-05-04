@@ -1,7 +1,6 @@
 
 alertIfMissingModal();
 
-
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
  * @return {string} `String` - Numerical location of the scene (which instance its found in) but still a string, returned so scene location can be used within init
@@ -13,7 +12,7 @@ async function make_title() {
 	const host = window.location.host;
 	try {
 		scene_data = graphicDataSceneData.titleArr;
-        scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p>');
+        scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
 		const scene_location = scene_data.scene_location;
 		const title = scene_data.post_title;
 
@@ -1223,7 +1222,7 @@ async function loadSVG(url, containerId) {
                 //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
                 if (window.location.href.includes('post.php')) {
                     const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
-                    visible_modals = iconsLayer
+                    graphicDataSceneData.visible_modals = iconsLayer
                         ? Array.from(iconsLayer.children)
                             .filter(el => el.tagName.toLowerCase() === "g")
                             .map(el => el.id)
@@ -1237,13 +1236,13 @@ async function loadSVG(url, containerId) {
                     sceneRow = document.getElementById("scene-row");
                     sceneRow.style.marginTop = "20px";
 
-                    scene_text_toggle = graphicDataSceneData.titleArr['scene_text_toggle']; //"toggle_on";
-                    scene_full_screen_button = graphicDataSceneData.titleArr['scene_full_screen_button'];//"yes";
-                    scene_toc_style = "list";
-                    scene_default_hover_color = graphicDataSceneData.titleArr['scene_hover_color'];
-                    scene_hover_text_color = graphicDataSceneData.titleArr['scene_hover_text_color']; 
+                    graphicDataSceneData.sceneTextToggle = graphicDataSceneData.titleArr['scene_text_toggle']; //"toggle_on";
+                    graphicDataSceneData.sceneFullScreenButton = graphicDataSceneData.titleArr['scene_full_screen_button'];//"yes";
+                    graphicDataSceneData.sceneTocStyle = "list";
+                    graphicDataSceneData.sceneDefaultHoverColor = graphicDataSceneData.titleArr['scene_hover_color'];
+                    graphicDataSceneData.sceneDefaultHoverTextColor = graphicDataSceneData.titleArr['scene_hover_text_color']; 
 
-                    sorted_child_objs = buildVisibleModalsObject(visible_modals, {
+                    sorted_child_objs = buildVisibleModalsObject(graphicDataSceneData.visible_modals, {
                         sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
                         postAuthor: "1",
                         useGmt: true, // set false if you want local time for both

@@ -3,7 +3,7 @@ Theme Name: Graphic Data Theme
 Theme URI: https://github.com/ioos/sanctuarywatch_graphicdata
 Author: The Graphic Data Team
 Description: The Graphic Data Theme is an interactive theme used for the easy visualization of scientific data, within the Graphic Data framework. 
-Version: 1.4.1
+Version: 1.4.3
 */
 
 @import url('assets/css/bootstrap.css');
@@ -1096,9 +1096,14 @@ body > nav{
 }
 
 .instance_draft_button {
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    color: white; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
     background-color: #808080
+}
+
+.coming_soon_italic {
+  font-style: italic;
 }

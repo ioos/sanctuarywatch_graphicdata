@@ -245,11 +245,13 @@ document.addEventListener('DOMContentLoaded', function () {
 						}
 					}
 
-					// Check if svgText checkbox is unchecked, and if so, delete the text group
+					// Check if svgText checkbox is unchecked, and if so, clear the text group contents
 					const svgTextCheckbox = document.getElementById('svgText');
 					if (svgTextCheckbox && !svgTextCheckbox.checked) {
 						const textGroup = svgDoc.getElementById('text');
-						textGroup.parentNode.removeChild(textGroup);
+						while (textGroup.firstChild) {
+							textGroup.removeChild(textGroup.firstChild);
+						}
 					}
 
 					// Get the svgIconNumber value and remove icons (regular and mobile) that exceed this number
@@ -440,11 +442,13 @@ document.addEventListener('DOMContentLoaded', function () {
 						}
 					}
 
-					// Check if svgText checkbox is unchecked, and if so, delete the text group
+					// Check if svgText checkbox is unchecked, and if so, clear the text group contents
 					const svgTextCheckbox = document.getElementById('svgText');
 					if (svgTextCheckbox && !svgTextCheckbox.checked) {
 						const textGroup = svgDoc.getElementById('text');
-						textGroup.parentNode.removeChild(textGroup);
+						while (textGroup.firstChild) {
+							textGroup.removeChild(textGroup.firstChild);
+						}
 					}
 
 					// Get the svgIconNumber value and remove icons (regular and mobile) that exceed this number

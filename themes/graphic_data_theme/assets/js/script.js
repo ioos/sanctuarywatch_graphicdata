@@ -3,7 +3,9 @@
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
 let child_obj = {};
 
-
+if (window.location.href.includes('post.php')) {
+	 let graphicDataSceneData = {};
+}
 //Checking the page title to see if we are in admin edit mode for a scene
 let adminEditTitle;
 try {

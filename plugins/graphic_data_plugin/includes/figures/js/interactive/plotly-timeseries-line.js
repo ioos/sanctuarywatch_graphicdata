@@ -188,8 +188,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
         }
         
     }
-    Plotly.react(plotDiv, [...overlays, ...mainDataTraces], layout);
-    //Plotly.react(plotDiv, [...mainDataTraces, ...overlays], layout);
+    // Plotly.react(plotDiv, [...overlays, ...mainDataTraces], layout);
+
 }
 
 /**
@@ -740,6 +740,31 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                 injectOverlays(plotDiv, layout, allLinesPlotly, figureArguments, dataToBePlotted);
             });
             Plotly.Plots.resize(plotDiv)
+
+
+
+			//Save the plotly figure as an html file. 
+			const savedFigure = {
+				data: plotDiv.data,
+				layout: plotDiv.layout,
+				config: { responsive: true }
+			};
+			
+			const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
+
+			// if () {
+			// 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
+			// 		saveHtmlFileToServer(figureiframeGenerator.figIframeHtml, figureiframeGenerator.figIframeHtmlFileName, figureiframeGenerator.figIframeHtmlPath, postId);
+			// 	});
+			// }	
+
+			//STANDALONE CODE TO INJECT INTO CODE BLOCK> WORKS INTERMITTENTLY
+			// const snippet = buildPlotlySnippetEmbedCode(
+			// 	savedFigure,
+			// 	`plotly-snippet-${figureID}`
+			// );
+			
+			// console.log("snippet", snippet);
 
         } else {}
 
@@ -1993,6 +2018,8 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 						const dropdownInputCol = document.createElement('div');
 						dropdownInputCol.classList.add('col');
 
+						//---------------------------------------------------------------- START FUNCTIONS
+
 						function createDropdown(labelText, selectId) {
 							const label = document.createElement('label');
 							label.innerHTML = labelText;
@@ -2069,8 +2096,11 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 							return { label, input };
 						}
 
+						//---------------------------------------------------------------- END FUNCTIONS
+
 						const controls = [];
 
+						// Add features for Mean
 						if (feature === 'Mean') {
 							const { label, select } = createDropdown(
 								'Mean Source Column',
@@ -2079,6 +2109,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 							controls.push(label, select);
 						}
 
+						// Add features for ErrorBars
 						if (feature === 'ErrorBars' || feature === 'StdDev') {
 							const { label: labelValues, select: selectValues } =
 								createDropdown(
@@ -2101,7 +2132,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 							);
 						}
 
-						// Initially hide the dropdown container
+						// Initially hide the dropdown container becasue the box hasnt been checked
 						dropdownContainer.style.display = checkbox.checked
 							? 'flex'
 							: 'none';

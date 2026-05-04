@@ -21,37 +21,15 @@ $graphic_data_about_central_details = $graphic_data_about_central_array['aboutDe
 ?>
 <div id="entire_thing">
 
-<div class="container-fluid">
-<!-- <i class="fa fa-clipboard-list" role="presentation" aria-label="clipboard-list icon"></i> -->
-<div class="image-center">
-		<span class="site-branding-logo">
-			<?php
-				echo '<img src="' . esc_url( get_site_icon_url( 512, get_stylesheet_directory_uri() . '/assets/images/graphic_data_logo_no_text_340.png' ) ) . '" alt="Navbar Emblem">';
-			?>
-		</span>
-		<span class="site-branding-text-container">
-
-		<div class="site-title-main"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></div>
-		<?php
-			$graphic_data_site_tagline = get_bloginfo( 'description' );
-		if ( '' != $graphic_data_site_tagline ) {
-			echo "<div class='site-tagline-main'>" . esc_html( $graphic_data_site_tagline ) . '</div>';
-		}
-		?>
-		</span>
-	</div>
-</div>
-
-
 <div class="page-container-fluid main-container">
 	<h2 style="color:black"><?php echo esc_html( $graphic_data_about_post_title ); ?></h2>
 
 	<div class="tagline-content row" style ="text-align:left">
-		<?php echo wp_kses_post( $graphic_data_about_central_main ); ?>
+		<?php echo wp_kses_post( wpautop( $graphic_data_about_central_main ) ); ?>
 		<?php if ( ! empty( $graphic_data_about_central_details ) ) : ?>
 		<details>
 			<summary>Learn More...</summary>
-			<?php echo wp_kses_post( $graphic_data_about_central_details ); ?>
+			<?php echo wp_kses_post( wpautop( $graphic_data_about_central_details ) ); ?>
 		</details>
 		<?php endif; ?>
 	</div>
@@ -73,11 +51,11 @@ $graphic_data_about_central_details = $graphic_data_about_central_array['aboutDe
 			<div class="about-card">
 				<h2><?php echo esc_html( $graphic_data_about_box_title ); ?></h2>
 				<div class="card-content">
-					<?php echo wp_kses_post( $graphic_data_about_box_main ); ?>
+					<?php echo wp_kses_post( wpautop( $graphic_data_about_box_main ) ); ?>
 					<?php if ( ! empty( $graphic_data_about_box_details ) ) : ?>
 						<details>
 							<summary>Learn More...</summary>
-							<?php echo wp_kses_post( $graphic_data_about_box_details ); ?>
+							<?php echo wp_kses_post( wpautop( $graphic_data_about_box_details ) ); ?>
 						</details>
 					<?php endif; ?>
 				</div>
