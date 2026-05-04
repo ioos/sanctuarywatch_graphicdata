@@ -222,7 +222,7 @@ foreach ( $graphic_data_terms_array as $graphic_data_term ) {
 				if ( 'Published' === $graphic_data_instance['instance_status'] ) {
 					echo "<a href='" . esc_url( $graphic_data_instance_link ) . "' class='btn w-100 instance_published_button'>" . esc_html( $graphic_data_instance['post_title'] ) . '</a>';
 				} else {
-					echo "<a class='btn w-100 instance_draft_button'>" . esc_html( $graphic_data_instance['post_title'] ) . '<br>Coming Soon</a>';
+					echo "<a class='btn w-100 instance_draft_button'><span>" . esc_html( $graphic_data_instance['post_title'] ) . '</span><span class="coming_soon_italic">Coming Soon</span></a>';
 				}
 				echo '</div>';
 
