@@ -2533,8 +2533,8 @@
         // entry.group.bringToFront();
         renderGeojsonList(name); // update active state in sidebar
 
-        let entryLat = entry.sanctuary.lat;
-        let entryLon = entry.sanctuary.lon;
+        let entryLat = entry.sanctuary.zoomlat;
+        let entryLon = entry.sanctuary.zoomlon;
         let entryZoom;
         if (!isMobile()) {
             entryZoom = entry.sanctuary.zoom;
@@ -2685,8 +2685,8 @@
         const mapDiv = document.getElementById("map");
         if (isMobile() || window.innerWidth < 768) {
 
-            const entryLat = Number(sanctuary.lat);
-            const entryLon = Number(sanctuary.lon);
+            const entryLat = Number(sanctuary.zoomlat);
+            const entryLon = Number(sanctuary.zoomlon);
             const entryZoom = Number(sanctuary.mobileZoom);
 
             mapDiv.style.setProperty("height", "23vh", "important");
@@ -2892,7 +2892,7 @@
     // Global base (works anywhere this script runs)
     //const SITE_BASE = ".";
     //const SITE_BASE = "https://noaaswlocal.local/wp-content/data/frontpage_map_geojson";
-    //const SITE_BASE = "https://sw-dev.ioos.us/wp-content/data/frontpage_map_geojson";
+    //SITE_BASE = "https://sw-dev.ioos.us/wp-content/data/frontpage_map_geojson";
     const SITE_BASE = "https://sanctuarywatch.ioos.us/wp-content/data/frontpage_map_geojson";
 
 
@@ -2946,10 +2946,10 @@
         status: 'active',
         lat: 34.73,
         lon: -121.07,
-        zoomlat: 34.73,
-        zoomlon: -121.07,
-        url: "",
-        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/03/chnms.png",
+        zoomlat: 34.5,
+        zoomlon: -120.88,
+        url: "https://sanctuarywatch.ioos.us/chumash-heritage/chnms-designation/",
+        image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2026/05/Screenshot-2026-05-04-1102371.png",
         labelSide: "left",  // "left" | "right"
         labelXOffset: 0,
         labelYOffset: 15,
@@ -3086,8 +3086,8 @@
         status: 'inactive',
         lat: 39.5,
         lon: -124.2,
-        zoomlat: 39.5,
-        zoomlon: -124.2,
+        zoomlat: 38,
+        zoomlon: -123.6,
         url: "",
         image: "",
         labelSide: "left",  // "left" | "right"
@@ -3115,7 +3115,7 @@
         lat: 21,
         lon: -157.0,
         zoomlat: 21,
-        zoomlon: -157.0,
+        zoomlon: -156.0,
         url: "",
         image: "",
         labelSide: "right",  // "left" | "right"
@@ -3143,7 +3143,7 @@
         lat: 43.61067548934814,
         lon: -76.72834965510089,
         zoomlat: 43.61067548934814,
-        zoomlon: -76.72834965510089,
+        zoomlon: -76.5,
         url: "",
         image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/03/lonms.png",
         labelSide: "right",  // "left" | "right"
@@ -3227,7 +3227,7 @@
         lat: 36.25,
         lon: -122.5,
         zoomlat: 36.25,
-        zoomlon: -122.5,
+        zoomlon: -122.22,
         url: "https://sanctuarywatch.ioos.us/monterey-bay/mbnms-overview",
         image: "https://sanctuarywatch.ioos.us/wp-content/uploads/2025/12/MBNMS-Overview-tile_12192025-JAB-01.png",
         labelSide: "left",  // "left" | "right"
@@ -3277,7 +3277,7 @@
         labelName: "Papahānaumokuākea",
         buttonName: "Papahānaumokuākea",
         type: "sanctuary",
-        zoom: 6,
+        zoom: 5,
         mobileZoom: 5,
         status: 'inactive',
         lat: 25.94,
@@ -3760,8 +3760,8 @@
             }
             if (sanctuary.status === "inactive") {
                 openPanel(sanctuary);
-                let entryLat = sanctuary.lat;
-                let entryLon = sanctuary.lon;
+                let entryLat = sanctuary.zoomlat;
+                let entryLon = sanctuary.zoomlon;
                 let entryZoom;
                 if (!isMobile()) {
                     entryZoom = sanctuary.zoom;
@@ -3946,7 +3946,7 @@
     // ----------------------------
     // 8) ADD THE GEOJSONS FROM THE SANCTUARIES DICT TO THE MAP
     // ----------------------------
-    async function addGeojsonLayer({ name, jsonUrl, pane, style, image, url, buttonName, status, lat, lon, zoom, mobileZoom, type }) {
+    async function addGeojsonLayer({ name, jsonUrl, pane, style, image, url, buttonName, status, lat, lon, zoom, mobileZoom, type,  zoomlat, zoomlon}) {
         const res = await fetch(jsonUrl);
         if (!res.ok) throw new Error(`Failed to load ${jsonUrl} (HTTP ${res.status})`);
         const geojson = await res.json();
@@ -3959,7 +3959,7 @@
             style: () => style
         }).addTo(map);
 
-        let sanctuary = {name, jsonUrl, pane, style, image, url, buttonName, status, lat, lon, zoom, mobileZoom, type};
+        let sanctuary = {name, jsonUrl, pane, style, image, url, buttonName, status, lat, lon, zoom, mobileZoom, type, zoomlat, zoomlon};
 
         // REGISTER THIS GROUP so sidebar can render it
         if (status === 'active') {
@@ -4179,8 +4179,8 @@
                         // ✅ If dots are showing, DO NOT open polygon popups / DO NOT navigate
                         if (dotsAreVisible()) return;
 
-                        let entryLat = lat;
-                        let entryLon = lon;
+                        let entryLat = zoomlat;
+                        let entryLon = zoomlon;
                         let entryZoom;
                         if (!isMobile()) {
                             entryZoom = zoom;
