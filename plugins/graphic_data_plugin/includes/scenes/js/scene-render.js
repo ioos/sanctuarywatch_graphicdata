@@ -1013,7 +1013,6 @@ async function loadSVG(url, containerId) {
 
         //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
         if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene') {
-
             const modalHeader = document.querySelector('.modal-header');
             modalHeader.style.display = 'flex';
             modalHeader.style.flexDirection = 'column';
