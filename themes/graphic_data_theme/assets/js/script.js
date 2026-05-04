@@ -4,8 +4,9 @@
 let child_obj = {};
 
 if (window.location.href.includes('post.php')) {
-	 let graphicDataSceneData = {};
+	graphicDataSceneData = {};
 }
+
 //Checking the page title to see if we are in admin edit mode for a scene
 let adminEditTitle;
 try {
