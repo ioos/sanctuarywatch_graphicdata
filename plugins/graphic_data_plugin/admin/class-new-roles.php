@@ -198,24 +198,46 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Filters the editable roles list to only include allowed custom roles.
+	 * Filters the editable roles list, restoring any missing standard WordPress roles.
 	 *
-	 * Removes any role not in the allowed set (content_editor, content_manager, administrator)
-	 * from the roles array. Intended for use with the 'editable_roles' filter.
+	 * For each standard WordPress role (administrator, editor, author, contributor, subscriber),
+	 * if the role is absent from the list it is restored to the database via populate_roles()
+	 * and added back to the returned array with its standard capabilities.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param array $roles Associative array of role slugs to role details.
-	 * @return array Filtered associative array containing only allowed roles.
+	 * @return array Roles array with any missing standard WordPress roles restored.
 	 */
 	public function filter_user_roles( $roles ) {
-		// ... (rest of the function remains the same) ...
-		// Only keep our custom roles and administrator.
-		$allowed_roles = array( 'content_editor', 'content_manager', 'administrator' );
+		$standard_roles = array( 'administrator', 'editor', 'author', 'contributor', 'subscriber' );
 
-		foreach ( $roles as $role => $details ) {
-			if ( ! in_array( $role, $allowed_roles ) ) {
-				unset( $roles[ $role ] );
+		$needs_populate = false;
+		foreach ( $standard_roles as $role_slug ) {
+			if ( ! isset( $roles[ $role_slug ] ) && ! get_role( $role_slug ) ) {
+				$needs_populate = true;
+				break;
+			}
+		}
+
+		if ( $needs_populate ) {
+			if ( ! function_exists( 'populate_roles' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/schema.php';
+			}
+			populate_roles();
+		}
+
+		foreach ( $standard_roles as $role_slug ) {
+			if ( isset( $roles[ $role_slug ] ) ) {
+				continue;
+			}
+			$role_obj = get_role( $role_slug );
+			if ( $role_obj ) {
+				$wp_role_name                = wp_roles()->roles[ $role_slug ]['name'] ?? ucfirst( $role_slug );
+				$roles[ $role_slug ] = array(
+					'name'         => $wp_role_name,
+					'capabilities' => $role_obj->capabilities,
+				);
 			}
 		}
 
