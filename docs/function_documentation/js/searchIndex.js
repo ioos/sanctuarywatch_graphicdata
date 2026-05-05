@@ -358,7 +358,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Afilter_user_roles\u0028\u0029",
             "name": "filter_user_roles",
-            "summary": "Filters\u0020the\u0020editable\u0020roles\u0020list\u0020to\u0020only\u0020include\u0020allowed\u0020custom\u0020roles.",
+            "summary": "Filters\u0020the\u0020editable\u0020roles\u0020list,\u0020restoring\u0020any\u0020missing\u0020standard\u0020WordPress\u0020roles.",
             "url": "classes/Graphic-Data-Custom-Roles.html#method_filter_user_roles"
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Areorder_roles_js\u0028\u0029",

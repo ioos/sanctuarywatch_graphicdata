@@ -171,7 +171,7 @@ Content Managers have editor-level capabilities without sensitive administrative
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
-<dd>Filters the editable roles list to only include allowed custom roles.</dd>
+<dd>Filters the editable roles list, restoring any missing standard WordPress roles.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_reorder_roles_js">reorder_roles_js()</a>
@@ -243,7 +243,7 @@ Content Managers have editor-level capabilities without sensitive administrative
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">313</span>
+    <span class="phpdocumentor-element-found-in__line">335</span>
 
     </aside>
 
@@ -365,11 +365,11 @@ subscriber, contributor, author, and editor roles are removed.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">211</span>
+    <span class="phpdocumentor-element-found-in__line">212</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Filters the editable roles list to only include allowed custom roles.</p>
+        <p class="phpdocumentor-summary">Filters the editable roles list, restoring any missing standard WordPress roles.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -378,8 +378,9 @@ subscriber, contributor, author, and editor roles are removed.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Removes any role not in the allowed set (content_editor, content_manager, administrator)
-from the roles array. Intended for use with the 'editable_roles' filter.</p>
+        <section class="phpdocumentor-description"><p>For each standard WordPress role (administrator, editor, author, contributor, subscriber),
+if the role is absent from the list it is restored to the database via populate_roles()
+and added back to the returned array with its standard capabilities.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -418,7 +419,7 @@ from the roles array. Intended for use with the 'editable_roles' filter.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Filtered associative array containing only allowed roles.</p>
+                <section class="phpdocumentor-description"><p>Roles array with any missing standard WordPress roles restored.</p>
 </section>
 
             </section>
@@ -438,7 +439,7 @@ from the roles array. Intended for use with the 'editable_roles' filter.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">236</span>
+    <span class="phpdocumentor-element-found-in__line">258</span>
 
     </aside>
 
@@ -545,7 +546,7 @@ from users with the 'content_editor' role.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">469</span>
+    <span class="phpdocumentor-element-found-in__line">491</span>
 
     </aside>
 
@@ -732,7 +733,7 @@ admin bar for any user who lacks the 'manage_options' capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">432</span>
+    <span class="phpdocumentor-element-found-in__line">454</span>
 
     </aside>
 
