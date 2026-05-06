@@ -95,7 +95,7 @@ class Graphic_Data_Custom_Roles {
 		if ( 'scene' != $current_post_type && 'modal' != $current_post_type && 'figure' != $current_post_type ) {
 			return;
 		}
-
+		$current_user_role = wp_get_current_user()->roles[0];
 		// Only filter when viewing the scene list table ('edit.php') and for content editors (excluding administrators).
 		if ( 'edit.php' === $pagenow && current_user_can( 'content_editor' ) && ! current_user_can( 'manage_options' ) ) {
 
@@ -298,7 +298,7 @@ class Graphic_Data_Custom_Roles {
 	 * Displays a list of all published instance posts as checkboxes, allowing
 	 * administrators to assign specific instances to a user. The section is only
 	 * visible to administrators and is toggled via inline JavaScript to show only
-	 * when the selected user role is 'content_editor'.
+	 * when the selected user role is 'author'.
 	 *
 	 * @since 1.0.0
 	 *
@@ -333,7 +333,7 @@ class Graphic_Data_Custom_Roles {
 		}
 
 		// Display the fields.
-		if ( 'content_editor' == $selected_user_role ) {
+		if ( 'author' == $selected_user_role ) {
 			?>
 			<h3>Instance Assignments</h3>
 			<?php wp_nonce_field( 'save_assigned_instances_' . $user->ID, 'assigned_instances_nonce' ); ?>
