@@ -394,23 +394,6 @@ class Graphic_Data_Admin {
 	}
 
 	/**
-	 * Edit what users with the Content Editor can see on the dashboard
-	 *
-	 * @since    1.0.0
-	 */
-	public function restrict_content_editor_admin_menu() {
-		if ( current_user_can( 'content_editor' ) ) {
-			remove_menu_page( 'edit.php' );                   // Posts.
-			remove_menu_page( 'edit.php?post_type=page' );    // Pages.
-			remove_menu_page( 'manage-instance-types' ); // Manage Instance Types.
-			remove_menu_page( 'edit.php?post_type=about' );
-			remove_menu_page( 'edit.php?post_type=instance' );
-
-		}
-	}
-
-
-	/**
 	 * Add SVG support to allowed upload MIME types.
 	 *
 	 * @param array $mimes Allowed MIME types.

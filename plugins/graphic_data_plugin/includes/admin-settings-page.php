@@ -100,6 +100,22 @@ class Graphic_Data_Settings_Page {
 			[ 'sanitize_callback' => [ $this, 'sanitize_graphic_data_settings' ] ]
 		);
 
+		// Plugin only or plugin plus theme.
+		add_settings_section(
+			'plugin_only_section',
+			'Use Graphic Data Theme?',
+			null,
+			'theme_settings'
+		);
+
+		add_settings_field(
+			'plugin_only_toggle',
+			'Are you using the Graphic Data theme?',
+			[ $this, 'tutorial_content_toggle_callback' ],
+			'theme_settings',
+			'plugin_only_section'
+		);
+
 		// Tutorial Content section.
 		add_settings_section(
 			'tutorial_content_section',
@@ -912,7 +928,7 @@ class Graphic_Data_Settings_Page {
 	public function settings_page() {
 		// Check user capabilities.
 		$user = wp_get_current_user();
-		if ( in_array( 'content_editor', (array) $user->roles, true ) ) {
+		if ( in_array( 'author', (array) $user->roles, true ) ) {
 			return;
 		}
 		?>

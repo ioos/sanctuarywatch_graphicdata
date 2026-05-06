@@ -532,7 +532,7 @@ class Graphic_Data_Instance {
 			$current_user = wp_get_current_user();
 			if ( gettype( $current_user ) == 'object' && property_exists( $current_user, 'roles' ) ) {
 				$current_user_role = $current_user->roles[0];
-				if ( 'administrator' == $current_user_role || 'content_manager' == $current_user_role ) {
+				if ( 'administrator' == $current_user_role || 'editor' == $current_user_role ) {
 					$remove_quick_edit = false;
 				}
 			}

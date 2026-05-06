@@ -36,7 +36,7 @@ class Graphic_Data_Custom_Roles {
 	 *
 	 * @return void
 	 */
-	public function restrict_content_editor_admin_menu() {
+	public function restrict_author_admin_menu() {
 		if ( current_user_can( 'content_editor' ) ) {
 			remove_menu_page( 'edit.php' );                   // Posts.
 			remove_menu_page( 'edit.php?post_type=page' );    // Pages.
@@ -189,11 +189,59 @@ class Graphic_Data_Custom_Roles {
 		}
 
 		// Remove default WordPress roles.
-		$roles_to_remove = array( 'subscriber', 'contributor', 'author', 'editor' );
-		foreach ( $roles_to_remove as $role ) {
-			if ( get_role( $role ) ) {
-				remove_role( $role );
-			}
+//		$roles_to_remove = array( 'subscriber', 'contributor', 'author', 'editor' );
+//		foreach ( $roles_to_remove as $role ) {
+//			if ( get_role( $role ) ) {
+//				remove_role( $role );
+//			}
+//		}
+	}
+
+
+	/**
+	 * Grants author-role users full create, edit, and delete access to the scene, modal, and figure post types.
+	 *
+	 * Iterates over the three custom post types and calls add_cap() for every
+	 * primitive capability WordPress maps to those types, covering own posts,
+	 * others' posts, published posts, and private posts.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function add_author_custom_post_type_caps() {
+		$options = get_option( 'graphic_data_settings' );
+
+		if ( is_array( $options ) && isset( $options['author_caps_version'] ) &&
+			GRAPHIC_DATA_PLUGIN_VERSION === $options['author_caps_version'] ) {
+				return;
+		}
+
+		$author_role = get_role( 'author' );
+		if ( ! $author_role ) {
+			return;
+		}
+
+		$post_types = array( 'scene', 'modal', 'figure' );
+
+		foreach ( $post_types as $post_type ) {
+			$plural = $post_type . 's';
+			$author_role->add_cap( 'edit_' . $plural );
+			$author_role->add_cap( 'edit_others_' . $plural );
+			$author_role->add_cap( 'edit_published_' . $plural );
+			$author_role->add_cap( 'edit_private_' . $plural );
+			$author_role->add_cap( 'delete_' . $plural );
+			$author_role->add_cap( 'delete_others_' . $plural );
+			$author_role->add_cap( 'delete_published_' . $plural );
+			$author_role->add_cap( 'delete_private_' . $plural );
+			$author_role->add_cap( 'read_private_' . $plural );
+		}
+
+		if ( ! is_array( $options ) ) {
+			add_option( graphic_data_settings, array( 'author_caps_version' => GRAPHIC_DATA_PLUGIN_VERSION ) );
+		} else {
+			$options['author_caps_version'] = GRAPHIC_DATA_PLUGIN_VERSION;
+			update_option( 'graphic_data_settings', $options );
 		}
 	}
 
@@ -242,81 +290,6 @@ class Graphic_Data_Custom_Roles {
 		}
 
 		return $roles;
-	}
-
-	/**
-	 * Outputs inline JavaScript to reorder the role dropdown on user edit screens.
-	 *
-	 * Sorts the role `<select>` options so they appear in the order: Administrator,
-	 * Content Manager, Content Editor. Runs on page load and after AJAX requests
-	 * to handle dynamically loaded forms.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function reorder_roles_js() {
-		// ... (rest of the function remains the same) ...
-		?>
-		<script type="text/javascript">
-		jQuery(document).ready(function($) {
-			// Function to reorder the role options.
-			function reorderRoleOptions() {
-				// Get the role select element.
-				const $roleSelect = $('select#role');
-				if (!$roleSelect.length) {
-					$roleSelect = $('select[name="role"]');
-				}
-
-				if ($roleSelect.length) {
-					// Define the desired order.
-					const desiredOrder = ['administrator', 'content_manager', 'content_editor',];
-
-					// Get all options
-					let $options = $roleSelect.find('option').get();
-
-					// Sort options based on our desired order.
-					$options.sort(function(a, b) {
-						var aValue = $(a).val();
-						var bValue = $(b).val();
-
-						var aIndex = desiredOrder.indexOf(aValue);
-						var bIndex = desiredOrder.indexOf(bValue);
-
-						// If both values are in our order array, sort by their index.
-						if (aIndex !== -1 && bIndex !== -1) {
-							return aIndex - bIndex;
-						}
-
-						// If only aValue is in our order array, it comes first.
-						if (aIndex !== -1) {
-							return -1;
-						}
-
-						// If only bValue is in our order array, it comes first.
-						if (bIndex !== -1) {
-							return 1;
-						}
-
-						// Otherwise, maintain original order.
-						return 0;
-					});
-
-					// Replace existing options with sorted ones.
-					$roleSelect.empty().append($options);
-				}
-			}
-
-			// Run on page load.
-			reorderRoleOptions();
-
-			// Also run after any AJAX completes (in case the form is loaded dynamically).
-			$(document).ajaxComplete(function() {
-				reorderRoleOptions();
-			});
-		});
-		</script>
-		<?php
 	}
 
 	/**
@@ -550,6 +523,30 @@ class Graphic_Data_Custom_Roles {
 			if ( ! in_array( $target_instance, $user_instances ) ) {
 				wp_safe_redirect( $redirect_url );
 				exit;
+			}
+		}
+	}
+
+	/**
+	 * Migrates users from custom roles to their standard WordPress equivalents.
+	 *
+	 * Moves content_editor users to the author role and content_manager users
+	 * to the editor role.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function migrate_custom_roles_to_standard() {
+		$migrations = array(
+			'content_editor'  => 'author',
+			'content_manager' => 'editor',
+		);
+
+		foreach ( $migrations as $from_role => $to_role ) {
+			$users = get_users( array( 'role' => $from_role ) );
+			foreach ( $users as $user ) {
+				$user->set_role( $to_role );
 			}
 		}
 	}
