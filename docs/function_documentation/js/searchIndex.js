@@ -333,7 +333,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_author_admin_menu\u0028\u0029",
             "name": "restrict_author_admin_menu",
-            "summary": "Removes\u0020admin\u0020menu\u0020pages\u0020that\u0020Content\u0020Editors\u0020should\u0020not\u0020access.",
+            "summary": "Removes\u0020admin\u0020menu\u0020pages\u0020that\u0020authors\u0020should\u0020not\u0020access.",
             "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_author_admin_menu"
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_new_post_from_admin_bar\u0028\u0029",
@@ -343,12 +343,12 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_listing\u0028\u0029",
             "name": "restrict_listing",
-            "summary": "Filters\u0020admin\u0020list\u0020queries\u0020to\u0020show\u0020only\u0020posts\u0020belonging\u0020to\u0020a\u0020Content\u0020Editor\u0027s\u0020assigned\u0020instances.",
+            "summary": "Filters\u0020admin\u0020list\u0020queries\u0020to\u0020show\u0020only\u0020posts\u0020belonging\u0020to\u0020an\u0020author\u0027s\u0020assigned\u0020instances.",
             "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_listing"
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Acreate_custom_roles\u0028\u0029",
             "name": "create_custom_roles",
-            "summary": "Registers\u0020the\u0020Content\u0020Editor\u0020and\u0020Content\u0020Manager\u0020roles\u0020and\u0020removes\u0020default\u0020WordPress\u0020roles.",
+            "summary": "Registers\u0020the\u0020Content\u0020Editor\u0020and\u0020Content\u0020Manager\u0020roles.",
             "url": "classes/Graphic-Data-Custom-Roles.html#method_create_custom_roles"
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Aadd_author_custom_post_type_caps\u0028\u0029",
@@ -373,7 +373,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_editing\u0028\u0029",
             "name": "restrict_editing",
-            "summary": "Restricts\u0020access\u0020to\u0020individual\u0020post\u0020edit\u0020screens\u0020for\u0020Content\u0020Editors.",
+            "summary": "Restricts\u0020access\u0020to\u0020individual\u0020post\u0020edit\u0020screens\u0020for\u0020authors.",
             "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_editing"
         },                {
             "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Amigrate_custom_roles_to_standard\u0028\u0029",
@@ -463,7 +463,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_all_instances\u0028\u0029",
             "name": "return_all_instances",
-            "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020instances,\u0020filtered\u0020for\u0020\u0027content_editor\u0027\u0020role.",
+            "summary": "Get\u0020a\u0020list\u0020of\u0020all\u0020instances,\u0020filtered\u0020for\u0020\u0027author\u0027\u0020role.",
             "url": "classes/Graphic-Data-Utility.html#method_return_all_instances"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_instance_scenes\u0028\u0029",
