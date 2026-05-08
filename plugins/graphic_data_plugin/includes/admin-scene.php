@@ -414,7 +414,7 @@ class Graphic_Data_Scene {
 	 * parameters, then falls back to stored user metadata values if they haven't expired.
 	 * After displaying the dropdowns, it stores the current selections for future use.
 	 * This function handles proper user capability checks to show only assigned instances
-	 * for content editors.
+	 * for authors.
 	 *
 	 * @since    1.0.0
 	 * @access   public
@@ -733,7 +733,8 @@ class Graphic_Data_Scene {
 			'show_in_rest'       => true,
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'scenes' ),
-			'capability_type'    => 'post',
+			'capability_type'    => 'scene',
+			'map_meta_cap'       => true,
 			'menu_icon'          => 'dashicons-tag',
 			'has_archive'        => true,
 			'hierarchical'       => false,

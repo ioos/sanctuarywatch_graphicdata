@@ -27,17 +27,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Graphic_Data_Custom_Roles {
 
 	/**
-	 * Removes admin menu pages that Content Editors should not access.
+	 * Removes admin menu pages that authors should not access.
 	 *
 	 * Hides Posts, Pages, About, Instance, and Manage Instance Types menu items
-	 * from users with the 'content_editor' role.
+	 * from users with the 'author' role.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
 	public function restrict_author_admin_menu() {
-		if ( current_user_can( 'content_editor' ) ) {
+		$user = wp_get_current_user();
+		$user_role = $user->roles[0];
+
+		if ( 'author' == $user_role ) {
 			remove_menu_page( 'edit.php' );                   // Posts.
 			remove_menu_page( 'edit.php?post_type=page' );    // Pages.
 			remove_menu_page( 'manage-instance-types' ); // Manage Instance Types.
@@ -71,10 +74,10 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Filters admin list queries to show only posts belonging to a Content Editor's assigned instances.
+	 * Filters admin list queries to show only posts belonging to an author's assigned instances.
 	 *
 	 * Applies a meta query on the main admin listing query for scene, modal, and figure post types.
-	 * Content Editors will only see posts whose location meta field matches one of their assigned
+	 * Authors will only see posts whose location meta field matches one of their assigned
 	 * instances. If no instances are assigned, no posts are shown.
 	 *
 	 * @since 1.0.0
@@ -90,19 +93,22 @@ class Graphic_Data_Custom_Roles {
 			return;
 		}
 
-		// Ensure that we are dealing with the scene, modal, or figure post types (the only ones where the content editor restructions come to bear).
+		// Ensure that we are dealing with the scene, modal, or figure post types (the only ones where the author restrictions come to bear).
 		$current_post_type = $query->get( 'post_type' );
 		if ( 'scene' != $current_post_type && 'modal' != $current_post_type && 'figure' != $current_post_type ) {
 			return;
 		}
-		$current_user_role = wp_get_current_user()->roles[0];
-		// Only filter when viewing the scene list table ('edit.php') and for content editors (excluding administrators).
-		if ( 'edit.php' === $pagenow && current_user_can( 'content_editor' ) && ! current_user_can( 'manage_options' ) ) {
+
+		$user = wp_get_current_user();
+		$user_role = $user->roles[0];
+
+		// Only filter when viewing the scene list table ('edit.php') and for authors.
+		if ( 'edit.php' === $pagenow && 'author' === $user_role ) {
 
 			// Get the current user.
 			$current_user = wp_get_current_user();
 
-			// Get instances associated with this content editor.
+			// Get instances associated with this author.
 			$user_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
 			// If we have associated instances and it's a non-empty array.
@@ -131,7 +137,7 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Registers the Content Editor and Content Manager roles and removes default WordPress roles.
+	 * Registers the Content Editor and Content Manager roles.
 	 *
 	 * Content Editor inherits the built-in editor capabilities, but is restricted to only allowed Instances. Content Manager also inherits
 	 * editor capabilities but explicitly excludes sensitive administrative capabilities such as
@@ -187,14 +193,6 @@ class Graphic_Data_Custom_Roles {
 
 			add_role( 'content_manager', 'Content Manager', $manager_capabilities );
 		}
-
-		// Remove default WordPress roles.
-//		$roles_to_remove = array( 'subscriber', 'contributor', 'author', 'editor' );
-//		foreach ( $roles_to_remove as $role ) {
-//			if ( get_role( $role ) ) {
-//				remove_role( $role );
-//			}
-//		}
 	}
 
 
@@ -218,6 +216,7 @@ class Graphic_Data_Custom_Roles {
 		}
 
 		$author_role = get_role( 'author' );
+
 		if ( ! $author_role ) {
 			return;
 		}
@@ -238,7 +237,7 @@ class Graphic_Data_Custom_Roles {
 		}
 
 		if ( ! is_array( $options ) ) {
-			add_option( graphic_data_settings, array( 'author_caps_version' => GRAPHIC_DATA_PLUGIN_VERSION ) );
+			add_option( 'graphic_data_settings', array( 'author_caps_version' => GRAPHIC_DATA_PLUGIN_VERSION ) );
 		} else {
 			$options['author_caps_version'] = GRAPHIC_DATA_PLUGIN_VERSION;
 			update_option( 'graphic_data_settings', $options );
@@ -354,13 +353,13 @@ class Graphic_Data_Custom_Roles {
 									</label><br>
 								<?php endforeach; ?>
 							</fieldset>
-							<p class="description">Select the instances this content editor can manage.</p>
+							<p class="description">Select the instances this author can manage.</p>
 						<?php else : ?>
 							<p>No instances found.</p>
 						<?php endif; ?>
 						
 
-						<!-- Script below makes sure that this only shows if we're editing a content manager.  -->
+						<!-- Script below makes sure that this only shows if we're editing an author.  -->
 						<script>
 						document.addEventListener('DOMContentLoaded', function () {
 							const roleDropdown = document.getElementById('role');
@@ -391,7 +390,7 @@ class Graphic_Data_Custom_Roles {
 
 							function toggleInstanceSection() {
 								const selectedRole = roleDropdown.value;
-								const show = selectedRole === 'content_editor';
+								const show = selectedRole === 'author';
 
 								instanceHeading.style.display = show ? '' : 'none';
 								instanceTable.style.display = show ? '' : 'none';
@@ -417,7 +416,7 @@ class Graphic_Data_Custom_Roles {
 	 * Sanitizes the submitted instance IDs with `absint` and stores them as the
 	 * 'assigned_instances' user meta. Only processes the save if the current user
 	 * has permission to edit the target user and the target user has the
-	 * 'content_editor' role.
+	 * 'author' role.
 	 *
 	 * @since 1.0.0
 	 *
@@ -438,8 +437,8 @@ class Graphic_Data_Custom_Roles {
 		// Get the current user object.
 		$user = get_userdata( $user_id );
 
-		// Only save instance selections if the user is a content editor.
-		if ( in_array( 'content_editor', $user->roles ) ) {
+		// Only save instance selections, for users with the role of author.
+		if ( in_array( 'author', $user->roles ) ) {
 			// Get the selected instances.
 			$selected_instances = isset( $_POST['assigned_instances'] ) ? array_map( 'absint', wp_unslash( $_POST['assigned_instances'] ) ) : array();
 
@@ -449,10 +448,10 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Restricts access to individual post edit screens for Content Editors.
+	 * Restricts access to individual post edit screens for authors.
 	 *
 	 * On `post.php` for scene, modal, and figure post types, verifies that the
-	 * Content Editor's assigned instances include the instance associated with the
+	 * Author's assigned instances include the instance associated with the
 	 * post being edited. If the user has no assigned instances or the post belongs
 	 * to an unassigned instance, the user is redirected to the post type's list screen.
 	 * Administrators and non-Content-Editor roles are not affected.
@@ -483,8 +482,11 @@ class Graphic_Data_Custom_Roles {
 			$current_post_type = '';
 		}
 
-		// Only apply restrictions to 'content_editor' role.
-		if ( ! current_user_can( 'content_editor' ) || current_user_can( 'manage_options' ) ) {
+		// Only apply restrictions to 'author' role.
+		$user = wp_get_current_user();
+		$user_role = $user->roles[0];
+
+		if ( 'author' != $user_role ) {
 			return;
 		}
 
