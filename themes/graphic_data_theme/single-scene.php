@@ -238,8 +238,6 @@ wp_localize_script(
 		'childIds'                       => $graphic_data_child_ids,
 		'postId'                         => absint( $graphic_data_post_id ),
 		'svgUrl'                         => $graphic_data_scene_url,
-//		'num_sections'                    => $graphic_data_num_sections,
-//		'scene_sections'                  => $graphic_data_scene_sections,
 		'sceneSameHoverColorSections' => $graphic_data_scene_same_hover_color_sections,
 		'sceneDefaultHoverColor'       => $graphic_data_scene_default_hover_color,
 		'sceneDefaultHoverTextColor'  => $graphic_data_scene_default_hover_text_color,

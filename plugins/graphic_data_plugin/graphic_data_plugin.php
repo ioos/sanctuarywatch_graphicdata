@@ -7,7 +7,7 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://ç
+ * @link              https://github.com/ioos/sanctuarywatch_graphicdata
  * @package           Graphic_Data_Plugin
  *
  * @wordpress-plugin

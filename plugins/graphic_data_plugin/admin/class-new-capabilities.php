@@ -1,9 +1,9 @@
 <?php
 /**
- * Content Editor and Manager Role Implementation
  *
- * This file creates custom user roles and limits available roles to:
- * Content Editor, Content Manager, and Administrator (in that order)
+ * Administrator, Editor and Author Capacity Implementation
+ *
+ * This file creates custom user capabilities for Administrators, Editors and Authors
  *
  * @package Graphic_Data_Plugin
  */
@@ -14,17 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Manages custom user roles and role-based access control for the Graphic Data Plugin.
- *
- * Replaces the default WordPress roles (subscriber, contributor, author, editor) with
- * two custom roles: Content Editor and Content Manager. Content Editors are restricted
- * to managing only the scene, modal, and figure post types assigned to their instances.
- * Content Managers have editor-level capabilities without sensitive administrative permissions.
+ * Manages custom user capabilities for the Graphic Data Plugin.
  *
  * @since   1.0.0
  * @package Graphic_Data_Plugin
  */
-class Graphic_Data_Custom_Roles {
+class Graphic_Data_Custom_Capabilities {
 
 	/**
 	 * Removes admin menu pages that authors should not access.
@@ -51,7 +46,7 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Removes "New" content links from the admin bar for non-admin users.
+	 * Removes "New" post, page, about, and instance content links from the admin bar for non-admin users.
 	 *
 	 * Strips the new-post, new-page, new-about, and new-instance nodes from the
 	 * admin bar for any user who lacks the 'manage_options' capability.
@@ -137,67 +132,7 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Registers the Content Editor and Content Manager roles.
-	 *
-	 * Content Editor inherits the built-in editor capabilities, but is restricted to only allowed Instances. Content Manager also inherits
-	 * editor capabilities but explicitly excludes sensitive administrative capabilities such as
-	 * plugin/theme management and core updates. After creating the custom roles, the default
-	 * subscriber, contributor, author, and editor roles are removed.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function create_custom_roles() {
-		// ... (rest of the function remains the same) ...
-		// Get the capabilities of the editor role
-		$editor_role = get_role( 'editor' );
-		$editor_capabilities = $editor_role ? $editor_role->capabilities : array();
-
-		// Create the Content Editor role.
-		if ( ! get_role( 'content_editor' ) ) {
-			add_role(
-				'content_editor',
-				'Content Editor',
-				$editor_capabilities
-			);
-		}
-
-		// Create the Content Manager role (with slightly higher capabilities).
-		if ( ! get_role( 'content_manager' ) ) {
-			// Get admin capabilities but remove some sensitive ones.
-			$manager_capabilities = $editor_role->capabilities;
-
-			// Remove capabilities that should be reserved for administrators.
-			$restricted_caps = array(
-				'install_plugins',
-				'activate_plugins',
-				'delete_plugins',
-				'edit_plugins',
-				'install_themes',
-				'switch_themes',
-				'edit_themes',
-				'delete_themes',
-				'update_core',
-				'update_plugins',
-				'update_themes',
-				'manage_options',
-				'manage_sites',
-			);
-
-			foreach ( $restricted_caps as $cap ) {
-				if ( isset( $manager_capabilities[ $cap ] ) ) {
-					unset( $manager_capabilities[ $cap ] );
-				}
-			}
-
-			add_role( 'content_manager', 'Content Manager', $manager_capabilities );
-		}
-	}
-
-
-	/**
-	 * Grants author-role users full create, edit, and delete access to the scene, modal, and figure post types.
+	 * Grants author-role users full create, edit, and delete access to selected scene, modal, and figure post types.
 	 *
 	 * Iterates over the three custom post types and calls add_cap() for every
 	 * primitive capability WordPress maps to those types, covering own posts,
@@ -242,53 +177,6 @@ class Graphic_Data_Custom_Roles {
 			$options['author_caps_version'] = GRAPHIC_DATA_PLUGIN_VERSION;
 			update_option( 'graphic_data_settings', $options );
 		}
-	}
-
-	/**
-	 * Filters the editable roles list, restoring any missing standard WordPress roles.
-	 *
-	 * For each standard WordPress role (administrator, editor, author, contributor, subscriber),
-	 * if the role is absent from the list it is restored to the database via populate_roles()
-	 * and added back to the returned array with its standard capabilities.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $roles Associative array of role slugs to role details.
-	 * @return array Roles array with any missing standard WordPress roles restored.
-	 */
-	public function filter_user_roles( $roles ) {
-		$standard_roles = array( 'administrator', 'editor', 'author', 'contributor', 'subscriber' );
-
-		$needs_populate = false;
-		foreach ( $standard_roles as $role_slug ) {
-			if ( ! isset( $roles[ $role_slug ] ) && ! get_role( $role_slug ) ) {
-				$needs_populate = true;
-				break;
-			}
-		}
-
-		if ( $needs_populate ) {
-			if ( ! function_exists( 'populate_roles' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/schema.php';
-			}
-			populate_roles();
-		}
-
-		foreach ( $standard_roles as $role_slug ) {
-			if ( isset( $roles[ $role_slug ] ) ) {
-				continue;
-			}
-			$role_obj = get_role( $role_slug );
-			if ( $role_obj ) {
-				$wp_role_name                = wp_roles()->roles[ $role_slug ]['name'] ?? ucfirst( $role_slug );
-				$roles[ $role_slug ] = array(
-					'name'         => $wp_role_name,
-					'capabilities' => $role_obj->capabilities,
-				);
-			}
-		}
-
-		return $roles;
 	}
 
 	/**
@@ -530,26 +418,56 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Migrates users from custom roles to their standard WordPress equivalents.
+	 * Grants administrator and editor roles full access to the scene, modal, and figure post types.
 	 *
-	 * Moves content_editor users to the author role and content_manager users
-	 * to the editor role.
+	 * Because these post types use a custom capability_type ('scene', 'modal', 'figure')
+	 * with map_meta_cap enabled, WordPress generates primitive capabilities
+	 * (e.g. edit_scenes, publish_scenes) that are not present in any default role.
+	 * This method explicitly adds those primitives to administrator and editor so they
+	 * can list, create, edit, publish, and delete these posts in the admin.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	public function migrate_custom_roles_to_standard() {
-		$migrations = array(
-			'content_editor'  => 'author',
-			'content_manager' => 'editor',
-		);
+	public function add_admin_editor_custom_post_type_caps() {
+		$options = get_option( 'graphic_data_settings' );
 
-		foreach ( $migrations as $from_role => $to_role ) {
-			$users = get_users( array( 'role' => $from_role ) );
-			foreach ( $users as $user ) {
-				$user->set_role( $to_role );
+		if ( is_array( $options ) && isset( $options['admin_editor_caps_version'] ) &&
+			GRAPHIC_DATA_PLUGIN_VERSION === $options['admin_editor_caps_version'] ) {
+				return;
+		}
+
+		$post_types      = array( 'scene', 'modal', 'figure' );
+		$roles_to_update = array( 'administrator', 'editor' );
+
+		foreach ( $roles_to_update as $role_slug ) {
+			$role = get_role( $role_slug );
+			if ( ! $role ) {
+				continue;
 			}
+
+			foreach ( $post_types as $post_type ) {
+				$plural = $post_type . 's';
+				$role->add_cap( 'edit_' . $plural );
+				$role->add_cap( 'edit_others_' . $plural );
+				$role->add_cap( 'edit_published_' . $plural );
+				$role->add_cap( 'edit_private_' . $plural );
+				$role->add_cap( 'delete_' . $plural );
+				$role->add_cap( 'delete_others_' . $plural );
+				$role->add_cap( 'delete_published_' . $plural );
+				$role->add_cap( 'delete_private_' . $plural );
+				$role->add_cap( 'read_private_' . $plural );
+				$role->add_cap( 'publish_' . $plural );
+				$role->add_cap( 'create_' . $plural );
+			}
+		}
+
+		if ( ! is_array( $options ) ) {
+			add_option( 'graphic_data_settings', array( 'admin_editor_caps_version' => GRAPHIC_DATA_PLUGIN_VERSION ) );
+		} else {
+			$options['admin_editor_caps_version'] = GRAPHIC_DATA_PLUGIN_VERSION;
+			update_option( 'graphic_data_settings', $options );
 		}
 	}
 }

@@ -128,7 +128,7 @@ class Graphic_Data_Plugin {
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-validation.php';
 
 		// The class that defines the validation methods used for the new user roles.
-		require_once plugin_dir_path( __DIR__ ) . 'admin/class-new-roles.php';
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-new-capabilities.php';
 
 		// The class that defines the support page for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-graphic-data-support.php';
@@ -172,32 +172,17 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'inject_tinymce_changes' );
 
 		// Load class and functions associated with new user roles.
-		$plugin_custom_roles = new Graphic_Data_Custom_Roles();
-		$this->loader->add_action( 'init', $plugin_custom_roles, 'create_custom_roles' ); // Create custom roles on plugin activation.
-		$this->loader->add_action( 'init', $plugin_custom_roles, 'add_author_custom_post_type_caps' );
-		$this->loader->add_action( 'show_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.
-		$this->loader->add_action( 'edit_user_profile', $plugin_custom_roles, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.
-		$this->loader->add_action( 'personal_options_update', $plugin_custom_roles, 'save_instance_selections' ); // Save the selected instances when the user is updated.
-		$this->loader->add_action( 'edit_user_profile_update', $plugin_custom_roles, 'save_instance_selections' ); // Save the selected instances when the user is updated.
-		$this->loader->add_filter( 'editable_roles', $plugin_custom_roles, 'filter_user_roles' ); // Filter the available roles in the dropdown.
-		$this->loader->add_action( 'pre_get_posts', $plugin_custom_roles, 'restrict_listing' ); // Filter admin list queries for custom content types.
-		$this->loader->add_action( 'current_screen', $plugin_custom_roles, 'restrict_editing' ); // For restrict editing access.
-		$this->loader->add_filter( 'admin_bar_menu', $plugin_custom_roles, 'restrict_new_post_from_admin_bar', 999 );
-		$this->loader->add_filter( 'admin_menu', $plugin_custom_roles, 'restrict_author_admin_menu', 999 );
-		add_action(
-			'admin_action_graphic_data_migrate_roles',
-			function () {
-				// Then visit this URL while logged in as an admin.
-				// /wp-admin/?action=graphic_data_migrate_roles .
-				if ( ! current_user_can( 'manage_options' ) ) {
-					wp_die( 'Unauthorized' );
-				}
-				$plugin_custom_roles = new Graphic_Data_Custom_Roles();
-				$plugin_custom_roles->migrate_custom_roles_to_standard();
-				wp_safe_redirect( admin_url( 'users.php?gdp_migrated=1' ) );
-				exit;
-			}
-		);
+		$plugin_custom_capabilities = new Graphic_Data_Custom_Capabilities();
+		$this->loader->add_action( 'init', $plugin_custom_capabilities, 'add_author_custom_post_type_caps' );
+		$this->loader->add_action( 'init', $plugin_custom_capabilities, 'add_admin_editor_custom_post_type_caps' );
+		$this->loader->add_action( 'show_user_profile', $plugin_custom_capabilities, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.
+		$this->loader->add_action( 'edit_user_profile', $plugin_custom_capabilities, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.
+		$this->loader->add_action( 'personal_options_update', $plugin_custom_capabilities, 'save_instance_selections' ); // Save the selected instances when the user is updated.
+		$this->loader->add_action( 'edit_user_profile_update', $plugin_custom_capabilities, 'save_instance_selections' ); // Save the selected instances when the user is updated.
+		$this->loader->add_action( 'pre_get_posts', $plugin_custom_capabilities, 'restrict_listing' ); // Filter admin list queries for custom content types.
+		$this->loader->add_action( 'current_screen', $plugin_custom_capabilities, 'restrict_editing' ); // For restrict editing access.
+		$this->loader->add_filter( 'admin_bar_menu', $plugin_custom_capabilities, 'restrict_new_post_from_admin_bar', 999 );
+		$this->loader->add_filter( 'admin_menu', $plugin_custom_capabilities, 'restrict_author_admin_menu', 999 );
 
 		// Load class and functions to change overall look and function of admin screens.
 		$plugin_admin = new Graphic_Data_Admin();
