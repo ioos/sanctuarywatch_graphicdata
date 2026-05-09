@@ -180,6 +180,14 @@ class Graphic_Data_Settings_Page {
 			'settings_section'
 		);
 
+		add_settings_field(
+			'front_page_break_text',
+			'Front Page Break Text',
+			[ $this, 'front_page_break_text_field_callback' ],
+			'theme_settings',
+			'settings_section'
+		);
+
 		// Google Analytics/Tags section.
 		add_settings_section(
 			'google_settings_section',
@@ -291,6 +299,10 @@ class Graphic_Data_Settings_Page {
 
 		if ( isset( $input['site_footer'] ) ) {
 			$sanitized['site_footer'] = wp_kses_post( $input['site_footer'] );
+		}
+
+		if ( isset( $input['front_page_break_text'] ) ) {
+			$sanitized['front_page_break_text'] = sanitize_text_field( $input['front_page_break_text'] );
 		}
 
 		if ( isset( $input['google_analytics_measurement_id'] ) ) {
@@ -621,6 +633,21 @@ class Graphic_Data_Settings_Page {
 		wp_editor( wp_kses_post( $value ), $editor_id, $settings );
 		?>
 		<p class="description">The content in this field will appear as the first column in the footer across all pages. If you don't want a site-wide footer, then leave this field blank.</p>
+		<?php
+	}
+
+	/**
+	 * Callback function to render the "Front Page Break Text" field.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function front_page_break_text_field_callback() {
+		$options = get_option( 'graphic_data_settings' );
+		$value = isset( $options['front_page_break_text'] ) ? $options['front_page_break_text'] : '';
+		?>
+		<input type="text" name="graphic_data_settings[front_page_break_text]" value="<?php echo esc_attr( $value ); ?>" class="regular-text">
+		<p class="description">For the front page tiles, what word or phrase should be on its own line? If no such behavior is wanted, leave this field blank.</p>
 		<?php
 	}
 
