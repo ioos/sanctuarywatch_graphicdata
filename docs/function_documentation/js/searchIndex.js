@@ -326,60 +326,50 @@ Search.appendIndex(
             "summary": "Modify\u0020the\u0020WordPress\u0020login\u0020screen\u0020page\u0020title\u0020to\u0020use\u0020Sanctuary\u0020Watch\u0020branding.",
             "url": "classes/Graphic-Data-Login.html#method_custom_login_title"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles",
-            "name": "Graphic_Data_Custom_Roles",
-            "summary": "Manages\u0020custom\u0020user\u0020roles\u0020and\u0020role\u002Dbased\u0020access\u0020control\u0020for\u0020the\u0020Graphic\u0020Data\u0020Plugin.",
-            "url": "classes/Graphic-Data-Custom-Roles.html"
+            "fqsen": "\\Graphic_Data_Custom_Capabilities",
+            "name": "Graphic_Data_Custom_Capabilities",
+            "summary": "Manages\u0020custom\u0020user\u0020capabilities\u0020for\u0020the\u0020Graphic\u0020Data\u0020Plugin.",
+            "url": "classes/Graphic-Data-Custom-Capabilities.html"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_author_admin_menu\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Arestrict_author_admin_menu\u0028\u0029",
             "name": "restrict_author_admin_menu",
             "summary": "Removes\u0020admin\u0020menu\u0020pages\u0020that\u0020authors\u0020should\u0020not\u0020access.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_author_admin_menu"
+            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_restrict_author_admin_menu"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_new_post_from_admin_bar\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Arestrict_new_post_from_admin_bar\u0028\u0029",
             "name": "restrict_new_post_from_admin_bar",
-            "summary": "Removes\u0020\u0022New\u0022\u0020content\u0020links\u0020from\u0020the\u0020admin\u0020bar\u0020for\u0020non\u002Dadmin\u0020users.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_new_post_from_admin_bar"
+            "summary": "Removes\u0020\u0022New\u0022\u0020post,\u0020page,\u0020about,\u0020and\u0020instance\u0020content\u0020links\u0020from\u0020the\u0020admin\u0020bar\u0020for\u0020non\u002Dadmin\u0020users.",
+            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_restrict_new_post_from_admin_bar"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_listing\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Arestrict_listing\u0028\u0029",
             "name": "restrict_listing",
             "summary": "Filters\u0020admin\u0020list\u0020queries\u0020to\u0020show\u0020only\u0020posts\u0020belonging\u0020to\u0020an\u0020author\u0027s\u0020assigned\u0020instances.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_listing"
+            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_restrict_listing"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Acreate_custom_roles\u0028\u0029",
-            "name": "create_custom_roles",
-            "summary": "Registers\u0020the\u0020Content\u0020Editor\u0020and\u0020Content\u0020Manager\u0020roles.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_create_custom_roles"
-        },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Aadd_author_custom_post_type_caps\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Aadd_author_custom_post_type_caps\u0028\u0029",
             "name": "add_author_custom_post_type_caps",
-            "summary": "Grants\u0020author\u002Drole\u0020users\u0020full\u0020create,\u0020edit,\u0020and\u0020delete\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_add_author_custom_post_type_caps"
+            "summary": "Grants\u0020author\u002Drole\u0020users\u0020full\u0020create,\u0020edit,\u0020and\u0020delete\u0020access\u0020to\u0020selected\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
+            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_add_author_custom_post_type_caps"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Afilter_user_roles\u0028\u0029",
-            "name": "filter_user_roles",
-            "summary": "Filters\u0020the\u0020editable\u0020roles\u0020list,\u0020restoring\u0020any\u0020missing\u0020standard\u0020WordPress\u0020roles.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_filter_user_roles"
-        },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Aadd_instance_selection_fields\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Aadd_instance_selection_fields\u0028\u0029",
             "name": "add_instance_selection_fields",
             "summary": "Renders\u0020the\u0020Instance\u0020Assignments\u0020checkbox\u0020fields\u0020on\u0020the\u0020user\u0020edit\u0020screen.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_add_instance_selection_fields"
+            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_add_instance_selection_fields"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Asave_instance_selections\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Asave_instance_selections\u0028\u0029",
             "name": "save_instance_selections",
             "summary": "Saves\u0020the\u0020assigned\u0020instance\u0020selections\u0020when\u0020a\u0020user\u0020profile\u0020is\u0020saved.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_save_instance_selections"
+            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_save_instance_selections"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Arestrict_editing\u0028\u0029",
+            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Arestrict_editing\u0028\u0029",
             "name": "restrict_editing",
             "summary": "Restricts\u0020access\u0020to\u0020individual\u0020post\u0020edit\u0020screens\u0020for\u0020authors.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_restrict_editing"
+            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_restrict_editing"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Roles\u003A\u003Amigrate_custom_roles_to_standard\u0028\u0029",
-            "name": "migrate_custom_roles_to_standard",
-            "summary": "Migrates\u0020users\u0020from\u0020custom\u0020roles\u0020to\u0020their\u0020standard\u0020WordPress\u0020equivalents.",
-            "url": "classes/Graphic-Data-Custom-Roles.html#method_migrate_custom_roles_to_standard"
+            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Aadd_admin_editor_custom_post_type_caps\u0028\u0029",
+            "name": "add_admin_editor_custom_post_type_caps",
+            "summary": "Grants\u0020administrator\u0020and\u0020editor\u0020roles\u0020full\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
+            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_add_admin_editor_custom_post_type_caps"
         },                {
             "fqsen": "\\Graphic_Data_Utility",
             "name": "Graphic_Data_Utility",
