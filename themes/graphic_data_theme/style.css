@@ -1107,3 +1107,15 @@ body > nav{
 .coming_soon_italic {
   font-style: italic;
 }
+
+/* On front page, equal-height card bodies with vertically centered content */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.card-body .instance_published_button,
+.card-body .instance_draft_button {
+  flex: 1 1 auto;    /* stretch the button to fill the full card-body height */
+}
