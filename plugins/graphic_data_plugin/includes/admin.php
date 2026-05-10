@@ -173,6 +173,7 @@ class Graphic_Data_Plugin {
 
 		// Load class and functions associated with new user roles.
 		$plugin_custom_capabilities = new Graphic_Data_Custom_Capabilities();
+		$this->loader->add_action( 'init', $plugin_custom_capabilities, 'delete_custom_roles' );
 		$this->loader->add_action( 'init', $plugin_custom_capabilities, 'add_author_custom_post_type_caps' );
 		$this->loader->add_action( 'init', $plugin_custom_capabilities, 'add_admin_editor_custom_post_type_caps' );
 		$this->loader->add_action( 'show_user_profile', $plugin_custom_capabilities, 'add_instance_selection_fields' ); // Add meta boxes to the user edit screen.

@@ -418,6 +418,21 @@ class Graphic_Data_Custom_Capabilities {
 	}
 
 	/**
+	 * Deletes the content_manager and content_editor roles if they exist. DELETE THIS METHOD.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function delete_custom_roles() {
+		foreach ( array( 'content_manager', 'content_editor' ) as $role_slug ) {
+			if ( get_role( $role_slug ) ) {
+				remove_role( $role_slug );
+			}
+		}
+	}
+
+	/**
 	 * Grants administrator and editor roles full access to the scene, modal, and figure post types.
 	 *
 	 * Because these post types use a custom capability_type ('scene', 'modal', 'figure')
