@@ -425,7 +425,7 @@ class Graphic_Data_Custom_Capabilities {
 	 * @return void
 	 */
 	public function delete_custom_roles() {
-		foreach ( array( 'content_manager', 'content_editor' ) as $role_slug ) {
+		foreach ( array( 'content_manager', 'content_editor', 'webcr_content_manager' ) as $role_slug ) {
 			if ( get_role( $role_slug ) ) {
 				remove_role( $role_slug );
 			}
