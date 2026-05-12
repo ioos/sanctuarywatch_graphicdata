@@ -742,15 +742,16 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
             Plotly.Plots.resize(plotDiv)
 
 
-
-			//Save the plotly figure as an html file. 
-			const savedFigure = {
-				data: plotDiv.data,
-				layout: plotDiv.layout,
-				config: { responsive: true }
-			};
-			
-			const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
+			if (window.location.href.includes('post.php')) {
+				//Save the plotly figure as an html file. 
+				const savedFigure = {
+					data: plotDiv.data,
+					layout: plotDiv.layout,
+					config: { responsive: true }
+				};
+				
+				const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
+			}
 
 			// if () {
 			// 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
