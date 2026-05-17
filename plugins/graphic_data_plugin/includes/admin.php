@@ -144,7 +144,7 @@ class Graphic_Data_Plugin {
 
 		// Initialize the GitHub Updater.
 		new Graphic_Data_GitHub_Updater(
-			__FILE__,
+			plugin_dir_path( __DIR__ ) . 'graphic_data_plugin.php',
 			'ioos', // the GitHub username.
 			'sanctuarywatch_graphicdata', // the repository name.
 			false, // This is a plugin, not a theme.
