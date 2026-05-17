@@ -366,11 +366,6 @@ Search.appendIndex(
             "summary": "Restricts\u0020access\u0020to\u0020individual\u0020post\u0020edit\u0020screens\u0020for\u0020authors.",
             "url": "classes/Graphic-Data-Custom-Capabilities.html#method_restrict_editing"
         },                {
-            "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Adelete_custom_roles\u0028\u0029",
-            "name": "delete_custom_roles",
-            "summary": "Deletes\u0020the\u0020content_manager\u0020and\u0020content_editor\u0020roles\u0020if\u0020they\u0020exist.\u0020DELETE\u0020THIS\u0020METHOD.",
-            "url": "classes/Graphic-Data-Custom-Capabilities.html#method_delete_custom_roles"
-        },                {
             "fqsen": "\\Graphic_Data_Custom_Capabilities\u003A\u003Aadd_admin_editor_custom_post_type_caps\u0028\u0029",
             "name": "add_admin_editor_custom_post_type_caps",
             "summary": "Grants\u0020administrator\u0020and\u0020editor\u0020roles\u0020full\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
