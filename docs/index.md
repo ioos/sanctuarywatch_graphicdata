@@ -18,7 +18,7 @@ Content Organization Hierarchy: **Instance Type → Instances → Scenes → Mod
 ## Quick Start
 
 1. **[Installation]({{ site.baseurl }}/installation)** - How to install Graphic Data on your WordPress site.
-2. **[Planning Companion]({{ site.baseurl }}/planning-companion)** - A planning companion for Graphic Data.
+2. **[Planning Companion]({{ site.baseurl }}/planning-companion)** - A planning companion for Graphic Data. Be sure to download the [associated blank spreadsheets](https://github.com/ioos/sanctuarywatch_graphicdata/blob/main/docs/planning_companion/Graphic_Data_staging_spreadsheet.zip)!
 3. **[Instance Types]({{ site.baseurl }}/instance-types)** - How to create "Instance Types"
 4. **[Instances]({{ site.baseurl }}/instances)** - How to create "Instances"
 5. **[Scenes]({{ site.baseurl }}/scenes)** - How to create "Scenes"
