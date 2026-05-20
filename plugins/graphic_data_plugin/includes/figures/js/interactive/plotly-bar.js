@@ -555,7 +555,8 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                     if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
                         // const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
                         let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
-                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyY.length;
+						let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
                         const filteredX = plotlyX.filter(item => item !== "");
                         
                         let xMin;

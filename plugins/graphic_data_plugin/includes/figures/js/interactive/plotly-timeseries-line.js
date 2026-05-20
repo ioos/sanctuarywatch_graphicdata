@@ -467,7 +467,8 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                         }
                         return parseFloat(val);
                     });
-                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSanitized.length;
+					let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
                     //console.log('mean', mean);
                     //console.log('stdDev', stdDev);
                     const upperY = plotlyY.map(y => mean + stdDev);
@@ -530,7 +531,8 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                         }
                         return parseFloat(val);
                     });
-                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyY.length;
+					let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
                     const upperY = plotlyY.map(y => mean + stdSingleValue);
                     const lowerY = plotlyY.map(y => mean - stdSingleValue);
                     const filteredX = plotlyX.filter(item => item !== "");
@@ -616,7 +618,8 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                     //Calculate mean (Auto Calculated) based on dataset Y-axis values
                     if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
                         let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
-                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyY.length;
+						let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
                         //console.log('mean', mean);
                         //console.log('plotlyY', plotlyY);
                         const filteredX = plotlyX.filter(item => item !== "");
