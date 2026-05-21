@@ -659,8 +659,8 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
             document.querySelector("#mobile-view-image").setAttribute("style", "transform: scale(0.5); margin-right: 35%; margin-top: -23%");
             document.querySelector("#scene-fluid").setAttribute("style", "margin-top: 25%; display: block"); //margin-left: -1.5%;
             document.querySelector("#title-container > div > div.col-md-2").setAttribute("style", "width: 100%");
-            document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
-            document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+            document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width:95%;");
+            document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 95%;");
 
         // === PORTRAIT MODE ===
         } else {
@@ -679,8 +679,8 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                 colmd2.setAttribute("style", '');
                 colmd2.setAttribute("style", ogColmd2);
 
-                document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
-                document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
+                document.querySelector("#mobileModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 95%;");
+                document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 95%;");
             }
             if (window.location.href.includes('post.php')) {
                 titleContainer = document.querySelector("#title-container > div > div.col-md-2");
@@ -689,7 +689,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                 document.querySelector("#mobile-view-image").setAttribute("style", "width: 100%; margin-right: 0%; margin-top: 0%; margin-bottom: -70%");
                 // const sceneFluid = document.querySelector("#scene-fluid");
                 // sceneFluid.setAttribute("style", '');
-                document.querySelector("#scene-fluid").setAttribute("style", "width: 88%; margin-top: 70%; display: block"); 
+                document.querySelector("#scene-fluid").setAttribute("style", "width: 95%; margin-top: 70%; display: block"); 
                 document.querySelector("#entire_thing").setAttribute("style", "z-index: 9999;max-width: 100%;");
             }
         }
