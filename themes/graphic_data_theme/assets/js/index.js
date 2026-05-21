@@ -59,13 +59,7 @@ let testDataIndex;
 			const host = window.location.host;
 			const postType = 'scene';
 			const postId = child.instance_overview_scene;
-			let url;
-			// if (child.instance_status == "Draft" && !is_logged_in && legacy_urls[child.id]){
-			if (legacy_urls[child.id]) {
-				url = legacy_urls[child.id];
-			} else {
-				url = `${protocol}//${host}/?post_type=${postType}&p=${postId}`;
-			}
+			const url = `${protocol}//${host}/?post_type=${postType}&p=${postId}`;
 
 			link.setAttribute('href', url);
 			// link.setAttribute('href', child.link)

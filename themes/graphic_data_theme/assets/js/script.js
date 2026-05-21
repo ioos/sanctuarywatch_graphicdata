@@ -1,3 +1,4 @@
+let url;
 
 // Deep clone the childIds object to create child_obj, ensuring that modifications to child_obj do not affect the original childIds.
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
@@ -35,7 +36,7 @@ if (
 		window.location.href.includes('edit.php')) &&
 	adminEditTitle !== 'Edit Scene'
 ) {
-	url1 = undefined;
+	url = url1.substring(2, url1.length - 2);
 }
 if (!window.location.href.includes('post.php')) { 
     let url1 =(JSON.stringify(graphicDataSceneData.svgUrl));

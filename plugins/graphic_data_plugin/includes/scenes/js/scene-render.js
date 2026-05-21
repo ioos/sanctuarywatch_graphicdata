@@ -1,5 +1,10 @@
-
 alertIfMissingModal();
+
+if (typeof child_obj === 'undefined') { var child_obj = {}; }
+if (typeof sorted_child_objs === 'undefined') { var sorted_child_objs = null; }
+if (typeof sectionObj === 'undefined') { var sectionObj = {}; }
+if (typeof visible_modals === 'undefined') { var visible_modals = []; }
+if (typeof scene_data === 'undefined') { var scene_data = {}; }
 
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function

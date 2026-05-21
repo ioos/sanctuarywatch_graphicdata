@@ -221,7 +221,7 @@ function displaySceneEntries(entry_number) {
  * is selected, the internal image upload field is hidden and the URL input is shown. The function
  * also clears the values of the hidden fields to prevent unintended data submission.
  *
- * @function displayPhotoPath
+ * @function displayScenePhotoPath
  * @param {number} fieldNumber - The index of the photo field to update (typically 1–6).
  *
  * @description
@@ -234,14 +234,14 @@ function displaySceneEntries(entry_number) {
  *
  * @example
  * // Show or hide the photo fields for the first photo entry based on user selection:
- * displayPhotoPath(1);
+ * displayScenePhotoPath(1);
  *
  * @global
  * - Assumes the existence of form fields named "scene_photo{n}[scene_photo_location{n}]", "scene_photo{n}[scene_photo_url{n}]", and
  *   elements with data-depend-id="scene_photo_internal{n}" in the DOM, where {n} is the field number.
  */
 // Function to display either URL or image under scene image link
-function displayPhotoPath(fieldNumber) {
+function displayScenePhotoPath(fieldNumber) {
 	const targetElement =
 		'scene_photo' +
 		fieldNumber +
@@ -307,118 +307,6 @@ function resizeSvg() {
 	svg.setAttribute('width', width);
 }
 
-/**
- * Dynamically creates and appends an accordion UI component for displaying lists of info or photo links in the scene preview.
- *
- * This function generates a Bootstrap-style accordion section (either "info" or "photo") and appends it to the specified parent div.
- * Each accordion contains a header button and a collapsible body with a list of links. The links are constructed from the provided
- * list of element indices, using the corresponding text and URL values from the scene form fields.
- *
- * @function createAccordion
- * @param {string}        accordionType - The type of accordion to create ("info" or "photo"). Determines field names and header text.
- * @param {HTMLElement}   parentDiv     - The parent DOM element to which the accordion will be appended.
- * @param {Array<number>} listElements  - An array of indices representing the info or photo entries to include in the accordion.
- *
- * @description
- * - Creates a container div for the accordion item and its header.
- * - Sets the header text to "More info" for "info" type or "Media" for "photo" type.
- * - Builds a collapsible section containing a list of links, where each link uses the text and URL from the corresponding scene form fields.
- * - Appends the completed accordion item to the specified parent div.
- *
- * @modifies
- * - Appends a new accordion item to the given parentDiv in the DOM.
- *
- * @example
- * // Example usage to create an info accordion with entries 1 and 2:
- * createAccordion("info", document.getElementById("allAccordions"), [1, 2]);
- *
- * @global
- * - Assumes the existence of scene form fields named "scene_{type}{n}[scene_{type}_text{n}]" and "scene_{type}{n}[scene_{type}_url{n}]" in the DOM.
- */
-function createAccordion(accordionType, parentDiv, listElements) {
-	console.log('createAccordion');
-	const accordionItem = document.createElement('div');
-	accordionItem.classList.add('accordion-item');
-
-	const accordionFirstPart = document.createElement('div');
-	accordionFirstPart.classList.add('accordion-header');
-
-	const accordionHeaderButton = document.createElement('button');
-	accordionHeaderButton.classList.add('accordion-button', 'accordionTitle');
-	accordionHeaderButton.setAttribute('type', 'button');
-	accordionHeaderButton.setAttribute('data-bs-toggle', 'collapse');
-	accordionHeaderButton.setAttribute(
-		'data-bs-target',
-		'#collapse' + accordionType
-	);
-	accordionHeaderButton.setAttribute('aria-expanded', 'true');
-	accordionHeaderButton.setAttribute(
-		'aria-controls',
-		'collapse' + accordionType
-	);
-	if (accordionType == 'info') {
-		accordionHeaderButton.textContent = 'More info';
-	} else {
-		accordionHeaderButton.textContent = 'Media';
-	}
-	accordionFirstPart.appendChild(accordionHeaderButton);
-	accordionItem.appendChild(accordionFirstPart);
-
-	const accordionSecondPart = document.createElement('div');
-	accordionSecondPart.classList.add('accordion-collapse', 'collapse');
-	accordionSecondPart.setAttribute(
-		'data-bs-parent',
-		'#accordion' + accordionType
-	);
-	accordionSecondPart.id = 'collapse' + accordionType;
-
-	const accordionBody = document.createElement('div');
-	accordionBody.classList.add('accordion_body');
-
-	const accordionList = document.createElement('ul');
-	accordionList.classList.add('previewAccordionElements');
-	for (let i = 0; i < listElements.length; i++) {
-		const listItem = document.createElement('li');
-		const listLink = document.createElement('a');
-
-		const targetElement = listElements[i];
-		const text_field = document.getElementsByName(
-			'scene_' +
-				accordionType +
-				targetElement +
-				'[scene_' +
-				accordionType +
-				'_text' +
-				targetElement +
-				']'
-		)[0].value;
-		const url_field = document.getElementsByName(
-			'scene_' +
-				accordionType +
-				targetElement +
-				'[scene_' +
-				accordionType +
-				'_url' +
-				targetElement +
-				']'
-		)[0].value;
-
-		listLink.setAttribute('href', url_field);
-		listLink.textContent = text_field;
-		if (true === graphicDataSceneData.newTabByDefault) {
-			listLink.setAttribute('target', '_blank');
-		}
-		listItem.appendChild(listLink);
-		accordionList.appendChild(listItem);
-	}
-
-	accordionBody.appendChild(accordionList);
-	accordionSecondPart.appendChild(accordionBody);
-	accordionItem.appendChild(accordionSecondPart);
-
-	parentDiv.appendChild(accordionItem);
-}
-
 //initialize entries display for info and photo entries on page load
 const opening_scene_info_entries = document.querySelector(
 	".range[data-depend-id='scene_info_entries']"
@@ -437,14 +325,14 @@ displayEntries(
 
 //initialize photopath six times and also set it for onchange of dropdown
 for (let i = 1; i < 7; i++) {
-	displayPhotoPath(i);
+	displayScenePhotoPath(i);
 	const targetPhotoElementSelector =
 		'select[name="scene_photo' + i + '[scene_photo_location' + i + ']"]';
 	const targetPhotoElement = document.querySelector(
 		targetPhotoElementSelector
 	);
 	targetPhotoElement.addEventListener('change', function () {
-		displayPhotoPath(i);
+		displayScenePhotoPath(i);
 	});
 }
 
