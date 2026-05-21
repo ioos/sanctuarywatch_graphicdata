@@ -101,7 +101,7 @@ if ( $graphic_data_instances_query->have_posts() ) {
 	?>
 </div>
 
-<div id="entire_thing"> 
+<div id="entire_thing" role="main"> 
 <!-- Main container with Bootstrap styling for fluid layout -->
 <?php
 $graphic_data_terms = get_terms(

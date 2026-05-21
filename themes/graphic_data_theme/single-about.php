@@ -19,7 +19,7 @@ $graphic_data_about_central_array = get_post_meta( $graphic_data_post_id, 'centr
 $graphic_data_about_central_main = $graphic_data_about_central_array['aboutMain'];
 $graphic_data_about_central_details = $graphic_data_about_central_array['aboutDetail'];
 ?>
-<div id="entire_thing">
+<div id="entire_thing" role="main">
 
 <div class="page-container-fluid main-container">
 	<h2 style="color:black"><?php echo esc_html( $graphic_data_about_post_title ); ?></h2>

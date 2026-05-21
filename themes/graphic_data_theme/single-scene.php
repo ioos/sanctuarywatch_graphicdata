@@ -103,7 +103,7 @@ $graphic_data_instance = get_post_meta( $graphic_data_post_id, 'scene_location',
 </div>
 
 
-<div id="entire_thing">  
+<div id="entire_thing" role="main">  
 <div id="title-container" ></div>
 <div id="mobile-view-image"></div>
 <div class="container-fluid" id="scene-fluid">
