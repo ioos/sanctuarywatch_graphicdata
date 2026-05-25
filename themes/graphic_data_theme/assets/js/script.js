@@ -2,7 +2,7 @@ let url;
 
 // Deep clone the childIds object to create child_obj, ensuring that modifications to child_obj do not affect the original childIds.
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
-let child_obj = {};
+if (typeof child_obj === 'undefined') { var child_obj = {}; }
 
 if (window.location.href.includes('post.php')) {
 	graphicDataSceneData = {};
@@ -52,7 +52,7 @@ let sceneLoc; // Will store the current scene location or identifier
 
 // Initialize empty objects to store section data and section colors for the scene.
 // These will be populated as the script processes scene/section information.
-const sectionObj = {};
+if (typeof sectionObj === 'undefined') { var sectionObj = {}; }
 const sectColors = {};
 
 // If the current device is NOT mobile, inject custom CSS styles for tablet/desktop layouts.
@@ -151,7 +151,7 @@ try {
 } catch {}
 
 // Step 4: extract the objects (no keys) to match your original format
-let sorted_child_objs = null;
+if (typeof sorted_child_objs === 'undefined') { var sorted_child_objs = null; }
 if (!window.location.href.includes('post.php')) {
 	sorted_child_objs = sortedChildEntries.map(([_, val]) => val);
 }

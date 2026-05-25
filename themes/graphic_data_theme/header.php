@@ -26,10 +26,15 @@ $graphic_data_google_tags_container_id = isset( $graphic_data_settings['google_t
 ?>
 
 <!-- // Google Tags/Analytics Measurement ID variable for access in JS for googletags.js-->
-<script>
-  window.graphicDataSettings = {
-	googleAnalyticsMeasurementId: "<?php echo esc_js( $graphic_data_google_analytics_measurement_id ); ?>"
-  };
+<script type="application/json" id="graphic-data-settings">
+	<?php
+		echo wp_json_encode(
+			array(
+				'googleAnalyticsMeasurementId' => $graphic_data_google_analytics_measurement_id,
+				'googleTagsContainerId'        => $graphic_data_google_tags_container_id,
+			)
+		);
+		?>
 </script>
 
 <!-- Google tag specifically from analytics datastream (gtag.js) index.php-->

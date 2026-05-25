@@ -508,21 +508,21 @@ if (OnSceneEditPage === 1 && SceneError === 'post_error') {
  * @global
  * - Uses document.cookie to access browser cookies.
  */
-function getCookie(cookieName) {
-	const cookies = document.cookie;
-	const cookieArray = cookies.split('; ');
+// function getCookie(cookieName) {
+// 	const cookies = document.cookie;
+// 	const cookieArray = cookies.split('; ');
 
-	for (let i = 0; i < cookieArray.length; i++) {
-		const cookie = cookieArray[i];
-		const [name, value] = cookie.split('=');
+// 	for (let i = 0; i < cookieArray.length; i++) {
+// 		const cookie = cookieArray[i];
+// 		const [name, value] = cookie.split('=');
 
-		if (name === cookieName) {
-			return decodeURIComponent(value);
-		}
-	}
+// 		if (name === cookieName) {
+// 			return decodeURIComponent(value);
+// 		}
+// 	}
 
-	return null;
-}
+// 	return null;
+// }
 
 /**
  * Controls the visibility of the "scene_orphan_icon_color" field based on the selected orphan icon action.

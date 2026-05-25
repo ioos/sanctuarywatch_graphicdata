@@ -1,6 +1,8 @@
 'use strict';
 window.dataLayer = window.dataLayer || [];
-const gaMeasurementID = window.graphicDataSettings.googleAnalyticsMeasurementId;
+const _settingsEl = document.getElementById( 'graphic-data-settings' );
+const _settings = _settingsEl ? JSON.parse( _settingsEl.textContent ) : {};
+const gaMeasurementID = _settings.googleAnalyticsMeasurementId ?? '';
 
 //FIGURE TRACKING AND ANALYSIS_______________________________________________________________
 /**
