@@ -718,7 +718,7 @@ function graphic_data_enqueue_scripts() {
 
 	// Enqueue the plotly utility script used for interactive figures.
 	wp_enqueue_script(
-		'utility',
+		'plotly-utility',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-utility.js',
 		array(),
 		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.

@@ -58,8 +58,16 @@ class Graphic_Data_Admin {
 	public function enqueue_scripts( $hook_suffix ) {
 
 		// Enqueue utlity javascript functions used across javascript files on the admin side.
-
-		wp_enqueue_script( 'utility', plugin_dir_url( __FILE__ ) . 'js/utility.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+		wp_register_script_module(
+			'@graphic-data/admin-utility',
+			plugin_dir_url( __FILE__ ) . 'js/utility.js',
+			array(),
+			GRAPHIC_DATA_PLUGIN_VERSION
+		);
+		// Prevent WordPress from emitting utility.js as a classic <script> tag.
+		// wp_register_script_module registers a same-named classic fallback internally;
+		// deregistering it here ensures only the type="module" version is output.
+		wp_deregister_script( '@graphic-data/admin-utility' );
 
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post.
@@ -80,7 +88,14 @@ class Graphic_Data_Admin {
 			// Enqueue figure-render.js.
 			wp_enqueue_script( 'scene-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
-			wp_enqueue_script( 'admin-scene', plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Enqueue admin-scene.js.
+			wp_register_script_module(
+				'@graphic-data/admin-scene',
+				plugin_dir_url( __FILE__ ) . 'js/admin-scene.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-scene' );
 
 			// Enqueue admin-preview-buttons.js.
 			wp_enqueue_script( 'admin-preview-buttons', plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );

@@ -169,8 +169,8 @@ class Graphic_Data_Utility {
 		if ( false !== $transient_data ) {
 			// Output the transient data as JavaScript.
 			?>
-			<script type="text/javascript">
-				const allCustomFields = <?php echo wp_json_encode( $transient_data ); ?>;
+			<script type="application/json" id="graphic-data-transient-fields">
+				<?php echo wp_json_encode( $transient_data ); ?>
 			</script>
 			<?php
 

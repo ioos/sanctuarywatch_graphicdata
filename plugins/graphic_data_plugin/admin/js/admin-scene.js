@@ -1,6 +1,13 @@
 // These functions only fire upon editing or creating a post of Scene custom content type
-
-'use strict';
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	displayEntries,
+	getCookie,
+	cookieExists,
+	onCorrectEditPage,
+	applyPlainTextPaste,
+} from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
@@ -32,9 +39,6 @@ orphanColorFieldVisibility();
 document
 	.querySelector('[data-depend-id="scene_orphan_icon_action"]')
 	.addEventListener('change', orphanColorFieldVisibility);
-
-// Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
-document.addEventListener('DOMContentLoaded', redText);
 
 /**
  * Controls the visibility and default values of scene section and hover color fields based on the selected Table of Contents (TOC) style.
@@ -486,45 +490,6 @@ if (OnSceneEditPage === 1 && SceneError === 'post_error') {
 }
 
 /**
- * Retrieves the value of a specified cookie by name.
- *
- * This function searches the document's cookies for a cookie with the given name and returns its decoded value.
- * If the cookie is not found, it returns null.
- *
- * @function getCookie
- * @param {string} cookieName - The name of the cookie to retrieve.
- * @return {string|null} The decoded value of the cookie if found, or null if not found.
- *
- * @description
- * - Splits the document.cookie string into individual cookies.
- * - Iterates through the cookies to find one matching the specified name.
- * - Decodes and returns the value of the matching cookie.
- * - Returns null if the cookie does not exist.
- *
- * @example
- * // Retrieve the value of a cookie named "session_id":
- * const sessionId = getCookie("session_id");
- *
- * @global
- * - Uses document.cookie to access browser cookies.
- */
-// function getCookie(cookieName) {
-// 	const cookies = document.cookie;
-// 	const cookieArray = cookies.split('; ');
-
-// 	for (let i = 0; i < cookieArray.length; i++) {
-// 		const cookie = cookieArray[i];
-// 		const [name, value] = cookie.split('=');
-
-// 		if (name === cookieName) {
-// 			return decodeURIComponent(value);
-// 		}
-// 	}
-
-// 	return null;
-// }
-
-/**
  * Controls the visibility of the "scene_orphan_icon_color" field based on the selected orphan icon action.
  *
  * This function shows or hides the color picker field for orphan icons in the scene editor form,
@@ -642,12 +607,5 @@ function writeCookieValuesToSceneFields() {
 // Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
 document.addEventListener('DOMContentLoaded', function () {
 	const sceneEditorIds = ['scene_tagline'];
-
-	if (typeof applyPlainTextPaste === 'function') {
-		applyPlainTextPaste(sceneEditorIds);
-	} else {
-		console.error(
-			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
-		);
-	}
+	applyPlainTextPaste(sceneEditorIds);
 });
