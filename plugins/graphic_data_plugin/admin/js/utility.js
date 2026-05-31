@@ -36,7 +36,28 @@ export function replaceFieldValuesWithTransientValues() {
 		console.error( 'graphic-data-transient-fields: failed to parse JSON', e );
 		return;
 	}
-	Object.entries( allCustomFields ).forEach( ( [ metaBoxName, metaValue ] ) => {
+
+	const setEditorContent = ( editor, value ) => {
+		if ( editor.initialized ) {
+			editor.setContent( value );
+			editor.save();
+		} else {
+			editor.on( 'init', () => {
+				editor.setContent( value );
+				editor.save();
+			} );
+		}
+	};
+
+	const applyValue = ( metaBoxName, metaValue ) => {
+		const editor =
+			typeof tinymce !== 'undefined' ? tinymce.get( metaBoxName ) : null;
+
+		if ( editor ) {
+			setEditorContent( editor, metaValue );
+			return;
+		}
+
 		const element = document.querySelector(
 			`[data-depend-id="${ metaBoxName }"]`
 		);
@@ -46,7 +67,23 @@ export function replaceFieldValuesWithTransientValues() {
 				element.nextElementSibling.value = metaValue;
 			}
 		}
+	};
+
+	// Apply immediately for anything already present (the 12 plain fields,
+	// plus any editor that happens to already be registered).
+	Object.entries( allCustomFields ).forEach( ( [ name, value ] ) => {
+		applyValue( name, value );
 	} );
+
+	// Catch editor fields that register AFTER this function runs.
+	if ( typeof tinymce !== 'undefined' ) {
+		tinymce.on( 'AddEditor', ( e ) => {
+			const id = e.editor.id;
+			if ( Object.prototype.hasOwnProperty.call( allCustomFields, id ) ) {
+				setEditorContent( e.editor, allCustomFields[ id ] );
+			}
+		} );
+	}
 }
 
 /**

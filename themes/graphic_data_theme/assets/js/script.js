@@ -1,10 +1,22 @@
 let url;
 
+// graphicDataSceneData is provided as a global by wp_localize_script on the
+// public scene page. On admin pages it does not exist. Normalize to a safe
+// object either way WITHOUT redeclaring the identifier (a `let`/`const`/`var`
+// here would collide with the localized global on the public page).
+// TRANSITIONAL: replace with getSceneData() island read in Phase 4.
+window.graphicDataSceneData = window.graphicDataSceneData || {};
+
+const isAdminEditor =
+	window.location.href.includes('post.php') ||
+	window.location.href.includes('post-new.php') ||
+	window.location.href.includes('edit.php');
+
 // Deep clone the childIds object to create child_obj, ensuring that modifications to child_obj do not affect the original childIds.
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
 if (typeof child_obj === 'undefined') { var child_obj = {}; }
 
-if (window.location.href.includes('post.php')) {
+if (isAdminEditor) {
 	graphicDataSceneData = {};
 }
 
@@ -19,9 +31,9 @@ try {
 }
 
 //Allows for declaration of child_obj variable for theme and for admin side preview mode
-if (window.location.href.includes('post.php') || window.location.href.includes('edit.php')) {
+if (isAdminEditor) {
     child_obj = undefined;
-} else { 
+} else {
     child_obj = JSON.parse(JSON.stringify(graphicDataSceneData.childIds));
 }
 
@@ -31,16 +43,12 @@ if (window.location.href.includes('post.php') || window.location.href.includes('
 let url1 = {};
 
 //Allows for declaration of url1 variable for theme and for admin side preview mode
-if (
-	(window.location.href.includes('post.php') ||
-		window.location.href.includes('edit.php')) &&
-	adminEditTitle !== 'Edit Scene'
-) {
-	url = url1.substring(2, url1.length - 2);
+if (isAdminEditor && adminEditTitle !== 'Edit Scene') {
+	url = '';
 }
-if (!window.location.href.includes('post.php')) { 
-    let url1 =(JSON.stringify(graphicDataSceneData.svgUrl));
-    url = url1.substring(2, url1.length - 2);
+if (!isAdminEditor) {
+	url1 = JSON.stringify(graphicDataSceneData.svgUrl);
+	url = url1.substring(2, url1.length - 2);
 }
 
 // Declare variables to hold data and state throughout the script.
@@ -106,10 +114,7 @@ process_child_obj();
 let sortedChildEntries = {};
 
 //Allows for declaration of url1 variable for theme and for admin side preview mode
-if (
-	window.location.href.includes('post.php') ||
-	window.location.href.includes('edit.php')
-) {
+if (isAdminEditor) {
 	sortedChildEntries = null;
 } else {
 	sortedChildEntries = Object.entries(child_obj);
@@ -129,7 +134,7 @@ if (
 
 let allOrdersAreOne = null;
 
-if (!window.location.href.includes('post.php')) {
+if (!isAdminEditor) {
 	allOrdersAreOne = sortedChildEntries.every(
 		([_, obj]) => parseInt(obj.modal_icon_order) === 1
 	);
@@ -152,13 +157,13 @@ try {
 
 // Step 4: extract the objects (no keys) to match your original format
 if (typeof sorted_child_objs === 'undefined') { var sorted_child_objs = null; }
-if (!window.location.href.includes('post.php')) {
+if (!isAdminEditor) {
 	sorted_child_objs = sortedChildEntries.map(([_, val]) => val);
 }
 
 // Step 5: build childIdsHelper for title-to-key mapping
 let childIdsHelper = {};
-if (!window.location.href.includes('post.php')) {
+if (!isAdminEditor) {
 	for (const [key, value] of sortedChildEntries) {
 		childIdsHelper[value.title] = key;
 	}
@@ -209,9 +214,6 @@ function admin_preview_condition_checker() {
             });
         });
     }
-
-    // console.log('window.mobileBool', window.mobileBool);
-
     // Return the current state *now*
     return !!window.mobileBool;
 }
@@ -219,7 +221,9 @@ function admin_preview_condition_checker() {
 
 //Main Initialization of script
 document.addEventListener('DOMContentLoaded', () => {
-	init();
+	if (!isAdminEditor) {
+		init();
+	}
 	handleHashNavigation();
 });
 
@@ -340,7 +344,7 @@ function remove_outer_div() {
  */
 function is_touchscreen(){
 
-    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
+    if (isAdminEditor && admin_preview_condition_checker()) {
         return true;
     } else {
         //check multiple things here: type of device, screen width, 
@@ -359,8 +363,7 @@ function is_touchscreen(){
 function is_mobile() {
 
     // Admin preview mobile functionality to allow for is_mobile() to return true
-    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
-        //console.log('admin_preview_condition_checker');
+    if (isAdminEditor && admin_preview_condition_checker()) {
         return true;
     }
     // Everything else that isnt admin preview related uses this
@@ -389,7 +392,7 @@ var deviceDetector = (function ()
   var ua = navigator.userAgent.toLowerCase();
   var detect = (function(s)
   {
-    if (window.location.href.includes('post.php') && admin_preview_condition_checker()) {
+    if (isAdminEditor && admin_preview_condition_checker()) {
         return 'phone';
     }
 
@@ -623,7 +626,7 @@ async function init() {
 
 		loadSVG(url, 'svg1'); // Call load_svg with the fetched data
 	} catch (error) {
-		if (!window.location.href.includes('post.php')) {
+		if (!isAdminEditor) {
 			console.error('Error:', error);
 		}
 	}

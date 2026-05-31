@@ -72,12 +72,24 @@ class Graphic_Data_Admin {
 		$current_post_type = get_post_type();
 		// Load About-specific Javascript only when editing/creating an About post.
 		if ( 'about' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
-			wp_enqueue_script( 'admin-about', plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-about',
+				plugin_dir_url( __FILE__ ) . 'js/admin-about.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-about' );
 		}
 
 		// Load Instance-specific Javascript only when editing/creating a Instance post.
 		if ( 'instance' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
-			wp_enqueue_script( 'admin-instance', plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-instance',
+				plugin_dir_url( __FILE__ ) . 'js/admin-instance.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-instance' );
 		}
 
 		// Load Scene-specific Javascript only when editing/creating a Scene post.
@@ -106,7 +118,13 @@ class Graphic_Data_Admin {
 
 			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
-			wp_enqueue_script( 'admin-modal', plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-modal',
+				plugin_dir_url( __FILE__ ) . 'js/admin-modal.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-modal' );
 
 			// Enqueue admin-preview-buttons.js.
 			wp_enqueue_script( 'admin-preview-buttons', plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
@@ -142,7 +160,13 @@ class Graphic_Data_Admin {
 			wp_enqueue_script( 'figure-code', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/code/figure-code.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
 			// Enqueue admin-figure.js.
-			wp_enqueue_script( 'admin-figure', plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-figure',
+				plugin_dir_url( __FILE__ ) . 'js/admin-figure.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-figure' );
 
 			// Enqueue modal-render.js.
 			wp_enqueue_script( 'modal-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/modals/js/modal-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
@@ -337,13 +361,13 @@ class Graphic_Data_Admin {
 		$options             = get_option( 'graphic_data_settings' );
 		$new_tab_by_default  = ! empty( $options['links_new_tab_by_default'] );
 
-		wp_enqueue_script(
-			'gd-tinymce-new-tab',
+		wp_register_script_module(
+			'@graphic-data/admin-tinymce-new-tab',
 			plugin_dir_url( __FILE__ ) . 'js/admin-tinymce-new-tab.js',
-			array(), // No hard JS dependencies; wpLink availability is handled inside the script.
-			GRAPHIC_DATA_PLUGIN_VERSION,
-			array( 'strategy' => 'defer' )
+			array(),
+			GRAPHIC_DATA_PLUGIN_VERSION
 		);
+		wp_enqueue_script_module( '@graphic-data/admin-tinymce-new-tab' );
 
 		/**
 		 * List of TinyMCE editor IDs that should default new links to opening
@@ -371,14 +395,13 @@ class Graphic_Data_Admin {
 		for ( $i = 1; $i < 11;  $i++ ) {
 			array_push( $target_fields, 'aboutBoxMain' . $i, 'aboutBoxDetail' . $i );
 		}
-
-		wp_localize_script(
-			'gd-tinymce-new-tab',
-			'graphicDataNewTab',
-			array(
-				'enabled'      => $new_tab_by_default,
-				'targetFields' => $target_fields,
-			)
+		add_filter(
+			'script_module_data_@graphic-data/admin-tinymce-new-tab',
+			function ( array $data ) use ( $new_tab_by_default, $target_fields ): array {
+				$data['enabled']      = $new_tab_by_default;
+				$data['targetFields'] = $target_fields;
+				return $data;
+			}
 		);
 	}
 

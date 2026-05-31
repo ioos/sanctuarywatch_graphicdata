@@ -15,7 +15,6 @@ function errorPreviewHandler(divID, figureType) {
 		try {
 			existingFileInputElement =
 				document.getElementById('existing-file-name').value;
-			//console.log('existingFileInputElement:', existingFileInputElement);
 		} catch {}
 		try {
 			graphTypeInputElement = document.getElementById('graphType').value;
@@ -52,7 +51,6 @@ function errorPreviewHandler(divID, figureType) {
 	} else if (window.location.href.includes('post.php')) {
 		setTimeout(() => {
 			const figure = document.querySelector('#myTabContent .figure');
-			//.console.log("FOUND FIGURE:", figure);
 			figure.remove();
 		}, 50);
 
@@ -99,7 +97,6 @@ if (previewFigureOrModalElements.length > 0) {
 
             // Prevent duplicate injection, remove existing to make way for new. 
             if (document.getElementById('myModal') || document.getElementById('mobileModal')) {
-                //console.log('Modals already exist — showing modal.');
                 const modalEl = document.getElementById('myModal');
                 const mobileModal = document.getElementById('mobileModal');
                 if (modalEl) modalEl.remove();
@@ -108,10 +105,9 @@ if (previewFigureOrModalElements.length > 0) {
 
             // --- INJECT MODAL HTML MARKUP to wpcontent---
             const markup = `
-                <body>
                     <!-- for the mobile image stuff -->
-                    <div class="modal" id="mobileModal" style="z-index: 9999; background-color: rgba(0,0,0,0.8);">
-                    <div class="modal-dialog modal-lg" style="z-index: 9999;margin-top: 5%; max-width: 95%;">
+                    <div class="modal fade" id="mobileModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg" style="margin-top: 5%; max-width: 95%;">
                         <div class="modal-content">
                         <div class="modal-header">
                             <h4 id="modal-title1" class="modal-title"> Full Scene Image</h4>
@@ -122,8 +118,8 @@ if (previewFigureOrModalElements.length > 0) {
                     </div>
                     </div>
 
-                    <div class="modal" id="myModal" style="z-index: 9999; background-color: rgba(0,0,0,0.8);">
-                    <div class="modal-dialog modal-lg" style="z-index: 9999; margin: 5% auto;">
+                    <div class="modal fade" id="myModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg" style="margin: 5% auto;">
                         <div class="modal-content" aria-labelledby="modal-title">
                         <div class="modal-header">
                             <h4 id="modal-title" class="modal-title"></h4>
@@ -141,35 +137,25 @@ if (previewFigureOrModalElements.length > 0) {
                         <div class="tab-content" id="myTabContent" style="margin-top: 2%; margin-left: 1%; margin-right: 1%;"></div>
                         </div>
                     </div>
-                    </div>
-                </body>`;
+                    </div>`;
 
-            const wpcontent = document.getElementById('wpwrap');
-            if (!wpcontent) {
-                console.warn('#wpwrap not found.');
-                return;
-            }
-
-
-            // Inject as the first child of #wpcontent
-            wpcontent.insertAdjacentHTML('afterbegin', markup);
-            //console.log('✅ Modals injected into #wpcontent');
-
+            document.body.insertAdjacentHTML('beforeend', markup);
 
             const modalEl2 = document.getElementById('myModal');
             const dialog2 = modalEl2?.querySelector('.modal-dialog');
             // Apply mobile preview sizing ONLY for mobile preview trigger
             if (el.getAttribute('data-depend-id') === 'modal_preview_mobile' || el.getAttribute('data-depend-id') === 'figure_preview_mobile') {
-                deviceDetector.device = 'phone';
+                window.mobileBool = true;   // render_modal() reads layout from is_mobile() → mobileBool
                 if (dialog2) {
                     dialog2.style.minWidth = '22%';
                     dialog2.style.width = '350px';
-                    dialog2.style.paddingTop = '2%'; // if you need this
+                    dialog2.style.paddingTop = '2%';
                 }
-            } 
+            }
 
             //remove mobile css if present 
             if (el.getAttribute('data-depend-id') === 'modal_preview' || el.getAttribute('data-depend-id') === 'figure_preview') {
+                window.mobileBool = false;
                 document.getElementById('sw-modal-accordion-btn-css')?.remove();
             }
 
@@ -186,8 +172,6 @@ if (previewFigureOrModalElements.length > 0) {
 
             const hasModalPreview = document.querySelectorAll('[data-depend-id="modal_preview"],[data-depend-id="modal_preview_mobile"]');
             const hasFigurePreview = document.querySelectorAll('[data-depend-id="figure_preview"],[data-depend-id="figure_preview_mobile"]');
-            //console.log('hasModalPreview:', hasModalPreview);
-            //console.log('hasFigurePreview:', hasFigurePreview);
 
             // --- GATHER MODAL DATA FROM FORM FIELDS AND PRODUCE A MODAL PREVIEW---
             if (hasModalPreview !== null && hasModalPreview.length > 0) {
@@ -368,10 +352,6 @@ if (previewFigureOrModalElements.length > 0) {
                         css2.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/modal_mobile_modal-dialog.css`;
                         document.head.appendChild(css2);
                     }
-
-                //console.log('🎨 Theme CSS injected');
-                } else {
-                //console.log('🎨 Theme CSS already loaded');
                 }
             });
     });
@@ -384,7 +364,6 @@ if (previewFigureOrModalElements.length > 0) {
 function buildScenePayloadFromForm() {
     // Helpers
     const byIdVal = (id) => (document.getElementById(id)?.value ?? "");
-    //console.log('byIdVal("title")', byIdVal("title"));
     const byNameVal = (name) => (document.getElementsByName(name)?.[0]?.value ?? "");
 
     const payload = {};
@@ -546,14 +525,7 @@ if (previewSceneElements.length > 0) {
                 `;
 
 
-            const wpcontent = document.getElementById('wpwrap');
-            if (!wpcontent) {
-                console.warn('#wpwrap not found.');
-                return;
-            }
-
-            // Inject as the first child of #wpcontent
-            wpcontent.insertAdjacentHTML('afterbegin', markup);
+            document.body.insertAdjacentHTML('beforeend', markup);
             
             // Scope everything to the newly injected modal (critical)
             const modalEl = document.getElementById('sceneModal');
@@ -592,7 +564,6 @@ if (previewSceneElements.length > 0) {
             try {
                 openSceneInModal(el);
                 graphicDataSceneData.titleArr = buildScenePayloadFromForm();
-                //console.log('titleArr', titleArr);
                 if (graphicDataSceneData.titleArr['post_title'] == '') {
                     graphicDataSceneData.titleArr['post_title'] = "No Scene Title Entered.";
                 }
@@ -647,8 +618,6 @@ if (previewSceneElements.length > 0) {
                         document.head.appendChild(css2);
                     }
 
-                } else {
-                //console.log('🎨 Theme CSS already loaded');
                 }
             });
     });

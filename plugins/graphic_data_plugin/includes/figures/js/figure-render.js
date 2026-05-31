@@ -82,7 +82,9 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
 	// Additional mobile-specific adjustments
 	function adjustPlotlyLayoutForMobile(postID) {
-		if (window.innerWidth <= 768) {
+        const isMobilePreview =
+            window.location.href.includes('post.php') && !!window.mobileBool;
+        if (window.innerWidth <= 768 || isMobilePreview) {
 			// basic mobile width check
 			const plotlyDivID = `plotlyFigure${postID}`;
 			const plotDiv = document.getElementById(plotlyDivID);

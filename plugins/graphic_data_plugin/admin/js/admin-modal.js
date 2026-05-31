@@ -1,4 +1,9 @@
-'use strict';
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	displayEntries,
+	applyPlainTextPaste,
+} from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
@@ -1137,12 +1142,5 @@ modalPhotoRangeElement2.addEventListener('change', function () {
 // Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
 document.addEventListener('DOMContentLoaded', function () {
 	const modalEditorIds = ['modal_tagline'];
-
-	if (typeof applyPlainTextPaste === 'function') {
-		applyPlainTextPaste(modalEditorIds);
-	} else {
-		console.error(
-			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
-		);
-	}
+	applyPlainTextPaste(modalEditorIds);
 });

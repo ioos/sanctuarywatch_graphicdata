@@ -37,16 +37,9 @@ class Graphic_Data_Figure {
 		$current_post_type = get_post_type();
 		if ( 'figure' == $current_post_type ) {
 
-			// AJAX action for handling interactive graph data retrieval.
-			wp_enqueue_script(
-				'admin-figure',
-				plugin_dir_url( __FILE__ ) . '../admin/js/admin-figure.js',
-				[], // <-- no jquery needed.
-				GRAPHIC_DATA_PLUGIN_VERSION,
-				true
-			);
+			// NOTE! This is a cross-script dependency as the following nonce is used only by file-upload.js This should be changed.
 			wp_localize_script(
-				'admin-figure',
+				'file-upload',
 				'wpApiSettings',
 				[
 					'nonce' => wp_create_nonce( 'wp_rest' ),
@@ -967,8 +960,6 @@ class Graphic_Data_Figure {
 		// From file, get the ['name'] and the ['tmp_name'].
 		if ( isset( $_FILES['uploaded_file'] ) ) {
 			// Sanitize and validate the uploaded file data.
-			// $file_name = isset( $_FILES['uploaded_file']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['uploaded_file']['name'] ) ) : '';
-			// $file_tmp_name = isset( $_FILES['uploaded_file']['tmp_name'] ) ? sanitize_text_field( wp_unslash( $_FILES['uploaded_file']['tmp_name'] ) ) : '';
 			$file_name = isset( $_FILES['uploaded_file']['name'] ) ? basename( wp_unslash( $_FILES['uploaded_file']['name'] ) ) : '';
 			$file_tmp_name = isset( $_FILES['uploaded_file']['tmp_name'] ) ? wp_unslash( $_FILES['uploaded_file']['tmp_name'] ) : '';
 

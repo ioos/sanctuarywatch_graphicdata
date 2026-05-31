@@ -1,6 +1,10 @@
 // These functions only fire upon editing or creating a post of Figure custom content type
 
-'use strict';
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	applyPlainTextPaste,
+} from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
@@ -378,12 +382,5 @@ function run_admin_figures() {
 // Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
 document.addEventListener('DOMContentLoaded', function () {
 	const figureEditorIds = ['figure_caption_short', 'figure_caption_long'];
-
-	if (typeof applyPlainTextPaste === 'function') {
-		applyPlainTextPaste(figureEditorIds);
-	} else {
-		console.error(
-			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
-		);
-	}
+	applyPlainTextPaste(figureEditorIds);
 });

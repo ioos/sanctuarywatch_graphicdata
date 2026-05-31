@@ -1,6 +1,13 @@
 // These functions only fire upon editing or creating a post of Instance custom content type
 
-'use strict';
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	applyPlainTextPaste,
+	onCorrectEditPage,
+	cookieExists,
+	getCookie,
+} from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
@@ -156,12 +163,5 @@ document.addEventListener('DOMContentLoaded', function () {
 		'instance_footer_column_content2',
 		'instance_footer_column_content3',
 	];
-
-	if (typeof applyPlainTextPaste === 'function') {
-		applyPlainTextPaste(instanceEditorIds);
-	} else {
-		console.error(
-			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
-		);
-	}
+	applyPlainTextPaste(instanceEditorIds);
 });

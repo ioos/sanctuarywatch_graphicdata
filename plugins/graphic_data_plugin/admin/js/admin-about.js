@@ -1,4 +1,7 @@
-'use strict';
+import {
+	replaceFieldValuesWithTransientValues,
+	applyPlainTextPaste,
+} from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
@@ -52,10 +55,5 @@ const aboutEditorIDs = ['aboutMain', 'aboutDetail'];
 for (let i = 1; i <= 10; i++) {
 	editorBoxType.forEach((element) => aboutEditorIDs.push(element + i));
 }
-if (typeof applyPlainTextPaste === 'function') {
-	applyPlainTextPaste(aboutEditorIDs);
-} else {
-	console.error(
-		'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
-	);
-}
+
+applyPlainTextPaste(aboutEditorIDs);

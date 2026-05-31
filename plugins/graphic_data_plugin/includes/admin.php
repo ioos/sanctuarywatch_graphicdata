@@ -307,7 +307,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_figure, 'register_get_alt_text_by_url_route' );
 		$this->loader->add_action( 'wp_ajax_custom_file_upload', $plugin_admin_figure, 'custom_file_upload_handler' );
 		$this->loader->add_action( 'wp_ajax_custom_file_delete', $plugin_admin_figure, 'custom_file_delete_handler' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script', 20 );
 
 		// Load class and functions connected to login screen customization.
 		$plugin_admin_logo = new Graphic_Data_Login();

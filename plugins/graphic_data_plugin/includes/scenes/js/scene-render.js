@@ -36,12 +36,6 @@ async function make_title() {
 
 		const accgroup = document.createElement('div');
 
-		//     if (!is_mobile()) {
-		//   //      accgroup.setAttribute("style", "margin-top: 2%");
-		//     } else {
-		//         accgroup.setAttribute("style", "margin-top: 16px"); //max-width: 85%
-		//     }
-
 		accgroup.classList.add('accordion');
 
 		if (scene_data.scene_info_entries != 0) {
@@ -408,51 +402,9 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                                 caption.innerText = "not in wp yet, have to add";
                             }
                             caption.style.paddingBottom = '10px';
-                            //caption.style.fontSize = "14px";
-                            //caption.style.fontSize = "3.15vw";
                             caption.style.overflow = "hidden";
-
-                            // const maxChars2 = 30;  // your character limit
-                            // const maxChars3 = 40;  // your character limit
-                            // const maxChars1 = 11;  // your character limit
-                        
-                            
-                            // if (caption.textContent.length <= maxChars1) {
-                            //     // Text is longer than limit — apply a certain style or class
-                            //     caption.style.fontSize = '12px';     // Example: smaller font size
-                            //     // or
-                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            //     console.log('test1');
-                            // }
-                            // if (caption.textContent.length > maxChars1 && caption.textContent.length <= maxChars2) {
-                            //     // Text is longer than limit — apply a certain style or class
-                            //     caption.style.fontSize = '11px';     // Example: smaller font size
-                            //     // or
-                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            //     console.log('test2');
-                            // } 
-                            // if (caption.textContent.length > maxChars3 && caption.textContent.length <= maxChars3) {
-                            //     // Text is longer than limit — apply a certain style or class
-                            //     caption.style.fontSize = '10.5px';     // Example: smaller font size
-                            //     // or
-                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            //     console.log('test3');
-                            // } 
-                            // if (caption.textContent.length > maxChars3) {
-                            //     // Text is longer than limit — apply a certain style or class
-                            //     caption.style.fontSize = '10px';     // Example: smaller font size
-                            //     // or
-                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            //     console.log('test4');
-                            // } else {
-                            //     // Reset or apply default style
-                            //     caption.style.fontSize = '14px';
-                            //     caption.classList.remove('small-text');
-                            //     console.log('test4');
-                            // }
                             
                             // Set to last fitting size
-                            //caption.style.maxHeight = '10%'; // Add some space between icon and caption
                             cont.appendChild(caption);
 
                             // Append this icon container to the row
@@ -465,7 +417,6 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                                 const bbox = key.getBBox();
                                 svgClone.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
                                 renderedIcons++;
-                                //console.log(`Rendered icon: ${currIcon}, total rendered: ${renderedIcons}`);
                                 if (renderedIcons === iconIds.length) {
                                     body.style.display = "none"; // only hide once ALL icons are done
                                 } 
@@ -984,26 +935,6 @@ async function loadSVG(url, containerId) {
         const svgText = await response.text();
         let svgDoc;
         let svgElement;
-        
-        // // Check if the SVG contains Inkscape-specific attributes
-        // if (svgText.includes("inkscape:label") || svgText.includes("inkscape:groupmode")) {
-        //     console.log("Inkscape is detected");
-
-        //     // 1) Remove inkscape:groupmode only (do not consume rest of the tag)
-        //     const applyRule1 = svgText.replace(/\s+inkscape:groupmode="layer"(?=\s|>)/g, "");
-
-        //     // 2) If id==label → keep id; else set id to label. Drop the label either way.
-        //     const applyRule2 = applyRule1.replace(
-        //         /id="([^"]+)"\s+inkscape:label="([^"]+)"/g,
-        //         (_, idValue, labelValue) => (idValue === labelValue ? `id="${idValue}"` : `id="${labelValue}"`)
-        //     );
-
-        //     const parser = new DOMParser();
-        //     svgDoc = parser.parseFromString(applyRule2, "image/svg+xml");
-        // } else {
-        //     const parser = new DOMParser();
-        //     svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-        // }
 
         const parser = new DOMParser();
         svgDoc = parser.parseFromString(svgText, "image/svg+xml");
@@ -1100,11 +1031,13 @@ async function loadSVG(url, containerId) {
                 }));
             }
         }
-      
+
         // checking if user device is touchscreen
-        if (is_touchscreen()){
-            if (is_mobile() && (deviceDetector.device != 'tablet')){ //a phone and not a tablet; screen will be its own UI here
-                //console.log('Mobile device detected');
+        const wantsMobileLayout = is_mobile() && deviceDetector.device != 'tablet';
+        const isPreview = window.location.href.includes('post.php');
+
+        if ( is_touchscreen() && ( ! isPreview || wantsMobileLayout ) ) {
+            if ( wantsMobileLayout ) {
                 //smaller image preview here for mobile
                 let fullImgCont = document.querySelector("#mobile-view-image");
                 
@@ -1179,10 +1112,7 @@ async function loadSVG(url, containerId) {
                     iconsArr =  visible_modals;
                 } else {
                     iconsArr =  Object.keys(child_obj);
-                    //console.log('iconsArr', iconsArr);
                 }
-                // console.log('iconsArr',iconsArr);
-                // console.log('mobileIcons',mobileIcons);
                 mobile_helper(svgElement, iconsArr, mobileIcons);
 
                 if (window.location.href.includes('post.php')) {
@@ -1190,8 +1120,6 @@ async function loadSVG(url, containerId) {
                 }
                 
             } else{ //if it gets here, device is a tablet
-                //hide mobile icons
-                
                 // remove_outer_div();
                 window.addEventListener('load', function() {
                     let mob_icons = document.querySelector("#mobile");
@@ -1216,7 +1144,6 @@ async function loadSVG(url, containerId) {
         }
         else{ //device is a PC
             //hide mobile icons
-            console.log('PC detected');
             window.addEventListener('load', function() {
                 let mob_icons = document.querySelector("#mobile");
                 if (mob_icons) {
@@ -1291,6 +1218,7 @@ async function loadSVG(url, containerId) {
             highlight_icons();
             toggle_text();
             full_screen_button('svg1');
+
             if (graphicDataSceneData.sceneTocStyle === "list"){
                 list_toc();
             } else {
@@ -1848,14 +1776,12 @@ function toc_sections() {
         let title_test = scene_data?.[`scene_section${sections[i]}`]?.[`scene_section_title${i + 1}`];
         if (!title_test) {
             title_test = "None";
-            //console.log("Title not found:", title_test);
         } 
 
 
         if (sections[i]!="None" && title_test != "None"){
 
             let scene_section_title = scene_data[`scene_section${sections[i]}`][`scene_section_title${i+1}`];
-            //console.log('scene_section_title', scene_section_title);
             if (scene_data['scene_same_hover_color_sections'] == "no" && scene_section_title != ""){
                 button.innerHTML = scene_section_title;
 
@@ -1874,10 +1800,7 @@ function toc_sections() {
             button.innerHTML = 'No Section';
             let color = graphicDataSceneData.sceneDefaultHoverColor;
             button.style.backgroundColor = hexToRgba(color, 0.2);
-        } else {
-            //console.log('Test 2');
-        }
-
+        } 
 
         if (title_test != "None"){
         
@@ -1957,8 +1880,6 @@ function table_of_contents() {
 		// const title_formatted = title.replace(/\s+/g, '_');
         const title_formatted = slugify(title);
 		link.setAttribute('id', title_formatted);
-
-        // console.log('title_formatted', title_formatted);
 
 		const modal = child_obj[key].modal;
 		if (modal) {
@@ -2126,9 +2047,7 @@ function list_toc(){
         let link = document.createElement("a");
         let modal = obj['modal'];
         //let title_formatted = title.replace(/\s+/g, '_')
-        let title_formatted= slugify(title);
-        //console.log('title_formatted', title_formatted);
-        
+        let title_formatted= slugify(title);        
     
         if (modal) {
             link.setAttribute("href", `#`); //just added
@@ -2193,7 +2112,6 @@ function list_toc(){
                 };
             })(key));
         }
-        //console.log('link', link);
         toc_group.appendChild(item);
     }
     toc_container.appendChild(toc_group);
@@ -2228,8 +2146,6 @@ function add_modal(){
         if (child_obj[key]['modal']){
             let modal = document.getElementById("myModal");
             let closeButton = document.getElementById("close");
-
-            //console.log('is_mobile()', is_mobile());
             
             if (is_mobile()){
                 let itemContainer = document.querySelector(`#${key}-container`);
