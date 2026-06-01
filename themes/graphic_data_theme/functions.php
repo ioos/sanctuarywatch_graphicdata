@@ -716,40 +716,36 @@ function graphic_data_enqueue_scripts() {
 		array( 'strategy'  => 'defer' )
 	);
 
-	// Enqueue the plotly utility script used for interactive figures.
-	wp_enqueue_script(
-		'plotly-utility',
+	// register the plotly utility module used for interactive figures.
+	wp_register_script_module(
+		'@graphic-data/plotly-utility',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-utility.js',
 		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		graphic_data_get_theme_asset_version()
 	);
 
-	// Enqueue the plotly line chart script used in interactive figures.
-	wp_enqueue_script(
-		'plotly-timeseries-line',
+	// register the plotly line chart module used in interactive figures.
+	wp_register_script_module(
+		'@graphic-data/plotly-timeseries-line',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-line.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( '@graphic-data/plotly-utility' ),
+		graphic_data_get_theme_asset_version()
 	);
 
-	// Enqueue the plotly bar chart script used in interactive figures.
-	wp_enqueue_script(
-		'plotly-bar',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-bar.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+	// register the plotly bar chart module used in interactive figures.
+	wp_register_script_module(
+		'@graphic-data/plotly-timeseries-bar',
+		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-bar.js',
+		array( '@graphic-data/plotly-utility' ),
+		graphic_data_get_theme_asset_version()
 	);
 
-	// Enqueue the plotly map script used in interactive figures.
-	wp_enqueue_script(
-		'plotly-map',
+	// register the plotly map module used in interactive figures.
+	wp_register_script_module(
+		'@graphic-data/plotly-map',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-map.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( '@graphic-data/plotly-utility' ),
+		graphic_data_get_theme_asset_version()
 	);
 
 	// Enqueue the google tag script used to log user behavior with tag manager.

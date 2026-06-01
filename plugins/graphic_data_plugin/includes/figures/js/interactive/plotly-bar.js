@@ -1,3 +1,20 @@
+import {
+    loadPlotlyScript,
+    waitForElementById,
+    computeStandardDeviation,
+    computePercentile,
+    logFormFieldValues,
+    fillFormFieldValues,
+} from '@graphic-data/plotly-utility';
+
+const _barDataEl = document.getElementById(
+    'wp-script-module-data-@graphic-data/plotly-bar'
+);
+let _barDefaults = {};
+if ( _barDataEl?.textContent ) {
+    try { _barDefaults = JSON.parse( _barDataEl.textContent ); } catch {}
+}
+
 /**
  * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
  *
@@ -271,7 +288,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * @param {boolean}       config.displayModeBar                      - Whether to display the mode bar.
  * @param {Array<string>} config.modeBarButtonsToRemove              - List of mode bar buttons to remove.
  */
-async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID){
+export async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID){
     try {
         await loadPlotlyScript(); // ensures Plotly is ready
 
@@ -856,11 +873,7 @@ function loadDefaultInteractiveBarArguments(jsonColumns) {
 	}
 
 	const currentStr = field.value || '';
-	const defaultsStr =
-		typeof argumentsDefaultsBar !== 'undefined' &&
-		argumentsDefaultsBar.interactive_bar_arguments
-			? argumentsDefaultsBar.interactive_bar_arguments
-			: '';
+	const defaultsStr = _barDefaults.interactive_bar_arguments || '';
 
 	// Parse both to objects and keep original pair order from current
 	const currentPairs = toPairsFlexible(currentStr);

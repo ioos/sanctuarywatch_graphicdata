@@ -141,17 +141,37 @@ class Graphic_Data_Admin {
 			// Enqueue figure-render.js.
 			wp_enqueue_script( 'figure-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/figure-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
-			// Enqueue utility.js.
-			wp_enqueue_script( 'figure-utility', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-utility.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// register plotly-utility.js.
+			wp_register_script_module(
+				'@graphic-data/plotly-utility',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-utility.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
 
-			// Enqueue plotly-timeseries-line.js.
-			wp_enqueue_script( 'plotly-timeseries-line', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-timeseries-line.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// register plotly-timeseries-line.js.
+			wp_register_script_module(
+				'@graphic-data/plotly-timeseries-line',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-timeseries-line.js',
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
 
-			// Enqueue plotly-bar.js.
-			wp_enqueue_script( 'plotly-bar', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-bar.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// register plotly-bar.js.
+			wp_register_script_module(
+				'@graphic-data/plotly-timeseries-bar',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-timeseries-bar.js',
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
 
-			// Enqueue plotly-map.js.
-			wp_enqueue_script( 'plotly-map', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-map.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// register plotly-map.js.
+			wp_register_script_module(
+				'@graphic-data/plotly-map',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-map.js',
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
 
 			// Enqueue file-upload.js.
 			wp_enqueue_script( 'file-upload', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/file-upload.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );

@@ -1,5 +1,5 @@
 // Needed to ensure Plotly is only loaded once
-let plotlyScriptPromise = null;
+export let plotlyScriptPromise = null;
 
 /**
  * Loads the Plotly.js library dynamically if it is not already loaded.
@@ -23,7 +23,7 @@ let plotlyScriptPromise = null;
  *     console.error('Failed to load Plotly.js:', error);
  *   });
  */
-function loadPlotlyScript() {
+export function loadPlotlyScript() {
 	if (window.Plotly) {
 		return Promise.resolve();
 	}
@@ -84,7 +84,7 @@ function loadPlotlyScript() {
  *     console.error(error.message);
  *   });
  */
-function waitForElementById(id, timeout = 1000) {
+export function waitForElementById(id, timeout = 1000) {
 	return new Promise((resolve, reject) => {
 		const intervalTime = 50;
 		let elapsedTime = 0;
@@ -121,7 +121,7 @@ function waitForElementById(id, timeout = 1000) {
  * @return {number} The standard deviation of the numbers in the array. Returns 0 if the input
  *                   is not a valid array or is empty.
  */
-function computeStandardDeviation(arr) {
+export function computeStandardDeviation(arr) {
 	if (!Array.isArray(arr) || arr.length === 0) {
 		return 0;
 	}
@@ -180,7 +180,7 @@ function computeStandardDeviation(arr) {
  * // Returns undefined
  * computePercentile([], 90);
  */
-function computePercentile(arr, percentile) {
+export function computePercentile(arr, percentile) {
 	if (arr.length === 0) {
 		return undefined;
 	}
@@ -217,7 +217,7 @@ function computePercentile(arr, percentile) {
  *   .then(() => console.log('Plotly loaded!'))
  *   .catch((error) => console.error('Failed to load Plotly:', error));
  */
-function loadExternalScript(url) {
+export function loadExternalScript(url) {
 	return new Promise((resolve, reject) => {
 		// Check if script is already loaded
 		if (document.querySelector(`script[src="${url}"]`)) {
@@ -257,7 +257,7 @@ function loadExternalScript(url) {
  * // <input type="hidden" name="figure_interactive_arguments" value="">
  * logFormFieldValues(); // After a change to one of the above plotFields, the hidden input will be updated
  */
-function logFormFieldValues() {
+export function logFormFieldValues() {
 	const allFields = document.getElementsByName('plotFields');
 	const fieldValues = [];
 	allFields.forEach((uniqueField) => {
@@ -283,7 +283,7 @@ function logFormFieldValues() {
  * // <input type="hidden" name="figure_interactive_arguments" value="[['xAxisTitle', 'Date'], ['yAxisTitle', 'Value']]">
  * const xAxisTitle = fillFormFieldValues('xAxisTitle'); // xAxisTitle will be set to "Date"
  */
-function fillFormFieldValues(elementID) {
+export function fillFormFieldValues(elementID) {
 	let interactiveFields = document.getElementsByName(
 		'figure_interactive_arguments'
 	)[0].value;
@@ -303,7 +303,25 @@ function fillFormFieldValues(elementID) {
 }
 
 
-function createFigureIframeHtml(savedFigure, figureID, rootURL) {
+/**
+ * Generates the HTML document and embed metadata needed to display a Plotly figure in an iframe.
+ *
+ * Builds a self-contained HTML page that loads Plotly from CDN (if not already present) and
+ * renders the figure responsively. Width/height are stripped from the layout so the chart fills
+ * its container automatically.
+ *
+ * @param {Object} savedFigure - Plotly figure object with `data`, `layout`, and `config` properties.
+ * @param {string|number} figureID - Unique identifier for the figure, used in element IDs and the output filename.
+ * @param {string} rootURL - WordPress site root URL (no trailing slash), used to construct the iframe `src` path.
+ * @returns {{
+ *   figIframeHtml: string,
+ *   figIframeHtmlFileName: string,
+ *   figIframeHtmlPath: string,
+ *   figIframeCode: string
+ * }} Object containing the full HTML document string, the filename (without extension), the
+ *    expected server path, and a ready-to-insert `<iframe>` tag.
+ */
+export function createFigureIframeHtml(savedFigure, figureID, rootURL) {
 
 	function buildStandalonePlotlyEmbedCode(savedFigure, figureID) {
 		const cleanFigure = {
@@ -408,7 +426,21 @@ function createFigureIframeHtml(savedFigure, figureID, rootURL) {
 }
 
 
-function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
+/**
+ * Builds an inline HTML snippet that renders a Plotly figure directly in a page (not inside an iframe).
+ *
+ * Produces a `<div>` wrapper and an immediately-invoked `<script>` block. The script inlines the
+ * figure JSON, loads Plotly from CDN if needed (reusing any already-loading CDN script to avoid
+ * duplicate requests), and calls `Plotly.react` once the library is ready. Width/height are removed
+ * from the layout so the chart fills its container responsively.
+ *
+ * @param {Object} savedFigure - Plotly figure object with `data`, `layout`, and `config` properties.
+ * @param {string} embedID - Unique element ID for the chart `<div>`. A wrapper `<div>` with ID
+ *   `${embedID}-wrap` is also created around it.
+ * @returns {string} An HTML string containing the wrapper div and self-executing script tag, ready
+ *   to be injected into a page.
+ */
+export function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
 	const cleanFigure = {
 	  data: savedFigure.data || [],
 	  layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
@@ -486,7 +518,21 @@ function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
 }
 
 
-function saveHtmlToServer(htmlContent, fileName, postId) {
+/**
+ * Uploads an HTML string to the server as a file via the WordPress AJAX API.
+ *
+ * Wraps `htmlContent` in a `File` object and POSTs it to `wp-admin/admin-ajax.php` using
+ * the `custom_file_upload` action. Requires a `[name="figure_nonce"]` input to be present
+ * in the DOM; alerts and returns early if it is missing.
+ *
+ * @param {string} htmlContent - The raw HTML string to save.
+ * @param {string} fileName - The filename (including extension) to use when creating the uploaded file.
+ * @param {string|number} postId - The WordPress post ID to associate the uploaded file with.
+ * @returns {Promise<Object>|undefined} Resolves with the parsed JSON response from the server on
+ *   success or failure (`result.success` indicates outcome), or `undefined` if the nonce is missing.
+ * @throws {Error} Rejects if the `fetch` call itself fails (network error, etc.).
+ */
+export function saveHtmlToServer(htmlContent, fileName, postId) {
 	// Send the HTML content and filename to the server via AJAX
 
 

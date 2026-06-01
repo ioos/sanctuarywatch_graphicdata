@@ -1,3 +1,22 @@
+import {
+    loadPlotlyScript,
+    waitForElementById,
+    computeStandardDeviation,
+    computePercentile,
+    logFormFieldValues,
+    fillFormFieldValues,
+    createFigureIframeHtml,
+    buildPlotlySnippetEmbedCode,
+} from '@graphic-data/plotly-utility';
+
+const _lineDataEl = document.getElementById(
+    'wp-script-module-data-@graphic-data/plotly-timeseries-line'
+);
+let _lineDefaults = {};
+if ( _lineDataEl?.textContent ) {
+    try { _lineDefaults = JSON.parse( _lineDataEl.textContent ); } catch {}
+}
+
 /**
  * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
  *
@@ -247,7 +266,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - layout: Plotly layout object for axis, legend, and display settings.
  * - config: Plotly configuration object for rendering options.
  */
-async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
+export async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
     // try {
         await loadPlotlyScript(); // ensures Plotly is ready
 
@@ -908,11 +927,7 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
 	}
 
 	const currentStr = field.value || '';
-	const defaultsStr =
-		typeof argumentsDefaultsLine !== 'undefined' &&
-		argumentsDefaultsLine.interactive_line_arguments
-			? argumentsDefaultsLine.interactive_line_arguments
-			: '';
+	const defaultsStr = _lineDefaults.interactive_line_arguments || '';
 
 	// Parse both to objects and keep original pair order from current
 	const currentPairs = toPairsFlexible(currentStr);
