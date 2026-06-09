@@ -50,14 +50,25 @@ class Graphic_Data_Figure {
 			// default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/admin-settings-page.php.
 			$settings = get_option( 'graphic_data_settings' );
 			$default_interactive_line_arguments = isset( $settings['interactive_line_arguments'] ) ? $settings['interactive_line_arguments'] : '';
-			wp_localize_script(
-				'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php.
-				'argumentsDefaultsLine',           // global object name.
-				[ 'interactive_line_arguments' => $default_interactive_line_arguments ]
+			add_filter(
+				'script_module_data_@graphic-data/plotly-timeseries-line',
+				function ( array $data ) use ( $line_args ): array {
+					$data['interactive_line_arguments'] = $default_interactive_line_arguments;
+					return $data;
+				}
 			);
 
 			$settings = get_option( 'graphic_data_settings' );
 			$default_interactive_bar_arguments = isset( $settings['interactive_bar_arguments'] ) ? $settings['interactive_bar_arguments'] : '';
+
+			add_filter(
+				'script_module_data_@graphic-data/plotly-bar',
+				function ( array $data ) use ( $bar_args ): array {
+					$data['interactive_bar_arguments'] = $default_interactive_bar_arguments;
+					return $data;
+				}
+			);
+
 			wp_localize_script(
 				'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php.
 				'argumentsDefaultsBar',           // global object name.

@@ -583,3 +583,5 @@ export function saveHtmlToServer(htmlContent, fileName, postId) {
 		});
   }
 
+  // Bridge for classic scripts (admin-preview-buttons.js) until they are modularized.
+  window.fillFormFieldValues = fillFormFieldValues;

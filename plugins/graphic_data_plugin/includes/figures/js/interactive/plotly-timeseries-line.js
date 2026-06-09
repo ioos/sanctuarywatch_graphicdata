@@ -274,7 +274,8 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
         ////console.log(rawField);
         const figureArguments = Object.fromEntries(JSON.parse(rawField));
         const rootURL = window.location.origin;
-
+		let figureID = '';
+		
         //Rest call to get uploaded_path_json
         if (postID == null) {
             // ADMIN SIDE POST ID GRAB
@@ -1710,6 +1711,8 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 			let newRow = document.createElement('div');
 			newRow.classList.add('row', 'fieldPadding');
 
+			let fieldLabelNumber = '';
+
 			if (fieldLabel[0] != 'XAxis') {
 				fieldLabelNumber = parseInt(fieldLabel[0].slice(-1));
 				if (fieldLabelNumber % 2 != 0) {
@@ -2183,3 +2186,5 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 		});
 	}
 }
+// Bridge for classic scripts until they are modularized.
+window.plotlyLineParameterFields = plotlyLineParameterFields;

@@ -1,3 +1,5 @@
+import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-render';
+
 /**
  * Renders a modal dialog for corresponding icon with data fetched from a WordPress REST API endpoint.
  * The modal displays a title, tagline, and two sections of content (more info and images)
@@ -22,18 +24,12 @@
  * @param          obj
  * @param          modal_obj
  */
-function render_modal(key, obj, modal_obj){
+export function render_modal(key, obj, modal_obj){
 
 
     // Allow passing in a specific child_obj from preview mode in admin-modal.js
-    if (typeof child_obj === 'undefined') {
-        child_obj = obj;
-    }
-
-    //console.log('Rendering modal for key:', key, 'with child_obj:', child_obj);
-
+    let child_obj = ( typeof window.child_obj !== 'undefined' ) ? window.child_obj : obj;
     let id = child_obj[key]['modal_id'];
-    //console.log('id', id);
 
     //function for rendering the modal content after fetching data
     function populateModalContent(modal_data, child_obj, key) {
@@ -215,6 +211,8 @@ function render_modal(key, obj, modal_obj){
     }
     //dumpComputedCSS('.modal-dialog');
 }
+// TO DO: Remove the following line with Phase 4 of the refactoring
+window.render_modal = render_modal;
 
 /**
  * Ensures at least one tab button is active inside the modal after tabs have been created or filtered.
@@ -393,7 +391,7 @@ function trapFocus(modalElement) {
         .then(response => response.json())
         .then(data => {
 
-            all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
+            let all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
             all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id));
             //console.log('all_figure_data1', all_figure_data);
 
@@ -467,6 +465,7 @@ function trapFocus(modalElement) {
                         const figure_data = all_figure_data[idx];
                 
                         let external_alt = '';
+                        let img = '';
                         if (figure_data['figure_path'] === 'External') {
                             img = figure_data['figure_external_url'];
                             external_alt = figure_data['figure_external_alt'];

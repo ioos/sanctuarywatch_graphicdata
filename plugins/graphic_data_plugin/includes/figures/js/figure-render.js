@@ -1,3 +1,7 @@
+import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
+import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
+import { producePlotlyMap } from '@graphic-data/plotly-map';
+
 /**
  * Renders interactive plots (e.g., Plotly graphs) within a specified tab content element.
  * Handles dynamic loading, resizing for mobile, and tab switching behavior.
@@ -30,7 +34,7 @@
  * };
  * await render_interactive_plots(tabContentElement, info_obj);
  */
-async function render_interactive_plots(tabContentElement, info_obj) {
+export async function render_interactive_plots(tabContentElement, info_obj) {
 	//Lets control if the figure is published or not
 	let figure_published = info_obj.figure_published;
 	if (figure_published != 'published') {
@@ -357,7 +361,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
  * Usage:
  * This function is called for each tab, populating one or more figures (and other corresponding info)
  */
-async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
+export async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
 
     console.log('tabContentElement', tabContentElement);
 
@@ -473,8 +477,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             } else {
                 const protocol = window.location.protocol; // Get the current protocol (e.g., http or https)
                 const host = window.location.host;// Get the current host (e.g., domain name)
-                const restURL = protocol + "//" + host  + "/wp-json/graphics_data/v1/media/alt-text-by-url?image_url=" + encodeURI(img.src); 
-                console.log(restURL);
+                const restURL = protocol + "//" + host  + "/wp-json/graphic_data/v1/media/alt-text-by-url?image_url=" + encodeURI(img.src); 
                 fetch(restURL)                
                 .then(response => response.json())
                 .then(data => {
@@ -558,7 +561,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             
             //Append the codeDiv to the figureDiv
             await figureDiv.appendChild(codeDiv);
-            embedCode = info_obj['code'];
+            let embedCode = info_obj['code'];
 
             //Error in admin preview for handling for missing image
             if (!embedCode || embedCode === ''){
@@ -604,7 +607,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     //CREATE PARAGRAPH ELEMENT UNDER "myTabContent" > div class="figure"
     const caption = document.createElement('p');
     caption.classList.add('caption');
-    tempShortCaption = info_obj['shortCaption'];
+    let tempShortCaption = info_obj['shortCaption'];
     tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     caption.innerHTML = tempShortCaption;
     caption.style.marginTop = '10px';
@@ -638,7 +641,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     summary.textContent = 'Click for Details';
 
     let longCaption = document.createElement("p");
-    tempLongCaption = info_obj['longCaption'];
+    let tempLongCaption = info_obj['longCaption'];
     tempLongCaption = tempLongCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     longCaption.innerHTML = tempLongCaption;
     if (info_obj['longCaption'] != ''){
@@ -685,3 +688,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     }
 
 }
+
+// Bridge for classic scripts (admin-preview-buttons.js) until they are modularized.
+window.render_interactive_plots = render_interactive_plots;
+window.render_tab_info = render_tab_info;

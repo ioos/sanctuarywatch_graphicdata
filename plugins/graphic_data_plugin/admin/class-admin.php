@@ -70,6 +70,53 @@ class Graphic_Data_Admin {
 		wp_deregister_script( '@graphic-data/admin-utility' );
 
 		$current_post_type = get_post_type();
+
+		if ( 'post.php' === $hook_suffix || 'post-new.php' === $hook_suffix ) {
+			$interactive_base = dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/';
+
+			wp_register_script_module(
+				'@graphic-data/plotly-utility',
+				$interactive_base . 'plotly-utility.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/plotly-timeseries-line',
+				$interactive_base . 'plotly-timeseries-line.js',
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/plotly-bar',                     // FIXED id (was plotly-timeseries-bar).
+				$interactive_base . 'plotly-bar.js',                                   // FIXED filename.
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/plotly-map',
+				$interactive_base . 'plotly-map.js',
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/figure-render',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/figure-render.js',
+				array( '@graphic-data/plotly-timeseries-line', '@graphic-data/plotly-bar', '@graphic-data/plotly-map' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/modal-render',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/modals/js/modal-render.js',
+				array( '@graphic-data/figure-render' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+		}
+
 		// Load About-specific Javascript only when editing/creating an About post.
 		if ( 'about' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
 			wp_register_script_module(
@@ -97,7 +144,7 @@ class Graphic_Data_Admin {
 
 			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
-			// Enqueue figure-render.js.
+			// Enqueue scene-render.js.
 			wp_enqueue_script( 'scene-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
 			// Enqueue admin-scene.js.
@@ -129,8 +176,8 @@ class Graphic_Data_Admin {
 			// Enqueue admin-preview-buttons.js.
 			wp_enqueue_script( 'admin-preview-buttons', plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
-			// Enqueue modal-render.js.
-			wp_enqueue_script( 'modal-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/modals/js/modal-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Enqueue the modal render module.
+			wp_enqueue_script_module( '@graphic-data/modal-render' );
 		}
 
 		// Load Figure-specific Javascript only when editing/creating a Figure post.
@@ -139,39 +186,7 @@ class Graphic_Data_Admin {
 			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
 			// Enqueue figure-render.js.
-			wp_enqueue_script( 'figure-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/figure-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
-
-			// register plotly-utility.js.
-			wp_register_script_module(
-				'@graphic-data/plotly-utility',
-				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-utility.js',
-				array(),
-				GRAPHIC_DATA_PLUGIN_VERSION
-			);
-
-			// register plotly-timeseries-line.js.
-			wp_register_script_module(
-				'@graphic-data/plotly-timeseries-line',
-				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-timeseries-line.js',
-				array( '@graphic-data/plotly-utility' ),
-				GRAPHIC_DATA_PLUGIN_VERSION
-			);
-
-			// register plotly-bar.js.
-			wp_register_script_module(
-				'@graphic-data/plotly-timeseries-bar',
-				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-timeseries-bar.js',
-				array( '@graphic-data/plotly-utility' ),
-				GRAPHIC_DATA_PLUGIN_VERSION
-			);
-
-			// register plotly-map.js.
-			wp_register_script_module(
-				'@graphic-data/plotly-map',
-				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-map.js',
-				array( '@graphic-data/plotly-utility' ),
-				GRAPHIC_DATA_PLUGIN_VERSION
-			);
+			wp_enqueue_script_module( '@graphic-data/figure-render' );
 
 			// Enqueue file-upload.js.
 			wp_enqueue_script( 'file-upload', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/file-upload.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
@@ -188,12 +203,11 @@ class Graphic_Data_Admin {
 			);
 			wp_enqueue_script_module( '@graphic-data/admin-figure' );
 
-			// Enqueue modal-render.js.
-			wp_enqueue_script( 'modal-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/modals/js/modal-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Enqueue the modal render module.
+			wp_enqueue_script_module( '@graphic-data/modal-render' );
 
 			// Enqueue admin-preview-buttons.js.
 			wp_enqueue_script( 'admin-preview-buttons', plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
-
 		}
 
 		// Load Modal-specific Javascript only for admin columns screen.

@@ -686,26 +686,33 @@ function graphic_data_enqueue_scripts() {
 		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js',
 		array(),
 		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy' => 'defer', 'in_footer' => true )
+		array(
+			'strategy' => 'defer',
+			'in_footer' => true,
+		)
 	);
 
-	// Enqueue the modal render script.
-	wp_enqueue_script(
-		'modal-render',
+	// Enqueue the modal render module.
+	wp_register_script_module(
+		'@graphic-data/modal-render',
 		content_url() . '/plugins/graphic_data_plugin/includes/modals/js/modal-render.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( '@graphic-data/figure-render' ),
+		GRAPHIC_DATA_PLUGIN_VERSION
 	);
+	wp_enqueue_script_module( '@graphic-data/modal-render' );
 
-	// Enqueue the figure render script.
-	wp_enqueue_script(
-		'figure-render',
+	// Enqueue the figure render module.
+	wp_register_script_module(
+		'@graphic-data/figure-render',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/figure-render.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array(
+			'@graphic-data/plotly-timeseries-line',
+			'@graphic-data/plotly-bar',
+			'@graphic-data/plotly-map',
+		),
+		GRAPHIC_DATA_PLUGIN_VERSION
 	);
+	wp_enqueue_script_module( '@graphic-data/figure-render' );
 
 	// Enqueue the interactive figure script.
 	wp_enqueue_script(
@@ -734,8 +741,8 @@ function graphic_data_enqueue_scripts() {
 
 	// register the plotly bar chart module used in interactive figures.
 	wp_register_script_module(
-		'@graphic-data/plotly-timeseries-bar',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-bar.js',
+		'@graphic-data/plotly-bar',
+		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-bar.js',
 		array( '@graphic-data/plotly-utility' ),
 		graphic_data_get_theme_asset_version()
 	);
