@@ -14,7 +14,9 @@ const isAdminEditor =
 
 // Deep clone the childIds object to create child_obj, ensuring that modifications to child_obj do not affect the original childIds.
 // This is useful for safely manipulating or filtering the child_obj data structure later in the script.
-if (typeof child_obj === 'undefined') { var child_obj = {}; }
+if (typeof child_obj === 'undefined') {
+	var child_obj = {};
+}
 
 if (isAdminEditor) {
 	graphicDataSceneData = {};
@@ -32,9 +34,9 @@ try {
 
 //Allows for declaration of child_obj variable for theme and for admin side preview mode
 if (isAdminEditor) {
-    child_obj = undefined;
+	child_obj = undefined;
 } else {
-    child_obj = JSON.parse(JSON.stringify(graphicDataSceneData.childIds));
+	child_obj = JSON.parse(JSON.stringify(graphicDataSceneData.childIds));
 }
 
 // Convert the svgUrl variable to a JSON string, then extract the actual URL by removing the first two and last two characters.
@@ -60,7 +62,9 @@ let sceneLoc; // Will store the current scene location or identifier
 
 // Initialize empty objects to store section data and section colors for the scene.
 // These will be populated as the script processes scene/section information.
-if (typeof sectionObj === 'undefined') { var sectionObj = {}; }
+if (typeof sectionObj === 'undefined') {
+	var sectionObj = {};
+}
 const sectColors = {};
 
 // If the current device is NOT mobile, inject custom CSS styles for tablet/desktop layouts.
@@ -156,7 +160,9 @@ try {
 } catch {}
 
 // Step 4: extract the objects (no keys) to match your original format
-if (typeof sorted_child_objs === 'undefined') { var sorted_child_objs = null; }
+if (typeof sorted_child_objs === 'undefined') {
+	var sorted_child_objs = null;
+}
 if (!isAdminEditor) {
 	sorted_child_objs = sortedChildEntries.map(([_, val]) => val);
 }
@@ -169,56 +175,6 @@ if (!isAdminEditor) {
 	}
 }
 
-// Declare a variable to track if the current environment is mobile.
-// Initially set to false, assuming a non-mobile environment by default.
-let mobileBool = false;
-
-
-// persistent flag (must live outside the function)
-window.mobileBool = window.mobileBool || false;
-
-function admin_preview_condition_checker() {
-    const admin_preview_mobile = document.querySelectorAll(
-        '[data-depend-id="scene_preview_mobile"],[data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"]'
-    );
-
-    const admin_preview_desktop = document.querySelectorAll(
-        '[data-depend-id="scene_preview"],[data-depend-id="modal_preview"],[data-depend-id="figure_preview"]'
-    );
-
-    // Ensure the global exists
-    if (typeof window.mobileBool === 'undefined') {
-        window.mobileBool = false;
-    }
-
-    // Bind mobile preview -> sets true
-    if (admin_preview_mobile.length > 0) {
-        admin_preview_mobile.forEach(el => {
-            if (el.dataset.previewMobileBound === '1') return;
-            el.dataset.previewMobileBound = '1';
-
-            el.addEventListener('click', () => {
-                window.mobileBool = true;
-            });
-        });
-    }
-
-    // Bind desktop preview -> resets false
-    if (admin_preview_desktop.length > 0) {
-        admin_preview_desktop.forEach(el => {
-            if (el.dataset.previewDesktopBound === '1') return;
-            el.dataset.previewDesktopBound = '1';
-
-            el.addEventListener('click', () => {
-                window.mobileBool = false;
-            });
-        });
-    }
-    // Return the current state *now*
-    return !!window.mobileBool;
-}
-
-
 //Main Initialization of script
 document.addEventListener('DOMContentLoaded', () => {
 	if (!isAdminEditor) {
@@ -228,50 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Debounces a function, delaying its execution until after a specified wait time
- * has elapsed since the last time it was invoked.
- * @param {Function} func  The function to debounce.
- * @param {number}   delay The number of milliseconds to delay.
- * @return {Function} The new debounced function.
- */
-function debounce(func, delay) {
-	let timeoutId;
-	return function (...args) {
-		const context = this;
-		clearTimeout(timeoutId);
-		timeoutId = setTimeout(() => {
-			func.apply(context, args);
-		}, delay);
-	};
-}
-
-/**
- * Converts a hex color code to an RGBA color string.
- *
- * @function
- * @param {string} hex     - The hex color code (e.g., "#ff0000" or "ff0000").
- * @param {number} opacity - The opacity value for the RGBA color (between 0 and 1).
- * @return {string} The RGBA color string (e.g., "rgba(255, 0, 0, 0.5)").
- *
- * @example
- * hexToRgba('#3498db', 0.7); // returns "rgba(52, 152, 219, 0.7)"
- */
-function hexToRgba(hex, opacity) {
-	// Remove the hash if it's present
-	hex = hex.replace(/^#/, '');
-
-	// Parse the r, g, b values from the hex string
-	const bigint = parseInt(hex, 16);
-	const r = (bigint >> 16) & 255;
-	const g = (bigint >> 8) & 255;
-	const b = bigint & 255;
-
-	// Return the rgba color string
-	return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-}
-
-/**
- 
  * This function pre-processes the `child_obj` dictionary to ensure that each element (scene icon) belongs to the 
  * current scene by checking if its scene ID matches the post ID.
  * This ensures that elements from other scenes are excluded, and keys are updated as needed to avoid duplicates.
@@ -300,81 +212,6 @@ function process_child_obj() {
 	// If you need it back as an object:
 }
 
-//returns DOM elements for mobile layer
-/**
- * Retrieves the DOM element corresponding to a specific layer in a mobile SVG structure based on its label.
- *
- * @param {HTMLElement} mob_icons - The parent DOM element that contains all child elements (icons) to search through.
- * @param {string}      elemname  - The name of the layer or icon to search for. It matches the 'inkscape:label' attribute of the child element.
- *
- * @return {HTMLElement|null} - Returns the DOM element that matches the given `elemname` in the 'inkscape:label' attribute.
- *                                If no match is found, it returns `null`.
- */
-function get_mobile_layer(mob_icons, elemname) {
-	for (let i = 0; i < mob_icons.children.length; i++) {
-		const child = mob_icons.children[i];
-		const label = child.getAttribute('id');
-		if (label === elemname) {
-			return child;
-		}
-	}
-	return null;
-}
-
-/**
- * Removes the outer container with the ID 'entire_thing' and promotes its child elements to the body.
- * This is because we want to get rid of entire_thing if we are on pc/tablet view, and keep it otherwise (ie mobile)
- *
- * This function locates the container element with the ID 'entire_thing', moves all its child elements
- * directly to the `document.body`, and then removes the container itself from the DOM.
- *
- * @return {void}
- */
-function remove_outer_div() {
-	const container = document.querySelector('#entire_thing');
-	while (container.firstChild) {
-		document.body.insertBefore(container.firstChild, container);
-	}
-	container.remove();
-}
-
-/**
- * Checks if the device being used is touchscreen or not.
- * @return {boolean} `True` if touchscreen else `False`.
- */
-function is_touchscreen(){
-
-    if (isAdminEditor && admin_preview_condition_checker()) {
-        return true;
-    } else {
-        //check multiple things here: type of device, screen width, 
-        return ( 'ontouchstart' in window ) || 
-            ( navigator.maxTouchPoints > 0 ) || 
-            ( navigator.msMaxTouchPoints > 0 );
-    }
-    
-}
-
-/**
- * Checks if the device being used is a mobile device or not.
- * Checks operating system and screen dimensions
- * @return {boolean} `True` if mobile else `False`.
- */
-function is_mobile() {
-
-    // Admin preview mobile functionality to allow for is_mobile() to return true
-    if (isAdminEditor && admin_preview_condition_checker()) {
-        return true;
-    }
-    // Everything else that isnt admin preview related uses this
-    else {
-        return (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) 
-           && (window.innerWidth < 512 || window.innerHeight < 512);
-           //(window.innerWidth <= 512 && 'ontouchstart' in window);
-    }
-    
-}
-
 /**
  * A utility object from the internet for detecting the user's device type based on the user agent string.
  * Helper function from the internet; using it to check type of device.
@@ -387,96 +224,36 @@ function is_mobile() {
  * - `detect(s)`: Detects the device type from the user agent string `s` (or the current user agent if not provided).
  *     - @returns {string} - The detected device type ('tablet', 'phone', or 'desktop').
  */
-var deviceDetector = (function ()
-{
-  var ua = navigator.userAgent.toLowerCase();
-  var detect = (function(s)
-  {
-    if (isAdminEditor && admin_preview_condition_checker()) {
-        return 'phone';
-    }
+var deviceDetector = (function () {
+	var ua = navigator.userAgent.toLowerCase();
+	var detect = function (s) {
+		if (isAdminEditor && admin_preview_condition_checker()) {
+			return 'phone';
+		}
 
-    if(s===undefined)s=ua;
-    else ua = s.toLowerCase();
-    if(/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(ua))
-                return 'tablet';
-          else
-      if(/(mobi|ipod|phone|blackberry|opera mini|fennec|minimo|symbian|psp|nintendo ds|archos|skyfire|puffin|blazer|bolt|gobrowser|iris|maemo|semc|teashark|uzard)/.test(ua))            
-                    return 'phone';
-                else return 'desktop';
-    });
-    return{
-        device:detect(),
-        detect:detect,
-        isMobile:((detect()!='desktop')?true:false),
-        userAgent:ua
-    };
-}());
- 
-
-//creates an accordion item w/custom IDs based on input
-/**
- * Creates and returns a fully structured Bootstrap accordion item with a header, button, and collapsible content.
- * Called in scenarios where accordion needs to be created - within `render_modal` (for modal info and modal images), `make_scene_elements` (for scene info and scene photo accordions), and `make_title' (for mobile tagline)
- *
- * @param {string} accordionId     - The unique ID for the accordion item.
- * @param {string} headerId        - The unique ID for the accordion header.
- * @param {string} collapseId      - The unique ID for the collapsible section.
- * @param {string} buttonText      - The text to display on the accordion button.
- * @param {string} collapseContent - The content to display within the collapsible section.
- *
- * @return {HTMLElement} `accordionItem` The complete accordion item containing the header, button, and collapsible content.
- */
-function createAccordionItem(
-	accordionId,
-	headerId,
-	collapseId,
-	buttonText,
-	collapseContent
-) {
-	// Create Accordion Item
-	const accordionItem = document.createElement('div');
-	accordionItem.classList.add('accordion-item');
-	accordionItem.setAttribute('id', accordionId);
-
-	// Create Accordion Header
-	const accordionHeader = document.createElement('h2');
-	accordionHeader.classList.add('accordion-header');
-	accordionHeader.setAttribute('id', headerId);
-
-	// Create Accordion Button
-	const accordionButton = document.createElement('button');
-	accordionButton.classList.add('accordion-button', 'collapsed'); // Add 'collapsed' class
-	accordionButton.setAttribute('type', 'button');
-	accordionButton.setAttribute('data-bs-toggle', 'collapse');
-	accordionButton.setAttribute('data-bs-target', `#${collapseId}`);
-	accordionButton.setAttribute('aria-expanded', 'false');
-	accordionButton.setAttribute('aria-controls', collapseId);
-	accordionButton.innerHTML = buttonText;
-
-	// Append Button to Header
-	accordionHeader.appendChild(accordionButton);
-
-	// Create Accordion Collapse
-	const accordionCollapse = document.createElement('div');
-	accordionCollapse.classList.add('accordion-collapse', 'collapse');
-	accordionCollapse.setAttribute('id', collapseId);
-	accordionCollapse.setAttribute('aria-labelledby', headerId);
-
-	// Create Accordion Collapse Body
-	const accordionCollapseBody = document.createElement('div');
-	accordionCollapseBody.classList.add('accordion-body');
-	accordionCollapseBody.innerHTML = collapseContent;
-
-	// Append Collapse Body to Collapse
-	accordionCollapse.appendChild(accordionCollapseBody);
-
-	// Append Header and Collapse to Accordion Item
-	accordionItem.appendChild(accordionHeader);
-	accordionItem.appendChild(accordionCollapse);
-
-	return accordionItem;
-}
+		if (s === undefined) s = ua;
+		else ua = s.toLowerCase();
+		if (
+			/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(
+				ua
+			)
+		)
+			return 'tablet';
+		else if (
+			/(mobi|ipod|phone|blackberry|opera mini|fennec|minimo|symbian|psp|nintendo ds|archos|skyfire|puffin|blazer|bolt|gobrowser|iris|maemo|semc|teashark|uzard)/.test(
+				ua
+			)
+		)
+			return 'phone';
+		else return 'desktop';
+	};
+	return {
+		device: detect(),
+		detect: detect,
+		isMobile: detect() != 'desktop' ? true : false,
+		userAgent: ua,
+	};
+})();
 
 /**
  * Waits for a DOM element matching the provided selector to become available.
@@ -522,81 +299,44 @@ async function waitForElement(selector) {
  * Called after init when DOMcontent loaded.
  */
 async function handleHashNavigation() {
-    //maybe in here check that the scene is/is not an overview
-    if (window.location.hash) {
-        let tabId = window.location.hash.substring(1);
+	//maybe in here check that the scene is/is not an overview
+	if (window.location.hash) {
+		let tabId = window.location.hash.substring(1);
 
-        let modalName = tabId.split('/')[0];
+		let modalName = tabId.split('/')[0];
 
-        tabId = tabId.replace(/\//g, '-');
+		tabId = tabId.replace(/\//g, '-');
 
-        history.pushState("", document.title, window.location.pathname + window.location.search);
-        let modName;
-        if (is_mobile()){
-            let modModal =  modalName.replace(/_/g, ' ');
-            modName = child_ids_helper[modModal] + '-container';
-        } else{
-            modName = modalName;
-        }
+		history.pushState(
+			'',
+			document.title,
+			window.location.pathname + window.location.search
+		);
+		let modName;
+		if (is_mobile()) {
+			let modModal = modalName.replace(/_/g, ' ');
+			modName = child_ids_helper[modModal] + '-container';
+		} else {
+			modName = modalName;
+		}
 
-        let modalButton = await waitForElement(`#${modName}`);
+		let modalButton = await waitForElement(`#${modName}`);
 
-        // Sometimes a <g tag is sent insteast of an <a tag. This break the way the modal loads. This is a good work around
-        // if <g then change method of waiting for click, if not then proceed as normal
-        if (modalButton.tagName.toLowerCase() === 'g') {
-            modalButton.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
-        } else {
-            modalButton.click();
-        }
+		// Sometimes a <g tag is sent insteast of an <a tag. This break the way the modal loads. This is a good work around
+		// if <g then change method of waiting for click, if not then proceed as normal
+		if (modalButton.tagName.toLowerCase() === 'g') {
+			modalButton.dispatchEvent(
+				new MouseEvent('click', { bubbles: true, cancelable: true })
+			);
+		} else {
+			modalButton.click();
+		}
 
-        let tabButton = await waitForElement(`#${tabId}`);
-        tabButton.click();
-    } else {
-
-    }
+		let tabButton = await waitForElement(`#${tabId}`);
+		tabButton.click();
+	} else {
+	}
 }
-
-/**
- * Convert an arbitrary string into a URL/DOM-friendly “slug”.
- *
- * What it does:
- * - Converts the input to a string.
- * - Normalizes Unicode characters (splits accented characters into base + accent marks).
- * - Removes diacritic marks (accents).
- * - Lowercases the result.
- * - Trims leading/trailing whitespace.
- * - Replaces any run of non-alphanumeric characters with a single hyphen.
- * - Trims leading/trailing hyphens.
- *
- * Common uses:
- * - Generating safe IDs: `id="my-title-1"`
- * - Building URL paths: `/posts/my-title-1`
- * - Creating stable keys for maps/objects
- *
- * Notes:
- * - Output is limited to ASCII `a-z`, `0-9`, and `-`.
- * - If you need underscores instead of hyphens, change the replacement to `"_"`
- *   and adjust the trim regex accordingly.
- *
- * @param {string} str - Input text to slugify.
- * @returns {string} A slugified, lowercased, hyphen-separated string.
- *
- * @example
- * slugify("R&D 50% Off — #1!") // "r-d-50-off-1"
- * slugify("  Crème brûlée  ")  // "creme-brulee"
- * slugify("Hello   world")     // "hello-world"
- */
-function slugify(str) {
-    return String(str)
-        .normalize("NFKD")                 // split accents
-        .replace(/[\u0300-\u036f]/g, "")   // remove accents
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-")       // non-alnum -> -
-        .replace(/^-+|-+$/g, "");          // trim dashes
-}
-
-
 
 /**
  * Initializes the application by loading instance details, setting up the scene location,
@@ -620,7 +360,6 @@ function slugify(str) {
  */
 async function init() {
 	try {
-
 		sceneLoc = make_title(); //this should be done on the SCENE side of things, maybe have make_title return scene object instead
 		thisInstance = sceneLoc;
 
