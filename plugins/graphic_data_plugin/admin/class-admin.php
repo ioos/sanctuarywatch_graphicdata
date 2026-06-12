@@ -142,10 +142,22 @@ class Graphic_Data_Admin {
 		// Load Scene-specific Javascript only when editing/creating a Scene post.
 		if ( 'scene' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
 
-			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/scene-shared',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-shared.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/scene-shared' );
 
 			// Enqueue scene-render.js.
-			wp_enqueue_script( 'scene-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/scene-render',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-render.js',
+				array( '@graphic-data/scene-shared' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/scene-render' );
 
 			// Enqueue admin-scene.js.
 			wp_register_script_module(
@@ -162,8 +174,6 @@ class Graphic_Data_Admin {
 
 		// Load Modal-specific Javascript only when editing/creating a Modal post.
 		if ( 'modal' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
-
-			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
 			wp_register_script_module(
 				'@graphic-data/admin-modal',
@@ -182,8 +192,6 @@ class Graphic_Data_Admin {
 
 		// Load Figure-specific Javascript only when editing/creating a Figure post.
 		if ( 'figure' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
-
-			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
 
 			// Enqueue figure-render.js.
 			wp_enqueue_script_module( '@graphic-data/figure-render' );

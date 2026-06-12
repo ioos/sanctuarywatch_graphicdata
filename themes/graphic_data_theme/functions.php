@@ -660,13 +660,16 @@ add_action( 'admin_notices', 'graphic_data_theme_check_required_plugin' );
 function graphic_data_enqueue_scripts() {
 	// Enqueue the theme's script.js file, but don't run on the main index page or on the about page.
 	if ( ! is_home() && ! is_front_page() && 'about' !== get_post_type() ) {
-		wp_enqueue_script(
-			'script-js',
+		wp_register_script_module(
+			'@graphic-data/theme-script',
 			get_template_directory_uri() . '/assets/js/script.js',
-			array(),
-			graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-			array( 'strategy' => 'defer' )
+			array(
+				'@graphic-data/scene-render',
+				'@graphic-data/scene-shared',
+			),
+			graphic_data_get_theme_asset_version(),
 		);
+		wp_enqueue_script_module( '@graphic-data/theme-script' );
 	}
 
 	// Enqueue the theme's index.js file, but don't run on the about page.
@@ -681,16 +684,13 @@ function graphic_data_enqueue_scripts() {
 	}
 
 	// Enqueue the scene render script.
-	wp_enqueue_script(
-		'scene-render',
+	wp_register_script_module(
+		'@graphic-data/scene-render',
 		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array(
-			'strategy' => 'defer',
-			'in_footer' => true,
-		)
+		array( '@graphic-data/scene-shared' ),
+		GRAPHIC_DATA_PLUGIN_VERSION
 	);
+	wp_enqueue_script_module( '@graphic-data/scene-render' );
 
 	// Enqueue the modal render module.
 	wp_register_script_module(
@@ -737,6 +737,14 @@ function graphic_data_enqueue_scripts() {
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-line.js',
 		array( '@graphic-data/plotly-utility' ),
 		graphic_data_get_theme_asset_version()
+	);
+
+	// register the scene shared module that contains utility functions and values needed to render scenes.
+	wp_register_script_module(
+		'@graphic-data/scene-shared',
+		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-shared.js',
+		array(),
+		GRAPHIC_DATA_PLUGIN_VERSION
 	);
 
 	// register the plotly bar chart module used in interactive figures.

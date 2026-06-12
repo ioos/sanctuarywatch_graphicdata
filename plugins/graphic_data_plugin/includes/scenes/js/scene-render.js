@@ -1,10 +1,54 @@
+import {
+    child_obj, setChildObj,
+    sorted_child_objs, setSortedChildObjs,
+    sectionObj, setSectionObj,
+    visible_modals, setVisibleModals,
+    scene_data, setSceneData,
+    getSceneData, deviceDetector,
+    is_mobile, is_touchscreen, slugify, debounce, hexToRgba,
+    get_mobile_layer, remove_outer_div, createAccordionItem,
+} from '@graphic-data/scene-shared';
+
+let graphicDataSceneData = getSceneData();
+
 alertIfMissingModal();
 
-if (typeof child_obj === 'undefined') { var child_obj = {}; }
-if (typeof sorted_child_objs === 'undefined') { var sorted_child_objs = null; }
-if (typeof sectionObj === 'undefined') { var sectionObj = {}; }
-if (typeof visible_modals === 'undefined') { var visible_modals = []; }
-if (typeof scene_data === 'undefined') { var scene_data = {}; }
+const isAdminEditor =
+window.location.href.includes('post.php') ||
+window.location.href.includes('post-new.php') ||
+window.location.href.includes('edit.php');
+
+/**
+ * Initializes the application by loading instance details, setting up the scene location,
+ * defining instance-specific settings, and rendering the SVG element.
+ *
+ * This asynchronous function serves as the driver for the script. It performs the following tasks:
+ * 1. Fetches instance details by calling `load_instance_details()` and stores the data in a global variable.
+ * 2. Determines the scene location by calling `make_title()` (which also makes the title, other scene elemsnts) and stores the result in `sceneLoc`, which is also a global variable.
+ * 3. Finds the instance object corresponding to the scene location and assigns it to `thisInstance`.
+ * 4. Extracts the hover colors for the instance and assigns them to a global variable `colors`.
+ * 5. Calls `loadSVG(url, "svg1")` to load and render an SVG based on the provided URL.
+ *
+ * If any errors occur during these steps, they are caught and logged to the console.
+ *
+ * @async
+ * @function init
+ *
+ * @throws {Error} - If fetching instance details, determining the scene location, or loading the SVG fails, an error is caught and logged.
+ *
+ * Usage: right below; this is essentially the driver function for the entire file, as it pretty much calls every other function inside here.
+ */
+export async function init() {
+    try {
+        await make_title();
+        const url = graphicDataSceneData.svgUrl;
+        await loadSVG(url, 'svg1');
+    } catch (error) {
+        if (!isAdminEditor) {
+            console.error('Error:', error);
+        }
+    }
+}
 
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
@@ -12,11 +56,16 @@ if (typeof scene_data === 'undefined') { var scene_data = {}; }
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  *  @throws {Error} - Throws an error if scene data not found or error fetching data
  */
-async function make_title() {
+export async function make_title() {
+    // On admin preview, admin-preview-buttons.js has set window.graphicDataSceneData.titleArr
+    // by the time this runs. Re-sync the module-scoped reference.
+    if (window.location.href.includes('post.php') && window.graphicDataSceneData?.titleArr) {
+        graphicDataSceneData.titleArr = window.graphicDataSceneData.titleArr;
+    }
 	const protocol = window.location.protocol;
 	const host = window.location.host;
 	try {
-		scene_data = graphicDataSceneData.titleArr;
+		setSceneData(graphicDataSceneData.titleArr);
         scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
 		const scene_location = scene_data.scene_location;
 		const title = scene_data.post_title;
@@ -154,7 +203,7 @@ async function make_title() {
  * @return {void}
  */
 
-function mobile_helper(svgElement, iconsArr, mobile_icons) {
+export function mobile_helper(svgElement, iconsArr, mobile_icons) {
     // Clear any existing mobile layout DOM container
     
     if (!window.location.href.includes('post.php')) {
@@ -467,7 +516,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
             return;
         }
         if (scene_toc_style === "" || scene_toc_style === "list") {
-
+            let orderedIcons;
             if (window.location.href.includes('post.php')) {
                 orderedIcons = iconsArr;
             } else {
@@ -561,7 +610,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                             
                                 return child_ids;
                             }
-                            child_obj = buildChildIdsFromTitles(iconsArr);
+                            setChildObj(buildChildIdsFromTitles(iconsArr));
                         }  
 
                         // Add a caption below the icon using child_obj data
@@ -639,7 +688,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                 document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 88%;");
             }
             if (window.location.href.includes('post.php')) {
-                titleContainer = document.querySelector("#title-container > div > div.col-md-2");
+                let titleContainer = document.querySelector("#title-container > div > div.col-md-2");
                 titleContainer.style.width = '87%';
                 titleContainer.style.paddingLeft = '0%';
                 document.querySelector("#mobile-view-image").setAttribute("style", "width: 100%; margin-right: 0%; margin-top: 0%; margin-bottom: -70%");
@@ -923,7 +972,62 @@ function has_mobile_layer(mob_icons, elemname) {
  * @return {void} `void` - Modifies the DOM but does not return any value.
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  */
-async function loadSVG(url, containerId) {
+export async function loadSVG(url, containerId) {
+    // Two hoisted helper functions — must be available to all branches
+    function toWpDateTimeLocal(d = new Date()) {
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function buildVisibleModalsObject(visible_modals, opts = {}) {
+        const now = new Date();
+        const nowStr = toWpDateTimeLocal(now);
+
+        const sceneId = opts.sceneId ?? 0;
+        const postAuthor = String(opts.postAuthor ?? "1");
+
+        // Optional: if you want GMT strings too (WP-style)
+        const nowGmtStr = opts.useGmt
+            ? toWpDateTimeLocal(new Date(now.getTime() + now.getTimezoneOffset() * 60000))
+            : nowStr;
+
+        return (visible_modals || []).map((name, idx) => ({
+            title: name,
+            modal_id: 0,
+            external_url: "",
+            modal: true,
+            scene: {
+            ID: sceneId,
+            post_author: postAuthor,
+            post_date: nowStr,
+            post_date_gmt: nowGmtStr,
+            post_content: "",
+            post_title: "",
+            post_excerpt: "",
+            post_status: "publish",
+            comment_status: "closed",
+            ping_status: "closed",
+            post_password: "",
+            post_name: "",
+            to_ping: "",
+            pinged: "",
+            post_modified: nowStr,
+            post_modified_gmt: nowGmtStr,
+            post_content_filtered: "",
+            post_parent: 0,
+            guid: "",
+            menu_order: 0,
+            post_type: "scene",
+            post_mime_type: "",
+            comment_count: "0",
+            filter: "raw",
+            },
+            section_name: "1",
+            original_name: name,
+            modal_icon_order: idx + 1, // sequential order
+        }));
+    }
+
     try {
         // Step 1: Fetch the SVG content
         const response = await fetch(url);
@@ -947,7 +1051,7 @@ async function loadSVG(url, containerId) {
         container.appendChild(svgElement);
 
         //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
-        if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene') {
+        if (window.location.href.includes('post.php') || window.location.href.includes('post-new.php')) {
             const modalHeader = document.querySelector('.modal-header');
             modalHeader.style.display = 'flex';
             modalHeader.style.flexDirection = 'column';
@@ -976,60 +1080,6 @@ async function loadSVG(url, containerId) {
 
             const modalWindow = document.querySelector('.modal-dialog.modal-xl.modal-dialog-scrollable');
             modalWindow.style.paddingTop = "1%";
-
-            function toWpDateTimeLocal(d = new Date()) {
-                const pad = (n) => String(n).padStart(2, "0");
-                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-            }
-
-            function buildVisibleModalsObject(visible_modals, opts = {}) {
-                const now = new Date();
-                const nowStr = toWpDateTimeLocal(now);
-
-                const sceneId = opts.sceneId ?? 0;
-                const postAuthor = String(opts.postAuthor ?? "1");
-
-                // Optional: if you want GMT strings too (WP-style)
-                const nowGmtStr = opts.useGmt
-                    ? toWpDateTimeLocal(new Date(now.getTime() + now.getTimezoneOffset() * 60000))
-                    : nowStr;
-
-                return (visible_modals || []).map((name, idx) => ({
-                    title: name,
-                    modal_id: 0,
-                    external_url: "",
-                    modal: true,
-                    scene: {
-                    ID: sceneId,
-                    post_author: postAuthor,
-                    post_date: nowStr,
-                    post_date_gmt: nowGmtStr,
-                    post_content: "",
-                    post_title: "",
-                    post_excerpt: "",
-                    post_status: "publish",
-                    comment_status: "closed",
-                    ping_status: "closed",
-                    post_password: "",
-                    post_name: "",
-                    to_ping: "",
-                    pinged: "",
-                    post_modified: nowStr,
-                    post_modified_gmt: nowGmtStr,
-                    post_content_filtered: "",
-                    post_parent: 0,
-                    guid: "",
-                    menu_order: 0,
-                    post_type: "scene",
-                    post_mime_type: "",
-                    comment_count: "0",
-                    filter: "raw",
-                    },
-                    section_name: "1",
-                    original_name: name,
-                    modal_icon_order: idx + 1, // sequential order
-                }));
-            }
         }
 
         // checking if user device is touchscreen
@@ -1103,12 +1153,14 @@ async function loadSVG(url, containerId) {
                 // Logic for admin preview for mobile
                 if (window.location.href.includes('post.php')) {
                     const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
-                    visible_modals = iconsLayer
-                        ? Array.from(iconsLayer.children)
-                            .filter(el => el.tagName.toLowerCase() === "g")
-                            .map(el => el.id)
-                            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
-                        : [];
+                    setVisibleModals(
+                        iconsLayer
+                            ? Array.from(iconsLayer.children)
+                                .filter(el => el.tagName.toLowerCase() === "g")
+                                .map(el => el.id)
+                                .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+                            : []
+                    );
                     iconsArr =  visible_modals;
                 } else {
                     iconsArr =  Object.keys(child_obj);
@@ -1152,7 +1204,7 @@ async function loadSVG(url, containerId) {
             });
             try {
                 //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
-                if (window.location.href.includes('post.php')) {
+                if (window.location.href.includes('post.php') || window.location.href.includes('post-new.php')) {
                     const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
                     graphicDataSceneData.visible_modals = iconsLayer
                         ? Array.from(iconsLayer.children)
@@ -1165,8 +1217,13 @@ async function loadSVG(url, containerId) {
                     svgElement.style.width = "100%";
                     svgElement.style.height = "auto";
 
-                    sceneRow = document.getElementById("scene-row");
+                    let sceneRow = document.getElementById("scene-row");
                     sceneRow.style.marginTop = "20px";
+
+                    // Re-sync with window.graphicDataSceneData which the preview button populated.
+                    if (window.graphicDataSceneData?.titleArr) {
+                        graphicDataSceneData.titleArr = window.graphicDataSceneData.titleArr;
+                    }
 
                     graphicDataSceneData.sceneTextToggle = graphicDataSceneData.titleArr['scene_text_toggle']; //"toggle_on";
                     graphicDataSceneData.sceneFullScreenButton = graphicDataSceneData.titleArr['scene_full_screen_button'];//"yes";
@@ -1174,11 +1231,15 @@ async function loadSVG(url, containerId) {
                     graphicDataSceneData.sceneDefaultHoverColor = graphicDataSceneData.titleArr['scene_hover_color'];
                     graphicDataSceneData.sceneDefaultHoverTextColor = graphicDataSceneData.titleArr['scene_hover_text_color']; 
 
-                    sorted_child_objs = buildVisibleModalsObject(graphicDataSceneData.visible_modals, {
-                        sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
-                        postAuthor: "1",
-                        useGmt: true, // set false if you want local time for both
-                    });
+                    setSortedChildObjs(
+                        buildVisibleModalsObject(
+                            graphicDataSceneData.visible_modals, {
+                                sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
+                                postAuthor: "1",
+                                useGmt: true, // set false if you want local time for both
+                            }
+                        )
+                    );
 
                     // Initialize an array to hold the sublayers
                     let sublayers = [];
@@ -1642,7 +1703,7 @@ function sectioned_list() {
 		if (!sections.includes(section) && section != 'None') {
 			sections.push(section);
 		}
-		sectionObj[key] = section;
+        setSectionObj([key], section);
 	}
 	sections.sort();
 	sections.push('None');
@@ -1744,7 +1805,7 @@ function toc_sections() {
         if (!sections.includes(section) && section!='None') {
             sections.push(section);
         }
-        sectionObj[key] = section;
+        setSectionObj([key], section);
     }
     sections.sort();
     sections.push('None');
@@ -1891,7 +1952,7 @@ function table_of_contents() {
 			item.addEventListener('click', function () {
 				const modal = document.getElementById('myModal');
 				modal.style.display = 'block';
-				render_modal(key);
+				render_modal(key, child_obj);
 			});
 
 			const closeButton = document.getElementById('close');
@@ -2025,7 +2086,7 @@ function list_toc(){
         if (!sections.includes(section)) {
             sections.push(section);
         }
-        sectionObj[key] = section;
+        setSectionObj([key], section);
     }
     sections.sort();
 
@@ -2060,7 +2121,7 @@ function list_toc(){
                 return function() {
                     modal = document.getElementById("myModal");
                     modal.style.display = "block";
-                    render_modal(key);
+				    render_modal(key, child_obj);
                 };
             })(key));
             
@@ -2152,14 +2213,14 @@ function add_modal(){
                 itemContainer.addEventListener('click', function() {
                     modal.style.display = "block";
 
-                    render_modal(key );
+				render_modal(key, child_obj);
 
             });
             } else {
                 elem.addEventListener('click', function(event) {
 
                     modal.style.display = "block";
-                    render_modal(key );
+				    render_modal(key, child_obj);
             });
             }
             
@@ -2350,3 +2411,5 @@ function alertIfMissingModal() {
     });
 }
 
+window.loadSVG = loadSVG;
+window.make_title = make_title;

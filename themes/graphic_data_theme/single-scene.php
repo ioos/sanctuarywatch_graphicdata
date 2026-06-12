@@ -231,24 +231,28 @@ $graphic_data_instance_color_settings = array(
 $graphic_data_options = get_option( 'graphic_data_settings' );
 $graphic_data_new_tab_by_default  = isset( $graphic_data_options['links_new_tab_by_default'] ) ? (bool) $graphic_data_options['links_new_tab_by_default'] : false;
 
-wp_localize_script(
-	'scene-render',
-	'graphicDataSceneData',
+?>
+<script type="application/json" id="graphic-data-scene-data">
+<?php
+echo wp_json_encode(
 	array(
-		'childIds'                       => $graphic_data_child_ids,
-		'postId'                         => absint( $graphic_data_post_id ),
-		'svgUrl'                         => $graphic_data_scene_url,
+		'childIds'                    => $graphic_data_child_ids,
+		'postId'                      => absint( $graphic_data_post_id ),
+		'svgUrl'                      => $graphic_data_scene_url,
 		'sceneSameHoverColorSections' => $graphic_data_scene_same_hover_color_sections,
-		'sceneDefaultHoverColor'       => $graphic_data_scene_default_hover_color,
+		'sceneDefaultHoverColor'      => $graphic_data_scene_default_hover_color,
 		'sceneDefaultHoverTextColor'  => $graphic_data_scene_default_hover_text_color,
-		'sceneTextToggle'               => $graphic_data_scene_text_toggle,
-		'sceneTocStyle'                 => $graphic_data_scene_toc_style,
-		'sceneFullScreenButton'        => $graphic_data_scene_full_screen_button,
-		'titleArr'                       => $graphic_data_title_arr,
-		'visibleModals'                  => $graphic_data_visible_modals,
-		'instanceColorSettings'         => $graphic_data_instance_color_settings,
-		'newTabByDefault'              => $graphic_data_new_tab_by_default,
+		'sceneTextToggle'             => $graphic_data_scene_text_toggle,
+		'sceneTocStyle'               => $graphic_data_scene_toc_style,
+		'sceneFullScreenButton'       => $graphic_data_scene_full_screen_button,
+		'titleArr'                    => $graphic_data_title_arr,
+		'visibleModals'               => $graphic_data_visible_modals,
+		'instanceColorSettings'       => $graphic_data_instance_color_settings,
+		'newTabByDefault'             => $graphic_data_new_tab_by_default,
 	)
 );
+?>
+</script>
+<?php
 
 get_footer();

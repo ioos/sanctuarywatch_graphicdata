@@ -45,16 +45,16 @@ export function setVisibleModals(v)   { visible_modals = v; }
 export function setSceneData(v)       { scene_data = v; }
 
 /**
- * Reads and parses scene data from the `#gd-scene-data` DOM element.
+ * Reads and parses scene data from the `#graphic-data-scene-data` DOM element.
  *
  * Expects a JSON-encoded data island rendered server-side as the text content
- * of an element with id `gd-scene-data`. Returns an empty object if the
+ * of an element with id `graphic-data-scene-data`. Returns an empty object if the
  * element is missing, empty, or contains invalid JSON.
  *
  * @return {Object} Parsed scene data, or `{}` on failure.
  */
 export function getSceneData() {
-    const el = document.getElementById('gd-scene-data');
+    const el = document.getElementById('graphic-data-scene-data');
     if (!el || !el.textContent) return {};
     try { return JSON.parse(el.textContent); } catch { return {}; }
 }
@@ -217,6 +217,54 @@ export function createAccordionItem(
 
 	return accordionItem;
 }
+
+/**
+ * A utility object from the internet for detecting the user's device type based on the user agent string.
+ * Helper function from the internet; using it to check type of device.
+ * Properties:
+ * - `device` {string}: The detected device type ('tablet', 'phone', or 'desktop').
+ * - `isMobile` (boolean): Indicates if the device is mobile (true for 'tablet' or 'phone', false for 'desktop').
+ * - `userAgent` (string): The user agent string in lowercase.
+ *
+ * Methods:
+ * - `detect(s)`: Detects the device type from the user agent string `s` (or the current user agent if not provided).
+ *     - @returns {string} - The detected device type ('tablet', 'phone', or 'desktop').
+ */
+export var deviceDetector = (function () {
+	const isAdminEditor =
+		window.location.href.includes('post.php') ||
+		window.location.href.includes('post-new.php') ||
+		window.location.href.includes('edit.php');
+
+	var ua = navigator.userAgent.toLowerCase();
+	var detect = function (s) {
+		if (isAdminEditor && is_mobile()) {
+			return 'phone';
+		}
+
+		if (s === undefined) s = ua;
+		else ua = s.toLowerCase();
+		if (
+			/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(
+				ua
+			)
+		)
+			return 'tablet';
+		else if (
+			/(mobi|ipod|phone|blackberry|opera mini|fennec|minimo|symbian|psp|nintendo ds|archos|skyfire|puffin|blazer|bolt|gobrowser|iris|maemo|semc|teashark|uzard)/.test(
+				ua
+			)
+		)
+			return 'phone';
+		else return 'desktop';
+	};
+	return {
+		device: detect(),
+		detect: detect,
+		isMobile: detect() != 'desktop' ? true : false,
+		userAgent: ua,
+	};
+})();
 
 /**
  * Convert an arbitrary string into a URL/DOM-friendly “slug”.

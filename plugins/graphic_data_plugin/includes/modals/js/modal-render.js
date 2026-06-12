@@ -1,4 +1,5 @@
 import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-render';
+import { child_obj as sharedChildObj } from '@graphic-data/scene-shared';
 
 /**
  * Renders a modal dialog for corresponding icon with data fetched from a WordPress REST API endpoint.
@@ -26,10 +27,9 @@ import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-
  */
 export function render_modal(key, obj, modal_obj){
 
-
-    // Allow passing in a specific child_obj from preview mode in admin-modal.js
-    let child_obj = ( typeof window.child_obj !== 'undefined' ) ? window.child_obj : obj;
-    let id = child_obj[key]['modal_id'];
+    // Use the passed-in obj for admin preview; fall back to the shared child_obj on the front end.
+    const resolvedChildObj = obj !== undefined ? obj : sharedChildObj;
+    let id = resolvedChildObj[key]['modal_id'];
 
     //function for rendering the modal content after fetching data
     function populateModalContent(modal_data, child_obj, key) {
@@ -192,7 +192,7 @@ export function render_modal(key, obj, modal_obj){
     // Fetch modal data and populate content PREVIEW MODE vs FRONTEND MODE
     if (window.location.href.includes("post.php")) {
         let modal_data = modal_obj;
-        populateModalContent(modal_data, child_obj, key);  
+        populateModalContent(modal_data, resolvedChildObj, key);  
     } 
 
     // Fetch modal data and populate content FRONTEND MODE
@@ -205,7 +205,7 @@ export function render_modal(key, obj, modal_obj){
             .then(data => {
                 let modal_data = data; //.find(modal => modal.id === id);
                 //('modal_data:', modal_data);
-                populateModalContent(modal_data, child_obj, key);
+                populateModalContent(modal_data, resolvedChildObj, key);
             })  
         .catch(error => console.error('Error fetching data:', error));
     }
