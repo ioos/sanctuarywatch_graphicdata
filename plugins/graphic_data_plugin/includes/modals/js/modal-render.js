@@ -1,5 +1,5 @@
 import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-render';
-import { child_obj as sharedChildObj } from '@graphic-data/scene-shared';
+import {  is_mobile, slugify, createAccordionItem, getSceneData, child_obj as sharedChildObj } from '@graphic-data/scene-shared';
 
 /**
  * Renders a modal dialog for corresponding icon with data fetched from a WordPress REST API endpoint.
@@ -101,7 +101,7 @@ export function render_modal(key, obj, modal_obj){
                 if (typeof window.new_tab_by_default === "undefined") {
                     window.new_tab_by_default = false;
                 }
-		        if (true === graphicDataSceneData.newTabByDefault) {
+		        if (true === getSceneData().newTabByDefault) {
                     collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
                 } else {
                     collapseListHTML += `<li><a href="${modal_info_url}">${modal_info_text}</a></li>`;

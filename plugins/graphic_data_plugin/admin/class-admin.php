@@ -75,6 +75,23 @@ class Graphic_Data_Admin {
 			$interactive_base = dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/';
 
 			wp_register_script_module(
+				'@graphic-data/scene-shared',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-shared.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/scene-shared' );
+
+			// Enqueue scene-render.js.
+			wp_register_script_module(
+				'@graphic-data/scene-render',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-render.js',
+				array( '@graphic-data/scene-shared' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/scene-render' );
+
+			wp_register_script_module(
 				'@graphic-data/plotly-utility',
 				$interactive_base . 'plotly-utility.js',
 				array(),
@@ -141,23 +158,6 @@ class Graphic_Data_Admin {
 
 		// Load Scene-specific Javascript only when editing/creating a Scene post.
 		if ( 'scene' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
-
-			wp_register_script_module(
-				'@graphic-data/scene-shared',
-				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-shared.js',
-				array(),
-				GRAPHIC_DATA_PLUGIN_VERSION
-			);
-			wp_enqueue_script_module( '@graphic-data/scene-shared' );
-
-			// Enqueue scene-render.js.
-			wp_register_script_module(
-				'@graphic-data/scene-render',
-				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-render.js',
-				array( '@graphic-data/scene-shared' ),
-				GRAPHIC_DATA_PLUGIN_VERSION
-			);
-			wp_enqueue_script_module( '@graphic-data/scene-render' );
 
 			// Enqueue admin-scene.js.
 			wp_register_script_module(
