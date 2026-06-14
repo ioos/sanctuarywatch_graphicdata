@@ -1,5 +1,4 @@
 // These functions are used within the context of the Export Figures Tool
-'use strict';
 
 const instanceButton = document.getElementById('chooseInstance');
 instanceButton.addEventListener('click', generateFigureOptions);
@@ -54,7 +53,7 @@ function downloadFile() {
 }
 
 function removeHtmlTagsForPPTX(transformText) {
-	if (transformText == '' || transformText == null) {
+	if (transformText === '' || transformText === null) {
 		transformText = 'None';
 	}
 	// remove <span> tags
@@ -304,10 +303,9 @@ async function downloadRTF(introText, selectedCheckBoxes) {
 			')';
 		rtfContent =
 			rtfContent + '\\fs32\\pard\\par ' + titleRow + '\\par\\par';
-		const restFigureURL = `${protocol}//${host}/wp-json/wp/v2/figure?_fields=id,title,figure_path,figure_image,figure_external_url,figure_caption_short,figure_caption_long&id=${targetFields[0]}`;
+		const restFigureURL = `${protocol}//${host}/wp-json/wp/v2/figure?_fields=id,title,figure_path,figure_image,figure_external_url,figure_caption_short,figure_caption_long&include=${targetFields[0]}`;
 		const figureResponse = await fetch(restFigureURL);
 		const figureData = await figureResponse.json();
-
 		figureCaptionShort = htmlToRtfText(figureData[0].figure_caption_short);
 		figureCaptionLong = htmlToRtfText(figureData[0].figure_caption_long);
 		figureLocation = figureData[0].figure_path;
@@ -349,7 +347,7 @@ async function downloadRTF(introText, selectedCheckBoxes) {
 }
 
 function htmlToRtfText(transformText) {
-	if (transformText == '' || transformText == null) {
+	if (transformText === '' || transformText === null) {
 		transformText = 'None';
 	}
 	// remove <span> tags

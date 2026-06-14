@@ -186,7 +186,9 @@ export function render_modal(key, obj, modal_obj){
             }
         }
         // Google Tags
-        //modalWindowLoaded(title, modal_id, gaMeasurementID);
+        document.dispatchEvent( new CustomEvent( 'graphic-data:modalWindowLoaded', {
+            detail: { title, modal_id }
+        } ) );
     }
 
     // Fetch modal data and populate content PREVIEW MODE vs FRONTEND MODE
@@ -211,8 +213,6 @@ export function render_modal(key, obj, modal_obj){
     }
     //dumpComputedCSS('.modal-dialog');
 }
-// TO DO: Remove the following line with Phase 4 of the refactoring
-window.render_modal = render_modal;
 
 /**
  * Ensures at least one tab button is active inside the modal after tabs have been created or filtered.
@@ -640,9 +640,17 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
 
     //Google tags triggers
     try {
-        modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID);
-        setupModalMoreInfoLinkTracking(modal_id);
-        setupModalImagesLinkTracking(modal_id);
+        document.dispatchEvent( new CustomEvent( 'graphic-data:modalTabLoaded', {
+            detail: { tab_label, modal_id, tab_id }
+        } ) );
+
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupModalMoreInfoLinkTracking', {
+            detail: { modalID }
+        } ) );
+
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupModalImagesLinkTracking', {
+            detail: { modalID }
+        } ) );
     } catch (error) {
     }
     

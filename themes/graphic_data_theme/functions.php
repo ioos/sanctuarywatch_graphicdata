@@ -674,20 +674,20 @@ function graphic_data_enqueue_scripts() {
 
 	// Enqueue the theme's index.js file, but don't run on the about page.
 	if ( 'about' !== get_post_type() ) {
-		wp_enqueue_script(
-			'index-js',
+		wp_register_script_module(
+			'@graphic-data/theme-index',
 			get_template_directory_uri() . '/assets/js/index.js',
 			array(),
-			graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-			array( 'strategy' => 'defer' )
+			graphic_data_get_theme_asset_version()
 		);
+		wp_enqueue_script_module( '@graphic-data/theme-index' );
 	}
 
 	// Enqueue the scene render script.
 	wp_register_script_module(
 		'@graphic-data/scene-render',
 		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js',
-		array( '@graphic-data/scene-shared' ),
+		array( '@graphic-data/scene-shared', '@graphic-data/modal-render' ),
 		GRAPHIC_DATA_PLUGIN_VERSION
 	);
 	wp_enqueue_script_module( '@graphic-data/scene-render' );
@@ -764,12 +764,12 @@ function graphic_data_enqueue_scripts() {
 	);
 
 	// Enqueue the google tag script used to log user behavior with tag manager.
-	wp_enqueue_script(
-		'googletags',
+	wp_register_script_module(
+		'@graphic-data/googletags',
 		get_template_directory_uri() . '/assets/js/googletags.js',
 		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy' => 'defer' )
+		graphic_data_get_theme_asset_version()
 	);
+	wp_enqueue_script_module( '@graphic-data/googletags' );
 }
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_scripts' );

@@ -6,6 +6,8 @@ import {
 	applyPlainTextPaste,
 } from '@graphic-data/admin-utility';
 
+import { checkIfFileExistsAndLoadJson } from '@graphic-data/file-upload';
+
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
 

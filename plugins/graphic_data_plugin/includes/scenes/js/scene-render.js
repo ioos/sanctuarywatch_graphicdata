@@ -8,6 +8,7 @@ import {
     is_mobile, is_touchscreen, slugify, debounce, hexToRgba,
     get_mobile_layer, remove_outer_div, createAccordionItem,
 } from '@graphic-data/scene-shared';
+import { render_modal } from '@graphic-data/modal-render';
 
 let graphicDataSceneData = getSceneData();
 
@@ -168,14 +169,16 @@ export async function make_title() {
 			instance_overview_scene = 'None';
 		}
 		// Google Tags
-		sceneLoaded(
-			title,
-			scene_data.post_ID,
-			instance_overview_scene,
-			gaMeasurementID
-		);
-		setupSceneMoreInfoLinkTracking(title, scene_data.post_ID);
-		setupSceneImagesLinkTracking(title, scene_data.post_ID);
+        const sceneID = graphicDataSceneData.postId ?? scene_data.post_id ?? '';
+        document.dispatchEvent( new CustomEvent( 'graphic-data:sceneLoaded', {
+            detail: { title, sceneID, instance_overview_scene }
+        } ) );
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupSceneMoreInfoLinkTracking', {
+            detail: { title, sceneID }
+        } ) );
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupSceneImagesLinkTracking', {
+            detail: { title, sceneID }
+        } ) );
 
 		return scene_data;
 	} catch (error) {
@@ -726,9 +729,11 @@ export function mobile_helper(svgElement, iconsArr, mobile_icons) {
         updateNumCols(); // only when portrait <-> landscape changes
     }
     
-    window.addEventListener("resize", debounce(onMaybeOrientationChange, 150));
-
-
+    if (loadSVG._orientationListener) {
+        window.removeEventListener('resize', loadSVG._orientationListener);
+    }
+    loadSVG._orientationListener = debounce(onMaybeOrientationChange, 150);
+    window.addEventListener('resize', loadSVG._orientationListener);
 }
 
 /**
@@ -1085,7 +1090,6 @@ export async function loadSVG(url, containerId) {
         // checking if user device is touchscreen
         const wantsMobileLayout = is_mobile() && deviceDetector.device != 'tablet';
         const isPreview = window.location.href.includes('post.php');
-
         if ( is_touchscreen() && ( ! isPreview || wantsMobileLayout ) ) {
             if ( wantsMobileLayout ) {
                 //smaller image preview here for mobile
@@ -1170,7 +1174,6 @@ export async function loadSVG(url, containerId) {
                 if (window.location.href.includes('post.php')) {
                     document.getElementById('svg-elem').remove()
                 }
-                
             } else{ //if it gets here, device is a tablet
                 // remove_outer_div();
                 window.addEventListener('load', function() {
@@ -2411,5 +2414,3 @@ function alertIfMissingModal() {
     });
 }
 
-window.loadSVG = loadSVG;
-window.make_title = make_title;

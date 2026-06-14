@@ -267,6 +267,9 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - config: Plotly configuration object for rendering options.
  */
 export async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
+	    console.log('[GD] producePlotlyLineFigure called:',
+        'interactive_arguments length:', interactive_arguments?.length,
+        'preview:', interactive_arguments?.substring(0, 100));
     // try {
         await loadPlotlyScript(); // ensures Plotly is ready
 
@@ -306,7 +309,10 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
         }
         
         const responseJson = await rawResponse.json();
+		console.log('[GD] responseJson keys:', Object.keys(responseJson), 'type:', Array.isArray(responseJson) ? 'array' : typeof responseJson);
+
         const dataToBePlotted = responseJson.data;
+		console.log('[GD] dataToBePlotted:', dataToBePlotted?.length, 'rows, first row:', JSON.stringify(dataToBePlotted?.[0]));
 
         let newDiv = document.createElement('div');
         const plotlyDivID = `plotlyFigure${figureID}`;
@@ -317,6 +323,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
         const targetElementpostID = targetElementparts[targetElementparts.length - 1];
 
         if (figureID == targetElementpostID) {
+    		console.log('[GD] INSIDE IF: figureID=', figureID, 'targetElementpostID=', targetElementpostID, 'dataToBePlotted=', dataToBePlotted, 'dataToBePlotted?.date_yyyy=', dataToBePlotted?.['date_yyyy']);
 
             ////console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;            
             // const targetElement = document.getElementById(targetFigureElement);
@@ -754,6 +761,10 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
                          
             // Create the plot with all lines
             // await Plotly.newPlot(plotlyDivID, allLinesPlotly, layout, config);
+			console.log('[GD] uploaded_path_json:', uploaded_path_json);
+			console.log('[GD] finalURL:', finalURL);
+			console.log('[GD] about to plot, allLinesPlotly length:', allLinesPlotly.length, 'numLines:', numLines);
+
             await Plotly.newPlot(plotDiv, allLinesPlotly, layout, config).then(() => {
                 // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
                 // You need the specific values for the entire yaxis
@@ -922,12 +933,17 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
 	}
 
 	// ---------- main ----------
+	// Use the passed interactive_arguments parameter (works in preview modal context
+	// where the form field may not be in the document). Fall back to DOM read for
+	// the settings-page context where the parameter is not passed.
 	const field = document.getElementsByName('figure_interactive_arguments')[0];
-	if (!field) {
+	const currentStr = interactive_arguments || (field ? field.value : '') || '';
+	console.log('[GD] currentStr length:', currentStr.length, 'preview:', currentStr.substring(0, 100));
+	if (!currentStr) {
+		console.log('[GD] EARLY RETURN — no currentStr');
 		return;
 	}
 
-	const currentStr = field.value || '';
 	const defaultsStr = _lineDefaults.interactive_line_arguments || '';
 
 	// Parse both to objects and keep original pair order from current

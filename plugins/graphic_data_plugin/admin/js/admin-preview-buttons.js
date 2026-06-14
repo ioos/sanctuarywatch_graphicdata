@@ -1,13 +1,17 @@
-// graphicDataSceneData is needed by the preview handler to pass scene form
-// data into make_title(). On admin pages getSceneData() returns {} which
-// the preview handler then populates with .titleArr from the form.
-// TODO Phase 5: remove once admin-preview-buttons.js is a module.
-if (typeof window.graphicDataSceneData === 'undefined') {
-	window.graphicDataSceneData = {};
+import { render_modal } from '@graphic-data/modal-render';
+import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-render';
+import { make_title, loadSVG } from '@graphic-data/scene-render';
+
+// graphicDataSceneData is used by the preview handlers to pass form data to
+// make_title() / scene-render.js. Keep on window so scene-render can read it.
+if ( typeof window.graphicDataSceneData === 'undefined' ) {
+    window.graphicDataSceneData = {};
 }
+const graphicDataSceneData = window.graphicDataSceneData;
 
 // FIGURES Admin error handling for missing figure data in preview mode. Operates in figure-render.js
-function errorPreviewHandler(divID, figureType) {
+document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
+    const { tabContentElement: divID, figureType } = e.detail;
 	if (figureType === 'Interactive') {
 		//Preview error message in admin
 
@@ -79,7 +83,7 @@ function errorPreviewHandler(divID, figureType) {
 			codeDiv.remove();
 		}
 	}
-}
+} );
 
 //PREVIEW BUTTON LOGIC FOR MODALS AND FIGURES
 /**
@@ -478,6 +482,11 @@ if (previewFigureOrModalElements.length > 0) {
 				);
 				const idx = 0; // Since we are only rendering one figure here, index is 0
 				(async () => {
+                    console.log('[GD] figure preview info_obj:', JSON.stringify({
+                        figureType: info_obj.figureType,
+                        figure_interactive_arguments_length: info_obj.figure_interactive_arguments?.length,
+                        figure_interactive_arguments_preview: info_obj.figure_interactive_arguments?.substring(0, 100)
+                    }));
 					await render_tab_info(
 						tabContentElement,
 						tabContentContainer,

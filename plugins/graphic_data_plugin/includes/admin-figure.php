@@ -52,7 +52,7 @@ class Graphic_Data_Figure {
 			$default_interactive_line_arguments = isset( $settings['interactive_line_arguments'] ) ? $settings['interactive_line_arguments'] : '';
 			add_filter(
 				'script_module_data_@graphic-data/plotly-timeseries-line',
-				function ( array $data ) use ( $line_args ): array {
+				function ( array $data ) use ( $default_interactive_line_arguments ): array {
 					$data['interactive_line_arguments'] = $default_interactive_line_arguments;
 					return $data;
 				}
@@ -63,16 +63,10 @@ class Graphic_Data_Figure {
 
 			add_filter(
 				'script_module_data_@graphic-data/plotly-bar',
-				function ( array $data ) use ( $bar_args ): array {
+				function ( array $data ) use ( $default_interactive_bar_arguments ): array {
 					$data['interactive_bar_arguments'] = $default_interactive_bar_arguments;
 					return $data;
 				}
-			);
-
-			wp_localize_script(
-				'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php.
-				'argumentsDefaultsBar',           // global object name.
-				[ 'interactive_bar_arguments' => $default_interactive_bar_arguments ]
 			);
 		}
 	}
@@ -926,15 +920,6 @@ class Graphic_Data_Figure {
 			];
 		}
 
-		if ( isset( $request['id'] ) ) {
-			$args['meta_query'][] = [
-				[
-					'key'   => 'id',
-					'value' => (int) $request['id'],
-					'compare' => '=',
-				],
-			];
-		}
 		return $args;
 	}
 

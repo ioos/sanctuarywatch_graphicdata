@@ -1,9 +1,17 @@
+import { logFormFieldValues, fillFormFieldValues } from '@graphic-data/plotly-utility';
+
+// Module-level replacement for wpApiSettings.
+const moduleData = JSON.parse(
+    document.getElementById( 'wp-script-module-data-@graphic-data/file-upload' )?.textContent ?? '{}'
+);
+const nonce = moduleData.nonce ?? '';
+
 /**
  * Checks if an uploaded file exists and loads its JSON content.
  * Handles the removal of existing interactive settings and dynamically updates the UI
  * based on the presence of the uploaded file.
  */
-async function checkIfFileExistsAndLoadJson() {
+export async function checkIfFileExistsAndLoadJson() {
 	try {
 		// Remove the existing "Interactive Settings" button if it exists
 		const button = document.querySelector(
@@ -17,18 +25,19 @@ async function checkIfFileExistsAndLoadJson() {
 		const rootURL = window.location.origin;
 		const figureID = document.getElementsByName('post_ID')[0].value;
 		const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
+		let uploaded_path_json;
 
 		// Fetch the uploaded file path from the REST API
 		//const response = await fetch(figureRestCall);
 		const response = await fetch(figureRestCall, {
 			headers: {
-				'X-WP-Nonce': wpApiSettings.nonce,
+				'X-WP-Nonce': nonce,
 			},
 		});
 
 		if (response.ok) {
 			const data = await response.json();
-			const uploaded_path_json = data.uploaded_path_json;
+			uploaded_path_json = data.uploaded_path_json;
 
 			// Find the target div inside "exopite-sof-field-button"
 			const targetContainer = document.querySelector(
@@ -36,7 +45,7 @@ async function checkIfFileExistsAndLoadJson() {
 			);
 
 			// Check if the post meta variable exists (assuming it's in the "meta" field)
-			if (uploaded_path_json != '') {
+			if (uploaded_path_json !== '') {
 				if (targetContainer) {
 					// Call the loadJson function and populate its contents inside the div
 					loadJson(targetContainer); // Call function with meta value
@@ -44,7 +53,7 @@ async function checkIfFileExistsAndLoadJson() {
 			}
 
 			// If no uploaded file path exists, remove the container and display a message
-			if (uploaded_path_json == '') {
+			if (uploaded_path_json === '') {
 				const divContainer = document.querySelector(
 					'.exopite-sof-field.exopite-sof-field-button'
 				);
@@ -55,7 +64,7 @@ async function checkIfFileExistsAndLoadJson() {
 			}
 		} else {
 			// If the response is not OK, log an error message
-			const uploaded_path_json = '';
+			uploaded_path_json = '';
 		}
 	} catch (error) {
 		// Log any errors that occur during the fetch or processing
@@ -71,6 +80,8 @@ async function checkIfFileExistsAndLoadJson() {
  */
 async function loadJson(targetContainer) {
 	const postPageType = window.location.href.includes('post-new.php');
+	let response;
+	let jsonColumns;
 
 	if (!postPageType) {
 		try {
@@ -78,28 +89,27 @@ async function loadJson(targetContainer) {
 			// REST API call to get the uploaded JSON file path
 			const figureID = document.getElementsByName('post_ID')[0].value;
 			const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-			const response = await fetch(figureRestCall);
+			response = await fetch(figureRestCall);
 
 			if (response.ok) {
-				const data = await response.json();
+				let data = await response.json();
 				const uploaded_path_json = data.uploaded_path_json;
 				const restOfURL =
 					'/wp-content' + uploaded_path_json.split('wp-content')[1];
 
 				// Check if the uploaded file path is empty and alert the user
-				if (uploaded_path_json == '') {
+				if (uploaded_path_json === '') {
 					alert('Please upload a file before creating a graph');
-					console.error('Error loading JSON:', error);
 				}
 
 				const finalURL = rootURL + restOfURL;
 				try {
 					// Fetch the actual JSON file using the constructed URL
-					const response = await fetch(finalURL);
+					response = await fetch(finalURL);
 					if (!response.ok) {
 						throw new Error('Network response was not ok');
 					}
-					const data = await response.json();
+					data = await response.json();
 
 					// Convert metadata keys into an array of key-value pairs for display
 					let metadataRows = [];
@@ -124,7 +134,6 @@ async function loadJson(targetContainer) {
 								key,
 							])
 						);
-						jsonColumns;
 					}
 					if (uploaded_path_json.includes('.geojson')) {
 						function extractJsonColumnsFromGeojson(geojson) {
@@ -212,7 +221,7 @@ async function loadJson(targetContainer) {
 						);
 
 						// Add event listeners to handle changes in the dropdown selection
-						if (fieldValueSaved != undefined) {
+						if (fieldValueSaved !== undefined) {
 							selectGraphType.value = fieldValueSaved;
 						}
 						selectGraphType.addEventListener('change', function () {
@@ -243,7 +252,7 @@ async function loadJson(targetContainer) {
 						targetElement.appendChild(newDiv);
 
 						// Trigger secondary graph fields if a saved value exists
-						if (fieldValueSaved != undefined) {
+						if (fieldValueSaved !== undefined) {
 							secondaryGraphFields(
 								selectGraphType.value,
 								interactive_arguments
