@@ -208,7 +208,6 @@ class Graphic_Data_Plugin {
 		add_filter( 'xmlrpc_enabled', '__return_false' );       // Disable Xlmrpc.php file.
 		add_filter( 'screen_options_show_screen', '__return_false' ); // Disable Screen Options in admin screens.
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin, 'remove_view_link_from_post_type', 10, 2 );
-		$this->loader->add_action( 'admin_notices', $plugin_admin, 'plugin_check_required_theme' );
 		$this->loader->add_action( 'admin_footer-post.php', $plugin_admin, 'adjust_admin_post_time_display', 10 );
 		$this->loader->add_action( 'admin_footer-post-new.php', $plugin_admin, 'adjust_admin_post_time_display', 10 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_tinymce_new_tab_script', 20 );
@@ -274,6 +273,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_scene, 'scene_enqueue_quick_edit_validation' );
 		$this->loader->add_action( 'wp_ajax_scene_validate_slug', $plugin_admin_scene, 'scene_validate_slug_ajax' );
 		$this->loader->add_filter( 'wp_handle_upload', $plugin_admin_scene, 'graphic_data_svg_cleanup_on_upload', 10, 2 );
+		$this->loader->add_action( 'admin_notices', $plugin_admin_scene, 'warn_if_graphic_data_theme_not_active' );
 
 		// Load  class and functions associated with Modal custom content type.
 		$plugin_admin_modal = new Graphic_Data_Modal();

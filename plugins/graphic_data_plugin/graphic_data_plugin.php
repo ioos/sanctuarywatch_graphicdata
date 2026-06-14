@@ -57,6 +57,10 @@ define( 'GRAPHIC_DATA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GRAPHIC_DATA_DATA_DIR', WP_CONTENT_DIR . '/data' );
 define( 'GRAPHIC_DATA_DATA_URL', content_url( 'data' ) );
 
+/**
+ * Determine whether the Graphic Data Theme is the active theme.
+ */
+define( 'GRAPHIC_DATA_IS_ACTIVE_THEME', get_template() === 'graphic_data_theme' );
 
 /**
  * Plugin activation callback.

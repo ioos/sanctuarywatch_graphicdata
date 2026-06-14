@@ -18,6 +18,8 @@ writeCookieValuesToSceneFields();
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
 
+document.addEventListener('DOMContentLoaded', hideInstanceDropdown);
+
 // Initialize the number of visible scene section fields and set up TOC-related field visibility on page load.
 //
 // - Retrieves the current value of the "scene_section_number" field to determine how many section fields to display.
@@ -39,6 +41,29 @@ orphanColorFieldVisibility();
 document
 	.querySelector('[data-depend-id="scene_orphan_icon_action"]')
 	.addEventListener('change', orphanColorFieldVisibility);
+
+
+/**
+ * Hides the scene_location dropdown when the active theme is not the Graphic Data theme.
+ *
+ * Reads the `isActiveTheme` flag from the PHP data island injected by the
+ * `script_module_data_@graphic-data/admin-scene` filter. If the flag is false
+ * (or absent), the `scene_location` field's wrapping row is hidden, since that
+ * field is only relevant when the Graphic Data theme is active.
+ *
+ * @return {void}
+ */
+function hideInstanceDropdown(){
+	const _dataEl = document.getElementById( 'wp-script-module-data-@graphic-data/admin-scene' );
+	let _moduleData = null;
+	if ( _dataEl?.textContent ) {
+		try { _moduleData = JSON.parse( _dataEl.textContent ); } catch {}
+	}
+	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
+	if (isActiveTheme === false){
+		document.getElementsByName("scene_location")[0].parentElement.parentElement.style.display = 'none';
+	}
+}
 
 /**
  * Controls the visibility and default values of scene section and hover color fields based on the selected Table of Contents (TOC) style.

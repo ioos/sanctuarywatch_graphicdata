@@ -718,9 +718,11 @@ class Graphic_Data_Validation {
 			wp_die( 'Security check failed for post of Scene custom post type.' );
 		}
 
-		if ( ! isset( $_POST['scene_location'] ) || ( isset( $_POST['scene_location'] ) && ' ' == $_POST['scene_location'] ) ) {
-			array_push( $scene_errors, 'The Instance field cannot be left blank.' );
-			$save_scene_fields = false;
+		if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			if ( ! isset( $_POST['scene_location'] ) || ( isset( $_POST['scene_location'] ) && ' ' == $_POST['scene_location'] ) ) {
+				array_push( $scene_errors, 'The Instance field cannot be left blank.' );
+				$save_scene_fields = false;
+			}
 		}
 
 		$scene_infographic = isset( $_POST['scene_infographic'] )

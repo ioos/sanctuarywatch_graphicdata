@@ -171,6 +171,15 @@ class Graphic_Data_Admin {
 		// Load Scene-specific Javascript only when editing/creating a Scene post.
 		if ( 'scene' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
 
+			// Pass Graphic Data Is Active Theme variable on to Javascript.
+			add_filter(
+				'script_module_data_@graphic-data/admin-scene',
+				function ( array $data ): array {
+					$data['isActiveTheme'] = GRAPHIC_DATA_IS_ACTIVE_THEME;
+					return $data;
+				}
+			);
+
 			// Enqueue admin-scene.js.
 			wp_register_script_module(
 				'@graphic-data/admin-scene',
@@ -544,27 +553,6 @@ class Graphic_Data_Admin {
 			unset( $actions['view'] ); // Remove the "View" link.
 		}
 		return $actions;
-	}
-
-	/**
-	 * Checks if the required theme ("Graphic Data Theme") is active.
-	 *
-	 * If the required theme is not active, it displays an admin notice
-	 * warning the user. This function is hooked to 'admin_notices'.
-	 *
-	 * @since 1.0.0
-	 */
-	public function plugin_check_required_theme() {
-		$current_theme = wp_get_theme();
-		$required_theme = 'Graphic Data Theme'; // Replace with your theme's folder name.
-
-		if ( $current_theme->get( 'Name' ) !== $required_theme && $current_theme->get( 'Template' ) !== $required_theme ) {
-			$message = sprintf(
-				'Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.'
-			);
-
-			echo '<div class="notice notice-warning is-dismissible"><p>' . wp_kses_post( $message ) . '</p></div>';
-		}
 	}
 
 	/**
