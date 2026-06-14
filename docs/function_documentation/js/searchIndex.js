@@ -96,11 +96,6 @@ Search.appendIndex(
             "summary": "Remove\u0020\u0022view\u0022\u0020link\u0020from\u0020admin\u0020screen\u0020for\u0020instance,\u0020modal,\u0020and\u0020figure\u0020posts.",
             "url": "classes/Graphic-Data-Admin.html#method_remove_view_link_from_post_type"
         },                {
-            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aplugin_check_required_theme\u0028\u0029",
-            "name": "plugin_check_required_theme",
-            "summary": "Checks\u0020if\u0020the\u0020required\u0020theme\u0020\u0028\u0022Graphic\u0020Data\u0020Theme\u0022\u0029\u0020is\u0020active.",
-            "url": "classes/Graphic-Data-Admin.html#method_plugin_check_required_theme"
-        },                {
             "fqsen": "\\Graphic_Data_Admin\u003A\u003Aadjust_admin_post_time_display\u0028\u0029",
             "name": "adjust_admin_post_time_display",
             "summary": "Adjust\u0020admin\u0020post\u0020time\u0020display\u0020to\u0020show\u0020local\u0020timezone\u0020and\u0020author\u0020information.",
@@ -591,6 +586,11 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL"
         },                {
+            "fqsen": "\\GRAPHIC_DATA_IS_ACTIVE_THEME",
+            "name": "GRAPHIC_DATA_IS_ACTIVE_THEME",
+            "summary": "Determine\u0020whether\u0020the\u0020Graphic\u0020Data\u0020Theme\u0020is\u0020the\u0020active\u0020theme.",
+            "url": "namespaces/default.html#constant_GRAPHIC_DATA_IS_ACTIVE_THEME"
+        },                {
             "fqsen": "\\graphic_data_activate\u0028\u0029",
             "name": "graphic_data_activate",
             "summary": "Plugin\u0020activation\u0020callback.",
@@ -940,6 +940,11 @@ Search.appendIndex(
             "name": "display_overview_scene_notice",
             "summary": "Display\u0020an\u0020admin\u0020notice\u0020if\u0020the\u0020current\u0020scene\u0020is\u0020the\u0020overview\u0020scene\u0020for\u0020its\u0020instance.",
             "url": "classes/Graphic-Data-Scene.html#method_display_overview_scene_notice"
+        },                {
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Awarn_if_graphic_data_theme_not_active\u0028\u0029",
+            "name": "warn_if_graphic_data_theme_not_active",
+            "summary": "Displays\u0020an\u0020admin\u0020notice\u0020when\u0020the\u0020active\u0020theme\u0020is\u0020not\u0020the\u0020Graphic\u0020Data\u0020theme.",
+            "url": "classes/Graphic-Data-Scene.html#method_warn_if_graphic_data_theme_not_active"
         },                {
             "fqsen": "\\Graphic_Data_Scene\u003A\u003Agraphic_data_svg_cleanup_on_upload\u0028\u0029",
             "name": "graphic_data_svg_cleanup_on_upload",
