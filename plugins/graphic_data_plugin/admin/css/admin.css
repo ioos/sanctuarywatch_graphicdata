@@ -18,6 +18,9 @@
     font-size:20px;
   }
 
+  .notice p {
+    font-size: larger!important;
+  }
   /* show bullets in list */
   .notice ul {
     list-style-type: disc;
