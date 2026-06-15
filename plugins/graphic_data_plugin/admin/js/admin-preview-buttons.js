@@ -101,10 +101,26 @@ let previewFigureOrModalElements = document.querySelectorAll(
 	'[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"]'
 );
 
+// We're going to iterate through all the types of buttons (preview and save) on the admin screen and have different behaviors when a button is clicked
+let postId = document.querySelector('[name="post_id"], [name="post_ID"]').value;
+let postType = document.querySelector('[name="post_type"]').value;
+let previewFigureOrModalElements; 
+
+//Define our post type and the id so we can use it later in the save process for the html
+if (postType === 'figure') {
+    previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"],[id="publish"]');
+} 
+if (postType === 'modal') {
+    previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"]');
+} 
+// If no button exist then previewFigureOrModalElements is an empty list.
 if (!previewFigureOrModalElements) {
 	previewFigureOrModalElements = [];
 }
 
+console.log('previewFigureOrModalElements', previewFigureOrModalElements);
+
+// If the number of elements in previewFigureOrModalElements list is greater than 0, let's iterate through these options.
 if (previewFigureOrModalElements.length > 0) {
 	previewFigureOrModalElements.forEach((el) => {
 		el.addEventListener('click', async function () {

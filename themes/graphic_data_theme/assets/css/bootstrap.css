@@ -5773,7 +5773,7 @@ textarea.form-control-lg {
 /* Mobile override */
 @media (max-width: 768px) {
   .modal-content {
-    width: 96vw;
+    /* width: 96vw; */
     height: 100%;
     /*width: 100vw;*/
     /*height: 100vh;*/
