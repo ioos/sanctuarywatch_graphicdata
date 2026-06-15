@@ -68,6 +68,35 @@ class Graphic_Data_Scene {
 	}
 
 	/**
+	 * Displays an admin notice when the active theme is not the Graphic Data theme.
+	 *
+	 * Checks the `GRAPHIC_DATA_IS_ACTIVE_THEME` constant defined at plugin load time.
+	 * If it is false, renders a dismissible warning reminding the user that
+	 * the post must be resaved if the site is ever migrated to the Graphic Data theme.
+	 *
+	 * Hooked into `admin_notices` on the Scene post edit screen.
+	 *
+	 * @since  1.0.0
+	 * @return void
+	 */
+	public function warn_if_graphic_data_theme_not_active() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'post' !== $screen->base || 'scene' !== $screen->id ) {
+			return;
+		}
+
+		if ( false === GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			wp_admin_notice(
+				'This site is using a theme other than the Graphic Data theme. If you ever move the site to the Graphic Data theme, this post will need to be resaved. Please see the Graphic Data documentation for more details - ADD LINK.',
+				array(
+					'additional_classes' => array( 'notice-warning' ),
+					'dismissible'        => true,
+				)
+			);
+		}
+	}
+
+	/**
 	 * Clean up Inkscape-generated SVGs after WordPress handles the upload.
 	 *
 	 * Hooked to `wp_handle_upload`, this function reads the uploaded file,
@@ -414,7 +443,7 @@ class Graphic_Data_Scene {
 	 * parameters, then falls back to stored user metadata values if they haven't expired.
 	 * After displaying the dropdowns, it stores the current selections for future use.
 	 * This function handles proper user capability checks to show only assigned instances
-	 * for content editors.
+	 * for authors.
 	 *
 	 * @since    1.0.0
 	 * @access   public
@@ -733,7 +762,8 @@ class Graphic_Data_Scene {
 			'show_in_rest'       => true,
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'scenes' ),
-			'capability_type'    => 'post',
+			'capability_type'    => 'scene',
+			'map_meta_cap'       => true,
 			'menu_icon'          => 'dashicons-tag',
 			'has_archive'        => true,
 			'hierarchical'       => false,

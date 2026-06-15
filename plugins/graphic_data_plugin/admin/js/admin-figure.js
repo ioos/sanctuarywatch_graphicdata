@@ -1,6 +1,12 @@
 // These functions only fire upon editing or creating a post of Figure custom content type
 
-'use strict';
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	applyPlainTextPaste,
+} from '@graphic-data/admin-utility';
+
+import { checkIfFileExistsAndLoadJson } from '@graphic-data/file-upload';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
@@ -113,8 +119,8 @@ function run_admin_figures() {
 
 				data.forEach((targetRow) => {
 					if (
-						targetRow.icon_function == 'Modal' &&
-						targetRow.modal_scene == figureScene
+						targetRow.icon_function === 'Modal' &&
+						targetRow.modal_scene === figureScene
 					) {
 						const optionIcon = document.createElement('option');
 						const tempTitleDiv = document.createElement('div');
@@ -171,11 +177,11 @@ function run_admin_figures() {
 				optionTab.value = '';
 				figureTab.add(optionTab);
 
-				if (figureModal != ' ' && figureModal != '') {
+				if (figureModal !== ' ' && figureModal !== '') {
 					let targetField = '';
 					for (let i = 1; i < 7; i++) {
 						targetField = 'modal_tab_title' + i;
-						if (data[targetField] != '') {
+						if (data[targetField] !== '') {
 							const optionTitleTab =
 								document.createElement('option');
 							const tmp = document.createElement('textarea');
@@ -379,14 +385,7 @@ function run_admin_figures() {
 // Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
 document.addEventListener('DOMContentLoaded', function () {
 	const figureEditorIds = ['figure_caption_short', 'figure_caption_long'];
-
-	if (typeof applyPlainTextPaste === 'function') {
-		applyPlainTextPaste(figureEditorIds);
-	} else {
-		console.error(
-			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
-		);
-	}
+	applyPlainTextPaste(figureEditorIds);
 });
 
 

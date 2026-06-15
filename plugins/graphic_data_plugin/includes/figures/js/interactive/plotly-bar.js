@@ -1,3 +1,20 @@
+import {
+    loadPlotlyScript,
+    waitForElementById,
+    computeStandardDeviation,
+    computePercentile,
+    logFormFieldValues,
+    fillFormFieldValues,
+} from '@graphic-data/plotly-utility';
+
+const _barDataEl = document.getElementById(
+    'wp-script-module-data-@graphic-data/plotly-bar'
+);
+let _barDefaults = {};
+if ( _barDataEl?.textContent ) {
+    try { _barDefaults = JSON.parse( _barDataEl.textContent ); } catch {}
+}
+
 /**
  * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
  *
@@ -271,13 +288,14 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * @param {boolean}       config.displayModeBar                      - Whether to display the mode bar.
  * @param {Array<string>} config.modeBarButtonsToRemove              - List of mode bar buttons to remove.
  */
-async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID){
+export async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID){
     try {
         await loadPlotlyScript(); // ensures Plotly is ready
 
         const rawField = interactive_arguments;
         const figureArguments = Object.fromEntries(JSON.parse(rawField));
         const rootURL = window.location.origin;
+		let figureID = '';
 
         //Rest call to get uploaded_path_json
         if (postID == null) {
@@ -623,7 +641,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
                 } : undefined;
 
                 if (!(isStacked === 'on' && columnXHeader !== 'None')) {
-                    trace = {
+                    const trace = {
                         x: plotlyX,
                         y: plotlyY,
                         type: 'bar',
@@ -857,11 +875,7 @@ function loadDefaultInteractiveBarArguments(jsonColumns) {
 	}
 
 	const currentStr = field.value || '';
-	const defaultsStr =
-		typeof argumentsDefaultsBar !== 'undefined' &&
-		argumentsDefaultsBar.interactive_bar_arguments
-			? argumentsDefaultsBar.interactive_bar_arguments
-			: '';
+	const defaultsStr = _barDefaults.interactive_bar_arguments || '';
 
 	// Parse both to objects and keep original pair order from current
 	const currentPairs = toPairsFlexible(currentStr);
@@ -1221,7 +1235,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 			const feature = features[i];
 			const featureName = featureNames[i];
 
-			const newRow = document.createElement('div');
+			let newRow = document.createElement('div');
 			newRow.classList.add('row', 'fieldPadding');
 
 			const newColumn1 = document.createElement('div');
@@ -1589,11 +1603,11 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 			? 'on'
 			: '';
 
-		newRow = document.createElement('div');
+		let newRow = document.createElement('div');
 		newRow.classList.add('row', 'fieldPadding');
-		newColumn1 = document.createElement('div');
+		let newColumn1 = document.createElement('div');
 		newColumn1.classList.add('col-3');
-		newColumn2 = document.createElement('div');
+		let newColumn2 = document.createElement('div');
 		newColumn2.classList.add('col');
 
 		newColumn1.appendChild(labelStackedBarColumns);
@@ -1667,6 +1681,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 
 			let newRow = document.createElement('div');
 			newRow.classList.add('row', 'fieldPadding');
+			let fieldLabelNumber = '';
 
 			if (fieldLabel[0] != 'XAxis') {
 				fieldLabelNumber = parseInt(fieldLabel[0].slice(-1));
@@ -1689,6 +1704,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 				// Add line label field
 				newRow = document.createElement('div');
 				newRow.classList.add('row', 'fieldPadding');
+
 
 				if (fieldLabelNumber % 2 != 0) {
 					newRow.classList.add('row', 'fieldBackgroundColor');
@@ -1795,7 +1811,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 				};
 
 				Object.entries(patternJsonColumns).forEach(([label, value]) => {
-					option = document.createElement('option');
+					let option = document.createElement('option');
 					option.value = value;
 					option.innerHTML = label;
 					selectColumnPattern.appendChild(option);
@@ -2116,3 +2132,6 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 		});
 	}
 }
+
+// Bridge for classic scripts (admin-preview-buttons.js) until they are modularized.
+window.plotlyBarParameterFields = plotlyBarParameterFields;

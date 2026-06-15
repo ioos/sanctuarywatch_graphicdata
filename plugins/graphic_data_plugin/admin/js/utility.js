@@ -2,34 +2,97 @@
  * Utility functions used across javascript files within admin/js folder
  */
 
-// Check if a cookie exists
-function cookieExists(cookieName) {
+/**
+ * Checks whether a cookie with the given name exists in the browser.
+ *
+ * @param {string} cookieName - The name of the cookie to look for.
+ * @returns {boolean} True if the cookie exists, false otherwise.
+ */
+export function cookieExists(cookieName) {
 	return document.cookie
 		.split(';')
 		.some((cookie) => cookie.trim().startsWith(cookieName + '='));
 }
 
-// As the last step in field validation of edit post pages, swap out existing field values with those stored in the allCustomFields object
-function replaceFieldValuesWithTransientValues() {
-	if (typeof allCustomFields !== 'undefined') {
-		Object.entries(allCustomFields).forEach(([metaBoxName, metaValue]) => {
-			const element = document.querySelector(
-				`[data-depend-id="${metaBoxName}"]`
-			);
-			if (element) {
-				element.value = metaValue;
+/**
+ * Replaces current form field values with those stored in the allCustomFields object.
+ *
+ * Intended as the last step in field validation on edit post pages. Iterates over
+ * each entry in allCustomFields and sets the matching field's value via its
+ * data-depend-id attribute. Range inputs are handled separately by also updating
+ * their adjacent sibling element.
+ *
+ * @returns {void}
+ */
+export function replaceFieldValuesWithTransientValues() {
+	const el = document.getElementById( 'graphic-data-transient-fields' );
+	if ( ! el ) {
+		return;
+	}
+	let allCustomFields;
+	try {
+		allCustomFields = JSON.parse( el.textContent );
+	} catch ( e ) {
+		console.error( 'graphic-data-transient-fields: failed to parse JSON', e );
+		return;
+	}
 
-				// range elements need to be set differently
-				if (element.tagName === 'INPUT' && element.type === 'range') {
-					element.nextElementSibling.value = metaValue;
-				}
+	const setEditorContent = ( editor, value ) => {
+		if ( editor.initialized ) {
+			editor.setContent( value );
+			editor.save();
+		} else {
+			editor.on( 'init', () => {
+				editor.setContent( value );
+				editor.save();
+			} );
+		}
+	};
+
+	const applyValue = ( metaBoxName, metaValue ) => {
+		const editor =
+			typeof tinymce !== 'undefined' ? tinymce.get( metaBoxName ) : null;
+
+		if ( editor ) {
+			setEditorContent( editor, metaValue );
+			return;
+		}
+
+		const element = document.querySelector(
+			`[data-depend-id="${ metaBoxName }"]`
+		);
+		if ( element ) {
+			element.value = metaValue;
+			if ( element.tagName === 'INPUT' && element.type === 'range' ) {
+				element.nextElementSibling.value = metaValue;
 			}
-		});
+		}
+	};
+
+	// Apply immediately for anything already present (the 12 plain fields,
+	// plus any editor that happens to already be registered).
+	Object.entries( allCustomFields ).forEach( ( [ name, value ] ) => {
+		applyValue( name, value );
+	} );
+
+	// Catch editor fields that register AFTER this function runs.
+	if ( typeof tinymce !== 'undefined' ) {
+		tinymce.on( 'AddEditor', ( e ) => {
+			const id = e.editor.id;
+			if ( Object.prototype.hasOwnProperty.call( allCustomFields, id ) ) {
+				setEditorContent( e.editor, allCustomFields[ id ] );
+			}
+		} );
 	}
 }
 
-// Get a cookie with a specified name
-function getCookie(cookieName) {
+/**
+ * Retrieves the value of a cookie by name.
+ *
+ * @param {string} cookieName - The name of the cookie to retrieve.
+ * @returns {string|null} The decoded cookie value, or null if not found.
+ */
+export function getCookie(cookieName) {
 	const name = cookieName + '=';
 	const decodedCookie = decodeURIComponent(document.cookie);
 	const cookieArray = decodedCookie.split(';');
@@ -43,8 +106,17 @@ function getCookie(cookieName) {
 	return null;
 }
 
-// determine if we are on the correct edit page for a custom post type; a precursor step for further functions to run
-function onCorrectEditPage(customPostType) {
+/**
+ * Determines whether the current page is the correct WordPress edit screen for a given custom post type.
+ *
+ * Checks both new-post and existing-post edit URLs, resolving the actual post type from the URL
+ * query string or the global `window.typenow` variable (used by WordPress when the post type
+ * is not present in the URL, e.g. when editing an existing post via post.php?post=123).
+ *
+ * @param {string} customPostType - The post type slug to check against (e.g. 'graphic_data').
+ * @returns {boolean} True if the current page is an edit screen for the specified post type, false otherwise.
+ */
+export function onCorrectEditPage(customPostType) {
 
 	// Get the current URL
 	const currentUrl = window.location.href;
@@ -82,7 +154,7 @@ function onCorrectEditPage(customPostType) {
  * // Call the function when the DOM is loaded
  * document.addEventListener('DOMContentLoaded', redText);
  */
-function redText() {
+export function redText() {
 	// Find only the first element with class "exopite-sof-content"
 	const contentElement = document.querySelector('.exopite-sof-content');
 
@@ -162,8 +234,20 @@ function redText() {
 	});
 }
 
-// Show relevant photo and info fields for scene and modal forms
-function displayEntries(entry_number, string_prefix) {
+/**                                   
+ * Shows or hides photo and info entry fields for scene and modal forms based on the selected entry count.        
+ *                                    
+ * Iterates up to a maximum of 6 entries. Fields beyond `entry_number` are cleared and hidden;                    
+ * fields within `entry_number` are made visible. Each field is located via a partial attribute                   
+ * selector built from `string_prefix` combined with a `text{n}` or `url{n}` suffix, and visibility               
+ * is controlled on the 7th ancestor element of the matched input.          
+ *                                     
+ * @param {number} entry_number - The number of entries to display (1–6).
+ * @param {string} string_prefix - The partial attribute selector prefix used to target field elements            
+ * (e.g. `[data-depend-id="scene_photo_`).                                
+ * @returns {void}                    
+ */      
+export function displayEntries(entry_number, string_prefix) {
 	for (let i = 6; i > entry_number; i--) {
 		const target_text = string_prefix + "text" + i + "']";
 		const target_text_div = document.querySelector(target_text);
@@ -197,7 +281,7 @@ function displayEntries(entry_number, string_prefix) {
  * @param {object} editor A fully initialized TinyMCE editor instance.
  * @return {void}
  */
-function bindPlainTextPaste(editor) {
+export function bindPlainTextPaste(editor) {
 	editor.on('paste', function (e) {
 		e.preventDefault();
 		const text = (e.clipboardData || window.clipboardData).getData(
@@ -230,7 +314,7 @@ function bindPlainTextPaste(editor) {
  *                             paste behavior.
  * @return {void}
  */
-function applyPlainTextPaste(editorIds) {
+export function applyPlainTextPaste(editorIds) {
 	if (!Array.isArray(editorIds) || editorIds.length === 0) {
 		console.warn('applyPlainTextPaste: No valid editor IDs provided.');
 		return;

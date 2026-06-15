@@ -1,4 +1,19 @@
+import { loadPlotlyScript } from '@graphic-data/plotly-utility';
+
 // === 1. Wait for Target Element ===
+/**
+ * Polls the DOM until an element with the given ID appears, or the timeout is reached.
+ *
+ * Uses recursive `setTimeout` so each poll waits a full `interval` ms after the
+ * previous check completes.
+ *
+ * @async
+ * @param {string} id - The ID of the element to wait for.
+ * @param {number} [timeout=10000] - Maximum time in milliseconds to wait before rejecting.
+ * @param {number} [interval=100] - Milliseconds between each DOM poll.
+ * @returns {Promise<HTMLElement>} Resolves with the element once it appears in the DOM.
+ * @throws {Error} Rejects if the element is not found within `timeout` milliseconds.
+ */
 async function waitForElementById(id, timeout = 10000, interval = 100) {
 	const start = Date.now();
 
@@ -23,6 +38,19 @@ async function waitForElementById(id, timeout = 10000, interval = 100) {
 }
 
 // === 2. Value Classification Function (equal interval) ===
+/**
+ * Assigns each value to a class index using equal-interval classification.
+ *
+ * Divides the range `[min, max]` into `numClasses` equal-width buckets and returns
+ * the zero-based class index for each input value. The last class index
+ * (`numClasses - 1`) is clamped so that the maximum value doesn't overflow into a
+ * non-existent class.
+ *
+ * @param {number[]} values - Array of numeric values to classify.
+ * @param {number} numClasses - Number of equal-interval classes to divide the range into.
+ * @returns {number[]} Array of zero-based class indices, one per input value, in the range
+ *   `[0, numClasses - 1]`.
+ */
 function classifyValues(values, numClasses) {
 	const min = Math.min(...values);
 	const max = Math.max(...values);
@@ -32,6 +60,23 @@ function classifyValues(values, numClasses) {
 	);
 }
 
+/**
+ * Dynamically builds and injects the map parameter UI into the `#graphGUI` element.
+ *
+ * Fetches the GeoJSON file associated with the current figure post, inspects the geometry
+ * types present (`Point`, `LineString`, `Polygon`, etc.), and renders per-geometry setting
+ * fields (color, thickness, visibility, classification classes, tooltip options). Also renders
+ * global controls for graph type (scattermapbox / densitymapbox / choroplethmapbox), map style,
+ * and an optional Mapbox access token.
+ *
+ * @async
+ * @param {Object} jsonColumns - Key/value map of available data columns, used to populate
+ *   the "Field for Tooltip Hover" dropdowns for each geometry type.
+ * @param {string|null} interactive_arguments - JSON-encoded string containing at minimum a
+ *   `postID` property, used to look up the figure's GeoJSON path via the WP REST API.
+ *   Falls back to the `post_ID` hidden input in the DOM if `null`.
+ * @returns {Promise<void>}
+ */
 async function plotlyMapParameterFields(jsonColumns, interactive_arguments) {
 	const targetElement = document.getElementById('graphGUI');
 	const newDiv = document.createElement('div');
@@ -270,7 +315,28 @@ async function plotlyMapParameterFields(jsonColumns, interactive_arguments) {
 }
 
 // === 6. Produce Plotly Map with UI-controlled Styles ===
-async function producePlotlyMap(
+/**
+ * Renders a Plotly geographic map into the target figure container.
+ *
+ * Loads Plotly if not already available, fetches the GeoJSON file associated with the
+ * figure post via the WP REST API, applies classification and tooltip settings from
+ * `interactive_arguments`, creates a `<div>` inside `targetFigureElement`, and calls
+ * `Plotly.newPlot` to render the chart.
+ *
+ * Only renders if the figure ID derived from `postID` (or the DOM `post_ID` input) matches
+ * the post ID embedded in `targetFigureElement`.
+ *
+ * @async
+ * @param {string} targetFigureElement - The DOM element ID of the figure container,
+ *   expected to end with `_<postID>` (e.g. `"figure_interactive_42"`).
+ * @param {string} interactive_arguments - JSON-encoded array of `[key, value]` pairs
+ *   containing figure settings such as `GeometryType`, `ValueProperty`, `ShowTooltip`,
+ *   and `NumClasses`.
+ * @param {string|number|null} postID - WordPress post ID for the figure. Falls back to
+ *   the `post_ID` hidden input in the DOM if `null` or `undefined`.
+ * @returns {Promise<void>}
+ */
+export async function producePlotlyMap(
 	targetFigureElement,
 	interactive_arguments,
 	postID
@@ -317,83 +383,6 @@ async function producePlotlyMap(
 		const targetElement = await waitForElementById(targetFigureElement); // ✅ await here
 		console.log('targetElement', targetElement);
 		targetElement.appendChild(newDiv);
-
-		// let trace;
-		// const baseColor = args[`${geometryType}Color`] || (geometryType === "Polygon" ? "#444444" : geometryType === "LineString" ? "#1f77b4" : "#ff0000");
-		// const baseThickness = parseFloat(args[`${geometryType}Thickness`] || 4);
-		// const visible = args[`${geometryType}Visible`] === 'on';
-
-		// if (!visible) return; // Skip rendering if not visible
-
-		// if (geometryType === "Point") {
-		//     trace = {
-		//         type: "scattermapbox",
-		//         lat: geoData.features.map(f => f.geometry.coordinates[1]),
-		//         lon: geoData.features.map(f => f.geometry.coordinates[0]),
-		//         mode: "markers",
-		//         marker: {
-		//             size: baseThickness,
-		//             color: classIndices.length ? classIndices : baseColor,
-		//             colorscale: args["ColorScale"] || "Viridis",
-		//             showscale: true
-		//         },
-		//         text: showTooltip ? geoData.features.map(f => JSON.stringify(f.properties)) : [],
-		//         hoverinfo: showTooltip ? "text" : "skip"
-		//     };
-		// } else if (geometryType === "LineString") {
-		//     const allLats = [];
-		//     const allLons = [];
-		//     geoData.features.forEach((f) => {
-		//         const coords = f.geometry.coordinates;
-		//         coords.forEach(c => {
-		//             allLons.push(c[0]);
-		//             allLats.push(c[1]);
-		//         });
-		//         allLons.push(null);
-		//         allLats.push(null);
-		//     });
-		//     trace = {
-		//         type: "scattermapbox",
-		//         mode: "lines",
-		//         lat: allLats,
-		//         lon: allLons,
-		//         line: {
-		//             width: baseThickness,
-		//             color: classIndices.length ? classIndices : baseColor,
-		//             colorscale: args["ColorScale"] || "Viridis",
-		//             showscale: true
-		//         },
-		//         text: showTooltip ? geoData.features.map(f => JSON.stringify(f.properties)) : [],
-		//         hoverinfo: showTooltip ? "text" : "skip"
-		//     };
-		// } else if (geometryType === "Polygon") {
-		//     trace = {
-		//         type: "choroplethmapbox",
-		//         geojson: geoData,
-		//         locations: geoData.features.map((_, i) => i),
-		//         z: classIndices.length ? classIndices : geoData.features.map(() => 1),
-		//         colorscale: args["ColorScale"] || "Viridis",
-		//         showscale: true,
-		//         marker: {
-		//             line: {
-		//                 width: baseThickness,
-		//                 color: baseColor
-		//             }
-		//         },
-		//         text: showTooltip ? geoData.features.map(f => JSON.stringify(f.properties)) : [],
-		//         hoverinfo: showTooltip ? "text" : "skip"
-		//     };
-		// }
-
-		// const layout = {
-		//     mapbox: {
-		//         style: args.MapStyle || "open-street-map",
-		//         center: args.MapCenter || { lon: -80.2, lat: 25.76 },
-		//         zoom: args.MapZoom || 10,
-		//         accesstoken: args.MapboxToken || undefined
-		//     },
-		//     margin: { t: 60, b: 60, l: 60, r: 60 }
-		// };
 
 		const thisdata = [
 			{

@@ -100,7 +100,7 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
 
     </h4>
     <dl class="phpdocumentor-table-of-contents">
-                    <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Admin.html"><abbr title="\Graphic_Data_Admin">Graphic_Data_Admin</abbr></a></dt><dd>The admin-specific functionality of the plugin.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Export-Figures.html"><abbr title="\Graphic_Data_Export_Figures">Graphic_Data_Export_Figures</abbr></a></dt><dd>Class Graphic_Data_Export_Figures</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Custom-Roles.html"><abbr title="\Graphic_Data_Custom_Roles">Graphic_Data_Custom_Roles</abbr></a></dt><dd>Manages custom user roles and role-based access control for the Graphic Data Plugin.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-About.html"><abbr title="\Graphic_Data_About">Graphic_Data_About</abbr></a></dt><dd>Register class that defines the About custom content post type as well as associated functions.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Instance.html"><abbr title="\Graphic_Data_Instance">Graphic_Data_Instance</abbr></a></dt><dd>Registers the Instance custom post type and manages its admin interface.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Loader.html"><abbr title="\Graphic_Data_Loader">Graphic_Data_Loader</abbr></a></dt><dd>Register all actions and filters for the plugin.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Settings-Page.html"><abbr title="\Graphic_Data_Settings_Page">Graphic_Data_Settings_Page</abbr></a></dt><dd>Handles the admin settings page for the Graphic Data plugin.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Tutorial-Content.html"><abbr title="\Graphic_Data_Tutorial_Content">Graphic_Data_Tutorial_Content</abbr></a></dt><dd>Class Graphic_Data_Tutorial_Content</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Plugin.html"><abbr title="\Graphic_Data_Plugin">Graphic_Data_Plugin</abbr></a></dt><dd>The core plugin class.</dd>    </dl>
+                    <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Admin.html"><abbr title="\Graphic_Data_Admin">Graphic_Data_Admin</abbr></a></dt><dd>The admin-specific functionality of the plugin.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Export-Figures.html"><abbr title="\Graphic_Data_Export_Figures">Graphic_Data_Export_Figures</abbr></a></dt><dd>Class Graphic_Data_Export_Figures</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Custom-Capabilities.html"><abbr title="\Graphic_Data_Custom_Capabilities">Graphic_Data_Custom_Capabilities</abbr></a></dt><dd>Manages custom user capabilities for the Graphic Data Plugin.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-About.html"><abbr title="\Graphic_Data_About">Graphic_Data_About</abbr></a></dt><dd>Register class that defines the About custom content post type as well as associated functions.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Instance.html"><abbr title="\Graphic_Data_Instance">Graphic_Data_Instance</abbr></a></dt><dd>Registers the Instance custom post type and manages its admin interface.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Loader.html"><abbr title="\Graphic_Data_Loader">Graphic_Data_Loader</abbr></a></dt><dd>Register all actions and filters for the plugin.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Settings-Page.html"><abbr title="\Graphic_Data_Settings_Page">Graphic_Data_Settings_Page</abbr></a></dt><dd>Handles the admin settings page for the Graphic Data plugin.</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Tutorial-Content.html"><abbr title="\Graphic_Data_Tutorial_Content">Graphic_Data_Tutorial_Content</abbr></a></dt><dd>Class Graphic_Data_Tutorial_Content</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Plugin.html"><abbr title="\Graphic_Data_Plugin">Graphic_Data_Plugin</abbr></a></dt><dd>The core plugin class.</dd>    </dl>
 
 
 
@@ -113,27 +113,34 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR">GRAPHIC_DATA_DATA_DIR</a>
     <span>
-        &nbsp;= \WP_CONTENT_DIR . &#039;/data&#039;                            </span>
+        &nbsp;: mixed&nbsp;= \WP_CONTENT_DIR . &#039;/data&#039;                            </span>
 </dt>
 <dd>The data directory inside of wp-content</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL">GRAPHIC_DATA_DATA_URL</a>
     <span>
-        &nbsp;= \content_url(&#039;data&#039;)                            </span>
+        &nbsp;: mixed&nbsp;= \content_url(&#039;data&#039;)                            </span>
 </dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_IS_ACTIVE_THEME">GRAPHIC_DATA_IS_ACTIVE_THEME</a>
+    <span>
+        &nbsp;: mixed&nbsp;= \get_template() === &#039;graphic_data_theme&#039;                            </span>
+</dt>
+<dd>Determine whether the Graphic Data Theme is the active theme.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_DIR">GRAPHIC_DATA_PLUGIN_DIR</a>
     <span>
-        &nbsp;= \plugin_dir_path(__FILE__)                            </span>
+        &nbsp;: mixed&nbsp;= \plugin_dir_path(__FILE__)                            </span>
 </dt>
 <dd>The directory path of the plugin.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION">GRAPHIC_DATA_PLUGIN_VERSION</a>
     <span>
-        &nbsp;= $graphic_data_plugin_data[&#039;Version&#039;]                            </span>
+        &nbsp;: mixed&nbsp;= $graphic_data_plugin_data[&#039;Version&#039;]                            </span>
 </dt>
 
     </dl>
@@ -239,6 +246,37 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
         
     </article>
                     <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_GRAPHIC_DATA_IS_ACTIVE_THEME">
+        GRAPHIC_DATA_IS_ACTIVE_THEME
+        <a href="namespaces/default.html#constant_GRAPHIC_DATA_IS_ACTIVE_THEME" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">63</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Determine whether the Graphic Data Theme is the active theme.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">GRAPHIC_DATA_IS_ACTIVE_THEME</span>
+    = <span class="phpdocumentor-signature__default-value">\get_template() === &#039;graphic_data_theme&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
     <h4 class="phpdocumentor-element__name" id="constant_GRAPHIC_DATA_PLUGIN_DIR">
         GRAPHIC_DATA_PLUGIN_DIR
         <a href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_DIR" class="headerlink"><i class="fas fa-link"></i></a>
@@ -316,7 +354,7 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">68</span>
+    <span class="phpdocumentor-element-found-in__line">72</span>
 
     </aside>
 
@@ -332,21 +370,20 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
 
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="function_graphic_data_activate_tags">
         Tags
-        <a href="namespaces/default.html#function_graphic_data_activate#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="namespaces/default.html#function_graphic_data_activate_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">see</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">see</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><a href="namespaces/default.html#function_graphic_data_ensure_public_data_dir"><abbr title="\graphic_data_ensure_public_data_dir()">graphic_data_ensure_public_data_dir()</abbr></a></span>
-                                        
-                                             
+                                                                
                                     </dd>
-                                            </dl>
+                        </dl>
 
     
 </article>
@@ -359,7 +396,7 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">89</span>
+    <span class="phpdocumentor-element-found-in__line">93</span>
 
     </aside>
 
@@ -379,21 +416,20 @@ so it can be surfaced via admin notices; on success that option is deleted.</p>
 
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="function_graphic_data_ensure_public_data_dir_tags">
         Tags
-        <a href="namespaces/default.html#function_graphic_data_ensure_public_data_dir#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="namespaces/default.html#function_graphic_data_ensure_public_data_dir_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
     
 </article>
@@ -406,7 +442,7 @@ so it can be surfaced via admin notices; on success that option is deleted.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">132</span>
+    <span class="phpdocumentor-element-found-in__line">136</span>
 
     </aside>
 
@@ -429,100 +465,7 @@ not affect the page life cycle.</p>
 </article>
             </section>
 
-        <div class="phpdocumentor-modal" id="source-view">
-    <div class="phpdocumentor-modal-bg" data-exit-button></div>
-    <div class="phpdocumentor-modal-container">
-        <div class="phpdocumentor-modal-content">
-            <pre style="max-height: 500px; overflow-y: scroll" data-src="" class="language-php line-numbers linkable-line-numbers"></pre>
-        </div>
-        <button data-exit-button class="phpdocumentor-modal__close">&times;</button>
-    </div>
-</div>
-
-    <script type="text/javascript">
-        (function () {
-            function loadExternalCodeSnippet(el, url, line) {
-                Array.prototype.slice.call(el.querySelectorAll('pre[data-src]')).forEach((pre) => {
-                    const src = url || pre.getAttribute('data-src').replace(/\\/g, '/');
-                    const language = 'php';
-
-                    const code = document.createElement('code');
-                    code.className = 'language-' + language;
-                    pre.textContent = '';
-                    pre.setAttribute('data-line', line)
-                    code.textContent = 'Loading…';
-                    pre.appendChild(code);
-
-                    var xhr = new XMLHttpRequest();
-
-                    xhr.open('GET', src, true);
-
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState !== 4) {
-                            return;
-                        }
-
-                        if (xhr.status < 400 && xhr.responseText) {
-                            code.textContent = xhr.responseText;
-                            Prism.highlightElement(code);
-                            d=document.getElementsByClassName("line-numbers");
-                            d[0].scrollTop = d[0].children[1].offsetTop;
-                            return;
-                        }
-
-                        if (xhr.status === 404) {
-                            code.textContent = '✖ Error: File could not be found';
-                            return;
-                        }
-
-                        if (xhr.status >= 400) {
-                            code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
-                            return;
-                        }
-
-                        code.textContent = '✖ Error: An unknown error occurred';
-                    };
-
-                    xhr.send(null);
-                });
-            }
-
-            const modalButtons = document.querySelectorAll("[data-modal]");
-            const openedAsLocalFile = window.location.protocol === 'file:';
-            if (modalButtons.length > 0 && openedAsLocalFile) {
-                console.warn(
-                    'Viewing the source code is unavailable because you are opening this page from the file:// scheme; ' +
-                    'browsers block XHR requests when a page is opened this way'
-                );
-            }
-
-            modalButtons.forEach(function (trigger) {
-                if (openedAsLocalFile) {
-                    trigger.setAttribute("hidden", "hidden");
-                }
-
-                trigger.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    const modal = document.getElementById(trigger.dataset.modal);
-                    if (!modal) {
-                        console.error(`Modal with id "${trigger.dataset.modal}" could not be found`);
-                        return;
-                    }
-                    modal.classList.add("phpdocumentor-modal__open");
-
-                    loadExternalCodeSnippet(modal, trigger.dataset.src || null, trigger.dataset.line)
-                    const exits = modal.querySelectorAll("[data-exit-button]");
-                    exits.forEach(function (exit) {
-                        exit.addEventListener("click", function (event) {
-                            event.preventDefault();
-                            modal.classList.remove("phpdocumentor-modal__open");
-                        });
-                    });
-                });
-            });
-        })();
-    </script>
-
+        
     </article>
                                 </section>
                 <section class="phpdocumentor-on-this-page__sidebar">
@@ -545,6 +488,7 @@ not affect the page life cycle.</p>
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR">GRAPHIC_DATA_DATA_DIR</a></li>
                                                     <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_URL">GRAPHIC_DATA_DATA_URL</a></li>
+                                                    <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_IS_ACTIVE_THEME">GRAPHIC_DATA_IS_ACTIVE_THEME</a></li>
                                                     <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_DIR">GRAPHIC_DATA_PLUGIN_DIR</a></li>
                                                     <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION">GRAPHIC_DATA_PLUGIN_VERSION</a></li>
                                             </ul>

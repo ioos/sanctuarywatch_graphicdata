@@ -110,22 +110,20 @@ permalink: /function_documentation/classes/Graphic-Data-Utility.html
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">link</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">link</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                                         <a class="phpdocumentor-tag-link" href="https://github.com/ioos/sanctuarywatch_graphicdata"> https://github.com/ioos/sanctuarywatch_graphicdata </a>
-                    
                                     </dd>
-                                                <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
     
     
@@ -274,7 +272,7 @@ permalink: /function_documentation/classes/Graphic-Data-Utility.html
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
-<dd>Get a list of all instances, filtered for &#039;content_editor&#039; role.</dd>
+<dd>Get a list of all instances, filtered for &#039;author&#039; role.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_return_figure_icons">return_figure_icons()</a>
@@ -331,6 +329,13 @@ permalink: /function_documentation/classes/Graphic-Data-Utility.html
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
 <dd>Retrieve scene dropdown options for the figure content type.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_sanitize_checkbox_field">sanitize_checkbox_field()</a>
+    <span>
+                                &nbsp;: int    </span>
+</dt>
+<dd>Sanitizes a checkbox field value for storage.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field">sanitize_number_or_quotes_field()</a>
@@ -445,7 +450,7 @@ in the edit screen for the relevant scene and instance.</p>
         </div>
     
         <section class="phpdocumentor-description"><p>Generates a dropdown filter for selecting instances with role-based access control.
-Content editors see only their assigned instances, while administrators and content managers see all published instances.
+Authors see only their assigned instances, while administrators and editors see all published instances.
 The dropdown maintains the selected value across page loads via GET parameter or stored filter value.</p>
 </section>
 
@@ -464,124 +469,91 @@ Used for form submission and DOM targeting.</p>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_create_instance_dropdown_filter_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_create_instance_dropdown_filter#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_create_instance_dropdown_filter_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                                <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">global</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
-                                                                                
-                                                 <section class="phpdocumentor-description"><p>wpdb $wpdb WordPress database abstraction object.</p>
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">global</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>wpdb $wpdb WordPress database abstraction object.</p>
 </section>
 
                                     </dd>
-                                                <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">uses</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">uses</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><abbr title="\wp_get_current_user()">wp_get_current_user()</abbr></span>
-                                        
-                                                 <section class="phpdocumentor-description"><p>Retrieves the current user object.</p>
+                                                                    <section class="phpdocumentor-description"><p>Retrieves the current user object.</p>
 </section>
 
                                     </dd>
-                            <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">uses</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><abbr title="\current_user_can()">current_user_can()</abbr></span>
-                                        
-                                                 <section class="phpdocumentor-description"><p>Checks user capabilities for role-based filtering.</p>
+                                                                    <section class="phpdocumentor-description"><p>Checks user capabilities for role-based filtering.</p>
 </section>
 
                                     </dd>
-                            <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">uses</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><abbr title="\get_user_meta()">get_user_meta()</abbr></span>
-                                        
-                                                 <section class="phpdocumentor-description"><p>Fetches assigned instances for content editors.</p>
+                                                                    <section class="phpdocumentor-description"><p>Fetches assigned instances for authors.</p>
 </section>
 
                                     </dd>
-                            <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">uses</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><abbr title="\selected()">selected()</abbr></span>
-                                        
-                                                 <section class="phpdocumentor-description"><p>WordPress helper for marking selected options.</p>
+                                                                    <section class="phpdocumentor-description"><p>WordPress helper for marking selected options.</p>
 </section>
 
                                     </dd>
-                            <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">uses</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><abbr title="\esc_attr()">esc_attr()</abbr></span>
-                                        
-                                                 <section class="phpdocumentor-description"><p>Escapes attribute values for security.</p>
+                                                                    <section class="phpdocumentor-description"><p>Escapes attribute values for security.</p>
 </section>
 
                                     </dd>
-                            <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">uses</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><abbr title="\esc_html()">esc_html()</abbr></span>
-                                        
-                                                 <section class="phpdocumentor-description"><p>Escapes output text for security.</p>
+                                                                    <section class="phpdocumentor-description"><p>Escapes output text for security.</p>
 </section>
 
                                     </dd>
-                            <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">uses</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                            <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><abbr title="\esc_html__()">esc_html__()</abbr></span>
-                                        
-                                                 <section class="phpdocumentor-description"><p>Translates and escapes text.</p>
+                                                                    <section class="phpdocumentor-description"><p>Translates and escapes text.</p>
 </section>
 
                                     </dd>
-                            <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">uses</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
-                                                                                
-                                                 <section class="phpdocumentor-description"><p>$this-&gt;get_filter_value()  Retrieves stored filter value (custom method).</p>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>$this-&gt;get_filter_value()  Retrieves stored filter value (custom method).</p>
 </section>
 
                                     </dd>
-                                                <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">example</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
-                                                                                
-                                                 <section class="phpdocumentor-description"><p>// Display instance filter with custom element name
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">example</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>// Display instance filter with custom element name
 $this-&gt;create_instance_dropdown_filter('scene_instance');</p>
 </section>
 
                                     </dd>
-                                                <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">security</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
-                                                                                
-                                                 <section class="phpdocumentor-description"><ul>
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">security</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><ul>
 <li>Sanitizes instance IDs using absint() before SQL queries</li>
 <li>Escapes all output using esc_attr() and esc_html()</li>
 <li>Validates user permissions before showing filtered results</li>
@@ -590,12 +562,11 @@ $this-&gt;create_instance_dropdown_filter('scene_instance');</p>
 </section>
 
                                     </dd>
-                                                <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">access</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
-                                                                                
-                                                 <section class="phpdocumentor-description"><p>public</p>
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">access</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>public</p>
 </section>
 
                                     </dd>
@@ -682,7 +653,7 @@ $this-&gt;create_instance_dropdown_filter('scene_instance');</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1179</span>
+    <span class="phpdocumentor-element-found-in__line">1201</span>
 
     </aside>
 
@@ -702,39 +673,33 @@ implemented for the instance content type, but is intended to be generalized for
 
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_display_warning_message_if_new_post_impossible_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_display_warning_message_if_new_post_impossible#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_display_warning_message_if_new_post_impossible_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">global</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
-                                                                                
-                                                 <section class="phpdocumentor-description"><p>string $pagenow  The current admin page filename.</p>
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">global</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>string $pagenow  The current admin page filename.</p>
 </section>
 
                                     </dd>
-                            <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">global</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
-                                                                                
-                                                 <section class="phpdocumentor-description"><p>string $typenow  The current post type being viewed.</p>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>string $typenow  The current post type being viewed.</p>
 </section>
 
                                     </dd>
-                                                <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -878,21 +843,20 @@ stores the data as-is. Cleans up expired transients before storing new ones.</p>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_fields_to_transient_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_fields_to_transient#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_fields_to_transient_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -999,30 +963,28 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_get_filter_value_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_get_filter_value#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_get_filter_value_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                                <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">access</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
-                                                                                
-                                                 <section class="phpdocumentor-description"><p>public</p>
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">access</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>public</p>
 </section>
 
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -1128,21 +1090,20 @@ iframe to render body text in a sans-serif font.</p>
 
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_inject_tinymce_changes_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_inject_tinymce_changes#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_inject_tinymce_changes_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -1171,7 +1132,7 @@ editor ID is not in the allowed fields list.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1161</span>
+    <span class="phpdocumentor-element-found-in__line">1183</span>
 
     </aside>
 
@@ -1267,21 +1228,20 @@ The transient is deleted after being output.</p>
 
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_output_transient_to_js_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_output_transient_to_js#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_output_transient_to_js_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -1347,7 +1307,7 @@ Notices are displayed only on the post type edit screen after a post has been up
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1138</span>
+    <span class="phpdocumentor-element-found-in__line">1160</span>
 
     </aside>
 
@@ -1434,21 +1394,20 @@ as a readable REST API field using the class's meta_get_callback method.</p>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_render_nonce_field_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_render_nonce_field#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_render_nonce_field_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -1583,11 +1542,11 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">649</span>
+    <span class="phpdocumentor-element-found-in__line">652</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Get a list of all instances, filtered for &#039;content_editor&#039; role.</p>
+        <p class="phpdocumentor-summary">Get a list of all instances, filtered for &#039;author&#039; role.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -1626,7 +1585,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1092</span>
+    <span class="phpdocumentor-element-found-in__line">1114</span>
 
     </aside>
 
@@ -1687,7 +1646,7 @@ as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">867</span>
+    <span class="phpdocumentor-element-found-in__line">874</span>
 
     </aside>
 
@@ -1747,7 +1706,7 @@ or if the 'icons' element is not found in the SVG.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">712</span>
+    <span class="phpdocumentor-element-found-in__line">719</span>
 
     </aside>
 
@@ -1802,7 +1761,7 @@ or if the 'icons' element is not found in the SVG.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">980</span>
+    <span class="phpdocumentor-element-found-in__line">987</span>
 
     </aside>
 
@@ -1863,7 +1822,7 @@ with section titles as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1066</span>
+    <span class="phpdocumentor-element-found-in__line">1088</span>
 
     </aside>
 
@@ -1923,7 +1882,7 @@ as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">747</span>
+    <span class="phpdocumentor-element-found-in__line">754</span>
 
     </aside>
 
@@ -1987,7 +1946,7 @@ as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">935</span>
+    <span class="phpdocumentor-element-found-in__line">942</span>
 
     </aside>
 
@@ -2042,7 +2001,7 @@ as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1009</span>
+    <span class="phpdocumentor-element-found-in__line">1016</span>
 
     </aside>
 
@@ -2095,6 +2054,66 @@ Includes a leading empty entry.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_sanitize_checkbox_field">
+        sanitize_checkbox_field()
+        <a href="classes/Graphic-Data-Utility.html#method_sanitize_checkbox_field" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1073</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Sanitizes a checkbox field value for storage.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">sanitize_checkbox_field</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Returns 1 if the value is set (i.e. the checkbox was submitted), or 0 if
+it is not. Checkbox inputs are omitted from POST data entirely when
+unchecked, so the absence of the value — not its content — signals an
+unchecked state.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$value</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The raw value from the form submission.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">int</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>1 if the checkbox was checked, 0 if unchecked.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_sanitize_number_or_quotes_field">
         sanitize_number_or_quotes_field()
         <a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field" class="headerlink"><i class="fas fa-link"></i></a>
@@ -2103,7 +2122,7 @@ Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1048</span>
+    <span class="phpdocumentor-element-found-in__line">1055</span>
 
     </aside>
 
@@ -2134,21 +2153,20 @@ converts it to a non-negative integer using absint().</p>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_sanitize_number_or_quotes_field_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -2176,7 +2194,7 @@ converts it to a non-negative integer using absint().</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">814</span>
+    <span class="phpdocumentor-element-found-in__line">821</span>
 
     </aside>
 
@@ -2223,21 +2241,20 @@ defined and always points at the WordPress root.</p>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_site_url_to_filesystem_path_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_site_url_to_filesystem_path#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_site_url_to_filesystem_path_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.3.7</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -2303,21 +2320,20 @@ file within this install, null otherwise.</p>
             </dl>
 
     
-    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+    <h5 class="phpdocumentor-tag-list__heading" id="method_string_truncate_tags">
         Tags
-        <a href="classes/Graphic-Data-Utility.html#method_string_truncate#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Utility.html#method_string_truncate_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
-                                    <dt class="phpdocumentor-tag-list__entry">
-                    <span class="phpdocumentor-tag__name">since</span>
-                </dt>
-                <dd class="phpdocumentor-tag-list__definition">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
                                             <span class="phpdocumentor-tag-link">1.0.0</span>
-                                                                                
-                                             
+                                                                                                        
                                     </dd>
-                                            </dl>
+                        </dl>
 
         
     
@@ -2333,100 +2349,7 @@ file within this install, null otherwise.</p>
 </article>
             </section>
 
-        <div class="phpdocumentor-modal" id="source-view">
-    <div class="phpdocumentor-modal-bg" data-exit-button></div>
-    <div class="phpdocumentor-modal-container">
-        <div class="phpdocumentor-modal-content">
-            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/plugins/graphic_data_plugin/admin/class-utility.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
-        </div>
-        <button data-exit-button class="phpdocumentor-modal__close">&times;</button>
-    </div>
-</div>
-
-    <script type="text/javascript">
-        (function () {
-            function loadExternalCodeSnippet(el, url, line) {
-                Array.prototype.slice.call(el.querySelectorAll('pre[data-src]')).forEach((pre) => {
-                    const src = url || pre.getAttribute('data-src').replace(/\\/g, '/');
-                    const language = 'php';
-
-                    const code = document.createElement('code');
-                    code.className = 'language-' + language;
-                    pre.textContent = '';
-                    pre.setAttribute('data-line', line)
-                    code.textContent = 'Loading…';
-                    pre.appendChild(code);
-
-                    var xhr = new XMLHttpRequest();
-
-                    xhr.open('GET', src, true);
-
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState !== 4) {
-                            return;
-                        }
-
-                        if (xhr.status < 400 && xhr.responseText) {
-                            code.textContent = xhr.responseText;
-                            Prism.highlightElement(code);
-                            d=document.getElementsByClassName("line-numbers");
-                            d[0].scrollTop = d[0].children[1].offsetTop;
-                            return;
-                        }
-
-                        if (xhr.status === 404) {
-                            code.textContent = '✖ Error: File could not be found';
-                            return;
-                        }
-
-                        if (xhr.status >= 400) {
-                            code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
-                            return;
-                        }
-
-                        code.textContent = '✖ Error: An unknown error occurred';
-                    };
-
-                    xhr.send(null);
-                });
-            }
-
-            const modalButtons = document.querySelectorAll("[data-modal]");
-            const openedAsLocalFile = window.location.protocol === 'file:';
-            if (modalButtons.length > 0 && openedAsLocalFile) {
-                console.warn(
-                    'Viewing the source code is unavailable because you are opening this page from the file:// scheme; ' +
-                    'browsers block XHR requests when a page is opened this way'
-                );
-            }
-
-            modalButtons.forEach(function (trigger) {
-                if (openedAsLocalFile) {
-                    trigger.setAttribute("hidden", "hidden");
-                }
-
-                trigger.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    const modal = document.getElementById(trigger.dataset.modal);
-                    if (!modal) {
-                        console.error(`Modal with id "${trigger.dataset.modal}" could not be found`);
-                        return;
-                    }
-                    modal.classList.add("phpdocumentor-modal__open");
-
-                    loadExternalCodeSnippet(modal, trigger.dataset.src || null, trigger.dataset.line)
-                    const exits = modal.querySelectorAll("[data-exit-button]");
-                    exits.forEach(function (exit) {
-                        exit.addEventListener("click", function (event) {
-                            event.preventDefault();
-                            modal.classList.remove("phpdocumentor-modal__open");
-                        });
-                    });
-                });
-            });
-        })();
-    </script>
-
+        
     </article>
                                 </section>
                 <section class="phpdocumentor-on-this-page__sidebar">
@@ -2472,6 +2395,7 @@ file within this install, null otherwise.</p>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scene_titles">return_scene_titles()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scenes_except_current">return_scenes_except_current()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scenes_figure">return_scenes_figure()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_sanitize_checkbox_field">sanitize_checkbox_field()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field">sanitize_number_or_quotes_field()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_site_url_to_filesystem_path">site_url_to_filesystem_path()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_string_truncate">string_truncate()</a></li>

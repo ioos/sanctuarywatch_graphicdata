@@ -169,8 +169,8 @@ class Graphic_Data_Utility {
 		if ( false !== $transient_data ) {
 			// Output the transient data as JavaScript.
 			?>
-			<script type="text/javascript">
-				const allCustomFields = <?php echo wp_json_encode( $transient_data ); ?>;
+			<script type="application/json" id="graphic-data-transient-fields">
+				<?php echo wp_json_encode( $transient_data ); ?>
 			</script>
 			<?php
 
@@ -537,7 +537,7 @@ class Graphic_Data_Utility {
 	 * Create Instance filter dropdown shown in the Scene, Modal, and Figure admin column screens.
 	 *
 	 * Generates a dropdown filter for selecting instances with role-based access control.
-	 * Content editors see only their assigned instances, while administrators and content managers see all published instances.
+	 * Authors see only their assigned instances, while administrators and editors see all published instances.
 	 * The dropdown maintains the selected value across page loads via GET parameter or stored filter value.
 	 *
 	 * @since 1.0.0
@@ -551,7 +551,7 @@ class Graphic_Data_Utility {
 	 *
 	 * @uses wp_get_current_user()     Retrieves the current user object.
 	 * @uses current_user_can()        Checks user capabilities for role-based filtering.
-	 * @uses get_user_meta()            Fetches assigned instances for content editors.
+	 * @uses get_user_meta()            Fetches assigned instances for authors.
 	 * @uses selected()                 WordPress helper for marking selected options.
 	 * @uses esc_attr()                 Escapes attribute values for security.
 	 * @uses esc_html()                 Escapes output text for security.
@@ -576,9 +576,12 @@ class Graphic_Data_Utility {
 
 		$current_user = wp_get_current_user();
 
-		// Check if user is content editor but not administrator.
-		if ( current_user_can( 'content_editor' ) && ! current_user_can( 'manage_options' ) ) {
-			// Get assigned instances for the content editor.
+		// Check if user is author.
+		$user = wp_get_current_user();
+		$user_role = $user->roles[0];
+
+		if ( 'author' == $user_role ) {
+			// Get assigned instances for the author.
 			$user_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
 			// Ensure user_instances is a non-empty array before querying.
@@ -606,7 +609,7 @@ class Graphic_Data_Utility {
 					)
 				);
 			}
-			// If content editor has no assigned instances, $instances remains empty, so only "All Instances" shows.
+			// If author has no assigned instances, $instances remains empty, so only "All Instances" shows.
 
 		} else {
 			// Administrators or other roles see all instances.
@@ -642,7 +645,7 @@ class Graphic_Data_Utility {
 
 
 	/**
-	 * Get a list of all instances, filtered for 'content_editor' role.
+	 * Get a list of all instances, filtered for 'author' role.
 	 *
 	 * @return array An associative array of instance IDs and titles.
 	 */
@@ -668,9 +671,13 @@ class Graphic_Data_Utility {
 		);
 
 		// --- Role-Based Filtering Logic ---
-		// Check if the current user is a 'content_editor' BUT NOT an 'administrator'.
-		if ( user_can( $current_user, 'content_editor' ) && ! user_can( $current_user, 'manage_options' ) ) {
-			// Get the instances assigned to this content editor.
+		// Check if the current user is an author.
+		// Check if user is author.
+		$user = wp_get_current_user();
+		$user_role = $user->roles[0];
+
+		if ( 'author' == $user_role ) {
+			// Get the instances assigned to this author.
 			$user_assigned_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
 			// Ensure it's a non-empty array.
@@ -678,7 +685,7 @@ class Graphic_Data_Utility {
 				// Modify the query to only include posts with these IDs.
 				$args['post__in'] = array_map( 'absint', $user_assigned_instances ); // Sanitize IDs just in case.
 			} else {
-				// If the content editor has no assigned instances, return only the default empty option.
+				// If the author has no assigned instances, return only the default empty option.
 				return $instances_array;
 			}
 		}
@@ -1050,6 +1057,21 @@ class Graphic_Data_Utility {
 			return '';
 		}
 		return absint( $value );
+	}
+
+	/**
+	 * Sanitizes a checkbox field value for storage.
+	 *
+	 * Returns 1 if the value is set (i.e. the checkbox was submitted), or 0 if
+	 * it is not. Checkbox inputs are omitted from POST data entirely when
+	 * unchecked, so the absence of the value — not its content — signals an
+	 * unchecked state.
+	 *
+	 * @param  mixed $value The raw value from the form submission.
+	 * @return int          1 if the checkbox was checked, 0 if unchecked.
+	 */
+	public function sanitize_checkbox_field( $value ) {
+		return 'yes' === $value ? 'yes' : 'no';
 	}
 
 	/**

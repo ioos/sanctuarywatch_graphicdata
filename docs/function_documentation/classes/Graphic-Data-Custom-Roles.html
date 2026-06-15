@@ -153,6 +153,13 @@ Content Managers have editor-level capabilities without sensitive administrative
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_add_author_custom_post_type_caps">add_author_custom_post_type_caps()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Grants author-role users full create, edit, and delete access to the scene, modal, and figure post types.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_add_instance_selection_fields">add_instance_selection_fields()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -164,42 +171,42 @@ Content Managers have editor-level capabilities without sensitive administrative
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Registers the Content Editor and Content Manager roles and removes default WordPress roles.</dd>
+<dd>Registers the Content Editor and Content Manager roles.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_filter_user_roles">filter_user_roles()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
-<dd>Filters the editable roles list to only include allowed custom roles.</dd>
+<dd>Filters the editable roles list, restoring any missing standard WordPress roles.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_reorder_roles_js">reorder_roles_js()</a>
+    <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_migrate_custom_roles_to_standard">migrate_custom_roles_to_standard()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Outputs inline JavaScript to reorder the role dropdown on user edit screens.</dd>
+<dd>Migrates users from custom roles to their standard WordPress equivalents.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_restrict_content_editor_admin_menu">restrict_content_editor_admin_menu()</a>
+    <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_restrict_author_admin_menu">restrict_author_admin_menu()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Removes admin menu pages that Content Editors should not access.</dd>
+<dd>Removes admin menu pages that authors should not access.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_restrict_editing">restrict_editing()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Restricts access to individual post edit screens for Content Editors.</dd>
+<dd>Restricts access to individual post edit screens for authors.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_restrict_listing">restrict_listing()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Filters admin list queries to show only posts belonging to a Content Editor&#039;s assigned instances.</dd>
+<dd>Filters admin list queries to show only posts belonging to an author&#039;s assigned instances.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Custom-Roles.html#method_restrict_new_post_from_admin_bar">restrict_new_post_from_admin_bar()</a>
@@ -235,6 +242,60 @@ Content Managers have editor-level capabilities without sensitive administrative
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_add_author_custom_post_type_caps">
+        add_author_custom_post_type_caps()
+        <a href="classes/Graphic-Data-Custom-Roles.html#method_add_author_custom_post_type_caps" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">210</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Grants author-role users full create, edit, and delete access to the scene, modal, and figure post types.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">add_author_custom_post_type_caps</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Iterates over the three custom post types and calls add_cap() for every
+primitive capability WordPress maps to those types, covering own posts,
+others' posts, published posts, and private posts.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/Graphic-Data-Custom-Roles.html#method_add_author_custom_post_type_caps#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">since</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                
+                                             
+                                    </dd>
+                                            </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_add_instance_selection_fields">
         add_instance_selection_fields()
         <a href="classes/Graphic-Data-Custom-Roles.html#method_add_instance_selection_fields" class="headerlink"><i class="fas fa-link"></i></a>
@@ -243,7 +304,7 @@ Content Managers have editor-level capabilities without sensitive administrative
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">313</span>
+    <span class="phpdocumentor-element-found-in__line">307</span>
 
     </aside>
 
@@ -259,7 +320,7 @@ Content Managers have editor-level capabilities without sensitive administrative
         <section class="phpdocumentor-description"><p>Displays a list of all published instance posts as checkboxes, allowing
 administrators to assign specific instances to a user. The section is only
 visible to administrators and is toggled via inline JavaScript to show only
-when the selected user role is 'content_editor'.</p>
+when the selected user role is 'author'.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -310,11 +371,11 @@ when the selected user role is 'content_editor'.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">145</span>
+    <span class="phpdocumentor-element-found-in__line">151</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Registers the Content Editor and Content Manager roles and removes default WordPress roles.</p>
+        <p class="phpdocumentor-summary">Registers the Content Editor and Content Manager roles.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -365,11 +426,11 @@ subscriber, contributor, author, and editor roles are removed.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">211</span>
+    <span class="phpdocumentor-element-found-in__line">259</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Filters the editable roles list to only include allowed custom roles.</p>
+        <p class="phpdocumentor-summary">Filters the editable roles list, restoring any missing standard WordPress roles.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -378,8 +439,9 @@ subscriber, contributor, author, and editor roles are removed.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Removes any role not in the allowed set (content_editor, content_manager, administrator)
-from the roles array. Intended for use with the 'editable_roles' filter.</p>
+        <section class="phpdocumentor-description"><p>For each standard WordPress role (administrator, editor, author, contributor, subscriber),
+if the role is absent from the list it is restored to the database via populate_roles()
+and added back to the returned array with its standard capabilities.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -418,7 +480,7 @@ from the roles array. Intended for use with the 'editable_roles' filter.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>Filtered associative array containing only allowed roles.</p>
+                <section class="phpdocumentor-description"><p>Roles array with any missing standard WordPress roles restored.</p>
 </section>
 
             </section>
@@ -430,37 +492,36 @@ from the roles array. Intended for use with the 'editable_roles' filter.</p>
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_reorder_roles_js">
-        reorder_roles_js()
-        <a href="classes/Graphic-Data-Custom-Roles.html#method_reorder_roles_js" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_migrate_custom_roles_to_standard">
+        migrate_custom_roles_to_standard()
+        <a href="classes/Graphic-Data-Custom-Roles.html#method_migrate_custom_roles_to_standard" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">236</span>
+    <span class="phpdocumentor-element-found-in__line">542</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Outputs inline JavaScript to reorder the role dropdown on user edit screens.</p>
+        <p class="phpdocumentor-summary">Migrates users from custom roles to their standard WordPress equivalents.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">reorder_roles_js</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">migrate_custom_roles_to_standard</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Sorts the role <code class="prettyprint">&lt;select&gt;</code> options so they appear in the order: Administrator,
-Content Manager, Content Editor. Runs on page load and after AJAX requests
-to handle dynamically loaded forms.</p>
+        <section class="phpdocumentor-description"><p>Moves content_editor users to the author role and content_manager users
+to the editor role.</p>
 </section>
 
     
     
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="classes/Graphic-Data-Custom-Roles.html#method_reorder_roles_js#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Custom-Roles.html#method_migrate_custom_roles_to_standard#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -484,9 +545,9 @@ to handle dynamically loaded forms.</p>
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_restrict_content_editor_admin_menu">
-        restrict_content_editor_admin_menu()
-        <a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_content_editor_admin_menu" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_restrict_author_admin_menu">
+        restrict_author_admin_menu()
+        <a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_author_admin_menu" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
@@ -496,24 +557,24 @@ to handle dynamically loaded forms.</p>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Removes admin menu pages that Content Editors should not access.</p>
+        <p class="phpdocumentor-summary">Removes admin menu pages that authors should not access.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">restrict_content_editor_admin_menu</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">restrict_author_admin_menu</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
         <section class="phpdocumentor-description"><p>Hides Posts, Pages, About, Instance, and Manage Instance Types menu items
-from users with the 'content_editor' role.</p>
+from users with the 'author' role.</p>
 </section>
 
     
     
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_content_editor_admin_menu#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_author_admin_menu#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -545,11 +606,11 @@ from users with the 'content_editor' role.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">469</span>
+    <span class="phpdocumentor-element-found-in__line">463</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Restricts access to individual post edit screens for Content Editors.</p>
+        <p class="phpdocumentor-summary">Restricts access to individual post edit screens for authors.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -559,7 +620,7 @@ from users with the 'content_editor' role.</p>
         </div>
     
         <section class="phpdocumentor-description"><p>On <code class="prettyprint">post.php</code> for scene, modal, and figure post types, verifies that the
-Content Editor's assigned instances include the instance associated with the
+Author's assigned instances include the instance associated with the
 post being edited. If the user has no assigned instances or the post belongs
 to an unassigned instance, the user is redirected to the post type's list screen.
 Administrators and non-Content-Editor roles are not affected.</p>
@@ -601,11 +662,11 @@ Administrators and non-Content-Editor roles are not affected.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">85</span>
+    <span class="phpdocumentor-element-found-in__line">88</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Filters admin list queries to show only posts belonging to a Content Editor&#039;s assigned instances.</p>
+        <p class="phpdocumentor-summary">Filters admin list queries to show only posts belonging to an author&#039;s assigned instances.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -615,7 +676,7 @@ Administrators and non-Content-Editor roles are not affected.</p>
         </div>
     
         <section class="phpdocumentor-description"><p>Applies a meta query on the main admin listing query for scene, modal, and figure post types.
-Content Editors will only see posts whose location meta field matches one of their assigned
+Authors will only see posts whose location meta field matches one of their assigned
 instances. If no instances are assigned, no posts are shown.</p>
 </section>
 
@@ -667,7 +728,7 @@ instances. If no instances are assigned, no posts are shown.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">61</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
@@ -732,7 +793,7 @@ admin bar for any user who lacks the 'manage_options' capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-roles.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-roles.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-roles.php">class-new-roles.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">432</span>
+    <span class="phpdocumentor-element-found-in__line">426</span>
 
     </aside>
 
@@ -748,7 +809,7 @@ admin bar for any user who lacks the 'manage_options' capability.</p>
         <section class="phpdocumentor-description"><p>Sanitizes the submitted instance IDs with <code class="prettyprint">absint</code> and stores them as the
 'assigned_instances' user meta. Only processes the save if the current user
 has permission to edit the target user and the target user has the
-'content_editor' role.</p>
+'author' role.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -908,11 +969,12 @@ has permission to edit the target user and the target user has the
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_add_author_custom_post_type_caps">add_author_custom_post_type_caps()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_add_instance_selection_fields">add_instance_selection_fields()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_create_custom_roles">create_custom_roles()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_filter_user_roles">filter_user_roles()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_reorder_roles_js">reorder_roles_js()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_content_editor_admin_menu">restrict_content_editor_admin_menu()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_migrate_custom_roles_to_standard">migrate_custom_roles_to_standard()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_author_admin_menu">restrict_author_admin_menu()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_editing">restrict_editing()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_listing">restrict_listing()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Custom-Roles.html#method_restrict_new_post_from_admin_bar">restrict_new_post_from_admin_bar()</a></li>

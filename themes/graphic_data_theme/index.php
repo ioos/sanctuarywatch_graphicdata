@@ -101,7 +101,7 @@ if ( $graphic_data_instances_query->have_posts() ) {
 	?>
 </div>
 
-<div id="entire_thing"> 
+<div id="entire_thing" role="main"> 
 <!-- Main container with Bootstrap styling for fluid layout -->
 <?php
 $graphic_data_terms = get_terms(
@@ -135,6 +135,8 @@ usort(
 	}
 );
 
+
+$graphic_data_break_text = ( $graphic_data_settings && isset( $graphic_data_settings['front_page_break_text'] ) ) ? trim( $graphic_data_settings['front_page_break_text'] ) : '';
 
 foreach ( $graphic_data_terms_array as $graphic_data_term ) {
 	?>
@@ -203,6 +205,20 @@ foreach ( $graphic_data_terms_array as $graphic_data_term ) {
 
 			if ( null != $graphic_data_instance ) {
 				$graphic_data_tile_image = get_post_meta( $graphic_data_instance['id'], 'instance_tile' )[0];
+				$graphic_data_raw_title = $graphic_data_instance['post_title'];
+				$graphic_data_formatted_title = esc_html( $graphic_data_raw_title );
+				if ( '' !== $graphic_data_break_text && false !== strpos( $graphic_data_raw_title, $graphic_data_break_text ) ) {
+					$graphic_data_title_parts = explode( $graphic_data_break_text, $graphic_data_raw_title, 2 );
+					$graphic_data_before      = trim( $graphic_data_title_parts[0] );
+					$graphic_data_after       = trim( $graphic_data_title_parts[1] );
+					if ( '' !== $graphic_data_before && '' !== $graphic_data_after ) {
+						$graphic_data_formatted_title = esc_html( $graphic_data_before ) . '<br>' . esc_html( $graphic_data_break_text ) . '<br>' . esc_html( $graphic_data_after );
+					} elseif ( '' === $graphic_data_before ) {
+						$graphic_data_formatted_title = esc_html( $graphic_data_break_text ) . '<br>' . esc_html( $graphic_data_after );
+					} else {
+						$graphic_data_formatted_title = esc_html( $graphic_data_before ) . '<br>' . esc_html( $graphic_data_break_text );
+					}
+				}
 				if ( 'no' == $graphic_data_instance['instance_legacy_content'] ) {
 					$graphic_data_instance_slug = get_post_meta( $graphic_data_instance['id'], 'instance_slug' )[0];
 					$graphic_data_instance_overview_scene = get_post_meta( $graphic_data_instance['id'], 'instance_overview_scene', true );
@@ -220,9 +236,9 @@ foreach ( $graphic_data_terms_array as $graphic_data_term ) {
 				}
 				echo '<div class="card-body">';
 				if ( 'Published' === $graphic_data_instance['instance_status'] ) {
-					echo "<a href='" . esc_url( $graphic_data_instance_link ) . "' class='btn w-100 instance_published_button'>" . esc_html( $graphic_data_instance['post_title'] ) . '</a>';
+					echo "<a href='" . esc_url( $graphic_data_instance_link ) . "' class='btn w-100 instance_published_button'>" . wp_kses( $graphic_data_formatted_title, [ 'br' => [] ] ) . '</a>';
 				} else {
-					echo "<a class='btn w-100 instance_draft_button'><span>" . esc_html( $graphic_data_instance['post_title'] ) . '</span><span class="coming_soon_italic">Coming Soon</span></a>';
+					echo "<a class='btn w-100 instance_draft_button'><span>" . wp_kses( $graphic_data_formatted_title, [ 'br' => [] ] ) . '</span><span class="coming_soon_italic">Coming Soon</span></a>';
 				}
 				echo '</div>';
 

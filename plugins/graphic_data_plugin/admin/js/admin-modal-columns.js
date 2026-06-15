@@ -23,6 +23,9 @@ function modal_instance_change() {
 		fetch(restURL)
 			.then((response) => response.json())
 			.then((data) => {
+				data.sort((a, b) =>
+					a.title.rendered.localeCompare(b.title.rendered)
+				);
 				data.forEach((targetRow) => {
 					const optionScene = document.createElement('option');
 					optionScene.value = targetRow.id;

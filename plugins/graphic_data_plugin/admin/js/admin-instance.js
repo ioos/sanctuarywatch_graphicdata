@@ -1,6 +1,13 @@
 // These functions only fire upon editing or creating a post of Instance custom content type
 
-'use strict';
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	applyPlainTextPaste,
+	onCorrectEditPage,
+	cookieExists,
+	getCookie,
+} from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
@@ -26,7 +33,7 @@ function displayLegacyContentField() {
 	const legacyContent = document.getElementsByName(
 		'instance_legacy_content'
 	)[0].value;
-	if (legacyContent == 'no') {
+	if (legacyContent === 'no') {
 		document.getElementsByName(
 			'instance_legacy_content_url'
 		)[0].parentElement.parentElement.style.display = 'none';
@@ -107,7 +114,7 @@ function displayFooterEntries() {
 // 2. The user is redirected back to the edit page for the instance post and an error message is displayed.
 // 3. The cookie is read and the field values are written to the fields on the edit page. It is this last step that is done by this function.
 function writeCookieValuesToInstanceFields() {
-	if (onCorrectEditPage('instance') == true) {
+	if (onCorrectEditPage('instance') === true) {
 		if (cookieExists('instance_error_all_fields')) {
 			const instanceCookie = getCookie('instance_error_all_fields');
 			// Parse the main JSON object
@@ -156,12 +163,5 @@ document.addEventListener('DOMContentLoaded', function () {
 		'instance_footer_column_content2',
 		'instance_footer_column_content3',
 	];
-
-	if (typeof applyPlainTextPaste === 'function') {
-		applyPlainTextPaste(instanceEditorIds);
-	} else {
-		console.error(
-			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
-		);
-	}
+	applyPlainTextPaste(instanceEditorIds);
 });

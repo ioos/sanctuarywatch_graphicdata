@@ -1,8 +1,8 @@
 // These functions only fire on the Figure admin columns screen
 
 // change contents of Scenes dropdown filter based on instance
-function figure_instance_change() {
-	const figure_instance_value =
+function figureInstanceChange() {
+	const figureInstanceValue =
 		document.getElementById('figure_instance').value;
 	const figure_scene = document.getElementById('figure_scene');
 	figure_scene.innerHTML = null;
@@ -11,7 +11,7 @@ function figure_instance_change() {
 	figure_scene_first_option.text = 'All Scenes';
 	figure_scene.appendChild(figure_scene_first_option);
 
-	if (figure_instance_value !== '') {
+	if (figureInstanceValue !== '') {
 		const protocol = window.location.protocol;
 		const host = window.location.host;
 		const restURL =
@@ -19,10 +19,13 @@ function figure_instance_change() {
 			'//' +
 			host +
 			'/wp-json/wp/v2/scene?_fields=id,title&scene_location=' +
-			figure_instance_value;
+			figureInstanceValue;
 		fetch(restURL)
 			.then((response) => response.json())
 			.then((data) => {
+				data.sort((a, b) =>
+					a.title.rendered.localeCompare(b.title.rendered)
+				);
 				data.forEach((targetRow) => {
 					const optionScene = document.createElement('option');
 					optionScene.value = targetRow.id;
@@ -59,6 +62,9 @@ function figure_scene_change() {
 		fetch(restURL)
 			.then((response) => response.json())
 			.then((data) => {
+				data.sort((a, b) =>
+					a.title.rendered.localeCompare(b.title.rendered)
+				);
 				data.forEach((targetRow) => {
 					const optionIcon = document.createElement('option');
 					optionIcon.value = targetRow.id;
@@ -76,7 +82,7 @@ function figure_scene_change() {
 document.addEventListener('DOMContentLoaded', function () {
 	document
 		.getElementById('figure_instance')
-		.addEventListener('change', figure_instance_change);
+		.addEventListener('change', figureInstanceChange);
 	document
 		.getElementById('figure_scene')
 		.addEventListener('change', figure_scene_change);

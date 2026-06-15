@@ -1,3 +1,6 @@
+import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-render';
+import {  is_mobile, slugify, createAccordionItem, getSceneData, child_obj as sharedChildObj } from '@graphic-data/scene-shared';
+
 /**
  * Renders a modal dialog for corresponding icon with data fetched from a WordPress REST API endpoint.
  * The modal displays a title, tagline, and two sections of content (more info and images)
@@ -22,18 +25,11 @@
  * @param          obj
  * @param          modal_obj
  */
-function render_modal(key, obj, modal_obj){
+export function render_modal(key, obj, modal_obj){
 
-
-    // Allow passing in a specific child_obj from preview mode in admin-modal.js
-    if (typeof child_obj === 'undefined') {
-        child_obj = obj;
-    }
-
-    //console.log('Rendering modal for key:', key, 'with child_obj:', child_obj);
-
-    let id = child_obj[key]['modal_id'];
-    //console.log('id', id);
+    // Use the passed-in obj for admin preview; fall back to the shared child_obj on the front end.
+    const resolvedChildObj = obj !== undefined ? obj : sharedChildObj;
+    let id = resolvedChildObj[key]['modal_id'];
 
     //function for rendering the modal content after fetching data
     function populateModalContent(modal_data, child_obj, key) {
@@ -105,7 +101,7 @@ function render_modal(key, obj, modal_obj){
                 if (typeof window.new_tab_by_default === "undefined") {
                     window.new_tab_by_default = false;
                 }
-		        if (true === graphicDataSceneData.newTabByDefault) {
+		        if (true === getSceneData().newTabByDefault) {
                     collapseListHTML += `<li><a href="${modal_info_url}" target="_blank">${modal_info_text}</a></li>`;
                 } else {
                     collapseListHTML += `<li><a href="${modal_info_url}">${modal_info_text}</a></li>`;
@@ -190,13 +186,15 @@ function render_modal(key, obj, modal_obj){
             }
         }
         // Google Tags
-        //modalWindowLoaded(title, modal_id, gaMeasurementID);
+        document.dispatchEvent( new CustomEvent( 'graphic-data:modalWindowLoaded', {
+            detail: { title, modal_id }
+        } ) );
     }
 
     // Fetch modal data and populate content PREVIEW MODE vs FRONTEND MODE
     if (window.location.href.includes("post.php")) {
         let modal_data = modal_obj;
-        populateModalContent(modal_data, child_obj, key);  
+        populateModalContent(modal_data, resolvedChildObj, key);  
     } 
 
     // Fetch modal data and populate content FRONTEND MODE
@@ -209,7 +207,7 @@ function render_modal(key, obj, modal_obj){
             .then(data => {
                 let modal_data = data; //.find(modal => modal.id === id);
                 //('modal_data:', modal_data);
-                populateModalContent(modal_data, child_obj, key);
+                populateModalContent(modal_data, resolvedChildObj, key);
             })  
         .catch(error => console.error('Error fetching data:', error));
     }
@@ -393,7 +391,7 @@ function trapFocus(modalElement) {
         .then(response => response.json())
         .then(data => {
 
-            all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
+            let all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
             all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id));
             //console.log('all_figure_data1', all_figure_data);
 
@@ -467,6 +465,7 @@ function trapFocus(modalElement) {
                         const figure_data = all_figure_data[idx];
                 
                         let external_alt = '';
+                        let img = '';
                         if (figure_data['figure_path'] === 'External') {
                             img = figure_data['figure_external_url'];
                             external_alt = figure_data['figure_external_alt'];
@@ -641,9 +640,17 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
 
     //Google tags triggers
     try {
-        modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID);
-        setupModalMoreInfoLinkTracking(modal_id);
-        setupModalImagesLinkTracking(modal_id);
+        document.dispatchEvent( new CustomEvent( 'graphic-data:modalTabLoaded', {
+            detail: { tab_label, modal_id, tab_id }
+        } ) );
+
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupModalMoreInfoLinkTracking', {
+            detail: { modalID }
+        } ) );
+
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupModalImagesLinkTracking', {
+            detail: { modalID }
+        } ) );
     } catch (error) {
     }
     

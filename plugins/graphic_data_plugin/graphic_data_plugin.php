@@ -7,14 +7,14 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://ç
+ * @link              https://github.com/ioos/sanctuarywatch_graphicdata
  * @package           Graphic_Data_Plugin
  *
  * @wordpress-plugin
  * Plugin Name:       Graphic Data Plugin
  * Plugin URI:        https://github.com/ioos/sanctuarywatch_graphicdata
  * Description:       This plugin customizes a Wordpress installation for the requirements of the Graphic Data framework.
- * Version:           1.4.3
+ * Version:           1.4.6
  * Author:            Graphic Data Team
  * Author URI:        https://www.noaa.gov
  * License:           GPL-2.0+
@@ -57,6 +57,10 @@ define( 'GRAPHIC_DATA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GRAPHIC_DATA_DATA_DIR', WP_CONTENT_DIR . '/data' );
 define( 'GRAPHIC_DATA_DATA_URL', content_url( 'data' ) );
 
+/**
+ * Determine whether the Graphic Data Theme is the active theme.
+ */
+define( 'GRAPHIC_DATA_IS_ACTIVE_THEME', get_template() === 'graphic_data_theme' );
 
 /**
  * Plugin activation callback.

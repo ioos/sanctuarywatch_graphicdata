@@ -58,99 +58,255 @@ class Graphic_Data_Admin {
 	public function enqueue_scripts( $hook_suffix ) {
 
 		// Enqueue utlity javascript functions used across javascript files on the admin side.
-
-		wp_enqueue_script( 'utility', plugin_dir_url( __FILE__ ) . 'js/utility.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+		wp_register_script_module(
+			'@graphic-data/admin-utility',
+			plugin_dir_url( __FILE__ ) . 'js/utility.js',
+			array(),
+			GRAPHIC_DATA_PLUGIN_VERSION
+		);
+		// Prevent WordPress from emitting utility.js as a classic <script> tag.
+		// wp_register_script_module registers a same-named classic fallback internally;
+		// deregistering it here ensures only the type="module" version is output.
+		wp_deregister_script( '@graphic-data/admin-utility' );
 
 		$current_post_type = get_post_type();
+
+		if ( 'post.php' === $hook_suffix || 'post-new.php' === $hook_suffix ) {
+			$interactive_base = dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/';
+
+			wp_register_script_module(
+				'@graphic-data/scene-shared',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-shared.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/scene-shared' );
+
+			// Enqueue scene-render.js.
+			wp_register_script_module(
+				'@graphic-data/scene-render',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-render.js',
+				array( '@graphic-data/scene-shared', '@graphic-data/modal-render' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/scene-render' );
+
+			wp_register_script_module(
+				'@graphic-data/plotly-utility',
+				$interactive_base . 'plotly-utility.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/plotly-timeseries-line',
+				$interactive_base . 'plotly-timeseries-line.js',
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/plotly-bar',                     // FIXED id (was plotly-timeseries-bar).
+				$interactive_base . 'plotly-bar.js',                                   // FIXED filename.
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/plotly-map',
+				$interactive_base . 'plotly-map.js',
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/figure-render',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/figure-render.js',
+				array( '@graphic-data/plotly-timeseries-line', '@graphic-data/plotly-bar', '@graphic-data/plotly-map' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/modal-render',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/modals/js/modal-render.js',
+				array( '@graphic-data/figure-render' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
+				'@graphic-data/admin-preview-buttons',
+				plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js',
+				array(
+					'@graphic-data/admin-utility',
+					'@graphic-data/modal-render',
+					'@graphic-data/figure-render',
+					'@graphic-data/scene-render',
+				),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+		}
+
 		// Load About-specific Javascript only when editing/creating an About post.
 		if ( 'about' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
-			wp_enqueue_script( 'admin-about', plugin_dir_url( __FILE__ ) . 'js/admin-about.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-about',
+				plugin_dir_url( __FILE__ ) . 'js/admin-about.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-about' );
 		}
 
 		// Load Instance-specific Javascript only when editing/creating a Instance post.
 		if ( 'instance' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
-			wp_enqueue_script( 'admin-instance', plugin_dir_url( __FILE__ ) . 'js/admin-instance.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-instance',
+				plugin_dir_url( __FILE__ ) . 'js/admin-instance.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-instance' );
 		}
 
 		// Load Scene-specific Javascript only when editing/creating a Scene post.
 		if ( 'scene' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
 
-			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Pass Graphic Data Is Active Theme variable on to Javascript.
+			add_filter(
+				'script_module_data_@graphic-data/admin-scene',
+				function ( array $data ): array {
+					$data['isActiveTheme'] = GRAPHIC_DATA_IS_ACTIVE_THEME;
+					return $data;
+				}
+			);
 
-			// Enqueue figure-render.js.
-			wp_enqueue_script( 'scene-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/scenes/js/scene-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
-
-			wp_enqueue_script( 'admin-scene', plugin_dir_url( __FILE__ ) . 'js/admin-scene.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Enqueue admin-scene.js.
+			wp_register_script_module(
+				'@graphic-data/admin-scene',
+				plugin_dir_url( __FILE__ ) . 'js/admin-scene.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-scene' );
 
 			// Enqueue admin-preview-buttons.js.
-			wp_enqueue_script( 'admin-preview-buttons', plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_enqueue_script_module( '@graphic-data/admin-preview-buttons' );
 		}
 
 		// Load Modal-specific Javascript only when editing/creating a Modal post.
 		if ( 'modal' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
 
-			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Pass Graphic Data Is Active Theme variable on to Javascript.
+			add_filter(
+				'script_module_data_@graphic-data/admin-modal',
+				function ( array $data ): array {
+					$data['isActiveTheme'] = GRAPHIC_DATA_IS_ACTIVE_THEME;
+					return $data;
+				}
+			);
 
-			wp_enqueue_script( 'admin-modal', plugin_dir_url( __FILE__ ) . 'js/admin-modal.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-modal',
+				plugin_dir_url( __FILE__ ) . 'js/admin-modal.js',
+				array( '@graphic-data/admin-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-modal' );
 
 			// Enqueue admin-preview-buttons.js.
-			wp_enqueue_script( 'admin-preview-buttons', plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_enqueue_script_module( '@graphic-data/admin-preview-buttons' );
 
-			// Enqueue modal-render.js.
-			wp_enqueue_script( 'modal-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/modals/js/modal-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Enqueue the modal render module.
+			wp_enqueue_script_module( '@graphic-data/modal-render' );
 		}
 
 		// Load Figure-specific Javascript only when editing/creating a Figure post.
 		if ( 'figure' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
 
-			wp_enqueue_script( 'theme_script', get_template_directory_uri() . '/assets/js/script.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Pass Graphic Data Is Active Theme variable on to Javascript.
+			add_filter(
+				'script_module_data_@graphic-data/admin-figure',
+				function ( array $data ): array {
+					$data['isActiveTheme'] = GRAPHIC_DATA_IS_ACTIVE_THEME;
+					return $data;
+				}
+			);
 
 			// Enqueue figure-render.js.
-			wp_enqueue_script( 'figure-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/figure-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
-
-			// Enqueue utility.js.
-			wp_enqueue_script( 'figure-utility', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-utility.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
-
-			// Enqueue plotly-timeseries-line.js.
-			wp_enqueue_script( 'plotly-timeseries-line', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-timeseries-line.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
-
-			// Enqueue plotly-bar.js.
-			wp_enqueue_script( 'plotly-bar', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-bar.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
-
-			// Enqueue plotly-map.js.
-			wp_enqueue_script( 'plotly-map', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/plotly-map.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_enqueue_script_module( '@graphic-data/figure-render' );
 
 			// Enqueue file-upload.js.
-			wp_enqueue_script( 'file-upload', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/file-upload.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
-
-			// Enqueue figure-code.js.
-			wp_enqueue_script( 'figure-code', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/code/figure-code.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/file-upload',
+				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/file-upload.js',
+				array(
+					'@graphic-data/plotly-bar',
+					'@graphic-data/plotly-timeseries-line',
+					'@graphic-data/plotly-map',
+				),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/file-upload' );
 
 			// Enqueue admin-figure.js.
-			wp_enqueue_script( 'admin-figure', plugin_dir_url( __FILE__ ) . 'js/admin-figure.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-figure',
+				plugin_dir_url( __FILE__ ) . 'js/admin-figure.js',
+				array( '@graphic-data/admin-utility', '@graphic-data/file-upload' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-figure' );
 
-			// Enqueue modal-render.js.
-			wp_enqueue_script( 'modal-render', dirname( plugin_dir_url( __FILE__ ) ) . '/includes/modals/js/modal-render.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			// Enqueue the modal render module.
+			wp_enqueue_script_module( '@graphic-data/modal-render' );
 
 			// Enqueue admin-preview-buttons.js.
-			wp_enqueue_script( 'admin-preview-buttons', plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_enqueue_script_module( '@graphic-data/admin-preview-buttons' );
 
+			// Pass the REST nonce via script_module_data (replaces wp_localize_script).
+			add_filter(
+				'script_module_data_@graphic-data/file-upload',
+				function ( array $data ): array {
+					$data['nonce'] = wp_create_nonce( 'wp_rest' );
+					return $data;
+				}
+			);
 		}
 
 		// Load Modal-specific Javascript only for admin columns screen.
 		if ( 'modal' == $current_post_type && 'edit.php' == $hook_suffix ) {
-			wp_enqueue_script( 'admin-modal_columns', plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-modal_columns',
+				plugin_dir_url( __FILE__ ) . 'js/admin-modal-columns.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-modal_columns' );
 		}
 
 		// Load Figure-specific Javascript only for admin columns screen.
 		if ( 'figure' == $current_post_type && 'edit.php' == $hook_suffix ) {
-			wp_enqueue_script( 'admin-figure_columns', plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+			wp_register_script_module(
+				'@graphic-data/admin-figure_columns',
+				plugin_dir_url( __FILE__ ) . 'js/admin-figure-columns.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-figure_columns' );
 		}
 
 		// Load Figure Export Javascript, but only when on Figure Export Tool page.
 		$current_screen = get_current_screen();
 		if ( 'tools_page_export-figures' == $current_screen->base ) {
-			wp_enqueue_script( 'admin-figure_export', plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js', array(), GRAPHIC_DATA_PLUGIN_VERSION, array( 'strategy' => 'defer' ) );
+
+			wp_register_script_module(
+				'@graphic-data/admin-export-figures',
+				plugin_dir_url( __FILE__ ) . 'js/admin-export-figures.js',
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+			wp_enqueue_script_module( '@graphic-data/admin-export-figures' );
+
 			// Enqueue Bootstrap JavaScript.
 			wp_enqueue_script( 'PptxGenJS', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js', array(), '3.12.0', true );
 
@@ -158,16 +314,28 @@ class Graphic_Data_Admin {
 	}
 
 	/**
-	 * Remove the ability to access Comments, Posts, Users, and Pages content types from the admin bar of the dashboard.
+	 * Adjusts the admin bar "New" menu based on the active theme.
 	 *
-	 * @since    1.0.0
+	 * When the Graphic Data theme is active, removes the Comments, New Page,
+	 * New Post, and New User items — standard WordPress content types that are
+	 * not used in this setup. When a different theme is active, removes the
+	 * plugin-specific New About and New Instance items instead, since those
+	 * post types are only meaningful under the Graphic Data theme.
+	 *
+	 * @since  1.0.0
+	 * @return void
 	 */
-	public function remove_admin_bar_options() {
+	public function change_admin_bar_options() {
 		global $wp_admin_bar;
-		$wp_admin_bar->remove_menu( 'comments' );
-		$wp_admin_bar->remove_menu( 'new-page' );
-		$wp_admin_bar->remove_menu( 'new-post' );
-		$wp_admin_bar->remove_menu( 'new-user' );
+		if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			$wp_admin_bar->remove_menu( 'comments' );
+			$wp_admin_bar->remove_menu( 'new-page' );
+			$wp_admin_bar->remove_menu( 'new-post' );
+			$wp_admin_bar->remove_menu( 'new-user' );
+		} else {
+			$wp_admin_bar->remove_menu( 'new-about' );
+			$wp_admin_bar->remove_menu( 'new-instance' );
+		}
 	}
 
 	/**
@@ -184,17 +352,31 @@ class Graphic_Data_Admin {
 	}
 
 	/**
-	 * Remove the ability to access the Comments, Posts, and Pages content types from the sidebar of the dashboard.
+	 * Adjusts the admin sidebar menu based on the active theme.
 	 *
-	 * @since    1.0.0
+	 * When the Graphic Data theme is active, removes the Comments, Posts, and
+	 * Pages menu items — standard WordPress content types not used in this
+	 * setup. When a different theme is active, removes the plugin-specific
+	 * Instance, About, and Instance Types menu items instead, since those are
+	 * only relevant under the Graphic Data theme.
+	 *
+	 * @since  1.0.0
+	 * @return void
 	 */
-	public function remove_elements_from_menu() {
-		// Remove comments from the admin menu.
-		remove_menu_page( 'edit-comments.php' );
-		// Remove posts from the admin menu.
-		remove_menu_page( 'edit.php' );
-		// Remove pages from the admin menu.
-		remove_menu_page( 'edit.php?post_type=page' );
+	public function change_elements_in_menu() {
+
+		if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			// Remove comments from the admin menu.
+			remove_menu_page( 'edit-comments.php' );
+			// Remove posts from the admin menu.
+			remove_menu_page( 'edit.php' );
+			// Remove pages from the admin menu.
+			remove_menu_page( 'edit.php?post_type=page' );
+		} else {
+			remove_menu_page( 'edit.php?post_type=instance' );
+			remove_menu_page( 'edit.php?post_type=about' );
+			remove_menu_page( 'manage-instance-types' );
+		}
 	}
 
 	/**
@@ -322,13 +504,13 @@ class Graphic_Data_Admin {
 		$options             = get_option( 'graphic_data_settings' );
 		$new_tab_by_default  = ! empty( $options['links_new_tab_by_default'] );
 
-		wp_enqueue_script(
-			'gd-tinymce-new-tab',
+		wp_register_script_module(
+			'@graphic-data/admin-tinymce-new-tab',
 			plugin_dir_url( __FILE__ ) . 'js/admin-tinymce-new-tab.js',
-			array(), // No hard JS dependencies; wpLink availability is handled inside the script.
-			GRAPHIC_DATA_PLUGIN_VERSION,
-			array( 'strategy' => 'defer' )
+			array(),
+			GRAPHIC_DATA_PLUGIN_VERSION
 		);
+		wp_enqueue_script_module( '@graphic-data/admin-tinymce-new-tab' );
 
 		/**
 		 * List of TinyMCE editor IDs that should default new links to opening
@@ -356,14 +538,13 @@ class Graphic_Data_Admin {
 		for ( $i = 1; $i < 11;  $i++ ) {
 			array_push( $target_fields, 'aboutBoxMain' . $i, 'aboutBoxDetail' . $i );
 		}
-
-		wp_localize_script(
-			'gd-tinymce-new-tab',
-			'graphicDataNewTab',
-			array(
-				'enabled'      => $new_tab_by_default,
-				'targetFields' => $target_fields,
-			)
+		add_filter(
+			'script_module_data_@graphic-data/admin-tinymce-new-tab',
+			function ( array $data ) use ( $new_tab_by_default, $target_fields ): array {
+				$data['enabled']      = $new_tab_by_default;
+				$data['targetFields'] = $target_fields;
+				return $data;
+			}
 		);
 	}
 
@@ -394,23 +575,6 @@ class Graphic_Data_Admin {
 	}
 
 	/**
-	 * Edit what users with the Content Editor can see on the dashboard
-	 *
-	 * @since    1.0.0
-	 */
-	public function restrict_content_editor_admin_menu() {
-		if ( current_user_can( 'content_editor' ) ) {
-			remove_menu_page( 'edit.php' );                   // Posts.
-			remove_menu_page( 'edit.php?post_type=page' );    // Pages.
-			remove_menu_page( 'manage-instance-types' ); // Manage Instance Types.
-			remove_menu_page( 'edit.php?post_type=about' );
-			remove_menu_page( 'edit.php?post_type=instance' );
-
-		}
-	}
-
-
-	/**
 	 * Add SVG support to allowed upload MIME types.
 	 *
 	 * @param array $mimes Allowed MIME types.
@@ -433,27 +597,6 @@ class Graphic_Data_Admin {
 			unset( $actions['view'] ); // Remove the "View" link.
 		}
 		return $actions;
-	}
-
-	/**
-	 * Checks if the required theme ("Graphic Data Theme") is active.
-	 *
-	 * If the required theme is not active, it displays an admin notice
-	 * warning the user. This function is hooked to 'admin_notices'.
-	 *
-	 * @since 1.0.0
-	 */
-	public function plugin_check_required_theme() {
-		$current_theme = wp_get_theme();
-		$required_theme = 'Graphic Data Theme'; // Replace with your theme's folder name.
-
-		if ( $current_theme->get( 'Name' ) !== $required_theme && $current_theme->get( 'Template' ) !== $required_theme ) {
-			$message = sprintf(
-				'Warning: The <strong>Graphic Data plugin</strong> is designed to work only with the <strong>Graphic Data theme</strong>.'
-			);
-
-			echo '<div class="notice notice-warning is-dismissible"><p>' . wp_kses_post( $message ) . '</p></div>';
-		}
 	}
 
 	/**

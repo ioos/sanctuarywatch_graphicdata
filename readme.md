@@ -10,6 +10,8 @@ Yes! Check out [Sanctuary Watch](https://sanctuarywatch.ioos.us/american-samoa/o
 ## How do I learn more about using Graphic Data?
 Check out our [guide](https://ioos.github.io/sanctuarywatch_graphicdata/)!
 
+Also check out the [sandbox version](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/ioos/sanctuarywatch_graphicdata/refs/heads/main/blueprint.json) of Graphic Data!
+
 ## Earlier Work
 The general approach taken by Graphic Data is based upon [Infographiq](https://github.com/marinebon/infographiq), created by [Ben Best](https://ecoquants.com/).
 The plugin is based upon the structure provided by Joe Sz's [Wordpress Plugin Boilerplate Tutorial](https://github.com/JoeSz/WordPress-Plugin-Boilerplate-Tutorial) - which is itself based upon the structure provided by Devin Vinson's [Wordpress Plugin Boilerplate](https://github.com/DevinVinson/WordPress-Plugin-Boilerplate). 

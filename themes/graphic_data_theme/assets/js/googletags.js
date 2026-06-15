@@ -1,6 +1,7 @@
-'use strict';
 window.dataLayer = window.dataLayer || [];
-const gaMeasurementID = window.graphicDataSettings.googleAnalyticsMeasurementId;
+const _settingsEl = document.getElementById('graphic-data-settings');
+const _settings = _settingsEl ? JSON.parse(_settingsEl.textContent) : {};
+const gaMeasurementID = _settings.googleAnalyticsMeasurementId ?? '';
 
 //FIGURE TRACKING AND ANALYSIS_______________________________________________________________
 /**
@@ -29,34 +30,36 @@ function figureScienceLinkClick(
 	});
 }
 
-/**
- * Attaches click event listeners to all science links to track figure science link interactions.
- *
- * @function setupFigureScienceLinkTracking
- * @param {string} figureID - The unique identifier of the figure to associate with tracked clicks.
- * @description Finds all anchor elements containing a clipboard-list icon (i.fa.fa-clipboard-list) and
- *              attaches click listeners that capture the link text, URL, and figure title,
- *              then forwards them to {@link figureScienceLinkClick} for dataLayer tracking.
- */
-function setupFigureScienceLinkTracking(figureID) {
-	document.querySelectorAll('a').forEach(function (link) {
-		const hasClipboardIcon = link.querySelector('i.fa.fa-clipboard-list');
-		if (hasClipboardIcon) {
-			link.addEventListener('click', function (event) {
-				const linkTitle = link.textContent.trim();
-				const url = link.href;
+document.addEventListener(
+	'graphic-data:setupFigureScienceLinkTracking',
+	(e) => {
+		const { figureID } = e.detail;
+		document.querySelectorAll('a').forEach(function (link) {
+			const hasClipboardIcon = link.querySelector(
+				'i.fa.fa-clipboard-list'
+			);
+			if (hasClipboardIcon) {
+				link.addEventListener('click', function (event) {
+					const linkTitle = link.textContent.trim();
+					const url = link.href;
 
-				const figureTitleElement =
-					document.querySelector('.figureTitle');
-				const figureTitle = figureTitleElement
-					? figureTitleElement.textContent.trim()
-					: 'Unknown Title';
+					const figureTitleElement =
+						document.querySelector('.figureTitle');
+					const figureTitle = figureTitleElement
+						? figureTitleElement.textContent.trim()
+						: 'Unknown Title';
 
-				figureScienceLinkClick(figureID, figureTitle, linkTitle, url);
-			});
-		}
-	});
-}
+					figureScienceLinkClick(
+						figureID,
+						figureTitle,
+						linkTitle,
+						url
+					);
+				});
+			}
+		});
+	}
+);
 
 /**
  * Pushes a custom event to the dataLayer for tracking figure data link interactions when clicked.
@@ -79,16 +82,8 @@ function figureDataLinkClick(figureID, figureTitle, dataText, dataLink) {
 	});
 }
 
-/**
- * Attaches click event listeners to all data links to track figure data link interactions.
- *
- * @function setupFigureDataLinkTracking
- * @param {string} figureID - The unique identifier of the figure to associate with tracked clicks.
- * @description Finds all anchor elements containing a database icon (i.fa.fa-database) and
- *              attaches click listeners that capture the link text, URL, and figure title,
- *              then forwards them to {@link figureDataLinkClick} for dataLayer tracking.
- */
-function setupFigureDataLinkTracking(figureID) {
+document.addEventListener('graphic-data:setupFigureDataLinkTracking', (e) => {
+	const { figureID } = e.detail;
 	document.querySelectorAll('a').forEach(function (link) {
 		const hasClipboardIcon = link.querySelector('i.fa.fa-database');
 		if (hasClipboardIcon) {
@@ -106,19 +101,10 @@ function setupFigureDataLinkTracking(figureID) {
 			});
 		}
 	});
-}
+});
 
-/**
- * Tracks the loading of an interactive timeseries graph by pushing an event to the dataLayer.
- *
- * @function figureTimeseriesGraphLoaded
- * @param {string} title           - The title of the figure.
- * @param {number} figureID        - The ID of the post associated with the figure.
- * @param {string} gaMeasurementID - The GA4 measurement ID for the analytics property.
- * @description Pushes a `figureTimeseriesGraphLoaded` event to the `dataLayer` with metadata
- *              including figure type (`lineChart`), page section (`figure`), title, and figure ID.
- */
-function figureTimeseriesGraphLoaded(title, figureID, gaMeasurementID) {
+document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (e) => {
+	const { title, figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureTimeseriesGraphLoaded',
@@ -127,19 +113,10 @@ function figureTimeseriesGraphLoaded(title, figureID, gaMeasurementID) {
 		title,
 		figureID,
 	});
-}
+});
 
-/**
- * Tracks the loading of an internal image by pushing an event to the dataLayer.
- *
- * @function figureInternalImageLoaded
- * @param {string} title           - The title of the figure.
- * @param {number} figureID        - The ID of the post associated with the figure.
- * @param {string} gaMeasurementID - The GA4 measurement ID for the analytics property.
- * @description Pushes a `figureInternalImageLoaded` event to the `dataLayer` with metadata
- *              including figure type (`internalImage`), page section (`figure`), title, and figure ID.
- */
-function figureInternalImageLoaded(title, figureID, gaMeasurementID) {
+document.addEventListener('graphic-data:figureInternalImageLoaded', (e) => {
+	const { title, figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureInternalImageLoaded',
@@ -148,19 +125,10 @@ function figureInternalImageLoaded(title, figureID, gaMeasurementID) {
 		title,
 		figureID,
 	});
-}
+});
 
-/**
- * Tracks the loading of an external image by pushing an event to the dataLayer.
- *
- * @function figureExternalImageLoaded
- * @param {string} title           - The title of the figure.
- * @param {number} figureID        - The ID of the post associated with the figure.
- * @param {string} gaMeasurementID - The GA4 measurement ID for the analytics property.
- * @description Pushes a `figureExternalImageLoaded` event to the `dataLayer` with metadata
- *              including figure type (`externalImage`), page section (`figure`), title, and figure ID.
- */
-function figureExternalImageLoaded(title, figureID, gaMeasurementID) {
+document.addEventListener('graphic-data:figureExternalImageLoaded', (e) => {
+	const { title, figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureExternalImageLoaded',
@@ -169,19 +137,10 @@ function figureExternalImageLoaded(title, figureID, gaMeasurementID) {
 		title,
 		figureID,
 	});
-}
+});
 
-/**
- * Tracks the loading of a code display by pushing an event to the dataLayer.
- *
- * @function figureCodeDisplayLoaded
- * @param {string} title           - The title of the figure.
- * @param {number} figureID        - The ID of the post associated with the figure.
- * @param {string} gaMeasurementID - The GA4 measurement ID for the analytics property.
- * @description Pushes a `figureCodeDisplayLoaded` event to the `dataLayer` with metadata
- *              including figure type (`codeDisplay`), page section (`figure`), title, and figure ID.
- */
-function figureCodeDisplayLoaded(title, figureID, gaMeasurementID) {
+document.addEventListener('graphic-data:figureCodeDisplayLoaded', (e) => {
+	const { title, figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureCodeDisplayLoaded',
@@ -190,17 +149,11 @@ function figureCodeDisplayLoaded(title, figureID, gaMeasurementID) {
 		title,
 		figureID,
 	});
-}
+});
 
 //MODAL & TAB TRACKING AND ANALYSIS_______________________________________________________________
-/**
- * Tracks the loading of a modal window by pushing an event to the dataLayer.
- *
- * @param {string}        title           - The title of the modal window.
- * @param {string|number} modal_id        - The ID of the post associated with the modal window.
- * @param                 gaMeasurementID
- */
-function modalWindowLoaded(title, modal_id, gaMeasurementID) {
+document.addEventListener('graphic-data:modalWindowLoaded', (e) => {
+	const { title, modal_id } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'modalWindowLoaded',
@@ -208,18 +161,10 @@ function modalWindowLoaded(title, modal_id, gaMeasurementID) {
 		title,
 		modalID: modal_id,
 	});
-}
+});
 
-/**
- * Tracks the loading of a modal tab by pushing an event to the dataLayer.
- *
- * @param {string}        title           - The title of the modal tab being loaded.
- * @param                 tab_label
- * @param {string|number} modal_id        - The ID of the post associated with the modal tab.
- * @param                 tab_id
- * @param                 gaMeasurementID
- */
-function modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID) {
+document.addEventListener('graphic-data:modalTabLoaded', (e) => {
+	const { tab_label, modal_id, tab_id } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'modalTabLoaded',
@@ -228,7 +173,7 @@ function modalTabLoaded(tab_label, modal_id, tab_id, gaMeasurementID) {
 		modalID: modal_id,
 		tabID: tab_id,
 	});
-}
+});
 
 /**
  * Tracks the "More Info" button click event within a modal and pushes the event data to the dataLayer.
@@ -257,42 +202,46 @@ function modalMoreInfoLinkClicked(
 	});
 }
 
-function setupModalMoreInfoLinkTracking(modalID) {
-	document.querySelectorAll('.accordion-body a').forEach(function (link) {
-		link.addEventListener('click', function (event) {
-			// Find the closest .accordion-item
-			const accordionItem =
-				event.currentTarget.closest('.accordion-item');
-			const accordionButton = accordionItem
-				? accordionItem.querySelector(
-						'.accordion-header .accordion-button'
-					)
-				: null;
-			const buttonText = accordionButton.textContent.trim();
-			// Check if the button has the class "More Info"
-			if (buttonText === 'More Info') {
-				const linkTitle = link.textContent.trim();
-				const url = link.href;
+document.addEventListener(
+	'graphic-data:setupModalMoreInfoLinkTracking',
+	(e) => {
+		const { modalID } = e.detail;
+		document.querySelectorAll('.accordion-body a').forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				// Find the closest .accordion-item
+				const accordionItem =
+					event.currentTarget.closest('.accordion-item');
+				const accordionButton = accordionItem
+					? accordionItem.querySelector(
+							'.accordion-header .accordion-button'
+						)
+					: null;
+				const buttonText = accordionButton.textContent.trim();
+				// Check if the button has the class "More Info"
+				if (buttonText === 'More Info') {
+					const linkTitle = link.textContent.trim();
+					const url = link.href;
 
-				// Get modal title from #modal-title
-				const modalTitleElement =
-					document.getElementById('modal-title');
-				const modalTitle = modalTitleElement
-					? modalTitleElement.textContent.trim()
-					: 'Unknown Title';
+					// Get modal title from #modal-title
+					const modalTitleElement =
+						document.getElementById('modal-title');
+					const modalTitle = modalTitleElement
+						? modalTitleElement.textContent.trim()
+						: 'Unknown Title';
 
-				// Push to dataLayer
-				modalMoreInfoLinkClicked(
-					linkTitle,
-					modalID,
-					url,
-					modalTitle,
-					gaMeasurementID
-				);
-			}
+					// Push to dataLayer
+					modalMoreInfoLinkClicked(
+						linkTitle,
+						modalID,
+						url,
+						modalTitle,
+						gaMeasurementID
+					);
+				}
+			});
 		});
-	});
-}
+	}
+);
 
 /**
  * Tracks the event when modal images are clicked and pushes relevant data to the dataLayer.
@@ -322,7 +271,8 @@ function modalImagesLinkClicked(
 	});
 }
 
-function setupModalImagesLinkTracking(modalID) {
+document.addEventListener('graphic-data:setupModalImagesLinkTracking', (e) => {
+	const { modalID } = e.detail;
 	document.querySelectorAll('.accordion-body a').forEach(function (link) {
 		link.addEventListener('click', function (event) {
 			// Find the closest .accordion-item
@@ -357,27 +307,19 @@ function setupModalImagesLinkTracking(modalID) {
 			}
 		});
 	});
-}
+});
 
 //SCENE TRACKING AND ANALYSIS_______________________________________________________________
-/**
- * Pushes a 'sceneLoaded' event to the dataLayer with details about the scene.
- *
- * @param {string} title                   - The title of the scene being loaded.
- * @param {number} sceneID                 - The ID of the post associated with the scene.
- * @param          instance_overview_scene
- * @param          gaMeasurementID
- */
-function sceneLoaded(title, sceneID, instance_overview_scene, gaMeasurementID) {
-	dataLayer.push({
-		GA4_MeasurementID: gaMeasurementID,
+document.addEventListener('graphic-data:sceneLoaded', (e) => {
+	const { title, sceneID, instance_overview_scene } = e.detail;
+	window.dataLayer.push({
 		event: 'sceneLoaded',
-		pageSection: 'scene',
-		title,
+		sceneTitle: title,
 		sceneID,
-		instance: instance_overview_scene,
+		instance_overview_scene,
+		gaMeasurementID, // from module-level const
 	});
-}
+});
 
 /**
  * Tracks the "More Info" click event for a scene and pushes the event data to the dataLayer.
@@ -407,43 +349,47 @@ function sceneMoreInfoLinkClicked(
 	});
 }
 
-function setupSceneMoreInfoLinkTracking(title, sceneID) {
-	document.querySelectorAll('.accordion-body a').forEach(function (link) {
-		link.addEventListener('click', function (event) {
-			// Find the closest .accordion-item
-			const accordionItem =
-				event.currentTarget.closest('.accordion-item');
-			const accordionButton = accordionItem
-				? accordionItem.querySelector(
-						'.accordion-header .accordion-button'
-					)
-				: null;
-			const buttonText = accordionButton.textContent.trim();
-			// Check if the button has the class "More Info"
-			if (buttonText === 'More Info') {
-				const linkTitle = link.textContent.trim();
-				const url = link.href;
+document.addEventListener(
+	'graphic-data:setupSceneMoreInfoLinkTracking',
+	(e) => {
+		const { title, sceneID } = e.detail;
+		document.querySelectorAll('.accordion-body a').forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				// Find the closest .accordion-item
+				const accordionItem =
+					event.currentTarget.closest('.accordion-item');
+				const accordionButton = accordionItem
+					? accordionItem.querySelector(
+							'.accordion-header .accordion-button'
+						)
+					: null;
+				const buttonText = accordionButton.textContent.trim();
+				// Check if the button has the class "More Info"
+				if (buttonText === 'More Info') {
+					const linkTitle = link.textContent.trim();
+					const url = link.href;
 
-				// Get scene title from #modal-title
-				const sceneTitleElement = document.querySelector(
-					'#title-container h1'
-				);
-				const sceneTitle = sceneTitleElement
-					? sceneTitleElement.textContent.trim()
-					: 'Unknown Title';
+					// Get scene title from #modal-title
+					const sceneTitleElement = document.querySelector(
+						'#title-container h1'
+					);
+					const sceneTitle = sceneTitleElement
+						? sceneTitleElement.textContent.trim()
+						: 'Unknown Title';
 
-				// Push to dataLayer
-				sceneMoreInfoLinkClicked(
-					linkTitle,
-					sceneID,
-					url,
-					sceneTitle,
-					gaMeasurementID
-				);
-			}
+					// Push to dataLayer
+					sceneMoreInfoLinkClicked(
+						linkTitle,
+						sceneID,
+						url,
+						sceneTitle,
+						gaMeasurementID
+					);
+				}
+			});
 		});
-	});
-}
+	}
+);
 
 /**
  * Tracks when a scene image is clicked and pushes the event data to the dataLayer.
@@ -473,7 +419,8 @@ function sceneImagesLinkClicked(
 	});
 }
 
-function setupSceneImagesLinkTracking(title, sceneID) {
+document.addEventListener('graphic-data:setupSceneImagesLinkTracking', (e) => {
+	const { sceneID } = e.detail;
 	document.querySelectorAll('.accordion-body a').forEach(function (link) {
 		link.addEventListener('click', function (event) {
 			// Find the closest .accordion-item
@@ -509,34 +456,4 @@ function setupSceneImagesLinkTracking(title, sceneID) {
 			}
 		});
 	});
-}
-
-//INSTANCE TRACKING AND ANALYSIS_______________________________________________________________
-
-/**
- * Tracks the selection of an instance and pushes relevant data to the dataLayer.
- *
- * @param {string} title      - The title of the selected instance.
- * @param {number} instanceID - The unique identifier of the selected instance.
- */
-// function instanceSelected(title, instanceID) {
-//     dataLayer.push({
-//       event: 'instanceSelected',
-//       pageSection: 'instance',
-//       title:  title,
-//       instanceID:  instanceID
-//     });
-// }
-
-//ABOUT TRACKING AND ANALYSIS_______________________________________________________________
-//Not sure if needed
-/**
- * Tracks the selection of an "about" section item by pushing an event to the dataLayer.
- *
- */
-// function aboutSelected() {
-//     dataLayer.push({
-//       event: 'aboutSelected',
-//       pageSection: 'about',
-//     });
-// }
+});

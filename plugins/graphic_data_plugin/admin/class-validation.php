@@ -108,7 +108,7 @@ class Graphic_Data_Validation {
 			$function_utilities->fields_to_transient( 'about_post_status', 'post_error', 30 );
 
 			// Instantiate the about class - we need this to get the current custom fields list for the content type.
-			$about_class = new About();
+			$about_class = new Graphic_Data_About();
 
 			// Get the list of custom fields for the content type.
 			$fields_config = $this->get_fields_config( 'about', $about_class );
@@ -718,9 +718,11 @@ class Graphic_Data_Validation {
 			wp_die( 'Security check failed for post of Scene custom post type.' );
 		}
 
-		if ( ! isset( $_POST['scene_location'] ) || ( isset( $_POST['scene_location'] ) && ' ' == $_POST['scene_location'] ) ) {
-			array_push( $scene_errors, 'The Instance field cannot be left blank.' );
-			$save_scene_fields = false;
+		if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			if ( ! isset( $_POST['scene_location'] ) || ( isset( $_POST['scene_location'] ) && ' ' == $_POST['scene_location'] ) ) {
+				array_push( $scene_errors, 'The Instance field cannot be left blank.' );
+				$save_scene_fields = false;
+			}
 		}
 
 		$scene_infographic = isset( $_POST['scene_infographic'] )

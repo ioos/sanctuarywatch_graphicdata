@@ -1,0 +1,12 @@
+{
+	"parserOptions": {
+		"ecmaVersion": 2020,
+		"sourceType": "module"
+	},
+	"settings": {
+		"import/ignore": ["^@graphic-data/"]
+	},
+	"rules": {
+		"no-alert": "off"
+	}
+}

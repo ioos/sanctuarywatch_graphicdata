@@ -348,9 +348,12 @@ class Graphic_Data_GitHub_Updater {
 		$clean_current = ltrim( $clean_current, 'v' );
 		$clean_remote = ltrim( $clean_remote, 'v' );
 
-		// Check if version numbers are equal but remote has a commit suffix.
+		// Force update only when both versions have commit suffixes but different SHAs.
+		// Without this guard, a plain installed version (e.g. "1.4.6") would always
+		// appear outdated against the commit-augmented remote tag ("1.4.6+abc1234").
 		$force_update = ( $clean_current === $clean_remote &&
 						 strpos( $remote_tag_name, '+' ) !== false &&
+						 strpos( (string) $current_version_val, '+' ) !== false &&
 						 $remote_tag_name !== (string) $current_version_val );
 
 		// Check if a new version is available.

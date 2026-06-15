@@ -1,3 +1,22 @@
+import {
+    loadPlotlyScript,
+    waitForElementById,
+    computeStandardDeviation,
+    computePercentile,
+    logFormFieldValues,
+    fillFormFieldValues,
+    createFigureIframeHtml,
+    buildPlotlySnippetEmbedCode,
+} from '@graphic-data/plotly-utility';
+
+const _lineDataEl = document.getElementById(
+    'wp-script-module-data-@graphic-data/plotly-timeseries-line'
+);
+let _lineDefaults = {};
+if ( _lineDataEl?.textContent ) {
+    try { _lineDefaults = JSON.parse( _lineDataEl.textContent ); } catch {}
+}
+
 /**
  * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
  *
@@ -247,7 +266,10 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - layout: Plotly layout object for axis, legend, and display settings.
  * - config: Plotly configuration object for rendering options.
  */
-async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
+export async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
+	    console.log('[GD] producePlotlyLineFigure called:',
+        'interactive_arguments length:', interactive_arguments?.length,
+        'preview:', interactive_arguments?.substring(0, 100));
     // try {
         await loadPlotlyScript(); // ensures Plotly is ready
 
@@ -255,7 +277,8 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         ////console.log(rawField);
         const figureArguments = Object.fromEntries(JSON.parse(rawField));
         const rootURL = window.location.origin;
-
+		let figureID = '';
+		
         //Rest call to get uploaded_path_json
         if (postID == null) {
             // ADMIN SIDE POST ID GRAB
@@ -286,7 +309,10 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         }
         
         const responseJson = await rawResponse.json();
+		console.log('[GD] responseJson keys:', Object.keys(responseJson), 'type:', Array.isArray(responseJson) ? 'array' : typeof responseJson);
+
         const dataToBePlotted = responseJson.data;
+		console.log('[GD] dataToBePlotted:', dataToBePlotted?.length, 'rows, first row:', JSON.stringify(dataToBePlotted?.[0]));
 
         let newDiv = document.createElement('div');
         const plotlyDivID = `plotlyFigure${figureID}`;
@@ -297,6 +323,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         const targetElementpostID = targetElementparts[targetElementparts.length - 1];
 
         if (figureID == targetElementpostID) {
+    		console.log('[GD] INSIDE IF: figureID=', figureID, 'targetElementpostID=', targetElementpostID, 'dataToBePlotted=', dataToBePlotted, 'dataToBePlotted?.date_yyyy=', dataToBePlotted?.['date_yyyy']);
 
             ////console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;            
             // const targetElement = document.getElementById(targetFigureElement);
@@ -737,6 +764,10 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
                          
             // Create the plot with all lines
             // await Plotly.newPlot(plotlyDivID, allLinesPlotly, layout, config);
+			console.log('[GD] uploaded_path_json:', uploaded_path_json);
+			console.log('[GD] finalURL:', finalURL);
+			console.log('[GD] about to plot, allLinesPlotly length:', allLinesPlotly.length, 'numLines:', numLines);
+
             await Plotly.newPlot(plotDiv, allLinesPlotly, layout, config).then(() => {
                 // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
                 // You need the specific values for the entire yaxis
@@ -906,17 +937,18 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
 	}
 
 	// ---------- main ----------
+	// Use the passed interactive_arguments parameter (works in preview modal context
+	// where the form field may not be in the document). Fall back to DOM read for
+	// the settings-page context where the parameter is not passed.
 	const field = document.getElementsByName('figure_interactive_arguments')[0];
-	if (!field) {
+	const currentStr = interactive_arguments || (field ? field.value : '') || '';
+	console.log('[GD] currentStr length:', currentStr.length, 'preview:', currentStr.substring(0, 100));
+	if (!currentStr) {
+		console.log('[GD] EARLY RETURN — no currentStr');
 		return;
 	}
 
-	const currentStr = field.value || '';
-	const defaultsStr =
-		typeof argumentsDefaultsLine !== 'undefined' &&
-		argumentsDefaultsLine.interactive_line_arguments
-			? argumentsDefaultsLine.interactive_line_arguments
-			: '';
+	const defaultsStr = _lineDefaults.interactive_line_arguments || '';
 
 	// Parse both to objects and keep original pair order from current
 	const currentPairs = toPairsFlexible(currentStr);
@@ -1699,6 +1731,8 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 			let newRow = document.createElement('div');
 			newRow.classList.add('row', 'fieldPadding');
 
+			let fieldLabelNumber = '';
+
 			if (fieldLabel[0] != 'XAxis') {
 				fieldLabelNumber = parseInt(fieldLabel[0].slice(-1));
 				if (fieldLabelNumber % 2 != 0) {
@@ -2172,3 +2206,5 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 		});
 	}
 }
+// Bridge for classic scripts until they are modularized.
+window.plotlyLineParameterFields = plotlyLineParameterFields;

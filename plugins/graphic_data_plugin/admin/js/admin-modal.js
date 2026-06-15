@@ -1,4 +1,9 @@
-'use strict';
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	displayEntries,
+	applyPlainTextPaste,
+} from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
@@ -7,6 +12,9 @@ let hoverColor = 'red'; // hacky solution to solving problem of hoverColor in pr
 
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
+
+// Hide Instance dropdown if Graphic Data is not active theme.
+document.addEventListener('DOMContentLoaded', hideModalCheckbox);
 
 const opening_scene_info_entries = document.querySelector(
 	".range[data-depend-id='modal_info_entries']"
@@ -43,6 +51,30 @@ modalWindow();
 modal_scene_change();
 modal_location_change();
 hideIconSection();
+
+/**
+ * Hides the modal_attached_to_scene field when the active theme is not the Graphic Data theme.
+ *
+ * Reads the `isActiveTheme` flag from the PHP data island injected by the
+ * `script_module_data_@graphic-data/admin-modal` filter. If the flag is false
+ * (or absent), the `modal_attached_to_scene` field's wrapping row is hidden,
+ * since that field is only relevant when the Graphic Data theme is active.
+ *
+ * @return {void}
+ */
+function hideModalCheckbox() {
+	const _dataEl = document.getElementById( 'wp-script-module-data-@graphic-data/admin-modal' );
+	let _moduleData = null;
+	if ( _dataEl?.textContent ) {
+		try { _moduleData = JSON.parse( _dataEl.textContent ); } catch {}
+	}
+	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
+	if (isActiveTheme) {
+		document.getElementsByName(
+			'modal_attached_to_scene'
+		)[0].parentElement.parentElement.parentElement.style.display = 'none';
+	}
+}
 
 /**
  * Hides or shows the "Icon Section" field in the modal form based on the number of available section options.
@@ -89,7 +121,7 @@ function hideIconSection() {
  * is selected, the internal image upload field is hidden and the URL input is shown. The function
  * also clears the values of the hidden fields to prevent unintended data submission.
  *
- * @function displayPhotoPath
+ * @function displayModalPhotoPath
  * @param {number} fieldNumber - The index of the photo field to update (typically 1–6).
  *
  * @description
@@ -102,14 +134,14 @@ function hideIconSection() {
  *
  * @example
  * // Show or hide the photo fields for the first photo entry based on user selection:
- * displayPhotoPath(1);
+ * displayModalPhotoPath(1);
  *
  * @global
  * - Assumes the existence of form fields named "modal_photo{n}[modal_photo_location{n}]", "modal_photo{n}[modal_photo_url{n}]", and
  *   elements with data-depend-id="modal_photo_internal{n}" in the DOM, where {n} is the field number.
  */
 // Function to display either URL or image under scene image link
-function displayPhotoPath(fieldNumber) {
+function displayModalPhotoPath(fieldNumber) {
 	const targetElement =
 		'modal_photo' +
 		fieldNumber +
@@ -140,10 +172,10 @@ function displayPhotoPath(fieldNumber) {
  * Initializes and manages the display logic for up to six scene photo fields in the modal form.
  *
  * For each photo entry (1–6), this loop:
- * 1. Calls `displayPhotoPath(i)` to set the initial visibility of the URL and internal image upload fields
+ * 1. Calls `displayModalPhotoPath(i)` to set the initial visibility of the URL and internal image upload fields
  *    based on the current selection ("Internal" or "External") for each photo location dropdown.
  * 2. Attaches a "change" event listener to the corresponding photo location select element, so that when
- *    the user changes the selection, `displayPhotoPath(i)` is called again to update the field visibility accordingly.
+ *    the user changes the selection, `displayModalPhotoPath(i)` is called again to update the field visibility accordingly.
  *
  * This ensures that the correct input fields are shown or hidden for each photo entry, and that any changes
  * made by the user are immediately reflected in the UI.
@@ -151,138 +183,27 @@ function displayPhotoPath(fieldNumber) {
  * @example
  * // This code is typically run on page load to initialize all photo fields:
  * for (let i = 1; i < 7; i++){
- *     displayPhotoPath(i);
+ *     displayModalPhotoPath(i);
  *     let targetPhotoElement = document.querySelector('select[name="modal_photo' + i + '[modal_photo_location' + i + ']"]');
  *     targetPhotoElement.addEventListener("change", function() {
- *         displayPhotoPath(i);
+ *         displayModalPhotoPath(i);
  *     });
  * }
  *
  * @requires
- * - displayPhotoPath: Function that toggles visibility of photo URL and internal upload fields for a given entry.
+ * - displayModalPhotoPath: Function that toggles visibility of photo URL and internal upload fields for a given entry.
  *
  * @global
  * - Assumes the existence of select elements named "modal_photo{n}[modal_photo_location{n}]" in the DOM, where {n} is 1–6.
  */
 for (let i = 1; i < 7; i++) {
-	displayPhotoPath(i);
+	displayModalPhotoPath(i);
 	const targetPhotoElement = document.querySelector(
 		'select[name="modal_photo' + i + '[modal_photo_location' + i + ']"]'
 	);
 	targetPhotoElement.addEventListener('change', function () {
-		displayPhotoPath(i);
+		displayModalPhotoPath(i);
 	});
-}
-
-/**
- * Dynamically creates and appends an accordion UI component for displaying lists of info or photo links in the modal preview.
- *
- * This function generates a Bootstrap-style accordion section (either "info" or "photo") and appends it to the specified parent div.
- * Each accordion contains a header button and a collapsible body with a list of links. The links are constructed from the provided
- * list of element indices, using the corresponding text and URL values from the modal form fields.
- *
- * @function createAccordion
- * @param {string}        accordionType - The type of accordion to create ("info" or "photo"). Determines field names and header text.
- * @param {HTMLElement}   parentDiv     - The parent DOM element to which the accordion will be appended.
- * @param {Array<number>} listElements  - An array of indices representing the info or photo entries to include in the accordion.
- *
- * @description
- * - Creates a container div for the accordion item and its header.
- * - Sets the header text to "More info" for "info" type or "Media" for "photo" type.
- * - Builds a collapsible section containing a list of links, where each link uses the text and URL from the corresponding modal form fields.
- * - Appends the completed accordion item to the specified parent div.
- *
- * @modifies
- * - Appends a new accordion item to the given parentDiv in the DOM.
- *
- * @example
- * // Example usage to create an info accordion with entries 1 and 2:
- * createAccordion("info", document.getElementById("allAccordions"), [1, 2]);
- *
- * @global
- * - Assumes the existence of modal form fields named "modal_{type}{n}[modal_{type}_text{n}]" and "modal_{type}{n}[modal_{type}_url{n}]" in the DOM.
- */
-function createAccordion(accordionType, parentDiv, listElements) {
-	const accordionItem = document.createElement('div');
-	accordionItem.classList.add('accordion-item');
-
-	const accordionFirstPart = document.createElement('div');
-	accordionFirstPart.classList.add('accordion-header');
-
-	const accordionHeaderButton = document.createElement('button');
-	accordionHeaderButton.classList.add('accordion-button', 'accordionTitle');
-	accordionHeaderButton.setAttribute('type', 'button');
-	accordionHeaderButton.setAttribute('data-bs-toggle', 'collapse');
-	accordionHeaderButton.setAttribute(
-		'data-bs-target',
-		'#collapse' + accordionType
-	);
-	accordionHeaderButton.setAttribute('aria-expanded', 'true');
-	accordionHeaderButton.setAttribute(
-		'aria-controls',
-		'collapse' + accordionType
-	);
-	if (accordionType == 'info') {
-		accordionHeaderButton.textContent = 'More info';
-	} else {
-		accordionHeaderButton.textContent = 'Media';
-	}
-	accordionFirstPart.appendChild(accordionHeaderButton);
-	accordionItem.appendChild(accordionFirstPart);
-
-	const accordionSecondPart = document.createElement('div');
-	accordionSecondPart.classList.add('accordion-collapse', 'collapse');
-	accordionSecondPart.setAttribute(
-		'data-bs-parent',
-		'#accordion' + accordionType
-	);
-	accordionSecondPart.id = 'collapse' + accordionType;
-
-	const accordionBody = document.createElement('div');
-	accordionBody.classList.add('accordion_body');
-
-	const accordionList = document.createElement('ul');
-	accordionList.classList.add('previewAccordionElements');
-	for (let i = 0; i < listElements.length; i++) {
-		const listItem = document.createElement('li');
-		const listLink = document.createElement('a');
-
-		const targetElement = listElements[i];
-		const text_field = document.getElementsByName(
-			'modal_' +
-				accordionType +
-				targetElement +
-				'[modal_' +
-				accordionType +
-				'_text' +
-				targetElement +
-				']'
-		)[0].value;
-		const url_field = document.getElementsByName(
-			'modal_' +
-				accordionType +
-				targetElement +
-				'[modal_' +
-				accordionType +
-				'_url' +
-				targetElement +
-				']'
-		)[0].value;
-
-		listLink.setAttribute('href', url_field);
-		listLink.textContent = text_field;
-		if (graphicDataSceneData.newTabByDefault) {
-			listLink.setAttribute('target', '_blank');
-		}
-		listItem.appendChild(listLink);
-		accordionList.appendChild(listItem);
-	}
-
-	accordionBody.appendChild(accordionList);
-	accordionSecondPart.appendChild(accordionBody);
-	accordionItem.appendChild(accordionSecondPart);
-
-	parentDiv.appendChild(accordionItem);
 }
 
 /**
@@ -1161,7 +1082,7 @@ function modal_icons_change() {
  * @global
  * - Assumes the existence of select elements and range inputs with appropriate names and data attributes in the DOM.
  * - Assumes the existence of helper functions: modal_location_change, modal_scene_change, modal_icons_change, iconFunction,
- *   displayTabEntries, displayEntries, and createAccordion.
+ *   displayTabEntries, and displayEntries.
  */
 document
 	.querySelector('select[name="modal_location"]')
@@ -1248,12 +1169,5 @@ modalPhotoRangeElement2.addEventListener('change', function () {
 // Both applyPlainTextPaste and bindPlainTextPaste are defined in utility.js.
 document.addEventListener('DOMContentLoaded', function () {
 	const modalEditorIds = ['modal_tagline'];
-
-	if (typeof applyPlainTextPaste === 'function') {
-		applyPlainTextPaste(modalEditorIds);
-	} else {
-		console.error(
-			'Trouble with plain-text paste in TinyMCE fields: applyPlainTextPaste not found. Ensure utility.js is loaded correctly.'
-		);
-	}
+	applyPlainTextPaste(modalEditorIds);
 });

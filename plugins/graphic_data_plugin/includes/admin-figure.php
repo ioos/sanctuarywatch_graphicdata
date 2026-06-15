@@ -37,16 +37,9 @@ class Graphic_Data_Figure {
 		$current_post_type = get_post_type();
 		if ( 'figure' == $current_post_type ) {
 
-			// AJAX action for handling interactive graph data retrieval.
-			wp_enqueue_script(
-				'admin-figure',
-				plugin_dir_url( __FILE__ ) . '../admin/js/admin-figure.js',
-				[], // <-- no jquery needed.
-				GRAPHIC_DATA_PLUGIN_VERSION,
-				true
-			);
+			// NOTE! This is a cross-script dependency as the following nonce is used only by file-upload.js This should be changed.
 			wp_localize_script(
-				'admin-figure',
+				'file-upload',
 				'wpApiSettings',
 				[
 					'nonce' => wp_create_nonce( 'wp_rest' ),
@@ -57,18 +50,23 @@ class Graphic_Data_Figure {
 			// default_interactive_arguments for line and bar charts from graphic_data_plugin/includes/admin-settings-page.php.
 			$settings = get_option( 'graphic_data_settings' );
 			$default_interactive_line_arguments = isset( $settings['interactive_line_arguments'] ) ? $settings['interactive_line_arguments'] : '';
-			wp_localize_script(
-				'plotly-timeseries-line',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php.
-				'argumentsDefaultsLine',           // global object name.
-				[ 'interactive_line_arguments' => $default_interactive_line_arguments ]
+			add_filter(
+				'script_module_data_@graphic-data/plotly-timeseries-line',
+				function ( array $data ) use ( $default_interactive_line_arguments ): array {
+					$data['interactive_line_arguments'] = $default_interactive_line_arguments;
+					return $data;
+				}
 			);
 
 			$settings = get_option( 'graphic_data_settings' );
 			$default_interactive_bar_arguments = isset( $settings['interactive_bar_arguments'] ) ? $settings['interactive_bar_arguments'] : '';
-			wp_localize_script(
-				'plotly-bar',  // MUST match the enqueued handle in graphic_data_plugin/admin/class-admin.php.
-				'argumentsDefaultsBar',           // global object name.
-				[ 'interactive_bar_arguments' => $default_interactive_bar_arguments ]
+
+			add_filter(
+				'script_module_data_@graphic-data/plotly-bar',
+				function ( array $data ) use ( $default_interactive_bar_arguments ): array {
+					$data['interactive_bar_arguments'] = $default_interactive_bar_arguments;
+					return $data;
+				}
 			);
 		}
 	}
@@ -484,7 +482,8 @@ class Graphic_Data_Figure {
 			'show_in_rest'       => true,
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'figures' ),
-			'capability_type'    => 'post',
+			'capability_type'    => 'figure',
+			'map_meta_cap'       => true,
 			'menu_icon'          => 'dashicons-admin-comments',
 			'has_archive'        => true,
 			'hierarchical'       => false,
@@ -921,15 +920,6 @@ class Graphic_Data_Figure {
 			];
 		}
 
-		if ( isset( $request['id'] ) ) {
-			$args['meta_query'][] = [
-				[
-					'key'   => 'id',
-					'value' => (int) $request['id'],
-					'compare' => '=',
-				],
-			];
-		}
 		return $args;
 	}
 
@@ -966,8 +956,6 @@ class Graphic_Data_Figure {
 		// From file, get the ['name'] and the ['tmp_name'].
 		if ( isset( $_FILES['uploaded_file'] ) ) {
 			// Sanitize and validate the uploaded file data.
-			// $file_name = isset( $_FILES['uploaded_file']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['uploaded_file']['name'] ) ) : '';
-			// $file_tmp_name = isset( $_FILES['uploaded_file']['tmp_name'] ) ? sanitize_text_field( wp_unslash( $_FILES['uploaded_file']['tmp_name'] ) ) : '';
 			$file_name = isset( $_FILES['uploaded_file']['name'] ) ? basename( wp_unslash( $_FILES['uploaded_file']['name'] ) ) : '';
 			$file_tmp_name = isset( $_FILES['uploaded_file']['tmp_name'] ) ? wp_unslash( $_FILES['uploaded_file']['tmp_name'] ) : '';
 

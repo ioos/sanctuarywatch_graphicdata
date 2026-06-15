@@ -100,6 +100,22 @@ class Graphic_Data_Settings_Page {
 			[ 'sanitize_callback' => [ $this, 'sanitize_graphic_data_settings' ] ]
 		);
 
+		// Plugin only or plugin plus theme.
+		add_settings_section(
+			'plugin_only_section',
+			'Use Graphic Data Theme?',
+			null,
+			'theme_settings'
+		);
+
+		add_settings_field(
+			'plugin_only_toggle',
+			'Are you using the Graphic Data theme?',
+			[ $this, 'tutorial_content_toggle_callback' ],
+			'theme_settings',
+			'plugin_only_section'
+		);
+
 		// Tutorial Content section.
 		add_settings_section(
 			'tutorial_content_section',
@@ -160,6 +176,14 @@ class Graphic_Data_Settings_Page {
 			'sitewide_footer',
 			'Site-wide footer',
 			[ $this, 'sitewide_footer_field_callback' ],
+			'theme_settings',
+			'settings_section'
+		);
+
+		add_settings_field(
+			'front_page_break_text',
+			'Front Page Break Text',
+			[ $this, 'front_page_break_text_field_callback' ],
 			'theme_settings',
 			'settings_section'
 		);
@@ -275,6 +299,10 @@ class Graphic_Data_Settings_Page {
 
 		if ( isset( $input['site_footer'] ) ) {
 			$sanitized['site_footer'] = wp_kses_post( $input['site_footer'] );
+		}
+
+		if ( isset( $input['front_page_break_text'] ) ) {
+			$sanitized['front_page_break_text'] = sanitize_text_field( $input['front_page_break_text'] );
 		}
 
 		if ( isset( $input['google_analytics_measurement_id'] ) ) {
@@ -609,6 +637,21 @@ class Graphic_Data_Settings_Page {
 	}
 
 	/**
+	 * Callback function to render the "Front Page Break Text" field.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function front_page_break_text_field_callback() {
+		$options = get_option( 'graphic_data_settings' );
+		$value = isset( $options['front_page_break_text'] ) ? $options['front_page_break_text'] : '';
+		?>
+		<input type="text" name="graphic_data_settings[front_page_break_text]" value="<?php echo esc_attr( $value ); ?>" class="regular-text">
+		<p class="description">For the front page tiles, what word or phrase should be on its own line? If no such behavior is wanted, leave this field blank.</p>
+		<?php
+	}
+
+	/**
 	 * Callback function to render the "Front Page Code Block" textarea field.
 	 *
 	 * Displays a code block textarea for entering custom code on the front page.
@@ -912,7 +955,7 @@ class Graphic_Data_Settings_Page {
 	public function settings_page() {
 		// Check user capabilities.
 		$user = wp_get_current_user();
-		if ( in_array( 'content_editor', (array) $user->roles, true ) ) {
+		if ( in_array( 'author', (array) $user->roles, true ) ) {
 			return;
 		}
 		?>

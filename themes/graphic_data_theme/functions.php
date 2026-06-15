@@ -660,52 +660,59 @@ add_action( 'admin_notices', 'graphic_data_theme_check_required_plugin' );
 function graphic_data_enqueue_scripts() {
 	// Enqueue the theme's script.js file, but don't run on the main index page or on the about page.
 	if ( ! is_home() && ! is_front_page() && 'about' !== get_post_type() ) {
-		wp_enqueue_script(
-			'script-js',
+		wp_register_script_module(
+			'@graphic-data/theme-script',
 			get_template_directory_uri() . '/assets/js/script.js',
-			array(),
-			graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-			array( 'strategy' => 'defer' )
+			array(
+				'@graphic-data/scene-render',
+				'@graphic-data/scene-shared',
+			),
+			graphic_data_get_theme_asset_version(),
 		);
+		wp_enqueue_script_module( '@graphic-data/theme-script' );
 	}
 
 	// Enqueue the theme's index.js file, but don't run on the about page.
 	if ( 'about' !== get_post_type() ) {
-		wp_enqueue_script(
-			'index-js',
+		wp_register_script_module(
+			'@graphic-data/theme-index',
 			get_template_directory_uri() . '/assets/js/index.js',
 			array(),
-			graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-			array( 'strategy' => 'defer' )
+			graphic_data_get_theme_asset_version()
 		);
+		wp_enqueue_script_module( '@graphic-data/theme-index' );
 	}
 
 	// Enqueue the scene render script.
-	wp_enqueue_script(
-		'scene-render',
+	wp_register_script_module(
+		'@graphic-data/scene-render',
 		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy' => 'defer', 'in_footer' => true )
+		array( '@graphic-data/scene-shared', '@graphic-data/modal-render' ),
+		GRAPHIC_DATA_PLUGIN_VERSION
 	);
+	wp_enqueue_script_module( '@graphic-data/scene-render' );
 
-	// Enqueue the modal render script.
-	wp_enqueue_script(
-		'modal-render',
+	// Enqueue the modal render module.
+	wp_register_script_module(
+		'@graphic-data/modal-render',
 		content_url() . '/plugins/graphic_data_plugin/includes/modals/js/modal-render.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( '@graphic-data/figure-render' ),
+		GRAPHIC_DATA_PLUGIN_VERSION
 	);
+	wp_enqueue_script_module( '@graphic-data/modal-render' );
 
-	// Enqueue the figure render script.
-	wp_enqueue_script(
-		'figure-render',
+	// Enqueue the figure render module.
+	wp_register_script_module(
+		'@graphic-data/figure-render',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/figure-render.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array(
+			'@graphic-data/plotly-timeseries-line',
+			'@graphic-data/plotly-bar',
+			'@graphic-data/plotly-map',
+		),
+		GRAPHIC_DATA_PLUGIN_VERSION
 	);
+	wp_enqueue_script_module( '@graphic-data/figure-render' );
 
 	// Enqueue the interactive figure script.
 	wp_enqueue_script(
@@ -716,49 +723,53 @@ function graphic_data_enqueue_scripts() {
 		array( 'strategy'  => 'defer' )
 	);
 
-	// Enqueue the plotly utility script used for interactive figures.
-	wp_enqueue_script(
-		'utility',
+	// register the plotly utility module used for interactive figures.
+	wp_register_script_module(
+		'@graphic-data/plotly-utility',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-utility.js',
 		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		graphic_data_get_theme_asset_version()
 	);
 
-	// Enqueue the plotly line chart script used in interactive figures.
-	wp_enqueue_script(
-		'plotly-timeseries-line',
+	// register the plotly line chart module used in interactive figures.
+	wp_register_script_module(
+		'@graphic-data/plotly-timeseries-line',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-line.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( '@graphic-data/plotly-utility' ),
+		graphic_data_get_theme_asset_version()
 	);
 
-	// Enqueue the plotly bar chart script used in interactive figures.
-	wp_enqueue_script(
-		'plotly-bar',
+	// register the scene shared module that contains utility functions and values needed to render scenes.
+	wp_register_script_module(
+		'@graphic-data/scene-shared',
+		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-shared.js',
+		array(),
+		GRAPHIC_DATA_PLUGIN_VERSION
+	);
+
+	// register the plotly bar chart module used in interactive figures.
+	wp_register_script_module(
+		'@graphic-data/plotly-bar',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-bar.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( '@graphic-data/plotly-utility' ),
+		graphic_data_get_theme_asset_version()
 	);
 
-	// Enqueue the plotly map script used in interactive figures.
-	wp_enqueue_script(
-		'plotly-map',
+	// register the plotly map module used in interactive figures.
+	wp_register_script_module(
+		'@graphic-data/plotly-map',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-map.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
+		array( '@graphic-data/plotly-utility' ),
+		graphic_data_get_theme_asset_version()
 	);
 
 	// Enqueue the google tag script used to log user behavior with tag manager.
-	wp_enqueue_script(
-		'googletags',
+	wp_register_script_module(
+		'@graphic-data/googletags',
 		get_template_directory_uri() . '/assets/js/googletags.js',
 		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy' => 'defer' )
+		graphic_data_get_theme_asset_version()
 	);
+	wp_enqueue_script_module( '@graphic-data/googletags' );
 }
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_scripts' );

@@ -18,14 +18,15 @@ Content Organization Hierarchy: **Instance Type → Instances → Scenes → Mod
 ## Quick Start
 
 1. **[Installation]({{ site.baseurl }}/installation)** - How to install Graphic Data on your WordPress site.
-2. **[Instance Types]({{ site.baseurl }}/instance-types)** - How to create "Instance Types"
-3. **[Instances]({{ site.baseurl }}/instances)** - How to create "Instances"
-4. **[Scenes]({{ site.baseurl }}/scenes)** - How to create "Scenes"
-5. **[Images]({{ site.baseurl }}/creating_svg_files)** - How to create the .svg files for "Scenes"
-6. **[Modals]({{ site.baseurl }}/modals)** - How to create "Modals"
-7. **[Figures]({{ site.baseurl }}/figures)** - How to create "Figures"
-8. **[Ineractive figures]({{ site.baseurl }}/figures-interactive)** - How to create "Interactive Figures"
-9. **[Non-interactive figures]({{ site.baseurl }}/figure-types)** - How to create figure with "Internal/External Images & Code"
+2. **[Planning Companion]({{ site.baseurl }}/planning-companion)** - A planning companion for Graphic Data. Be sure to download the [associated blank spreadsheets](https://github.com/ioos/sanctuarywatch_graphicdata/blob/main/docs/planning_companion/Graphic_Data_staging_spreadsheet.zip)!
+3. **[Instance Types]({{ site.baseurl }}/instance-types)** - How to create "Instance Types"
+4. **[Instances]({{ site.baseurl }}/instances)** - How to create "Instances"
+5. **[Scenes]({{ site.baseurl }}/scenes)** - How to create "Scenes"
+6. **[Images]({{ site.baseurl }}/creating_svg_files)** - How to create the .svg files for "Scenes"
+7. **[Modals]({{ site.baseurl }}/modals)** - How to create "Modals"
+8. **[Figures]({{ site.baseurl }}/figures)** - How to create "Figures"
+9. **[Ineractive figures]({{ site.baseurl }}/figures-interactive)** - How to create "Interactive Figures"
+10. **[Non-interactive figures]({{ site.baseurl }}/figure-types)** - How to create figure with "Internal/External Images & Code"
 
 ## Function Documentation
 

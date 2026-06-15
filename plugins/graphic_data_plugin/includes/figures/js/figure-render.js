@@ -1,3 +1,7 @@
+import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
+import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
+import { producePlotlyMap } from '@graphic-data/plotly-map';
+
 /**
  * Renders interactive plots (e.g., Plotly graphs) within a specified tab content element.
  * Handles dynamic loading, resizing for mobile, and tab switching behavior.
@@ -30,7 +34,7 @@
  * };
  * await render_interactive_plots(tabContentElement, info_obj);
  */
-async function render_interactive_plots(tabContentElement, info_obj) {
+export async function render_interactive_plots(tabContentElement, info_obj) {
 	//Lets control if the figure is published or not
 	let figure_published = info_obj.figure_published;
 	if (figure_published != 'published') {
@@ -49,12 +53,14 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 	const interactive_arguments = info_obj.figure_interactive_arguments;
 
 	//Preview error message in admin
-	if (
-		window.location.href.includes('post.php') &&
-		figureType === 'Interactive'
-	) {
-		errorPreviewHandler(tabContentElement, figureType);
-	}
+    if (
+        window.location.href.includes('post.php') &&
+        figureType === 'Interactive'
+    ) {
+        document.dispatchEvent( new CustomEvent( 'graphic-data:figurePreviewError', {
+            detail: { tabContentElement, figureType }
+        } ) );
+    }
 
 	async function waitForElementByIdPolling(
 		id,
@@ -82,7 +88,9 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
 	// Additional mobile-specific adjustments
 	function adjustPlotlyLayoutForMobile(postID) {
-		if (window.innerWidth <= 768) {
+        const isMobilePreview =
+            window.location.href.includes('post.php') && !!window.mobileBool;
+        if (window.innerWidth <= 768 || isMobilePreview) {
 			// basic mobile width check
 			const plotlyDivID = `plotlyFigure${postID}`;
 			const plotDiv = document.getElementById(plotlyDivID);
@@ -103,29 +111,19 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 			const graphType = figure_arguments.graphType;
 
 			if (graphType === 'Plotly line graph (time series)') {
-				async function waitForPlotlyDiv(
-					plotlyDivID,
-					retries = 150,
-					interval = 300
-				) {
-					for (let i = 0; i < retries; i++) {
-						const el = document.getElementById(plotlyDivID);
-						if (el) {
-							return el;
-						}
-						await new Promise((resolve) =>
-							setTimeout(resolve, interval)
-						);
-						await producePlotlyLineFigure(
-							targetId,
-							interactive_arguments,
-							postID
-						);
-					}
-					throw new Error(
-						`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`
-					);
-				}
+                async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+                    for (let i = 0; i < retries; i++) {
+                        const el = document.getElementById(plotlyDivID);
+                        if (el) {
+                            return el;
+                        }
+                        await new Promise((resolve) => setTimeout(resolve, interval));
+                        // producePlotly* call removed — this function only WAITS for the div,
+                        // it does not re-render. Re-rendering here caused duplicate fetch calls
+                        // and empty charts in admin preview context.
+                    }
+                    throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+                }
 
 				try {
 					await waitForElementByIdPolling(targetId, 15000);
@@ -173,29 +171,19 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 			}
 
 			if (graphType === 'Plotly bar graph') {
-				async function waitForPlotlyDiv(
-					plotlyDivID,
-					retries = 150,
-					interval = 300
-				) {
-					for (let i = 0; i < retries; i++) {
-						const el = document.getElementById(plotlyDivID);
-						if (el) {
-							return el;
-						}
-						await new Promise((resolve) =>
-							setTimeout(resolve, interval)
-						);
-						await producePlotlyBarFigure(
-							targetId,
-							interactive_arguments,
-							postID
-						);
-					}
-					throw new Error(
-						`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`
-					);
-				}
+                async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+                    for (let i = 0; i < retries; i++) {
+                        const el = document.getElementById(plotlyDivID);
+                        if (el) {
+                            return el;
+                        }
+                        await new Promise((resolve) => setTimeout(resolve, interval));
+                        // producePlotly* call removed — this function only WAITS for the div,
+                        // it does not re-render. Re-rendering here caused duplicate fetch calls
+                        // and empty charts in admin preview context.
+                    }
+                    throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+                }
 
 				try {
 					await waitForElementByIdPolling(targetId, 15000);
@@ -242,29 +230,19 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 			}
 
 			if (graphType === 'Plotly map') {
-				async function waitForPlotlyDiv(
-					plotlyDivID,
-					retries = 150,
-					interval = 300
-				) {
-					for (let i = 0; i < retries; i++) {
-						const el = document.getElementById(plotlyDivID);
-						if (el) {
-							return el;
-						}
-						await new Promise((resolve) =>
-							setTimeout(resolve, interval)
-						);
-						await producePlotlyMap(
-							targetId,
-							interactive_arguments,
-							postID
-						);
-					}
-					throw new Error(
-						`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`
-					);
-				}
+                async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+                    for (let i = 0; i < retries; i++) {
+                        const el = document.getElementById(plotlyDivID);
+                        if (el) {
+                            return el;
+                        }
+                        await new Promise((resolve) => setTimeout(resolve, interval));
+                        // producePlotly* call removed — this function only WAITS for the div,
+                        // it does not re-render. Re-rendering here caused duplicate fetch calls
+                        // and empty charts in admin preview context.
+                    }
+                    throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+                }
 
 				try {
 					await waitForElementByIdPolling(targetId, 15000);
@@ -312,7 +290,9 @@ async function render_interactive_plots(tabContentElement, info_obj) {
 
 			//Google Tags
 			if (!window.location.href.includes('post.php')) {
-				figureTimeseriesGraphLoaded(title, postID, gaMeasurementID);
+                document.dispatchEvent( new CustomEvent( 'graphic-data:figureTimeseriesGraphLoaded', {
+                    detail: { title, postID }
+                } ) );
 			}
 
 			break;
@@ -355,7 +335,7 @@ async function render_interactive_plots(tabContentElement, info_obj) {
  * Usage:
  * This function is called for each tab, populating one or more figures (and other corresponding info)
  */
-async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
+export async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
 
     console.log('tabContentElement', tabContentElement);
 
@@ -471,8 +451,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             } else {
                 const protocol = window.location.protocol; // Get the current protocol (e.g., http or https)
                 const host = window.location.host;// Get the current host (e.g., domain name)
-                const restURL = protocol + "//" + host  + "/wp-json/graphics_data/v1/media/alt-text-by-url?image_url=" + encodeURI(img.src); 
-                console.log(restURL);
+                const restURL = protocol + "//" + host  + "/wp-json/graphic_data/v1/media/alt-text-by-url?image_url=" + encodeURI(img.src); 
                 fetch(restURL)                
                 .then(response => response.json())
                 .then(data => {
@@ -491,7 +470,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
                 //Error in admin preview for handling for missing image
                 if (window.location.href.includes('post.php')) {
                     if (img.src.includes('post.php')) {
-                        errorPreviewHandler(tabContentElement, figureType);
+                        document.dispatchEvent( new CustomEvent( 'graphic-data:figurePreviewError', {
+                            detail: { tabContentElement, figureType }
+                        } ) );
                     } 
                 }
             } else
@@ -499,7 +480,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
             //Google Tags
             if (!window.location.href.includes('post.php')) {
-                figureInternalImageLoaded(title, postID, gaMeasurementID);
+                document.dispatchEvent( new CustomEvent( 'graphic-data:figureInternalImageLoaded', {
+                    detail: { title, postID }
+                } ) );
             }
         break;
 
@@ -519,7 +502,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
                 //Error in admin preview for handling for missing image
                 if (window.location.href.includes('post.php')) {
                     if (img.src.includes('post.php')) {
-                        errorPreviewHandler(tabContentElement, figureType);
+                        document.dispatchEvent( new CustomEvent( 'graphic-data:figurePreviewError', {
+                            detail: { tabContentElement, figureType }
+                        } ) );
                     } 
                 }
                 
@@ -527,7 +512,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
             //Google Tags
             if (!window.location.href.includes('post.php')) {
-                figureExternalImageLoaded(title, postID, gaMeasurementID);
+                document.dispatchEvent( new CustomEvent( 'graphic-data:figureExternalImageLoaded', {
+                    detail: { title, postID }
+                } ) );
             }
         break;
 
@@ -556,12 +543,14 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             
             //Append the codeDiv to the figureDiv
             await figureDiv.appendChild(codeDiv);
-            embedCode = info_obj['code'];
+            let embedCode = info_obj['code'];
 
             //Error in admin preview for handling for missing image
             if (!embedCode || embedCode === ''){
                 if (window.location.href.includes('post.php')) {
-                    errorPreviewHandler(tabContentElement, figureType);
+                    document.dispatchEvent( new CustomEvent( 'graphic-data:figurePreviewError', {
+                        detail: { tabContentElement, figureType }
+                    } ) );
                 }
             }
 
@@ -587,7 +576,9 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
             //Google Tags
             if (!window.location.href.includes('post.php')) {
-                figureCodeDisplayLoaded(title, postID, gaMeasurementID);
+                document.dispatchEvent( new CustomEvent( 'graphic-data:figureCodeDisplayLoaded', {
+                    detail: { title, postID }
+                } ) );
             }
         break;
 
@@ -602,7 +593,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     //CREATE PARAGRAPH ELEMENT UNDER "myTabContent" > div class="figure"
     const caption = document.createElement('p');
     caption.classList.add('caption');
-    tempShortCaption = info_obj['shortCaption'];
+    let tempShortCaption = info_obj['shortCaption'];
     tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     caption.innerHTML = tempShortCaption;
     caption.style.marginTop = '10px';
@@ -636,7 +627,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     summary.textContent = 'Click for Details';
 
     let longCaption = document.createElement("p");
-    tempLongCaption = info_obj['longCaption'];
+    let tempLongCaption = info_obj['longCaption'];
     tempLongCaption = tempLongCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     longCaption.innerHTML = tempLongCaption;
     if (info_obj['longCaption'] != ''){
@@ -652,14 +643,15 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     //Google Tags registration for figure science and data links
     if (info_obj['scienceText']!=''){
         if (!window.location.href.includes('post.php')) {
-            setupFigureScienceLinkTracking(postID);
+            document.dispatchEvent( new CustomEvent( 'graphic-data:setupFigureScienceLinkTracking', {
+                detail: { postID }
+            } ) );
         }
     }
     if (info_obj['dataLink']!=''){
-        if (!window.location.href.includes('post.php')) {
-            setupFigureDataLinkTracking(postID);
-        }
-
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupFigureDataLinkTracking', {
+            detail: { postID }
+        } ) );
     }
     //Finish the containers and give them the correct properties.
     switch (figureType) {
@@ -677,9 +669,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
                     plotDiv.style.width = "100%";
                 } catch {};
             break;
-        // case "Code":
-        //         img.setAttribute("style", "width: 100% !important; height: auto; display: flex; margin: 0; margin-top: 2%");
-        //      break;
     }
 
 }
+

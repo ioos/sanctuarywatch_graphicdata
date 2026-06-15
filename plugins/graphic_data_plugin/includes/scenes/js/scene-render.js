@@ -1,5 +1,55 @@
+import {
+    child_obj, setChildObj,
+    sorted_child_objs, setSortedChildObjs,
+    sectionObj, setSectionObj,
+    visible_modals, setVisibleModals,
+    scene_data, setSceneData,
+    getSceneData, deviceDetector,
+    is_mobile, is_touchscreen, slugify, debounce, hexToRgba,
+    get_mobile_layer, remove_outer_div, createAccordionItem,
+} from '@graphic-data/scene-shared';
+import { render_modal } from '@graphic-data/modal-render';
+
+let graphicDataSceneData = getSceneData();
 
 alertIfMissingModal();
+
+const isAdminEditor =
+window.location.href.includes('post.php') ||
+window.location.href.includes('post-new.php') ||
+window.location.href.includes('edit.php');
+
+/**
+ * Initializes the application by loading instance details, setting up the scene location,
+ * defining instance-specific settings, and rendering the SVG element.
+ *
+ * This asynchronous function serves as the driver for the script. It performs the following tasks:
+ * 1. Fetches instance details by calling `load_instance_details()` and stores the data in a global variable.
+ * 2. Determines the scene location by calling `make_title()` (which also makes the title, other scene elemsnts) and stores the result in `sceneLoc`, which is also a global variable.
+ * 3. Finds the instance object corresponding to the scene location and assigns it to `thisInstance`.
+ * 4. Extracts the hover colors for the instance and assigns them to a global variable `colors`.
+ * 5. Calls `loadSVG(url, "svg1")` to load and render an SVG based on the provided URL.
+ *
+ * If any errors occur during these steps, they are caught and logged to the console.
+ *
+ * @async
+ * @function init
+ *
+ * @throws {Error} - If fetching instance details, determining the scene location, or loading the SVG fails, an error is caught and logged.
+ *
+ * Usage: right below; this is essentially the driver function for the entire file, as it pretty much calls every other function inside here.
+ */
+export async function init() {
+    try {
+        await make_title();
+        const url = graphicDataSceneData.svgUrl;
+        await loadSVG(url, 'svg1');
+    } catch (error) {
+        if (!isAdminEditor) {
+            console.error('Error:', error);
+        }
+    }
+}
 
 /**
  * Creates and renders the scene title, tagline, more information/photo dropdowns after scene API call. Called asynchronously within init function
@@ -7,11 +57,16 @@ alertIfMissingModal();
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  *  @throws {Error} - Throws an error if scene data not found or error fetching data
  */
-async function make_title() {
+export async function make_title() {
+    // On admin preview, admin-preview-buttons.js has set window.graphicDataSceneData.titleArr
+    // by the time this runs. Re-sync the module-scoped reference.
+    if (window.location.href.includes('post.php') && window.graphicDataSceneData?.titleArr) {
+        graphicDataSceneData.titleArr = window.graphicDataSceneData.titleArr;
+    }
 	const protocol = window.location.protocol;
 	const host = window.location.host;
 	try {
-		scene_data = graphicDataSceneData.titleArr;
+		setSceneData(graphicDataSceneData.titleArr);
         scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
 		const scene_location = scene_data.scene_location;
 		const title = scene_data.post_title;
@@ -30,12 +85,6 @@ async function make_title() {
 		}
 
 		const accgroup = document.createElement('div');
-
-		//     if (!is_mobile()) {
-		//   //      accgroup.setAttribute("style", "margin-top: 2%");
-		//     } else {
-		//         accgroup.setAttribute("style", "margin-top: 16px"); //max-width: 85%
-		//     }
 
 		accgroup.classList.add('accordion');
 
@@ -120,14 +169,16 @@ async function make_title() {
 			instance_overview_scene = 'None';
 		}
 		// Google Tags
-		sceneLoaded(
-			title,
-			scene_data.post_ID,
-			instance_overview_scene,
-			gaMeasurementID
-		);
-		setupSceneMoreInfoLinkTracking(title, scene_data.post_ID);
-		setupSceneImagesLinkTracking(title, scene_data.post_ID);
+        const sceneID = graphicDataSceneData.postId ?? scene_data.post_id ?? '';
+        document.dispatchEvent( new CustomEvent( 'graphic-data:sceneLoaded', {
+            detail: { title, sceneID, instance_overview_scene }
+        } ) );
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupSceneMoreInfoLinkTracking', {
+            detail: { title, sceneID }
+        } ) );
+        document.dispatchEvent( new CustomEvent( 'graphic-data:setupSceneImagesLinkTracking', {
+            detail: { title, sceneID }
+        } ) );
 
 		return scene_data;
 	} catch (error) {
@@ -155,7 +206,7 @@ async function make_title() {
  * @return {void}
  */
 
-function mobile_helper(svgElement, iconsArr, mobile_icons) {
+export function mobile_helper(svgElement, iconsArr, mobile_icons) {
     // Clear any existing mobile layout DOM container
     
     if (!window.location.href.includes('post.php')) {
@@ -403,51 +454,9 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                                 caption.innerText = "not in wp yet, have to add";
                             }
                             caption.style.paddingBottom = '10px';
-                            //caption.style.fontSize = "14px";
-                            //caption.style.fontSize = "3.15vw";
                             caption.style.overflow = "hidden";
-
-                            // const maxChars2 = 30;  // your character limit
-                            // const maxChars3 = 40;  // your character limit
-                            // const maxChars1 = 11;  // your character limit
-                        
-                            
-                            // if (caption.textContent.length <= maxChars1) {
-                            //     // Text is longer than limit — apply a certain style or class
-                            //     caption.style.fontSize = '12px';     // Example: smaller font size
-                            //     // or
-                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            //     console.log('test1');
-                            // }
-                            // if (caption.textContent.length > maxChars1 && caption.textContent.length <= maxChars2) {
-                            //     // Text is longer than limit — apply a certain style or class
-                            //     caption.style.fontSize = '11px';     // Example: smaller font size
-                            //     // or
-                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            //     console.log('test2');
-                            // } 
-                            // if (caption.textContent.length > maxChars3 && caption.textContent.length <= maxChars3) {
-                            //     // Text is longer than limit — apply a certain style or class
-                            //     caption.style.fontSize = '10.5px';     // Example: smaller font size
-                            //     // or
-                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            //     console.log('test3');
-                            // } 
-                            // if (caption.textContent.length > maxChars3) {
-                            //     // Text is longer than limit — apply a certain style or class
-                            //     caption.style.fontSize = '10px';     // Example: smaller font size
-                            //     // or
-                            //     caption.classList.add('small-text'); // Example: add CSS class controlling size
-                            //     console.log('test4');
-                            // } else {
-                            //     // Reset or apply default style
-                            //     caption.style.fontSize = '14px';
-                            //     caption.classList.remove('small-text');
-                            //     console.log('test4');
-                            // }
                             
                             // Set to last fitting size
-                            //caption.style.maxHeight = '10%'; // Add some space between icon and caption
                             cont.appendChild(caption);
 
                             // Append this icon container to the row
@@ -460,7 +469,6 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                                 const bbox = key.getBBox();
                                 svgClone.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
                                 renderedIcons++;
-                                //console.log(`Rendered icon: ${currIcon}, total rendered: ${renderedIcons}`);
                                 if (renderedIcons === iconIds.length) {
                                     body.style.display = "none"; // only hide once ALL icons are done
                                 } 
@@ -511,7 +519,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
             return;
         }
         if (scene_toc_style === "" || scene_toc_style === "list") {
-
+            let orderedIcons;
             if (window.location.href.includes('post.php')) {
                 orderedIcons = iconsArr;
             } else {
@@ -605,7 +613,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                             
                                 return child_ids;
                             }
-                            child_obj = buildChildIdsFromTitles(iconsArr);
+                            setChildObj(buildChildIdsFromTitles(iconsArr));
                         }  
 
                         // Add a caption below the icon using child_obj data
@@ -683,7 +691,7 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
                 document.querySelector("#myModal > div").setAttribute("style", "z-index: 9999;margin-top: 5%;max-width: 95%;");
             }
             if (window.location.href.includes('post.php')) {
-                titleContainer = document.querySelector("#title-container > div > div.col-md-2");
+                let titleContainer = document.querySelector("#title-container > div > div.col-md-2");
                 titleContainer.style.width = '87%';
                 titleContainer.style.paddingLeft = '0%';
                 document.querySelector("#mobile-view-image").setAttribute("style", "width: 100%; margin-right: 0%; margin-top: 0%; margin-bottom: -70%");
@@ -721,9 +729,11 @@ function mobile_helper(svgElement, iconsArr, mobile_icons) {
         updateNumCols(); // only when portrait <-> landscape changes
     }
     
-    window.addEventListener("resize", debounce(onMaybeOrientationChange, 150));
-
-
+    if (loadSVG._orientationListener) {
+        window.removeEventListener('resize', loadSVG._orientationListener);
+    }
+    loadSVG._orientationListener = debounce(onMaybeOrientationChange, 150);
+    window.addEventListener('resize', loadSVG._orientationListener);
 }
 
 /**
@@ -967,7 +977,62 @@ function has_mobile_layer(mob_icons, elemname) {
  * @return {void} `void` - Modifies the DOM but does not return any value.
  * @throws {Error} - Throws an error if the network response is not OK or if the SVG cannot be fetched or parsed.
  */
-async function loadSVG(url, containerId) {
+export async function loadSVG(url, containerId) {
+    // Two hoisted helper functions — must be available to all branches
+    function toWpDateTimeLocal(d = new Date()) {
+        const pad = (n) => String(n).padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function buildVisibleModalsObject(visible_modals, opts = {}) {
+        const now = new Date();
+        const nowStr = toWpDateTimeLocal(now);
+
+        const sceneId = opts.sceneId ?? 0;
+        const postAuthor = String(opts.postAuthor ?? "1");
+
+        // Optional: if you want GMT strings too (WP-style)
+        const nowGmtStr = opts.useGmt
+            ? toWpDateTimeLocal(new Date(now.getTime() + now.getTimezoneOffset() * 60000))
+            : nowStr;
+
+        return (visible_modals || []).map((name, idx) => ({
+            title: name,
+            modal_id: 0,
+            external_url: "",
+            modal: true,
+            scene: {
+            ID: sceneId,
+            post_author: postAuthor,
+            post_date: nowStr,
+            post_date_gmt: nowGmtStr,
+            post_content: "",
+            post_title: "",
+            post_excerpt: "",
+            post_status: "publish",
+            comment_status: "closed",
+            ping_status: "closed",
+            post_password: "",
+            post_name: "",
+            to_ping: "",
+            pinged: "",
+            post_modified: nowStr,
+            post_modified_gmt: nowGmtStr,
+            post_content_filtered: "",
+            post_parent: 0,
+            guid: "",
+            menu_order: 0,
+            post_type: "scene",
+            post_mime_type: "",
+            comment_count: "0",
+            filter: "raw",
+            },
+            section_name: "1",
+            original_name: name,
+            modal_icon_order: idx + 1, // sequential order
+        }));
+    }
+
     try {
         // Step 1: Fetch the SVG content
         const response = await fetch(url);
@@ -979,26 +1044,6 @@ async function loadSVG(url, containerId) {
         const svgText = await response.text();
         let svgDoc;
         let svgElement;
-        
-        // // Check if the SVG contains Inkscape-specific attributes
-        // if (svgText.includes("inkscape:label") || svgText.includes("inkscape:groupmode")) {
-        //     console.log("Inkscape is detected");
-
-        //     // 1) Remove inkscape:groupmode only (do not consume rest of the tag)
-        //     const applyRule1 = svgText.replace(/\s+inkscape:groupmode="layer"(?=\s|>)/g, "");
-
-        //     // 2) If id==label → keep id; else set id to label. Drop the label either way.
-        //     const applyRule2 = applyRule1.replace(
-        //         /id="([^"]+)"\s+inkscape:label="([^"]+)"/g,
-        //         (_, idValue, labelValue) => (idValue === labelValue ? `id="${idValue}"` : `id="${labelValue}"`)
-        //     );
-
-        //     const parser = new DOMParser();
-        //     svgDoc = parser.parseFromString(applyRule2, "image/svg+xml");
-        // } else {
-        //     const parser = new DOMParser();
-        //     svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-        // }
 
         const parser = new DOMParser();
         svgDoc = parser.parseFromString(svgText, "image/svg+xml");
@@ -1011,7 +1056,7 @@ async function loadSVG(url, containerId) {
         container.appendChild(svgElement);
 
         //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
-        if (window.location.href.includes('post.php')  &&  adminEditTitle === 'Edit Scene') {
+        if (window.location.href.includes('post.php') || window.location.href.includes('post-new.php')) {
             const modalHeader = document.querySelector('.modal-header');
             modalHeader.style.display = 'flex';
             modalHeader.style.flexDirection = 'column';
@@ -1040,66 +1085,13 @@ async function loadSVG(url, containerId) {
 
             const modalWindow = document.querySelector('.modal-dialog.modal-xl.modal-dialog-scrollable');
             modalWindow.style.paddingTop = "1%";
-
-            function toWpDateTimeLocal(d = new Date()) {
-                const pad = (n) => String(n).padStart(2, "0");
-                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-            }
-
-            function buildVisibleModalsObject(visible_modals, opts = {}) {
-                const now = new Date();
-                const nowStr = toWpDateTimeLocal(now);
-
-                const sceneId = opts.sceneId ?? 0;
-                const postAuthor = String(opts.postAuthor ?? "1");
-
-                // Optional: if you want GMT strings too (WP-style)
-                const nowGmtStr = opts.useGmt
-                    ? toWpDateTimeLocal(new Date(now.getTime() + now.getTimezoneOffset() * 60000))
-                    : nowStr;
-
-                return (visible_modals || []).map((name, idx) => ({
-                    title: name,
-                    modal_id: 0,
-                    external_url: "",
-                    modal: true,
-                    scene: {
-                    ID: sceneId,
-                    post_author: postAuthor,
-                    post_date: nowStr,
-                    post_date_gmt: nowGmtStr,
-                    post_content: "",
-                    post_title: "",
-                    post_excerpt: "",
-                    post_status: "publish",
-                    comment_status: "closed",
-                    ping_status: "closed",
-                    post_password: "",
-                    post_name: "",
-                    to_ping: "",
-                    pinged: "",
-                    post_modified: nowStr,
-                    post_modified_gmt: nowGmtStr,
-                    post_content_filtered: "",
-                    post_parent: 0,
-                    guid: "",
-                    menu_order: 0,
-                    post_type: "scene",
-                    post_mime_type: "",
-                    comment_count: "0",
-                    filter: "raw",
-                    },
-                    section_name: "1",
-                    original_name: name,
-                    modal_icon_order: idx + 1, // sequential order
-                }));
-            }
         }
-      
+
         // checking if user device is touchscreen
-        if (is_touchscreen()){
-            if (is_mobile() && (deviceDetector.device != 'tablet')){ //a phone and not a tablet; screen will be its own UI here
-                //console.log('Mobile device detected');
+        const wantsMobileLayout = is_mobile() && deviceDetector.device != 'tablet';
+        const isPreview = window.location.href.includes('post.php');
+        if ( is_touchscreen() && ( ! isPreview || wantsMobileLayout ) ) {
+            if ( wantsMobileLayout ) {
                 //smaller image preview here for mobile
                 let fullImgCont = document.querySelector("#mobile-view-image");
                 
@@ -1165,28 +1157,24 @@ async function loadSVG(url, containerId) {
                 // Logic for admin preview for mobile
                 if (window.location.href.includes('post.php')) {
                     const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
-                    visible_modals = iconsLayer
-                        ? Array.from(iconsLayer.children)
-                            .filter(el => el.tagName.toLowerCase() === "g")
-                            .map(el => el.id)
-                            .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
-                        : [];
+                    setVisibleModals(
+                        iconsLayer
+                            ? Array.from(iconsLayer.children)
+                                .filter(el => el.tagName.toLowerCase() === "g")
+                                .map(el => el.id)
+                                .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }))
+                            : []
+                    );
                     iconsArr =  visible_modals;
                 } else {
                     iconsArr =  Object.keys(child_obj);
-                    //console.log('iconsArr', iconsArr);
                 }
-                // console.log('iconsArr',iconsArr);
-                // console.log('mobileIcons',mobileIcons);
                 mobile_helper(svgElement, iconsArr, mobileIcons);
 
                 if (window.location.href.includes('post.php')) {
                     document.getElementById('svg-elem').remove()
                 }
-                
             } else{ //if it gets here, device is a tablet
-                //hide mobile icons
-                
                 // remove_outer_div();
                 window.addEventListener('load', function() {
                     let mob_icons = document.querySelector("#mobile");
@@ -1211,7 +1199,6 @@ async function loadSVG(url, containerId) {
         }
         else{ //device is a PC
             //hide mobile icons
-            console.log('PC detected');
             window.addEventListener('load', function() {
                 let mob_icons = document.querySelector("#mobile");
                 if (mob_icons) {
@@ -1220,7 +1207,7 @@ async function loadSVG(url, containerId) {
             });
             try {
                 //LOGIC FOR OPTIONS FOR SCENE PREVIEW MODE
-                if (window.location.href.includes('post.php')) {
+                if (window.location.href.includes('post.php') || window.location.href.includes('post-new.php')) {
                     const iconsLayer = document.getElementById("svg-elem").querySelector('g[id="icons"]');
                     graphicDataSceneData.visible_modals = iconsLayer
                         ? Array.from(iconsLayer.children)
@@ -1233,8 +1220,13 @@ async function loadSVG(url, containerId) {
                     svgElement.style.width = "100%";
                     svgElement.style.height = "auto";
 
-                    sceneRow = document.getElementById("scene-row");
+                    let sceneRow = document.getElementById("scene-row");
                     sceneRow.style.marginTop = "20px";
+
+                    // Re-sync with window.graphicDataSceneData which the preview button populated.
+                    if (window.graphicDataSceneData?.titleArr) {
+                        graphicDataSceneData.titleArr = window.graphicDataSceneData.titleArr;
+                    }
 
                     graphicDataSceneData.sceneTextToggle = graphicDataSceneData.titleArr['scene_text_toggle']; //"toggle_on";
                     graphicDataSceneData.sceneFullScreenButton = graphicDataSceneData.titleArr['scene_full_screen_button'];//"yes";
@@ -1242,11 +1234,15 @@ async function loadSVG(url, containerId) {
                     graphicDataSceneData.sceneDefaultHoverColor = graphicDataSceneData.titleArr['scene_hover_color'];
                     graphicDataSceneData.sceneDefaultHoverTextColor = graphicDataSceneData.titleArr['scene_hover_text_color']; 
 
-                    sorted_child_objs = buildVisibleModalsObject(graphicDataSceneData.visible_modals, {
-                        sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
-                        postAuthor: "1",
-                        useGmt: true, // set false if you want local time for both
-                    });
+                    setSortedChildObjs(
+                        buildVisibleModalsObject(
+                            graphicDataSceneData.visible_modals, {
+                                sceneId: Number(document.getElementsByName("post_ID")?.[0]?.value || 0),
+                                postAuthor: "1",
+                                useGmt: true, // set false if you want local time for both
+                            }
+                        )
+                    );
 
                     // Initialize an array to hold the sublayers
                     let sublayers = [];
@@ -1286,6 +1282,7 @@ async function loadSVG(url, containerId) {
             highlight_icons();
             toggle_text();
             full_screen_button('svg1');
+
             if (graphicDataSceneData.sceneTocStyle === "list"){
                 list_toc();
             } else {
@@ -1709,7 +1706,7 @@ function sectioned_list() {
 		if (!sections.includes(section) && section != 'None') {
 			sections.push(section);
 		}
-		sectionObj[key] = section;
+        setSectionObj([key], section);
 	}
 	sections.sort();
 	sections.push('None');
@@ -1811,7 +1808,7 @@ function toc_sections() {
         if (!sections.includes(section) && section!='None') {
             sections.push(section);
         }
-        sectionObj[key] = section;
+        setSectionObj([key], section);
     }
     sections.sort();
     sections.push('None');
@@ -1843,14 +1840,12 @@ function toc_sections() {
         let title_test = scene_data?.[`scene_section${sections[i]}`]?.[`scene_section_title${i + 1}`];
         if (!title_test) {
             title_test = "None";
-            //console.log("Title not found:", title_test);
         } 
 
 
         if (sections[i]!="None" && title_test != "None"){
 
             let scene_section_title = scene_data[`scene_section${sections[i]}`][`scene_section_title${i+1}`];
-            //console.log('scene_section_title', scene_section_title);
             if (scene_data['scene_same_hover_color_sections'] == "no" && scene_section_title != ""){
                 button.innerHTML = scene_section_title;
 
@@ -1869,10 +1864,7 @@ function toc_sections() {
             button.innerHTML = 'No Section';
             let color = graphicDataSceneData.sceneDefaultHoverColor;
             button.style.backgroundColor = hexToRgba(color, 0.2);
-        } else {
-            //console.log('Test 2');
-        }
-
+        } 
 
         if (title_test != "None"){
         
@@ -1953,8 +1945,6 @@ function table_of_contents() {
         const title_formatted = slugify(title);
 		link.setAttribute('id', title_formatted);
 
-        // console.log('title_formatted', title_formatted);
-
 		const modal = child_obj[key].modal;
 		if (modal) {
 			link.setAttribute('href', `#`); //just added
@@ -1965,7 +1955,7 @@ function table_of_contents() {
 			item.addEventListener('click', function () {
 				const modal = document.getElementById('myModal');
 				modal.style.display = 'block';
-				render_modal(key);
+				render_modal(key, child_obj);
 			});
 
 			const closeButton = document.getElementById('close');
@@ -2099,7 +2089,7 @@ function list_toc(){
         if (!sections.includes(section)) {
             sections.push(section);
         }
-        sectionObj[key] = section;
+        setSectionObj([key], section);
     }
     sections.sort();
 
@@ -2121,9 +2111,7 @@ function list_toc(){
         let link = document.createElement("a");
         let modal = obj['modal'];
         //let title_formatted = title.replace(/\s+/g, '_')
-        let title_formatted= slugify(title);
-        //console.log('title_formatted', title_formatted);
-        
+        let title_formatted= slugify(title);        
     
         if (modal) {
             link.setAttribute("href", `#`); //just added
@@ -2136,7 +2124,7 @@ function list_toc(){
                 return function() {
                     modal = document.getElementById("myModal");
                     modal.style.display = "block";
-                    render_modal(key);
+				    render_modal(key, child_obj);
                 };
             })(key));
             
@@ -2188,7 +2176,6 @@ function list_toc(){
                 };
             })(key));
         }
-        //console.log('link', link);
         toc_group.appendChild(item);
     }
     toc_container.appendChild(toc_group);
@@ -2223,22 +2210,20 @@ function add_modal(){
         if (child_obj[key]['modal']){
             let modal = document.getElementById("myModal");
             let closeButton = document.getElementById("close");
-
-            //console.log('is_mobile()', is_mobile());
             
             if (is_mobile()){
                 let itemContainer = document.querySelector(`#${key}-container`);
                 itemContainer.addEventListener('click', function() {
                     modal.style.display = "block";
 
-                    render_modal(key );
+				render_modal(key, child_obj);
 
             });
             } else {
                 elem.addEventListener('click', function(event) {
 
                     modal.style.display = "block";
-                    render_modal(key );
+				    render_modal(key, child_obj);
             });
             }
             

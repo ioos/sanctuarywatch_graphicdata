@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@graphic-data/admin-utility":        ["admin/js/utility.js"],
+			"@graphic-data/admin-about":          ["admin/js/admin-about.js"],
+			"@graphic-data/admin-instance":       ["admin/js/admin-instance.js"],
+			"@graphic-data/admin-scene":          ["admin/js/admin-scene.js"],
+			"@graphic-data/admin-modal":          ["admin/js/admin-modal.js"],
+			"@graphic-data/admin-figure":         ["admin/js/admin-figure.js"],
+			"@graphic-data/admin-preview-buttons":["admin/js/admin-preview-buttons.js"],
+			"@graphic-data/admin-modal_columns":  ["admin/js/admin-modal-columns.js"],
+			"@graphic-data/admin-figure_columns": ["admin/js/admin-figure-columns.js"],
+			"@graphic-data/admin-export-figures": ["admin/js/admin-export-figures.js"],
+			"@graphic-data/admin-tinymce-new-tab":["admin/js/admin-tinymce-new-tab.js"],
+			"@graphic-data/scene-shared":         ["includes/scenes/js/scene-shared.js"],
+			"@graphic-data/scene-render":         ["includes/scenes/js/scene-render.js"],
+			"@graphic-data/modal-render":         ["includes/modals/js/modal-render.js"],
+			"@graphic-data/figure-render":        ["includes/figures/js/figure-render.js"],
+			"@graphic-data/file-upload":          ["includes/figures/js/interactive/file-upload.js"],
+			"@graphic-data/plotly-utility":       ["includes/figures/js/interactive/plotly-utility.js"],
+			"@graphic-data/plotly-timeseries-line":["includes/figures/js/interactive/plotly-timeseries-line.js"],
+			"@graphic-data/plotly-bar":           ["includes/figures/js/interactive/plotly-bar.js"],
+			"@graphic-data/plotly-map":           ["includes/figures/js/interactive/plotly-map.js"]
+		}
+	}
+}

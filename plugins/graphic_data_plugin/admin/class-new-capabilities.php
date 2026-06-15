@@ -1,9 +1,9 @@
 <?php
 /**
- * Content Editor and Manager Role Implementation
  *
- * This file creates custom user roles and limits available roles to:
- * Content Editor, Content Manager, and Administrator (in that order)
+ * Administrator, Editor and Author Capacity Implementation
+ *
+ * This file creates custom user capabilities for Administrators, Editors and Authors
  *
  * @package Graphic_Data_Plugin
  */
@@ -14,30 +14,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Manages custom user roles and role-based access control for the Graphic Data Plugin.
- *
- * Replaces the default WordPress roles (subscriber, contributor, author, editor) with
- * two custom roles: Content Editor and Content Manager. Content Editors are restricted
- * to managing only the scene, modal, and figure post types assigned to their instances.
- * Content Managers have editor-level capabilities without sensitive administrative permissions.
+ * Manages custom user capabilities for the Graphic Data Plugin.
  *
  * @since   1.0.0
  * @package Graphic_Data_Plugin
  */
-class Graphic_Data_Custom_Roles {
+class Graphic_Data_Custom_Capabilities {
 
 	/**
-	 * Removes admin menu pages that Content Editors should not access.
+	 * Removes admin menu pages that authors should not access.
 	 *
 	 * Hides Posts, Pages, About, Instance, and Manage Instance Types menu items
-	 * from users with the 'content_editor' role.
+	 * from users with the 'author' role.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	public function restrict_content_editor_admin_menu() {
-		if ( current_user_can( 'content_editor' ) ) {
+	public function restrict_author_admin_menu() {
+		$user = wp_get_current_user();
+		$user_role = $user->roles[0];
+
+		if ( 'author' == $user_role ) {
 			remove_menu_page( 'edit.php' );                   // Posts.
 			remove_menu_page( 'edit.php?post_type=page' );    // Pages.
 			remove_menu_page( 'manage-instance-types' ); // Manage Instance Types.
@@ -48,7 +46,7 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Removes "New" content links from the admin bar for non-admin users.
+	 * Removes "New" post, page, about, and instance content links from the admin bar for non-admin users.
 	 *
 	 * Strips the new-post, new-page, new-about, and new-instance nodes from the
 	 * admin bar for any user who lacks the 'manage_options' capability.
@@ -71,10 +69,10 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Filters admin list queries to show only posts belonging to a Content Editor's assigned instances.
+	 * Filters admin list queries to show only posts belonging to an author's assigned instances.
 	 *
 	 * Applies a meta query on the main admin listing query for scene, modal, and figure post types.
-	 * Content Editors will only see posts whose location meta field matches one of their assigned
+	 * Authors will only see posts whose location meta field matches one of their assigned
 	 * instances. If no instances are assigned, no posts are shown.
 	 *
 	 * @since 1.0.0
@@ -90,19 +88,22 @@ class Graphic_Data_Custom_Roles {
 			return;
 		}
 
-		// Ensure that we are dealing with the scene, modal, or figure post types (the only ones where the content editor restructions come to bear).
+		// Ensure that we are dealing with the scene, modal, or figure post types (the only ones where the author restrictions come to bear).
 		$current_post_type = $query->get( 'post_type' );
 		if ( 'scene' != $current_post_type && 'modal' != $current_post_type && 'figure' != $current_post_type ) {
 			return;
 		}
 
-		// Only filter when viewing the scene list table ('edit.php') and for content editors (excluding administrators).
-		if ( 'edit.php' === $pagenow && current_user_can( 'content_editor' ) && ! current_user_can( 'manage_options' ) ) {
+		$user = wp_get_current_user();
+		$user_role = $user->roles[0];
+
+		// Only filter when viewing the scene list table ('edit.php') and for authors.
+		if ( 'edit.php' === $pagenow && 'author' === $user_role ) {
 
 			// Get the current user.
 			$current_user = wp_get_current_user();
 
-			// Get instances associated with this content editor.
+			// Get instances associated with this author.
 			$user_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 
 			// If we have associated instances and it's a non-empty array.
@@ -131,170 +132,51 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Registers the Content Editor and Content Manager roles and removes default WordPress roles.
+	 * Grants author-role users full create, edit, and delete access to selected scene, modal, and figure post types.
 	 *
-	 * Content Editor inherits the built-in editor capabilities, but is restricted to only allowed Instances. Content Manager also inherits
-	 * editor capabilities but explicitly excludes sensitive administrative capabilities such as
-	 * plugin/theme management and core updates. After creating the custom roles, the default
-	 * subscriber, contributor, author, and editor roles are removed.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function create_custom_roles() {
-		// ... (rest of the function remains the same) ...
-		// Get the capabilities of the editor role
-		$editor_role = get_role( 'editor' );
-		$editor_capabilities = $editor_role ? $editor_role->capabilities : array();
-
-		// Create the Content Editor role.
-		if ( ! get_role( 'content_editor' ) ) {
-			add_role(
-				'content_editor',
-				'Content Editor',
-				$editor_capabilities
-			);
-		}
-
-		// Create the Content Manager role (with slightly higher capabilities).
-		if ( ! get_role( 'content_manager' ) ) {
-			// Get admin capabilities but remove some sensitive ones.
-			$manager_capabilities = $editor_role->capabilities;
-
-			// Remove capabilities that should be reserved for administrators.
-			$restricted_caps = array(
-				'install_plugins',
-				'activate_plugins',
-				'delete_plugins',
-				'edit_plugins',
-				'install_themes',
-				'switch_themes',
-				'edit_themes',
-				'delete_themes',
-				'update_core',
-				'update_plugins',
-				'update_themes',
-				'manage_options',
-				'manage_sites',
-			);
-
-			foreach ( $restricted_caps as $cap ) {
-				if ( isset( $manager_capabilities[ $cap ] ) ) {
-					unset( $manager_capabilities[ $cap ] );
-				}
-			}
-
-			add_role( 'content_manager', 'Content Manager', $manager_capabilities );
-		}
-
-		// Remove default WordPress roles.
-		$roles_to_remove = array( 'subscriber', 'contributor', 'author', 'editor' );
-		foreach ( $roles_to_remove as $role ) {
-			if ( get_role( $role ) ) {
-				remove_role( $role );
-			}
-		}
-	}
-
-	/**
-	 * Filters the editable roles list to only include allowed custom roles.
-	 *
-	 * Removes any role not in the allowed set (content_editor, content_manager, administrator)
-	 * from the roles array. Intended for use with the 'editable_roles' filter.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $roles Associative array of role slugs to role details.
-	 * @return array Filtered associative array containing only allowed roles.
-	 */
-	public function filter_user_roles( $roles ) {
-		// ... (rest of the function remains the same) ...
-		// Only keep our custom roles and administrator.
-		$allowed_roles = array( 'content_editor', 'content_manager', 'administrator' );
-
-		foreach ( $roles as $role => $details ) {
-			if ( ! in_array( $role, $allowed_roles ) ) {
-				unset( $roles[ $role ] );
-			}
-		}
-
-		return $roles;
-	}
-
-	/**
-	 * Outputs inline JavaScript to reorder the role dropdown on user edit screens.
-	 *
-	 * Sorts the role `<select>` options so they appear in the order: Administrator,
-	 * Content Manager, Content Editor. Runs on page load and after AJAX requests
-	 * to handle dynamically loaded forms.
+	 * Iterates over the three custom post types and calls add_cap() for every
+	 * primitive capability WordPress maps to those types, covering own posts,
+	 * others' posts, published posts, and private posts.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
-	public function reorder_roles_js() {
-		// ... (rest of the function remains the same) ...
-		?>
-		<script type="text/javascript">
-		jQuery(document).ready(function($) {
-			// Function to reorder the role options.
-			function reorderRoleOptions() {
-				// Get the role select element.
-				const $roleSelect = $('select#role');
-				if (!$roleSelect.length) {
-					$roleSelect = $('select[name="role"]');
-				}
+	public function add_author_custom_post_type_caps() {
+		$options = get_option( 'graphic_data_settings' );
 
-				if ($roleSelect.length) {
-					// Define the desired order.
-					const desiredOrder = ['administrator', 'content_manager', 'content_editor',];
+		if ( is_array( $options ) && isset( $options['author_caps_version'] ) &&
+			GRAPHIC_DATA_PLUGIN_VERSION === $options['author_caps_version'] ) {
+				return;
+		}
 
-					// Get all options
-					let $options = $roleSelect.find('option').get();
+		$author_role = get_role( 'author' );
 
-					// Sort options based on our desired order.
-					$options.sort(function(a, b) {
-						var aValue = $(a).val();
-						var bValue = $(b).val();
+		if ( ! $author_role ) {
+			return;
+		}
 
-						var aIndex = desiredOrder.indexOf(aValue);
-						var bIndex = desiredOrder.indexOf(bValue);
+		$post_types = array( 'scene', 'modal', 'figure' );
 
-						// If both values are in our order array, sort by their index.
-						if (aIndex !== -1 && bIndex !== -1) {
-							return aIndex - bIndex;
-						}
+		foreach ( $post_types as $post_type ) {
+			$plural = $post_type . 's';
+			$author_role->add_cap( 'edit_' . $plural );
+			$author_role->add_cap( 'edit_others_' . $plural );
+			$author_role->add_cap( 'edit_published_' . $plural );
+			$author_role->add_cap( 'edit_private_' . $plural );
+			$author_role->add_cap( 'delete_' . $plural );
+			$author_role->add_cap( 'delete_others_' . $plural );
+			$author_role->add_cap( 'delete_published_' . $plural );
+			$author_role->add_cap( 'delete_private_' . $plural );
+			$author_role->add_cap( 'read_private_' . $plural );
+		}
 
-						// If only aValue is in our order array, it comes first.
-						if (aIndex !== -1) {
-							return -1;
-						}
-
-						// If only bValue is in our order array, it comes first.
-						if (bIndex !== -1) {
-							return 1;
-						}
-
-						// Otherwise, maintain original order.
-						return 0;
-					});
-
-					// Replace existing options with sorted ones.
-					$roleSelect.empty().append($options);
-				}
-			}
-
-			// Run on page load.
-			reorderRoleOptions();
-
-			// Also run after any AJAX completes (in case the form is loaded dynamically).
-			$(document).ajaxComplete(function() {
-				reorderRoleOptions();
-			});
-		});
-		</script>
-		<?php
+		if ( ! is_array( $options ) ) {
+			add_option( 'graphic_data_settings', array( 'author_caps_version' => GRAPHIC_DATA_PLUGIN_VERSION ) );
+		} else {
+			$options['author_caps_version'] = GRAPHIC_DATA_PLUGIN_VERSION;
+			update_option( 'graphic_data_settings', $options );
+		}
 	}
 
 	/**
@@ -303,7 +185,7 @@ class Graphic_Data_Custom_Roles {
 	 * Displays a list of all published instance posts as checkboxes, allowing
 	 * administrators to assign specific instances to a user. The section is only
 	 * visible to administrators and is toggled via inline JavaScript to show only
-	 * when the selected user role is 'content_editor'.
+	 * when the selected user role is 'author'.
 	 *
 	 * @since 1.0.0
 	 *
@@ -338,7 +220,7 @@ class Graphic_Data_Custom_Roles {
 		}
 
 		// Display the fields.
-		if ( 'content_editor' == $selected_user_role ) {
+		if ( 'author' == $selected_user_role ) {
 			?>
 			<h3>Instance Assignments</h3>
 			<?php wp_nonce_field( 'save_assigned_instances_' . $user->ID, 'assigned_instances_nonce' ); ?>
@@ -359,13 +241,13 @@ class Graphic_Data_Custom_Roles {
 									</label><br>
 								<?php endforeach; ?>
 							</fieldset>
-							<p class="description">Select the instances this content editor can manage.</p>
+							<p class="description">Select the instances this author can manage.</p>
 						<?php else : ?>
 							<p>No instances found.</p>
 						<?php endif; ?>
 						
 
-						<!-- Script below makes sure that this only shows if we're editing a content manager.  -->
+						<!-- Script below makes sure that this only shows if we're editing an author.  -->
 						<script>
 						document.addEventListener('DOMContentLoaded', function () {
 							const roleDropdown = document.getElementById('role');
@@ -396,7 +278,7 @@ class Graphic_Data_Custom_Roles {
 
 							function toggleInstanceSection() {
 								const selectedRole = roleDropdown.value;
-								const show = selectedRole === 'content_editor';
+								const show = selectedRole === 'author';
 
 								instanceHeading.style.display = show ? '' : 'none';
 								instanceTable.style.display = show ? '' : 'none';
@@ -422,7 +304,7 @@ class Graphic_Data_Custom_Roles {
 	 * Sanitizes the submitted instance IDs with `absint` and stores them as the
 	 * 'assigned_instances' user meta. Only processes the save if the current user
 	 * has permission to edit the target user and the target user has the
-	 * 'content_editor' role.
+	 * 'author' role.
 	 *
 	 * @since 1.0.0
 	 *
@@ -443,8 +325,8 @@ class Graphic_Data_Custom_Roles {
 		// Get the current user object.
 		$user = get_userdata( $user_id );
 
-		// Only save instance selections if the user is a content editor.
-		if ( in_array( 'content_editor', $user->roles ) ) {
+		// Only save instance selections, for users with the role of author.
+		if ( in_array( 'author', $user->roles ) ) {
 			// Get the selected instances.
 			$selected_instances = isset( $_POST['assigned_instances'] ) ? array_map( 'absint', wp_unslash( $_POST['assigned_instances'] ) ) : array();
 
@@ -454,10 +336,10 @@ class Graphic_Data_Custom_Roles {
 	}
 
 	/**
-	 * Restricts access to individual post edit screens for Content Editors.
+	 * Restricts access to individual post edit screens for authors.
 	 *
 	 * On `post.php` for scene, modal, and figure post types, verifies that the
-	 * Content Editor's assigned instances include the instance associated with the
+	 * Author's assigned instances include the instance associated with the
 	 * post being edited. If the user has no assigned instances or the post belongs
 	 * to an unassigned instance, the user is redirected to the post type's list screen.
 	 * Administrators and non-Content-Editor roles are not affected.
@@ -488,8 +370,11 @@ class Graphic_Data_Custom_Roles {
 			$current_post_type = '';
 		}
 
-		// Only apply restrictions to 'content_editor' role.
-		if ( ! current_user_can( 'content_editor' ) || current_user_can( 'manage_options' ) ) {
+		// Only apply restrictions to 'author' role.
+		$user = wp_get_current_user();
+		$user_role = $user->roles[0];
+
+		if ( 'author' != $user_role ) {
 			return;
 		}
 
@@ -529,6 +414,60 @@ class Graphic_Data_Custom_Roles {
 				wp_safe_redirect( $redirect_url );
 				exit;
 			}
+		}
+	}
+
+	/**
+	 * Grants administrator and editor roles full access to the scene, modal, and figure post types.
+	 *
+	 * Because these post types use a custom capability_type ('scene', 'modal', 'figure')
+	 * with map_meta_cap enabled, WordPress generates primitive capabilities
+	 * (e.g. edit_scenes, publish_scenes) that are not present in any default role.
+	 * This method explicitly adds those primitives to administrator and editor so they
+	 * can list, create, edit, publish, and delete these posts in the admin.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function add_admin_editor_custom_post_type_caps() {
+		$options = get_option( 'graphic_data_settings' );
+
+		if ( is_array( $options ) && isset( $options['admin_editor_caps_version'] ) &&
+			GRAPHIC_DATA_PLUGIN_VERSION === $options['admin_editor_caps_version'] ) {
+				return;
+		}
+
+		$post_types      = array( 'scene', 'modal', 'figure' );
+		$roles_to_update = array( 'administrator', 'editor' );
+
+		foreach ( $roles_to_update as $role_slug ) {
+			$role = get_role( $role_slug );
+			if ( ! $role ) {
+				continue;
+			}
+
+			foreach ( $post_types as $post_type ) {
+				$plural = $post_type . 's';
+				$role->add_cap( 'edit_' . $plural );
+				$role->add_cap( 'edit_others_' . $plural );
+				$role->add_cap( 'edit_published_' . $plural );
+				$role->add_cap( 'edit_private_' . $plural );
+				$role->add_cap( 'delete_' . $plural );
+				$role->add_cap( 'delete_others_' . $plural );
+				$role->add_cap( 'delete_published_' . $plural );
+				$role->add_cap( 'delete_private_' . $plural );
+				$role->add_cap( 'read_private_' . $plural );
+				$role->add_cap( 'publish_' . $plural );
+				$role->add_cap( 'create_' . $plural );
+			}
+		}
+
+		if ( ! is_array( $options ) ) {
+			add_option( 'graphic_data_settings', array( 'admin_editor_caps_version' => GRAPHIC_DATA_PLUGIN_VERSION ) );
+		} else {
+			$options['admin_editor_caps_version'] = GRAPHIC_DATA_PLUGIN_VERSION;
+			update_option( 'graphic_data_settings', $options );
 		}
 	}
 }
