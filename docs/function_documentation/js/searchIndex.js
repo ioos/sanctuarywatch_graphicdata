@@ -16,20 +16,20 @@ Search.appendIndex(
             "summary": "Register\u0020the\u0020JavaScript\u0020for\u0020the\u0020admin\u0020area.",
             "url": "classes/Graphic-Data-Admin.html#method_enqueue_scripts"
         },                {
-            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_admin_bar_options\u0028\u0029",
-            "name": "remove_admin_bar_options",
-            "summary": "Remove\u0020the\u0020ability\u0020to\u0020access\u0020Comments,\u0020Posts,\u0020Users,\u0020and\u0020Pages\u0020content\u0020types\u0020from\u0020the\u0020admin\u0020bar\u0020of\u0020the\u0020dashboard.",
-            "url": "classes/Graphic-Data-Admin.html#method_remove_admin_bar_options"
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Achange_admin_bar_options\u0028\u0029",
+            "name": "change_admin_bar_options",
+            "summary": "Adjusts\u0020the\u0020admin\u0020bar\u0020\u0022New\u0022\u0020menu\u0020based\u0020on\u0020the\u0020active\u0020theme.",
+            "url": "classes/Graphic-Data-Admin.html#method_change_admin_bar_options"
         },                {
             "fqsen": "\\Graphic_Data_Admin\u003A\u003Aenqueue_bootstrap_admin\u0028\u0029",
             "name": "enqueue_bootstrap_admin",
             "summary": "Enqueue\u0020Bootstrap\u0020\u0028version\u00205.3.0\u0029\u0020CSS\u0020and\u0020Javascript.",
             "url": "classes/Graphic-Data-Admin.html#method_enqueue_bootstrap_admin"
         },                {
-            "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_elements_from_menu\u0028\u0029",
-            "name": "remove_elements_from_menu",
-            "summary": "Remove\u0020the\u0020ability\u0020to\u0020access\u0020the\u0020Comments,\u0020Posts,\u0020and\u0020Pages\u0020content\u0020types\u0020from\u0020the\u0020sidebar\u0020of\u0020the\u0020dashboard.",
-            "url": "classes/Graphic-Data-Admin.html#method_remove_elements_from_menu"
+            "fqsen": "\\Graphic_Data_Admin\u003A\u003Achange_elements_in_menu\u0028\u0029",
+            "name": "change_elements_in_menu",
+            "summary": "Adjusts\u0020the\u0020admin\u0020sidebar\u0020menu\u0020based\u0020on\u0020the\u0020active\u0020theme.",
+            "url": "classes/Graphic-Data-Admin.html#method_change_elements_in_menu"
         },                {
             "fqsen": "\\Graphic_Data_Admin\u003A\u003Aremove_dashboard_widgets\u0028\u0029",
             "name": "remove_dashboard_widgets",
