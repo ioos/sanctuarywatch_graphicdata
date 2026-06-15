@@ -191,8 +191,8 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts', 10 );
 		$this->loader->add_action( 'login_head', $plugin_admin, 'add_favicon' );
 		$this->loader->add_action( 'admin_head', $plugin_admin, 'add_favicon' );
-		$this->loader->add_action( 'wp_before_admin_bar_render', $plugin_admin, 'remove_admin_bar_options' );
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'remove_elements_from_menu' );
+		$this->loader->add_action( 'wp_before_admin_bar_render', $plugin_admin, 'change_admin_bar_options' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'change_elements_in_menu', 20 );
 		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'remove_dashboard_widgets' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'wppversionremove' );
 		$this->loader->add_action( 'get_sample_permalink_html', $plugin_admin, 'wppversionremove' );

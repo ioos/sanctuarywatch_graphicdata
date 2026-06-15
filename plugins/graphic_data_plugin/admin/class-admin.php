@@ -296,16 +296,28 @@ class Graphic_Data_Admin {
 	}
 
 	/**
-	 * Remove the ability to access Comments, Posts, Users, and Pages content types from the admin bar of the dashboard.
+	 * Adjusts the admin bar "New" menu based on the active theme.
 	 *
-	 * @since    1.0.0
+	 * When the Graphic Data theme is active, removes the Comments, New Page,
+	 * New Post, and New User items — standard WordPress content types that are
+	 * not used in this setup. When a different theme is active, removes the
+	 * plugin-specific New About and New Instance items instead, since those
+	 * post types are only meaningful under the Graphic Data theme.
+	 *
+	 * @since  1.0.0
+	 * @return void
 	 */
-	public function remove_admin_bar_options() {
+	public function change_admin_bar_options() {
 		global $wp_admin_bar;
-		$wp_admin_bar->remove_menu( 'comments' );
-		$wp_admin_bar->remove_menu( 'new-page' );
-		$wp_admin_bar->remove_menu( 'new-post' );
-		$wp_admin_bar->remove_menu( 'new-user' );
+		if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			$wp_admin_bar->remove_menu( 'comments' );
+			$wp_admin_bar->remove_menu( 'new-page' );
+			$wp_admin_bar->remove_menu( 'new-post' );
+			$wp_admin_bar->remove_menu( 'new-user' );
+		} else {
+			$wp_admin_bar->remove_menu( 'new-about' );
+			$wp_admin_bar->remove_menu( 'new-instance' );
+		}
 	}
 
 	/**
@@ -322,17 +334,31 @@ class Graphic_Data_Admin {
 	}
 
 	/**
-	 * Remove the ability to access the Comments, Posts, and Pages content types from the sidebar of the dashboard.
+	 * Adjusts the admin sidebar menu based on the active theme.
 	 *
-	 * @since    1.0.0
+	 * When the Graphic Data theme is active, removes the Comments, Posts, and
+	 * Pages menu items — standard WordPress content types not used in this
+	 * setup. When a different theme is active, removes the plugin-specific
+	 * Instance, About, and Instance Types menu items instead, since those are
+	 * only relevant under the Graphic Data theme.
+	 *
+	 * @since  1.0.0
+	 * @return void
 	 */
-	public function remove_elements_from_menu() {
-		// Remove comments from the admin menu.
-		remove_menu_page( 'edit-comments.php' );
-		// Remove posts from the admin menu.
-		remove_menu_page( 'edit.php' );
-		// Remove pages from the admin menu.
-		remove_menu_page( 'edit.php?post_type=page' );
+	public function change_elements_in_menu() {
+
+		if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			// Remove comments from the admin menu.
+			remove_menu_page( 'edit-comments.php' );
+			// Remove posts from the admin menu.
+			remove_menu_page( 'edit.php' );
+			// Remove pages from the admin menu.
+			remove_menu_page( 'edit.php?post_type=page' );
+		} else {
+			remove_menu_page( 'edit.php?post_type=instance' );
+			remove_menu_page( 'edit.php?post_type=about' );
+			remove_menu_page( 'manage-instance-types' );
+		}
 	}
 
 	/**
