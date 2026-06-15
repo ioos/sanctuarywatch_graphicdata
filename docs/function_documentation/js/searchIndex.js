@@ -491,6 +491,11 @@ Search.appendIndex(
             "summary": "Sanitize\u0020the\u0020field\u0020value\u0020when\u0020the\u0020option\u0020is\u0020a\u0020whole\u0020number\u0020or\u0020an\u0020empty\u0020string.",
             "url": "classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field"
         },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Asanitize_checkbox_field\u0028\u0029",
+            "name": "sanitize_checkbox_field",
+            "summary": "Sanitizes\u0020a\u0020checkbox\u0020field\u0020value\u0020for\u0020storage.",
+            "url": "classes/Graphic-Data-Utility.html#method_sanitize_checkbox_field"
+        },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_modal_tabs\u0028\u0029",
             "name": "return_modal_tabs",
             "summary": "Retrieve\u0020tab\u0020titles\u0020for\u0020a\u0020given\u0020modal.",
