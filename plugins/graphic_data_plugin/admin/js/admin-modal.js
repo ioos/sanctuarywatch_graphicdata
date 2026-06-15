@@ -13,6 +13,9 @@ let hoverColor = 'red'; // hacky solution to solving problem of hoverColor in pr
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
 
+// Hide Instance dropdown if Graphic Data is not active theme.
+document.addEventListener('DOMContentLoaded', hideModalCheckbox);
+
 const opening_scene_info_entries = document.querySelector(
 	".range[data-depend-id='modal_info_entries']"
 ).value;
@@ -48,6 +51,30 @@ modalWindow();
 modal_scene_change();
 modal_location_change();
 hideIconSection();
+
+/**
+ * Hides the modal_attached_to_scene field when the active theme is not the Graphic Data theme.
+ *
+ * Reads the `isActiveTheme` flag from the PHP data island injected by the
+ * `script_module_data_@graphic-data/admin-modal` filter. If the flag is false
+ * (or absent), the `modal_attached_to_scene` field's wrapping row is hidden,
+ * since that field is only relevant when the Graphic Data theme is active.
+ *
+ * @return {void}
+ */
+function hideModalCheckbox() {
+	const _dataEl = document.getElementById( 'wp-script-module-data-@graphic-data/admin-modal' );
+	let _moduleData = null;
+	if ( _dataEl?.textContent ) {
+		try { _moduleData = JSON.parse( _dataEl.textContent ); } catch {}
+	}
+	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
+	if (isActiveTheme) {
+		document.getElementsByName(
+			'modal_attached_to_scene'
+		)[0].parentElement.parentElement.parentElement.style.display = 'none';
+	}
+}
 
 /**
  * Hides or shows the "Icon Section" field in the modal form based on the number of available section options.

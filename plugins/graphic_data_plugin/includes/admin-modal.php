@@ -153,6 +153,14 @@ class Graphic_Data_Modal {
 				'sanitize'      => 'sanitize_text_field',
 			),
 			array(
+				'id'    => 'modal_attached_to_scene',
+				'type'  => 'checkbox',
+				'title' => 'Modal attached to scene*',
+				'style'    => 'fancy',
+				'default'     => 'no',
+				'sanitize'    => [ $function_utilities, 'sanitize_checkbox_field' ],
+			),
+			array(
 				'id'          => 'modal_location',
 				'type'        => 'select',
 				'title'       => 'Instance*',
@@ -382,9 +390,9 @@ class Graphic_Data_Modal {
 		}
 
 		// Step 3: Insert the new sub-arrays after the second element in the original 'fields' array.
-		array_splice( $fields, 11, 0, $info_fields );
-		array_splice( $fields, 18, 0, $photo_fields );
-		array_splice( $fields, 25, 0, $tab_fields );
+		array_splice( $fields, 12, 0, $info_fields );
+		array_splice( $fields, 19, 0, $photo_fields );
+		array_splice( $fields, 26, 0, $tab_fields );
 
 		// If we're just running this function to get the custom field list for field validation, return early.
 		if ( $return_fields_only ) {

@@ -196,6 +196,15 @@ class Graphic_Data_Admin {
 		// Load Modal-specific Javascript only when editing/creating a Modal post.
 		if ( 'modal' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
 
+			// Pass Graphic Data Is Active Theme variable on to Javascript.
+			add_filter(
+				'script_module_data_@graphic-data/admin-modal',
+				function ( array $data ): array {
+					$data['isActiveTheme'] = GRAPHIC_DATA_IS_ACTIVE_THEME;
+					return $data;
+				}
+			);
+
 			wp_register_script_module(
 				'@graphic-data/admin-modal',
 				plugin_dir_url( __FILE__ ) . 'js/admin-modal.js',
@@ -213,6 +222,15 @@ class Graphic_Data_Admin {
 
 		// Load Figure-specific Javascript only when editing/creating a Figure post.
 		if ( 'figure' == $current_post_type && ( 'post.php' == $hook_suffix || 'post-new.php' == $hook_suffix ) ) {
+
+			// Pass Graphic Data Is Active Theme variable on to Javascript.
+			add_filter(
+				'script_module_data_@graphic-data/admin-figure',
+				function ( array $data ): array {
+					$data['isActiveTheme'] = GRAPHIC_DATA_IS_ACTIVE_THEME;
+					return $data;
+				}
+			);
 
 			// Enqueue figure-render.js.
 			wp_enqueue_script_module( '@graphic-data/figure-render' );

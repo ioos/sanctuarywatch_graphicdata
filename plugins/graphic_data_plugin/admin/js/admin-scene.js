@@ -18,6 +18,7 @@ writeCookieValuesToSceneFields();
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
 
+// Hide Instance dropdown if Graphic Data is not active theme.
 document.addEventListener('DOMContentLoaded', hideInstanceDropdown);
 
 // Initialize the number of visible scene section fields and set up TOC-related field visibility on page load.
@@ -61,7 +62,9 @@ function hideInstanceDropdown(){
 	}
 	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
 	if (isActiveTheme === false){
-		document.getElementsByName("scene_location")[0].parentElement.parentElement.style.display = 'none';
+		document.getElementsByName(
+			'scene_location'
+		)[0].parentElement.parentElement.style.display = 'none';
 	}
 }
 
