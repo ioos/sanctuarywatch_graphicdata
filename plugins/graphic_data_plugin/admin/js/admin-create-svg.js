@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		.getElementById('generateSVG')
 		.addEventListener('click', function () {
 			const fieldError = validateForm();
-			if (fieldError == true) {
+			if (fieldError === true) {
 				return;
 			}
 
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					for (let q = 12; q > svgIconNumber; q--) {
 						for (let k = 0; k < 2; k++) {
 							targetID = 'icon' + q;
-							if (k == 1) {
+							if (k === 1) {
 								targetID = targetID + '-mobile';
 							}
 							targetElement = svgDoc.getElementById(targetID);
@@ -277,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						const includeIconMobile = document.getElementById(
 							'iconMobile' + q
 						).checked;
-						if (includeIconMobile == false) {
+						if (includeIconMobile === false) {
 							targetID = 'icon' + q + '-mobile';
 							targetElement = svgDoc.getElementById(targetID);
 							targetElement.parentNode.removeChild(targetElement);
@@ -288,10 +288,13 @@ document.addEventListener('DOMContentLoaded', function () {
 					let tspanElements = null;
 					let targetElementLabel = null;
 					let newLabelValue = null;
+					let iconLabelField;
+					let labelValue;
+
 					for (let q = 1; q <= svgIconNumber; q++) {
 						for (let k = 0; k < 2; k++) {
 							targetID = 'icon' + q;
-							if (k == 1) {
+							if (k === 1) {
 								targetID = targetID + '-mobile';
 							}
 							iconLabelField = document.getElementById(
@@ -305,13 +308,13 @@ document.addEventListener('DOMContentLoaded', function () {
 								targetElement.setAttribute('id', labelValue);
 
 								targetID = 'icon' + q + '-text';
-								if (k == 1) {
+								if (k === 1) {
 									targetID = 'icon' + q + '-mobile-text';
 								}
 								targetElementLabel =
 									svgDoc.getElementById(targetID);
 								newLabelValue = labelValue + '-text';
-								if (k == 1) {
+								if (k === 1) {
 									newLabelValue = labelValue + '-mobile-text';
 								}
 								targetElementLabel.setAttribute(
@@ -388,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			previewElement.innerHTML = ''; // Clear previous preview
 
 			const fieldError = validateForm();
-			if (fieldError == true) {
+			if (fieldError === true) {
 				return;
 			}
 
@@ -461,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function () {
 					for (let q = 12; q > svgIconNumber; q--) {
 						for (let k = 0; k < 2; k++) {
 							targetID = 'icon' + q;
-							if (k == 1) {
+							if (k === 1) {
 								targetID = targetID + '-mobile';
 							}
 							targetElement = svgDoc.getElementById(targetID);
@@ -474,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						const includeIconMobile = document.getElementById(
 							'iconMobile' + q
 						).checked;
-						if (includeIconMobile == false) {
+						if (includeIconMobile === false) {
 							targetID = 'icon' + q + '-mobile';
 							targetElement = svgDoc.getElementById(targetID);
 							targetElement.parentNode.removeChild(targetElement);
@@ -485,16 +488,17 @@ document.addEventListener('DOMContentLoaded', function () {
 					let tspanElements = null;
 					let targetElementLabel = null;
 					let newLabelValue = null;
+					let iconLabelField;
 					for (let q = 1; q <= svgIconNumber; q++) {
 						for (let k = 0; k < 2; k++) {
 							targetID = 'icon' + q;
-							if (k == 1) {
+							if (k === 1) {
 								targetID = targetID + '-mobile';
 							}
 							iconLabelField = document.getElementById(
 								'iconLabel' + q
 							);
-							labelValue = iconLabelField.value.trim();
+							const labelValue = iconLabelField.value.trim();
 							targetElement = svgDoc.getElementById(targetID);
 
 							// we need this if statement as some mobile icons may have been removed already
@@ -502,13 +506,13 @@ document.addEventListener('DOMContentLoaded', function () {
 								targetElement.setAttribute('id', labelValue);
 
 								targetID = 'icon' + q + '-text';
-								if (k == 1) {
+								if (k === 1) {
 									targetID = 'icon' + q + '-mobile-text';
 								}
 								targetElementLabel =
 									svgDoc.getElementById(targetID);
 								newLabelValue = labelValue + '-text';
-								if (k == 1) {
+								if (k === 1) {
 									newLabelValue = labelValue + '-mobile-text';
 								}
 								targetElementLabel.setAttribute(

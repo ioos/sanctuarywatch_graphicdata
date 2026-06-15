@@ -119,8 +119,8 @@ function run_admin_figures() {
 
 				data.forEach((targetRow) => {
 					if (
-						targetRow.icon_function == 'Modal' &&
-						targetRow.modal_scene == figureScene
+						targetRow.icon_function === 'Modal' &&
+						targetRow.modal_scene === figureScene
 					) {
 						const optionIcon = document.createElement('option');
 						const tempTitleDiv = document.createElement('div');
@@ -177,11 +177,11 @@ function run_admin_figures() {
 				optionTab.value = '';
 				figureTab.add(optionTab);
 
-				if (figureModal != ' ' && figureModal != '') {
+				if (figureModal !== ' ' && figureModal !== '') {
 					let targetField = '';
 					for (let i = 1; i < 7; i++) {
 						targetField = 'modal_tab_title' + i;
-						if (data[targetField] != '') {
+						if (data[targetField] !== '') {
 							const optionTitleTab =
 								document.createElement('option');
 							const tmp = document.createElement('textarea');

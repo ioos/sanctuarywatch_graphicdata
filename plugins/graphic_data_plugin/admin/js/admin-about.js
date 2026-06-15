@@ -12,11 +12,11 @@ displayAboutBoxes();
 function displayAboutBoxes() {
 	const numAboutBoxes =
 		document.getElementsByName('numberAboutBoxes')[0].value;
-	const target_element = '';
+	let targetElement = '';
 	for (let i = 10; i > numAboutBoxes; i--) {
-		const target_element = 'aboutBoxMain' + i;
+		targetElement = 'aboutBoxMain' + i;
 		document
-			.getElementById(target_element)
+			.getElementById(targetElement)
 			.closest('.exopite-sof-field-fieldset').style.display = 'none';
 		document.getElementsByName(
 			'aboutBox' + i + '[aboutBoxTitle' + i + ']'
@@ -34,9 +34,9 @@ function displayAboutBoxes() {
 	}
 
 	for (let i = 1; i <= numAboutBoxes; i++) {
-		const target_element = 'aboutBoxMain' + i;
+		targetElement = 'aboutBoxMain' + i;
 		document
-			.getElementById(target_element)
+			.getElementById(targetElement)
 			.closest('.exopite-sof-field-fieldset').style.display = 'block';
 	}
 }
