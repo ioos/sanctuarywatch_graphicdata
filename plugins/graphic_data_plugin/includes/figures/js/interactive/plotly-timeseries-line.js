@@ -1119,7 +1119,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
       inputAxisTitle.id = axisTitle + "AxisTitle";
       inputAxisTitle.name = "plotFields";
       inputAxisTitle.size = "70";
-      fieldValueSaved = fillFormFieldValues(inputAxisTitle.id, interactive_arguments);
+      let fieldValueSaved = fillFormFieldValues(inputAxisTitle.id, interactive_arguments);
       if (fieldValueSaved != undefined){
           inputAxisTitle.value = fieldValueSaved;
       }
@@ -1183,7 +1183,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
       selectNumberLinesOption.innerHTML = i; 
       selectNumberLines.appendChild(selectNumberLinesOption);
   }
-  fieldValueSaved = fillFormFieldValues(selectNumberLines.id, interactive_arguments);
+  let fieldValueSaved = fillFormFieldValues(selectNumberLines.id, interactive_arguments);
   if (fieldValueSaved != undefined){
       selectNumberLines.value = fieldValueSaved;
   }
@@ -1720,7 +1720,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 				}
 			);
 
-			fieldValueSaved = fillFormFieldValues(
+			let fieldValueSaved = fillFormFieldValues(
 				selectColumn.id,
 				interactive_arguments
 			);

@@ -82,6 +82,7 @@ async function loadJson(targetContainer) {
 	const postPageType = window.location.href.includes('post-new.php');
 	let response;
 	let jsonColumns;
+	let fieldValueSaved;
 
 	if (!postPageType) {
 		try {
@@ -216,6 +217,7 @@ async function loadJson(targetContainer) {
 							interactive_arguments =
 								interactive_arguments.replace(/\\/g, '');
 						}
+
 						fieldValueSaved = fillFormFieldValues(
 							selectGraphType.id
 						);
@@ -227,7 +229,8 @@ async function loadJson(targetContainer) {
 						selectGraphType.addEventListener('change', function () {
 							secondaryGraphFields(
 								this.value,
-								interactive_arguments
+								interactive_arguments,
+								jsonColumns
 							);
 						});
 						selectGraphType.addEventListener('change', function () {
@@ -255,7 +258,8 @@ async function loadJson(targetContainer) {
 						if (fieldValueSaved !== undefined) {
 							secondaryGraphFields(
 								selectGraphType.value,
-								interactive_arguments
+								interactive_arguments,
+								jsonColumns
 							);
 						}
 					}
@@ -311,7 +315,8 @@ function displayMetadataBox(metadataRows, newDiv) {
  * @param {string} graphType             - The type of graph selected by the user (e.g., "None", "Plotly bar graph", "Plotly line graph (time series)").
  * @param {string} interactive_arguments - A string containing saved interactive arguments for pre-filling fields.
  */
-function secondaryGraphFields(graphType, interactive_arguments) {
+function secondaryGraphFields(graphType, interactive_arguments, jsonColumns) {
+
 	// Get the container for secondary graph fields
 	const secondaryGraphDiv = document.getElementById('secondaryGraphFields');
 	// If the element exists
