@@ -1060,21 +1060,6 @@ class Graphic_Data_Utility {
 	}
 
 	/**
-	 * Sanitizes a checkbox field value for storage.
-	 *
-	 * Returns 1 if the value is set (i.e. the checkbox was submitted), or 0 if
-	 * it is not. Checkbox inputs are omitted from POST data entirely when
-	 * unchecked, so the absence of the value — not its content — signals an
-	 * unchecked state.
-	 *
-	 * @param  mixed $value The raw value from the form submission.
-	 * @return int          1 if the checkbox was checked, 0 if unchecked.
-	 */
-	public function sanitize_checkbox_field( $value ) {
-		return 'yes' === $value ? 'yes' : 'no';
-	}
-
-	/**
 	 * Retrieve tab titles for a given modal.
 	 *
 	 * Iterates through up to six tab title meta fields for the specified

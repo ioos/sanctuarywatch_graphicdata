@@ -273,7 +273,6 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_scene, 'scene_enqueue_quick_edit_validation' );
 		$this->loader->add_action( 'wp_ajax_scene_validate_slug', $plugin_admin_scene, 'scene_validate_slug_ajax' );
 		$this->loader->add_filter( 'wp_handle_upload', $plugin_admin_scene, 'graphic_data_svg_cleanup_on_upload', 10, 2 );
-		$this->loader->add_action( 'admin_notices', $plugin_admin_scene, 'warn_if_graphic_data_theme_not_active' );
 
 		// Load  class and functions associated with Modal custom content type.
 		$plugin_admin_modal = new Graphic_Data_Modal();

@@ -14,7 +14,7 @@ let hoverColor = 'red'; // hacky solution to solving problem of hoverColor in pr
 document.addEventListener('DOMContentLoaded', redText);
 
 // Hide Instance dropdown if Graphic Data is not active theme.
-document.addEventListener('DOMContentLoaded', hideModalCheckbox);
+document.addEventListener('DOMContentLoaded', hideModalDropdownOrInstance);
 
 const opening_scene_info_entries = document.querySelector(
 	".range[data-depend-id='modal_info_entries']"
@@ -51,28 +51,105 @@ modalWindow();
 modal_scene_change();
 modal_location_change();
 hideIconSection();
+hideFieldsBasedOnModalAttachedToScene();
+
+document
+	.getElementsByName('modal_attached_to_scene')[0]
+	.addEventListener('change', hideFieldsBasedOnModalAttachedToScene);
 
 /**
- * Hides the modal_attached_to_scene field when the active theme is not the Graphic Data theme.
+ * Conditionally hides fields in the modal form based on the active theme.
  *
  * Reads the `isActiveTheme` flag from the PHP data island injected by the
- * `script_module_data_@graphic-data/admin-modal` filter. If the flag is false
- * (or absent), the `modal_attached_to_scene` field's wrapping row is hidden,
- * since that field is only relevant when the Graphic Data theme is active.
+ * `script_module_data_@graphic-data/admin-modal` filter, then hides the
+ * field that is irrelevant for the current theme:
+ *
+ * - Graphic Data theme active: hides `modal_attached_to_scene`, since modals
+ *   are located via the scene relationship field (`modal_location`) instead.
+ * - Different theme active: hides the `modal_location` label and input, since
+ *   scene-based location is only meaningful under the Graphic Data theme.
  *
  * @return {void}
  */
-function hideModalCheckbox() {
-	const _dataEl = document.getElementById( 'wp-script-module-data-@graphic-data/admin-modal' );
+function hideModalDropdownOrInstance() {
+	const _dataEl = document.getElementById(
+		'wp-script-module-data-@graphic-data/admin-modal'
+	);
 	let _moduleData = null;
-	if ( _dataEl?.textContent ) {
-		try { _moduleData = JSON.parse( _dataEl.textContent ); } catch {}
+	if (_dataEl?.textContent) {
+		try {
+			_moduleData = JSON.parse(_dataEl.textContent);
+		} catch {}
 	}
 	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
 	if (isActiveTheme) {
 		document.getElementsByName(
 			'modal_attached_to_scene'
-		)[0].parentElement.parentElement.parentElement.style.display = 'none';
+		)[0].parentElement.style.display = 'none';
+		document.getElementsByName(
+			'modal_attached_to_scene'
+		)[0].parentElement.previousElementSibling.style.display = 'none';
+	} else {
+		document.getElementsByName(
+			'modal_location'
+		)[0].parentElement.previousElementSibling.style.display = 'none';
+		document.getElementsByName(
+			'modal_location'
+		)[0].parentElement.style.display = 'none';
+	}
+}
+
+/**
+ * Toggles visibility of modal fields based on the "modal_attached_to_scene" field value.
+ *
+ * When the field value is "Yes", shows the preview window, modal scene, modal icons,
+ * and icon function fields, then calls hideIconSection() to conditionally hide the icon
+ * subsection. When the value is "No", hide all four of those fields and also
+ * hide the icon TOC section field if it has fewer than two options.
+ *
+ * @return {void}
+ */
+function hideFieldsBasedOnModalAttachedToScene() {
+	const _dataEl = document.getElementById(
+		'wp-script-module-data-@graphic-data/admin-modal'
+	);
+	let _moduleData = null;
+	if (_dataEl?.textContent) {
+		try {
+			_moduleData = JSON.parse(_dataEl.textContent);
+		} catch {}
+	}
+	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
+	if (isActiveTheme) {
+		const fieldValue = document.getElementsByName(
+			'modal_attached_to_scene'
+		)[0].value;
+		const previewWindow = document.getElementById('preview_window');
+		const modalScene =
+			document.getElementsByName('modal_scene')[0].parentElement
+				.parentElement;
+		const modalIcons =
+			document.getElementsByName('modal_icons')[0].parentElement
+				.parentElement;
+		const iconFunctionField =
+			document.getElementsByName('icon_function')[0].parentElement
+				.parentElement;
+		if (fieldValue === 'Yes') {
+			previewWindow.style.display = 'block';
+			modalScene.style.display = 'block';
+			modalIcons.style.display = 'block';
+			iconFunctionField.style.display = 'block';
+			hideIconSection();
+		} else {
+			previewWindow.style.display = 'none';
+			modalScene.style.display = 'none';
+			modalIcons.style.display = 'none';
+			iconFunctionField.style.display = 'none';
+			const sectionField = document.getElementsByName('icon_toc_section')[0];
+			if (sectionField.options.length < 2) {
+				sectionField.parentElement.parentElement.style.display = 'none';
+			}
+		}
 	}
 }
 
@@ -302,50 +379,84 @@ function iconSceneOutDropdown() {
  *   "modal_info_entries", "modal_photo_entries", "modal_tab_number", and elements with class "modal_preview" in the DOM.
  * - Assumes the existence of helper functions `displayTabEntries` and `displayEntries`.
  */
-function modalWindow(){
-    const iconFunctionValue = document.getElementsByName("icon_function")[0].value;
-    if (iconFunctionValue == "Modal"){ 
-        //  document.getElementsByName("icon_out_type")[0].value = "External";
-        document.getElementsByName("icon_external_url")[0].parentElement.parentElement.style.display = "none";
-        document.getElementsByName("icon_external_url")[0].value = "";
-        document.getElementsByName("icon_scene_out")[0].value = "";
-        document.getElementsByName("icon_scene_out")[0].parentElement.parentElement.style.display = "none";
-        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.parentElement.parentElement.style.display = "block";
-        document.getElementsByName("modal_info_entries")[0].parentElement.parentElement.style.display = "block";
-        document.getElementsByName("modal_photo_entries")[0].parentElement.parentElement.style.display = "block";
-        document.getElementsByName("modal_tab_number")[0].parentElement.parentElement.style.display = "block";
-        document.getElementsByClassName("modal_preview")[0].parentElement.parentElement.style.display = "block";
-        document.getElementsByClassName("modal_preview_mobile")[0].parentElement.parentElement.style.display = "block";
-        displayTabEntries(document.getElementsByName("modal_tab_number")[0].value);
-    } else {
+function modalWindow() {
+	const iconFunctionValue =
+		document.getElementsByName('icon_function')[0].value;
+	if (iconFunctionValue == 'Modal') {
+		//  document.getElementsByName("icon_out_type")[0].value = "External";
+		document.getElementsByName(
+			'icon_external_url'
+		)[0].parentElement.parentElement.style.display = 'none';
+		document.getElementsByName('icon_external_url')[0].value = '';
+		document.getElementsByName('icon_scene_out')[0].value = '';
+		document.getElementsByName(
+			'icon_scene_out'
+		)[0].parentElement.parentElement.style.display = 'none';
+		document.getElementsByName(
+			'modal_tagline'
+		)[0].parentElement.parentElement.parentElement.parentElement.style.display =
+			'block';
+		document.getElementsByName(
+			'modal_info_entries'
+		)[0].parentElement.parentElement.style.display = 'block';
+		document.getElementsByName(
+			'modal_photo_entries'
+		)[0].parentElement.parentElement.style.display = 'block';
+		document.getElementsByName(
+			'modal_tab_number'
+		)[0].parentElement.parentElement.style.display = 'block';
+		document.getElementsByClassName(
+			'modal_preview'
+		)[0].parentElement.parentElement.style.display = 'block';
+		document.getElementsByClassName(
+			'modal_preview_mobile'
+		)[0].parentElement.parentElement.style.display = 'block';
+		displayTabEntries(
+			document.getElementsByName('modal_tab_number')[0].value
+		);
+	} else {
+		document.getElementsByName(
+			'modal_tagline'
+		)[0].parentElement.parentElement.parentElement.parentElement.style.display =
+			'none';
 
-        document.getElementsByName("modal_tagline")[0].parentElement.parentElement.parentElement.parentElement.style.display = "none";
+		// Set the Modal Info entries to 0, run displayEntries to hide all of the resulting Modal Info fields
+		// and then hide the Modal Info range
+		document.getElementsByName('modal_info_entries')[0].value = 0;
+		document.getElementsByName('modal_info_entries')[0].nextSibling.value =
+			0;
+		displayEntries(0, ".text-class[data-depend-id='modal_info_");
+		document.getElementsByName(
+			'modal_info_entries'
+		)[0].parentElement.parentElement.style.display = 'none';
 
-        // Set the Modal Info entries to 0, run displayEntries to hide all of the resulting Modal Info fields 
-        // and then hide the Modal Info range 
-        document.getElementsByName("modal_info_entries")[0].value = 0;
-        document.getElementsByName("modal_info_entries")[0].nextSibling.value = 0;
-        displayEntries(0, ".text-class[data-depend-id='modal_info_");
-        document.getElementsByName("modal_info_entries")[0].parentElement.parentElement.style.display = "none";
+		// Set the Modal Photo entries to 0, run displayEntries to hide all of the resulting Modal Photo fields
+		// and then hide the Modal Photo range
+		document.getElementsByName('modal_photo_entries')[0].value = 0;
+		document.getElementsByName('modal_photo_entries')[0].nextSibling.value =
+			0;
+		displayEntries(0, ".text-class[data-depend-id='modal_photo_");
+		document.getElementsByName(
+			'modal_photo_entries'
+		)[0].parentElement.parentElement.style.display = 'none';
 
-        // Set the Modal Photo entries to 0, run displayEntries to hide all of the resulting Modal Photo fields 
-        // and then hide the Modal Photo range 
-        document.getElementsByName("modal_photo_entries")[0].value = 0;
-        document.getElementsByName("modal_photo_entries")[0].nextSibling.value = 0;
-        displayEntries(0, ".text-class[data-depend-id='modal_photo_");
-        document.getElementsByName("modal_photo_entries")[0].parentElement.parentElement.style.display = "none";
+		// Set the Modal Tab entries to 0, run displayTabEntries to hide all of the resulting Modal Tab fields
+		// and then hide the Modal Tab range
+		document.getElementsByName('modal_tab_number')[0].value = 1;
+		document.getElementsByName('modal_tab_number')[0].nextSibling.value = 1;
+		displayTabEntries(0);
+		document.getElementsByName(
+			'modal_tab_number'
+		)[0].parentElement.parentElement.style.display = 'none';
 
-        // Set the Modal Tab entries to 0, run displayTabEntries to hide all of the resulting Modal Tab fields 
-        // and then hide the Modal Tab range 
-        document.getElementsByName("modal_tab_number")[0].value = 1;
-        document.getElementsByName("modal_tab_number")[0].nextSibling.value = 1;
-        displayTabEntries(0);
-        document.getElementsByName("modal_tab_number")[0].parentElement.parentElement.style.display = "none";
-
-        // Turn off the Modal preview button
-        document.getElementsByClassName("modal_preview")[0].parentElement.parentElement.style.display = "none";
-        document.getElementsByClassName("modal_preview_mobile")[0].parentElement.parentElement.style.display = "none";
-    }
+		// Turn off the Modal preview button
+		document.getElementsByClassName(
+			'modal_preview'
+		)[0].parentElement.parentElement.style.display = 'none';
+		document.getElementsByClassName(
+			'modal_preview_mobile'
+		)[0].parentElement.parentElement.style.display = 'none';
+	}
 }
 
 /**
