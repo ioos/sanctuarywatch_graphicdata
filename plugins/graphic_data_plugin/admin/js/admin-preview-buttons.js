@@ -97,9 +97,9 @@ document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
  * @modifies
  * - The DOM by removing and creating the modal preview window.
  */
-let previewFigureOrModalElements = document.querySelectorAll(
-	'[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"]'
-);
+// let previewFigureOrModalElements = document.querySelectorAll(
+// 	'[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"]'
+// );
 
 // We're going to iterate through all the types of buttons (preview and save) on the admin screen and have different behaviors when a button is clicked
 let postId = document.querySelector('[name="post_id"], [name="post_ID"]').value;
