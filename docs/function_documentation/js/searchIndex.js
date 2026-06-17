@@ -931,6 +931,16 @@ Search.appendIndex(
             "summary": "Populate\u0020custom\u0020fields\u0020for\u0020Modal\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
             "url": "classes/Graphic-Data-Modal.html#method_custom_modal_column"
         },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content",
+            "name": "Graphic_Data_Plugin_Only_Content",
+            "summary": "Class\u0020Graphic_Data_Plugin_Only_Content",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_plugin_only_instance_type\u0028\u0029",
+            "name": "create_plugin_only_instance_type",
+            "summary": "",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_plugin_only_instance_type"
+        },                {
             "fqsen": "\\Graphic_Data_Scene",
             "name": "Graphic_Data_Scene",
             "summary": "Manages\u0020the\u0020Scene\u0020custom\u0020post\u0020type\u0020and\u0020its\u0020admin\u0020interface.",
