@@ -14,17 +14,13 @@
  */
 class Graphic_Data_Plugin_Only_Content {
 
-	public function create_plugin_only_instance_type() {
+	public function create_placeholder_instance_type() {
 		global $wpdb;
 
-		$term_name = 'First Instance Type';
-		$term_slug = [ 'tutorial-instance-example-1', 'tutorial-instance-example-2' ];
-		$term_description = [
-			'Welcome, Space Captain! The highest level of organization in Graphic Data is the "Instance Type". Right here is an example (First Instance Type). ' .
-			'Instance Types contain Instances. With Graphic Data, you must have at least one Instance Type and each Type must contains one or more Instances. This particular Instance Type contains two Instances. You can check out your Instances and Instance Types in the WordPress admin dashboard (they are options in the left panel).',
-			'This is a second example Instance Type and it contains one Instance.',
-		];
-		$instance_navbar_name = [ 'Example 1', 'Example 2' ];
+		$term_name = 'Graphic Data Placeholder Instance Type';
+		$term_slug = 'graphic-data-placeholder-instance-type';
+		$term_description = 'This instance type is a placeholder used in cases where the Graphic Data theme is not activated.';
+		$instance_navbar_name = 'Placeholder';
 		// Find current max value of instance order in the database (which really should be called instance type order).
 		$max_instance_order = $wpdb->get_var(
 			"SELECT MAX(CAST(meta_value AS UNSIGNED)) 
@@ -33,18 +29,22 @@ class Graphic_Data_Plugin_Only_Content {
 		);
 		$processed_max_order = null !== $max_instance_order ? (int) $max_instance_order : 0;
 
-		for ( $i = 0; $i < 2; $i++ ) {
-			$args = array(
-				'slug' => $term_slug[ $i ],
-				'description' => $term_description[ $i ],
-			);
+		$args = array(
+			'slug' => $term_slug,
+			'description' => $term_description,
+		);
 
-			$term = wp_insert_term( $term_name[ $i ], 'instance_type', $args );
-			if ( ! is_wp_error( $term ) ) {
-				update_term_meta( $term['term_id'], 'instance_order', $processed_max_order + $i + 1 );
-				update_term_meta( $term['term_id'], 'instance_navbar_name', $instance_navbar_name [ $i ] );
-				update_term_meta( $term['term_id'], 'tutorial_instance_type_id', $i + 1 );
-			}
+		$term = wp_insert_term( $term_name, 'instance_type', $args );
+		if ( ! is_wp_error( $term ) ) {
+			update_term_meta( $term['term_id'], 'instance_order', $processed_max_order + 1 );
+			update_term_meta( $term['term_id'], 'instance_navbar_name', $instance_navbar_name );
+			update_term_meta( $term['term_id'], 'graphic_data_instance_type_placeholder_id', 1 );
+		}
+	}
+
+	public function placeholder_content_director() {
+		if (GRAPHIC_DATA_IS_ACTIVE_THEME){
+			
 		}
 	}
 }
