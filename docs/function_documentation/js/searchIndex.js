@@ -936,10 +936,15 @@ Search.appendIndex(
             "summary": "Class\u0020Graphic_Data_Plugin_Only_Content",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html"
         },                {
-            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_plugin_only_instance_type\u0028\u0029",
-            "name": "create_plugin_only_instance_type",
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_placeholder_instance_type\u0028\u0029",
+            "name": "create_placeholder_instance_type",
             "summary": "",
-            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_plugin_only_instance_type"
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance_type"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Aplaceholder_content_director\u0028\u0029",
+            "name": "placeholder_content_director",
+            "summary": "",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director"
         },                {
             "fqsen": "\\Graphic_Data_Scene",
             "name": "Graphic_Data_Scene",
