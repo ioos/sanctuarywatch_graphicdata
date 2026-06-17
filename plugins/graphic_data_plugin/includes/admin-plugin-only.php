@@ -14,6 +14,17 @@
  */
 class Graphic_Data_Plugin_Only_Content {
 
+	/**
+	 * Creates a placeholder instance type term if the Graphic Data theme is not active.
+	 *
+	 * Inserts a new term into the `instance_type` taxonomy with a predefined name, slug,
+	 * and description. Sets its `instance_order` to one greater than the current maximum,
+	 * assigns a navbar name of "Placeholder", and marks it with the
+	 * `graphic_data_instance_type_placeholder_id` meta flag.
+	 *
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 * @return void
+	 */
 	public function create_placeholder_instance_type() {
 		global $wpdb;
 
@@ -46,10 +57,13 @@ class Graphic_Data_Plugin_Only_Content {
 		global $wpdb;
 		if ( ! GRAPHIC_DATA_IS_ACTIVE_THEME ) {
 			$instance_type_present = $wpdb->get_var(
-				"SELECT * 
-				FROM {$wpdb->postmeta} 
+				"SELECT COUNT(*)
+				FROM {$wpdb->postmeta}
 				WHERE meta_key = 'graphic_data_instance_type_placeholder_id'"
 			);
+			if ( 0 == $instance_type_present ) {
+				$this->create_placeholder_instance_type();
+			}
 		}
 	}
 }
