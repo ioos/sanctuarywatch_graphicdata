@@ -1045,7 +1045,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
       inputAxisTitle.id = axisTitle + "AxisTitle";
       inputAxisTitle.name = "plotFields";
       inputAxisTitle.size = "70";
-      fieldValueSaved = fillFormFieldValues(inputAxisTitle.id, interactive_arguments);
+      let fieldValueSaved = fillFormFieldValues(inputAxisTitle.id, interactive_arguments);
       if (fieldValueSaved != undefined){
           inputAxisTitle.value = fieldValueSaved;
       }
@@ -1109,7 +1109,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
       selectNumberBarsOption.innerHTML = i; 
       selectNumberBars.appendChild(selectNumberBarsOption);
   }
-  fieldValueSaved = fillFormFieldValues(selectNumberBars.id, interactive_arguments);
+  let fieldValueSaved = fillFormFieldValues(selectNumberBars.id, interactive_arguments);
   if (fieldValueSaved != undefined){
       selectNumberBars.value = fieldValueSaved;
   }
@@ -1594,7 +1594,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 			logFormFieldValues();
 		});
 
-		fieldValueSaved = fillFormFieldValues(
+		let fieldValueSaved = fillFormFieldValues(
 			checkboxStackedBarColumns.id,
 			interactive_arguments
 		);
