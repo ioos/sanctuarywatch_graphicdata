@@ -43,8 +43,13 @@ class Graphic_Data_Plugin_Only_Content {
 	}
 
 	public function placeholder_content_director() {
-		if (GRAPHIC_DATA_IS_ACTIVE_THEME){
-			
+		global $wpdb;
+		if ( ! GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			$instance_type_present = $wpdb->get_var(
+				"SELECT * 
+				FROM {$wpdb->postmeta} 
+				WHERE meta_key = 'graphic_data_instance_type_placeholder_id'"
+			);
 		}
 	}
 }
