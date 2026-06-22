@@ -494,7 +494,8 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
                         }
                         return parseFloat(val);
                     });
-                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSanitized.length;
+					let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
                     //console.log('mean', mean);
                     //console.log('stdDev', stdDev);
                     const upperY = plotlyY.map(y => mean + stdDev);
@@ -557,7 +558,8 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
                         }
                         return parseFloat(val);
                     });
-                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyY.length;
+					let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+                    const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
                     const upperY = plotlyY.map(y => mean + stdSingleValue);
                     const lowerY = plotlyY.map(y => mean - stdSingleValue);
                     const filteredX = plotlyX.filter(item => item !== "");
@@ -643,7 +645,8 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
                     //Calculate mean (Auto Calculated) based on dataset Y-axis values
                     if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
                         let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
-                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyY.length;
+						let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+                        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
                         //console.log('mean', mean);
                         //console.log('plotlyY', plotlyY);
                         const filteredX = plotlyX.filter(item => item !== "");
@@ -773,15 +776,16 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
             Plotly.Plots.resize(plotDiv)
 
 
-
-			//Save the plotly figure as an html file. 
-			const savedFigure = {
-				data: plotDiv.data,
-				layout: plotDiv.layout,
-				config: { responsive: true }
-			};
-			
-			const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
+			if (window.location.href.includes('post.php')) {
+				//Save the plotly figure as an html file. 
+				const savedFigure = {
+					data: plotDiv.data,
+					layout: plotDiv.layout,
+					config: { responsive: true }
+				};
+				
+				const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
+			}
 
 			// if () {
 			// 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
@@ -1115,7 +1119,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
       inputAxisTitle.id = axisTitle + "AxisTitle";
       inputAxisTitle.name = "plotFields";
       inputAxisTitle.size = "70";
-      fieldValueSaved = fillFormFieldValues(inputAxisTitle.id, interactive_arguments);
+      let fieldValueSaved = fillFormFieldValues(inputAxisTitle.id, interactive_arguments);
       if (fieldValueSaved != undefined){
           inputAxisTitle.value = fieldValueSaved;
       }
@@ -1179,7 +1183,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
       selectNumberLinesOption.innerHTML = i; 
       selectNumberLines.appendChild(selectNumberLinesOption);
   }
-  fieldValueSaved = fillFormFieldValues(selectNumberLines.id, interactive_arguments);
+  let fieldValueSaved = fillFormFieldValues(selectNumberLines.id, interactive_arguments);
   if (fieldValueSaved != undefined){
       selectNumberLines.value = fieldValueSaved;
   }
@@ -1716,7 +1720,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 				}
 			);
 
-			fieldValueSaved = fillFormFieldValues(
+			let fieldValueSaved = fillFormFieldValues(
 				selectColumn.id,
 				interactive_arguments
 			);
