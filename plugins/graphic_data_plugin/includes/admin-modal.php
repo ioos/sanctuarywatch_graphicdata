@@ -153,12 +153,15 @@ class Graphic_Data_Modal {
 				'sanitize'      => 'sanitize_text_field',
 			),
 			array(
-				'id'    => 'modal_attached_to_scene',
-				'type'  => 'checkbox',
-				'title' => 'Modal attached to scene*',
-				'style'    => 'fancy',
-				'default'     => 'no',
-				'sanitize'    => [ $function_utilities, 'sanitize_checkbox_field' ],
+				'id'            => 'modal_attached_to_scene',
+				'type'          => 'select',
+				'title'         => 'Modal Attached to Scene*',
+				'options'       => array(
+					'No'        => 'No',
+					'Yes'       => 'Yes',
+				),
+				'default'       => 'No',
+				'sanitize'      => 'sanitize_text_field',
 			),
 			array(
 				'id'          => 'modal_location',

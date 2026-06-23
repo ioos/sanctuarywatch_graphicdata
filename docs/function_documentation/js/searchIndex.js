@@ -491,11 +491,6 @@ Search.appendIndex(
             "summary": "Sanitize\u0020the\u0020field\u0020value\u0020when\u0020the\u0020option\u0020is\u0020a\u0020whole\u0020number\u0020or\u0020an\u0020empty\u0020string.",
             "url": "classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field"
         },                {
-            "fqsen": "\\Graphic_Data_Utility\u003A\u003Asanitize_checkbox_field\u0028\u0029",
-            "name": "sanitize_checkbox_field",
-            "summary": "Sanitizes\u0020a\u0020checkbox\u0020field\u0020value\u0020for\u0020storage.",
-            "url": "classes/Graphic-Data-Utility.html#method_sanitize_checkbox_field"
-        },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_modal_tabs\u0028\u0029",
             "name": "return_modal_tabs",
             "summary": "Retrieve\u0020tab\u0020titles\u0020for\u0020a\u0020given\u0020modal.",
@@ -936,6 +931,21 @@ Search.appendIndex(
             "summary": "Populate\u0020custom\u0020fields\u0020for\u0020Modal\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
             "url": "classes/Graphic-Data-Modal.html#method_custom_modal_column"
         },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content",
+            "name": "Graphic_Data_Plugin_Only_Content",
+            "summary": "Class\u0020Graphic_Data_Plugin_Only_Content",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_placeholder_instance_type\u0028\u0029",
+            "name": "create_placeholder_instance_type",
+            "summary": "Creates\u0020a\u0020placeholder\u0020instance\u0020type\u0020term\u0020if\u0020the\u0020Graphic\u0020Data\u0020theme\u0020is\u0020not\u0020active.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance_type"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Aplaceholder_content_director\u0028\u0029",
+            "name": "placeholder_content_director",
+            "summary": "",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director"
+        },                {
             "fqsen": "\\Graphic_Data_Scene",
             "name": "Graphic_Data_Scene",
             "summary": "Manages\u0020the\u0020Scene\u0020custom\u0020post\u0020type\u0020and\u0020its\u0020admin\u0020interface.",
@@ -945,11 +955,6 @@ Search.appendIndex(
             "name": "display_overview_scene_notice",
             "summary": "Display\u0020an\u0020admin\u0020notice\u0020if\u0020the\u0020current\u0020scene\u0020is\u0020the\u0020overview\u0020scene\u0020for\u0020its\u0020instance.",
             "url": "classes/Graphic-Data-Scene.html#method_display_overview_scene_notice"
-        },                {
-            "fqsen": "\\Graphic_Data_Scene\u003A\u003Awarn_if_graphic_data_theme_not_active\u0028\u0029",
-            "name": "warn_if_graphic_data_theme_not_active",
-            "summary": "Displays\u0020an\u0020admin\u0020notice\u0020when\u0020the\u0020active\u0020theme\u0020is\u0020not\u0020the\u0020Graphic\u0020Data\u0020theme.",
-            "url": "classes/Graphic-Data-Scene.html#method_warn_if_graphic_data_theme_not_active"
         },                {
             "fqsen": "\\Graphic_Data_Scene\u003A\u003Agraphic_data_svg_cleanup_on_upload\u0028\u0029",
             "name": "graphic_data_svg_cleanup_on_upload",

@@ -331,13 +331,6 @@ permalink: /function_documentation/classes/Graphic-Data-Utility.html
 <dd>Retrieve scene dropdown options for the figure content type.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Utility.html#method_sanitize_checkbox_field">sanitize_checkbox_field()</a>
-    <span>
-                                &nbsp;: int    </span>
-</dt>
-<dd>Sanitizes a checkbox field value for storage.</dd>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field">sanitize_number_or_quotes_field()</a>
     <span>
                                 &nbsp;: string|int    </span>
@@ -653,7 +646,7 @@ $this-&gt;create_instance_dropdown_filter('scene_instance');</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1201</span>
+    <span class="phpdocumentor-element-found-in__line">1186</span>
 
     </aside>
 
@@ -1132,7 +1125,7 @@ editor ID is not in the allowed fields list.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1183</span>
+    <span class="phpdocumentor-element-found-in__line">1168</span>
 
     </aside>
 
@@ -1307,7 +1300,7 @@ Notices are displayed only on the post type edit screen after a post has been up
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1160</span>
+    <span class="phpdocumentor-element-found-in__line">1145</span>
 
     </aside>
 
@@ -1585,7 +1578,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1114</span>
+    <span class="phpdocumentor-element-found-in__line">1099</span>
 
     </aside>
 
@@ -1822,7 +1815,7 @@ with section titles as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1088</span>
+    <span class="phpdocumentor-element-found-in__line">1073</span>
 
     </aside>
 
@@ -2043,66 +2036,6 @@ as a default dropdown option.</p>
                     &mdash;
                 <section class="phpdocumentor-description"><p>Associative array keyed by scene post ID with post titles as values.
 Includes a leading empty entry.</p>
-</section>
-
-            </section>
-
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_sanitize_checkbox_field">
-        sanitize_checkbox_field()
-        <a href="classes/Graphic-Data-Utility.html#method_sanitize_checkbox_field" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">1073</span>
-
-    </aside>
-
-        <p class="phpdocumentor-summary">Sanitizes a checkbox field value for storage.</p>
-
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">sanitize_checkbox_field</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-        <section class="phpdocumentor-description"><p>Returns 1 if the value is set (i.e. the checkbox was submitted), or 0 if
-it is not. Checkbox inputs are omitted from POST data entirely when
-unchecked, so the absence of the value — not its content — signals an
-unchecked state.</p>
-</section>
-
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$value</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>The raw value from the form submission.</p>
-</section>
-
-            </dd>
-            </dl>
-
-    
-
-        
-    
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">int</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>1 if the checkbox was checked, 0 if unchecked.</p>
 </section>
 
             </section>
@@ -2395,7 +2328,6 @@ file within this install, null otherwise.</p>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scene_titles">return_scene_titles()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scenes_except_current">return_scenes_except_current()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scenes_figure">return_scenes_figure()</a></li>
-                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_sanitize_checkbox_field">sanitize_checkbox_field()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field">sanitize_number_or_quotes_field()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_site_url_to_filesystem_path">site_url_to_filesystem_path()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_string_truncate">string_truncate()</a></li>

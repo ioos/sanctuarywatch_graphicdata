@@ -475,64 +475,68 @@ class Graphic_Data_Validation {
 			array_push( $modal_warnings, "The title length is {$string_length} characters long, which exceeds the 70 character limit recommendation for proper layout." );
 		}
 
-		if ( ! isset( $_POST['modal_location'] ) || ' ' == $_POST['modal_location'] || '' == $_POST['modal_location'] ) {
-			array_push( $modal_errors, 'The Instance field cannot be left blank.' );
-			$save_modal_fields = false;
+		if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+			if ( ! isset( $_POST['modal_location'] ) || ' ' == $_POST['modal_location'] || '' == $_POST['modal_location'] ) {
+				array_push( $modal_errors, 'The Instance field cannot be left blank.' );
+				$save_modal_fields = false;
+			}
 		}
+		if ( GRAPHIC_DATA_IS_ACTIVE_THEME && isset( $_POST['modal_attached_to_scene'] ) && 'Yes' == $_POST['modal_attached_to_scene'] ) {
+			if ( ! isset( $_POST['modal_scene'] ) || ' ' == $_POST['modal_scene'] || '' == $_POST['modal_scene'] ) {
+				array_push( $modal_errors, 'The Scene field cannot be left blank.' );
+				$save_modal_fields = false;
+			}
 
-		if ( ! isset( $_POST['modal_scene'] ) || ' ' == $_POST['modal_scene'] || '' == $_POST['modal_scene'] ) {
-			array_push( $modal_errors, 'The Scene field cannot be left blank.' );
-			$save_modal_fields = false;
-		}
+			if ( ! isset( $_POST['modal_icons'] ) || ' ' == $_POST['modal_icons'] || '' == $_POST['modal_icons'] ) {
+				array_push( $modal_errors, 'The Icons field cannot be left blank.' );
+				$save_modal_fields = false;
+			}
 
-		if ( ! isset( $_POST['modal_icons'] ) || ' ' == $_POST['modal_icons'] || '' == $_POST['modal_icons'] ) {
-			array_push( $modal_errors, 'The Icons field cannot be left blank.' );
-			$save_modal_fields = false;
-		}
+			if ( ' ' != $_POST['modal_scene'] && '' != $_POST['modal_icons'] ) {
+				$icon_id = absint( wp_unslash( $_POST['modal_icons'] ) );
+				$scene_id = absint( wp_unslash( $_POST['modal_scene'] ) );
 
-		if ( ' ' != $_POST['modal_scene'] && '' != $_POST['modal_icons'] ) {
-			$icon_id = absint( wp_unslash( $_POST['modal_icons'] ) );
-			$scene_id = absint( wp_unslash( $_POST['modal_scene'] ) );
-
-			$args = array(
-				'post_type'      => 'modal',       // Specify the custom post type.
-				'posts_per_page' => -1,          // Ensure we count all matching posts, not just the first page.
-				'fields'         => 'ids',         // More efficient: Only retrieve post IDs, not full post objects.
-				'meta_query'     => array(
-					'relation' => 'AND', // Both conditions must be true.
-					array(
-						'key'     => 'modal_icons', // First custom field key.
-						'value'   => $icon_id,      // Value to match for modal_icons.
-						'compare' => '=',           // Exact match comparison.
+				$args = array(
+					'post_type'      => 'modal',       // Specify the custom post type.
+					'posts_per_page' => -1,          // Ensure we count all matching posts, not just the first page.
+					'fields'         => 'ids',         // More efficient: Only retrieve post IDs, not full post objects.
+					'meta_query'     => array(
+						'relation' => 'AND', // Both conditions must be true.
+						array(
+							'key'     => 'modal_icons', // First custom field key.
+							'value'   => $icon_id,      // Value to match for modal_icons.
+							'compare' => '=',           // Exact match comparison.
+						),
+						array(
+							'key'     => 'modal_scene', // Second custom field key.
+							'value'   => $scene_id,     // Value to match for modal_scene.
+							'compare' => '=',           // Exact match comparison.
+							'type'    => 'NUMERIC',     // Treat the value as a number.
+						),
 					),
-					array(
-						'key'     => 'modal_scene', // Second custom field key.
-						'value'   => $scene_id,     // Value to match for modal_scene.
-						'compare' => '=',           // Exact match comparison.
-						'type'    => 'NUMERIC',     // Treat the value as a number.
-					),
-				),
-				// Performance optimizations for counting.
-				'no_found_rows'          => false, // We *need* found_rows to get the count.
-				'cache_results'          => false, // Disable caching.
-				'update_post_meta_cache' => false, // Don't need post meta cache for counting IDs.
-				'update_post_term_cache' => false, // Don't need term cache for counting IDs.
-			);
+					// Performance optimizations for counting.
+					'no_found_rows'          => false, // We *need* found_rows to get the count.
+					'cache_results'          => false, // Disable caching.
+					'update_post_meta_cache' => false, // Don't need post meta cache for counting IDs.
+					'update_post_term_cache' => false, // Don't need term cache for counting IDs.
+				);
 
-			// Create a new WP_Query instance.
-			$query = new WP_Query( $args );
+				// Create a new WP_Query instance.
+				$query = new WP_Query( $args );
 
-			// Get the total number of posts found by the query.
-			$record_count = $query->found_posts;
-			if ( $record_count > 1 ) {
-				array_push( $modal_warnings, 'This icon has already been claimed by one or more other modals.' );
-			} else if ( 1 == $record_count ) {
-				$saved_id = $query->posts[0];
-				if ( isset( $_POST['post_ID'] ) && $saved_id != $_POST['post_ID'] ) {
+				// Get the total number of posts found by the query.
+				$record_count = $query->found_posts;
+				if ( $record_count > 1 ) {
 					array_push( $modal_warnings, 'This icon has already been claimed by one or more other modals.' );
+				} else if ( 1 == $record_count ) {
+					$saved_id = $query->posts[0];
+					if ( isset( $_POST['post_ID'] ) && $saved_id != $_POST['post_ID'] ) {
+						array_push( $modal_warnings, 'This icon has already been claimed by one or more other modals.' );
+					}
 				}
 			}
 		}
+
 		// If the associated scene contains sections, force the use of sections with this modal.
 		if ( '' != $_POST['modal_scene'] ) {
 			$scene_id = intval( $_POST['modal_scene'] );
