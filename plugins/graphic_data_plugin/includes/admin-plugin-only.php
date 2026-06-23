@@ -49,20 +49,116 @@ class Graphic_Data_Plugin_Only_Content {
 		if ( ! is_wp_error( $term ) ) {
 			update_term_meta( $term['term_id'], 'instance_order', $processed_max_order + 1 );
 			update_term_meta( $term['term_id'], 'instance_navbar_name', $instance_navbar_name );
-			update_term_meta( $term['term_id'], 'graphic_data_instance_type_placeholder_id', 1 );
+			update_term_meta( $term['term_id'], 'graphic_data_placeholder_id', 1 );
 		}
 	}
 
+	/**
+	 * Create placeholder instance for the tutorial.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_placeholder_instance( $current_user_id ) {
+		global $wpdb;
+
+		// set up information to be saved as the three tutorial instances.
+		$post_title = 'Placeholder Instance';
+		$instance_short_title = 'Placeholder Instance';
+		$instance_slug = 'placeholder-instance';
+		$instance_status = 'Published';
+		$tile_prefix = 'example_files/tutorial/';
+		$instance_tile = $tile_prefix . 'instance_tile1.jpg';
+		$instance_mobile_tile_background_color = '#f0f0f0';
+		$instance_mobile_tile_text_color = '#000000';
+		$instance_footer_columns = 0;
+
+		// create the instance.
+		$post_data = array(
+			'post_title'   => $post_title,
+			'post_type'    => 'instance',
+			'post_status'  => 'publish',
+			'post_author'  => $current_user_id,
+		);
+
+		// Insert the post and get its ID.
+		$post_id = wp_insert_post( $post_data );
+
+		// Check if post was created successfully.
+		if ( ! is_wp_error( $post_id ) ) {
+			update_post_meta( $post_id, 'instance_short_title', $instance_short_title );
+			update_post_meta( $post_id, 'instance_slug', $instance_slug );
+
+			$placeholder_instance_type_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT term_id FROM {$wpdb->termmeta} WHERE meta_key = %s AND meta_value = %s",
+					'graphic_data_placeholder_id',
+					1,
+				)
+			);
+			update_post_meta( $post_id, 'instance_type', $tutorial_instance_type_id );
+			update_post_meta( $post_id, 'instance_status', 'Published' );
+
+			// $instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ] );
+			// update_post_meta( $post_id, 'instance_tile', $instance_tile_url );
+			update_post_meta( $post_id, 'instance_legacy_content', 'no' );
+			update_post_meta( $post_id, 'instance_mobile_tile_background_color', $instance_mobile_tile_background_color );
+			update_post_meta( $post_id, 'instance_mobile_tile_text_color', $instance_mobile_tile_text_color );
+			update_post_meta( $post_id, 'instance_footer_columns', 0 );
+			update_post_meta( $post_id, 'graphic_data_placeholder_id', 2 );
+		}
+
+	}
+
+	/**
+	 * Ensures a placeholder instance type exists when the Graphic Data theme is not active.
+	 *
+	 * Queries postmeta for the `graphic_data_instance_type_placeholder_id` key. If no
+	 * record is found, delegates to {@see create_placeholder_instance_type()} to insert
+	 * the placeholder term. Does nothing when the Graphic Data theme is active, since the
+	 * theme provides its own instance type management.
+	 *
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 * @return void
+	 */
 	public function placeholder_content_director() {
 		global $wpdb;
 		if ( ! GRAPHIC_DATA_IS_ACTIVE_THEME ) {
+
+			$current_user_id = get_current_user_id();
+			if ( 0 === $current_user_id ) {
+				$users = get_users(
+					array(
+						'number'  => 1,
+						'orderby' => 'ID',
+						'order'   => 'ASC',
+					)
+				);
+				if ( ! empty( $users ) ) {
+					$current_user_id = $users[0]->ID;
+				}
+			}
+
+			// create placeholder instance type if it isn't there.
 			$instance_type_present = $wpdb->get_var(
 				"SELECT COUNT(*)
 				FROM {$wpdb->postmeta}
-				WHERE meta_key = 'graphic_data_instance_type_placeholder_id'"
+				WHERE meta_key = 'graphic_data_placeholder_id' 
+				AND meta_value = 1"
 			);
 			if ( 0 == $instance_type_present ) {
 				$this->create_placeholder_instance_type();
+			}
+
+			// create instance if it isn't there.
+			$instance_type_present = $wpdb->get_var(
+				"SELECT COUNT(*)
+				FROM {$wpdb->postmeta}
+				WHERE meta_key = 'graphic_data_placeholder_id' 
+				AND meta_value = 2"
+			);
+			if ( 0 == $instance_type_present ) {
+				$this->create_placeholder_instance( $current_user_id );
 			}
 		}
 	}

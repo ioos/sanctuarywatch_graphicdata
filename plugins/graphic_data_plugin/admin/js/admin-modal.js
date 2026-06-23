@@ -120,7 +120,8 @@ function hideFieldsBasedOnModalAttachedToScene() {
 		} catch {}
 	}
 	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
-	if (isActiveTheme) {
+	console.log(isActiveTheme);
+	if (!isActiveTheme) {
 		const fieldValue = document.getElementsByName(
 			'modal_attached_to_scene'
 		)[0].value;
@@ -134,17 +135,26 @@ function hideFieldsBasedOnModalAttachedToScene() {
 		const iconFunctionField =
 			document.getElementsByName('icon_function')[0].parentElement
 				.parentElement;
+		const modalIconOrder =
+			document.getElementsByName('modal_icon_order')[0].parentElement
+				.parentElement;
 		if (fieldValue === 'Yes') {
-			previewWindow.style.display = 'block';
+			if (previewWindow) {
+				previewWindow.style.display = 'block';
+			}
 			modalScene.style.display = 'block';
 			modalIcons.style.display = 'block';
 			iconFunctionField.style.display = 'block';
+			modalIconOrder.style.display = 'block';
 			hideIconSection();
 		} else {
-			previewWindow.style.display = 'none';
+			if (previewWindow) {
+				previewWindow.style.display = 'none';
+			}
 			modalScene.style.display = 'none';
 			modalIcons.style.display = 'none';
 			iconFunctionField.style.display = 'none';
+			modalIconOrder.style.display = 'none';
 			const sectionField = document.getElementsByName('icon_toc_section')[0];
 			if (sectionField.options.length < 2) {
 				sectionField.parentElement.parentElement.style.display = 'none';
