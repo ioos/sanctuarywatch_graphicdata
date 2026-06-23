@@ -107,7 +107,90 @@ class Graphic_Data_Plugin_Only_Content {
 			update_post_meta( $post_id, 'instance_footer_columns', 0 );
 			update_post_meta( $post_id, 'graphic_data_placeholder_id', 2 );
 		}
+	}
 
+	/**
+	 * Create example scenes for the tutorial.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_placeholder_scene( $current_user_id ) {
+		global $wpdb;
+		$post_title = 'Placeholder Scene';
+		$file_prefix = 'example_files/placeholder/';
+		$scene_infographic = $file_prefix . 'placeholder-scene.svg';
+		$scene_tagline = 'This is a placeholder scene used for behind the scenes purposes when Graphic Data is not the theme';
+		$scene_order = 1;
+		$scene_full_screen_button = 'yes';
+		$scene_text_toggle = 'toggle_on';
+		$scene_orphan_icon_action = 'translucent';
+		$scene_toc_style = 'list';
+		$scene_same_hover_color_sections = 'yes';
+		$scene_hover_color = '#ffff00';
+		$scene_hover_text_color = '#000000';
+		$scene_section_number = 0;
+
+		// create the placeholder scene.
+		$post_data = array(
+			'post_title'   => $post_title,
+			'post_type'    => 'scene',
+			'post_status'  => 'publish',
+			'post_author'  => $current_user_id,
+		);
+
+		// Insert the post and get its ID.
+		$post_id = wp_insert_post( $post_data );
+
+		// Check if post was created successfully.
+		if ( ! is_wp_error( $post_id ) ) {
+			$placeholder_instance_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+					'graphic_data_placeholder_id',
+					2,
+				)
+			);
+
+			update_post_meta( $post_id, 'scene_location', $placeholder_instance_id );
+			update_post_meta( $placeholder_instance_id, 'instance_overview_scene', $post_id );
+
+			update_post_meta( $post_id, 'scene_published', 'published' );
+			update_post_meta( $post_id, 'post_title', $post_title[ $i ] ); // This line is only needed because post title is added to the post meta table for regular scene posts, where it is used for several operations.
+			$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic [ $i ], $tutorial_id [ $i ] );
+			update_post_meta( $post_id, 'scene_infographic', $scene_infographic_url );
+			update_post_meta( $post_id, 'scene_tagline', $scene_tagline [ $i ] );
+			update_post_meta( $post_id, 'scene_info_entries', $scene_info_entries );
+			update_post_meta( $post_id, 'scene_info1', $scene_info1 );
+			update_post_meta( $post_id, 'scene_info2', $scene_info2 );
+			for ( $q = 3; $q < 7; $q++ ) {
+				$meta_key = 'scene_info' . $q;
+				update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
+			}
+			update_post_meta( $post_id, 'scene_photo_entries', $scene_photo_entries );
+			update_post_meta( $post_id, 'scene_photo1', $scene_photo1 );
+			$scene_photo2['scene_photo_internal2'] = $this->copy_image_to_media_library( 'example_files/tutorial/tutorial_image1.jpg', $tutorial_id [ $i ] );
+			update_post_meta( $post_id, 'scene_photo2', $scene_photo2 );
+			update_post_meta( $post_id, 'scene_photo3', $scene_photo3 );
+			for ( $q = 4; $q < 7; $q++ ) {
+				$meta_key = 'scene_photo' . $q;
+				update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
+			}
+			update_post_meta( $post_id, 'scene_order', $scene_order [ $i ] );
+			update_post_meta( $post_id, 'scene_full_screen_button', $scene_full_screen_button [ $i ] );
+			update_post_meta( $post_id, 'scene_text_toggle', $scene_text_toggle [ $i ] );
+			update_post_meta( $post_id, 'scene_orphan_icon_action', $scene_orphan_icon_action );
+			update_post_meta( $post_id, 'scene_toc_style', $scene_toc_style [ $i ] );
+			update_post_meta( $post_id, 'scene_hover_color', $scene_hover_color );
+			update_post_meta( $post_id, 'scene_hover_text_color', $scene_hover_text_color );
+			update_post_meta( $post_id, 'scene_same_hover_color_sections', $scene_same_hover_color_sections [ $i ] );
+			update_post_meta( $post_id, 'scene_section_number', $scene_section_number [ $i ] );
+			if ( $i > 3 ) {
+				update_post_meta( $post_id, 'scene_section1', $scene_section_details[0] );
+				update_post_meta( $post_id, 'scene_section2', $scene_section_details[1] );
+			}
+			update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
+		}
 	}
 
 	/**
@@ -151,13 +234,13 @@ class Graphic_Data_Plugin_Only_Content {
 			}
 
 			// create instance if it isn't there.
-			$instance_type_present = $wpdb->get_var(
+			$instance_present = $wpdb->get_var(
 				"SELECT COUNT(*)
 				FROM {$wpdb->postmeta}
 				WHERE meta_key = 'graphic_data_placeholder_id' 
 				AND meta_value = 2"
 			);
-			if ( 0 == $instance_type_present ) {
+			if ( 0 == $instance_present ) {
 				$this->create_placeholder_instance( $current_user_id );
 			}
 		}
