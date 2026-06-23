@@ -946,6 +946,11 @@ Search.appendIndex(
             "summary": "Create\u0020placeholder\u0020instance\u0020for\u0020the\u0020tutorial.",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance"
         },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_placeholder_scene\u0028\u0029",
+            "name": "create_placeholder_scene",
+            "summary": "Create\u0020example\u0020scenes\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_scene"
+        },                {
             "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Aplaceholder_content_director\u0028\u0029",
             "name": "placeholder_content_director",
             "summary": "Ensures\u0020a\u0020placeholder\u0020instance\u0020type\u0020exists\u0020when\u0020the\u0020Graphic\u0020Data\u0020theme\u0020is\u0020not\u0020active.",
