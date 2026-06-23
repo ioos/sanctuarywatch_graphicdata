@@ -149,6 +149,13 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance">create_placeholder_instance()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Create placeholder instance for the tutorial.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance_type">create_placeholder_instance_type()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -158,8 +165,9 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director">placeholder_content_director()</a>
     <span>
-                                &nbsp;: mixed    </span>
+                                &nbsp;: void    </span>
 </dt>
+<dd>Ensures a placeholder instance type exists when the Graphic Data theme is not active.</dd>
 
     </dl>
 
@@ -175,6 +183,53 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
             <a href="classes/Graphic-Data-Plugin-Only-Content.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_create_placeholder_instance">
+        create_placeholder_instance()
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">62</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Create placeholder instance for the tutorial.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">create_placeholder_instance</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$current_user_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$current_user_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The ID of the user to set as post author.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
                     <article
         class="phpdocumentor-element
             -method
@@ -244,21 +299,42 @@ assigns a navbar name of &quot;Placeholder&quot;, and marks it with the
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">56</span>
+    <span class="phpdocumentor-element-found-in__line">124</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">Ensures a placeholder instance type exists when the Graphic Data theme is not active.</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">placeholder_content_director</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">placeholder_content_director</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
+        <section class="phpdocumentor-description"><p>Queries postmeta for the <code class="prettyprint">graphic_data_instance_type_placeholder_id</code> key. If no
+record is found, delegates to <abbr title="\create_placeholder_instance_type()">create_placeholder_instance_type()</abbr> to insert
+the placeholder term. Does nothing when the Graphic Data theme is active, since the
+theme provides its own instance type management.</p>
+</section>
+
     
     
-    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_placeholder_content_director_tags">
+        Tags
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">global</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>wpdb $wpdb WordPress database abstraction object.</p>
+</section>
+
+                                    </dd>
+                        </dl>
 
         
     
@@ -286,6 +362,7 @@ assigns a navbar name of &quot;Placeholder&quot;, and marks it with the
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance">create_placeholder_instance()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance_type">create_placeholder_instance_type()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director">placeholder_content_director()</a></li>
                                     </ul>

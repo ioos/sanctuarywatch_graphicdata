@@ -941,9 +941,14 @@ Search.appendIndex(
             "summary": "Creates\u0020a\u0020placeholder\u0020instance\u0020type\u0020term\u0020if\u0020the\u0020Graphic\u0020Data\u0020theme\u0020is\u0020not\u0020active.",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance_type"
         },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_placeholder_instance\u0028\u0029",
+            "name": "create_placeholder_instance",
+            "summary": "Create\u0020placeholder\u0020instance\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance"
+        },                {
             "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Aplaceholder_content_director\u0028\u0029",
             "name": "placeholder_content_director",
-            "summary": "",
+            "summary": "Ensures\u0020a\u0020placeholder\u0020instance\u0020type\u0020exists\u0020when\u0020the\u0020Graphic\u0020Data\u0020theme\u0020is\u0020not\u0020active.",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director"
         },                {
             "fqsen": "\\Graphic_Data_Scene",
