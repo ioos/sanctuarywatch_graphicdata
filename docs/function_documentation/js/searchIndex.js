@@ -943,18 +943,28 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_placeholder_instance\u0028\u0029",
             "name": "create_placeholder_instance",
-            "summary": "Create\u0020placeholder\u0020instance\u0020for\u0020the\u0020tutorial.",
+            "summary": "Create\u0020placeholder\u0020instance.",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance"
         },                {
             "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_placeholder_scene\u0028\u0029",
             "name": "create_placeholder_scene",
-            "summary": "Create\u0020example\u0020scenes\u0020for\u0020the\u0020tutorial.",
+            "summary": "Create\u0020example\u0020scenes\u0020for\u0020the\u0020placeholder.",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_scene"
         },                {
             "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Aplaceholder_content_director\u0028\u0029",
             "name": "placeholder_content_director",
             "summary": "Ensures\u0020a\u0020placeholder\u0020instance\u0020type\u0020exists\u0020when\u0020the\u0020Graphic\u0020Data\u0020theme\u0020is\u0020not\u0020active.",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_placeholder_modal\u0028\u0029",
+            "name": "create_placeholder_modal",
+            "summary": "Creates\u0020tutorial\u0020modal\u0020posts\u0020and\u0020writes\u0020their\u0020metadata\u0020to\u0020the\u0020database.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_modal"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acopy_image_to_media_library\u0028\u0029",
+            "name": "copy_image_to_media_library",
+            "summary": "Copies\u0020an\u0020image\u0020file\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020the\u0020WordPress\u0020media\u0020library.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_copy_image_to_media_library"
         },                {
             "fqsen": "\\Graphic_Data_Scene",
             "name": "Graphic_Data_Scene",
