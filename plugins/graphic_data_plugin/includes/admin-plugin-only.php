@@ -54,7 +54,7 @@ class Graphic_Data_Plugin_Only_Content {
 	}
 
 	/**
-	 * Create placeholder instance for the tutorial.
+	 * Create placeholder instance.
 	 *
 	 * @param int $current_user_id The ID of the user to set as post author.
 	 * @return void
@@ -62,13 +62,11 @@ class Graphic_Data_Plugin_Only_Content {
 	public function create_placeholder_instance( $current_user_id ) {
 		global $wpdb;
 
-		// set up information to be saved as the three tutorial instances.
+		// set up information to be saved as the placeholder instance.
 		$post_title = 'Placeholder Instance';
 		$instance_short_title = 'Placeholder Instance';
 		$instance_slug = 'placeholder-instance';
 		$instance_status = 'Published';
-		$tile_prefix = 'example_files/tutorial/';
-		$instance_tile = $tile_prefix . 'instance_tile1.jpg';
 		$instance_mobile_tile_background_color = '#f0f0f0';
 		$instance_mobile_tile_text_color = '#000000';
 		$instance_footer_columns = 0;
@@ -96,11 +94,8 @@ class Graphic_Data_Plugin_Only_Content {
 					1,
 				)
 			);
-			update_post_meta( $post_id, 'instance_type', $tutorial_instance_type_id );
+			update_post_meta( $post_id, 'instance_type', $placeholder_instance_type_id );
 			update_post_meta( $post_id, 'instance_status', 'Published' );
-
-			// $instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ] );
-			// update_post_meta( $post_id, 'instance_tile', $instance_tile_url );
 			update_post_meta( $post_id, 'instance_legacy_content', 'no' );
 			update_post_meta( $post_id, 'instance_mobile_tile_background_color', $instance_mobile_tile_background_color );
 			update_post_meta( $post_id, 'instance_mobile_tile_text_color', $instance_mobile_tile_text_color );
@@ -110,7 +105,7 @@ class Graphic_Data_Plugin_Only_Content {
 	}
 
 	/**
-	 * Create example scenes for the tutorial.
+	 * Create example scenes for the placeholder.
 	 *
 	 * @param int $current_user_id The ID of the user to set as post author.
 	 * @return void
@@ -154,42 +149,21 @@ class Graphic_Data_Plugin_Only_Content {
 
 			update_post_meta( $post_id, 'scene_location', $placeholder_instance_id );
 			update_post_meta( $placeholder_instance_id, 'instance_overview_scene', $post_id );
-
 			update_post_meta( $post_id, 'scene_published', 'published' );
-			update_post_meta( $post_id, 'post_title', $post_title[ $i ] ); // This line is only needed because post title is added to the post meta table for regular scene posts, where it is used for several operations.
-			$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic [ $i ], $tutorial_id [ $i ] );
+			update_post_meta( $post_id, 'post_title', $post_title ); // This line is only needed because post title is added to the post meta table for regular scene posts, where it is used for several operations.
+			$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic, 2 );
 			update_post_meta( $post_id, 'scene_infographic', $scene_infographic_url );
-			update_post_meta( $post_id, 'scene_tagline', $scene_tagline [ $i ] );
-			update_post_meta( $post_id, 'scene_info_entries', $scene_info_entries );
-			update_post_meta( $post_id, 'scene_info1', $scene_info1 );
-			update_post_meta( $post_id, 'scene_info2', $scene_info2 );
-			for ( $q = 3; $q < 7; $q++ ) {
-				$meta_key = 'scene_info' . $q;
-				update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
-			}
-			update_post_meta( $post_id, 'scene_photo_entries', $scene_photo_entries );
-			update_post_meta( $post_id, 'scene_photo1', $scene_photo1 );
-			$scene_photo2['scene_photo_internal2'] = $this->copy_image_to_media_library( 'example_files/tutorial/tutorial_image1.jpg', $tutorial_id [ $i ] );
-			update_post_meta( $post_id, 'scene_photo2', $scene_photo2 );
-			update_post_meta( $post_id, 'scene_photo3', $scene_photo3 );
-			for ( $q = 4; $q < 7; $q++ ) {
-				$meta_key = 'scene_photo' . $q;
-				update_post_meta( $post_id, $meta_key, $this->create_blank_array( $meta_key ) );
-			}
-			update_post_meta( $post_id, 'scene_order', $scene_order [ $i ] );
-			update_post_meta( $post_id, 'scene_full_screen_button', $scene_full_screen_button [ $i ] );
-			update_post_meta( $post_id, 'scene_text_toggle', $scene_text_toggle [ $i ] );
+			update_post_meta( $post_id, 'scene_tagline', $scene_tagline );
+			update_post_meta( $post_id, 'scene_info_entries', 0 );
+			update_post_meta( $post_id, 'scene_photo_entries', 0 );
+			update_post_meta( $post_id, 'scene_order', 1 );
+			update_post_meta( $post_id, 'scene_full_screen_button', $scene_full_screen_button );
+			update_post_meta( $post_id, 'scene_text_toggle', $scene_text_toggle );
 			update_post_meta( $post_id, 'scene_orphan_icon_action', $scene_orphan_icon_action );
-			update_post_meta( $post_id, 'scene_toc_style', $scene_toc_style [ $i ] );
+			update_post_meta( $post_id, 'scene_toc_style', $scene_toc_style );
 			update_post_meta( $post_id, 'scene_hover_color', $scene_hover_color );
 			update_post_meta( $post_id, 'scene_hover_text_color', $scene_hover_text_color );
-			update_post_meta( $post_id, 'scene_same_hover_color_sections', $scene_same_hover_color_sections [ $i ] );
-			update_post_meta( $post_id, 'scene_section_number', $scene_section_number [ $i ] );
-			if ( $i > 3 ) {
-				update_post_meta( $post_id, 'scene_section1', $scene_section_details[0] );
-				update_post_meta( $post_id, 'scene_section2', $scene_section_details[1] );
-			}
-			update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
+			update_post_meta( $post_id, 'graphic_data_placeholder_id', 3 );
 		}
 	}
 
@@ -243,6 +217,145 @@ class Graphic_Data_Plugin_Only_Content {
 			if ( 0 == $instance_present ) {
 				$this->create_placeholder_instance( $current_user_id );
 			}
+
+			// create scene if it isn't there.
+			$scene_present = $wpdb->get_var(
+				"SELECT COUNT(*)
+				FROM {$wpdb->postmeta}
+				WHERE meta_key = 'graphic_data_placeholder_id' 
+				AND meta_value = 3"
+			);
+			if ( 0 == $scene_present ) {
+				$this->create_placeholder_scene( $current_user_id );
+			}
+
+			// create modal if it isn't there.
+			$modal_present = $wpdb->get_var(
+				"SELECT COUNT(*)
+				FROM {$wpdb->postmeta}
+				WHERE meta_key = 'graphic_data_placeholder_id' 
+				AND meta_value = 4"
+			);
+			if ( 0 == $modal_present ) {
+				$this->create_placeholder_modal( $current_user_id );
+			}
 		}
+	}
+
+	/**
+	 * Creates tutorial modal posts and writes their metadata to the database.
+	 *
+	 * Iterates over a structured array of modal data and inserts each entry as a
+	 * WordPress post of type 'modal'. For each successfully created post, sets
+	 * post meta fields based on the keys present in $modal_array.
+	 *
+	 * @param int $current_user_id  The WordPress user ID to set as the post author.
+	 * @return void
+	 */
+	public function create_placeholder_modal( $current_user_id ) {
+		global $wpdb;
+
+		$post_title = 'Placeholder Modal';
+		$modal_tagline = 'This is a placeholder modal used for behind the scenes purposes when Graphic Data is not used as the theme.';
+
+		$post_data = array(
+			'post_title'   => $post_title,
+			'post_type'    => 'modal',
+			'post_status'  => 'publish',
+			'post_author'  => $current_user_id,
+		);
+
+		// Insert the post and get its ID.
+		$post_id = wp_insert_post( $post_data );
+
+		// Check if post was created successfully.
+		if ( ! is_wp_error( $post_id ) ) {
+			update_post_meta( $post_id, 'modal_published', 'published' );
+			update_post_meta( $post_id, 'post_type', 'modal' ); // needed? Unclear.
+
+			$placeholder_instance_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+					'graphic_data_placeholder_id',
+					2,
+				)
+			);
+			update_post_meta( $post_id, 'modal_location', $placeholder_instance_id );
+
+			$placeholder_scene_id = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
+					'graphic_data_placeholder_id',
+					3,
+					'scene',
+				)
+			);
+			update_post_meta( $post_id, 'modal_scene', $placeholder_scene_id );
+
+			update_post_meta( $post_id, 'modal_icons', 'Placeholder' );
+			update_post_meta( $post_id, 'modal_tagline', $modal_tagline );
+			update_post_meta( $post_id, 'modal_icon_order', 1 );
+			update_post_meta( $post_id, 'icon_function', 'Modal' );
+			update_post_meta( $post_id, 'modal_info_entries', 0 );
+			update_post_meta( $post_id, 'modal_photo_entries', 0 );
+			update_post_meta( $post_id, 'modal_tab_number', 1 );
+			update_post_meta( $post_id, 'modal_tab_title1', 'First Modal Tab' );
+			update_post_meta( $post_id, 'graphic_data_placeholder_id', 4 );
+		}
+	}
+
+	/**
+	 * Copies an image file from the plugin directory to the WordPress media library.
+	 *
+	 * This method takes an image file from within the plugin's directory structure,
+	 * uploads it to the WordPress media library, generates the necessary attachment
+	 * metadata (including image sizes), and associates it with a placeholder ID for
+	 * later reference or cleanup.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $plugin_relative_path The relative path to the image file from the plugin's includes directory.
+	 *                                     Example: '../example_files/tutorial/image.jpg'
+	 * @param int    $placeholder_id          The placeholder ID to associate with this media library item.
+	 *                                     This is stored in post meta to keep track of placeholder media.
+	 *
+	 * @return string|false The URL of the uploaded attachment on success, false on failure.
+	 *                      Failure can occur if the source file doesn't exist or if
+	 *                      the upload process encounters an error.
+	 */
+	public function copy_image_to_media_library( $plugin_relative_path, $placeholder_id ) {
+		$plugin_image_path = GRAPHIC_DATA_PLUGIN_DIR . $plugin_relative_path;
+
+		if ( ! file_exists( $plugin_image_path ) ) {
+			return false;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
+		$filename = basename( $plugin_image_path );
+		$upload_file = wp_upload_bits( $filename, null, file_get_contents( $plugin_image_path ) );
+
+		if ( $upload_file['error'] ) {
+			return false;
+		}
+
+		$attachment_data = array(
+			'post_mime_type' => $upload_file['type'],
+			'post_title'     => sanitize_file_name( pathinfo( $filename, PATHINFO_FILENAME ) ),
+			'post_content'   => '',
+			'post_status'    => 'inherit',
+		);
+
+		$attachment_id = wp_insert_attachment( $attachment_data, $upload_file['file'] );
+		$attachment_metadata = wp_generate_attachment_metadata( $attachment_id, $upload_file['file'] );
+		wp_update_attachment_metadata( $attachment_id, $attachment_metadata );
+
+		// Add a flag to the post meta table so that we can find this media library item if we need to delete it later.
+		update_post_meta( $attachment_id, 'graphic_data_placeholder_id', $placeholder_id );
+
+		// Return the URL associated with the media library item.
+		return wp_get_attachment_url( $attachment_id );
 	}
 }
