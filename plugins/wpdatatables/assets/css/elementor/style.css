@@ -1,0 +1,15 @@
+.elementor-element .icon .wpdt-table-logo:before,
+.elementor-element .icon .wpdt-chart-logo:before{
+    content: "";
+    height: 30px;
+    display: block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.elementor-element .icon .wpdt-table-logo:before {
+    background-image: url('/wp-content/plugins/wpdatatables/assets/img/logo-large.png');
+}
+.elementor-element .icon .wpdt-chart-logo:before {
+    background-image: url('/wp-content/plugins/wpdatatables/assets/img/chart-icon.png');
+}

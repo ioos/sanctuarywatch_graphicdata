@@ -1,0 +1,171 @@
+.wpdt-c .wdt-datatables-admin-wrap #color-and-font-settings a, .wpdt-c .wdt-datatables-admin-wrap #wdt-activation a {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap tr:first-child > td {
+    border-top: 0px;
+}
+
+
+/*  Theme fixes  */
+.wpdt-c .panel-title {
+    float: none;
+}
+
+.wpdt-c .wdt-activation-section {
+    min-height: 232px;
+    background: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(23, 43, 77, 0.1), 0 0 1px rgba(23, 43, 77, 0.32);
+    border-radius: 3px;
+}
+.wpdt-c .wdt-activation-section .wpdt-plugins-desc{
+    min-height: 50px;
+    padding: 12px;
+    background: #F8F8FA;
+}
+
+.wpdt-c .wdt-activation-section  .wpdt-plugins-desc img{
+    display: inline-block !important;
+    background: #FFFFFF;
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    margin: 0 11px 0 0 !important;
+    box-shadow: 0 1px 2px rgba(9, 29, 112, 0.17);
+    border-radius: 12px;
+}
+.wpdt-c .wdt-activation-section  .wpdt-plugins-desc h4 {
+    display: inline-block;
+    width: 80%;
+    vertical-align: middle;
+    word-break: break-word;
+    font-size: 15px;
+    line-height: 20px;
+    color: #061938;
+}
+.wpdt-c .wdt-envato-activation {
+    margin-top: 12px;
+}
+.wpdt-c .wdt-envato-activation .wdt-envato-deactivation-button,
+.wpdt-c .wdt-store-activate-plugin.btn-danger,
+.wpdt-c .wdt-store-activate-plugin.btn-danger:focus:focus {
+    background: #FFFFFF;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    padding: 8px 16px;
+    color: #253858;
+    border-radius: 5px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+}
+.wpdt-c .wdt-envato-activation .wdt-envato-deactivation-button i,
+.wpdt-c .wdt-store-activate-plugin.btn-danger i{
+    color: #F03E3E;
+}
+.wpdt-c .wdt-store-activate-plugin.btn-primary i{
+    color: #FFFFFF;
+}
+
+.wpdt-c .wdt-envato-activation .wdt-envato-activation-button{
+    background: #FFFFFF;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #253858;
+    padding: 8px 16px;
+}
+
+.wpdt-c .wdt-envato-activation .wdt-envato-activation-button:hover,
+.wpdt-c .wdt-envato-activation .wdt-envato-deactivation-button:hover,
+.wpdt-c .wdt-store-activate-plugin.btn-danger:hover {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.03)), #FFFFFF;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #253858;
+    border: 1px solid #DFE1E6;
+}
+
+.wpdt-c .wdt-envato-activation .wdt-envato-activation-button #wdt-envato-div {
+    display: inline-block;
+    width: 20px;
+    background: #7CB442;
+    border-radius: 50px;
+    margin-right: 4px;
+}
+
+.wpdt-c .wdt-envato-activation .wdt-envato-activation-button img {
+    width: 11px;
+    margin-bottom: 2px;
+    background: #7CB442;
+}
+
+.wpdt-c #custom-js-and-css textarea {
+    background: #FFFFFF;
+    border: 1px solid #D7D9E2 !important;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px rgba(90, 108, 137, 0.08) !important;
+    border-radius: 3px;
+    padding:10px 12px;
+}
+.wpdt-c .wdt-custom-number-input {
+    position: relative;
+}
+
+.wpdt-c .wdt-custom-number-input .wdt-btn-number:hover,
+.wpdt-c .wdt-custom-number-input .wdt-btn-number:hover:disabled,
+.wpdt-c .wdt-custom-number-input .wdt-btn-number:active,
+.wpdt-c .wdt-custom-number-input .wdt-btn-number:visited,
+.wpdt-c .wdt-custom-number-input .wdt-btn-number{
+    position: absolute;
+    height: 100%;
+    width: 40px;
+    border: 1px solid #D7D9E2;
+    color: #8796AF;
+    background: #F8F8FA;
+}
+.wpdt-c .wdt-custom-number-input input {
+    text-align: center;
+}
+
+.wpdt-c .wdt-custom-number-input .wdt-btn-number.wdt-button-minus{
+    left: 0;
+    top: 0;
+    height: 100%;
+    border: 1px solid #D7D9E2;
+    color: #8796AF;
+    background: #F8F8FA;
+    border-radius: 2px 0 0 2px;
+}
+.wpdt-c .wdt-custom-number-input .wdt-btn-number.wdt-button-plus{
+    right: 0;
+    top: 0;
+    height: 100%;
+    border: 1px solid #D7D9E2;
+    color: #8796AF;
+    background: #F8F8FA;
+    border-radius: 0 2px 2px 0;
+}
+.wpdt-c .wdt-upgrade-btn {
+    background: #091D70 !important;
+}
+
+.wpdt-c .wdt-upgrade-img {
+    width: 100%;
+}
+.wpdt-c .wdt-upgrade-btn a {
+    color: #FFFFFF !important;
+}
+.wpdt-c .wdt-upgrade-btn a:hover {
+    opacity: .8;
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpdatatables/wpdatatables-gutenberg-block",
+  "version": "3.4.2.11",
+  "title": "wpDataTables – WordPress Data Table, Dynamic Tables & Table Charts Plugin",
+  "category": "wpdatatables-blocks",
+  "description": "Create responsive, searchable, sortable tables and charts",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "keywords": [
+    "wpdatatable",
+    "table",
+    "tables",
+    "chart",
+    "datatable",
+    "dynamic table",
+    "csv",
+    "excel",
+    "json",
+    "php",
+    "xml"
+  ],
+  "textdomain": "wpdatatables",
+  "editorScript": "file:./index.js"
+}

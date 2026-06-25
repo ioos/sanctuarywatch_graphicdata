@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;700&family=Kaushan+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;500;700&display=swap');
+#wpdt-bundles-section {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-image: url("../../img/bundles/bundles_promo_background.png");
+    background-repeat-x: no-repeat;
+    background-repeat-y: no-repeat;
+    background-size: cover;
+}
+#wpdt-bundles-section img{
+    width: 57%;
+}
+.wpdt-bundles-notice {
+    border: none !important;
+    padding: 0 !important;
+}
+#wpdt-bundles-section {
+    height: 140px;
+    display: flex;
+    overflow: hidden;
+}
+
+.wpdt-bundles-close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}
+button#wpdt-grab-it {
+    padding: 8px 0px;
+    background: linear-gradient(351.76deg, #091D70 -8.07%, #005AEE 123.41%);
+    border-radius: 9px;
+    border: none;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    margin: 3px 0 0 0;
+    text-align: center;
+    color: #ffffff;
+    width: 200px;
+    font-size: 1rem;
+    line-height: 1.75;
+}
+.tms-store-card-plan-ribbon-dis .tms-store-card-plan-ribbon-text,
+.tms-store-card-plan-buy-now-button {
+    background: linear-gradient(351.76deg, #091D70 -8.07%, #005AEE 123.41%);
+}
+button#wpdt-grab-it:hover,
+.tms-store-card-plan-buy-now-button:hover {
+    background: #008cff;
+    color: #fff !important;
+    transition: none !important;
+}
+.wpdt-bundles-dismiss-text {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 15px;
+    margin-left: 65px;
+    line-height: 19px;
+    text-align: center;;
+    opacity: 0.8;
+    color: #005AEE;
+}
+.wpdt-icon-times-thin{
+    margin-left: 10px;
+    opacity: 0.8;
+    cursor: pointer;
+    color: #005AEE;
+    font-size: 15px;
+}
+.wpdt-bundles-notice .notice-dismiss {
+    display: none !important;
+}
+
+.tms-store-col-active:nth-child(2):hover {
+    padding-bottom: 18px !important;
+}
+.tms-store-col:nth-child(1) .tms-store-card, .tms-store-col:nth-child(3) .tms-store-card {
+    max-height: 499px;
+}
+#wpdt-bundles-section #wpdt-second-section h2 strong{
+    color: #091D70;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-right: 6px;
+}
+#wpdt-bundles-section #wpdt-second-section h2 {
+    color: #005AEE;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-left: -20px;
+    float: left;
+}
+#wpdt-bundles-section #wpdt-second-section{
+    flex: 1;
+    margin-left: -80px;
+    margin-bottom: 5px;
+    align-self: center;
+}
+@media(max-width: 1441px) {
+    #wpdt-bundles-section img {
+        width: 75%;
+        float: left;
+    }
+    div#wpdt-first-section,
+    #wpdt-second-section {
+        text-align: center;
+    }
+    button#wpdt-grab-it {
+        margin-right: 10px;
+    }
+}
+@media(max-width: 1025px) {
+    .wpdt-bundles-dismiss-text {
+        display: none;
+    }
+
+}
+
+@media(min-width: 625px) and (max-width: 960px) {
+    .tms-store-col:nth-child(2) {
+        background: none !important;
+    }
+}
+
+@media(max-width: 625px) {
+    #wpdt-bundles-section {
+        flex-direction: column;
+        height: 160px;
+    }
+    #wpdt-first-section img {
+        margin-top: 10px;
+        padding-bottom: 10px;
+    }
+    button#wpdt-grab-it {
+        margin-bottom: 10px;
+    }
+    #wpdt-first-section{
+        display: none;
+    }
+    #wpdt-bundles-section #wpdt-second-section h2 {
+        color: #005AEE;
+        font-size: 1rem;
+        margin-left: -20px;
+    }
+    #wpdt-bundles-section #wpdt-second-section{
+        flex: 1;
+        margin-bottom: 5px;
+        align-self: center;
+        margin-left: 10px;
+        width:63%;
+    }
+}

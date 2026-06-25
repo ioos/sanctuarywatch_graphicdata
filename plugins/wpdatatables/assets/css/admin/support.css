@@ -1,0 +1,109 @@
+.wdt-datatables-admin-wrap .wdt-support {
+    font-family: Inter;
+    font-style: normal;
+}
+.wdt-datatables-admin-wrap .wdt-support .btn-primary{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #FFFFFF;
+    border-radius: 5px;
+}
+.wdt-datatables-admin-wrap .wdt-support .card-head .wdt-admin-card-header h2 a {
+    box-shadow: none !important;
+    color: #304463 !important;
+}
+.wdt-datatables-admin-wrap .wdt-support .card-head .wdt-admin-card-header h2 a i {
+    font-size: 16px;
+    margin-right: 4px;
+    vertical-align: bottom;
+    font-style: normal;
+    line-height: 24px;
+}
+.wdt-datatables-admin-wrap .wdt-support .card h5{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24px;
+    color: #091D70;
+    margin-bottom: 6px;
+}
+.wdt-datatables-admin-wrap .wdt-support .card h5.wdt-large-title {
+    font-size: 24px;
+    line-height: 32px;
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
+.wdt-datatables-admin-wrap .wdt-support .card .m-b-28 {
+    margin-bottom: 28px;
+}
+.wdt-datatables-admin-wrap .wdt-support .card p{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    margin-bottom: 12px;
+}
+
+.wdt-datatables-admin-wrap .wdt-support .card:not(.card-head) {
+    box-shadow: 0 1px 1px rgba(23, 43, 77, 0.11);
+}
+.wdt-datatables-admin-wrap .wdt-support .card-head {
+    background: none;
+}
+.wdt-datatables-admin-wrap .wdt-support .card-body {
+    padding: 24px 24px 24px 28px !important;
+    box-shadow: 0 1px 1px rgba(23, 43, 77, 0.11) !important;
+}
+.wdt-datatables-admin-wrap .wdt-support .card-body i{
+    margin-right: 8px;
+}
+.wdt-datatables-admin-wrap .wdt-support .wdt-support-img {
+    min-height: 470px;
+    background: url(../../img/dashboard/support-page.svg) no-repeat bottom !important;
+    background-size: contain !important;
+}
+
+/* FOOTER*/
+.wdt-datatables-admin-wrap .wdt-support .wpdt-footer-links li {
+    display: inline-block;
+    margin-right: 12px;
+}
+
+.wdt-datatables-admin-wrap .wdt-support .wpdt-footer-links li a {
+    color: #5A6C89;
+}
+.wdt-datatables-admin-wrap .wdt-support .wdt-footer-title {
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    margin-top: 60px;
+    margin-bottom: 20px;
+}
+
+
+.wdt-datatables-admin-wrap .wdt-support .wdt-footer-title img {
+    margin-left: 10px;
+    vertical-align: bottom;
+}
+@media (max-width: 1024px) {
+    .col-sm-6.card-columns {
+        width: 100%;
+        padding: 0 !important;
+    }
+}
+@media (max-width: 768px) {
+    .wpdt-c .card .card-header .actions {
+        top: 12px !important;
+    }
+}
+@media (max-width: 480px) {
+    .wdt-datatables-admin-wrap .wdt-support .wdt-support-img {
+        min-height: 420px;
+    }
+}

@@ -76,6 +76,28 @@ register_activation_hook( __FILE__, 'graphic_data_activate' );
 
 add_action( 'admin_init', 'graphic_data_ensure_public_data_dir' ); // fallback after migrations.
 
+
+/**
+ * Register the blocks in the plugin.
+ *
+ * Ensures the block functionality exists when the plugin is activated.
+ *
+ */
+function graphic_data_register_blocks() {
+	register_block_type( __DIR__ . '/blocks/copyright-date-block/build' );
+	register_block_type( __DIR__ . '/blocks/insert-figure/build' );
+}
+
+add_action( 'init', '*' );
+
+add_action( 'enqueue_block_editor_assets', function() {
+	wp_enqueue_editor();
+} );
+
+
+
+
+
 /**
  * Ensure the public data directory exists with correct permissions.
  *
