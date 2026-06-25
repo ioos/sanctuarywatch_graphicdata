@@ -139,6 +139,9 @@ class Graphic_Data_Plugin {
 		// The class that defines general utility functions for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
+		// The class that defines general utility functions for the plugin.
+		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-plugin-only.php';
+
 		// Include the GitHub Updater class.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-github-updater.php';
 
@@ -290,7 +293,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'manage_edit-modal_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column' );
 		$this->loader->add_action( 'admin_notices', $plugin_admin_modal, 'modal_warning_notice_tabs' );
 
-		// Load  class and functions associated with Figure custom content type.
+		// Load class and functions associated with Figure custom content type.
 		$plugin_admin_figure = new Graphic_Data_Figure();
 		$this->loader->add_action( 'init', $plugin_admin_figure, 'custom_content_type_figure' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin_figure, 'create_figure_fields', 1 );
@@ -325,6 +328,10 @@ class Graphic_Data_Plugin {
 		// Load class and functions connected with Support page.
 		$plugin_admin_support = new Graphic_Data_Support();
 		$this->loader->add_action( 'admin_menu', $plugin_admin_support, 'add_admin_menu' );
+
+		// Load class and functions associated with Plugin only class.
+		$plugin_admin_plugin_onlly = new Graphic_Data_Plugin_Only_Content();
+		$this->loader->add_action( 'init', $plugin_admin_plugin_onlly, 'placeholder_content_director' );
 	}
 
 	/**

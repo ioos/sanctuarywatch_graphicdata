@@ -111,6 +111,15 @@ $graphic_data_terms = get_terms(
 	]
 );
 
+if ( ! is_wp_error( $graphic_data_terms ) ) {
+	$graphic_data_terms = array_values(
+		array_filter(
+			$graphic_data_terms,
+			fn( $term ) => 'graphic-data-placeholder-instance-type' !== $term->slug
+		)
+	);
+}
+
 if ( empty( $graphic_data_terms ) || is_wp_error( $graphic_data_terms ) ) {
 	return; // No terms found or an error occurred.
 }

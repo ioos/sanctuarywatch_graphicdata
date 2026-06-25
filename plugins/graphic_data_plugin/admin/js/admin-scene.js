@@ -19,7 +19,7 @@ writeCookieValuesToSceneFields();
 document.addEventListener('DOMContentLoaded', redText);
 
 // Hide Instance dropdown if Graphic Data is not active theme.
-document.addEventListener('DOMContentLoaded', hideInstanceDropdown);
+//document.addEventListener('DOMContentLoaded', hideInstanceDropdown);
 
 // Initialize the number of visible scene section fields and set up TOC-related field visibility on page load.
 //
