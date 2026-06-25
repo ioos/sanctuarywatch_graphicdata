@@ -51,7 +51,7 @@ modalWindow();
 modal_scene_change();
 modal_location_change();
 hideIconSection();
-hideFieldsBasedOnModalAttachedToScene();
+//hideFieldsBasedOnModalAttachedToScene(); TEMPORARILY TURNED OFF.
 
 document
 	.getElementsByName('modal_attached_to_scene')[0]
