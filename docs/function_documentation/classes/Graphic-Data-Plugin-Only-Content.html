@@ -149,11 +149,18 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_copy_image_to_media_library">copy_image_to_media_library()</a>
+    <span>
+                                &nbsp;: string|false    </span>
+</dt>
+<dd>Copies an image file from the plugin directory to the WordPress media library.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance">create_placeholder_instance()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Create placeholder instance for the tutorial.</dd>
+<dd>Create placeholder instance.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance_type">create_placeholder_instance_type()</a>
@@ -163,11 +170,18 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
 <dd>Creates a placeholder instance type term if the Graphic Data theme is not active.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_modal">create_placeholder_modal()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Creates tutorial modal posts and writes their metadata to the database.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_scene">create_placeholder_scene()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Create example scenes for the tutorial.</dd>
+<dd>Create example scenes for the placeholder.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director">placeholder_content_director()</a>
@@ -196,6 +210,93 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_copy_image_to_media_library">
+        copy_image_to_media_library()
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_copy_image_to_media_library" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">326</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Copies an image file from the plugin directory to the WordPress media library.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">copy_image_to_media_library</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$plugin_relative_path</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$placeholder_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|false</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>This method takes an image file from within the plugin's directory structure,
+uploads it to the WordPress media library, generates the necessary attachment
+metadata (including image sizes), and associates it with a placeholder ID for
+later reference or cleanup.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$plugin_relative_path</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The relative path to the image file from the plugin's includes directory.
+Example: '../example_files/tutorial/image.jpg'</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$placeholder_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The placeholder ID to associate with this media library item.
+This is stored in post meta to keep track of placeholder media.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_copy_image_to_media_library_tags">
+        Tags
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_copy_image_to_media_library_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string|false</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The URL of the uploaded attachment on success, false on failure.
+Failure can occur if the source file doesn't exist or if
+the upload process encounters an error.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_create_placeholder_instance">
         create_placeholder_instance()
         <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance" class="headerlink"><i class="fas fa-link"></i></a>
@@ -208,7 +309,7 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
 
     </aside>
 
-        <p class="phpdocumentor-summary">Create placeholder instance for the tutorial.</p>
+        <p class="phpdocumentor-summary">Create placeholder instance.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -298,6 +399,57 @@ assigns a navbar name of &quot;Placeholder&quot;, and marks it with the
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_create_placeholder_modal">
+        create_placeholder_modal()
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_modal" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">255</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Creates tutorial modal posts and writes their metadata to the database.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">create_placeholder_modal</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$current_user_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Iterates over a structured array of modal data and inserts each entry as a
+WordPress post of type 'modal'. For each successfully created post, sets
+post meta fields based on the keys present in $modal_array.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$current_user_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The WordPress user ID to set as the post author.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_create_placeholder_scene">
         create_placeholder_scene()
         <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_scene" class="headerlink"><i class="fas fa-link"></i></a>
@@ -306,11 +458,11 @@ assigns a navbar name of &quot;Placeholder&quot;, and marks it with the
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">118</span>
+    <span class="phpdocumentor-element-found-in__line">113</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Create example scenes for the tutorial.</p>
+        <p class="phpdocumentor-summary">Create example scenes for the placeholder.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -353,7 +505,7 @@ assigns a navbar name of &quot;Placeholder&quot;, and marks it with the
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">207</span>
+    <span class="phpdocumentor-element-found-in__line">181</span>
 
     </aside>
 
@@ -416,8 +568,10 @@ theme provides its own instance type management.</p>
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_copy_image_to_media_library">copy_image_to_media_library()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance">create_placeholder_instance()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_instance_type">create_placeholder_instance_type()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_modal">create_placeholder_modal()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_scene">create_placeholder_scene()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director">placeholder_content_director()</a></li>
                                     </ul>
