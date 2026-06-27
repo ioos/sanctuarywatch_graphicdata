@@ -321,6 +321,21 @@ Search.appendIndex(
             "summary": "Modify\u0020the\u0020WordPress\u0020login\u0020screen\u0020page\u0020title\u0020to\u0020use\u0020Sanctuary\u0020Watch\u0020branding.",
             "url": "classes/Graphic-Data-Login.html#method_custom_login_title"
         },                {
+            "fqsen": "\\Graphic_Data_Media_Manager",
+            "name": "Graphic_Data_Media_Manager",
+            "summary": "Manages\u0020custom\u0020attachment\u0020fields\u0020in\u0020the\u0020WordPress\u0020Media\u0020Library.",
+            "url": "classes/Graphic-Data-Media-Manager.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Aadd_instance_field_to_media\u0028\u0029",
+            "name": "add_instance_field_to_media",
+            "summary": "Add\u0020Instance\u0020dropdown\u0020to\u0020Media\u0020Library\u0020attachment\u0020fields.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_add_instance_field_to_media"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Asave_instance_field_to_media\u0028\u0029",
+            "name": "save_instance_field_to_media",
+            "summary": "Save\u0020the\u0020Instance\u0020dropdown\u0020value\u0020when\u0020an\u0020attachment\u0020is\u0020updated.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_save_instance_field_to_media"
+        },                {
             "fqsen": "\\Graphic_Data_Custom_Capabilities",
             "name": "Graphic_Data_Custom_Capabilities",
             "summary": "Manages\u0020custom\u0020user\u0020capabilities\u0020for\u0020the\u0020Graphic\u0020Data\u0020Plugin.",
