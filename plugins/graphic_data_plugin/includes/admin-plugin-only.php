@@ -151,7 +151,7 @@ class Graphic_Data_Plugin_Only_Content {
 			update_post_meta( $placeholder_instance_id, 'instance_overview_scene', $post_id );
 			update_post_meta( $post_id, 'scene_published', 'published' );
 			update_post_meta( $post_id, 'post_title', $post_title ); // This line is only needed because post title is added to the post meta table for regular scene posts, where it is used for several operations.
-			$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic, 2 );
+			$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic, 2, $placeholder_instance_id );
 			update_post_meta( $post_id, 'scene_infographic', $scene_infographic_url );
 			update_post_meta( $post_id, 'scene_tagline', $scene_tagline );
 			update_post_meta( $post_id, 'scene_info_entries', 0 );
@@ -323,7 +323,7 @@ class Graphic_Data_Plugin_Only_Content {
 	 *                      Failure can occur if the source file doesn't exist or if
 	 *                      the upload process encounters an error.
 	 */
-	public function copy_image_to_media_library( $plugin_relative_path, $placeholder_id ) {
+	public function copy_image_to_media_library( $plugin_relative_path, $placeholder_id, $instance_id ) {
 		$plugin_image_path = GRAPHIC_DATA_PLUGIN_DIR . $plugin_relative_path;
 
 		if ( ! file_exists( $plugin_image_path ) ) {
@@ -354,6 +354,9 @@ class Graphic_Data_Plugin_Only_Content {
 
 		// Add a flag to the post meta table so that we can find this media library item if we need to delete it later.
 		update_post_meta( $attachment_id, 'graphic_data_placeholder_id', $placeholder_id );
+
+		// Add the instance to the post meta for the media.
+		update_post_meta( $attachment_id, 'graphic_data_instance_id', $instance_id );
 
 		// Return the URL associated with the media library item.
 		return wp_get_attachment_url( $attachment_id );

@@ -124,6 +124,33 @@ class Graphic_Data_Validation {
 	}
 
 	/**
+	 * Associate an instance with a media attachment via post meta.
+	 *
+	 * Resolves the attachment post ID from a URL, stripping any WordPress-generated
+	 * size suffix (e.g. `-300x200.jpg`) before the lookup so that scaled variants
+	 * resolve to the original attachment. If the attachment exists and does not
+	 * already have a `graphic_data_instance_id` value, the instance ID is written
+	 * as post meta. Existing associations are left unchanged.
+	 *
+	 * @param string $image_url   Full URL of the image (may include a size suffix).
+	 * @param int    $instance_id The instance post ID to associate with the attachment.
+	 * @return void
+	 */
+	public function add_instance_id_to_media( $image_url, $instance_id ) {
+		// Remove WP-generated size suffix before lookup.
+		$root_image_url = preg_replace( '/-\d+x\d+(\.[a-z]+)$/i', '$1', $image_url );
+		$tile_attachment_id = attachment_url_to_postid( $root_image_url );
+		// Does attachment exist?
+		if ( $tile_attachment_id ) {
+			// If so, attach instance, if it isn't already attached.
+			$instance_id_present = get_post_meta( $tile_attachment_id, 'graphic_data_instance_id', true );
+			if ( empty( $instance_id_present ) ) {
+				update_post_meta( $tile_attachment_id, 'graphic_data_instance_id', $instance_id );
+			}
+		}
+	}
+
+	/**
 	 * Validates a post of Instance custom post type before saving.
 	 *
 	 * Performs comprehensive validation on a given Instance post. If the validation succeeds, the function
@@ -214,6 +241,9 @@ class Graphic_Data_Validation {
 						} else if ( $width > 1000 ) {
 							array_push( $instance_errors, "The image specified by the 'Tile image' field is too big. The image must be, at the maximum, 1000 pixels wide by 800 pixels tall." );
 							$save_instance_fields = false;
+						} else if ( ! empty( $_POST['post_ID'] ) ) {
+							// Attach instance id to tile as post meta.
+							$this->add_instance_id_to_media( esc_url_raw( wp_unslash( $_POST['instance_tile'] ) ), absint( $_POST['post_ID'] ) );
 						}
 					}
 				}
@@ -332,6 +362,12 @@ class Graphic_Data_Validation {
 		if ( isset( $_POST['figure_path'] ) && 'Internal' == $_POST['figure_path'] && isset( $_POST['figure_image'] ) && '' == $_POST['figure_image'] ) {
 			array_push( $figure_errors, "If the Figure Type is set to 'Internal image', then the 'Figure image' field cannot be left blank." );
 			$save_figure_fields = false;
+		}
+
+		if ( isset( $_POST['figure_path'] ) && 'Internal' == $_POST['figure_path'] && isset( $_POST['figure_image'] ) && '' != $_POST['figure_image'] ) {
+			if ( isset( $_POST['location'] ) && ' ' != $_POST['location'] ) {
+				$this->add_instance_id_to_media( esc_url_raw( wp_unslash( $_POST['figure_image'] ) ), absint( $_POST['location'] ) );
+			}
 		}
 
 		if ( 'External' == $_POST['figure_path'] ) {
@@ -642,6 +678,13 @@ class Graphic_Data_Validation {
 						$save_modal_fields = false;
 						array_push( $modal_errors, 'Error in Modal ' . ucfirst( $field_type ) . ' Link ' . $i );
 					}
+
+					if ( 'photo' == $field_type && '' != $field_couplet[ $field_photo_internal ] ) {
+						if ( isset( $_POST['modal_location'] ) && ' ' != $_POST['modal_location'] ) {
+							$this->add_instance_id_to_media( $field_couplet[ $field_photo_internal ], absint( $_POST['modal_location'] ) );
+						}
+					}
+
 					if ( '' != $field_couplet[ $field_url ] ) {
 						if ( $this->url_check( $field_couplet[ $field_url ] ) == false ) {
 							$save_modal_fields = false;
@@ -722,11 +765,9 @@ class Graphic_Data_Validation {
 			wp_die( 'Security check failed for post of Scene custom post type.' );
 		}
 
-		if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
-			if ( ! isset( $_POST['scene_location'] ) || ( isset( $_POST['scene_location'] ) && ' ' == $_POST['scene_location'] ) ) {
-				array_push( $scene_errors, 'The Instance field cannot be left blank.' );
-				$save_scene_fields = false;
-			}
+		if ( ! isset( $_POST['scene_location'] ) || ( isset( $_POST['scene_location'] ) && ' ' == $_POST['scene_location'] ) ) {
+			array_push( $scene_errors, 'The Instance field cannot be left blank.' );
+			$save_scene_fields = false;
 		}
 
 		$scene_infographic = isset( $_POST['scene_infographic'] )
@@ -749,6 +790,8 @@ class Graphic_Data_Validation {
 				if ( false == $svg_analyze['valid'] ) {
 					array_push( $scene_errors, $svg_analyze['error'] );
 					$save_scene_fields = false;
+				} else if ( isset( $_POST['scene_location'] ) && ' ' != $_POST['scene_location'] ) {
+					$this->add_instance_id_to_media( $scene_infographic, absint( $_POST['scene_location'] ) );
 				}
 			}
 		}
@@ -795,6 +838,11 @@ class Graphic_Data_Validation {
 					if ( ( 'info' === $field_type && ( '' === $field_couplet[ $field_url ] || '' === $field_couplet[ $field_text ] ) ) || ( 'photo' === $field_type && ( ( '' === $field_couplet[ $field_url ] && '' === $field_couplet[ $field_photo_internal ] ) || '' === $field_couplet[ $field_text ] ) ) ) {
 						$save_scene_fields = false;
 						array_push( $scene_errors, 'Error in Scene ' . ucfirst( $field_type ) . ' Link ' . $i );
+					}
+					if ( 'photo' == $field_type && '' != $field_couplet[ $field_photo_internal ] ) {
+						if ( isset( $_POST['scene_location'] ) && ' ' != $_POST['scene_location'] ) {
+							$this->add_instance_id_to_media( $field_couplet[ $field_photo_internal ], absint( $_POST['scene_location'] ) );
+						}
 					}
 					if ( '' != $field_couplet[ $field_url ] ) {
 						if ( $this->url_check( $field_couplet[ $field_url ] ) == false ) {
