@@ -1,6 +1,10 @@
-// These functions only fire upon editing or creating a post of Figure custom content type
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	applyPlainTextPaste,
+} from '@graphic-data/admin-utility';
 
-'use strict';
+import { checkIfFileExistsAndLoadJson } from '@graphic-data/file-upload';
 
 import {
 	replaceFieldValuesWithTransientValues,

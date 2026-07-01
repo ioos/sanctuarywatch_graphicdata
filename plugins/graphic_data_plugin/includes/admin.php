@@ -133,6 +133,9 @@ class Graphic_Data_Plugin {
 		// The class that defines the support page for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-graphic-data-support.php';
 
+		// The class that defines the alterations for the media manager for the plugin.
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-media-manager.php';
+
 		// The class that defines the settings page for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-settings-page.php';
 
@@ -235,6 +238,15 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'bulk_actions-edit-instance', $plugin_admin_instance, 'remove_bulk_actions' );
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin_instance, 'custom_content_remove_quick_edit_link', 10, 2 );
 		$this->loader->add_filter( 'rest_api_init', $plugin_admin_instance, 'register_instance_rest_fields' );
+
+		// Load class and functions associated with media manager.
+		$plugin_media_manager = new Graphic_Data_Media_Manager();
+		$this->loader->add_filter( 'attachment_fields_to_save', $plugin_media_manager, 'save_instance_field_to_media', 10, 2 );
+		$this->loader->add_filter( 'attachment_fields_to_edit', $plugin_media_manager, 'add_instance_field_to_media', 10, 2 );
+		$this->loader->add_action( 'restrict_manage_posts', $plugin_media_manager, 'render_instance_filter_dropdown' );
+		$this->loader->add_action( 'parse_query', $plugin_media_manager, 'filter_media_by_instance' );
+		$this->loader->add_filter( 'ajax_query_attachments_args', $plugin_media_manager, 'filter_ajax_media_by_instance' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_media_manager, 'enqueue_instance_filter_script' );
 
 		// Load class and functions associated with the Settings Page.
 		$plugin_admin_settings_page = new Graphic_Data_Settings_Page();

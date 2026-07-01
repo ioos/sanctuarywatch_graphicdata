@@ -321,6 +321,46 @@ Search.appendIndex(
             "summary": "Modify\u0020the\u0020WordPress\u0020login\u0020screen\u0020page\u0020title\u0020to\u0020use\u0020Sanctuary\u0020Watch\u0020branding.",
             "url": "classes/Graphic-Data-Login.html#method_custom_login_title"
         },                {
+            "fqsen": "\\Graphic_Data_Media_Manager",
+            "name": "Graphic_Data_Media_Manager",
+            "summary": "Manages\u0020custom\u0020attachment\u0020fields\u0020in\u0020the\u0020WordPress\u0020Media\u0020Library.",
+            "url": "classes/Graphic-Data-Media-Manager.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Acreate_instance_list\u0028\u0029",
+            "name": "create_instance_list",
+            "summary": "Query\u0020published\u0020Instance\u0020posts\u0020visible\u0020to\u0020the\u0020current\u0020user.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_create_instance_list"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Aadd_instance_field_to_media\u0028\u0029",
+            "name": "add_instance_field_to_media",
+            "summary": "Add\u0020Instance\u0020dropdown\u0020to\u0020Media\u0020Library\u0020attachment\u0020fields.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_add_instance_field_to_media"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Asave_instance_field_to_media\u0028\u0029",
+            "name": "save_instance_field_to_media",
+            "summary": "Save\u0020the\u0020Instance\u0020dropdown\u0020value\u0020when\u0020an\u0020attachment\u0020is\u0020updated.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_save_instance_field_to_media"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Aenqueue_instance_filter_script\u0028\u0029",
+            "name": "enqueue_instance_filter_script",
+            "summary": "Enqueue\u0020the\u0020media\u0020grid\u0020filter\u0020script\u0020and\u0020pass\u0020instance\u0020data\u0020to\u0020it.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_enqueue_instance_filter_script"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Arender_instance_filter_dropdown\u0028\u0029",
+            "name": "render_instance_filter_dropdown",
+            "summary": "Render\u0020the\u0020Instance\u0020filter\u0020dropdown\u0020in\u0020the\u0020media\u0020list\u0020view\u0020toolbar.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_render_instance_filter_dropdown"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Afilter_media_by_instance\u0028\u0029",
+            "name": "filter_media_by_instance",
+            "summary": "Apply\u0020the\u0020Instance\u0020filter\u0020to\u0020the\u0020media\u0020list\u0020view\u0020query.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_filter_media_by_instance"
+        },                {
+            "fqsen": "\\Graphic_Data_Media_Manager\u003A\u003Afilter_ajax_media_by_instance\u0028\u0029",
+            "name": "filter_ajax_media_by_instance",
+            "summary": "Apply\u0020the\u0020Instance\u0020filter\u0020to\u0020the\u0020media\u0020grid\u0020view\u0020\u0028AJAX\u0029\u0020query.",
+            "url": "classes/Graphic-Data-Media-Manager.html#method_filter_ajax_media_by_instance"
+        },                {
             "fqsen": "\\Graphic_Data_Custom_Capabilities",
             "name": "Graphic_Data_Custom_Capabilities",
             "summary": "Manages\u0020custom\u0020user\u0020capabilities\u0020for\u0020the\u0020Graphic\u0020Data\u0020Plugin.",
@@ -531,6 +571,11 @@ Search.appendIndex(
             "summary": "Validates\u0020a\u0020post\u0020of\u0020About\u0020custom\u0020post\u0020type\u0020before\u0020saving.",
             "url": "classes/Graphic-Data-Validation.html#method_validate_about"
         },                {
+            "fqsen": "\\Graphic_Data_Validation\u003A\u003Aadd_instance_id_to_media\u0028\u0029",
+            "name": "add_instance_id_to_media",
+            "summary": "Associate\u0020an\u0020instance\u0020with\u0020a\u0020media\u0020attachment\u0020via\u0020post\u0020meta.",
+            "url": "classes/Graphic-Data-Validation.html#method_add_instance_id_to_media"
+        },                {
             "fqsen": "\\Graphic_Data_Validation\u003A\u003Avalidate_instance\u0028\u0029",
             "name": "validate_instance",
             "summary": "Validates\u0020a\u0020post\u0020of\u0020Instance\u0020custom\u0020post\u0020type\u0020before\u0020saving.",
@@ -595,6 +640,11 @@ Search.appendIndex(
             "name": "graphic_data_activate",
             "summary": "Plugin\u0020activation\u0020callback.",
             "url": "namespaces/default.html#function_graphic_data_activate"
+        },                {
+            "fqsen": "\\graphic_data_deactivate\u0028\u0029",
+            "name": "graphic_data_deactivate",
+            "summary": "Plugin\u0020deactivation\u0020callback.",
+            "url": "namespaces/default.html#function_graphic_data_deactivate"
         },                {
             "fqsen": "\\graphic_data_ensure_public_data_dir\u0028\u0029",
             "name": "graphic_data_ensure_public_data_dir",

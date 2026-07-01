@@ -166,6 +166,13 @@ accessibility, and stores errors/warnings in transients for display after page r
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Validation.html#method_add_instance_id_to_media">add_instance_id_to_media()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Associate an instance with a media attachment via post meta.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Validation.html#method_check_url_is_accessible">check_url_is_accessible()</a>
     <span>
                                 &nbsp;: int    </span>
@@ -248,6 +255,68 @@ accessibility, and stores errors/warnings in transients for display after page r
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_add_instance_id_to_media">
+        add_instance_id_to_media()
+        <a href="classes/Graphic-Data-Validation.html#method_add_instance_id_to_media" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">139</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Associate an instance with a media attachment via post meta.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">add_instance_id_to_media</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$image_url</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$instance_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Resolves the attachment post ID from a URL, stripping any WordPress-generated
+size suffix (e.g. <code class="prettyprint">-300x200.jpg</code>) before the lookup so that scaled variants
+resolve to the original attachment. If the attachment exists and does not
+already have a <code class="prettyprint">graphic_data_instance_id</code> value, the instance ID is written
+as post meta. Existing associations are left unchanged.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$image_url</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Full URL of the image (may include a size suffix).</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$instance_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The instance post ID to associate with the attachment.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_check_url_is_accessible">
         check_url_is_accessible()
         <a href="classes/Graphic-Data-Validation.html#method_check_url_is_accessible" class="headerlink"><i class="fas fa-link"></i></a>
@@ -256,7 +325,7 @@ accessibility, and stores errors/warnings in transients for display after page r
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">846</span>
+    <span class="phpdocumentor-element-found-in__line">894</span>
 
     </aside>
 
@@ -329,7 +398,7 @@ validated for correct syntax before calling this method.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">918</span>
+    <span class="phpdocumentor-element-found-in__line">966</span>
 
     </aside>
 
@@ -485,7 +554,7 @@ Accepts 'about', 'scene', 'modal', 'figure', or 'instance'.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">897</span>
+    <span class="phpdocumentor-element-found-in__line">945</span>
 
     </aside>
 
@@ -647,7 +716,7 @@ for display after page reload.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">299</span>
+    <span class="phpdocumentor-element-found-in__line">329</span>
 
     </aside>
 
@@ -730,7 +799,7 @@ several transients to store error messages, warnings, and field values for displ
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">149</span>
+    <span class="phpdocumentor-element-found-in__line">176</span>
 
     </aside>
 
@@ -813,7 +882,7 @@ several transients to store error messages, warnings, and field values for displ
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">440</span>
+    <span class="phpdocumentor-element-found-in__line">476</span>
 
     </aside>
 
@@ -900,7 +969,7 @@ several transients to store error messages, warnings, and field values for displ
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-validation.php"><a href="files/plugins-graphic-data-plugin-admin-class-validation.html"><abbr title="plugins/graphic_data_plugin/admin/class-validation.php">class-validation.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">713</span>
+    <span class="phpdocumentor-element-found-in__line">756</span>
 
     </aside>
 
@@ -992,6 +1061,7 @@ several transients to store error messages, warnings, and field values for displ
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/Graphic-Data-Validation.html#method_add_instance_id_to_media">add_instance_id_to_media()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Validation.html#method_check_url_is_accessible">check_url_is_accessible()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Validation.html#method_get_fields_config">get_fields_config()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Validation.html#method_master_validate">master_validate()</a></li>

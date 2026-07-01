@@ -65,14 +65,64 @@ define( 'GRAPHIC_DATA_IS_ACTIVE_THEME', get_template() === 'graphic_data_theme' 
 /**
  * Plugin activation callback.
  *
- * Ensures the public data directory exists when the plugin is activated.
+ * Ensures the public data directory exists when the plugin is activated. Creates figure, modal, and
+ * scene publishing capabilities for the Author role.
  *
  * @see graphic_data_ensure_public_data_dir()
  */
 function graphic_data_activate() {
 	graphic_data_ensure_public_data_dir();
+
+	$author_role = get_role( 'author' );
+	$author_role->add_cap( 'edit_figures' );
+	$author_role->add_cap( 'edit_published_figures' );
+	$author_role->add_cap( 'publish_figures' );
+	$author_role->add_cap( 'delete_figures' );
+	$author_role->add_cap( 'delete_published_figures' );
+
+	$author_role->add_cap( 'edit_modals' );
+	$author_role->add_cap( 'edit_published_modals' );
+	$author_role->add_cap( 'publish_modals' );
+	$author_role->add_cap( 'delete_modals' );
+	$author_role->add_cap( 'delete_published_modals' );
+
+	$author_role->add_cap( 'edit_scenes' );
+	$author_role->add_cap( 'edit_published_scenes' );
+	$author_role->add_cap( 'publish_scenes' );
+	$author_role->add_cap( 'delete_scenes' );
+	$author_role->add_cap( 'delete_published_scenes' );
 }
 register_activation_hook( __FILE__, 'graphic_data_activate' );
+
+/**
+ * Plugin deactivation callback.
+ *
+ * Removes figure, modal, and scene publishing capabilities from the Author role
+ * that were granted on activation.
+ *
+ * @see graphic_data_activate()
+ */
+function graphic_data_deactivate() {
+	$author_role = get_role( 'author' );
+	$author_role->remove_cap( 'edit_figures' );
+	$author_role->remove_cap( 'edit_published_figures' );
+	$author_role->remove_cap( 'publish_figures' );
+	$author_role->remove_cap( 'delete_figures' );
+	$author_role->remove_cap( 'delete_published_figures' );
+
+	$author_role->remove_cap( 'edit_modals' );
+	$author_role->remove_cap( 'edit_published_modals' );
+	$author_role->remove_cap( 'publish_modals' );
+	$author_role->remove_cap( 'delete_modals' );
+	$author_role->remove_cap( 'delete_published_modals' );
+
+	$author_role->remove_cap( 'edit_scenes' );
+	$author_role->remove_cap( 'edit_published_scenes' );
+	$author_role->remove_cap( 'publish_scenes' );
+	$author_role->remove_cap( 'delete_scenes' );
+	$author_role->remove_cap( 'delete_published_scenes' );
+}
+register_deactivation_hook( __FILE__, 'graphic_data_deactivate' );
 
 add_action( 'admin_init', 'graphic_data_ensure_public_data_dir' ); // fallback after migrations.
 

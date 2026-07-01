@@ -162,6 +162,13 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
 <dd>Plugin activation callback.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -function -">
+    <a class="" href="namespaces/default.html#function_graphic_data_deactivate">graphic_data_deactivate()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Plugin deactivation callback.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a class="" href="namespaces/default.html#function_graphic_data_ensure_public_data_dir">graphic_data_ensure_public_data_dir()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -354,7 +361,7 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">72</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
@@ -365,7 +372,8 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
     <span class="phpdocumentor-signature__visibility"></span>
                     <span class="phpdocumentor-signature__name">graphic_data_activate</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
-        <section class="phpdocumentor-description"><p>Ensures the public data directory exists when the plugin is activated.</p>
+        <section class="phpdocumentor-description"><p>Ensures the public data directory exists when the plugin is activated. Creates figure, modal, and
+scene publishing capabilities for the Author role.</p>
 </section>
 
     
@@ -388,6 +396,49 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
     
 </article>
                     <article class="phpdocumentor-element -function - ">
+    <h4 class="phpdocumentor-element__name" id="function_graphic_data_deactivate">
+        graphic_data_deactivate()
+        <a href="namespaces/default.html#function_graphic_data_deactivate" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">105</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Plugin deactivation callback.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility"></span>
+                    <span class="phpdocumentor-signature__name">graphic_data_deactivate</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+        <section class="phpdocumentor-description"><p>Removes figure, modal, and scene publishing capabilities from the Author role
+that were granted on activation.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="function_graphic_data_deactivate_tags">
+        Tags
+        <a href="namespaces/default.html#function_graphic_data_deactivate_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">see</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                    <span class="phpdocumentor-tag-link"><a href="namespaces/default.html#function_graphic_data_activate"><abbr title="\graphic_data_activate()">graphic_data_activate()</abbr></a></span>
+                                                                
+                                    </dd>
+                        </dl>
+
+    
+</article>
+                    <article class="phpdocumentor-element -function - ">
     <h4 class="phpdocumentor-element__name" id="function_graphic_data_ensure_public_data_dir">
         graphic_data_ensure_public_data_dir()
         <a href="namespaces/default.html#function_graphic_data_ensure_public_data_dir" class="headerlink"><i class="fas fa-link"></i></a>
@@ -396,7 +447,7 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">93</span>
+    <span class="phpdocumentor-element-found-in__line">143</span>
 
     </aside>
 
@@ -442,7 +493,7 @@ so it can be surfaced via admin notices; on success that option is deleted.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">136</span>
+    <span class="phpdocumentor-element-found-in__line">186</span>
 
     </aside>
 
@@ -498,6 +549,7 @@ not affect the page life cycle.</p>
                 <li>
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="namespaces/default.html#function_graphic_data_activate">graphic_data_activate()</a></li>
+                                                    <li class=""><a href="namespaces/default.html#function_graphic_data_deactivate">graphic_data_deactivate()</a></li>
                                                     <li class=""><a href="namespaces/default.html#function_graphic_data_ensure_public_data_dir">graphic_data_ensure_public_data_dir()</a></li>
                                                     <li class=""><a href="namespaces/default.html#function_graphic_data_plugin_run">graphic_data_plugin_run()</a></li>
                                             </ul>

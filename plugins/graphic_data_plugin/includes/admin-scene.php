@@ -771,13 +771,13 @@ class Graphic_Data_Scene {
 			array(
 				'id'             => 'scene_published',
 				'type'           => 'select',
-				'title'          => 'Scene status*',
+				'title'          => 'Scene Status*',
 				'options'        => array(
 					'draft'      => 'Draft',
 					'published'  => 'Published',
 				),
 				'default'        => 'draft',
-				'description'    => 'Should the Scene be live?',
+				'description'    => 'Should the Scene Be Live?',
 				'sanitize'       => 'sanitize_text_field',
 			),
 			array(
@@ -806,7 +806,7 @@ class Graphic_Data_Scene {
 			array(
 				'id'          => 'scene_info_entries',
 				'type'        => 'range',
-				'title'       => 'Number of info entries',
+				'title'       => 'Number of Info Entries',
 				'description' => 'How many info links are there for the scene?',
 				'min'         => 0,
 				'default'     => 0,
@@ -817,8 +817,8 @@ class Graphic_Data_Scene {
 			array(
 				'id'          => 'scene_photo_entries',
 				'type'        => 'range',
-				'title'       => 'Number of photo entries',
-				'description' => 'How many photo links are there for the scene?',
+				'title'       => 'Number of Media Entries',
+				'description' => 'How many media links are there for the scene?',
 				'min'         => 0,
 				'default'     => 0,
 				'max'         => 6,
@@ -864,7 +864,7 @@ class Graphic_Data_Scene {
 			array(
 				'id'              => 'scene_orphan_icon_action',
 				'type'            => 'select',
-				'title'           => 'Icon visibility in scene, if no associated modal',
+				'title'           => 'Icon Visibility in Scene, If No Associated Modal',
 				'options'         => array(
 					'visible'     => 'Keep icons as they are',
 					'hide'        => 'Hide icons',
@@ -878,7 +878,7 @@ class Graphic_Data_Scene {
 			array(
 				'id'          => 'scene_orphan_icon_color',
 				'type'        => 'color',
-				'title'       => 'Color for icons with no associated modal',
+				'title'       => 'Color For Icons With No Associated Modal',
 				'description' => 'What should the icon color be?',
 				'picker'      => 'html5',
 				'default'     => '#808080',
@@ -887,7 +887,7 @@ class Graphic_Data_Scene {
 			array(
 				'id'                 => 'scene_toc_style',
 				'type'               => 'select',
-				'title'              => 'Table of contents style*',
+				'title'              => 'Table of Contents Style*',
 				'options'            => array(
 					'accordion'      => 'Accordion (Sections Required)',
 					'list'           => 'List (default option, No Sections)',
@@ -900,7 +900,7 @@ class Graphic_Data_Scene {
 			array(
 				'id'          => 'scene_same_hover_color_sections',
 				'type'        => 'select',
-				'title'       => 'Single color for sections',
+				'title'       => 'Single Color For Sections',
 				'options'     => array(
 					'no'      => 'No',
 					'yes'     => 'Yes',
@@ -912,7 +912,7 @@ class Graphic_Data_Scene {
 			array(
 				'id'          => 'scene_hover_color',
 				'type'        => 'color',
-				'title'       => 'Scene Hover color',
+				'title'       => 'Scene Hover Color',
 				'description' => 'What should the hover color be?',
 				'picker'      => 'html5',
 				'default'     => '#FFFF00',
@@ -930,7 +930,7 @@ class Graphic_Data_Scene {
 			array(
 				'id'          => 'scene_section_number',
 				'type'        => 'select',
-				'title'       => 'Number of scene sections*',
+				'title'       => 'Number of Scene Sections*',
 				'description' => 'How many scene sections are there?',
 				'options'     => array(
 					0         => '0',
@@ -1006,12 +1006,12 @@ class Graphic_Data_Scene {
 			$photo_fields[] = array(
 				'type' => 'fieldset',
 				'id' => 'scene_photo' . $i,
-				'title'   => 'Photo Link ' . $i,
+				'title'   => 'Media Link ' . $i,
 				'fields' => array(
 					array(
 						'id'             => 'scene_photo_location' . $i,
 						'type'           => 'select',
-						'title'          => 'Image Location',
+						'title'          => 'Media Location',
 						'options'        => array(
 							'Internal' => 'Within this site',
 							'External' => 'Outside of this site',
@@ -1036,7 +1036,7 @@ class Graphic_Data_Scene {
 					array(
 						'id'       => 'scene_photo_internal' . $i,
 						'type'     => 'image',
-						'title'    => 'Image',
+						'title'    => 'Media',
 						'sanitize' => 'sanitize_url',
 					),
 				),
