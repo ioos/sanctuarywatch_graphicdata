@@ -1195,3 +1195,58 @@ body > nav{
 .card-body .instance_draft_button {
   flex: 1 1 auto;    /* stretch the button to fill the full card-body height */
 }
+
+/* Standard WordPress Page / block editor support
+   --------------------------------------------------
+   The custom front-page and scene templates use #entire_thing. Normal Pages use
+   .graphic-data-page so Gutenberg block content can render without inheriting
+   the instance-grid layout. */
+   .graphic-data-page {
+    padding: 2rem 0 3rem;
+  }
+  
+  .graphic-data-page-header,
+  .graphic-data-page-content > :where(:not(.alignwide):not(.alignfull)) {
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .graphic-data-page-title {
+    color: #033c73;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .graphic-data-page-content > .alignwide {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .graphic-data-page-content > .alignfull {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  .graphic-data-page-content img,
+  .graphic-data-page-content figure {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .graphic-data-page-content .wp-block-columns {
+    box-sizing: border-box;
+  }
+  
+  .graphic-data-page-content .wp-block-embed iframe,
+  .graphic-data-page-content iframe {
+    max-width: 100%;
+  }
+  

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "create-block/graphic-data-insert-figure",
+  "version": "0.1.0",
+  "title": "Graphic Data Insert Figure Data",
+  "category": "media",
+  "description": "Insert a figure into a post",
+  "example": {},
+  "attributes": {
+    "figureId": {
+      "type": "number",
+      "default": 0
+    },
+    "figureMode": {
+      "type": "string",
+      "default": "existing"
+    }
+  },
+  "supports": {
+    "color": {
+      "background": false,
+      "text": true
+    },
+    "html": false,
+    "typography": {
+      "fontSize": true
+    }
+  },
+  "textdomain": "graphic-data-insert-figure",
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php"
+}

@@ -266,15 +266,15 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - layout: Plotly layout object for axis, legend, and display settings.
  * - config: Plotly configuration object for rendering options.
  */
-export async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID){
-	    console.log('[GD] producePlotlyLineFigure called:',
-        'interactive_arguments length:', interactive_arguments?.length,
-        'preview:', interactive_arguments?.substring(0, 100));
+export async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document){
+	
+
     // try {
+
+		const renderDocument = targetDocument || document;
         await loadPlotlyScript(); // ensures Plotly is ready
 
         const rawField = interactive_arguments;
-        ////console.log(rawField);
         const figureArguments = Object.fromEntries(JSON.parse(rawField));
         const rootURL = window.location.origin;
 		let figureID = '';
@@ -283,18 +283,17 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
         if (postID == null) {
             // ADMIN SIDE POST ID GRAB
             figureID = document.getElementsByName("post_ID")[0].value;
-            console.log("figureID ADMIN:", figureID);
+            //console.log("figureID ADMIN:", figureID);
         }
         if (postID != null) {
             // THEME SIDE POST ID GRAB
             figureID = postID;
-            console.log("figureID THEME:", figureID);
+            //console.log("figureID THEME:", figureID);
         }
 
         // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyLineFigure a chance to finish running before the next one kicked off
         // producePlotlyLineFigure used to fail here because the script was running before the previous iteration finished. 
         const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-		console.log('figureRestCall', figureRestCall);
         const response = await fetch(figureRestCall);
 
         const data = await response.json();
@@ -309,12 +308,20 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
         }
         
         const responseJson = await rawResponse.json();
-		console.log('[GD] responseJson keys:', Object.keys(responseJson), 'type:', Array.isArray(responseJson) ? 'array' : typeof responseJson);
+		//console.log('[GD] responseJson keys:', Object.keys(responseJson), 'type:', Array.isArray(responseJson) ? 'array' : typeof responseJson);
 
         const dataToBePlotted = responseJson.data;
-		console.log('[GD] dataToBePlotted:', dataToBePlotted?.length, 'rows, first row:', JSON.stringify(dataToBePlotted?.[0]));
+		//console.log('[GD] dataToBePlotted:', dataToBePlotted?.length, 'rows, first row:', JSON.stringify(dataToBePlotted?.[0]));
 
-        let newDiv = document.createElement('div');
+		//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
+		let newDiv;
+		if (!targetDocument) {
+        	newDiv = document.createElement('div');
+		}
+		if (targetDocument) {
+        	newDiv = renderDocument.createElement('div');
+		}
+
         const plotlyDivID = `plotlyFigure${figureID}`;
         newDiv.id = plotlyDivID
         newDiv.classList.add("container", `figure_interactive${figureID}`);
@@ -323,12 +330,17 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
         const targetElementpostID = targetElementparts[targetElementparts.length - 1];
 
         if (figureID == targetElementpostID) {
-    		console.log('[GD] INSIDE IF: figureID=', figureID, 'targetElementpostID=', targetElementpostID, 'dataToBePlotted=', dataToBePlotted, 'dataToBePlotted?.date_yyyy=', dataToBePlotted?.['date_yyyy']);
 
-            ////console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`) ;            
-            // const targetElement = document.getElementById(targetFigureElement);
-            const targetElement = await waitForElementById(targetFigureElement);
-            targetElement.appendChild(newDiv);
+			//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
+			let targetElement;
+			if (!targetDocument) {
+				targetElement = await waitForElementById(targetFigureElement);
+				targetElement.appendChild(newDiv);
+			}
+			if (targetDocument) {
+				targetElement = renderDocument.getElementById(targetFigureElement);
+				targetElement.appendChild(newDiv);
+			}
             
             const numLines = figureArguments['NumberOfLines'];
 
@@ -756,24 +768,27 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
             };
 
             // Set up the plotlyDiv (The div the the plot will be rendered in)
-            const plotDiv = document.getElementById(plotlyDivID);         
+			//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
+            let plotDiv;
+			if (!targetDocument) {
+				plotDiv = document.getElementById(plotlyDivID);
+			}
+			if (targetDocument) {
+				plotDiv = renderDocument.getElementById(plotlyDivID);
+			}
             plotDiv.style.setProperty("width", "100%", "important");
             plotDiv.style.setProperty("max-width", "none", "important");
-            //plotDiv.style.border = "1px solid black";
-            //plotDiv.style.display = "inline-block";
                          
             // Create the plot with all lines
             // await Plotly.newPlot(plotlyDivID, allLinesPlotly, layout, config);
-			console.log('[GD] uploaded_path_json:', uploaded_path_json);
-			console.log('[GD] finalURL:', finalURL);
-			console.log('[GD] about to plot, allLinesPlotly length:', allLinesPlotly.length, 'numLines:', numLines);
 
             await Plotly.newPlot(plotDiv, allLinesPlotly, layout, config).then(() => {
                 // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
                 // You need the specific values for the entire yaxis
                 injectOverlays(plotDiv, layout, allLinesPlotly, figureArguments, dataToBePlotted);
             });
-            Plotly.Plots.resize(plotDiv)
+            Plotly.Plots.resize(plotDiv);
+
 
 
 			if (window.location.href.includes('post.php')) {

@@ -1,7 +1,10 @@
 /**
- * Registers a new block provided a unique name and an object defining its behavior.
+ * Registers the Graphic Data Figure block in the editor.
  *
- * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
+ * Important:
+ * - This file is for the Gutenberg editor bundle.
+ * - Do not import ./view here.
+ * - The frontend view script should be declared in block.json with "viewScript": "file:./view.js".
  */
 import { registerBlockType } from '@wordpress/blocks';
 
@@ -13,8 +16,7 @@ import save from './save';
 import metadata from './block.json';
 
 /**
- * Define a custom SVG icon for the block. This icon will appear in
- * the Inserter and when the user selects the block in the Editor.
+ * Define a custom SVG icon for the block.
  */
 const figureIcon = (
 	<svg
@@ -32,18 +34,14 @@ const figureIcon = (
 );
 
 /**
- * Every block starts by registering a new block type definition.
+ * Register the block for the editor.
  *
- * @see https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
+ * Spread metadata so the editor receives attributes/supports from block.json.
+ * Frontend rendering still comes from render.php + view.js, not from this file.
  */
 registerBlockType( metadata.name, {
+	...metadata,
 	icon: figureIcon,
-	/**
-	 * @see ./edit.js
-	 */
 	edit: Edit,
-	/**
-	 * @see ./save.js
-	 */
 	save,
 } );

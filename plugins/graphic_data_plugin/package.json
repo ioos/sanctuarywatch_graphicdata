@@ -1,7 +1,7 @@
 {
 	"scripts": {
-		"start:insert-figure": "wp-scripts start blocks/insert-figure/src/index.js --output-path=blocks/insert-figure/build",
-		"build:insert-figure": "wp-scripts build blocks/insert-figure/src/index.js --output-path=blocks/insert-figure/build"
+		"start:insert-figure": "wp-scripts start --source-path=blocks/insert-figure/src --output-path=blocks/insert-figure/build --webpack-copy-php",
+		"build:insert-figure": "wp-scripts build --source-path=blocks/insert-figure/src --output-path=blocks/insert-figure/build --webpack-copy-php"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^32.2.0"
