@@ -1,0 +1,681 @@
+/*
+* WPDataTables Graphite skin styles
+*/
+
+/*  Table   */
+
+/*  Table Header  */
+
+.wpdt-c .wpDataTablesFilter{
+    line-height:normal !important;
+}
+
+.wpDataTablesWrapper table.wpDataTable > thead > tr > th {
+    border-style: solid;
+    border-width: 1px 1px 2px;
+    cursor: pointer;
+    padding: 7px 10px;
+    text-align: left;
+}
+
+.wpDataTablesWrapper table.wpDataTable > thead > tr > th,
+.wpDataTablesWrapper table.wpDataTable thead th.sorting,
+.wpDataTablesWrapper .wdt-checkbox-filter.btn {
+    background-color: #313131; /* th background color */
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#4c4c4c),to(#313131));
+    background-image: -webkit-linear-gradient(top,#4c4c4c,#313131);
+    background-image: -o-linear-gradient(top,#4c4c4c,#313131);
+    background-image: linear-gradient(to bottom,#4c4c4c,#313131);
+    background-image: -moz-linear-gradient(top,#4c4c4c,#313131);
+    background-repeat: repeat-x;
+    filter: progid:dximagetransform.microsoft.gradient(startColorstr= '#ff4c4c4c',endColorstr= '#ff313131',GradientType= 0) !important;
+    border-color: #000000; /* th border color */
+    border-left-color:#545454;
+    color: #ffffff; /* th font color */
+    font-weight: 700;
+    padding: 7px 10px;
+    text-align: left;
+    cursor: pointer;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+}
+
+.wpDataTablesWrapper table.wpDataTable thead tr th {
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_asc,
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_desc,
+.wpDataTablesWrapper table.wpDataTable thead th.sorting:hover,
+.wpDataTablesWrapper .wdt-checkbox-filter.btn:hover {
+    background-color: #000000;  /* th active/hover background color */
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#313131),to(#000));
+    background-image: -webkit-linear-gradient(top,#313131,#000);
+    background-image: -o-linear-gradient(top,#313131,#000);
+    background-image: linear-gradient(to bottom,#313131,#000);
+    background-image: -moz-linear-gradient(top,#313131,#000);
+    filter: progid:dximagetransform.microsoft.gradient(startColorstr= '#ff313131',endColorstr= '#ff000000',GradientType= 0) !important;
+}
+
+.wpDataTablesWrapper table.wpDataTable thead th.sorting:after,
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_asc:after,
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_desc:after {
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0;
+    content: "";
+    height: 0;
+    width: 0;
+    vertical-align: 3px;
+    margin: 0 0 0 10px;
+    opacity: .6;
+}
+
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_asc:after {
+    border-top-width: 0;
+}
+
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_desc:after {
+    border-bottom-width: 0;
+}
+
+.wpDataTablesWrapper table.wpDataTable thead th.sorting:hover:after,
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_asc:after,
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_desc:after {
+    opacity: 1;
+}
+
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_desc:after {
+    border-top-color: #ffffff; /* th caret color = th font color */
+}
+
+.wpDataTablesWrapper table.wpDataTable thead th.sorting:after,
+.wpDataTablesWrapper table.wpDataTable thead th.sorting_asc:after {
+    border-bottom-color: #ffffff; /* th caret color = th font color */
+}
+
+
+/*  Table Body  */
+
+.wpDataTablesWrapper table.wpDataTable td {
+    border: 1px solid;
+    border-color: #e0e0e0; /* td inner border color */
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+    height : 25px;
+}
+
+.wpDataTablesWrapper table.wpDataTable tr:last-child td {
+    border-bottom-color: #c6c6c6;  /* table outer border color */
+}
+
+.wpDataTablesWrapper table.wpDataTable tr td:first-child {
+    border-left-color: #c6c6c6;  /* table outer border color */
+}
+
+.wpDataTablesWrapper table.wpDataTable tr td:last-child {
+    border-right-color: #c6c6c6;  /* table outer border color */
+}
+
+.wpDataTablesWrapper table.wpDataTable tr.odd td {
+    background-color: #f5f5f5;  /* odd rows background color */
+}
+
+.wpDataTablesWrapper table.wpDataTable tr.even td {
+    background-color: #ffffff;  /* even rows background color */
+}
+
+.wpDataTablesWrapper table.wpDataTable tr.odd td.sorting_1 {
+    background-color: #dbeaf6; /* odd rows active background color */
+}
+
+.wpDataTablesWrapper table.wpDataTable tr.even td.sorting_1 {
+    background-color: #f0f6fb; /* even rows active background color */
+}
+
+.wpDataTablesWrapper table.wpDataTable tr.odd:hover > td,
+.wpDataTablesWrapper table.wpDataTable tr.odd:hover > td.sorting_1,
+.wpDataTablesWrapper table.wpDataTable tr.even:hover > td,
+.wpDataTablesWrapper table.wpDataTable tr.even:hover > td.sorting_1 {
+    background-color: #f0f6fb; /* rows hover background color */
+}
+
+.wpDataTablesWrapper table.wpDataTable tr.odd.selected > td,
+.wpDataTablesWrapper table.wpDataTable tr.odd.selected > td.sorting_1,
+.wpDataTablesWrapper table.wpDataTable tr.even.selected > td,
+.wpDataTablesWrapper table.wpDataTable tr.even.selected > td.sorting_1 {
+    background-color: #dbeaf6; /* selected rows background color */
+}
+
+/*  Table Footer  */
+
+.wpDataTablesWrapper table.wpDataTable tfoot th {
+    border-top: 1px solid #000;
+    border-width: 1px 0;
+}
+
+/*  Table Pagination  */
+
+.wpDataTablesWrapper .dataTables_paginate {
+    font-size: 13px !important;
+    font-family: sans-serif !important;
+}
+
+.wpDataTablesWrapper .dataTables_paginate .paginate_button {
+    min-width: 1.5em;
+    padding: 0.6em 1.164em 0.4em 1.164em;
+    text-align: center;
+    text-decoration: none !important;
+    cursor: pointer;
+    color: rgb(23, 23, 23);
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+}
+
+.wpDataTablesWrapper .dataTables_paginate > .paginate_button {
+    font: 0/0 a;
+    background-color: transparent;
+    border: 0;
+    text-shadow: none;
+    text-indent: -9999em;
+}
+
+.wpDataTablesWrapper .dataTables_paginate a.paginate_button:focus {
+    outline: none !important;
+    box-shadow: none;
+}
+
+.wpDataTablesWrapper .dataTables_paginate .paginate_button:hover:not(.disabled) {
+    color: rgb(23, 23, 23);
+    background-color: #dbeaf6;
+}
+
+.wpDataTablesWrapper .dataTables_paginate .ellipsis {
+    margin:0 2px;
+}
+
+.wpDataTablesWrapper .dataTables_paginate .paginate_button.current,
+.wpDataTablesWrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #FFF;
+    background-color: rgb(23, 23, 23);
+}
+
+.wpDataTablesWrapper .dataTables_paginate .paginate_button.disabled:before,
+.wpDataTablesWrapper .dataTables_paginate .paginate_button.disabled:hover:before,
+.wpDataTablesWrapper .dataTables_paginate .paginate_button.disabled:active:before {
+    cursor: default !important;
+    opacity: 0.4;
+    color: rgb(23, 23, 23);
+    background: none !important;
+    box-shadow: none;
+}
+
+.wpDataTablesWrapper .paginate_button.next:before {
+    content: "\e001" !important;
+    padding: 0.9em 1.1em 0.601em 1.1em;
+}
+
+.wpDataTablesWrapper .paginate_button.previous:before {
+    content: "\e002" !important;
+    padding: 0.9em 1.08em 0.601em 1.08em;
+}
+
+.wpDataTablesWrapper .paginate_button.last:before {
+    content: "\e003";
+    padding: 0.9em 0.95em 0.601em 0.95em;
+}
+
+.wpDataTablesWrapper .paginate_button.first:before {
+    content: "\e004";
+    padding: 0.9em 0.95em 0.601em 0.95em;
+}
+
+.wpDataTablesWrapper .paginate_button.next:hover:before {
+    padding: 0.9em 1.1em 0.601em 1.1em;
+    color:rgb(23, 23, 23);
+}
+
+.wpDataTablesWrapper .paginate_button.previous:hover:before {
+    padding: 0.9em 1.08em 0.601em 1.08em;
+    color:rgb(23, 23, 23);
+}
+
+.wpDataTablesWrapper .paginate_button.last:hover:before {
+    padding: 0.9em 0.95em 0.601em 0.95em;
+    color:rgb(23, 23, 23);
+}
+
+.wpDataTablesWrapper .paginate_button.first:hover:before {
+    padding: 0.9em 0.95em 0.601em 0.95em;
+    color:rgb(23, 23, 23);
+}
+
+.wpDataTablesWrapper .dataTables_length .bootstrap-select.length_menu {
+    width: 80px;
+    padding: 0 5px;
+}
+
+.wpDataTablesWrapper .DTTT_button:before,
+.wpDataTablesWrapper .wdt-checkbox-filter.btn:before,
+.wpDataTablesWrapper .paginate_button:before,
+.wpDataTablesWrapper table.has-columns-hidden span.responsiveExpander:before {
+    display: inline-block;
+    font-family: wpDataTablesIcons !important;
+    font-style: normal;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    -webkit-font-smoothing: antialiased;
+}
+.wpDataTablesWrapper .DTTT_button.DTTT_button_md {
+    margin-left: 0 !important;
+}
+
+.wpDataTablesWrapper button.DTTT_button,
+.wpDataTablesWrapper div.DTTT_button,
+.wpDataTablesWrapper a.DTTT_button,
+.wpDataTablesWrapper button.DTTT_button:hover,
+.wpDataTablesWrapper div.DTTT_button:hover,
+.wpDataTablesWrapper a.DTTT_button:hover,
+.wpDataTablesWrapper button.DTTT_button,
+.wpDataTablesWrapper button.DTTT_button:hover {
+    background-color: transparent;
+    background-image: none;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.wpDataTablesWrapper .DTTT_button {
+    opacity: 0.7;
+}
+
+.wpDataTablesWrapper .DTTT_button {
+    opacity: 0.7;
+}
+
+.wpDataTablesWrapper .DTTT_button:hover {
+    opacity: 1;
+}
+
+.wpDataTablesWrapper .DTTT_button.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.wpDataTablesWrapper .wdt-checkbox-filter.btn:hover:before {
+    opacity: 1;
+}
+
+/*  Responsive  */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child:before,
+table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:before {
+    display: inline-block;
+    content: "";
+    height: 11px;
+    width: 11px;
+    background-image: url(../../img/icons.png);
+    background-repeat: no-repeat;
+    background-position: -12px 0;
+
+}
+
+/* Responsive table skin styles */
+.wpDataTablesWrapper table.has-columns-hidden span.responsiveExpander {
+    opacity: 0.6;
+}
+
+.wpDataTablesWrapper table.has-columns-hidden span.responsiveExpander:hover {
+    opacity: 1;
+}
+
+.wpDataTablesWrapper table.has-columns-hidden tr.row-detail > td {
+    background-color: #ffffff;  /* even rows background color */
+}
+
+
+/*  Export Tools  */
+
+.wpDataTablesWrapper button.DTTT_button,
+.wpDataTablesWrapper div.DTTT_button,
+.wpDataTablesWrapper a.DTTT_button,
+.wpDataTablesWrapper button.DTTT_button:hover,
+.wpDataTablesWrapper div.DTTT_button:hover,
+.wpDataTablesWrapper a.DTTT_button:hover {
+    background-color: transparent;
+    background-image: none;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.wpDataTablesWrapper .DTTT_button {
+    opacity: 0.7;
+}
+
+.wpDataTablesWrapper .DTTT_button {
+    opacity: 0.7;
+}
+
+.wpDataTablesWrapper .DTTT_button:hover {
+    opacity: 1;
+}
+
+.wpDataTablesWrapper .DTTT_button.disabled {
+    opacity: 0.4;
+}
+
+.wpDataTablesWrapper a.DTTT_button,
+.wpDataTablesWrapper a.DTTT_button:hover {
+    border-color: transparent;
+    border-style: solid;
+}
+
+/*  Popover Tools  */
+
+.wpDataTablesPopover {
+    background-color: rgba(0, 0, 0, 0.85);
+    border-radius: 5px;
+    color: #fff;
+    font-size: 12px;
+    padding: 7px 10px;
+}
+
+.wpDataTablesPopover:before {
+    border-top: 7px solid rgba(0, 0, 0, 0.85);
+    border-right: 7px solid transparent;
+    border-left: 7px solid transparent;
+    bottom: -7px;
+}
+
+.wpDataTablesPopover.editTools a.DTTT_button,
+.wpDataTablesPopover.editTools button.DTTT_button {
+    color: #ffffff !important;
+}
+
+.wpDataTables.wpDataTablesWrapper table.wpDataTable tr.odd td.error {
+    background-color: #f2dede;
+}
+/*  Formatting rule  */
+
+.formatting_rule_if_clause,
+.formatting_rule_action {
+    background-color: #fdfdfd !important;
+    border-color: #cccccc !important;
+    background-image: none !important;
+    color: #333333;
+    border-radius: 3px !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+    vertical-align: middle;
+}
+
+.cellVal {
+    font-size: inherit !important;
+    line-height: 20px !important;
+    -webkit-box-sizing: border-box !important;
+    -moz-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+}
+
+/*  Overlay  */
+
+.wpDataTables .overlayed {
+    position: relative;
+    pointer-events: none;
+}
+
+.wpDataTables .overlayed > * {
+    opacity: .3;
+}
+
+.wpDataTables .overlayed:after {
+    color: inherit;
+    font-size: 34px;
+    left: 50%;
+    margin-left: -15px;
+    margin-top: -20px;
+    opacity: 1;
+    position: absolute;
+    top: 50%;
+    -webkit-animation: spin 2s infinite linear;
+    -moz-animation: spin 2s infinite linear;
+    -o-animation: spin 2s infinite linear;
+    animation: spin 2s infinite linear;
+}
+
+.wpDataTables .overlayed:after {
+    font-family: wpDataTablesIcons !important;
+    content: "\e982";
+}
+
+@-moz-keyframes spin {
+    0% {
+        -moz-transform: rotate(0);
+    }
+    100% {
+        -moz-transform: rotate(359deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+    }
+}
+
+@-o-keyframes spin {
+    0% {
+        -o-transform: rotate(0);
+    }
+    100% {
+        -o-transform: rotate(359deg);
+    }
+}
+
+@-ms-keyframes spin {
+    0% {
+        -ms-transform: rotate(0);
+    }
+    100% {
+        -ms-transform: rotate(359deg);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(359deg);
+    }
+}
+
+.wpDataTables #wdt-checkbox-filter-close,
+.wpDataTables #wdt-checkbox-filter-reset {
+    background-color: #313131;
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#4c4c4c),to(#313131)) !important;
+    background-image: -webkit-linear-gradient(top,#4c4c4c,#313131) !important;
+    background-image: -o-linear-gradient(top,#4c4c4c,#313131) !important;
+    background-image: linear-gradient(to bottom,#4c4c4c,#313131) !important;
+    background-image: -moz-linear-gradient(top,#4c4c4c,#313131) !important;
+    background-repeat: repeat-x;
+    filter: progid:dximagetransform.microsoft.gradient(startColorstr= '#ff4c4c4c',endColorstr= '#ff313131',GradientType= 0) !important;
+    border-color: #000000;
+    border-left-color: #545454;
+    color: #ffffff;
+    -o-transition: .5s;
+    -ms-transition: .5s;
+    -moz-transition: .5s;
+    -webkit-transition: .5s;
+    transition: .5s;
+    -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+}
+
+.wpDataTables #wdt-checkbox-filter-close:hover,
+.wpDataTables #wdt-checkbox-filter-reset:hover {
+    color: #ffffff;
+    font-weight:bold;
+    background-color: #000000;
+    background-image: -webkit-gradient(linear,0 0,0 100%,from(#313131),to(#000)) !important;
+    background-image: -webkit-linear-gradient(top,#313131,#000) !important;
+    background-image: -o-linear-gradient(top,#313131,#000) !important;
+    background-image: linear-gradient(to bottom,#313131,#000) !important;
+    background-image: -moz-linear-gradient(top,#313131,#000) !important;
+    filter: progid:dximagetransform.microsoft.gradient(startColorstr= '#ff313131',endColorstr= '#ff000000',GradientType= 0) !important;
+}
+
+.wpDataTablesWrapper .wdt-checkbox-filter.btn:hover {
+    color: #ffffff;
+}
+
+.wpDataTablesWrapper table.wpDataTable .timepicker-hours,
+.wpDataTablesWrapper table.wpDataTable .timepicker-minutes {
+    color: initial;
+}
+
+.wpDataTablesWrapper th .text_filter,
+.wpDataTablesWrapper th .text_filter:focus,
+.wpDataTablesWrapper th .text_filter:hover,
+.wpDataTablesWrapper th .number_filter,
+.wpDataTablesWrapper th .number_filter:focus,
+.wpDataTablesWrapper th .number_filter:hover,
+.wpDataTablesWrapper th .wdt-select-filter > .btn-default,
+.wpDataTablesWrapper th .wdt-select-filter > .btn-default:focus,
+.wpDataTablesWrapper th .wdt-select-filter > .btn-default:hover,
+.wpDataTablesWrapper th .wdt-multiselect-filter > .btn-default,
+.wpDataTablesWrapper th .wdt-multiselect-filter > .btn-default:focus,
+.wpDataTablesWrapper th .wdt-multiselect-filter > .btn-default:hover,
+.wpDataTablesWrapper th .wdt-datepicker,
+.wpDataTablesWrapper th .wdt-datepicker:focus,
+.wpDataTablesWrapper th .wdt-datepicker:hover,
+.wpDataTablesWrapper th .wdt-datetimepicker,
+.wpDataTablesWrapper th .wdt-datetimepicker:focus,
+.wpDataTablesWrapper th .wdt-datetimepicker:hover,
+.wpDataTablesWrapper th .wdt-timepicker,
+.wpDataTablesWrapper th .wdt-timepicker:focus,
+.wpDataTablesWrapper th .wdt-timepicker:hover,
+.wpDataTablesWrapper th .number-range-filter,
+.wpDataTablesWrapper th .number-range-filter:focus,
+.wpDataTablesWrapper th .number-range-filter:hover {
+    color: #ffffff;
+}
+
+.wpdt-c .noUi-handle.noUi-handle-upper {
+    right: 0 !important;
+    left: 100% !important;
+    margin-top: 0px !important;
+    background-color: #D3D3D3 !important;
+}
+.wpdt-c .noUi-handle.noUi-handle-lower{
+    right: 0 !important;
+    left: 100% !important;
+    margin-top: 0px !important;
+    background-color: #D3D3D3 !important;
+}
+.wpdt-c .noUi-horizontal{
+    margin-top: 20px !important;
+    margin-right: 15px !important;
+}
+.wpdt-c .noUi-connect{
+    background-color: #696969 !important ;
+    margin-top: 0px !important;
+}
+
+#wdt-frontend-modal .wdt_checkbox_option,
+#wdt-frontend-modal .wdt-search-filters-button-container .wdt_checkbox_option {
+    margin-top: 0;
+}
+.wpdt-c.wpTableWCAG th:focus{
+    border: 2px solid #f5f5f5 !important;
+}
+.wpdt-c.wpTableWCAG *:focus{
+    box-shadow: #000000;
+    border: 2px solid #000000 !important;
+}
+.wpdt-c .modal#wdt-frontend-modal.wpTableWCAG .wdt-apply-duplicate-button:focus,
+.wpdt-c .modal#wdt-frontend-modal.wpTableWCAG .wdt-apply-edit-button:focus,
+.wpdt-c .modal#wdt-frontend-modal.wpTableWCAG .wdt-next-edit-button:focus,
+.wpdt-c .modal#wdt-frontend-modal.wpTableWCAG .wdt-prev-edit-button:focus,
+.wpdt-c .modal#wdt-frontend-modal.wpTableWCAG .wdt-cancel-edit-button:focus,
+.wpdt-c .modal#wdt-frontend-modal.wpTableWCAG .wdt-edit-dialog-button-block:focus,
+.wpdt-c .modal#wdt-frontend-modal.wpTableWCAG input.editDialogInput:focus,
+.wpdt-c .modal#wdt-delete-modal.wpTableWCAG .wdt-cancel-delete-button:focus,
+.wpdt-c .modal#wdt-delete-modal.wpTableWCAG .wdt-browse-delete-button:focus{
+    border: 2px solid #000000 !important;
+}
+.wpdt-c .modal#wdt-frontend-modal.wpTableWCAG .wdt-ok-edit-button:focus{
+    border: 2px solid #000000 !important;
+}
+.wpdt-c .modal-header.wpTableWCAG button:focus{
+    border: 5px solid #000000 !important;
+    line-height: 18px !important;
+}
+.wpdt-c.wpTableWCAG .dataTables_length button:focus{
+    border: none !important;
+}
+.wpdt-c.wpTableWCAG .wpDataTablesWrapper .DTTT_button.disabled {
+    opacity: 1;
+}
+.wpdt-c.wpTableWCAG .wpDataTablesWrapper tr a{
+    color: #1366a7;
+}
+.wpdt-c.wpTableWCAG .wpDataTablesWrapper .master_detail_column_btn{
+    color: #1366a7;
+}
+.wpdt-c.wpTableWCAG #wdt-pf-search-filters-button-block .wdt-pf-search-filters-button,
+.wpdt-c.wpTableWCAG #wdt-clear-filters-button-block .wdt-clear-filters-button{
+    background-color: #04b9ff;
+    color: #3e4249;
+}
+.wpdt-c.wpTableWCAG .wpDataTablesWrapper .filter_column button{
+    color: #747474;
+}
+.wpdt-c .wpDataTablesWrapper .dataTables_length .bootstrap-select .dropdown-toggle .filter-option {
+    margin-left: 20px;
+    display: inline-block;
+    overflow: hidden;
+    width: 100%;
+    text-align: left;
+    font-family: var(--wpdt-inter-google-font, inherit);
+    left: 0px;
+    height: auto;
+}

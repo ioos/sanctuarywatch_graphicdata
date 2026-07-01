@@ -1,0 +1,213 @@
+
+.wdt-addons .card-body {
+    background: #F1F1F1 !important;
+    padding: 33px 0 0 0 !important;
+}
+
+.wdt-addons .thumbnail {
+    background: #FFFFFF;
+    box-shadow: 0 3px 6px rgba(23, 43, 77, 0.08), 0 1px 1px rgba(23, 43, 77, 0.11);
+    border-radius: 3px;
+    padding: 20px;
+    min-height: 238px;
+    display: flex;
+    flex-direction: column;
+}
+
+.wdt-addons .wpdt-addons-desc {
+    min-height: 58px;
+    display: flex;
+}
+
+.wdt-addons .wpdt-addons-desc img {
+    display: inline-block !important;
+    background: #FFFFFF;
+    width: 50px;
+    height: 50px;
+    padding: 8px;
+    margin: 0 20px 0 0 !important;
+    box-shadow: 0 1px 2px rgba(9, 29, 112, 0.17);
+    border-radius: 12px;
+}
+
+.wdt-addons .wpdt-addons-desc img.wdt-gravity-img {
+    padding: 4px;
+}
+
+.wdt-addons .wpdt-addons-desc img.wdt-formidable-img {
+    padding: 0;
+}
+
+.wdt-addons .wdt-plugin-installed:hover:hover,
+.wdt-addons .wdt-plugin-installed:hover,
+.wdt-addons .wdt-plugin-installed:focus:focus,
+.wdt-addons .wdt-plugin-installed:focus,
+.wdt-addons .wdt-plugin-installed {
+    color: #008CFF !important;
+    background-color: rgba(0, 140, 255, 0.1) !important;
+    cursor: default;
+    padding: 8px 16px;
+    float: right;
+    line-height: 20px;
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+.wdt-addons .wpdt-addons-desc h4,
+.wdt-addons .wdt-checkout-button,
+.wdt-addons .thumbnail .caption,
+.wdt-addons .wdt-addons-find-out-more,
+.wdt-addons .wpdt-addons-intro {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.wdt-addons .wpdt-addons-intro {
+    line-height: 24px;
+    color: #5A6C89;
+}
+
+.wdt-addons .thumbnail .caption {
+    line-height: 24px;
+    color: #5A6C89;
+    padding: 16px 0 0 0;
+    min-height: 110px;
+}
+
+.wdt-addons .thumbnail .caption {
+    line-height: 24px;
+    color: #5A6C89;
+    padding: 16px 0 0 0;
+    min-height: 93px;
+}
+
+.wdt-addons .wpdt-addons-desc h4 {
+    display: inline-block;
+    line-height: 20px;
+    color: #091D70;
+    width: 197px;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+.wdt-addons .wdt-addons-links {
+    padding: 10px 0 0 0;
+}
+
+.wdt-addons .wdt-addons-links .btn {
+    float: right;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 8px 16px;
+    background: #008CFF;
+    border-radius: 5px;
+    color: #FFFFFF;
+}
+.wdt-addons .wdt-addons-links .btn.free-download{
+    float: left;
+}
+
+.wdt-addons .wdt-addons-find-out-more {
+    display: inline-block;
+    margin: 8px 16px 8px 0;
+    outline: none;
+    box-shadow: none;
+}
+
+.wdt-addons .wdt-checkout-button {
+    float: right;
+    line-height: 20px;
+    color: #FFFFFF;
+    padding: 8px 16px;
+    background: #008CFF;
+    border-radius: 5px;
+}
+
+.wdt-addons .wdt-checkout-button i {
+    margin-right: 8px;
+}
+
+.wdt-addons .ribbon {
+    position: absolute;
+    right: 10px;
+    top: -5px;
+    z-index: 1;
+    overflow: hidden;
+    width: 75px;
+    height: 75px;
+    text-align: right;
+}
+
+.wdt-addons .ribbon span {
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 20px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    width: 100px;
+    display: block;
+    background: #79a70a;
+    background: linear-gradient(#091D70 0, #091D70 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+    position: absolute;
+    top: 19px;
+    right: -21px;
+}
+
+.wdt-addons .ribbon span::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid #091D70;
+    border-right: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #091D70;
+}
+
+.wdt-addons .ribbon span::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid transparent;
+    border-right: 3px solid #091D70;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #091D70;
+}
+
+.wdt-addons p {
+    margin-bottom: 0;
+}
+
+@media (max-width: 1441px) {
+    .wdt-addons .thumbnail .caption {
+        min-height: 110px;
+    }
+}
+
+@media (max-width: 1025px) {
+    .wdt-addons .thumbnail .caption {
+        min-height: 170px;
+    }
+}
+
+@media (max-width: 768px) {
+    .wpdt-c .wdt-addons .col-sm-4 {
+        width: 100%;
+    }
+
+    .wdt-addons .thumbnail .caption {
+        min-height: 110px;
+    }
+}

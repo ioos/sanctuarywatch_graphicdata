@@ -177,6 +177,205 @@ function graphic_data_ensure_public_data_dir() {
 }
 
 /**
+ * Register the blocks in the plugin.
+ *
+ * Ensures the public data directory exists when the plugin is activated.
+ *
+ * @see graphic_data_ensure_public_data_dir()
+ */
+function graphic_data_register_blocks() {
+	register_block_type( __DIR__ . '/blocks/copyright-date-block/build' );
+	register_block_type( __DIR__ . '/blocks/insert-figure/build' );
+}
+
+add_action( 'init', 'graphic_data_register_blocks' );
+
+add_action( 'enqueue_block_editor_assets', function() {
+	wp_enqueue_editor();
+} );
+
+/**
+ * Register the figure fields for posts.
+ *
+ * Ensures the public data directory exists when the plugin is activated.
+ *
+ * @see graphic_data_ensure_public_data_dir()
+ */
+function graphic_data_register_figure_block_meta() {
+
+	$post_types = array( 'post', 'page' );
+
+	$fields = array(
+		'figure_published',
+		'figure_path',
+		'figure_title',
+		'figure_science_link_text',
+		'figure_science_link_url',
+		'figure_data_link_text',
+		'figure_data_link_url',
+		'figure_external_url',
+		'figure_external_alt',
+		'figure_code',
+		'figure_upload_file',
+		'figure_interactive_arguments',
+		'figure_caption_short',
+		'figure_caption_long',
+	);
+
+	foreach ( $post_types as $post_type ) {
+		foreach ( $fields as $field ) {
+			register_post_meta(
+				$post_type,
+				$field,
+				array(
+					'show_in_rest'      => true,
+					'single'            => true,
+					'type'              => 'string',
+					'sanitize_callback' => 'wp_kses_post',
+					'auth_callback'     => function () {
+						return current_user_can( 'edit_posts' );
+					},
+				)
+			);
+		}
+	}
+}
+
+add_action( 'init', 'graphic_data_register_figure_block_meta' );
+
+add_action( 'rest_api_init', 'graphic_data_register_figure_block_routes' );
+
+function graphic_data_register_figure_block_routes() {
+	register_rest_route(
+		'graphic-data/v1',
+		'/figure/(?P<id>\d+)',
+		array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => 'graphic_data_get_figure_block_meta',
+				'permission_callback' => function ( $request ) {
+					$post_id = absint( $request['id'] );
+					return current_user_can( 'edit_post', $post_id );
+				},
+			),
+			array(
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => 'graphic_data_save_figure_block_meta',
+				'permission_callback' => function ( $request ) {
+					$post_id = absint( $request['id'] );
+					return current_user_can( 'edit_post', $post_id );
+				},
+			),
+		)
+	);
+}
+
+
+function graphic_data_get_figure_block_meta( WP_REST_Request $request ) {
+	$post_id = absint( $request['id'] );
+
+	if ( 'figure' !== get_post_type( $post_id ) ) {
+		return new WP_Error(
+			'invalid_post_type',
+			'This endpoint only supports figure posts.',
+			array( 'status' => 400 )
+		);
+	}
+
+	$science_info = get_post_meta( $post_id, 'figure_science_info', true );
+	$data_info    = get_post_meta( $post_id, 'figure_data_info', true );
+
+	if ( ! is_array( $science_info ) ) {
+		$science_info = array();
+	}
+
+	if ( ! is_array( $data_info ) ) {
+		$data_info = array();
+	}
+
+	return rest_ensure_response(
+		array(
+			'figure_published'             => get_post_meta( $post_id, 'figure_published', true ),
+			'location'                     => get_post_meta( $post_id, 'location', true ),
+			'figure_scene'                 => get_post_meta( $post_id, 'figure_scene', true ),
+			'figure_modal'                 => get_post_meta( $post_id, 'figure_modal', true ),
+			'figure_tab'                   => get_post_meta( $post_id, 'figure_tab', true ),
+			'figure_order'                 => get_post_meta( $post_id, 'figure_order', true ),
+			'figure_path'                  => get_post_meta( $post_id, 'figure_path', true ),
+			'figure_title'                 => get_post_meta( $post_id, 'figure_title', true ),
+			'figure_image'                 => get_post_meta( $post_id, 'figure_image', true ),
+			'figure_external_url'          => get_post_meta( $post_id, 'figure_external_url', true ),
+			'figure_external_alt'          => get_post_meta( $post_id, 'figure_external_alt', true ),
+			'figure_code'                  => get_post_meta( $post_id, 'figure_code', true ),
+			'figure_upload_file'           => get_post_meta( $post_id, 'figure_upload_file', true ),
+			'uploaded_file'                => get_post_meta( $post_id, 'uploaded_file', true ),
+			'figure_interactive_arguments' => get_post_meta( $post_id, 'figure_interactive_arguments', true ),
+			'figure_caption_short'         => get_post_meta( $post_id, 'figure_caption_short', true ),
+			'figure_caption_long'          => get_post_meta( $post_id, 'figure_caption_long', true ),
+
+			// Flatten Exopite fieldsets for React.
+			'figure_science_link_text'     => isset( $science_info['figure_science_link_text'] ) ? $science_info['figure_science_link_text'] : '',
+			'figure_science_link_url'      => isset( $science_info['figure_science_link_url'] ) ? $science_info['figure_science_link_url'] : '',
+			'figure_data_link_text'        => isset( $data_info['figure_data_link_text'] ) ? $data_info['figure_data_link_text'] : '',
+			'figure_data_link_url'         => isset( $data_info['figure_data_link_url'] ) ? $data_info['figure_data_link_url'] : '',
+		)
+	);
+}
+
+function graphic_data_save_figure_block_meta( WP_REST_Request $request ) {
+	$post_id = absint( $request['id'] );
+
+	if ( 'figure' !== get_post_type( $post_id ) ) {
+		return new WP_Error(
+			'invalid_post_type',
+			'This endpoint only supports figure posts.',
+			array( 'status' => 400 )
+		);
+	}
+
+	$params = $request->get_json_params();
+
+	update_post_meta( $post_id, 'figure_published', sanitize_text_field( $params['figure_published'] ?? 'draft' ) );
+	update_post_meta( $post_id, 'location', sanitize_text_field( $params['location'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_scene', sanitize_text_field( $params['figure_scene'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_modal', sanitize_text_field( $params['figure_modal'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_tab', sanitize_text_field( $params['figure_tab'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_order', absint( $params['figure_order'] ?? 1 ) );
+
+	update_post_meta( $post_id, 'figure_path', sanitize_text_field( $params['figure_path'] ?? 'Internal' ) );
+	update_post_meta( $post_id, 'figure_title', sanitize_text_field( $params['figure_title'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_image', esc_url_raw( $params['figure_image'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_external_url', esc_url_raw( $params['figure_external_url'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_external_alt', sanitize_text_field( $params['figure_external_alt'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_code', wp_kses_post( $params['figure_code'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_upload_file', sanitize_text_field( $params['figure_upload_file'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_interactive_arguments', wp_kses_post( $params['figure_interactive_arguments'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_caption_short', wp_kses_post( $params['figure_caption_short'] ?? '' ) );
+	update_post_meta( $post_id, 'figure_caption_long', wp_kses_post( $params['figure_caption_long'] ?? '' ) );
+
+	// Save fieldsets in Exopite-compatible associative array shape.
+	update_post_meta(
+		$post_id,
+		'figure_science_info',
+		array(
+			'figure_science_link_text' => sanitize_text_field( $params['figure_science_link_text'] ?? '' ),
+			'figure_science_link_url'  => esc_url_raw( $params['figure_science_link_url'] ?? '' ),
+		)
+	);
+
+	update_post_meta(
+		$post_id,
+		'figure_data_info',
+		array(
+			'figure_data_link_text' => sanitize_text_field( $params['figure_data_link_text'] ?? '' ),
+			'figure_data_link_url'  => esc_url_raw( $params['figure_data_link_url'] ?? '' ),
+		)
+	);
+
+	return graphic_data_get_figure_block_meta( $request );
+}
+
+/**
  * Begins execution of the plugin.
  *
  * Since everything within the plugin is registered via hooks,

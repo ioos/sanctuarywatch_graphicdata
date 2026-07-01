@@ -1,0 +1,206 @@
+/*
+	Version: 4.0.2
+*/
+#visualizer-library-view {
+	padding: 30px 10px 10px 30px;
+}
+
+.visualizer-library-filters {
+	margin-top: 18px !important;
+	margin-left: 14px !important;
+}
+
+.visualizer-clearfix {
+	*zoom: 1;
+}
+
+.visualizer-clearfix:before,
+.visualizer-clearfix:after {
+	display: table;
+	line-height: 0;
+	content: "";
+}
+
+.visualizer-clearfix:after {
+	clear: both;
+}
+
+.visualizer-library-chart {
+	float: left;
+	margin: 0 20px 20px 0;
+	padding: 5px;
+	border: 1px solid #ddd;
+	background-color: #efefef;
+	box-shadow: 0 0 8px #ddd;
+}
+
+.visualizer-library-chart-canvas {
+	width: 250px;
+	height: 187px;
+	border: 1px solid #ddd;
+	background-color: white;
+	background-image: url("../images/ajax-loader.gif");
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.visualizer-library-nochart-canvas {
+	position: relative;
+	background-image: url("../images/notfound.png?v=4");
+	background-repeat: repeat;
+}
+
+.visualizer-library-notfound {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	left: 0;
+	margin-top: -7px;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.visualizer-library-chart-action {
+	display: block;
+	float: right;
+	width: 16px;
+	height: 16px;
+	margin: 2px 5px 0;
+	background-image: url("../images/ui-icons.png");
+	background-repeat: no-repeat;
+}
+
+.visualizer-library-nochart-delete,
+.visualizer-library-chart-delete {
+	background-position: -176px -96px;
+}
+
+.visualizer-library-nochart-insert,
+.visualizer-library-chart-insert {
+	background-position: -48px -48px;
+}
+
+.visualizer-library-nochart-delete,
+.visualizer-library-nochart-insert {
+	opacity: 0.5;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+	filter: alpha(opacity=50);
+}
+
+.visualizer-library-chart-footer {
+	margin-top: 4px;
+}
+
+.visualizer-library-chart-shortcode {
+	padding: 3px 0;
+	color: #aaa;
+	text-shadow: 0 1px 0 #fff;
+	cursor: pointer;
+}
+
+.visualizer-library-chart-shortcode::-moz-selection,
+.visualizer-library-chart-shortcode::-moz-selection {
+	color: black;
+	background-color: #a8d1ff;
+	text-shadow: none;
+}
+
+.visualizer-library-chart-shortcode::selection,
+.visualizer-library-chart-shortcode::-moz-selection {
+	color: black;
+	background-color: #a8d1ff;
+	text-shadow: none;
+}
+
+#visualizer-library-pagination {
+	margin-right: 30px;
+}
+
+.visualizer-library-pagination-item {
+	float: left;
+	margin-top: 10px;
+	margin-left: 20px;
+}
+
+.visualizer-library-pagination-page {
+	padding: 5px 10px;
+	border-radius: 2px;
+	color: white !important;
+	background-color: #aaa;
+	box-shadow: 0 0 5px #ccc;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.visualizer-library-pagination-active > .visualizer-library-pagination-page,
+a.visualizer-library-pagination-page:hover {
+	background-color: lightcoral;
+	box-shadow: 0 0 5px lightpink;
+}
+
+.locker,
+.locker-loader {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.locker {
+	z-index: 1000;
+	opacity: 0.8;
+	background-color: white;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	filter: alpha(opacity=80);
+}
+
+.locker-loader {
+	z-index: 1001;
+	background: url(../images/ajax-loader.gif) no-repeat center center;
+}
+
+
+/* TinyMCE button */
+i.mce-i-visualizer-icon:before {
+	content: "\f184";
+	display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    font: 400 20px/1 dashicons;
+    vertical-align: top;
+}
+
+.visualizer-chart-bg, .visualizer-chart-insert-bg {
+	display: none;
+}
+
+.visualizer-library-chart:hover .visualizer-chart-bg {
+	display: block;
+	position: absolute;
+    background: #000000;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+}
+
+.visualizer-library-chart:hover .visualizer-chart-bg ~ .visualizer-chart-insert-bg {
+	display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+}
+
+button.visualizer-library-chart-insert{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

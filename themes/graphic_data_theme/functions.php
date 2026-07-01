@@ -580,6 +580,21 @@ function graphic_data_get_modal_array( $svg_url ) {
 add_theme_support( 'title-tag' );
 
 /**
+ * Add block-editor support for normal WordPress Pages.
+ *
+ * The Graphic Data Theme is a classic PHP theme, so Pages need classic-theme
+ * block support flags plus a page.php template that calls the_content().
+ */
+function graphic_data_theme_add_page_block_support() {
+	add_theme_support( 'wp-block-styles' );
+	add_theme_support( 'align-wide' );
+	add_theme_support( 'responsive-embeds' );
+	add_theme_support( 'editor-styles' );
+	add_editor_style( 'style.css' );
+}
+add_action( 'after_setup_theme', 'graphic_data_theme_add_page_block_support' );
+
+/**
  * Create document title.
  *
  * Modifies the title display based on the page type:

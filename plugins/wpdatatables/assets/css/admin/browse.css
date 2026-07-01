@@ -1,0 +1,557 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+
+@font-face {
+    font-family: 'wpDataTablesIcons' !important;
+    src: url(../../fonts/wpDataTablesIcons.eot);
+    src: url(../../fonts/wpDataTablesIcons.eot?#iefix) format('embedded-opentype'), url(../../fonts/wpDataTablesIcons.woff) format('woff'), url(../../fonts/wpDataTablesIcons.ttf) format('truetype'), url(../../fonts/wpDataTablesIcons.svg#wpDataTablesIcons) format('svg');
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table {
+    font-family: Inter;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table div.wpdt-bulk-select {
+    display: none;
+}
+
+/* Common elements */
+.wdt-datatables-admin-wrap .card.wdt-browse-table .btn {
+    box-shadow: none;
+}
+
+/* Card header */
+.wdt-datatables-admin-wrap .card.wdt-browse-table .card-header .actions .wdt-add-new {
+    font-size: 14px;
+    padding: 8px 16px;
+    background: #008CFF;
+    border-radius: 5px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    text-transform: none;
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table .card-header .actions .wdt-add-new:hover {
+    background: #0B86EC;
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table .card-header .actions .wdt-add-new i {
+    margin-right: 4px;
+}
+
+/* Browse table */
+.wdt-datatables-admin-wrap .card.wdt-browse-table .widefat td, .wdt-datatables-admin-wrap .card.wdt-browse-table .widefat th {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #5A6C89;
+    border: none;
+    margin: 5px 0;
+    vertical-align: middle;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .widefat td.id.column-id {
+    color: #000000;
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table .wdt-function-flex {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .widefat td.functions.column-functions {
+    text-align: center;
+    padding-top: 12px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table {
+    border: 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table a:not(.wdt-copy-shortcode-browse) {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #008CFF;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table a.wdt-copy-shortcode-browse {
+    color: #304463;
+    cursor: pointer;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .no-items td {
+    padding: 20px 0 20px 30px;
+    text-align: center;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table a:focus {
+    box-shadow: none;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table th {
+    border-right: 0 !important
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table th#id {
+    width: 5%;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead tr th a span {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #5A6C89;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th {
+    background: #F8F8FA;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th .sorting-indicator {
+    position: relative;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted .sorting-indicator:before {
+    color: #5A6C89;
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted.desc .sorting-indicator:before,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted.asc:hover .sorting-indicator:before,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sortable .sorting-indicator:before {
+    position: absolute;
+    font-size: 15px;
+    left: 0;
+    top: -3px;
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted.desc:hover .sorting-indicator:before,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted.asc .sorting-indicator:before {
+    top: -3px;
+    left: 0;
+    position: absolute;
+    font-size: 15px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted.desc .sorting-indicator:before {
+    font-family: "wpDataTablesIcons";
+    content: "\f0dd";
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted.asc .sorting-indicator:before {
+    font-family: "wpDataTablesIcons";
+    content: "\f0e1";
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted.desc:hover .sorting-indicator:before {
+    font-family: "wpDataTablesIcons";
+    content: "\f0e1";
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sorted.asc:hover .sorting-indicator:before {
+    font-family: "wpDataTablesIcons";
+    content: "\f0dd";
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th.sortable .sorting-indicator:before {
+    color: #5A6C89;
+    font-family: "wpDataTablesIcons";
+    opacity: 0.4;
+    content: '\f0e1';
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table thead th .sorting-indicator {
+    visibility: visible !important;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tbody tr {
+    border-top: 1px solid #F3F3FA;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tbody > :nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tbody tr.checked-row {
+    background-color: rgba(0, 140, 255, 0.06);
+    border-bottom: 1px solid rgba(0, 140, 255, 0.2) !important;
+    border-top: 1px solid rgba(0, 140, 255, 0.2) !important;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tbody tr.checked-row .column-functions a i {
+    display: none;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.check-column {
+    width: 55px;
+    background: #F8F8FA;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .check-column .checkbox {
+    margin: -5px 0 4px 27px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .check-column .checkbox input[type="checkbox"] {
+    position: relative;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .check-column .checkbox .input-helper:after {
+    top: -2px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .check-column .checkbox .input-helper:before {
+    top: -3px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .check-column .checkbox input[type="checkbox"] {
+    margin-top: 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table #cb .checkbox input[type="checkbox"] {
+    margin-top: 4px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table #cb .checkbox .input-helper:after,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table #cb .checkbox .input-helper:before {
+    top: 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table #cb .checkbox {
+    margin: -2px 0 0 27px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.table_type,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.connection,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.shortcode,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.engine,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.type {
+    padding: 18px 10px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.shortcode {
+    display: flex;
+    width: inherit !important;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.shortcode i {
+    padding: 4px 7px;
+    line-height: 20px;
+    background: #EBECF0;
+    border-radius: 3px 0 0 3px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.table_type span.wpdt-type-column,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.shortcode span.wdt-shortcode,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.engine span.wdt-render-engine{
+    padding: 4px 8px;
+    color: #172B4D;
+    background: #FAFBFC;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    border-radius: 3px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 20px;
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.connection span.wpdt-type-column,
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.type span.wdt-chart-type{
+    padding: 2px 6px;
+    color: #061938;
+    box-sizing: border-box;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table td.shortcode span.wdt-shortcode {
+    background: #F4F5F7;
+    border-radius: 0 3px 3px 0;
+    padding: 4px 8px;
+    border: none;
+    font-weight: normal;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .column-functions .btn {
+    margin: 3px 0 0 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table .column-functions a {
+    line-height: 40px;
+    display: inline-block;
+    position: relative;
+    font-size: 20px;
+    color: #304463;
+    width:36px;
+    height: 36px;
+}
+
+
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tr:hover > .column-functions a:hover  {
+    background: #FFFFFF;
+    border-radius: 28px;
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tr.checked-row:hover > .column-functions a {
+    display: none;
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tr:hover > .column-functions a.wdt-configure {
+    color: #4CAF50;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tr .column-functions a i {
+    font-size: 15px;
+    color: #ffffff;
+    position: absolute;
+    left: 11px;
+    top: 10px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tr:hover {
+    background: #F8F8FA;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table table tr:hover > .column-functions a i {
+    color: #304463;
+}
+
+/* Search box and bulk actions list */
+.wdt-datatables-admin-wrap .card.wdt-browse-table .wpdt-search-box {
+    padding: 16px 0 16px 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .wpdt-search-box .fg-line {
+    position: relative;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .wpdt-search-box i {
+    position: absolute;
+    top: 11px;
+    left: 10px;
+    color: #091E6F;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .wpdt-search-box input {
+    background: #FFFFFF;
+    border: 1px solid #DBDFEA;
+    box-sizing: border-box;
+    box-shadow: 0 0.5px 2px rgba(15, 30, 81, 0.11);
+    border-radius: 4px;
+    margin: 0;
+    padding: 8px 0 8px 30px;
+    min-width: 300px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .wpdt-bulk-select span.filter-option {
+    font-size: 14px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .search-box-container .btn-icon,
+.wdt-datatables-admin-wrap .card.wdt-browse-table .bulk-action-container .btn-icon {
+    position: absolute;
+    top: 5px;
+    right: 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table #doaction {
+    padding: 6px 10px;
+    background: #FFFFFF;
+    border: 1px solid #EBECF0;
+    box-sizing: border-box;
+    border-radius: 4px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #061938;
+    margin: 4px 0 0 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table #doaction:hover {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.03)), #FFFFFF;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+}
+.wdt-datatables-admin-wrap .card.wdt-browse-table #doaction.disabled:hover,
+.wdt-datatables-admin-wrap .card.wdt-browse-table #doaction.disabled {
+    cursor: not-allowed;
+    background: #FFFFFF;
+    opacity: 0.5;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+    color: #253858;
+    border-radius: 5px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .bulk-action-button i {
+    margin-right: 8px;
+    color: #304463;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .bulk-action-button:hover,
+.wdt-datatables-admin-wrap .card.wdt-browse-table .bulk-action-button:active {
+    color: #061938;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table #search-submit {
+    position: absolute;
+    top: 9px;
+    right: 25px;
+    border: 0;
+    background-color: inherit;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table #search-submit i {
+    font-size: 25px;
+    color: #cdcdcd;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table #search-submit:hover i,
+.wdt-datatables-admin-wrap .card.wdt-browse-table #search-submit:active i {
+    color: #2196f3 !important;
+}
+
+/* Duplicate table dialog */
+#wdt-duplicate-table-modal .duplicate-explain-trigger {
+    cursor: pointer;
+    font-size: 17px;
+    vertical-align: middle;
+}
+
+#wdt-duplicate-table-modal .duplicate-table-label {
+    margin: 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .wdt-documentation {
+    margin: 18px 0 18px 0;
+    color: #253858;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .wdt-documentation i {
+    margin-right: 8px;
+    color: #253858;
+}
+
+/* Browse page pagination */
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination {
+    margin: 18px 0 18px 0;
+    display: inline-flex;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li {
+    margin: 0;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.disabled {
+    opacity: 1;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li > a {
+    background-color: #ffffff;
+    border-radius: 0;
+    color: #5A6C89;
+    height: 30px;
+    line-height: 30px;
+    width: 30px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.active > a {
+    background: #008CFF;
+    border-radius: 3px;
+    color: #ffffff;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.disabled > a {
+    color: #c7c7c7;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li > a:focus {
+    box-shadow: none;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li:first-child > a {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li:last-child > a {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li > a > i,
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.ellipses-dots {
+    font-size: 17px;
+    width: 30px;
+    line-height: 30px;
+    height: 30px;
+    text-align: center;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.ellipses-dots {
+    color: #777777;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li a:before {
+    font-size: 15px;
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.previous.first a:before {
+    font-family: wpDataTablesIcons;
+    content: "\f100";
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.previous a:before {
+    font-family: wpDataTablesIcons;
+    content: "\f104";
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.next.last a:before {
+    font-family: wpDataTablesIcons;
+    content: "\f101";
+}
+
+.wdt-datatables-admin-wrap .card.wdt-browse-table .pagination > li.next a:before {
+    font-family: wpDataTablesIcons;
+    content: "\f105";
+}
+@media(max-width:750px) {
+    .wdt-datatables-admin-wrap .card.wdt-browse-table table td.check-column {
+        width: 1px;
+    }
+    .wdt-datatables-admin-wrap .card.wdt-browse-table .wpdt-search-box input {
+        min-width: 200px;
+    }
+    .wdt-datatables-admin-wrap .card.wdt-browse-table .tablenav{
+        padding-top: 0px;
+    }
+    .wdt-datatables-admin-wrap .card.wdt-browse-table .tablenav.top {
+        margin: 10px 0 5px 0;
+    }
+    .wdt-datatables-admin-wrap .card.wdt-browse-table #doaction {
+        padding: 10px;
+    }
+    .wpdt-c .wdt-datatables-admin-wrap .card.wdt-browse-table .pull-left,
+    .wpdt-c .wdt-datatables-admin-wrap .card.wdt-browse-table .pull-right {
+        float: none !important;
+        text-align: center;
+    }
+    .wpdt-c .wdt-datatables-admin-wrap .card.wdt-browse-table .search-box-container {
+        float: right !important;
+    }
+}

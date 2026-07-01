@@ -1,0 +1,33 @@
+.wpdatatable-fusion-icon:before {
+    background-image: url(../img/vc-icon.png) !important;
+}
+.wpdatachart-fusion-icon:before {
+    background-image: url(../img/vc-charts-icon.png) !important;
+}
+.wpdatachart-fusion-icon:before,
+.wpdatatable-fusion-icon:before {
+    filter: unset !important;
+    content: '';
+    background-position: center;
+    display: inline-block;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 14px;
+    background-size: 16px;
+}
+.wpdatatable-head-title,
+.wpdatachart-head-title {
+    font-weight: bold;
+}
+.fusion-builder-live .wpdatachart-fusion-icon:before,
+.fusion-builder-live  .fusion-builder-all-modules .wpdatachart-fusion-icon:before{
+    width: 30px;
+    height: 30px;
+    background-size: 30px;
+}
+.fusion-builder-live .wpdatatable-fusion-icon:before,
+.fusion-builder-live .fusion-builder-all-modules .wpdatatable-fusion-icon:before {
+    width: 35px;
+    height: 30px;
+    background-size: 35px;
+}

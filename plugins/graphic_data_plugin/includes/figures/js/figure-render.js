@@ -289,6 +289,11 @@ export async function render_interactive_plots(tabContentElement, info_obj) {
 			}
 
 			//Google Tags
+            document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (event) => {  
+                console.log('Received graphic-data:figureTimeseriesGraphLoaded', event.detail);
+            });
+
+
 			if (!window.location.href.includes('post.php')) {
                 document.dispatchEvent( new CustomEvent( 'graphic-data:figureTimeseriesGraphLoaded', {
                     detail: { title, postID }
@@ -479,6 +484,10 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             window.dataLayer = window.dataLayer || [];
 
             //Google Tags
+            document.addEventListener('graphic-data:figureInternalImageLoaded', (event) => {  
+                console.log('Received graphic-data:figureInternalImageLoaded', event.detail);
+            });
+            
             if (!window.location.href.includes('post.php')) {
                 document.dispatchEvent( new CustomEvent( 'graphic-data:figureInternalImageLoaded', {
                     detail: { title, postID }
@@ -511,6 +520,10 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             } else {}
 
             //Google Tags
+            document.addEventListener('graphic-data:figureExternalImageLoaded', (event) => {  
+                console.log('Received graphic-data:figureExternalImageLoaded', event.detail);
+            });
+
             if (!window.location.href.includes('post.php')) {
                 document.dispatchEvent( new CustomEvent( 'graphic-data:figureExternalImageLoaded', {
                     detail: { title, postID }
@@ -575,6 +588,10 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             codeDiv.innerHTML = tempDiv.innerHTML;
 
             //Google Tags
+            document.addEventListener('graphic-data:figureCodeDisplayLoaded', (event) => {  
+                console.log('Received graphic-data:figureCodeDisplayLoaded', event.detail);
+            });
+
             if (!window.location.href.includes('post.php')) {
                 document.dispatchEvent( new CustomEvent( 'graphic-data:figureCodeDisplayLoaded', {
                     detail: { title, postID }

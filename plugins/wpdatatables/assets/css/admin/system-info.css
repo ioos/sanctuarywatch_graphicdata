@@ -1,0 +1,122 @@
+.wdt-datatables-admin-wrap .wdt-system-info {
+    font-family: Inter;
+    font-style: normal;
+}
+.wdt-datatables-admin-wrap .wdt-system-info .btn-primary {
+    border-radius: 6px;
+}
+.wdt-datatables-admin-wrap .wdt-system-info .card-head {
+    background: none;
+}
+.wdt-datatables-admin-wrap .wdt-system-info-card {
+    padding: 28px 32px !important;
+    box-shadow: 0 1px 1px rgba(23, 43, 77, 0.11) !important;
+    border-radius: 3px;
+}
+
+.wdt-datatables-admin-wrap .wdt-system-info .card-head .wdt-admin-card-header h2 a {
+    box-shadow: none !important;
+    color: #304463 !important;
+}
+.wdt-datatables-admin-wrap .wdt-system-info .card-head .wdt-admin-card-header h2 a i {
+    font-size: 16px;
+    margin-right: 4px;
+    vertical-align: bottom;
+    font-style: normal;
+    line-height: 24px;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table{
+    width: 100%;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table.m-t-40{
+    margin-top: 40px;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table thead th{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 24px;
+    color: #091D70;
+    border-bottom: 2px solid #008CFF;
+}
+
+.wdt-datatables-admin-wrap  table.wdt-system-info-table tbody tr td {
+    padding: 12px 12px 10px 12px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    border-bottom: 1px solid #E7E8EC;
+}
+
+.wdt-datatables-admin-wrap  table.wdt-system-info-table tbody tr td:first-child{
+    width: 30%;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table tbody tr td:last-child{
+    width: 10%;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table .help{
+    text-align: right;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table .wpdt-error{
+    color: #FF0000;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table .wpdt-error-bg{
+    color: #FFF5F5;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table .wpdt-warning{
+    color: #F08C00 !important;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table .wpdt-warning-bg{
+    background: #fcfcec;
+}
+.wdt-datatables-admin-wrap  table.wdt-system-info-table .help i{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 20px;
+    color: #008CFF !important;
+}
+
+/* FOOTER*/
+.wdt-datatables-admin-wrap .wpdt-footer-links li {
+    display: inline-block;
+    margin-right: 12px;
+}
+
+.wdt-datatables-admin-wrap .wpdt-footer-links li a {
+    color: #5A6C89;
+    box-shadow: none;
+}
+.wdt-datatables-admin-wrap  .wdt-footer-title {
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    margin-top: 60px;
+    margin-bottom: 20px;
+}
+
+.wdt-datatables-admin-wrap .wdt-footer-title img {
+    margin-left: 10px;
+    vertical-align: bottom;
+}
+@media (max-width: 768px) {
+
+    .wdt-datatables-admin-wrap table.wdt-system-info-table tbody tr td {
+        word-break: break-word;
+    }
+    .wdt-datatables-admin-wrap table.wdt-system-info-table tbody tr td:last-child {
+        display: none;
+    }
+    .wdt-datatables-admin-wrap table.wdt-system-info-table tbody tr td:first-child ,
+    .wdt-datatables-admin-wrap table.wdt-system-info-table tbody tr td {
+        width: 50%;
+    }
+    .wpdt-c .card .card-header .actions {
+        top: 12px !important;
+    }
+
+}

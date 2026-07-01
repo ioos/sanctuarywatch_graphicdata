@@ -1,0 +1,90 @@
+table.has-columns-hidden > tbody > tr > td > span.responsiveExpander,
+table.has-columns-hidden > tbody > tr.detail-show > td span.responsiveExpander {
+	background-color: #ffffff;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e0e0e0) );
+	background-image: -webkit-linear-gradient(top, #ffffff, #e0e0e0);
+	background-image: -o-linear-gradient(top, #ffffff, #e0e0e0);
+	background-image: linear-gradient(to bottom, #ffffff, #e0e0e0);
+	background-image: -moz-linear-gradient(top, #ffffff, #e0e0e0);
+	filter: progid:dximagetransform.microsoft.gradient(  startColorstr=  '#ffffffff', endColorstr=  '#ffe0e0e0', GradientType=  0 );
+	border: 1px solid #e0e0e0;
+	cursor: pointer;
+	display: inline-block;
+	line-height: 0;
+	font-size: 0;
+	padding: 1px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	margin-right: 3px;
+}
+
+table.has-columns-hidden > tbody > tr > td > span.responsiveExpander:hover,
+table.has-columns-hidden > tbody > tr.detail-show > td span.responsiveExpander:hover {
+	background-color: #fff;
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f5f5f5) );
+	background-image: -webkit-linear-gradient(top, #ffffff, #f5f5f5);
+	background-image: -o-linear-gradient(top, #ffffff, #f5f5f5);
+	background-image: linear-gradient(to bottom, #ffffff, #f5f5f5);
+	background-image: -moz-linear-gradient(top, #ffffff, #f5f5f5);
+	filter: progid:dximagetransform.microsoft.gradient(  startColorstr=  '#ffffffff', endColorstr=  '#fff5f5f5', GradientType=  0 );
+	border-color: #c7d5e1;
+	-webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+}
+
+table.has-columns-hidden > tbody > tr > td > span.responsiveExpander:after,
+table.has-columns-hidden > tbody > tr.detail-show > td span.responsiveExpander:after {
+	display: inline-block;
+	line-height: 0;
+	content: "";
+	height: 11px;
+	width: 11px;
+	background-image: url("../img/icons.png");
+	background-repeat: no-repeat;
+	background-position: -3000px -3000px;
+}
+
+table.has-columns-hidden > tbody > tr > td > span.responsiveExpander:after {
+	background-position: 0 0;
+	cursor: pointer;
+}
+
+table.has-columns-hidden > tbody > tr > td > span.responsiveExpander:hover:after {
+	background-position: -12px 0;
+}
+
+table.has-columns-hidden > tbody > tr.detail-show > td span.responsiveExpander:after {
+	background-position: -24px 0;
+}
+
+table.has-columns-hidden > tbody > tr.detail-show > td span.responsiveExpander:hover:after {
+	background-position: -36px 0;
+}
+
+table.has-columns-hidden > tbody > tr.row-detail > td {
+	background: #eee;
+}
+
+table.has-columns-hidden > tbody > tr.row-detail > td > ul {
+	list-style: none;
+	margin: 0;
+}
+
+table.has-columns-hidden > tbody > tr.row-detail > td > ul > li > span.columnTitle {
+	font-weight: bold;
+}
+
+td.wdt-responsive-cell-action, tr.wdt-responsive-row-action {
+	cursor: pointer;
+}

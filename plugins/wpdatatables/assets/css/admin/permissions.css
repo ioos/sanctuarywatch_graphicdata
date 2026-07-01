@@ -1,0 +1,210 @@
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table {
+    font-family: Inter;
+    border: 0;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table td,
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table th {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 20px;
+    color: #5A6C89;
+    border: none;
+    margin: 5px 0;
+    vertical-align: middle;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th {
+    background: #F8F8FA;
+    border-right: 0 !important;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead tr th a span {
+    font-style: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #5A6C89;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th .sorting-indicator {
+    position: relative;
+    visibility: visible !important;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted .sorting-indicator:before {
+    color: #5A6C89;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted.desc .sorting-indicator:before,
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted.asc:hover .sorting-indicator:before,
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sortable .sorting-indicator:before {
+    position: absolute;
+    font-size: 15px;
+    left: 0;
+    top: -3px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted.desc:hover .sorting-indicator:before,
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted.asc .sorting-indicator:before {
+    top: -3px;
+    left: 0;
+    position: absolute;
+    font-size: 15px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted.desc .sorting-indicator:before {
+    font-family: "wpDataTablesIcons";
+    content: "\f0dd";
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted.asc .sorting-indicator:before {
+    font-family: "wpDataTablesIcons";
+    content: "\f0e1";
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted.desc:hover .sorting-indicator:before {
+    font-family: "wpDataTablesIcons";
+    content: "\f0e1";
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sorted.asc:hover .sorting-indicator:before {
+    font-family: "wpDataTablesIcons";
+    content: "\f0dd";
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table thead th.sortable .sorting-indicator:before {
+    color: #5A6C89;
+    font-family: "wpDataTablesIcons";
+    opacity: 0.4;
+    content: "\f0e1";
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tbody tr {
+    border-top: 1px solid #F3F3FA;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tbody > :nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table td.column-id {
+    color: #000000;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table .wdt-function-flex {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table .column-actions {
+    text-align: right;
+    padding-top: 12px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table a {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #008CFF;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table a:focus {
+    box-shadow: none;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table .column-actions a {
+    line-height: 40px;
+    display: inline-block;
+    position: relative;
+    font-size: 20px;
+    color: #304463;
+    width: 36px;
+    height: 36px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tr:hover > .column-actions a:hover {
+    background: #FFFFFF;
+    border-radius: 28px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tr .column-actions a i {
+    font-size: 15px;
+    color: #ffffff;
+    position: absolute;
+    left: 11px;
+    top: 10px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tr:hover > .column-actions a i {
+    color: #304463;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table .wdt-function-flex {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table td.column-actions {
+    padding-right: 12px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table td.column-actions {
+    padding-right: 20px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings.wdt-browse-table .wpdt-search-box .fg-line,
+.wdt-datatables-admin-wrap .card.plugin-settings .wpdt-search-box .fg-line {
+    position: relative;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings.wdt-browse-table .wpdt-search-box i,
+.wdt-datatables-admin-wrap .card.plugin-settings .wpdt-search-box i {
+    position: absolute;
+    top: 11px;
+    left: 10px;
+    color: #091E6F;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wpdt-search-box input {
+    padding-left: 30px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wpdt-search-box input {
+    background: #FFFFFF;
+    border: 1px solid #DBDFEA;
+    box-sizing: border-box;
+    box-shadow: 0 0.5px 2px rgba(15, 30, 81, 0.11);
+    border-radius: 4px;
+    margin: 0;
+    padding: 8px 0 8px 30px;
+    min-width: 300px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wpdt-search-box input:focus {
+    outline: none;
+    border: 1px solid #DBDFEA;
+    box-shadow: 0 0.5px 2px rgba(15, 30, 81, 0.11);
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tr .column-actions a {
+    width: 40px;
+    height: 40px;
+}
+
+.wdt-datatables-admin-wrap .card.plugin-settings .wdt-permissions-table tr .column-actions a i {
+    left: 12px;
+    top: 12px;
+}

@@ -1,0 +1,990 @@
+.wdt-datatables-admin-wrap .wdt-dashbord {
+    font-family: Inter;
+    font-style: normal;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .card:not(.plugin-dashboard) {
+    border-radius: 3px;
+    margin-bottom: 24px;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord a {
+    box-shadow: none;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .card-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #F3F3FA;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .wpdt-text {
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    margin-bottom: 12px;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .card-header .actions {
+    top: 10px;
+    right: 16px;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .btn-primary {
+    font-weight: 500;
+    border-radius: 5px;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .wdt-row-title {
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 32px;
+    color: #091D70;
+    margin-top: 60px;
+}
+
+.wdt-datatables-admin-wrap .wdt-welcome-card img {
+    vertical-align: sub;
+}
+.wdt-datatables-admin-wrap .wdt-welcome-card .wdt-welcome-img {
+    display: inline-block !important;
+}
+.wdt-datatables-admin-wrap .wdt-welcome-card h1 {
+    font-family: Inter;
+    font-style: normal;
+    display: inline-block;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 32px;
+    color: #091D70;
+}
+.wdt-datatables-admin-wrap .wdt-dashbord sup{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 16px;
+    padding: 4px 8px;
+    background: rgba(0, 140, 255, 0.2);
+    border-radius: 45px;
+    color: #008CFF;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .wdt-row-desc {
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    margin-bottom: 20px;
+}
+
+.wdt-datatables-admin-wrap .wdt-link-tutorials {
+    display: block;
+    margin-top: 4px;
+    width: max-content;
+}
+.wdt-datatables-admin-wrap .wdt-link-tutorials-inline {
+    display: inline-block;
+    margin-top: 4px;
+    width: max-content;
+}
+
+.wdt-datatables-admin-wrap .wdt-card-header-title {
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 24px;
+    color: #304463;
+}
+
+.wdt-datatables-admin-wrap .wdt-card-header-title i,
+.wdt-datatables-admin-wrap .wdt-welcome-card .btn i {
+    margin-right: 4px;
+}
+
+.wdt-datatables-admin-wrap .wdt-card-header-button {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    height: 28px;
+    color: #253858;
+    background: #FFFFFF;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06) !important;
+    border-radius: 5px;
+    padding: 0;
+    outline: none !important;
+}
+.wdt-datatables-admin-wrap .wdt-card-header-link{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #008CFF;
+    background: #FFFFFF;
+    border: none;
+}
+
+.wdt-datatables-admin-wrap .wdt-card-header-button:hover {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.03)), #FFFFFF;
+}
+
+.wdt-datatables-admin-wrap .wdt-card-header-button a {
+    color: #253858;
+    padding: 4px 12px;
+    outline: none !important;
+    box-shadow: none;
+}
+
+.wdt-datatables-admin-wrap .card-columns {
+    -webkit-column-count: 1;
+    -moz-column-count: 1;
+    column-count: 1;
+    -webkit-column-gap: 1.25rem;
+    -moz-column-gap: 1.25rem;
+    column-gap: 1.25rem;
+}
+
+.wdt-datatables-admin-wrap .card-body.card-padding{
+    box-shadow: 0 1px 1px rgba(23, 43, 77, 0.11) !important;
+}
+.wdt-datatables-admin-wrap .wdt-premium-features p{
+    font-size: 13px;
+    line-height: 20px;
+    color: #091D70 !important;
+    margin-bottom: 8px;
+}
+
+
+/* PREMIUM CARD*/
+
+.wdt-datatables-admin-wrap .wdt-premium-features-card .actions {
+    top: 13px !important;
+}
+.wdt-datatables-admin-wrap .wdt-premium-features-card .wdt-premium-features i{
+    font-weight: 900;
+    font-size: 13px;
+    margin-right: 5px;
+    line-height: 20px;
+    color: #008CFF;
+}
+.wdt-datatables-admin-wrap .wdt-premium-features-card .card-body {
+    background: url(../../img/dashboard/premium.svg) no-repeat bottom right !important;
+    background-size: 400px 300px !important;
+    padding: 18px 24px !important;
+}
+.wdt-datatables-admin-wrap .wdt-premium-features-card .wpdt-text{
+    font-size: 13px;
+    line-height: 20px;
+    color: #091D70 !important;
+    margin: 0 0 18px 0 !important;
+}
+/* TABLE/CHART CARD */
+
+.wdt-datatables-admin-wrap .wdt-chart-card .card-body,
+.wdt-datatables-admin-wrap .wdt-table-card .card-body {
+    position: relative;
+    padding: 18px 16px 18px 28px !important;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .card-body.wdt-empty,
+.wdt-datatables-admin-wrap .wdt-table-card .card-body.wdt-empty {
+    background-size: contain !important;
+    padding: 0 0 18px 28px !important;
+    margin-right: 22px;
+    margin-top: 20px;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .card-body.wdt-empty {
+    background: url(../../img/dashboard/empty.svg) no-repeat right !important;
+}
+.wdt-datatables-admin-wrap .wdt-table-card .card-body.wdt-empty {
+    background: url(../../img/dashboard/emptyTable.svg) no-repeat right !important;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .card-body.wdt-empty .wdt-chart-message p,
+.wdt-datatables-admin-wrap .wdt-table-card .card-body.wdt-empty .wdt-table-message p {
+    margin-right: 125px;
+}
+
+.wdt-datatables-admin-wrap .wdt-chart-card .wpdt-flex,
+.wdt-datatables-admin-wrap .wdt-table-card .wpdt-flex {
+    display: flex;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-engine,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-type {
+    padding: 2px 6px;
+    background: #FAFBFC;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    border-radius: 3px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    color: #172B4D;
+    margin-left: 8px;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-count,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-count {
+    margin-top: 4px;
+}
+
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-count p,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-count p {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #5A6C89;
+    margin: 8px 0 0 0;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-count-number,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-count-number {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 36px;
+    line-height: 32px;
+    color: #091D70;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-count-number a,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-count-number a{
+    color: #091D70;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-count-number a:hover,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-count-number a:hover{
+    opacity: .8;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-last-created,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-last-created {
+    background: #FFFFFF;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    width: 100%;
+    padding: 14px;
+    margin-left: 28px;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-last-created a,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-last-created a{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #008CFF;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-last-created p,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-last-created p{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 16px;
+    color: #6D7C96;
+    margin: 4px 0 0 0;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-message,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-message {
+    padding: 14px 14px 0 14px;
+    margin-left: 28px;
+    width: 100%;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-message p,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-message p{
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    margin-bottom: 4px;
+}
+.wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-message img,
+.wdt-datatables-admin-wrap .wdt-table-card .wdt-table-message img{
+    position: absolute;
+    right: 39px;
+    bottom: 0;
+}
+
+.wpdt-c #wdt-last-chart-shortcode-id,
+.wpdt-c #wdt-last-table-shortcode-id {
+    background: #F4F5F7;
+    border-radius: 0 3px 3px 0;
+    padding: 4px 8px;
+    border: none;
+    color: #172B4D;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 20px;
+}
+.wpdt-c #wpdt-shortcode-container {
+    margin: 6px auto;
+    display: inline-flex;
+    justify-content: center;
+}
+.wpdt-c #wpdt-shortcode-container .wdt-copy-shortcode{
+    display: inline-block;
+    color: #304463;
+    cursor: pointer;
+}
+.wpdt-c #wpdt-shortcode-container .wdt-copy-shortcode i{
+    padding: 4px 7px;
+    background: #EBECF0;
+    border-radius: 3px 0 0 3px;
+    line-height: 20px;
+}
+
+/* STORE CARD*/
+
+.wdt-datatables-admin-wrap .wdt-store-login-card h5 {
+    margin: 8px 0;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 20px;
+    color: #05163F;
+}
+.wdt-datatables-admin-wrap .wdt-store-login-card p {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+}
+
+/* ADDONS CARD*/
+
+.wdt-datatables-admin-wrap .wdt-addons-card .thumbnail {
+    background: #FFFFFF;
+    box-shadow: 0 1px 1px rgba(23, 43, 77, 0.11);
+    border-radius: 3px;
+    padding: 16px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.wdt-datatables-admin-wrap .wdt-addons-card .thumbnail h4 {
+    font-size: 14px;
+    line-height: 20px;
+    color: #091D70;
+    margin-bottom: 12px;
+    margin-top: 16px;
+}
+
+.wdt-datatables-admin-wrap .wdt-addons-card .thumbnail .caption p {
+    font-size: 13px;
+    line-height: 20px;
+    color: #5A6C89;
+    margin-bottom: 24px;
+}
+
+.wdt-datatables-admin-wrap .wdt-addons-card .wpdt-addons-desc img {
+    display: inline-block !important;
+    background: #FFFFFF;
+    width: 50px;
+    height: 50px;
+    padding: 8px;
+    margin: 0 !important;
+    box-shadow: 0 1px 2px rgba(9, 29, 112, 0.17);
+    border-radius: 12px;
+}
+.wdt-datatables-admin-wrap .wdt-addons-card .wpdt-addons-desc img.wdt-gravity-img {
+    padding: 4px;
+}
+.wdt-datatables-admin-wrap .wdt-addons-card .wpdt-addons-desc img.wdt-formidable-img {
+    padding: 0;
+}
+.wdt-datatables-admin-wrap .wdt-plugin-installed:hover:hover,
+.wdt-datatables-admin-wrap .wdt-plugin-installed:hover,
+.wdt-datatables-admin-wrap .wdt-plugin-installed:focus:focus,
+.wdt-datatables-admin-wrap .wdt-plugin-installed:focus,
+.wdt-datatables-admin-wrap .wdt-plugin-installed {
+    color: #008CFF !important;
+    background-color: rgba(0, 140, 255, 0.1) !important;
+    cursor: default;
+}
+
+.wdt-datatables-admin-wrap .wdt-addons-card .wdt-addons-links {
+    position: absolute;
+    bottom: 5%;
+    left: 34%;
+}
+.wdt-datatables-admin-wrap .wdt-addons-card .btn {
+    padding: 8px 16px;
+}
+
+.wdt-datatables-admin-wrap .wdt-addons-card .wdt-addons-links i {
+    margin-right: 4px;
+}
+
+.wdt-datatables-admin-wrap .wdt-addons-card .wdt-addons-find-out-more {
+    display: block;
+    margin: 8px 16px;
+    outline: none;
+    box-shadow: none;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #008CFF;
+}
+
+/* CHANGELOG CARD*/
+
+.wdt-datatables-admin-wrap .wdt-changelog-card .alert-info {
+    background: #FFFFFF;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    position: relative;
+    padding: 14px 16px;
+}
+
+.wdt-datatables-admin-wrap .wdt-changelog-card .alert-info .alert-desc {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 16px;
+    color: #304463;
+}
+.wdt-datatables-admin-wrap .wdt-changelog-card .alert-info i{
+    position: absolute;
+    left: 20px;
+}
+.wdt-datatables-admin-wrap .wdt-changelog-card .alert-info ul{
+    margin-left: 40px;
+}
+/* SETTINGS CARD*/
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body.card-padding {
+    padding: 24px 28px 14px 28px !important;
+}
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body li {
+    border-bottom: 1px solid #F3F3FA;
+    position: relative;
+    margin: 0;
+}
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body p.wdt-link{
+    margin-top: 14px;
+}
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body a {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #008CFF;
+}
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body a:hover {
+    color: #0a6ebd;
+}
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body li span{
+    display: block;
+    padding: 10px 0;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+}
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body li i{
+    font-size: 15px;
+    line-height: 20px;
+    position: absolute;
+    right: 0;
+    top: 10px;
+}
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body li i.wpdt-icon-check-circle-full{
+    color: #40C057;
+}
+.wdt-datatables-admin-wrap .wdt-settings-card .card-body li i.wpdt-icon-times-circle-full{
+    color: #F03E3E;
+}
+
+
+/* SUPPORT CARD */
+
+.wdt-datatables-admin-wrap .wdt-support-card .card-body {
+    background: url(../../img/dashboard/dashboard-support.svg) no-repeat right !important;
+    background-size: contain !important;
+}
+
+/* BLOG CARD*/
+.wdt-datatables-admin-wrap .wdt-blog-card .card-body.card-padding {
+    padding: 24px 28px 18px 28px !important;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .card-body li {
+    border-bottom: 1px solid #F3F3FA;
+    position: relative;
+    margin: 0;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .card-body li a{
+    display: block;
+    padding: 10px 0;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    margin-right: 15px;
+}
+
+.wdt-datatables-admin-wrap .wdt-blog-card .card-body li a i{
+    font-size: 14px;
+    line-height: 20px;
+    color: rgba(0, 140, 255, 0.4);
+    position: absolute;
+    right: 0;
+    top: 10px;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .card-body li a:hover i {
+    color: #008CFF;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe{
+    background: #FFFFFF;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    position: relative;
+    margin-top: 20px;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-message{
+    border-bottom: 1px solid #DFE1E6;
+    position: relative;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-message p{
+    padding: 12px 12px 18px 36px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-message i{
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #008CFF;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form{
+    margin-top: 12px;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form ._form_36{
+    margin-left: 12px !important;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form ._form_36 ._form-label,
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form ._form_36 ._form_element ._form-label{
+    font-family: Inter !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-size: 13px !important;
+    line-height: 20px !important;
+    color: #061938 !important;
+    margin-bottom: 2px !important;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form ._form_36 ._field-wrapper {
+    width: 235px !important;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form ._form_36 ._button-wrapper._inline-style {
+    margin-left: 8px !important;
+    margin-top: 25px !important;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form ._form_36 ._inline-style input[type="text"]{
+    padding: 10px 12px !important;
+    font-family: Inter !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-size: 13px !important;
+    line-height: 20px !important;
+    color: #061938 !important;
+    width: 235px !important;
+    border: 1px solid #D7D9E2 !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 1px 2px rgba(90, 108, 137, 0.08) !important;
+    border-radius: 3px !important;
+}
+.wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form  #_form_36_submit {
+    background: #008CFF !important;
+    border-radius: 5px !important;
+    font-family: Inter !important;
+    font-style: normal !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    color: #FFFFFF !important;
+    padding: 8px 12px !important;
+}
+/* AMELIA CARD*/
+.wdt-datatables-admin-wrap .wdt-amelia-card img {
+    margin-bottom: 12px;
+}
+.wdt-datatables-admin-wrap .wdt-amelia-card .card-body {
+    background: url(../../img/dashboard/amelia.png) no-repeat right !important;
+    background-size: contain !important;
+}
+
+
+.wdt-datatables-admin-wrap .wdt-amelia-card .amelia-title {
+    font-size: 14px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    color: #304463;
+    margin-bottom: 8px;
+}
+
+.wdt-datatables-admin-wrap .wdt-amelia-card .amelia-bg {
+    height: 230px;
+    position: relative;
+}
+
+.wdt-datatables-admin-wrap .wdt-amelia-card .card-body {
+    padding: 0 0 0 42px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.wdt-datatables-admin-wrap .wdt-amelia-card .amelia-bg img {
+    position: absolute;
+    width: 100%;
+    right: -50px;
+    top: 0;
+}
+.wdt-datatables-admin-wrap .wdt-amelia-card .card-body .amelia-desc {
+    padding: 40px 0 !important;
+}
+.wdt-datatables-admin-wrap .wdt-amelia-card .card-body .amelia-desc i{
+    margin-left: 8px;
+}
+.wpdt-c .col-1-4 {
+    width: 25%;
+    float: left;
+    position: relative;
+    min-height: 1px;
+    padding-right: 12px;
+}
+/* FOOTER*/
+.wdt-datatables-admin-wrap .wpdt-footer-links li {
+    display: inline-block;
+    margin-right: 12px;
+}
+
+.wdt-datatables-admin-wrap .wpdt-footer-links li a {
+    color: #5A6C89;
+    box-shadow: none;
+}
+.wdt-datatables-admin-wrap .wdt-dashbord .wdt-footer-title {
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    margin-top: 60px;
+    margin-bottom: 20px;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .wdt-footer-title img {
+    margin-left: 10px;
+    vertical-align: bottom;
+}
+
+.wdt-datatables-admin-wrap .plugin-dashboard {
+    word-break: break-word;
+}
+
+.wdt-datatables-admin-wrap .plugin-dashboard .wpdt-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+
+.wdt-datatables-admin-wrap .wdt-dashbord .wdt-stars-container {
+    position: relative;
+    display: inline-block;
+    color: transparent;
+    font-size: 15px;
+    line-height:normal;
+}
+.wdt-datatables-admin-wrap .wdt-dashbord .wdt-stars-container::before{
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '★★★★★';
+    color:lightgray;
+}
+.wdt-datatables-admin-wrap .wdt-dashbord .wdt-stars-container::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: '★★★★★';
+    color: gold;
+    overflow: hidden;
+}
+.wdt-datatables-admin-wrap .wdt-dashbord .stars-88::after { width: 88%; }
+.wdt-datatables-admin-wrap .wdt-dashbord .wdt-rating { font-size: 13px  }
+
+.wdt-dashbord .ribbon {
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    z-index: 1;
+    overflow: hidden;
+    width: 75px;
+    height: 75px;
+    text-align: right;
+}
+
+.wdt-dashbord .ribbon span {
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 20px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    width: 100px;
+    display: block;
+    background: #79a70a;
+    background: linear-gradient(#091D70 0, #091D70 100%);
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+    position: absolute;
+    top: 19px;
+    right: -21px;
+}
+
+.wdt-dashbord .ribbon span::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid #091D70;
+    border-right: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #091D70;
+}
+
+.wdt-dashbord .ribbon span::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid transparent;
+    border-right: 3px solid #091D70;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid #091D70;
+}
+@media (max-width: 1440px) {
+    .wpdt-c .col-1-4 {
+        width: 33%;
+    }
+    .wdt-datatables-admin-wrap .wdt-premium-features-card .card-body {
+        background-size: 300px 200px !important;
+    }
+}
+
+@media (max-width: 1024px) {
+
+    .wpdt-c .col-1-4 {
+        width: 50%;
+    }
+
+    .wdt-datatables-admin-wrap .wdt-chart-card .wdt-empty .wdt-chart-message,
+    .wdt-datatables-admin-wrap .wdt-table-card .wdt-empty .wdt-table-message {
+        margin-left: 10px;
+    }
+    .wdt-datatables-admin-wrap .wdt-chart-card .card-body.wdt-empty,
+    .wdt-datatables-admin-wrap .wdt-table-card .card-body.wdt-empty {
+        margin-right: 6px;
+    }
+
+    .wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-count, .wdt-datatables-admin-wrap .wdt-table-card .wdt-table-count {
+        margin-top: 24px;
+    }
+    .wdt-datatables-admin-wrap .wdt-support-card .card-body {
+        background-size: 200px 200px !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-amelia-card .card-body {
+        background: url(../../img/dashboard/amelia.png) no-repeat right !important;
+        background-size: 400px 260px !important;
+    }
+
+}
+
+@media (max-width: 768px) {
+    .wpdt-c .col-sm-3 {
+        width: 100%;
+    }
+    .wdt-datatables-admin-wrap .card-columns {
+        width: 100%;
+        padding: 0 !important;
+    }
+    .wpdt-c .card .card-header .actions {
+        top: 12px !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-chart-card .wdt-empty .wdt-chart-message a,
+    .wdt-datatables-admin-wrap .wdt-table-card .wdt-empty .wdt-table-message a {
+        display: none;
+    }
+
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium table,
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium thead,
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium tbody,
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium th,
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium td,
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium tr {
+        display: block;
+    }
+
+    /* Hide table headers (but not display: none;, for accessibility) */
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium tr {
+        border: 1px solid #2196F3;
+    }
+
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium table td {
+        /* Behave  like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee;
+        border-left: 1px solid #2196F3;
+        border-right: 1px solid #2196F3;
+        position: relative;
+        padding-left: 50%;
+        white-space: normal;
+        text-align: left;
+    }
+
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium td:last-child {
+        border-bottom: 1px solid #2196F3;
+    }
+
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium td:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 25%;
+        left: 3%;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    /*
+    Label the data
+    */
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium td:before {
+        content: attr(data-title);
+    }
+
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium table th, .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium table {
+        font-size: 14px;
+    }
+
+    .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium table th, .wdt-datatables-admin-wrap .plugin-dashboard .wpdt-dashboard-premium table td {
+        width: 100%;
+        padding: 3% 0 3% 50% !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-welcome-card .wdt-welcome-img {
+        margin-top: 40px !important;
+    }
+
+    .wdt-datatables-admin-wrap .wdt-premium-features-card .card-body {
+        background-size: 400px 300px !important;
+    }
+
+}
+
+@media (max-width: 480px) {
+    .wpdt-c .col-1-4 {
+        width: 100%;
+        padding: 0 !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-amelia-card .card-body {
+        padding:18px !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-dashbord .card-header .actions {
+        right: 0 !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-welcome-card .card-padding.card-body {
+        display: flex !important;
+        flex-direction: column-reverse;
+    }
+    .wdt-datatables-admin-wrap .wdt-welcome-card .wdt-welcome-img {
+        margin-top: 0 !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-engine,
+    .wdt-datatables-admin-wrap .wdt-table-card .wdt-table-type {
+        display: inline-block;
+        margin-left: 0 !important;
+    }
+
+    .wdt-datatables-admin-wrap .wdt-chart-card .wdt-empty .wdt-chart-message,
+    .wdt-datatables-admin-wrap .wdt-table-card .wdt-empty .wdt-table-message {
+        margin-left: 5px;
+    }
+
+    .wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-last-created,
+    .wdt-datatables-admin-wrap .wdt-table-card .wdt-table-last-created {
+        min-height: 125px ;
+        position: relative;
+    }
+    .wdt-datatables-admin-wrap .wdt-chart-card .wdt-chart-count,
+    .wdt-datatables-admin-wrap .wdt-table-card .wdt-table-count {
+        margin-top: 40px;
+    }
+    .wpdt-c #wpdt-shortcode-container {
+        position: absolute;
+        left: 12px;
+        bottom: 10px;
+        justify-content: left;
+    }
+    .wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form #_form_36_submit {
+        margin-bottom: 10px;
+        width: 96%;
+    }
+    .wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form ._form_36 ._inline-style input[type="text"] {
+        width: 96% !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-blog-card .wdt-subscribe-form ._form_36 ._field-wrapper {
+        width: 100% !important;
+    }
+
+    .wdt-datatables-admin-wrap .wdt-support-card .card-body {
+        background: url(../../img/dashboard/dashboard-support.svg) no-repeat top right !important;
+        background-size: 200px 130px !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-dashbord .wdt-support-card .wpdt-text {
+        margin-right: 150px;
+    }
+    .wdt-datatables-admin-wrap .wdt-amelia-card .card-body .amelia-desc {
+        padding: 40px 0 0 0 !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-amelia-card .card-body {
+        background: url(../../img/dashboard/amelia.png) no-repeat top right !important;
+        background-size: 200px 100px !important;
+    }
+    .wdt-datatables-admin-wrap .wdt-dashbord .wdt-footer-title,
+    .wdt-datatables-admin-wrap .wdt-dashbord .wdt-row-title {
+        margin-top: 0;
+    }
+    .wdt-datatables-admin-wrap .wdt-premium-features-card .card-body {
+        background: none !important;
+    }
+}
+

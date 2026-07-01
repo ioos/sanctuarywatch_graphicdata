@@ -4,6 +4,14 @@
   "description": "ESLint configuration for WordPress plugins and themes",
   "private": true,
   "scripts": {
+    "clean:insert-figure": "rm -rf blocks/insert-figure/build && mkdir -p blocks/insert-figure/build",
+
+    "copy:insert-figure": "mkdir -p blocks/insert-figure/build && cp blocks/insert-figure/src/block.json blocks/insert-figure/build/block.json && cp blocks/insert-figure/src/render.php blocks/insert-figure/build/render.php && cp blocks/insert-figure/src/index.css blocks/insert-figure/build/index.css 2>/dev/null || true && cp blocks/insert-figure/src/style-index.css blocks/insert-figure/build/style-index.css 2>/dev/null || true",
+
+    "build:insert-figure": "npm run clean:insert-figure && wp-scripts build blocks/insert-figure/src/index.js blocks/insert-figure/src/view.js --output-path=blocks/insert-figure/build && npm run copy:insert-figure",
+
+    "start:insert-figure": "npm run copy:insert-figure && wp-scripts start blocks/insert-figure/src/index.js blocks/insert-figure/src/view.js --output-path=blocks/insert-figure/build",
+
     "lint:js": "eslint --ext .js plugins/ themes/ --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' --format stylish",
     "lint:php-js": "node lint-php-js.js",
     "lint:all": "npm run lint:js && npm run lint:php-js",
@@ -11,6 +19,7 @@
   },
   "devDependencies": {
     "@wordpress/eslint-plugin": "^21.4.0",
+    "@wordpress/scripts": "^32.5.0",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-jsdoc": "^50.6.2",

@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;700&family=Kaushan+Script&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;500;700&display=swap');
+#wpdt-promo-section {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: url("../../../assets/img/promo/background.png");
+}
+#wpdt-promo-section img{
+   width: 100%;
+}
+.wpdt-promo-notice {
+    border: none !important;
+    padding: 0 !important;
+}
+#wpdt-promo-section {
+    height: 140px;
+}
+
+.wpdt-promo-logo {
+    display: inline-block;
+    margin-left:40px;
+}
+.wpdt-promo-discounts {
+    height: 160px;
+}
+
+.wpdt-promo-close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}
+button#wpdt-grab-it {
+    padding: 12px 20px;
+    background: linear-gradient(351.76deg, #FFD601 -8.07%, #FCFF7D 123.41%);
+    border-radius: 9px;
+    border: none;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    margin: 0 40px 0 0;
+    text-align: center;
+    color: #011D9F;
+    width: 160px;
+}
+.tms-store-card-plan-ribbon-dis .tms-store-card-plan-ribbon-text,
+.tms-store-card-plan-buy-now-button {
+    background: linear-gradient(351.76deg, #FFD601 -8.07%, #FCFF7D 123.41%);
+}
+button#wpdt-grab-it:hover,
+.tms-store-card-plan-buy-now-button:hover {
+    background: #FFD601;
+    color: #011D9F !important;
+    transition: none !important;
+}
+.wpdt-promo-dismiss-text {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    margin-left: 65px;
+    line-height: 19px;
+    text-align: center;;
+    opacity: 0.8;
+    color: #FFFFFF;
+}
+.wpdt-icon-times-thin{
+    margin-left: 10px;
+    opacity: 0.8;
+    cursor: pointer;
+    color: #FFFFFF;
+}
+.wpdt-promo-notice .notice-dismiss {
+    display: none !important;
+}
+
+.tms-store-col-active:nth-child(2):hover {
+    padding-bottom: 18px !important;
+}
+.tms-store-col:nth-child(1) .tms-store-card, .tms-store-col:nth-child(3) .tms-store-card {
+    max-height: 499px;
+}
+@media(max-width: 1441px) {
+    #wpdt-promo-section img {
+        width: 90%;
+    }
+    .wpdt-promo-logo {
+        margin-left: 10px;
+    }
+    div#wpdt-first-section,
+    #wpdt-second-section {
+        text-align: center;
+    }
+    button#wpdt-grab-it {
+        margin-right: 10px;
+    }
+}
+@media(max-width: 1025px) {
+    .wpdt-promo-discounts {
+        height: 140px;
+    }
+    #wpdt-second-section {
+        display: none;
+    }
+    .wpdt-promo-dismiss-text {
+        display: none;
+    }
+
+}
+
+@media(min-width: 625px) and (max-width: 960px) {
+    .tms-store-col:nth-child(2) {
+        background: none !important;
+    }
+}
+
+@media(max-width: 625px) {
+    #wpdt-third-section {
+        display: none;
+    }
+    #wpdt-promo-section {
+        flex-direction: column;
+        height: 160px;
+    }
+    #wpdt-first-section img {
+        margin-top: 10px;
+        padding-bottom: 10px;
+    }
+    button#wpdt-grab-it {
+        margin-bottom: 10px;
+    }
+}

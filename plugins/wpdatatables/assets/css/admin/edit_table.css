@@ -1,0 +1,1005 @@
+.wpdt-c .wdt-datatables-admin-wrap .card.wdt-table-settings,
+.wpdt-c .wdt-datatables-admin-wrap .card.column-settings {
+    max-width: 100%;
+    margin-bottom: 20px;
+    margin-top: 0;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap .card.wdt-table-settings .card-body {
+    padding: 0 24px 16px 24px !important;
+    background: #ffffff !important;
+}
+
+
+.wpdt-c .wdt-datatables-admin-wrap .card.wdt-table-settings h2 span.wdt-table-name {
+    padding: 3px;
+}
+
+.wpdt-c .wdt-admin-card-header button#wdt-table-id {
+    margin-left: 12px;
+    padding: 0;
+    margin-top: 5px;
+}
+.wpdt-c #wdt-table-shortcode-id {
+    background: #ffffff;
+    border-radius: 0 3px 3px 0;
+    padding: 8px;
+    border: none;
+    color: #172B4D;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    cursor: auto;
+}
+.wpdt-c #wdt-table-id .wdt-copy-shortcode{
+    color: #304463;
+    cursor: pointer;
+}
+.wpdt-c #wdt-table-id .wdt-copy-shortcode i{
+    padding: 9px;
+    background: #EBECF0;
+    color: #304463;
+    border-radius: 3px 0 0 3px;
+    margin-right: -5px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap .card.wdt-table-settings h2 span.wdt-table-name:hover {
+    border: 1px solid #ccc;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainer {
+    margin: 15px 0 0 0;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainer .tab-content {
+    padding: 20px 15px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap button.wdt-column-settings,
+.wpdt-c .wdt-datatables-admin-wrap button.wdt-delete-formula-column {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    z-index: 8;
+    display: inline-block;
+    margin: 2px;
+    border: 1px solid #e7e7e7;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    -vendor-animation-duration: 1s;
+    -vendor-animation-delay: 1s;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap button.wdt-column-settings:hover,
+.wpdt-c .wdt-datatables-admin-wrap button.wdt-delete-formula-column:hover {
+    background-color: #ccc !important;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-overlay {
+    display: none;
+    background: rgba(0, 0, 0, 0.4);
+    height: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    z-index: 9999;
+    -webkit-transition: opacity 400ms ease-in;
+    -moz-transition: opacity 400ms ease-in;
+    transition: opacity 400ms ease-in;
+    border-left: 1px solid #eee;
+    max-height: 100vh;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 32px;
+    padding: 0;
+    background: #fff;
+    box-shadow: -3px 0 5px -1px rgba(105, 105, 105, 0.17);
+    width: 60%;
+    max-width: 60%;
+    margin: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel .wdt-documentation,
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel .wdt-documentation:hover {
+    border: 1px solid #DFE1E6;
+}
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel.card h2 {
+    font-size: 17px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel div.card-body.card-padding {
+    padding: 5px 10px 5px 10px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel input[type="text"] {
+    width: 100%;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel div.input-group {
+    width: 100%;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel div.form-group {
+    height: 30px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel .bootstrap-tagsinput input[type="text"] {
+    width: 70px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel button.btn-xs {
+    font-size: 10px !important;
+    line-height: 1em !important;
+    margin: 0 !important;
+    height: auto !important;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel button.btn-xs.wdt-copy-shortcode {
+    text-transform: none;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wdt-column-block, div.wdt-column-block.gu-mirror {
+    background-color: #F8F8FA;
+    border-radius: 2px;
+    margin-bottom: 5px;
+    padding: 14px 12px;
+    -o-transition: .5s;
+    -ms-transition: .5s;
+    -moz-transition: .5s;
+    -webkit-transition: .5s;
+    transition: .5s;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wdt-column-block i.wdt-toggle-show-on-tablet {
+    transform: rotate(-90deg);
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel .wdt-conditional-formatting-rule .wdt-delete-conditional-formatting-rule {
+    background: #ffffff;
+    font-size: 15px;
+    line-height: 24px;
+    color: #5A6C89;
+    margin-top: 3px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel .wdt-conditional-formatting-rule .form-group {
+    width: 100%;
+    display: inline-block;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel .colorpicker.colorpicker-visible {
+    top: 32px;
+    right: 10px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel .wdt-conditional-formatting-rule .colorpicker.colorpicker-visible {
+    right: 7px;
+}
+
+div.wdt-column-block.gu-mirror {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
+
+div.wdt-column-block.gu-mirror .fg-line {
+    margin-left: 10px;
+    width: 200px;
+    display: inline-block;
+}
+
+div.wdt-column-block.gu-mirror .fg-line input.wdt-column-display-header-edit {
+    padding: 0;
+    height: 20px;
+    font-size: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+div.wdt-column-block.gu-mirror .fg-line i {
+    position: absolute;
+    left: 178px;
+    top: 3px;
+    font-size: 16px;
+    color: #c7c7c7;
+}
+
+div.wdt-column-block.gu-mirror .wdt-column-move-arrows {
+    padding: 5px 6px 6px 2px;
+    margin-top: -4px;
+    border-left: 1px solid #c7c7c7;
+    font-size: 16px;
+    margin-left: 7px;
+    float: right;
+}
+
+div.wdt-column-block.gu-mirror span {
+    float: right;
+    margin-left: 10px;
+}
+.wpdt-c .wdt-datatables-admin-wrap div.wdt-column-block > span {
+    margin-left: 20px !important;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wdt-column-block:hover {
+    background-color: rgba(0, 140, 255, 0.06) !important;
+    cursor: pointer;
+}
+
+
+.wpdt-c .wdt-datatables-admin-wrap div.wdt-column-block i.column-control {
+    font-style: normal;
+    font-weight: 900;
+    font-size: 15px;
+    line-height: 24px;
+    color: #5A6C89;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wdt-column-block i.column-control.inactive {
+    color: #999;
+    opacity: 50%;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wdt-column-block i.column-control:hover {
+    color: #000;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wdt-conditional-formatting-rule .form-group {
+    margin-right: 0;
+}
+
+/* Column list modal */
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block input {
+    padding-right: 25px;
+    padding-left: 4px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+    border: none;
+}
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block input:hover,
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block input:focus {
+    background: #FFFFFF !important;
+}
+
+/* Formula editor modal */
+.wpdt-c #wdt-formula-editor-modal .modal-body p {
+    margin-bottom: 10px;
+}
+
+.wpdt-c #wdt-formula-editor-modal .wdt-formula-operators .btn {
+    text-transform: none;
+    margin: 3px;
+    width: 57px;
+    padding: 2px 6px;
+    background: #F8F8FA;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 20px;
+    text-align: center;
+    color: #304463;
+}
+
+.wpdt-c #wdt-formula-editor-modal .wdt-formula-operators {
+    max-height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.wpdt-c #wdt-formula-editor-modal .formula-columns-container {
+    height: 150px;
+    overflow-x: hidden;
+}
+
+.wpdt-c #wdt-formula-editor-modal .formula-columns-container .wdt-column-block{
+    padding: 3px 9px;
+}
+.wpdt-c #wdt-formula-editor-modal .formula-columns-container .fg-line span{
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #304463;
+}
+.wpdt-c #wdt-formula-editor-modal .formula-columns-container i{
+    display: none;
+}
+
+.wpdt-c #wdt-formula-editor-modal .formula_col .title,
+.wpdt-c #wdt-formula-editor-modal .formula_operators .title,
+.wpdt-c #wdt-formula-editor-modal .formula_columns .title {
+    font-size: 13px;
+    line-height: 20px;
+    color: #061938;
+    margin-bottom: 4px;
+}
+.wpdt-c #wdt-formula-editor-modal .formula_col textarea {
+    height: 150px;
+    background: #FFFFFF;
+    border: 1px solid #D7D9E2 !important;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px rgba(90, 108, 137, 0.08) !important;
+    border-radius: 3px;
+    padding:10px 12px;
+}
+
+.wpdt-c #wdt-formula-editor-modal div.wdt-formula-result-preview {
+    margin: 15px 0;
+}
+.wpdt-c #column-data-settings > div.wdt-possible-values-options-block > div.wdt-manual-list-enter-block .bootstrap-tagsinput .tag {
+    color: #5A6C89 ;
+    background-color: #F3F3FA;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.wpdt-c #column-data-settings > div.wdt-possible-values-options-block > div.wdt-manual-list-enter-block > div {
+    height: inherit;
+    max-height: 80px;
+    overflow-y: auto;
+    border: 1px solid #EBECF0;
+    box-sizing: border-box;
+    border-radius: 3px;
+    padding: 3px;
+}
+
+
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block .fg-line,
+.wdt-column-block.gu-mirror .fg-line {
+    width: inherit;
+}
+.wpdt-c .wdt-datatables-admin-wrap .wdt-table-name{
+    max-width: 300px;
+}
+
+
+.wpdt-c .wdt-datatables-admin-wrap .wdt-table-name #wdt-table-title-edit {
+    background-color: #F1F1F1;
+    padding: 5px 26px 5px 4px;
+    font-size: 20px;
+    line-height: 24px;
+    border: none;
+}
+.wpdt-c .wdt-datatables-admin-wrap .wdt-table-name #wdt-table-title-edit:hover {
+    background: #D7D9E2;
+    border-radius: 2px;
+}
+.wpdt-c .wdt-datatables-admin-wrap .wdt-table-name #wdt-table-title-edit:focus{
+    background: #FFFFFF !important;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap .wdt-table-name i,
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block .fg-line i {
+    position: absolute;
+    right: 5px;
+    font-size: 16px;
+    color: #c7c7c7;
+}
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block .fg-line i {
+    top: 3px;
+}
+.wpdt-c .wdt-datatables-admin-wrap .wdt-table-name i{
+    top: 12px;
+}
+.wpdt-c .wdt-datatables-admin-wrap .wdt-table-name i,
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block .fg-line i{
+    color: #008CFF;
+}
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block .fg-line i {
+    font-weight: 900;
+    font-size: 12px;
+    line-height: 24px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap .wdt-admin-card-header h2 #wdt-table-id {
+    text-transform: none;
+    top: 32px;
+    position: absolute;
+    left: 290px;
+}
+
+.wpdt-c #wdt-table-title-edit:focus ~ i.wpdt-icon-pen,
+.wpdt-c #wdt-table-title-edit:hover ~ i.wpdt-icon-pen,
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block .wdt-column-display-header-edit:focus ~ i.wpdt-icon-pen,
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block .wdt-column-display-header-edit:hover ~ i.wpdt-icon-pen {
+    color: #2196f3;
+}
+
+.wpdt-c #wdt-columns-list-modal .modal-body .wdt-columns-container .wdt-column-block .wdt-column-move-arrows {
+    padding: 3px 6px 4px 20px;
+    margin-left: 20px;
+    margin-top: -4px;
+    border-left: 1px solid #c7c7c7;
+    font-size: 16px;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+.wpdt-c .wdt-edit-buttons span {
+    color: #9E9E9E;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    margin-bottom: 0;
+}
+
+.wpdt-c .wdt-edit-buttons span a {
+    text-decoration: none;
+}
+.wpdt-c .wdt-edit-buttons span .wdt-standard-view-selected,
+.wpdt-c .wdt-edit-buttons span .wdt-excel-view-selected,
+.wpdt-c .wdt-edit-buttons span .wdt-standard-view,
+.wpdt-c .wdt-edit-buttons span .wdt-excel-view {
+    padding: 4px 12px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    min-width: 144px;
+}
+.wpdt-c .wdt-edit-buttons span .wdt-excel-view,
+.wpdt-c .wdt-edit-buttons span .wdt-excel-view-selected {
+    border-top-left-radius: 0;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 0;
+    /*border-radius: 0 3px 3px 0;*/
+}
+.wpdt-c .wdt-edit-buttons span .wdt-standard-view,
+.wpdt-c .wdt-edit-buttons span .wdt-standard-view-selected {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 3px;
+    /*border-radius:  3px 0 0 3px;*/
+}
+.wpdt-c .wdt-edit-buttons span .wdt-standard-view,
+.wpdt-c .wdt-edit-buttons span .wdt-excel-view {
+    background: #F4F5F7;
+    color: #172B4D;
+    border: 1px solid #DFE1E6;
+    cursor: default;
+}
+.wpdt-c .wdt-edit-buttons span .wdt-standard-view-selected,
+.wpdt-c .wdt-edit-buttons span .wdt-excel-view-selected {
+    background: #008CFF;
+    color: #FFFFFF;
+    border: 1px solid #2280CD;
+}
+.wpdt-c .wdt-edit-buttons span .wdt-standard-view-selected a,
+.wpdt-c .wdt-edit-buttons span .wdt-standard-view-selected a:hover,
+.wpdt-c .wdt-edit-buttons span .wdt-excel-view-selected a,
+.wpdt-c .wdt-edit-buttons span .wdt-excel-view-selected a:hover{
+    color: #FFFFFF;
+}
+
+
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-column,
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-remove-column,
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button#wdt-open-columns-list {
+    padding: 8px 12px;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #304463;
+    background: #FFFFFF;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+    border-radius: 5px;
+}
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-formula-column {
+    background: #FFFFFF;
+    border: 1px solid #FFE8CC;
+    box-sizing: border-box;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.06);
+    border-radius: 5px;
+}
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-column:hover {
+    background: linear-gradient(0deg, rgba(0, 140, 255, 0.13), rgba(0, 140, 255, 0.13)), #FFFFFF;
+    border: 1px solid rgba(0, 140, 255, 0.14);
+    box-sizing: border-box;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+}
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-remove-column:hover,
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button#wdt-open-columns-list:hover {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.03)), #FFFFFF;
+    border: 1px solid #DFE1E6;
+    box-sizing: border-box;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.06);
+}
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-formula-column:hover {
+    background: linear-gradient(0deg, rgba(255, 244, 230, 0.25), rgba(255, 244, 230, 0.25)), #FFFFFF;
+    border: 1px solid #FFA94D;
+    box-sizing: border-box;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.06);
+}
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-column,
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-remove-column,
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-formula-column {
+    margin-right: 8px;
+}
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-column i,
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-remove-column i,
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-formula-column i,
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button#wdt-open-columns-list i {
+    margin-right: 8px;
+}
+
+.wpdt-c .column-settings .card-body .wdt-table-action-buttons button.wdt-add-column {
+    color: #091E6F;
+    background: linear-gradient(0deg, rgba(0, 140, 255, 0.08), rgba(0, 140, 255, 0.08)), #FFFFFF;
+    border: 1px solid rgba(0, 140, 255, 0.14);
+}
+
+.wpdt-c .column-settings .card-header button:not(.wdt-excel-view):not(.wdt-standard-view):not(.wdt-excel-view-selected):not(.wdt-standard-view-selected) {
+    height: 32px;
+    margin-left: 1px;
+    border-radius: 0;
+    opacity: 0.8;
+}
+
+.wpdt-c .column-settings .card-header button:hover {
+    opacity: 1;
+}
+
+.wpdt-c .column-settings .card-header button:first-of-type:not(.wdt-excel-view):not(.wdt-standard-view):not(.wdt-excel-view-selected):not(.wdt-standard-view-selected) {
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+.wpdt-c .column-settings .card-header button:last-of-type:not(.wdt-excel-view):not(.wdt-standard-view):not(.wdt-excel-view-selected):not(.wdt-standard-view-selected) {
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.wpdt-c .column-settings .card-header button.wdt-add-column,
+.wpdt-c .column-settings .card-header button.wdt-remove-column,
+.wpdt-c .column-settings .card-header button#wdt-open-columns-list {
+    width: 38px;
+}
+
+.wpdt-c .column-settings .card-header button#wdt-open-columns-list i:before {
+    font-size: 20px;
+}
+
+.wpdt-c .column-settings .card-header button.wdt-add-column:after,
+.wpdt-c .column-settings .card-header button.wdt-remove-column:after {
+    font-size: 15px;
+}
+
+.wpdt-c .wdt-table-settings .input-path-block .fg-line,
+.wpdt-c .wdt-table-settings .input-nested-json-url-block .fg-line {
+    width: 75%;
+}
+
+.wpdt-c .wdt-table-settings .wdt-pf-cascade-filtering-logic-block .form-group {
+    margin-bottom: 0;
+}
+
+
+.wpdt-c .wdt-custom-number-input {
+    position: relative;
+}
+.wpdt-c .wdt-custom-number-input #wdt-auto-refresh {
+    text-align: center;
+}
+.wpdt-c .wdt-custom-number-input .wdt-btn-number:hover,
+.wpdt-c .wdt-custom-number-input .wdt-btn-number:active,
+.wpdt-c .wdt-custom-number-input .wdt-btn-number:visited,
+.wpdt-c .wdt-custom-number-input .wdt-btn-number{
+    position: absolute;
+    height: 100%;
+    width: 40px;
+    border: 1px solid #D7D9E2;
+    color: #8796AF;
+    background: #F8F8FA;
+}
+
+.wpdt-c .wdt-custom-number-input .wdt-btn-number.wdt-button-minus{
+    left: 0;
+    top: 0;
+    height: 100%;
+    border: 1px solid #D7D9E2;
+    color: #8796AF;
+    background: #F8F8FA;
+    border-radius: 2px 0 0 2px;
+}
+.wpdt-c .wdt-custom-number-input .wdt-btn-number.wdt-button-plus{
+    right: 0;
+    top: 0;
+    height: 100%;
+    border: 1px solid #D7D9E2;
+    color: #8796AF;
+    background: #F8F8FA;
+    border-radius: 0 2px 2px 0;
+}
+
+.wpdt-c .wdt-simple-table-settings .tab-content {
+    padding: 0 !important;
+}
+.wpdt-c .wdt-simple-table-settings #edit-table-settings .btn.disabled{
+    opacity: 1;
+    color: #ced0d1 !important;
+}
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerSimpleTable,
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerConfigSimpleTable{
+    position: relative;
+    margin: auto;
+    background: #fff;
+    text-align: center;
+}
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerConfigSimpleTable {
+    margin: 0;
+    padding: 0;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerSimpleTable {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap .wpdt-row-flex {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-star-size,
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-star-number {
+    border-radius: 4px;
+    border: solid 1px #dcdfe6;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    color: #606266;
+    height: 36px !important;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerConfigSimpleTable {
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap .wpdt-actions-main-wrap {
+    border: 3px solid #eee;
+}
+.wpdt-c .wdt-datatables-admin-wrap .wpdt-manage-title,
+.wpdt-c .wdt-datatables-admin-wrap .wpdt-cell-data-title {
+    text-align: center;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpdt-cell-action-buttons .btn {
+    padding: 6px 8px;
+    font-size: 16px;
+    font-weight: 500;
+    text-transform: none !important;
+    min-width: 34px;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap .wpdt-cell-actions-titles {
+    margin-top: 10px;
+}
+
+#wpdt-table-editor {
+    width: 100%;
+    z-index: 10;
+}
+
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerConfigSimpleTable .wpdtSimpleTable{
+    table-layout: fixed;
+    display: table;
+    border-collapse: collapse !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-width: 1000px;
+    width: 100%;
+}
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerConfigSimpleTable#wpdatatable-preview-container{
+    max-width: 1200px;
+    overflow: auto;
+}
+
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerConfigSimpleTable .wpdtSimpleTable td {
+    padding: 25px;
+    position: relative;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerSimpleTable .wpdtSimpleTable td img {
+    max-width: 100%;
+    height: auto;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerSimpleTable .wpdtSimpleTable td.selected {
+    border: 1px solid royalblue;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerConfigSimpleTable .wpdtSimpleTable td.wpdt-cell {
+    width: 150px;
+    border: 1px dashed #969fa6;
+
+}
+
+.wpdt-c .wdt-datatables-admin-wrap div.wpDataTableContainerConfigSimpleTable .wpdtSimpleTable td.wpdt-cell input {
+    width: 100%;
+}
+
+
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-cell-action-buttons button:active,
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-table-action-buttons button:active,
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-cell-action-buttons button:focus,
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-table-action-buttons button:focus,
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-cell-action-buttons button,
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-table-action-buttons button {
+    color: #5f6368 !important;
+    background-color: #FFFFFF !important;
+}
+
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-cell-action-buttons button.selected,
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-cell-action-buttons button:hover:not(.disabled),
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-table-action-buttons button:hover:not(.disabled) {
+    color: #FFFFFF !important;
+    background-color: #5f6368 !important;
+}
+
+.wpdt-c #wdt-cell-modal .modal-body input {
+    width: 100%;
+    display: block;
+}
+.wpdt-c .wdt-datatables-admin-wrap #wpdt-cell-action-buttons {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    width: fit-content;
+}
+.wpdt-c .wdt-datatables-admin-wrap div.wpdt-cell-action-buttons {
+    display: inline-block;
+}
+.wpdt-c #wpdt-align-button, #wpdt-valign-button{
+    position: relative;
+}
+.wpdt-c #wpdt-row-button, #wpdt-column-button {
+    position: relative;
+    padding: 6px 4px;
+}
+.wpdt-c #wpdt-cell-action-buttons .btn-separator,
+.wpdt-c #wpdt-table-action-buttons .btn-separator {
+    border-left: 1px solid #dadce0;
+    margin: 5px 0;
+    user-select: none;
+    vertical-align: top;
+    line-height: normal;
+    list-style: none;
+    outline: none;
+    overflow: hidden;
+    padding: 0;
+    text-decoration: none;
+    width: 0;
+    position: relative;
+    display: -moz-inline-box;
+    display: inline-block;
+}
+.wpdt-c #wpdt-cell-action-buttons .btn-separator {
+    height: 26px;
+}
+.wpdt-c #wpdt-expand-buttons,
+.wpdt-c #wpdt-table-action-buttons{
+    display: inline-block;
+}
+.wpdt-c #wpdt-expand-wrap-buttons,
+.wpdt-c #wpdt-expand-align-buttons,
+.wpdt-c #wpdt-expand-valign-buttons,
+.wpdt-c #wpdt-column-action-buttons,
+.wpdt-c #wpdt-row-action-buttons{
+    position: relative;
+    display: inline-block;
+}
+.wpdt-c #wpdt-table-action-buttons *:after{
+    font-size: 16px;
+}
+.wpdt-c #wpdt-column-actions, .wpdt-c #wpdt-row-actions,
+.wpdt-c #wpdt-align-buttons, .wpdt-c #wpdt-valign-buttons,
+.wpdt-c #wpdt-wrap-buttons{
+    position: absolute;
+    z-index: 10000;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px 2px rgba(60,64,67,.15);
+    transition: opacity 0.218s;
+    cursor: default;
+    font-size: 13px;
+    margin: 0;
+    outline: none;
+}
+.wpdt-c #wpdt-align-buttons {
+    height: 35px;
+    width: 149px;
+}
+.wpdt-c #wpdt-valign-buttons,
+.wpdt-c #wpdt-wrap-buttons{
+    height: 35px;
+    width: 112px;
+}
+.wpdt-c #wpdt-column-actions, .wpdt-c #wpdt-row-actions{
+    width: 187px;
+    height: 35px;
+}
+.wpdt-c #wpdt-wrap-buttons .btn,
+.wpdt-c #wpdt-align-buttons .btn,
+.wpdt-c #wpdt-valign-buttons .btn,
+.wpdt-c #wpdt-column-actions .btn,
+.wpdt-c #wpdt-row-actions .btn{
+    z-index: 10001;
+    margin: 0;
+}
+
+
+.wpdt-c #wpdt-text-color,
+.wpdt-c #wpdt-background-color {
+    position: relative;
+    border-bottom: 5px solid transparent;
+    border-radius: 3px 3px 0 0 !important;
+}
+.wpdt-c #wpdt-text-color {
+    border-bottom-color: #000;
+}
+.wpdt-c #wpdt-background-color {
+    border-bottom-color: #FFF;
+}
+.wpdt-c #wpdt-background-color span {
+    background:#FFF;
+}
+.wpdt-c #wpdt-text-color span {
+    background: #000;
+}
+
+.wpdt-c #wpdt-align-button,
+.wpdt-c #wpdt-valign-button,
+.wpdt-c #wpdt-wrap-button{
+    position: relative;
+    padding: 6px 16px 6px 6px;
+}
+.wpdt-c #wpdt-align-button .wpdt-icon-sort-down,
+.wpdt-c #wpdt-valign-button .wpdt-icon-sort-down,
+.wpdt-c #wpdt-wrap-button .wpdt-icon-sort-down{
+    position: absolute;
+    right: 3px;
+    font-size: 13px;
+    top: 9px;
+}
+.wpdt-c #wdt-backend-html-modal .mce-container iframe {
+    border: 1px solid #eee;
+}
+.wpdt-c #wdt-backend-html-modal .mce-container iframe {
+    border: 1px solid #eee;
+}
+.wpdt-c #wdt-backend-link-modal .modal-dialog,
+.wpdt-c #wdt-backend-html-modal .modal-dialog{
+    width: 500px !important;
+}
+.wpdt-c #wdt-backend-link-modal .modal-dialog .form-group {
+    margin-bottom: 15px !important;
+}
+.wpdt-c #wdt-backend-shortcode-modal .modal-dialog .modal-content .modal-header,
+.wpdt-c #wdt-backend-star-modal .modal-dialog .modal-content .modal-header,
+.wpdt-c #wdt-backend-html-modal .modal-dialog .modal-content .modal-header,
+.wpdt-c #wdt-backend-link-modal .modal-dialog .modal-content .modal-header {
+    border-bottom: 1px solid #ebeef5;
+    margin-bottom: 20px;
+    padding: 23px 20px;
+}
+.wpdt-c #wdt-backend-insert-shortcode-button,
+.wpdt-c #wdt-backend-insert-star-button,
+.wpdt-c #wdt-backend-insert-html-button,
+.wpdt-c #wdt-backend-insert-link-button,
+.wpdt-c .wdt-backend-close-modal-button {
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 8px 16px;
+    border-radius: 5px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06) !important;
+}
+.wpdt-c #wdt-backend-insert-html-button,
+.wpdt-c #wdt-backend-insert-shortcode-button,
+.wpdt-c #wdt-backend-insert-star-button,
+.wpdt-c #wdt-backend-insert-link-button {
+    background-color: #008CFF;
+    color: #FFF;
+}
+.wpdt-c .wdt-backend-close-modal-button {
+    background-color: #E03131;
+}
+.wpdt-c .wpdt-modals .error-msg{
+    color: #dc3545;
+}
+.wpdt-c .wpdt-modals .error-border{
+    border:1px solid #dc3545 !important;
+}
+.wpdt-c #wdt-backend-insert-shortcode-button i,
+.wpdt-c #wdt-backend-insert-star-button i,
+.wpdt-c #wdt-backend-insert-html-button i,
+.wpdt-c #wdt-backend-insert-link-button i,
+.wpdt-c .wdt-backend-close-modal-button i {
+    margin-right: 8px;
+    vertical-align: baseline;
+}
+
+.wpdt-c #wdt-backend-link-modal .modal-dialog .modal-content .modal-body  input:not([type="checkbox"]) {
+    border-radius: 4px;
+    border: solid 1px #dcdfe6;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    color: #606266;
+    height: 36px !important;
+    width: 100% !important;
+    padding: 11px 13px !important;
+}
+.wpdt-c #wdt-backend-shortcode-modal .modal-dialog .modal-content .modal-body textarea {
+    border-radius: 4px;
+    border: solid 1px #dcdfe6;
+    width: 100%;
+    padding: 11px 15px;
+    font-size: 16px;
+    resize: none;
+}
+.wpdt-c #wdt-backend-shortcode-modal .modal-dialog .modal-content .modal-body label,
+.wpdt-c #wdt-backend-html-modal .modal-dialog .modal-content .modal-body label,
+.wpdt-c #wdt-backend-link-modal .modal-dialog .modal-content .modal-body label,
+.wpdt-c #wdt-backend-star-modal .modal-dialog .modal-content .modal-body label {
+    font-size: 16px;
+}
+.wpdt-c #wdt-backend-shortcode-modal .modal-dialog .modal-content .modal-body textarea:focus {
+    box-shadow: none;
+}
+
+@media (max-width: 768px) {
+
+    .wpdt-c .wdt-datatables-admin-wrap div.column-settings-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+@media (max-width: 480px) {
+
+    .wpdt-c #wpdt-cell-action-buttons .btn.btn-primary {
+        width: auto !important;
+    }
+
+}

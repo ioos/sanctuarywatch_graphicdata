@@ -6,11 +6,16 @@ import {
 
 import { checkIfFileExistsAndLoadJson } from '@graphic-data/file-upload';
 
-// the last stop in the field validation process (if needed)
-replaceFieldValuesWithTransientValues();
+import {
+	replaceFieldValuesWithTransientValues,
+	redText,
+	displayEntries,
+	applyPlainTextPaste,
+} from '@graphic-data/admin-utility';
 
-// Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
-document.addEventListener('DOMContentLoaded', redText);
+import {
+	checkIfFileExistsAndLoadJson,
+} from '@graphic-data/file-upload';
 
 run_admin_figures();
 
