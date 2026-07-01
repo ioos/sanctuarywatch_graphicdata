@@ -251,7 +251,7 @@ class Graphic_Data_Modal {
 			array(
 				'id'          => 'modal_info_entries',
 				'type'        => 'range',
-				'title'       => 'Number of Modal Info Entries',
+				'title'       => 'Number of Info Entries',
 				'description' => 'How many info links are there for the modal?',
 				'min'         => 0,
 				'max'         => 6,
@@ -262,8 +262,8 @@ class Graphic_Data_Modal {
 			array(
 				'id'      => 'modal_photo_entries',
 				'type'    => 'range',
-				'title'   => 'Number of Modal Photo Entries',
-				'description' => 'How many photo links are there for the modal?',
+				'title'   => 'Number of Media Entries',
+				'description' => 'How many media links are there for the modal?',
 				'min'     => 0,
 				'max'     => 6,
 				'step'    => 1,
@@ -347,7 +347,7 @@ class Graphic_Data_Modal {
 					array(
 						'id'             => 'modal_photo_location' . $i,
 						'type'           => 'select',
-						'title'          => 'Image Location',
+						'title'          => 'Media Location',
 						'options'        => array(
 							'Internal' => 'Within this site',
 							'External' => 'Outside of this site',
@@ -372,7 +372,7 @@ class Graphic_Data_Modal {
 					array(
 						'id'       => 'modal_photo_internal' . $i,
 						'type'     => 'image',
-						'title'    => 'Image',
+						'title'    => 'Media',
 						'sanitize' => 'sanitize_url',
 					),
 				),

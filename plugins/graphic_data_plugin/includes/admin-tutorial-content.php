@@ -584,8 +584,8 @@ class Graphic_Data_Tutorial_Content {
 				update_post_meta( $post_id, 'instance_type', $tutorial_instance_type_id );
 				update_post_meta( $post_id, 'instance_status', 'Published' );
 
-				$instance_tile_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ], $post_id );
-				update_post_meta( $post_id, 'instance_tile', $instance_tile_url );
+				$instance_tile_attachment_url = $this->copy_image_to_media_library( $instance_tile [ $i ], $tutorial_id [ $i ], $post_id );
+				update_post_meta( $post_id, 'instance_tile', $instance_tile_attachment_url );
 				update_post_meta( $post_id, 'instance_legacy_content', 'no' );
 				update_post_meta( $post_id, 'instance_mobile_tile_background_color', $instance_mobile_tile_background_color );
 				update_post_meta( $post_id, 'instance_mobile_tile_text_color', $instance_mobile_tile_text_color );
@@ -1083,7 +1083,7 @@ class Graphic_Data_Tutorial_Content {
 							update_post_meta( $post_id, 'modal_location', $tutorial_instance_id );
 							break;
 						case 'modal_scene':
-							$tutorial_instance_id = $wpdb->get_var(
+							$tutorial_scene_id = $wpdb->get_var(
 								$wpdb->prepare(
 									"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
 									'tutorial_id',
@@ -1091,7 +1091,7 @@ class Graphic_Data_Tutorial_Content {
 									'scene',
 								)
 							);
-							update_post_meta( $post_id, 'modal_scene', $tutorial_instance_id );
+							update_post_meta( $post_id, 'modal_scene', $tutorial_scene_id );
 							break;
 						case 'modal_icons':
 							update_post_meta( $post_id, 'modal_icons', $modal_array['modal_icons'][ $i ] );
@@ -1219,7 +1219,7 @@ class Graphic_Data_Tutorial_Content {
 		// Add a flag to the post meta table so that we can find this media library item if we need to delete it later.
 		update_post_meta( $attachment_id, 'image_tutorial_id', $tutorial_id );
 
-		// Add a flag to the post meta table so that we can find this media library item if we need to delete it later.
+		// Add the instance id to the post meta table so that we can find this media library item if we need to delete it later.
 		update_post_meta( $attachment_id, 'graphic_data_instance_id', $instance_id );
 
 		// Return the URL associated with the media library item.
