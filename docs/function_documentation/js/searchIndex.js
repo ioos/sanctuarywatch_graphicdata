@@ -406,6 +406,36 @@ Search.appendIndex(
             "summary": "Grants\u0020administrator\u0020and\u0020editor\u0020roles\u0020full\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
             "url": "classes/Graphic-Data-Custom-Capabilities.html#method_add_admin_editor_custom_post_type_caps"
         },                {
+            "fqsen": "\\Graphic_Data_Search",
+            "name": "Graphic_Data_Search",
+            "summary": "Class\u0020Graphic_Data_Admin_Search",
+            "url": "classes/Graphic-Data-Search.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Ainit\u0028\u0029",
+            "name": "init",
+            "summary": "Hook\u0020the\u0020admin\u0020menu\u0020registration.",
+            "url": "classes/Graphic-Data-Search.html#method_init"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Aregister_menu\u0028\u0029",
+            "name": "register_menu",
+            "summary": "Register\u0020the\u0020\u0022Search\u0020All\u0020Content\u0022\u0020submenu\u0020page.",
+            "url": "classes/Graphic-Data-Search.html#method_register_menu"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Arender_page\u0028\u0029",
+            "name": "render_page",
+            "summary": "Render\u0020the\u0020search\u0020form\u0020and\u0020results\u0020table.",
+            "url": "classes/Graphic-Data-Search.html#method_render_page"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Asearch_content\u0028\u0029",
+            "name": "search_content",
+            "summary": "Search\u0020post\u0020titles\u0020and\u0020postmeta\u0020values\u0020for\u0020the\u0020given\u0020term.",
+            "url": "classes/Graphic-Data-Search.html#method_search_content"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003A\u0024post_types",
+            "name": "post_types",
+            "summary": "Custom\u0020post\u0020types\u0020included\u0020in\u0020the\u0020search.",
+            "url": "classes/Graphic-Data-Search.html#property_post_types"
+        },                {
             "fqsen": "\\Graphic_Data_Utility",
             "name": "Graphic_Data_Utility",
             "summary": "Utility\u0020functions\u0020used\u0020across\u0020the\u0020plugin",
@@ -650,6 +680,31 @@ Search.appendIndex(
             "name": "graphic_data_ensure_public_data_dir",
             "summary": "Ensure\u0020the\u0020public\u0020data\u0020directory\u0020exists\u0020with\u0020correct\u0020permissions.",
             "url": "namespaces/default.html#function_graphic_data_ensure_public_data_dir"
+        },                {
+            "fqsen": "\\graphic_data_register_blocks\u0028\u0029",
+            "name": "graphic_data_register_blocks",
+            "summary": "Register\u0020the\u0020blocks\u0020in\u0020the\u0020plugin.",
+            "url": "namespaces/default.html#function_graphic_data_register_blocks"
+        },                {
+            "fqsen": "\\graphic_data_register_figure_block_meta\u0028\u0029",
+            "name": "graphic_data_register_figure_block_meta",
+            "summary": "Register\u0020the\u0020figure\u0020fields\u0020for\u0020posts.",
+            "url": "namespaces/default.html#function_graphic_data_register_figure_block_meta"
+        },                {
+            "fqsen": "\\graphic_data_register_figure_block_routes\u0028\u0029",
+            "name": "graphic_data_register_figure_block_routes",
+            "summary": "",
+            "url": "namespaces/default.html#function_graphic_data_register_figure_block_routes"
+        },                {
+            "fqsen": "\\graphic_data_get_figure_block_meta\u0028\u0029",
+            "name": "graphic_data_get_figure_block_meta",
+            "summary": "",
+            "url": "namespaces/default.html#function_graphic_data_get_figure_block_meta"
+        },                {
+            "fqsen": "\\graphic_data_save_figure_block_meta\u0028\u0029",
+            "name": "graphic_data_save_figure_block_meta",
+            "summary": "",
+            "url": "namespaces/default.html#function_graphic_data_save_figure_block_meta"
         },                {
             "fqsen": "\\graphic_data_plugin_run\u0028\u0029",
             "name": "graphic_data_plugin_run",
