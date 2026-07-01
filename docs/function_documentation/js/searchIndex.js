@@ -641,6 +641,11 @@ Search.appendIndex(
             "summary": "Plugin\u0020activation\u0020callback.",
             "url": "namespaces/default.html#function_graphic_data_activate"
         },                {
+            "fqsen": "\\graphic_data_deactivate\u0028\u0029",
+            "name": "graphic_data_deactivate",
+            "summary": "Plugin\u0020deactivation\u0020callback.",
+            "url": "namespaces/default.html#function_graphic_data_deactivate"
+        },                {
             "fqsen": "\\graphic_data_ensure_public_data_dir\u0028\u0029",
             "name": "graphic_data_ensure_public_data_dir",
             "summary": "Ensure\u0020the\u0020public\u0020data\u0020directory\u0020exists\u0020with\u0020correct\u0020permissions.",
