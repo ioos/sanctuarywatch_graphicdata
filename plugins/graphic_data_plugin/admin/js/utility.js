@@ -274,24 +274,36 @@ export function displayEntries(entry_number, string_prefix) {
  * Newlines in the pasted content are converted to <br> elements so that
  * line breaks are preserved visually inside the editor.
  *
+ * Hooks TinyMCE's 'PastePreProcess' event rather than the raw 'paste' DOM
+ * event: PastePreProcess fires after TinyMCE has finished its own paste
+ * handling (including restoring the caret position via its internal paste
+ * bin), so rewriting e.content here lands wherever the caret actually was
+ * instead of racing TinyMCE and falling back to the end of the document.
+ *
  * This is a low-level helper intended to be called by applyPlainTextPaste,
  * which handles timing and editor discovery. You should not normally need to
  * call this function directly.
  *
- * @param {object} editor A fully initialized TinyMCE editor instance.
+ * @param {Object} editor A fully initialized TinyMCE editor instance.
  * @return {void}
  */
 export function bindPlainTextPaste(editor) {
-	editor.on('paste', function (e) {
-		e.preventDefault();
-		const text = (e.clipboardData || window.clipboardData).getData(
-			'text/plain'
-		);
-		if (text) {
-			editor.insertContent(
-				editor.dom.encode(text).replace(/\n/g, '<br>')
-			);
-		}
+	editor.on('PastePreProcess', function (e) {
+		// Convert block-level boundaries to newlines before stripping tags,
+		// otherwise multi-line/paragraph pastes collapse onto a single line.
+		const html = e.content
+			.replace(/<\/(p|div|li|h[1-6]|tr)>/gi, '\n')
+			.replace(/<br\s*\/?>/gi, '\n');
+
+		// Parse into a detached element so textContent decodes entities
+		// (e.g. &amp;) exactly once, avoiding double-encoding below.
+		const container = document.createElement('div');
+		container.innerHTML = html;
+		const text = (container.textContent || '')
+			.replace(/\n{2,}/g, '\n')
+			.replace(/^\n+|\n+$/g, '');
+
+		e.content = editor.dom.encode(text).replace(/\n/g, '<br>');
 	});
 }
 
