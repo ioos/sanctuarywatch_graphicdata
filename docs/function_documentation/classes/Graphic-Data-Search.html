@@ -99,14 +99,14 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">22</span>
+    <span class="phpdocumentor-element-found-in__line">25</span>
 
     </aside>
 
-            <p class="phpdocumentor-summary">Class Graphic_Data_Admin_Search</p>
+            <p class="phpdocumentor-summary">Class Graphic_Data_Search</p>
 
 
-    <section class="phpdocumentor-description"><p>Registers and renders the &quot;Search All Content&quot; admin submenu page.</p>
+    <section class="phpdocumentor-description"><p>Registers and renders the &quot;Search All Content&quot; top-level admin page.</p>
 </section>
 
 
@@ -148,6 +148,20 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-Search.html#property_instance_meta_keys">$instance_meta_keys</a>
+    <span>
+                        &nbsp;: array&lt;string, string&gt;            </span>
+</dt>
+<dd>Maps post type to the postmeta key that stores the related Instance post ID.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-Search.html#property_instance_title_cache">$instance_title_cache</a>
+    <span>
+                        &nbsp;: array&lt;int, string&gt;            </span>
+</dt>
+<dd>In-request cache of resolved Instance titles, keyed by Instance post ID.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/Graphic-Data-Search.html#property_post_types">$post_types</a>
     <span>
                         &nbsp;: array&lt;string|int, string&gt;            </span>
@@ -174,7 +188,7 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Register the &quot;Search All Content&quot; submenu page.</dd>
+<dd>Register &quot;Search All Content&quot; as a top-level admin menu page.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Search.html#method_render_page">render_page()</a>
@@ -184,11 +198,53 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
 <dd>Render the search form and results table.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Search.html#method_filter_by_assigned_instances">filter_by_assigned_instances()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, array&lt;string|int, mixed&gt;&gt;    </span>
+</dt>
+<dd>Filter results down to only those whose Instance is in the current user&#039;s assigned list.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Search.html#method_get_instance_id">get_instance_id()</a>
+    <span>
+                                &nbsp;: int    </span>
+</dt>
+<dd>Resolve the Instance post ID for a single result row.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Search.html#method_get_instance_title">get_instance_title()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Resolve the Instance display title for a single result row.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Search.html#method_is_restricted_author">is_restricted_author()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Determine whether the current user should be restricted to their assigned Instances.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Graphic-Data-Search.html#method_search_content">search_content()</a>
     <span>
                                 &nbsp;: array&lt;string|int, array&lt;string|int, mixed&gt;&gt;    </span>
 </dt>
 <dd>Search post titles and postmeta values for the given term.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Search.html#method_sort_results">sort_results()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Sort the results array in place by the requested column and direction.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Search.html#method_sortable_column_header">sortable_column_header()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Output a single &lt;th&gt; with a sort toggle link, preserving the current search term.</dd>
 
     </dl>
 
@@ -210,6 +266,115 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
             -private
             -static                                                        "
 >
+    <h4 class="phpdocumentor-element__name" id="property_instance_meta_keys">
+        $instance_meta_keys
+        <a href="classes/Graphic-Data-Search.html#property_instance_meta_keys" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">44</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Maps post type to the postmeta key that stores the related Instance post ID.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">array&lt;string, string&gt;</span>
+    <span class="phpdocumentor-signature__name">$instance_meta_keys</span>
+     = <span class="phpdocumentor-signature__default-value">array(&#039;scene&#039; =&gt; &#039;scene_location&#039;, &#039;modal&#039; =&gt; &#039;modal_location&#039;, &#039;figure&#039; =&gt; &#039;location&#039;)</span></code>
+
+        <section class="phpdocumentor-description"><p>The 'about' type has no Instance relationship, and 'instance' posts
+are their own Instance, so neither appears here.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="property_instance_meta_keys_tags">
+        Tags
+        <a href="classes/Graphic-Data-Search.html#property_instance_meta_keys_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+            -static                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_instance_title_cache">
+        $instance_title_cache
+        <a href="classes/Graphic-Data-Search.html#property_instance_title_cache" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">57</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">In-request cache of resolved Instance titles, keyed by Instance post ID.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">array&lt;int, string&gt;</span>
+    <span class="phpdocumentor-signature__name">$instance_title_cache</span>
+     = <span class="phpdocumentor-signature__default-value">array()</span></code>
+
+        <section class="phpdocumentor-description"><p>Avoids repeated get_the_title() calls when multiple results share an Instance.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="property_instance_title_cache_tags">
+        Tags
+        <a href="classes/Graphic-Data-Search.html#property_instance_title_cache_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+            -static                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_post_types">
         $post_types
         <a href="classes/Graphic-Data-Search.html#property_post_types" class="headerlink"><i class="fas fa-link"></i></a>
@@ -220,7 +385,7 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">30</span>
+    <span class="phpdocumentor-element-found-in__line">33</span>
 
     </aside>
 
@@ -277,7 +442,7 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">39</span>
+    <span class="phpdocumentor-element-found-in__line">66</span>
 
     </aside>
 
@@ -326,11 +491,11 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">53</span>
+    <span class="phpdocumentor-element-found-in__line">77</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Register the &quot;Search All Content&quot; submenu page.</p>
+        <p class="phpdocumentor-summary">Register &quot;Search All Content&quot; as a top-level admin menu page.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -339,10 +504,7 @@ permalink: /function_documentation/classes/Graphic-Data-Search.html
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Attached under the Scene CPT menu; adjust the parent slug if a
-different top-level menu location is preferred.</p>
-</section>
-
+    
     
     
     <h5 class="phpdocumentor-tag-list__heading" id="method_register_menu_tags">
@@ -378,7 +540,7 @@ different top-level menu location is preferred.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">74</span>
+    <span class="phpdocumentor-element-found-in__line">101</span>
 
     </aside>
 
@@ -391,8 +553,10 @@ different top-level menu location is preferred.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Handles the POST submission, verifies the nonce, sanitizes the
-search term, runs the query, and outputs the admin markup.</p>
+        <section class="phpdocumentor-description"><p>Reads the search term and sort parameters from $_GET, runs the
+query, resolves each row's Instance value, applies the Author
+instance-assignment restriction, sorts in PHP, and outputs the
+admin markup with sortable column headers.</p>
 </section>
 
     
@@ -422,6 +586,315 @@ search term, runs the query, and outputs the admin markup.</p>
             -private
                                     -static                    "
 >
+    <h4 class="phpdocumentor-element__name" id="method_filter_by_assigned_instances">
+        filter_by_assigned_instances()
+        <a href="classes/Graphic-Data-Search.html#method_filter_by_assigned_instances" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">353</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Filter results down to only those whose Instance is in the current user&#039;s assigned list.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">filter_by_assigned_instances</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, array&lt;string|int, mixed&gt;&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$results</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, array&lt;string|int, mixed&gt;&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Reads 'assigned_instances' from wp_usermeta for the current user,
+which is expected to be an array of Instance post IDs. Rows with
+no Instance (e.g. 'about' posts, or an unresolved location meta)
+are excluded, since they cannot be matched to an assignment.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$results</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, array&lt;string|int, mixed&gt;&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Results array, each row containing an 'instance_id' key.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_filter_by_assigned_instances_tags">
+        Tags
+        <a href="classes/Graphic-Data-Search.html#method_filter_by_assigned_instances_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, array&lt;string|int, mixed&gt;&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Filtered results.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_instance_id">
+        get_instance_id()
+        <a href="classes/Graphic-Data-Search.html#method_get_instance_id" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">270</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Resolve the Instance post ID for a single result row.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">get_instance_id</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Behavior varies by post type:</p>
+<ul>
+<li>about:    no Instance relationship, always returns 0.</li>
+<li>instance: the post IS an Instance, so its own ID is returned.</li>
+<li>scene:    resolved via the 'scene_location' postmeta.</li>
+<li>modal:    resolved via the 'modal_location' postmeta.</li>
+<li>figure:   resolved via the 'location' postmeta.</li>
+</ul>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The result row's post ID.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The result row's post type.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_get_instance_id_tags">
+        Tags
+        <a href="classes/Graphic-Data-Search.html#method_get_instance_id_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">int</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Instance post ID, or 0 if not applicable/not found.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_instance_title">
+        get_instance_title()
+        <a href="classes/Graphic-Data-Search.html#method_get_instance_title" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">294</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Resolve the Instance display title for a single result row.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">get_instance_title</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$instance_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$current_title</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$instance_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Instance post ID as resolved by get_instance_id().</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The result row's post type.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$current_title</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The result row's own title (used when post type is 'instance').</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_get_instance_title_tags">
+        Tags
+        <a href="classes/Graphic-Data-Search.html#method_get_instance_title_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Instance title, or empty string if not applicable/not found.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_is_restricted_author">
+        is_restricted_author()
+        <a href="classes/Graphic-Data-Search.html#method_is_restricted_author" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">325</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Determine whether the current user should be restricted to their assigned Instances.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">is_restricted_author</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Restriction applies to users holding the 'author' role who do not
+also hold a higher-privilege role (administrator or editor), so an
+Author who has additionally been granted Editor is not restricted.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_is_restricted_author_tags">
+        Tags
+        <a href="classes/Graphic-Data-Search.html#method_is_restricted_author_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>True if the current user should be limited to assigned Instances.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
     <h4 class="phpdocumentor-element__name" id="method_search_content">
         search_content()
         <a href="classes/Graphic-Data-Search.html#method_search_content" class="headerlink"><i class="fas fa-link"></i></a>
@@ -430,7 +903,7 @@ search term, runs the query, and outputs the admin markup.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">179</span>
+    <span class="phpdocumentor-element-found-in__line">395</span>
 
     </aside>
 
@@ -486,16 +959,196 @@ a single matching post would be returned once per matching row.</p>
                     &mdash;
                 <section class="phpdocumentor-description"><p>{
 Indexed array of matching post rows.</p>
-<pre class="prettyprint"><code class="prettyprint">@type int    $ID         Post ID.
-@type string $title      Post title (may be empty).
-@type string $post_type  Post type slug.
-@type string $matched_on Human-readable match source: 'Title' or 'Content field'.
+<pre class="prettyprint"><code class="prettyprint">@type int    $ID        Post ID.
+@type string $title     Post title (may be empty).
+@type string $post_type Post type slug.
 </code></pre>
 <p>}</p>
 </section>
 
             </section>
 
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_sort_results">
+        sort_results()
+        <a href="classes/Graphic-Data-Search.html#method_sort_results" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">236</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Sort the results array in place by the requested column and direction.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">sort_results</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, array&lt;string|int, mixed&gt;&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$results</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$orderby</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$order</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Sorting is done in PHP rather than SQL because the Instance value
+is resolved after the initial query (it requires a per-row postmeta
+lookup and, for scene/modal/figure, a second post title lookup).</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$results</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, array&lt;string|int, mixed&gt;&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Results array, passed by reference. Each row has
+'ID', 'title', 'post_type', 'instance_id', 'instance' keys.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$orderby</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>One of 'title', 'post_type', 'instance'.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$order</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>'asc' or 'desc'.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_sort_results_tags">
+        Tags
+        <a href="classes/Graphic-Data-Search.html#method_sort_results_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_sortable_column_header">
+        sortable_column_header()
+        <a href="classes/Graphic-Data-Search.html#method_sortable_column_header" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-search.php"><a href="files/plugins-graphic-data-plugin-admin-class-search.html"><abbr title="plugins/graphic_data_plugin/admin/class-search.php">class-search.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">199</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Output a single &lt;th&gt; with a sort toggle link, preserving the current search term.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">sortable_column_header</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$label</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$column_key</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$search_term</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$orderby</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$order</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$label</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Visible column label.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$column_key</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Key used in the orderby query arg (must be in $allowed_orderby).</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$search_term</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Current search term, preserved across the sort link.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$orderby</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Currently active orderby column.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$order</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Currently active order ('asc'|'desc').</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_sortable_column_header_tags">
+        Tags
+        <a href="classes/Graphic-Data-Search.html#method_sortable_column_header_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
 </article>
             </section>
 
@@ -519,6 +1172,8 @@ Indexed array of matching post rows.</p>
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/Graphic-Data-Search.html#property_instance_meta_keys">$instance_meta_keys</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Search.html#property_instance_title_cache">$instance_title_cache</a></li>
                                                     <li class=""><a href="classes/Graphic-Data-Search.html#property_post_types">$post_types</a></li>
                                             </ul>
                 </li>
@@ -529,7 +1184,13 @@ Indexed array of matching post rows.</p>
                                             <li class=""><a href="classes/Graphic-Data-Search.html#method_init">init()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Search.html#method_register_menu">register_menu()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Search.html#method_render_page">render_page()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Search.html#method_filter_by_assigned_instances">filter_by_assigned_instances()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Search.html#method_get_instance_id">get_instance_id()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Search.html#method_get_instance_title">get_instance_title()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Search.html#method_is_restricted_author">is_restricted_author()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Search.html#method_search_content">search_content()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Search.html#method_sort_results">sort_results()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Search.html#method_sortable_column_header">sortable_column_header()</a></li>
                                     </ul>
             </li>
                     </ul>
