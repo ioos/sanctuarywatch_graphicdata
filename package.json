@@ -4,13 +4,13 @@
   "description": "ESLint configuration for WordPress plugins and themes",
   "private": true,
   "scripts": {
-    "clean:insert-figure": "rm -rf blocks/insert-figure/build && mkdir -p blocks/insert-figure/build",
+    "clean:insert-interactive-figure": "rm -rf blocks/insert-interactive-figure/build && mkdir -p blocks/insert-interactive-figure/build",
 
-    "copy:insert-figure": "mkdir -p blocks/insert-figure/build && cp blocks/insert-figure/src/block.json blocks/insert-figure/build/block.json && cp blocks/insert-figure/src/render.php blocks/insert-figure/build/render.php && cp blocks/insert-figure/src/index.css blocks/insert-figure/build/index.css 2>/dev/null || true && cp blocks/insert-figure/src/style-index.css blocks/insert-figure/build/style-index.css 2>/dev/null || true",
+    "copy:insert-interactive-figure": "mkdir -p blocks/insert-interactive-figure/build && cp blocks/insert-interactive-figure/src/block.json blocks/insert-interactive-figure/build/block.json && cp blocks/insert-interactive-figure/src/render.php blocks/insert-interactive-figure/build/render.php && cp blocks/insert-interactive-figure/src/index.css blocks/insert-interactive-figure/build/index.css 2>/dev/null || true && cp blocks/insert-interactive-figure/src/style-index.css blocks/insert-interactive-figure/build/style-index.css 2>/dev/null || true",
 
-    "build:insert-figure": "npm run clean:insert-figure && wp-scripts build blocks/insert-figure/src/index.js blocks/insert-figure/src/view.js --output-path=blocks/insert-figure/build && npm run copy:insert-figure",
+    "build:insert-interactive-figure": "npm run clean:insert-interactive-figure && wp-scripts build blocks/insert-interactive-figure/src/index.js blocks/insert-interactive-figure/src/view.js --output-path=blocks/insert-interactive-figure/build && npm run copy:insert-interactive-figure",
 
-    "start:insert-figure": "npm run copy:insert-figure && wp-scripts start blocks/insert-figure/src/index.js blocks/insert-figure/src/view.js --output-path=blocks/insert-figure/build",
+    "start:insert-interactive-figure": "npm run copy:insert-interactive-figure && wp-scripts start blocks/insert-interactive-figure/src/index.js blocks/insert-interactive-figure/src/view.js --output-path=blocks/insert-interactive-figure/build",
 
     "lint:js": "eslint --ext .js plugins/ themes/ --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' --format stylish",
     "lint:php-js": "node lint-php-js.js",

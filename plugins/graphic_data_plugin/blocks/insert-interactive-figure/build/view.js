@@ -2557,9 +2557,9 @@ window.fillFormFieldValues = fillFormFieldValues;
 var __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
-/*!******************************************!*\
-  !*** ./blocks/insert-figure/src/view.js ***!
-  \******************************************/
+/*!******************************************************!*\
+  !*** ./blocks/insert-interactive-figure/src/view.js ***!
+  \******************************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @graphic-data/plotly-timeseries-line */ "./includes/figures/js/interactive/plotly-timeseries-line.js");
 

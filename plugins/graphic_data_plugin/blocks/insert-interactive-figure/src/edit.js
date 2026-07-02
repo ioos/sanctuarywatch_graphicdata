@@ -207,7 +207,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	 * useBlockProps adds the standard WordPress block classes and editor props.
 	 */
 	const blockProps = useBlockProps({
-		className: 'graphic-data-insert-figure-block',
+		className: 'graphic-data-insert-interactive-figure-block',
 		// style: {
 		// 	width: '100%',
 		// 	maxWidth: 'none',
