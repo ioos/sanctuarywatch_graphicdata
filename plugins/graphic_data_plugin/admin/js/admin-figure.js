@@ -1,9 +1,3 @@
-import {
-	replaceFieldValuesWithTransientValues,
-	redText,
-	applyPlainTextPaste,
-} from '@graphic-data/admin-utility';
-
 import { checkIfFileExistsAndLoadJson } from '@graphic-data/file-upload';
 
 import {
@@ -12,10 +6,6 @@ import {
 	displayEntries,
 	applyPlainTextPaste,
 } from '@graphic-data/admin-utility';
-
-import {
-	checkIfFileExistsAndLoadJson,
-} from '@graphic-data/file-upload';
 
 run_admin_figures();
 

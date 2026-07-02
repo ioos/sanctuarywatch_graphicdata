@@ -95,7 +95,7 @@ class Graphic_Data_Figure {
 			'figure_modal' => 'Icon',
 			'figure_tab' => 'Tab',
 			'figure_order' => 'Order',
-			'figure_image_location' => 'Image Location',
+			'figure_image_location' => 'Type',
 			'figure_published' => 'Published',
 			'status' => 'Status',
 		);

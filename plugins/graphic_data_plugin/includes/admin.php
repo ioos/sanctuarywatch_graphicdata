@@ -142,8 +142,11 @@ class Graphic_Data_Plugin {
 		// The class that defines general utility functions for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
-		// The class that defines general utility functions for the plugin.
+		// The class that defines plugin only functions for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-plugin-only.php';
+
+		// The class that defines plugin only functions for the plugin.
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-search.php';
 
 		// Include the GitHub Updater class.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-github-updater.php';
@@ -177,6 +180,10 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_notices', $plugin_utility, 'check_draft_overview_scene', 40 );
 		$this->loader->add_action( 'edit_form_after_title', $plugin_utility, 'render_nonce_field' );
 		$this->loader->add_action( 'admin_footer', $plugin_utility, 'inject_tinymce_changes' );
+
+		// Load class and functions associated with new user roles.
+		$plugin_search = new Graphic_Data_Search();
+		$this->loader->add_action( 'init', $plugin_search, 'init' );
 
 		// Load class and functions associated with new user roles.
 		$plugin_custom_capabilities = new Graphic_Data_Custom_Capabilities();

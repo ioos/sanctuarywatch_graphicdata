@@ -406,6 +406,76 @@ Search.appendIndex(
             "summary": "Grants\u0020administrator\u0020and\u0020editor\u0020roles\u0020full\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
             "url": "classes/Graphic-Data-Custom-Capabilities.html#method_add_admin_editor_custom_post_type_caps"
         },                {
+            "fqsen": "\\Graphic_Data_Search",
+            "name": "Graphic_Data_Search",
+            "summary": "Class\u0020Graphic_Data_Search",
+            "url": "classes/Graphic-Data-Search.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Ainit\u0028\u0029",
+            "name": "init",
+            "summary": "Hook\u0020the\u0020admin\u0020menu\u0020registration.",
+            "url": "classes/Graphic-Data-Search.html#method_init"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Aregister_menu\u0028\u0029",
+            "name": "register_menu",
+            "summary": "Register\u0020\u0022Search\u0020All\u0020Content\u0022\u0020as\u0020a\u0020top\u002Dlevel\u0020admin\u0020menu\u0020page.",
+            "url": "classes/Graphic-Data-Search.html#method_register_menu"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Arender_page\u0028\u0029",
+            "name": "render_page",
+            "summary": "Render\u0020the\u0020search\u0020form\u0020and\u0020results\u0020table.",
+            "url": "classes/Graphic-Data-Search.html#method_render_page"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Asortable_column_header\u0028\u0029",
+            "name": "sortable_column_header",
+            "summary": "Output\u0020a\u0020single\u0020\u003Cth\u003E\u0020with\u0020a\u0020sort\u0020toggle\u0020link,\u0020preserving\u0020the\u0020current\u0020search\u0020term.",
+            "url": "classes/Graphic-Data-Search.html#method_sortable_column_header"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Asort_results\u0028\u0029",
+            "name": "sort_results",
+            "summary": "Sort\u0020the\u0020results\u0020array\u0020in\u0020place\u0020by\u0020the\u0020requested\u0020column\u0020and\u0020direction.",
+            "url": "classes/Graphic-Data-Search.html#method_sort_results"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Aget_instance_id\u0028\u0029",
+            "name": "get_instance_id",
+            "summary": "Resolve\u0020the\u0020Instance\u0020post\u0020ID\u0020for\u0020a\u0020single\u0020result\u0020row.",
+            "url": "classes/Graphic-Data-Search.html#method_get_instance_id"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Aget_instance_title\u0028\u0029",
+            "name": "get_instance_title",
+            "summary": "Resolve\u0020the\u0020Instance\u0020display\u0020title\u0020for\u0020a\u0020single\u0020result\u0020row.",
+            "url": "classes/Graphic-Data-Search.html#method_get_instance_title"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Ais_restricted_author\u0028\u0029",
+            "name": "is_restricted_author",
+            "summary": "Determine\u0020whether\u0020the\u0020current\u0020user\u0020should\u0020be\u0020restricted\u0020to\u0020their\u0020assigned\u0020Instances.",
+            "url": "classes/Graphic-Data-Search.html#method_is_restricted_author"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Afilter_by_assigned_instances\u0028\u0029",
+            "name": "filter_by_assigned_instances",
+            "summary": "Filter\u0020results\u0020down\u0020to\u0020only\u0020those\u0020whose\u0020Instance\u0020is\u0020in\u0020the\u0020current\u0020user\u0027s\u0020assigned\u0020list.",
+            "url": "classes/Graphic-Data-Search.html#method_filter_by_assigned_instances"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003Asearch_content\u0028\u0029",
+            "name": "search_content",
+            "summary": "Search\u0020post\u0020titles\u0020and\u0020postmeta\u0020values\u0020for\u0020the\u0020given\u0020term.",
+            "url": "classes/Graphic-Data-Search.html#method_search_content"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003A\u0024post_types",
+            "name": "post_types",
+            "summary": "Custom\u0020post\u0020types\u0020included\u0020in\u0020the\u0020search.",
+            "url": "classes/Graphic-Data-Search.html#property_post_types"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003A\u0024instance_meta_keys",
+            "name": "instance_meta_keys",
+            "summary": "Maps\u0020post\u0020type\u0020to\u0020the\u0020postmeta\u0020key\u0020that\u0020stores\u0020the\u0020related\u0020Instance\u0020post\u0020ID.",
+            "url": "classes/Graphic-Data-Search.html#property_instance_meta_keys"
+        },                {
+            "fqsen": "\\Graphic_Data_Search\u003A\u003A\u0024instance_title_cache",
+            "name": "instance_title_cache",
+            "summary": "In\u002Drequest\u0020cache\u0020of\u0020resolved\u0020Instance\u0020titles,\u0020keyed\u0020by\u0020Instance\u0020post\u0020ID.",
+            "url": "classes/Graphic-Data-Search.html#property_instance_title_cache"
+        },                {
             "fqsen": "\\Graphic_Data_Utility",
             "name": "Graphic_Data_Utility",
             "summary": "Utility\u0020functions\u0020used\u0020across\u0020the\u0020plugin",
@@ -650,6 +720,31 @@ Search.appendIndex(
             "name": "graphic_data_ensure_public_data_dir",
             "summary": "Ensure\u0020the\u0020public\u0020data\u0020directory\u0020exists\u0020with\u0020correct\u0020permissions.",
             "url": "namespaces/default.html#function_graphic_data_ensure_public_data_dir"
+        },                {
+            "fqsen": "\\graphic_data_register_blocks\u0028\u0029",
+            "name": "graphic_data_register_blocks",
+            "summary": "Register\u0020the\u0020blocks\u0020in\u0020the\u0020plugin.",
+            "url": "namespaces/default.html#function_graphic_data_register_blocks"
+        },                {
+            "fqsen": "\\graphic_data_register_figure_block_meta\u0028\u0029",
+            "name": "graphic_data_register_figure_block_meta",
+            "summary": "Register\u0020the\u0020figure\u0020fields\u0020for\u0020posts.",
+            "url": "namespaces/default.html#function_graphic_data_register_figure_block_meta"
+        },                {
+            "fqsen": "\\graphic_data_register_figure_block_routes\u0028\u0029",
+            "name": "graphic_data_register_figure_block_routes",
+            "summary": "",
+            "url": "namespaces/default.html#function_graphic_data_register_figure_block_routes"
+        },                {
+            "fqsen": "\\graphic_data_get_figure_block_meta\u0028\u0029",
+            "name": "graphic_data_get_figure_block_meta",
+            "summary": "",
+            "url": "namespaces/default.html#function_graphic_data_get_figure_block_meta"
+        },                {
+            "fqsen": "\\graphic_data_save_figure_block_meta\u0028\u0029",
+            "name": "graphic_data_save_figure_block_meta",
+            "summary": "",
+            "url": "namespaces/default.html#function_graphic_data_save_figure_block_meta"
         },                {
             "fqsen": "\\graphic_data_plugin_run\u0028\u0029",
             "name": "graphic_data_plugin_run",
