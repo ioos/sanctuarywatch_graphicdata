@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "create-block/graphic-data-insert-interactive-figure",
   "version": "0.1.0",
-  "title": "Graphic Data Insert Figure Data",
+  "title": "Graphic Data - Interactive Figure",
   "category": "media",
   "description": "Insert an interactive figure into a post",
   "example": {},

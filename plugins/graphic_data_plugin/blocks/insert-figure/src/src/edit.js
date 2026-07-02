@@ -3,7 +3,6 @@ import { useSelect } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
 import apiFetch from '@wordpress/api-fetch';
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
-import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 
 import {
 	SelectControl,
@@ -469,40 +468,14 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			setErrorMessage('');
 
 			try {
-				
-				const rawArgs = meta?.figure_interactive_arguments;
-
-				const parsedArgs =
-					typeof rawArgs === 'string'
-						? JSON.parse(rawArgs)
-						: rawArgs;
-
-				const graphType = Array.isArray(parsedArgs)
-					? Object.fromEntries(parsedArgs).graphType
-					: parsedArgs?.graphType;
-
-
-				if (graphType === 'Plotly line graph (time series)') {
-					await Promise.resolve(
-						producePlotlyLineFigure(
-							targetFigureElement,
-							interactiveArguments,
-							Number(figureId),
-							targetDocument
-						)
-					);
-				}
-				if (graphType === 'Plotly bar graph') {
-					await Promise.resolve(
-						producePlotlyBarFigure(
-							targetFigureElement,
-							interactiveArguments,
-							Number(figureId),
-							targetDocument
-						)
-					);
-				}
-
+				await Promise.resolve(
+					producePlotlyLineFigure(
+						targetFigureElement,
+						interactiveArguments,
+						Number(figureId),
+						targetDocument
+					)
+				);
 
 				/**
 				 * Gutenberg may finish sizing the block after Plotly initially renders.

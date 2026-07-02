@@ -15,6 +15,11 @@ module.exports = {
 				'includes/figures/js/interactive/plotly-timeseries-line.js'
 			),
 
+			'@graphic-data/plotly-bar': path.resolve(
+				__dirname,
+				'includes/figures/js/interactive/plotly-bar.js'
+			),
+
 			'@graphic-data/plotly-utility': path.resolve(
 				__dirname,
 				'includes/figures/js/interactive/plotly-utility.js'

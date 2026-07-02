@@ -1,5 +1,4 @@
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
-import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 
 function normalizeInteractiveArguments(value) {
 	if (!value) {
@@ -53,19 +52,6 @@ async function renderFigureBlock(block) {
 		block.dataset.targetId || `targetFigureElement_${figureId}`;
 
 	const interactiveArguments = readInteractiveArguments(block);
-	
-	const rawArgs = interactiveArguments;
-
-	const parsedArgs =
-		typeof rawArgs === 'string'
-			? JSON.parse(rawArgs)
-			: rawArgs;
-
-	const graphType = Array.isArray(parsedArgs)
-		? Object.fromEntries(parsedArgs).graphType
-		: parsedArgs?.graphType;
-
-	console.log('graphType', graphType);
 
 	if (!interactiveArguments) {
 		throw new Error(
@@ -96,26 +82,14 @@ async function renderFigureBlock(block) {
 
 	targetDiv.innerHTML = '';
 
-	if (graphType === 'Plotly line graph (time series)') {
-		await Promise.resolve(
-			producePlotlyLineFigure(
-				targetFigureElement,
-				interactiveArguments,
-				figureId,
-				document
-			)
-		);
-	}
-	if (graphType === 'Plotly bar graph') {
-		await Promise.resolve(
-			producePlotlyBarFigure(
-				targetFigureElement,
-				interactiveArguments,
-				figureId,
-				document
-			)
-		);
-	}
+	await Promise.resolve(
+		producePlotlyLineFigure(
+			targetFigureElement,
+			interactiveArguments,
+			figureId,
+			document
+		)
+	);
 
 	const plotDiv = document.getElementById(`plotlyFigure${figureId}`);
 
