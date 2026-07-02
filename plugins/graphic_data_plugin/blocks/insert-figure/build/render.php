@@ -21,7 +21,19 @@ if ( empty( $interactive_arguments ) ) {
 	return '';
 }
 
-$target_id = 'targetFigureElement_' . $figure_id;
+/**
+ * Each block instance needs its own frontend target ID.
+ *
+ * This prevents two copies of the same Figure ID from rendering into the
+ * same DOM target.
+ */
+$instance_id = isset( $attributes['instanceId'] ) ? sanitize_key( $attributes['instanceId'] ) : '';
+
+if ( empty( $instance_id ) ) {
+	$instance_id = wp_unique_id( 'figure-instance-' );
+}
+
+$target_id = 'targetFigureElement_' . $figure_id . '_' . $instance_id;
 
 $wrapper_attributes = get_block_wrapper_attributes(
 	array(
@@ -33,6 +45,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 <div
 	<?php echo $wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	data-figure-id="<?php echo esc_attr( $figure_id ); ?>"
+	data-instance-id="<?php echo esc_attr( $instance_id ); ?>"
 	data-target-id="<?php echo esc_attr( $target_id ); ?>"
 >
 	<script type="application/json" class="graphic-data-interactive-arguments">
@@ -48,6 +61,7 @@ $wrapper_attributes = get_block_wrapper_attributes(
 		id="<?php echo esc_attr( $target_id ); ?>"
 		class="targetFigureElement graphic-data-block-plotly-target"
 		data-figure-id="<?php echo esc_attr( $figure_id ); ?>"
+		data-instance-id="<?php echo esc_attr( $instance_id ); ?>"
 		style="width: 100%; max-width: 100%;"
 	></div>
 </div>

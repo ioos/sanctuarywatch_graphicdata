@@ -15,6 +15,10 @@
     "figureMode": {
       "type": "string",
       "default": "existing"
+    },
+    "instanceId": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {

@@ -66,6 +66,136 @@ function normalizeInteractiveArguments(value) {
   }
   return JSON.stringify(value);
 }
+function ensurePlotlyEditorLayerStyles(rootDocument) {
+  if (!rootDocument) return;
+  const styleId = 'graphic-data-plotly-editor-layer-fix';
+  if (rootDocument.getElementById(styleId)) {
+    return;
+  }
+  const style = rootDocument.createElement('style');
+  style.id = styleId;
+  style.textContent = `
+		.graphic-data-block-plotly-target,
+		.graphic-data-block-plotly-target .js-plotly-plot,
+		.graphic-data-block-plotly-target .plot-container,
+		.graphic-data-block-plotly-target .plot-container.plotly,
+		.graphic-data-block-plotly-target .svg-container {
+			position: relative !important;
+		}
+
+		.graphic-data-block-plotly-target .svg-container {
+			overflow: hidden !important;
+		}
+
+		.graphic-data-block-plotly-target .svg-container > .main-svg {
+			position: absolute !important;
+			top: 0 !important;
+			left: 0 !important;
+		}
+
+		.graphic-data-block-plotly-target .svg-container > .main-svg {
+			width: 100% !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-container {
+			position: absolute !important;
+			top: 0 !important;
+			right: 0 !important;
+			left: auto !important;
+			width: 100% !important;
+			height: 100% !important;
+			z-index: 1001 !important;
+			pointer-events: none !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar {
+			position: absolute !important;
+			top: 2px !important;
+			right: 2px !important;
+			left: auto !important;
+
+			display: flex !important;
+			flex-direction: row !important;
+			flex-wrap: nowrap !important;
+			align-items: center !important;
+			justify-content: flex-end !important;
+
+			width: auto !important;
+			height: auto !important;
+			white-space: nowrap !important;
+			pointer-events: all !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-group {
+			position: relative !important;
+
+			display: flex !important;
+			flex-direction: row !important;
+			flex-wrap: nowrap !important;
+			align-items: center !important;
+
+			float: none !important;
+			clear: none !important;
+
+			width: auto !important;
+			height: 22px !important;
+			min-width: 0 !important;
+			min-height: 0 !important;
+
+			margin: 0 0 0 8px !important;
+			padding: 0 !important;
+
+			white-space: nowrap !important;
+			vertical-align: middle !important;
+			box-sizing: border-box !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-group:first-child {
+			margin-left: 0 !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-btn {
+			position: relative !important;
+
+			display: inline-flex !important;
+			flex: 0 0 auto !important;
+			align-items: center !important;
+			justify-content: center !important;
+
+			float: none !important;
+			clear: none !important;
+
+			width: 22px !important;
+			height: 22px !important;
+			min-width: 22px !important;
+			min-height: 22px !important;
+
+			margin: 0 !important;
+			padding: 3px 4px !important;
+
+			line-height: 1 !important;
+			box-sizing: border-box !important;
+			vertical-align: middle !important;
+			text-decoration: none !important;
+			pointer-events: all !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-btn svg {
+			position: static !important;
+			display: block !important;
+			width: 1em !important;
+			height: 1em !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			flex: 0 0 auto !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-btn svg path {
+			pointer-events: none !important;
+		}
+	`;
+  rootDocument.head.appendChild(style);
+}
 
 /**
  * Edit component
@@ -82,7 +212,8 @@ function normalizeInteractiveArguments(value) {
  */
 function Edit({
   attributes,
-  setAttributes
+  setAttributes,
+  clientId
 }) {
   /**
    * figureId is the only block attribute this editor really needs now.
@@ -91,7 +222,8 @@ function Edit({
    * Plotly figure.
    */
   const {
-    figureId = 0
+    figureId = 0,
+    instanceId = ''
   } = attributes;
 
   /**
@@ -150,10 +282,20 @@ function Edit({
   const figureOptions = [{
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Select a figure', 'graphic-data-plugin'),
     value: 0
-  }, ...(Array.isArray(figures) ? figures.map(figure => ({
-    label: figure.title?.rendered ? stripHTML(figure.title.rendered) : `Figure ${figure.id}`,
-    value: figure.id
-  })) : [])];
+  }, ...(Array.isArray(figures) ? figures.map(figure => {
+    const figureTitle = figure.title?.rendered ? stripHTML(figure.title.rendered) : 'Untitled figure';
+    return {
+      label: `${figureTitle} (Figure ${figure.id})`,
+      value: figure.id
+    };
+  }) : [])];
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (instanceId) return;
+    const cleanClientId = String(clientId || '').replace(/[^a-zA-Z0-9_-]/g, '');
+    setAttributes({
+      instanceId: cleanClientId || `instance-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+    });
+  }, [instanceId, clientId, setAttributes]);
 
   /**
    * When figureId changes, fetch the full figure metadata from your custom
@@ -263,55 +405,48 @@ function Edit({
      *
      * So we keep that same pattern.
      */
-    const targetFigureElement = `targetFigureElement_${figureId}`;
+    const safeInstanceId = String(instanceId || clientId || '').replace(/[^a-zA-Z0-9_-]/g, '');
+    const targetFigureElement = `targetFigureElement_${figureId}_${safeInstanceId}`;
 
     /**
      * Important:
      * Do not assume global document is the same document as the block editor canvas.
      * In the block editor, previewElement may live inside an editor iframe.
      */
+
     const targetDocument = previewElement.ownerDocument;
+    ensurePlotlyEditorLayerStyles(targetDocument);
     const targetDiv = targetDocument.createElement('div');
     targetDiv.id = targetFigureElement;
     targetDiv.className = 'targetFigureElement graphic-data-block-plotly-target';
     targetDiv.dataset.figureId = String(figureId);
     targetDiv.style.width = '100%';
     previewElement.appendChild(targetDiv);
-
-    // console.log('Target div created for Plotly:', {
-    // 	figureId,
-    // 	targetFigureElement,
-    // 	targetDiv,
-    // 	foundInGlobalDocument: !!document.getElementById(targetFigureElement),
-    // 	foundInTargetDocument: !!targetDocument.getElementById(targetFigureElement),
-    // 	sameDocument: targetDocument === document,
-    // });
-
     async function renderPlotlyFigure() {
       setIsRenderingPlot(true);
       setErrorMessage('');
       try {
         await Promise.resolve((0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_4__.producePlotlyLineFigure)(targetFigureElement, interactiveArguments, Number(figureId), targetDocument));
-        const plotDiv = targetDocument.getElementById(`plotlyFigure${figureId}`);
-        const targetDiv2 = targetDocument.getElementById(`targetFigureElement_${figureId}`);
-        console.log('plotDiv', plotDiv);
-        console.log('targetDiv2', targetDiv2);
-        if (plotDiv && window.Plotly?.relayout) {
-          plotDiv.style.width = '100%';
-          plotDiv.style.maxWidth = '100%';
-          // plotDiv.style.height = `${editorPlotHeight}px`;
 
+        /**
+         * Gutenberg may finish sizing the block after Plotly initially renders.
+         * Wait two animation frames, then force Plotly to use the actual parent width.
+         */
+        await new Promise(resolve => {
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(resolve);
+          });
+        });
+        const targetElement = targetDocument.getElementById(targetFigureElement);
+        const plotDiv = targetElement?.querySelector('.js-plotly-plot') || targetElement?.querySelector('.plotly') || targetElement;
+        if (plotDiv && window.Plotly?.Plots?.resize) {
+          window.Plotly.Plots.resize(plotDiv);
+        }
+        if (plotDiv && window.Plotly?.relayout) {
           await window.Plotly.relayout(plotDiv, {
             autosize: true,
-            'margin.t': 60,
-            'margin.b': 60,
-            'margin.l': 60,
-            'margin.r': 60,
-            'margin.pad': 4,
-            'xaxis.automargin': true,
-            'yaxis.automargin': true
+            width: targetElement.clientWidth
           });
-          await window.Plotly.Plots.resize(plotDiv);
         }
       } catch (error) {
         if (!isCurrentRender) return;
@@ -323,14 +458,6 @@ function Edit({
       }
     }
     renderPlotlyFigure();
-
-    // console.log('targetFigureElement', targetFigureElement);
-    // producePlotlyLineFigure(
-    // 	targetFigureElement,
-    // 	interactiveArguments,
-    // 	Number(figureId)
-    // )
-
     return () => {
       isCurrentRender = false;
 
@@ -355,7 +482,7 @@ function Edit({
         isDismissible: false,
         children: "No published figures found."
       }), Array.isArray(figures) && figures.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
-        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Figure', 'graphic-data-plugin'),
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Graphic Data - Insert Interactive Figure', 'graphic-data-plugin'),
         value: Number(figureId),
         options: figureOptions,
         onChange: value => {
@@ -374,15 +501,6 @@ function Edit({
             previewRef.current.innerHTML = '';
           }
         }
-      }), selectedFigureTitle && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("p", {
-        style: {
-          marginTop: '8px',
-          marginBottom: '0',
-          fontSize: '13px'
-        },
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("strong", {
-          children: "Selected:"
-        }), " ", selectedFigureTitle]
       })]
     }), isLoadingMeta && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
       className: "graphic-data-figure-loading",
@@ -2069,490 +2187,497 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
   if (targetDocument) {
     newDiv = renderDocument.createElement('div');
   }
-  const plotlyDivID = `plotlyFigure${figureID}`;
+
+  // considerations for unique hashing for multiple uses vs onetime use. 
+  let plotlyDivID;
+  const uniqueHash = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
   newDiv.id = plotlyDivID;
   newDiv.classList.add("container", `figure_interactive${figureID}`);
   const targetElementparts = targetFigureElement.split("_");
   const targetElementpostID = targetElementparts[targetElementparts.length - 1];
-  if (figureID == targetElementpostID) {
-    //Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-    let targetElement;
-    if (!targetDocument) {
-      targetElement = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.waitForElementById)(targetFigureElement);
-      targetElement.appendChild(newDiv);
-    }
-    if (targetDocument) {
-      targetElement = renderDocument.getElementById(targetFigureElement);
-      targetElement.appendChild(newDiv);
-    }
-    const numLines = figureArguments['NumberOfLines'];
-    let plotlyX;
-    let plotlyY;
-    let columnXHeader;
-    let columnYHeader;
-    let targetLineColumn;
-    let singleLinePlotly;
-    let allLinesPlotly = [];
-    let shapesForLayout = [];
 
-    //Shows the grid lines if it is set to 'on' in the figure arguments
-    const showGrid = figureArguments['showGrid'];
-    if (showGrid === 'on') {
-      var showGridBool = true;
+  // if (figureID == targetElementpostID) {
+
+  //Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
+  let targetElement;
+  if (!targetDocument) {
+    targetElement = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.waitForElementById)(targetFigureElement);
+    targetElement.appendChild(newDiv);
+  }
+  if (targetDocument) {
+    targetElement = renderDocument.getElementById(targetFigureElement);
+    targetElement.appendChild(newDiv);
+  }
+  const numLines = figureArguments['NumberOfLines'];
+  let plotlyX;
+  let plotlyY;
+  let columnXHeader;
+  let columnYHeader;
+  let targetLineColumn;
+  let singleLinePlotly;
+  let allLinesPlotly = [];
+  let shapesForLayout = [];
+
+  //Shows the grid lines if it is set to 'on' in the figure arguments
+  const showGrid = figureArguments['showGrid'];
+  if (showGrid === 'on') {
+    var showGridBool = true;
+  } else {
+    var showGridBool = false;
+  }
+
+  //Shows the graph ticks on the outside if it is set to 'on' in the figure arguments
+  const graphTicks = figureArguments['graphTicks'];
+  if (graphTicks === 'on') {
+    var graphTickModeBool = '';
+    var graphTickPositionBool = '';
+  } else {
+    var graphTickModeBool = 'auto';
+    var graphTickPositionBool = 'outside';
+  }
+  //console.log('graphTicks', graphTicks);            
+  //console.log('graphTickModeBool', graphTickModeBool);
+  //console.log('graphTickPositionBool', graphTickPositionBool);
+
+  // Plotly figure production logic
+  for (let i = 1; i <= figureArguments['NumberOfLines']; i++) {
+    const targetLineColumn = 'Line' + i;
+    const columnXHeader = figureArguments['XAxis'];
+    const columnYHeader = figureArguments[targetLineColumn];
+    const plotlyX = dataToBePlotted[columnXHeader];
+    const plotlyY = dataToBePlotted[columnYHeader];
+    const stdDev = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computeStandardDeviation)(plotlyY);
+    const dateFormat = figureArguments['XAxisFormat'];
+    let xHoverFormat = '';
+    switch (dateFormat) {
+      case 'YYYY':
+        xHoverFormat = '%Y';
+        break;
+      case 'YYYY-MM':
+        xHoverFormat = '%Y-%m';
+        break;
+      case 'YYYY-MM-DD':
+        xHoverFormat = '%Y-%m-%d';
+        break;
+      default:
+        xHoverFormat = '';
+      // fallback to raw
+    }
+
+    // Then build your hovertemplate:
+    const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
+
+    // Line type, marker type, and marker size
+    const lineType = figureArguments[targetLineColumn + 'LineType'];
+    if (lineType === undefined) {
+      const lineType = 'solid';
+    }
+    //console.log('lineType', lineType);
+    const markerType = figureArguments[targetLineColumn + 'MarkerType'];
+    const markerSize = parseInt(figureArguments[targetLineColumn + 'MarkerSize'], 10);
+
+    //Shows the legend if it is set to 'on' in the figure arguments
+    const showLegend = figureArguments[targetLineColumn + 'Legend'];
+    if (showLegend === 'on') {
+      var showLegendBool = true;
     } else {
-      var showGridBool = false;
+      var showLegendBool = false;
     }
 
-    //Shows the graph ticks on the outside if it is set to 'on' in the figure arguments
-    const graphTicks = figureArguments['graphTicks'];
-    if (graphTicks === 'on') {
-      var graphTickModeBool = '';
-      var graphTickPositionBool = '';
-    } else {
-      var graphTickModeBool = 'auto';
-      var graphTickPositionBool = 'outside';
-    }
-    //console.log('graphTicks', graphTicks);            
-    //console.log('graphTickModeBool', graphTickModeBool);
-    //console.log('graphTickPositionBool', graphTickPositionBool);
+    //Connects gaps in line where there is missing data
+    const connectGapsOpt = figureArguments[targetLineColumn + 'ConnectGaps'] === 'on';
 
-    // Plotly figure production logic
-    for (let i = 1; i <= figureArguments['NumberOfLines']; i++) {
-      const targetLineColumn = 'Line' + i;
-      const columnXHeader = figureArguments['XAxis'];
-      const columnYHeader = figureArguments[targetLineColumn];
-      const plotlyX = dataToBePlotted[columnXHeader];
-      const plotlyY = dataToBePlotted[columnYHeader];
-      const stdDev = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computeStandardDeviation)(plotlyY);
-      const dateFormat = figureArguments['XAxisFormat'];
-      let xHoverFormat = '';
-      switch (dateFormat) {
-        case 'YYYY':
-          xHoverFormat = '%Y';
-          break;
-        case 'YYYY-MM':
-          xHoverFormat = '%Y-%m';
-          break;
-        case 'YYYY-MM-DD':
-          xHoverFormat = '%Y-%m-%d';
-          break;
-        default:
-          xHoverFormat = '';
-        // fallback to raw
-      }
-
-      // Then build your hovertemplate:
-      const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
-
-      // Line type, marker type, and marker size
-      const lineType = figureArguments[targetLineColumn + 'LineType'];
-      if (lineType === undefined) {
-        const lineType = 'solid';
-      }
-      //console.log('lineType', lineType);
-      const markerType = figureArguments[targetLineColumn + 'MarkerType'];
-      const markerSize = parseInt(figureArguments[targetLineColumn + 'MarkerSize'], 10);
-
-      //Shows the legend if it is set to 'on' in the figure arguments
-      const showLegend = figureArguments[targetLineColumn + 'Legend'];
-      if (showLegend === 'on') {
-        var showLegendBool = true;
-      } else {
-        var showLegendBool = false;
-      }
-
-      //Connects gaps in line where there is missing data
-      const connectGapsOpt = figureArguments[targetLineColumn + 'ConnectGaps'] === 'on';
-
-      //Show Standard error bars
-      const showError = figureArguments[targetLineColumn + 'ErrorBars'];
-      const showError_InputValuesOpt = figureArguments[targetLineColumn + 'ErrorBarsInputValues'];
-      if (showError === 'on') {
-        //Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
-        if (showError_InputValuesOpt === 'auto') {
-          var errorBarY = {
-            type: 'data',
-            array: new Array(plotlyY.length).fill(stdDev),
-            visible: true,
-            color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
-            thickness: 1.5,
-            width: 8
-          };
-        }
-        //Error bars (values imported from spreadsheet per point in dataset)
-        //Do we want high and low bounds here?
-        if (showError_InputValuesOpt != 'auto') {
-          const showError_InputValue = dataToBePlotted[showError_InputValuesOpt].filter(item => item !== "");
-          var errorBarY = {
-            type: 'data',
-            array: showError_InputValue.map(val => parseFloat(val)),
-            // Convert to number if needed
-            visible: true,
-            color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
-            thickness: 1.5,
-            width: 8
-          };
-        }
-      }
-      if (showError != 'on') {
-        var errorBarY = {};
-      }
-
-      // Main line with or w/o error bars
-      const singleLinePlotly = {
-        x: plotlyX,
-        y: plotlyY,
-        mode: 'lines+markers',
-        type: 'scatter',
-        name: `${figureArguments[targetLineColumn + 'Title']}`,
-        showlegend: showLegendBool,
-        line: {
-          dash: lineType // e.g., 'dash', 'dot', etc.
-        },
-        marker: {
-          color: figureArguments[targetLineColumn + 'Color'],
-          symbol: markerType,
-          size: markerSize // Convert markerSize to integer
-        },
-        error_y: errorBarY,
-        connectgaps: connectGapsOpt,
-        hovertemplate: `${figureArguments['XAxisTitle']}: ${xHoverValue}<br>` + `${figureArguments['YAxisTitle']}: %{y}<extra></extra>`
-        //figureArguments['XAxisTitle'] + ': %{x}<br>' +
-        //figureArguments['YAxisTitle'] + ': %{y}'
-      };
-      allLinesPlotly.push(singleLinePlotly);
-
-      //Show Standard Deviation Lines
-      const showSD = figureArguments[targetLineColumn + 'StdDev'];
-      const showSD_InputValuesOpt = figureArguments[targetLineColumn + 'StdDevInputValues'];
-      //Standard Deviation of dataset based on dataset Y-axis values (AutoCalculated)
-      if (showSD == 'on' && showSD_InputValuesOpt === 'auto') {
-        const plotlyYSanitized = plotlyY.map(val => {
-          if (val === null || val === undefined || val === "" || typeof val === "string" && val.trim().toUpperCase() === "NA" || isNaN(val)) {
-            return 0;
-          }
-          return parseFloat(val);
-        });
-        let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
-        const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
-        //console.log('mean', mean);
-        //console.log('stdDev', stdDev);
-        const upperY = plotlyY.map(y => mean + stdDev);
-        const lowerY = plotlyY.map(y => mean - stdDev);
-        const filteredX = plotlyX.filter(item => item !== "");
-        // Shared legend group name
-        const legendGroupName = `${figureArguments[targetLineColumn + 'Title']} ±1 SD`;
-
-        // Upper SD line
-        const stdUpperLine = {
-          x: filteredX,
-          y: upperY,
-          type: 'scatter',
-          mode: 'lines',
-          name: legendGroupName,
-          legendgroup: legendGroupName,
-          line: {
-            dash: 'dash',
-            color: figureArguments[targetLineColumn + 'StdDevColor']
-          },
-          hoverinfo: 'skip',
-          showlegend: showLegendBool,
-          // only the first one shows in legend
-          visible: true
+    //Show Standard error bars
+    const showError = figureArguments[targetLineColumn + 'ErrorBars'];
+    const showError_InputValuesOpt = figureArguments[targetLineColumn + 'ErrorBarsInputValues'];
+    if (showError === 'on') {
+      //Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
+      if (showError_InputValuesOpt === 'auto') {
+        var errorBarY = {
+          type: 'data',
+          array: new Array(plotlyY.length).fill(stdDev),
+          visible: true,
+          color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+          thickness: 1.5,
+          width: 8
         };
-
-        // Lower SD line
-        const stdLowerLine = {
-          x: filteredX,
-          y: lowerY,
-          type: 'scatter',
-          mode: 'lines',
-          name: legendGroupName,
-          // same name, but hidden in legend
-          legendgroup: legendGroupName,
-          line: {
-            dash: 'dash',
-            color: figureArguments[targetLineColumn + 'StdDevColor']
-          },
-          hoverinfo: 'skip',
-          showlegend: false,
-          // hides duplicate legend entry
-          visible: true
-        };
-
-        // Push both to plot
-        allLinesPlotly.push(stdUpperLine, stdLowerLine);
       }
-      //Standard Deviation (values imported from spreadsheet per point in dataset)
+      //Error bars (values imported from spreadsheet per point in dataset)
       //Do we want high and low bounds here?
-      if (showSD == 'on' && showSD_InputValuesOpt != 'auto') {
-        const stdSingleValue = dataToBePlotted[showSD_InputValuesOpt].filter(item => item !== "NA").reduce((a, b) => a + b, 0) / dataToBePlotted[showSD_InputValuesOpt].length;
-        //console.log('stdSingleValue', stdSingleValue);
-        const plotlyYSanitized = plotlyY.map(val => {
-          if (val === null || val === undefined || val === "" || typeof val === "string" && val.trim().toUpperCase() === "NA" || isNaN(val)) {
-            return 0;
-          }
-          return parseFloat(val);
-        });
-        let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
-        const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
-        const upperY = plotlyY.map(y => mean + stdSingleValue);
-        const lowerY = plotlyY.map(y => mean - stdSingleValue);
-        const filteredX = plotlyX.filter(item => item !== "");
-        // Shared legend group name
-        const legendGroupName = `${figureArguments[targetLineColumn + 'Title']} ±1 SD`;
-
-        // Upper SD line
-        const stdUpperLine = {
-          x: filteredX,
-          y: upperY,
-          type: 'scatter',
-          mode: 'lines',
-          name: legendGroupName,
-          legendgroup: legendGroupName,
-          line: {
-            dash: 'dash',
-            color: figureArguments[targetLineColumn + 'StdDevColor']
-          },
-          hoverinfo: 'skip',
-          showlegend: showLegendBool,
-          // only the first one shows in legend
-          visible: true
+      if (showError_InputValuesOpt != 'auto') {
+        const showError_InputValue = dataToBePlotted[showError_InputValuesOpt].filter(item => item !== "");
+        var errorBarY = {
+          type: 'data',
+          array: showError_InputValue.map(val => parseFloat(val)),
+          // Convert to number if needed
+          visible: true,
+          color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+          thickness: 1.5,
+          width: 8
         };
-
-        // Lower SD line
-        const stdLowerLine = {
-          x: filteredX,
-          y: lowerY,
-          type: 'scatter',
-          mode: 'lines',
-          name: legendGroupName,
-          // same name, but hidden in legend
-          legendgroup: legendGroupName,
-          line: {
-            dash: 'dash',
-            color: figureArguments[targetLineColumn + 'StdDevColor']
-          },
-          hoverinfo: 'skip',
-          showlegend: false,
-          // hides duplicate legend entry
-          visible: true
-        };
-
-        // Push both to plot
-        allLinesPlotly.push(stdUpperLine, stdLowerLine);
-      }
-
-      //Percentiles and Mean lines
-      const showPercentiles = figureArguments[targetLineColumn + 'Percentiles'];
-      const showMean = figureArguments[targetLineColumn + 'Mean'];
-      const showMean_ValuesOpt = figureArguments[targetLineColumn + 'MeanField'];
-      if (showPercentiles === 'on' || showMean === 'on') {
-        //Calculate Percentiles (Auto Calculated) based on dataset Y-axis values
-        //Do we want to be able to set high and low bounds per point here? (That wouldn't make sense to me)
-        const p10 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 10);
-        const p90 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 90);
-        const filteredX = plotlyX.filter(item => item !== "");
-        const xMinPercentile = Math.min(...filteredX);
-        const xMaxPercentile = Math.max(...filteredX);
-        if (showPercentiles === 'on') {
-          allLinesPlotly.push({
-            x: [xMinPercentile, xMaxPercentile],
-            y: [p10, p10],
-            mode: 'lines',
-            line: {
-              dash: 'dot',
-              color: figureArguments[targetLineColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetLineColumn + 'Title']} 10th Percentile (Bottom)`,
-            type: 'scatter',
-            visible: true,
-            showlegend: false
-          });
-          allLinesPlotly.push({
-            x: [xMinPercentile, xMaxPercentile],
-            y: [p90, p90],
-            mode: 'lines',
-            line: {
-              dash: 'dot',
-              color: figureArguments[targetLineColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetLineColumn + 'Title']} 10th & 90th Percentile`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
-        }
-
-        // Calculate mean
-
-        //Calculate mean (Auto Calculated) based on dataset Y-axis values
-        if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
-          let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
-          let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
-          const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
-          //console.log('mean', mean);
-          //console.log('plotlyY', plotlyY);
-          const filteredX = plotlyX.filter(item => item !== "");
-          //console.log('filteredX', filteredX);
-
-          let xMin;
-          let xMax;
-          xMin = Math.min(...filteredX);
-          xMax = Math.max(...filteredX);
-          if (isNaN(xMin) || isNaN(xMax)) {
-            xMin = new Date(filteredX[0]);
-            xMax = new Date(filteredX[filteredX.length - 1]);
-          }
-          allLinesPlotly.push({
-            x: [xMin, xMax],
-            y: [mean, mean],
-            mode: 'lines',
-            line: {
-              dash: 'solid',
-              color: figureArguments[targetLineColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
-        }
-        //Get mean from the spreadsheet (values imported from spreadsheet per point in dataset)
-        if (showMean_ValuesOpt != 'auto' && showMean === 'on') {
-          const ExistingMeanValue = dataToBePlotted[showMean_ValuesOpt].filter(item => item !== "");
-          const mean = ExistingMeanValue.reduce((a, b) => a + b, 0) / ExistingMeanValue.length;
-          const filteredX = plotlyX.filter(item => item !== "");
-          let xMin;
-          let xMax;
-          xMin = Math.min(...filteredX);
-          xMax = Math.max(...filteredX);
-          if (isNaN(xMin) || isNaN(xMax)) {
-            xMin = new Date(filteredX[0]);
-            xMax = new Date(filteredX[filteredX.length - 1]);
-          }
-          allLinesPlotly.push({
-            x: [xMin, xMax],
-            y: [mean, mean],
-            mode: 'lines',
-            line: {
-              dash: 'solid',
-              color: figureArguments[targetLineColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
-        }
       }
     }
-
-    //const container = document.getElementById(plotlyDivID); 
-
-    //GRAPH DISPLAY SETTINGS
-    var layout = {
-      xaxis: {
-        title: {
-          text: figureArguments['XAxisTitle']
-        },
-        linecolor: 'black',
-        linewidth: 1,
-        range: [figureArguments['XAxisLowBound'], figureArguments['XAxisHighBound']],
-        tickmode: graphTickModeBool,
-        ticks: graphTickPositionBool,
-        showgrid: showGridBool
-      },
-      yaxis: {
-        title: {
-          text: figureArguments['YAxisTitle']
-        },
-        linecolor: 'black',
-        linewidth: 1,
-        range: [figureArguments['YAxisLowBound'], figureArguments['YAxisHighBound']],
-        tickmode: graphTickModeBool,
-        ticks: graphTickPositionBool,
-        showgrid: showGridBool
-      },
-      legend: {
-        orientation: 'h',
-        // horizontal layout
-        y: 1.1,
-        // position legend above the plot
-        x: 0.5,
-        // center the legend
-        xanchor: 'center',
-        yanchor: 'bottom'
-      },
-      autosize: true,
-      margin: {
-        t: 60,
-        b: 60,
-        l: 60,
-        r: 60
-      },
-      hovermode: 'closest',
-      //width: container.clientWidth, 
-      //height: container.clientHeight,
-      cliponaxis: true
-    };
-    const config = {
-      responsive: true,
-      // This makes the plot resize with the browser window
-      renderer: 'svg',
-      displayModeBar: true,
-      displaylogo: false,
-      modeBarButtonsToRemove: ['zoom2d', 'lasso2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian' //'toImage', 'resetScale2d', 'select2d'
-      ]
-    };
-
-    // Set up the plotlyDiv (The div the the plot will be rendered in)
-    //Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-    let plotDiv;
-    if (!targetDocument) {
-      plotDiv = document.getElementById(plotlyDivID);
+    if (showError != 'on') {
+      var errorBarY = {};
     }
-    if (targetDocument) {
-      plotDiv = renderDocument.getElementById(plotlyDivID);
-    }
-    plotDiv.style.setProperty("width", "100%", "important");
-    plotDiv.style.setProperty("max-width", "none", "important");
 
-    // Create the plot with all lines
-    // await Plotly.newPlot(plotlyDivID, allLinesPlotly, layout, config);
+    // Main line with or w/o error bars
+    const singleLinePlotly = {
+      x: plotlyX,
+      y: plotlyY,
+      mode: 'lines+markers',
+      type: 'scatter',
+      name: `${figureArguments[targetLineColumn + 'Title']}`,
+      showlegend: showLegendBool,
+      line: {
+        dash: lineType // e.g., 'dash', 'dot', etc.
+      },
+      marker: {
+        color: figureArguments[targetLineColumn + 'Color'],
+        symbol: markerType,
+        size: markerSize // Convert markerSize to integer
+      },
+      error_y: errorBarY,
+      connectgaps: connectGapsOpt,
+      hovertemplate: `${figureArguments['XAxisTitle']}: ${xHoverValue}<br>` + `${figureArguments['YAxisTitle']}: %{y}<extra></extra>`
+      //figureArguments['XAxisTitle'] + ': %{x}<br>' +
+      //figureArguments['YAxisTitle'] + ': %{y}'
+    };
+    allLinesPlotly.push(singleLinePlotly);
 
-    await Plotly.newPlot(plotDiv, allLinesPlotly, layout, config).then(() => {
-      // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
-      // You need the specific values for the entire yaxis
-      injectOverlays(plotDiv, layout, allLinesPlotly, figureArguments, dataToBePlotted);
-    });
-    Plotly.Plots.resize(plotDiv);
-    if (window.location.href.includes('post.php')) {
-      //Save the plotly figure as an html file. 
-      const savedFigure = {
-        data: plotDiv.data,
-        layout: plotDiv.layout,
-        config: {
-          responsive: true
+    //Show Standard Deviation Lines
+    const showSD = figureArguments[targetLineColumn + 'StdDev'];
+    const showSD_InputValuesOpt = figureArguments[targetLineColumn + 'StdDevInputValues'];
+    //Standard Deviation of dataset based on dataset Y-axis values (AutoCalculated)
+    if (showSD == 'on' && showSD_InputValuesOpt === 'auto') {
+      const plotlyYSanitized = plotlyY.map(val => {
+        if (val === null || val === undefined || val === "" || typeof val === "string" && val.trim().toUpperCase() === "NA" || isNaN(val)) {
+          return 0;
         }
+        return parseFloat(val);
+      });
+      let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+      const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
+      //console.log('mean', mean);
+      //console.log('stdDev', stdDev);
+      const upperY = plotlyY.map(y => mean + stdDev);
+      const lowerY = plotlyY.map(y => mean - stdDev);
+      const filteredX = plotlyX.filter(item => item !== "");
+      // Shared legend group name
+      const legendGroupName = `${figureArguments[targetLineColumn + 'Title']} ±1 SD`;
+
+      // Upper SD line
+      const stdUpperLine = {
+        x: filteredX,
+        y: upperY,
+        type: 'scatter',
+        mode: 'lines',
+        name: legendGroupName,
+        legendgroup: legendGroupName,
+        line: {
+          dash: 'dash',
+          color: figureArguments[targetLineColumn + 'StdDevColor']
+        },
+        hoverinfo: 'skip',
+        showlegend: showLegendBool,
+        // only the first one shows in legend
+        visible: true
       };
-      const figureiframeGenerator = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.createFigureIframeHtml)(savedFigure, figureID, rootURL);
+
+      // Lower SD line
+      const stdLowerLine = {
+        x: filteredX,
+        y: lowerY,
+        type: 'scatter',
+        mode: 'lines',
+        name: legendGroupName,
+        // same name, but hidden in legend
+        legendgroup: legendGroupName,
+        line: {
+          dash: 'dash',
+          color: figureArguments[targetLineColumn + 'StdDevColor']
+        },
+        hoverinfo: 'skip',
+        showlegend: false,
+        // hides duplicate legend entry
+        visible: true
+      };
+
+      // Push both to plot
+      allLinesPlotly.push(stdUpperLine, stdLowerLine);
+    }
+    //Standard Deviation (values imported from spreadsheet per point in dataset)
+    //Do we want high and low bounds here?
+    if (showSD == 'on' && showSD_InputValuesOpt != 'auto') {
+      const stdSingleValue = dataToBePlotted[showSD_InputValuesOpt].filter(item => item !== "NA").reduce((a, b) => a + b, 0) / dataToBePlotted[showSD_InputValuesOpt].length;
+      //console.log('stdSingleValue', stdSingleValue);
+      const plotlyYSanitized = plotlyY.map(val => {
+        if (val === null || val === undefined || val === "" || typeof val === "string" && val.trim().toUpperCase() === "NA" || isNaN(val)) {
+          return 0;
+        }
+        return parseFloat(val);
+      });
+      let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+      const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
+      const upperY = plotlyY.map(y => mean + stdSingleValue);
+      const lowerY = plotlyY.map(y => mean - stdSingleValue);
+      const filteredX = plotlyX.filter(item => item !== "");
+      // Shared legend group name
+      const legendGroupName = `${figureArguments[targetLineColumn + 'Title']} ±1 SD`;
+
+      // Upper SD line
+      const stdUpperLine = {
+        x: filteredX,
+        y: upperY,
+        type: 'scatter',
+        mode: 'lines',
+        name: legendGroupName,
+        legendgroup: legendGroupName,
+        line: {
+          dash: 'dash',
+          color: figureArguments[targetLineColumn + 'StdDevColor']
+        },
+        hoverinfo: 'skip',
+        showlegend: showLegendBool,
+        // only the first one shows in legend
+        visible: true
+      };
+
+      // Lower SD line
+      const stdLowerLine = {
+        x: filteredX,
+        y: lowerY,
+        type: 'scatter',
+        mode: 'lines',
+        name: legendGroupName,
+        // same name, but hidden in legend
+        legendgroup: legendGroupName,
+        line: {
+          dash: 'dash',
+          color: figureArguments[targetLineColumn + 'StdDevColor']
+        },
+        hoverinfo: 'skip',
+        showlegend: false,
+        // hides duplicate legend entry
+        visible: true
+      };
+
+      // Push both to plot
+      allLinesPlotly.push(stdUpperLine, stdLowerLine);
     }
 
-    // if () {
-    // 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
-    // 		saveHtmlFileToServer(figureiframeGenerator.figIframeHtml, figureiframeGenerator.figIframeHtmlFileName, figureiframeGenerator.figIframeHtmlPath, postId);
-    // 	});
-    // }	
+    //Percentiles and Mean lines
+    const showPercentiles = figureArguments[targetLineColumn + 'Percentiles'];
+    const showMean = figureArguments[targetLineColumn + 'Mean'];
+    const showMean_ValuesOpt = figureArguments[targetLineColumn + 'MeanField'];
+    if (showPercentiles === 'on' || showMean === 'on') {
+      //Calculate Percentiles (Auto Calculated) based on dataset Y-axis values
+      //Do we want to be able to set high and low bounds per point here? (That wouldn't make sense to me)
+      const p10 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 10);
+      const p90 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 90);
+      const filteredX = plotlyX.filter(item => item !== "");
+      const xMinPercentile = Math.min(...filteredX);
+      const xMaxPercentile = Math.max(...filteredX);
+      if (showPercentiles === 'on') {
+        allLinesPlotly.push({
+          x: [xMinPercentile, xMaxPercentile],
+          y: [p10, p10],
+          mode: 'lines',
+          line: {
+            dash: 'dot',
+            color: figureArguments[targetLineColumn + 'Color'] + '60'
+          },
+          name: `${figureArguments[targetLineColumn + 'Title']} 10th Percentile (Bottom)`,
+          type: 'scatter',
+          visible: true,
+          showlegend: false
+        });
+        allLinesPlotly.push({
+          x: [xMinPercentile, xMaxPercentile],
+          y: [p90, p90],
+          mode: 'lines',
+          line: {
+            dash: 'dot',
+            color: figureArguments[targetLineColumn + 'Color'] + '60'
+          },
+          name: `${figureArguments[targetLineColumn + 'Title']} 10th & 90th Percentile`,
+          type: 'scatter',
+          visible: true,
+          showlegend: showLegendBool
+        });
+      }
 
-    //STANDALONE CODE TO INJECT INTO CODE BLOCK> WORKS INTERMITTENTLY
-    // const snippet = buildPlotlySnippetEmbedCode(
-    // 	savedFigure,
-    // 	`plotly-snippet-${figureID}`
-    // );
+      // Calculate mean
 
-    // console.log("snippet", snippet);
-  } else {}
+      //Calculate mean (Auto Calculated) based on dataset Y-axis values
+      if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
+        let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
+        let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+        const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
+        //console.log('mean', mean);
+        //console.log('plotlyY', plotlyY);
+        const filteredX = plotlyX.filter(item => item !== "");
+        //console.log('filteredX', filteredX);
+
+        let xMin;
+        let xMax;
+        xMin = Math.min(...filteredX);
+        xMax = Math.max(...filteredX);
+        if (isNaN(xMin) || isNaN(xMax)) {
+          xMin = new Date(filteredX[0]);
+          xMax = new Date(filteredX[filteredX.length - 1]);
+        }
+        allLinesPlotly.push({
+          x: [xMin, xMax],
+          y: [mean, mean],
+          mode: 'lines',
+          line: {
+            dash: 'solid',
+            color: figureArguments[targetLineColumn + 'Color'] + '60'
+          },
+          name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
+          type: 'scatter',
+          visible: true,
+          showlegend: showLegendBool
+        });
+      }
+      //Get mean from the spreadsheet (values imported from spreadsheet per point in dataset)
+      if (showMean_ValuesOpt != 'auto' && showMean === 'on') {
+        const ExistingMeanValue = dataToBePlotted[showMean_ValuesOpt].filter(item => item !== "");
+        const mean = ExistingMeanValue.reduce((a, b) => a + b, 0) / ExistingMeanValue.length;
+        const filteredX = plotlyX.filter(item => item !== "");
+        let xMin;
+        let xMax;
+        xMin = Math.min(...filteredX);
+        xMax = Math.max(...filteredX);
+        if (isNaN(xMin) || isNaN(xMax)) {
+          xMin = new Date(filteredX[0]);
+          xMax = new Date(filteredX[filteredX.length - 1]);
+        }
+        allLinesPlotly.push({
+          x: [xMin, xMax],
+          y: [mean, mean],
+          mode: 'lines',
+          line: {
+            dash: 'solid',
+            color: figureArguments[targetLineColumn + 'Color'] + '60'
+          },
+          name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
+          type: 'scatter',
+          visible: true,
+          showlegend: showLegendBool
+        });
+      }
+    }
+  }
+
+  //const container = document.getElementById(plotlyDivID); 
+
+  //GRAPH DISPLAY SETTINGS
+  var layout = {
+    xaxis: {
+      title: {
+        text: figureArguments['XAxisTitle']
+      },
+      linecolor: 'black',
+      linewidth: 1,
+      range: [figureArguments['XAxisLowBound'], figureArguments['XAxisHighBound']],
+      tickmode: graphTickModeBool,
+      ticks: graphTickPositionBool,
+      showgrid: showGridBool
+    },
+    yaxis: {
+      title: {
+        text: figureArguments['YAxisTitle']
+      },
+      linecolor: 'black',
+      linewidth: 1,
+      range: [figureArguments['YAxisLowBound'], figureArguments['YAxisHighBound']],
+      tickmode: graphTickModeBool,
+      ticks: graphTickPositionBool,
+      showgrid: showGridBool
+    },
+    legend: {
+      orientation: 'h',
+      // horizontal layout
+      y: 1.1,
+      // position legend above the plot
+      x: 0.5,
+      // center the legend
+      xanchor: 'center',
+      yanchor: 'bottom'
+    },
+    autosize: true,
+    margin: {
+      t: 60,
+      b: 60,
+      l: 60,
+      r: 60
+    },
+    hovermode: 'closest',
+    //width: container.clientWidth, 
+    //height: container.clientHeight,
+    cliponaxis: true
+  };
+  const config = {
+    responsive: true,
+    // This makes the plot resize with the browser window
+    renderer: 'svg',
+    displayModeBar: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['zoom2d', 'lasso2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian' //'toImage', 'resetScale2d', 'select2d'
+    ]
+  };
+
+  // Set up the plotlyDiv (The div the the plot will be rendered in)
+  //Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
+  let plotDiv;
+  if (!targetDocument) {
+    plotDiv = document.getElementById(plotlyDivID);
+  }
+  if (targetDocument) {
+    plotDiv = renderDocument.getElementById(plotlyDivID);
+  }
+  plotDiv.style.setProperty("width", "100%", "important");
+  plotDiv.style.setProperty("max-width", "none", "important");
+
+  // Create the plot with all lines
+  // await Plotly.newPlot(plotlyDivID, allLinesPlotly, layout, config);
+
+  await Plotly.newPlot(plotDiv, allLinesPlotly, layout, config).then(() => {
+    // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
+    // You need the specific values for the entire yaxis
+    injectOverlays(plotDiv, layout, allLinesPlotly, figureArguments, dataToBePlotted);
+  });
+  Plotly.Plots.resize(plotDiv);
+  if (window.location.href.includes('post.php')) {
+    //Save the plotly figure as an html file. 
+    const savedFigure = {
+      data: plotDiv.data,
+      layout: plotDiv.layout,
+      config: {
+        responsive: true
+      }
+    };
+    const figureiframeGenerator = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.createFigureIframeHtml)(savedFigure, figureID, rootURL);
+  }
+
+  // if () {
+  // 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
+  // 		saveHtmlFileToServer(figureiframeGenerator.figIframeHtml, figureiframeGenerator.figIframeHtmlFileName, figureiframeGenerator.figIframeHtmlPath, postId);
+  // 	});
+  // }	
+
+  //STANDALONE CODE TO INJECT INTO CODE BLOCK> WORKS INTERMITTENTLY
+  // const snippet = buildPlotlySnippetEmbedCode(
+  // 	savedFigure,
+  // 	`plotly-snippet-${figureID}`
+  // );
+
+  // console.log("snippet", snippet);
+
+  // } else {}
 
   // } catch (error) {
   //     console.error('Error loading scripts:', error);
@@ -4318,7 +4443,7 @@ module.exports = window["wp"]["i18n"];
   \*********************************************/
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/graphic-data-insert-figure","version":"0.1.0","title":"Graphic Data Insert Figure Data","category":"media","description":"Insert a figure into a post","example":{},"attributes":{"figureId":{"type":"number","default":0},"figureMode":{"type":"string","default":"existing"}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"graphic-data-insert-figure","editorScript":"file:./index.js","viewScript":"file:./view.js","render":"file:./render.php"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/graphic-data-insert-figure","version":"0.1.0","title":"Graphic Data Insert Figure Data","category":"media","description":"Insert a figure into a post","example":{},"attributes":{"figureId":{"type":"number","default":0},"figureMode":{"type":"string","default":"existing"},"instanceId":{"type":"string","default":""}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"graphic-data-insert-figure","editorScript":"file:./index.js","viewScript":"file:./view.js","render":"file:./render.php"}');
 
 /***/ }
 

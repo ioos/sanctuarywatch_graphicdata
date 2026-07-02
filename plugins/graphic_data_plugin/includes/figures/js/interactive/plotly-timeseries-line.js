@@ -322,14 +322,19 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
         	newDiv = renderDocument.createElement('div');
 		}
 
-        const plotlyDivID = `plotlyFigure${figureID}`;
+		// considerations for unique hashing for multiple uses vs onetime use. 
+		let plotlyDivID;
+		const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+		plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`
+
+
         newDiv.id = plotlyDivID
         newDiv.classList.add("container", `figure_interactive${figureID}`);
 
         const targetElementparts = targetFigureElement.split("_");
         const targetElementpostID = targetElementparts[targetElementparts.length - 1];
 
-        if (figureID == targetElementpostID) {
+        // if (figureID == targetElementpostID) {
 
 			//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
 			let targetElement;
@@ -816,7 +821,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 			
 			// console.log("snippet", snippet);
 
-        } else {}
+        // } else {}
 
     // } catch (error) {
     //     console.error('Error loading scripts:', error);
