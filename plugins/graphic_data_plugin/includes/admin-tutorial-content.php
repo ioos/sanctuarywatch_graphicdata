@@ -838,7 +838,7 @@ class Graphic_Data_Tutorial_Content {
 					);
 
 					$post_data = array(
-						'post_title'   => $target_figure_details_element['title'],
+						'post_title'   => $target_figure_details_element['title'] . ' - ' . get_the_title( $tutorial_scene_id ),
 						'post_type'    => 'figure',
 						'post_status'  => 'publish',
 						'post_author'  => $current_user_id,
@@ -969,7 +969,7 @@ class Graphic_Data_Tutorial_Content {
 		for ( $q = 0; $q < 5; $q++ ) {
 			$repeat_array = array();
 
-			$tutorial_instance_id = $wpdb->get_var(
+			$tutorial_scene_id = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
 					'tutorial_id',
@@ -977,8 +977,8 @@ class Graphic_Data_Tutorial_Content {
 					'scene',
 				)
 			);
-			$scene_title = get_the_title( $tutorial_instance_id );
-			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block', 'External Link' ];
+			$scene_title = get_the_title( $tutorial_scene_id );
+			$repeat_array['post_title'] = array_map( fn( $item ) => $item . ' - ' . $scene_title, [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block', 'External Link' ] );
 			$repeat_array['modal_location'] = $modal_location[ $q ];
 			$repeat_array['modal_scene'] = $modal_scene[ $q ];
 			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Bar-Chart', 'Interactive-Line-Chart', 'Code-Block', 'External-Link' ];
