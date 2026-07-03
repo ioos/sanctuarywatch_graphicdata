@@ -17,25 +17,6 @@
 class Graphic_Data_Settings_Page {
 
 	/**
-	 * Adds the Graphic Data Settings page to the WordPress admin menu.
-	 *
-	 * Registers a top-level menu page in the admin dashboard that allows
-	 * users with administrator capability to configure plugin settings.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function add_admin_menu() {
-		add_menu_page(
-			'Graphic Data Settings', // Page title.
-			'Graphic Data Settings', // Menu title.
-			'edit_others_posts', // Capability required.
-			'theme_settings', // Menu slug.
-			[ $this, 'settings_page' ] // Function to display the page.
-		);
-	}
-
-	/**
 	 * Enqueues the Plotly time series line chart settings script.
 	 *
 	 * Loads the JavaScript file required for configuring default line chart

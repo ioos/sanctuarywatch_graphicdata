@@ -76,13 +76,55 @@ class Graphic_Data_Search {
 	 */
 	public static function register_menu() {
 		add_menu_page(
-			'Graphic Data Search',
-			'Graphic Data Search',
+			'Graphic Data',
+			'Graphic Data',
 			'edit_posts',
 			'graphic-data-search',
 			array( __CLASS__, 'render_page' ),
-			'dashicons-search',
+			'dashicons-chart-area',
 			135
+		);
+
+		// Re-register the top-level slug as its own submenu so the
+		// top-level link itself goes to Search (see earlier fix).
+		add_submenu_page(
+			'graphic-data-search',
+			'Graphic Data Search',
+			'Search',
+			'edit_posts',
+			'graphic-data-search',
+			array( __CLASS__, 'render_page' ),
+			0
+		);
+
+		add_submenu_page(
+			'graphic-data-search',
+			'Graphic Data Support',
+			'Support',
+			'manage_options',
+			'graphic-data-support',
+			array( new Graphic_Data_Support(), 'display_support_page' ),
+			10
+		);
+
+		add_submenu_page(
+			'graphic-data-search',
+			'Graphic Data Settings', // Page title.
+			'Settings', // Menu title.
+			'edit_others_posts', // Capability required.
+			'graphic-data-settings', // Menu slug.
+			array( new Graphic_Data_Settings_Page(), 'settings_page' ),
+			20
+		);
+
+		add_submenu_page(
+			'graphic-data-search',
+			'Graphic Data Figure Export', // Page title.
+			'Figure Export', // Menu title.
+			'edit_posts', // Capability required.
+			'graphic-data-export-figures', // Menu slug.
+			array( new Graphic_Data_Export_Figures(), 'export_figures_page' ),
+			30
 		);
 	}
 

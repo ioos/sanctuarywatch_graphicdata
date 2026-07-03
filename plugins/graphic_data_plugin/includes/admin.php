@@ -257,7 +257,6 @@ class Graphic_Data_Plugin {
 
 		// Load class and functions associated with the Settings Page.
 		$plugin_admin_settings_page = new Graphic_Data_Settings_Page();
-		$this->loader->add_action( 'admin_menu', $plugin_admin_settings_page, 'add_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin_settings_page, 'settings_init' );
 		$plugin = plugin_basename( __FILE__ ); // Used in the next line.
 		$this->loader->add_filter( "plugin_action_links_$plugin", $plugin_admin_settings_page, 'add_settings_link' );
@@ -336,22 +335,14 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'login_enqueue_scripts', $plugin_admin_logo, 'login_logo' );
 		$this->loader->add_action( 'login_headerurl', $plugin_admin_logo, 'logo_url' );
 
-		// Load class and functions connected with Export Figures Tool.
-		$plugin_admin_export_figures = new Graphic_Data_Export_Figures();
-		$this->loader->add_action( 'admin_menu', $plugin_admin_export_figures, 'add_export_figures_menu' );
-
 		// Load class and functions connected with Create SVG Tool.
 		$plugin_admin_create_svg = new Graphic_Data_Create_SVG();
 		$this->loader->add_action( 'admin_menu', $plugin_admin_create_svg, 'add_create_svg_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_create_svg, 'enqueue_admin_svg_script' );
 
-		// Load class and functions connected with Support page.
-		$plugin_admin_support = new Graphic_Data_Support();
-		$this->loader->add_action( 'admin_menu', $plugin_admin_support, 'add_admin_menu' );
-
 		// Load class and functions associated with Plugin only class.
-		$plugin_admin_plugin_onlly = new Graphic_Data_Plugin_Only_Content();
-		$this->loader->add_action( 'init', $plugin_admin_plugin_onlly, 'placeholder_content_director' );
+		$plugin_admin_plugin_only = new Graphic_Data_Plugin_Only_Content();
+		$this->loader->add_action( 'init', $plugin_admin_plugin_only, 'placeholder_content_director' );
 	}
 
 	/**
