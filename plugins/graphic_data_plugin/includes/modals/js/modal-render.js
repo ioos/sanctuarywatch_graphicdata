@@ -559,6 +559,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
         button.setAttribute('aria-selected', 'false');
     }
     button.id = `${title}-${tab_id}`;
+    console.log(button.id);
     button.setAttribute('data-bs-toggle', 'tab');
     button.setAttribute('data-bs-target', tab_target);
     button.setAttribute('type', 'button');

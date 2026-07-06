@@ -40,8 +40,8 @@ $graphic_data_google_tags_container_id = isset( $graphic_data_settings['google_t
 
 <script>
   window.graphicDataSettings = {
-	googleAnalyticsMeasurementId: "<?php echo esc_js( $graphic_data_google_analytics_measurement_id ); ?>";
-	googleTagsContainerId: "<?php echo esc_js( $graphic_data_google_tags_container_id ); ?>";
+	googleAnalyticsMeasurementId: "<?php echo esc_js( $graphic_data_google_analytics_measurement_id ); ?>",
+	googleTagsContainerId: "<?php echo esc_js( $graphic_data_google_tags_container_id ); ?>",
   };
 </script>
 

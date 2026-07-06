@@ -834,11 +834,11 @@ input:checked + .slider:before {
   .navbar-wrapper {
       display: flex;
       flex-direction: column; /* Stack brand and nav items vertically */
-      align-items: center;   /* Center items horizontally */
+      align-items: stretch;   /* Center items horizontally */
       position: relative; /* Kept from original, in case it's used for dropdowns or other elements */
       justify-content: center; /* Kept from original, now centers content vertically if wrapper has more height than content */
       /* width: 100%; */
-      max-width: 1000px; 
+      max-width: 1400px; 
       margin: 0 auto; 
   }
 
@@ -867,16 +867,6 @@ input:checked + .slider:before {
     /* margin-bottom: 10px;  */
     /* Adds some space between the brand and the navigation links below it */
 
-  }
-
-  /* Assuming .navbar-collapse is a direct child of .navbar-wrapper and contains .navbar-nav */
-  .navbar-wrapper .navbar-collapse {
-    /* This container for the main navigation links will be centered horizontally */
-    /* by .navbar-wrapper's 'align-items: center'. */
-    display: flex; /* Use flexbox to control the alignment of .navbar-nav within it. */
-    justify-content: center; /* Horizontally center .navbar-nav (the list of links). */
-    width: 100%; /* Ensure .navbar-collapse takes available width to allow centering of its content. */
-    /* margin-top: 0.5rem; */
   }
 
   .navbar-nav {
@@ -1249,4 +1239,72 @@ body > nav{
   .graphic-data-page-content iframe {
     max-width: 100%;
   }
-  
+
+/* --------------------------------------------------------------------------
+ * Navbar layout on lg+ breakpoints
+ *
+ * Row 1: brand ("Example Instance N"), centered on its own line.
+ * Row 2: [flex spacer] [nav list, centered] [search form, right-aligned]
+ *
+ * The ::before pseudo-element mirrors the form's `flex: 1 1 0`, so the two
+ * flexible siblings consume equal share of the row's free space. That leaves
+ * the intrinsically-sized nav list perfectly centered between them while the
+ * form's contents (via justify-content: flex-end) hug the right edge.
+ *
+ * Wrapper max-width is bumped to 1400px so it matches #entire_thing, which
+ * is what puts the Search button's right edge on the same x-coordinate as
+ * the More Info / Media accordions below.
+ *
+ * Mobile (<992px) is untouched — .navbar-collapse is hidden behind the
+ * hamburger there.
+ * -------------------------------------------------------------------------- */
+@media (min-width: 992px) {
+    .navbar-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .navbar-wrapper > .navbar-brand {
+        align-self: center;
+    }
+
+    /* Three-column grid on the nav row:
+     *   [ minmax(0,1fr) | auto | minmax(0,1fr) ]
+     * Both side tracks share leftover space equally, which forces the
+     * auto-sized nav list to sit dead-center regardless of how many links
+     * it holds. The form lives in the right track with justify-self: end,
+     * so it stays at its intrinsic width and hugs the right edge — no more
+     * stretching when the nav list is short.
+     *
+     * !important on display: grid overrides Bootstrap's
+     *   .navbar-expand-lg .navbar-collapse { display: flex !important; } */
+    .navbar-wrapper > .navbar-collapse {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        width: 100%;
+        flex-basis: 100%;
+    }
+
+    .navbar-wrapper > .navbar-collapse > .navbar-nav {
+        grid-column: 2;
+        margin-right: 0 !important; /* neutralize the .me-auto in navbar.php */
+    }
+
+    .navbar-wrapper > .navbar-collapse > form[role="search"] {
+        position: absolute;
+        top: 50%;
+        right: 29px;
+        transform: translateY(-50%);
+    }
+
+    /* Keep the input a fixed compact width, so form-control's width: 100%
+       doesn't inflate the form when the nav row has few items. */
+    .navbar-wrapper > .navbar-collapse > form[role="search"] .form-control {
+        width: 200px;
+    }
+}

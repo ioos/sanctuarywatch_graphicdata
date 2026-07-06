@@ -126,25 +126,26 @@ usort(
 );
 
 foreach ( $graphic_data_term_data as $graphic_data_term_element ) {
-	$graphic_data_term_element_id = $graphic_data_term_element['term_id'];
-	echo "<li class='nav-item dropdown'>";
-	$graphic_data_navbar_id = 'Component' . $graphic_data_term_element_id;
-	echo "<a class='nav-link dropdown-toggle' data-bs-toggle='dropdown' href='#' role='button' id='" . esc_attr( $graphic_data_navbar_id ) . "' aria-haspopup='true' aria-expanded='false'>" . esc_html( $graphic_data_term_element['instance_navbar_name'] ) . '</a>';
-	$graphic_data_navbar_dropdown_elements = graphic_data_instance_type_array( $graphic_data_term_element_id );
-	if ( ! empty( $graphic_data_navbar_dropdown_elements ) ) {
-		echo "<ul class='dropdown-menu' aria-labelledby='" . esc_attr( $graphic_data_navbar_id ) . "'>";
-		foreach ( $graphic_data_navbar_dropdown_elements as $graphic_data_navbar_dropdown_element ) {
-			if ( 'no' == $graphic_data_navbar_dropdown_element['instance_legacy_content'] ) {
-				$graphic_data_instance_link = $graphic_data_navbar_dropdown_element['scene_permalink'];
-			} else {
-				$graphic_data_instance_link = $graphic_data_navbar_dropdown_element['instance_legacy_content_url'];
+	if ( 'Placeholder' != $graphic_data_term_element['instance_navbar_name'] ) {
+		$graphic_data_term_element_id = $graphic_data_term_element['term_id'];
+		echo "<li class='nav-item dropdown'>";
+		$graphic_data_navbar_id = 'Component' . $graphic_data_term_element_id;
+		echo "<a class='nav-link dropdown-toggle' data-bs-toggle='dropdown' href='#' role='button' id='" . esc_attr( $graphic_data_navbar_id ) . "' aria-haspopup='true' aria-expanded='false'>" . esc_html( $graphic_data_term_element['instance_navbar_name'] ) . '</a>';
+		$graphic_data_navbar_dropdown_elements = graphic_data_instance_type_array( $graphic_data_term_element_id );
+		if ( ! empty( $graphic_data_navbar_dropdown_elements ) ) {
+			echo "<ul class='dropdown-menu' aria-labelledby='" . esc_attr( $graphic_data_navbar_id ) . "'>";
+			foreach ( $graphic_data_navbar_dropdown_elements as $graphic_data_navbar_dropdown_element ) {
+				if ( 'no' == $graphic_data_navbar_dropdown_element['instance_legacy_content'] ) {
+					$graphic_data_instance_link = $graphic_data_navbar_dropdown_element['scene_permalink'];
+				} else {
+					$graphic_data_instance_link = $graphic_data_navbar_dropdown_element['instance_legacy_content_url'];
+				}
+				echo "<li><a class='dropdown-item' href='" . esc_url( $graphic_data_instance_link ) . "'>" . esc_html( $graphic_data_navbar_dropdown_element['post_title'] ) . '</a></li>';
 			}
-			echo "<li><a class='dropdown-item' href='" . esc_url( $graphic_data_instance_link ) . "'>" . esc_html( $graphic_data_navbar_dropdown_element['post_title'] ) . '</a></li>';
+			echo '</ul>';
 		}
-		echo '</ul>';
+		echo '</li>';
 	}
-
-	 echo '</li>';
 }
 
 if ( is_user_logged_in() == true ) {

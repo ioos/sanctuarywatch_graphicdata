@@ -88,7 +88,7 @@ $graphic_data_instance = get_post_meta( $graphic_data_post_id, 'scene_location',
 	  </div>
 
 	  <!-- images go here -->
-	  <ul class="nav nav-pills" id="myTab" role="tablist" style="margin-left: 1%">
+	  <ul class="nav nav-tabs" id="myTab" role="tablist" style="margin-left: 1%">
 
 		
 	  </ul>

@@ -49,7 +49,7 @@
 
 			?>
 			<div class="collapse navbar-collapse" id="navbarColor01">
-				<ul class="navbar-nav">
+				<ul class="navbar-nav me-auto">
 					<?php
 
 					$graphic_data_args = array(
@@ -142,8 +142,13 @@
 						get_template_part( 'parts/navbar-dropdown' );
 					}
 					?>
-				
 				</ul>
+				<form class="d-flex" role="search" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
+					<label for="graphic-data-search" class="visually-hidden">Search this site</label>
+					<input id="graphic-data-search" class="form-control me-2" type="search" name="s"
+						value="<?php echo esc_attr( get_search_query() ); ?>">
+					<button class="btn btn-outline-light" type="submit">Search</button>
+				</form>
 			</div>
 		</div>
 	</div>
