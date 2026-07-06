@@ -1,11 +1,11 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "create-block/graphic-data-insert-interactive-figure",
+	"name": "create-block/graphic-data-insert-figure",
 	"version": "0.1.0",
-	"title": "Graphic Data - Interactive Figure",
+	"title": "Graphic Data - Figure",
 	"category": "media",
-	"description": "Insert an interactive figure into a post",
+	"description": "Insert a figure into a post",
 	"example": {},
 	"attributes": {
 		"figureId": {

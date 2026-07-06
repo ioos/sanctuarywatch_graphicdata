@@ -208,7 +208,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	 * useBlockProps adds the standard WordPress block classes and editor props.
 	 */
 	const blockProps = useBlockProps({
-		className: 'graphic-data-insert-interactive-figure-block',
+		className: 'graphic-data-insert-figure-block',
 		// style: {
 		// 	width: '100%',
 		// 	maxWidth: 'none',
@@ -235,6 +235,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const [isLoadingMeta, setIsLoadingMeta] = useState(false);
 	const [isRenderingPlot, setIsRenderingPlot] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [figurePathFilter, setFigurePathFilter] = useState(0);
 
 	/**
 	 * Load published Figure CPT posts for the dropdown.
@@ -264,24 +265,56 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			? `Figure ${figureId}`
 			: '';
 
+
+
 	/**
 	 * Convert Figure CPT posts into SelectControl options.
 	 */
+
+	const figurePathOptions = [
+		{
+			label: __('Filter by Figure Type...', 'graphic-data-plugin'),
+			value: 0,
+		},
+		{
+			label: __('Interactive', 'graphic-data-plugin'),
+			value: 'Interactive',
+		},
+		{
+			label: __('External Image', 'graphic-data-plugin'),
+			value: 'External',
+		},
+		{
+			label: __('Code', 'graphic-data-plugin'),
+			value: 'Code',
+		},
+		{
+			label: __('Internal Image', 'graphic-data-plugin'),
+			value: 'Internal',
+		},
+	];
+
 	const figureOptions = [
 		{
-			label: __('Select a figure', 'graphic-data-plugin'),
+			label: __('Select a Figure...', 'graphic-data-plugin'),
 			value: 0,
 		},
 		...(Array.isArray(figures)
 			? figures
-				.filter((figure) => figure.figure_path === 'Interactive')
+				.filter((figure) => {
+					if (figurePathFilter === 0 || figurePathFilter === '0') {
+						return true;
+					}
+				
+					return figure.figure_path === figurePathFilter;
+				})
 				.map((figure) => {
 					const figureTitle = figure.title?.rendered
 						? stripHTML(figure.title.rendered)
 						: 'Untitled figure';
 					
 					return {
-						label: `${figureTitle} (Figure ${figure.id})`,
+							label: `${figure.figure_path} (id:${figure.id}) - ${figureTitle}`,
 						value: figure.id,
 					};
 					
@@ -469,7 +502,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			setErrorMessage('');
 
 			try {
-				
+
 				const rawArgs = meta?.figure_interactive_arguments;
 
 				const parsedArgs =
@@ -571,6 +604,60 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	return (
 		<div {...blockProps}>
 			<div
+				className="graphic-data-figure-path-selector"
+				style={{
+					marginBottom: '16px',
+				}}
+			>
+				<label
+					className="graphic-data-figure-path-selector"
+					style={{
+						display: 'block',
+						marginBottom: '8px',
+						// textTransform: 'uppercase',
+						// textDecoration: 'underline',
+						fontSize: '14px',
+						fontWeight: '600',
+						lineHeight: '1.4',
+						fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
+						}}
+				>
+					{__('Graphic Data - Figure', 'graphic-data-plugin')}
+				</label>
+			</div>
+
+			<div
+				className="graphic-data-figure-path-selector"
+				style={{
+					marginBottom: '16px',
+				}}
+			>
+				<SelectControl
+					// label={__('Select Figure Type:', 'graphic-data-plugin')}
+					value={figurePathFilter}
+					options={figurePathOptions}
+					onChange={(value) => {
+						setFigurePathFilter(value);
+
+						/**
+						 * Clear the selected figure when changing figure type.
+						 * This prevents an old selected figure from staying active
+						 * after the dropdown category changes.
+						 */
+						setAttributes({
+							figureId: 0,
+						});
+
+						setMeta(null);
+						setErrorMessage('');
+
+						if (previewRef.current) {
+							previewRef.current.innerHTML = '';
+						}
+					}}
+				/>
+			</div>
+			<div
 				className="graphic-data-figure-selector"
 				style={{
 					marginBottom: '16px',
@@ -585,8 +672,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				)}
 
 				{Array.isArray(figures) && figures.length > 0 && (
+
+					
 					<SelectControl
-						label={__('Graphic Data - Insert Interactive Figure', 'graphic-data-plugin')}
+						// label={__('Select Existing Figure:', 'graphic-data-plugin')}
 						value={Number(figureId)}
 						options={figureOptions}
 						onChange={(value) => {
@@ -609,18 +698,6 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						}}
 					/>
 				)}
-
-				{/* {selectedFigureTitle && (
-					<p
-						style={{
-							marginTop: '8px',
-							marginBottom: '0',
-							fontSize: '13px',
-						}}
-					>
-						<strong>Selected:</strong> {selectedFigureTitle}
-					</p>
-				)} */}
 			</div>
 
 			{isLoadingMeta && (
@@ -645,7 +722,17 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 			{!figureId && !figuresAreLoading && (
 				<Notice status="info" isDismissible={false}>
-					Select a figure to render it in this block.
+					Select a Graphic Data "Figure" to render it in this block. If you
+					filter by figure type and do not see any figures listed in the drop
+					down menu above, you will need to{' '}
+					<a
+						href="/wp-admin/post-new.php?post_type=figure"
+						target="_blank"
+						rel="noreferrer"
+					>
+						Create a New Figure
+					</a>{' '}
+					of that type.
 				</Notice>
 			)}
 

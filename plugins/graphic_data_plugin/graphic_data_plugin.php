@@ -184,7 +184,7 @@ function graphic_data_ensure_public_data_dir() {
  * @see graphic_data_ensure_public_data_dir()
  */
 function graphic_data_register_blocks() {
-	register_block_type( __DIR__ . '/blocks/insert-interactive-figure/build' );
+	register_block_type( __DIR__ . '/blocks/insert-figure/build' );
 }
 
 add_action( 'init', 'graphic_data_register_blocks' );
