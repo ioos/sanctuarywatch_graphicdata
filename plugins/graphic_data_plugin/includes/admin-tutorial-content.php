@@ -838,7 +838,7 @@ class Graphic_Data_Tutorial_Content {
 					);
 
 					$post_data = array(
-						'post_title'   => $target_figure_details_element['title'] . ' - ' . get_the_title( $tutorial_scene_id ),
+						'post_title'   => $target_figure_details_element['title'],
 						'post_type'    => 'figure',
 						'post_status'  => 'publish',
 						'post_author'  => $current_user_id,
@@ -978,7 +978,7 @@ class Graphic_Data_Tutorial_Content {
 				)
 			);
 			$scene_title = get_the_title( $tutorial_scene_id );
-			$repeat_array['post_title'] = array_map( fn( $item ) => $item . ' - ' . $scene_title, [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block', 'External Link' ] );
+			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block', 'External Link' ];
 			$repeat_array['modal_location'] = $modal_location[ $q ];
 			$repeat_array['modal_scene'] = $modal_scene[ $q ];
 			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Bar-Chart', 'Interactive-Line-Chart', 'Code-Block', 'External-Link' ];
