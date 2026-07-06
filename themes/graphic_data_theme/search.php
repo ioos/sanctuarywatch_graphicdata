@@ -54,10 +54,13 @@ function graphic_data_search_trim_description( $text ) {
 		$graphic_data_cut = mb_substr( $graphic_data_cut, 0, $graphic_data_last );
 	}
 
-	return rtrim( $graphic_data_cut, " ,;:.!?-" ) . '…';
+	return rtrim( $graphic_data_cut, ' ,;:.!?-' ) . '…';
 }
 
 $graphic_data_search_query = get_search_query();
+$graphic_data_selected_instance = isset( $_GET['graphic_data_instance'] )
+	? absint( wp_unslash( $_GET['graphic_data_instance'] ) )
+	: 0;
 ?>
 
 <div class="container my-4">
@@ -82,6 +85,7 @@ $graphic_data_search_query = get_search_query();
 				'description_cb' => static function ( $post_id ) {
 					return get_post_meta( $post_id, 'aboutMain', true );
 				},
+				'location_meta_key' => '',
 			),
 			'scene'  => array(
 				'meta_key' => 'scene_published',
@@ -92,6 +96,7 @@ $graphic_data_search_query = get_search_query();
 				'description_cb' => static function ( $post_id ) {
 					return get_post_meta( $post_id, 'scene_tagline', true );
 				},
+				'location_meta_key' => 'scene_location',
 			),
 			'modal'  => array(
 				'meta_key' => 'modal_published',
@@ -108,6 +113,7 @@ $graphic_data_search_query = get_search_query();
 				'description_cb' => static function ( $post_id ) {
 					return get_post_meta( $post_id, 'modal_tagline', true );
 				},
+				'location_meta_key' => 'modal_location',
 			),
 			'figure' => array(
 				'meta_key' => 'figure_published',
@@ -126,6 +132,7 @@ $graphic_data_search_query = get_search_query();
 				'description_cb' => static function ( $post_id ) {
 					return get_post_meta( $post_id, 'figure_caption_short', true );
 				},
+				'location_meta_key' => 'location',
 			),
 		);
 
@@ -148,58 +155,66 @@ $graphic_data_search_query = get_search_query();
 		*/
 
 		// Eligible instances: instance_status = "Published", then drop "Placeholder" titles.
-		$graphic_data_valid_instance_ids = get_posts( array(
-			'post_type'      => 'instance',
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-			'no_found_rows'  => true,
-			'meta_query'     => array(
-				array(
-					'key'     => 'instance_status',
-					'value'   => 'Published',
-					'compare' => '=',
+		$graphic_data_valid_instance_ids = get_posts(
+			array(
+				'post_type'      => 'instance',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'meta_query'     => array(
+					array(
+						'key'     => 'instance_status',
+						'value'   => 'Published',
+						'compare' => '=',
+					),
 				),
-			),
-		) );
-		$graphic_data_valid_instance_ids = array_values( array_filter(
-			$graphic_data_valid_instance_ids,
-			static function ( $graphic_data_id ) {
-				return 'Placeholder Instance' !== get_the_title( $graphic_data_id );
-			}
-		) );
+			)
+		);
+		$graphic_data_valid_instance_ids = array_values(
+			array_filter(
+				$graphic_data_valid_instance_ids,
+				static function ( $graphic_data_id ) {
+					return 'Placeholder Instance' !== get_the_title( $graphic_data_id );
+				}
+			)
+		);
 
 		// Eligible scenes: scene_status = "published".
-		$graphic_data_valid_scene_ids = get_posts( array(
-			'post_type'      => 'scene',
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-			'no_found_rows'  => true,
-			'meta_query'     => array(
-				array(
-					'key'     => 'scene_published',
-					'value'   => 'published',
-					'compare' => '=',
+		$graphic_data_valid_scene_ids = get_posts(
+			array(
+				'post_type'      => 'scene',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'meta_query'     => array(
+					array(
+						'key'     => 'scene_published',
+						'value'   => 'published',
+						'compare' => '=',
+					),
 				),
-			),
-		) );
+			)
+		);
 
 		// Eligible modals: modal_status = "published".
-		$graphic_data_valid_modal_ids = get_posts( array(
-			'post_type'      => 'modal',
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-			'no_found_rows'  => true,
-			'meta_query'     => array(
-				array(
-					'key'     => 'modal_published',
-					'value'   => 'published',
-					'compare' => '=',
+		$graphic_data_valid_modal_ids = get_posts(
+			array(
+				'post_type'      => 'modal',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'meta_query'     => array(
+					array(
+						'key'     => 'modal_published',
+						'value'   => 'published',
+						'compare' => '=',
+					),
 				),
-			),
-		) );
+			)
+		);
 
 		/*
 		* Per-CPT ancestry rules. Each rule says: "the post's {meta_key} must be one
@@ -209,16 +224,34 @@ $graphic_data_search_query = get_search_query();
 		$graphic_data_ancestry_rules = array(
 			'about'  => array(),
 			'scene'  => array(
-				array( 'meta_key' => 'scene_location', 'valid_ids' => $graphic_data_valid_instance_ids ),
+				array(
+					'meta_key' => 'scene_location',
+					'valid_ids' => $graphic_data_valid_instance_ids,
+				),
 			),
 			'modal'  => array(
-				array( 'meta_key' => 'modal_location', 'valid_ids' => $graphic_data_valid_instance_ids ),
-				array( 'meta_key' => 'modal_scene', 'valid_ids' => $graphic_data_valid_scene_ids ),
+				array(
+					'meta_key' => 'modal_location',
+					'valid_ids' => $graphic_data_valid_instance_ids,
+				),
+				array(
+					'meta_key' => 'modal_scene',
+					'valid_ids' => $graphic_data_valid_scene_ids,
+				),
 			),
 			'figure' => array(
-				array( 'meta_key' => 'location', 'valid_ids' => $graphic_data_valid_instance_ids ),
-				array( 'meta_key' => 'figure_scene', 'valid_ids' => $graphic_data_valid_scene_ids ),
-				array( 'meta_key' => 'figure_modal', 'valid_ids' => $graphic_data_valid_modal_ids ),
+				array(
+					'meta_key' => 'location',
+					'valid_ids' => $graphic_data_valid_instance_ids,
+				),
+				array(
+					'meta_key' => 'figure_scene',
+					'valid_ids' => $graphic_data_valid_scene_ids,
+				),
+				array(
+					'meta_key' => 'figure_modal',
+					'valid_ids' => $graphic_data_valid_modal_ids,
+				),
 			),
 		);
 
@@ -266,14 +299,20 @@ $graphic_data_search_query = get_search_query();
 			if ( $graphic_data_cpt_query->have_posts() ) {
 				while ( $graphic_data_cpt_query->have_posts() ) {
 					$graphic_data_cpt_query->the_post();
-					$graphic_data_id        = get_the_ID();
+					$graphic_data_id            = get_the_ID();
+					$graphic_data_location_key  = $graphic_data_config['location_meta_key'];
+					$graphic_data_instance_id   = '' !== $graphic_data_location_key
+						? (int) get_post_meta( $graphic_data_id, $graphic_data_location_key, true )
+						: 0;
+
 					$graphic_data_results[] = array(
-						'title' => get_the_title(),
-						'link'  => call_user_func( $graphic_data_config['link_cb'], $graphic_data_id ),
-						'label' => $graphic_data_config['label'],
+						'title'       => get_the_title(),
+						'link'        => call_user_func( $graphic_data_config['link_cb'], $graphic_data_id ),
+						'label'       => $graphic_data_config['label'],
 						'description' => graphic_data_search_trim_description(
 							call_user_func( $graphic_data_config['description_cb'], $graphic_data_id )
 						),
+						'instance_id' => $graphic_data_instance_id,
 					);
 				}
 				wp_reset_postdata();
@@ -293,16 +332,68 @@ $graphic_data_search_query = get_search_query();
 		if ( $graphic_data_std_query->have_posts() ) {
 			while ( $graphic_data_std_query->have_posts() ) {
 				$graphic_data_std_query->the_post();
-				$graphic_data_results[] = array(
-					'title' => get_the_title(),
-					'link'  => get_permalink( get_the_ID() ),
-					'label' => ( 'page' === get_post_type() ) ? 'Page' : 'Post',
+				$graphic_data_std_id      = get_the_ID();
+				$graphic_data_results[]   = array(
+					'title'       => get_the_title(),
+					'link'        => get_permalink( $graphic_data_std_id ),
+					'label'       => ( 'page' === get_post_type() ) ? 'Page' : 'Post',
 					'description' => graphic_data_search_trim_description(
-						get_post_field( 'post_content', get_the_ID() )
+						get_post_field( 'post_content', $graphic_data_std_id )
 					),
+					'instance_id' => (int) get_post_meta( $graphic_data_std_id, 'page_location', true ),
 				);
 			}
 			wp_reset_postdata();
+		}
+
+		/*
+		* Build the list of instances represented in the (unfiltered) result set.
+		* This runs BEFORE the instance filter is applied so that the dropdown
+		* always shows every option the user could pick — otherwise selecting one
+		* instance would collapse the dropdown to only that one and the user
+		* couldn't switch back.
+		*/
+		$graphic_data_available_instances = array();
+		foreach ( $graphic_data_results as $graphic_data_result ) {
+			if ( $graphic_data_result['instance_id'] > 0 ) {
+				$graphic_data_available_instances[ $graphic_data_result['instance_id'] ] =
+					get_the_title( $graphic_data_result['instance_id'] );
+			}
+		}
+		asort( $graphic_data_available_instances ); // Sort alphabetically by title.
+
+		// Render the filter dropdown when at least one instance is available.
+		if ( ! empty( $graphic_data_available_instances ) ) {
+			?>
+			<form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="mb-4 d-flex align-items-center gap-2">
+				<input type="hidden" name="s" value="<?php echo esc_attr( $graphic_data_search_query ); ?>">
+				<label for="graphic-data-instance-filter" class="mb-0 me-2"><strong>Search:</strong></label>
+				<select id="graphic-data-instance-filter" name="graphic_data_instance" class="form-select w-auto">
+					<option value="0"><?php echo 'Everywhere'; ?></option>
+					<?php foreach ( $graphic_data_available_instances as $graphic_data_inst_id => $graphic_data_inst_title ) : ?>
+						<option
+							value="<?php echo esc_attr( $graphic_data_inst_id ); ?>"
+							<?php selected( $graphic_data_selected_instance, $graphic_data_inst_id ); ?>
+						>
+							<?php echo esc_html( $graphic_data_inst_title ); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+				<button type="submit" class="btn btn-primary btn-sm">Filter</button>
+			</form>
+			<?php
+		}
+
+		// Apply the filter — done AFTER the dropdown is rendered from the full set.
+		if ( $graphic_data_selected_instance > 0 ) {
+			$graphic_data_results = array_values(
+				array_filter(
+					$graphic_data_results,
+					static function ( $graphic_data_result ) use ( $graphic_data_selected_instance ) {
+						return $graphic_data_result['instance_id'] === $graphic_data_selected_instance;
+					}
+				)
+			);
 		}
 
 		if ( empty( $graphic_data_results ) ) {
