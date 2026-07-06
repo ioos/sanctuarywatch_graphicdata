@@ -729,15 +729,6 @@ function graphic_data_enqueue_scripts() {
 	);
 	wp_enqueue_script_module( '@graphic-data/figure-render' );
 
-	// Enqueue the interactive figure script.
-	wp_enqueue_script(
-		'figure-code',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/code/figure-code.js',
-		array(),
-		graphic_data_get_theme_asset_version(), // ADD NEW VERSION NUMBER.
-		array( 'strategy'  => 'defer' )
-	);
-
 	// register the plotly utility module used for interactive figures.
 	wp_register_script_module(
 		'@graphic-data/plotly-utility',
@@ -788,3 +779,56 @@ function graphic_data_enqueue_scripts() {
 	wp_enqueue_script_module( '@graphic-data/googletags' );
 }
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_scripts' );
+
+/**
+ * Extend WP_Query's search SQL to also match against non-private postmeta values.
+ *
+ * Only runs for queries that pass the `graphic_data_meta_search` query var as truthy.
+ * The `LEFT(pm.meta_key, 1) != '_'` clause skips WordPress internal meta
+ * (_edit_lock, _thumbnail_id, etc.) to avoid false positives.
+ *
+ * @param string   $search   The generated SEARCH SQL clause (starts with " AND ...").
+ * @param WP_Query $wp_query The current WP_Query object.
+ * @return string Modified SEARCH clause.
+ */
+function graphic_data_extend_search_to_postmeta( $search, $wp_query ) {
+	global $wpdb;
+
+	if ( ! $wp_query->get( 'graphic_data_meta_search' ) ) {
+		return $search;
+	}
+
+	$graphic_data_terms = $wp_query->get( 'search_terms' );
+	if ( empty( $graphic_data_terms ) || ! is_array( $graphic_data_terms ) ) {
+		return $search;
+	}
+
+	$graphic_data_new_search = '';
+	$graphic_data_and        = '';
+	foreach ( $graphic_data_terms as $graphic_data_term ) {
+		$graphic_data_like       = '%' . $wpdb->esc_like( $graphic_data_term ) . '%';
+		$graphic_data_new_search .= $wpdb->prepare(
+			"{$graphic_data_and}(({$wpdb->posts}.post_title LIKE %s)"
+			. " OR ({$wpdb->posts}.post_content LIKE %s)"
+			. " OR ({$wpdb->posts}.post_excerpt LIKE %s)"
+			. " OR EXISTS ("
+			. "   SELECT 1 FROM {$wpdb->postmeta} pm"
+			. "   WHERE pm.post_id = {$wpdb->posts}.ID"
+			. "     AND LEFT(pm.meta_key, 1) != '_'"
+			. "     AND pm.meta_value LIKE %s"
+			. " ))",
+			$graphic_data_like,
+			$graphic_data_like,
+			$graphic_data_like,
+			$graphic_data_like
+		);
+		$graphic_data_and = ' AND ';
+	}
+
+	if ( '' !== $graphic_data_new_search ) {
+		$search = " AND ({$graphic_data_new_search}) ";
+	}
+
+	return $search;
+}
+add_filter( 'posts_search', 'graphic_data_extend_search_to_postmeta', 10, 2 );

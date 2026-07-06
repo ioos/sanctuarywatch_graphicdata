@@ -126,11 +126,6 @@ Search.appendIndex(
             "summary": "Class\u0020Graphic_Data_Export_Figures",
             "url": "classes/Graphic-Data-Export-Figures.html"
         },                {
-            "fqsen": "\\Graphic_Data_Export_Figures\u003A\u003Aadd_export_figures_menu\u0028\u0029",
-            "name": "add_export_figures_menu",
-            "summary": "Function\u0020to\u0020add\u0020the\u0020\u0022Export\u0020Figures\u0022\u0020submenu\u0020under\u0020Tools",
-            "url": "classes/Graphic-Data-Export-Figures.html#method_add_export_figures_menu"
-        },                {
             "fqsen": "\\Graphic_Data_Export_Figures\u003A\u003Aexport_figures_page\u0028\u0029",
             "name": "export_figures_page",
             "summary": "Callback\u0020function\u0020to\u0020display\u0020the\u0020content\u0020of\u0020the\u0020\u0022Export\u0020Figures\u0022\u0020page.",
@@ -1245,11 +1240,6 @@ Search.appendIndex(
             "name": "Graphic_Data_Settings_Page",
             "summary": "Handles\u0020the\u0020admin\u0020settings\u0020page\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
             "url": "classes/Graphic-Data-Settings-Page.html"
-        },                {
-            "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aadd_admin_menu\u0028\u0029",
-            "name": "add_admin_menu",
-            "summary": "Adds\u0020the\u0020Graphic\u0020Data\u0020Settings\u0020page\u0020to\u0020the\u0020WordPress\u0020admin\u0020menu.",
-            "url": "classes/Graphic-Data-Settings-Page.html#method_add_admin_menu"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aenqueue_admin_interactive_default_line_styles\u0028\u0029",
             "name": "enqueue_admin_interactive_default_line_styles",
