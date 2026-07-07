@@ -339,27 +339,32 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
         	newDiv = renderDocument.createElement('div');
 		}
 
-        // considerations for unique hashing for multiple uses vs onetime use. 
-		let plotlyDivID;
-		const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-		plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`
+        // considerations for unique hashing for multiple uses vs onetime use.
+		let plotlyDivID = `plotlyFigure${figureID}`; 
+		// let plotlyDivID;
+		// const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+		// if (!targetDocument) {
+		// 	plotlyDivID = `plotlyFigure${figureID}`;
+		// }
+		// if (targetDocument) {
+		// 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
+		// }
 
         newDiv.id = plotlyDivID
         newDiv.classList.add("container", `figure_interactive${figureID}`);
 
-        const targetElementparts = targetFigureElement.split("_");
-        const targetElementpostID = targetElementparts[targetElementparts.length - 1];
-
-
-		let targetElement;
-		if (!targetDocument) {
-			targetElement = await waitForElementById(targetFigureElement);
-			targetElement.appendChild(newDiv);
-		}
-		if (targetDocument) {
-			targetElement = renderDocument.getElementById(targetFigureElement);
-			targetElement.appendChild(newDiv);
-		}
+		
+		let targetElement = await waitForElementById(targetFigureElement);
+		targetElement.appendChild(newDiv);
+		// let targetElement;
+		// if (!targetDocument) {
+		// 	targetElement = await waitForElementById(targetFigureElement);
+		// 	targetElement.appendChild(newDiv);
+		// }
+		// if (targetDocument) {
+		// 	targetElement = renderDocument.getElementById(targetFigureElement);
+		// 	targetElement.appendChild(newDiv);
+		// }
 		
 		const numBars = figureArguments['NumberOfBars'];
 
@@ -734,13 +739,14 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
 		};
 
 		// Set up the plotlyDiv (The div the the plot will be rendered in)
-		let plotDiv;
-		if (!targetDocument) {
-			plotDiv = document.getElementById(plotlyDivID);
-		}
-		if (targetDocument) {
-			plotDiv = renderDocument.getElementById(plotlyDivID);
-		}      
+		let plotDiv = document.getElementById(plotlyDivID);
+		// let plotDiv;
+		// if (!targetDocument) {
+		// 	plotDiv = document.getElementById(plotlyDivID);
+		// }
+		// if (targetDocument) {
+		// 	plotDiv = renderDocument.getElementById(plotlyDivID);
+		// }      
 		plotDiv.style.setProperty("width", "100%", "important");
 		plotDiv.style.setProperty("max-width", "none", "important");
 

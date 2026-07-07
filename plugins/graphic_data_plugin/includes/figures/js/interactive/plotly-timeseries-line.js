@@ -313,36 +313,43 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 		//console.log('[GD] dataToBePlotted:', dataToBePlotted?.length, 'rows, first row:', JSON.stringify(dataToBePlotted?.[0]));
 
 		//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-		let newDiv;
-		if (!targetDocument) {
-        	newDiv = document.createElement('div');
-		}
-		if (targetDocument) {
-        	newDiv = renderDocument.createElement('div');
-		}
+		let newDiv = document.createElement('div');
+		// let newDiv;
+		// if (!targetDocument || targetDocument === null) {
+        // 	newDiv = document.createElement('div');
+		// }
+		// if (targetDocument) {
+        // 	newDiv = renderDocument.createElement('div');
+		// }
 
-		// considerations for unique hashing for multiple uses vs onetime use. 
-		let plotlyDivID;
-		const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-		plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`
+		// considerations for unique hashing for multiple uses vs onetime use.
+		let plotlyDivID = `plotlyFigure${figureID}`;
+		// let plotlyDivID;
+		// const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+		// // if (targetDocument != renderDocument) {
+		// 	plotlyDivID = `plotlyFigure${figureID}`;
+		// }
+		// if (targetDocument === renderDocument) {
+		// 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
+		// }
 
 
         newDiv.id = plotlyDivID
         newDiv.classList.add("container", `figure_interactive${figureID}`);
 
-        const targetElementparts = targetFigureElement.split("_");
-        const targetElementpostID = targetElementparts[targetElementparts.length - 1];
-
 		//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-		let targetElement;
-		if (!targetDocument) {
-			targetElement = await waitForElementById(targetFigureElement);
-			targetElement.appendChild(newDiv);
-		}
-		if (targetDocument) {
-			targetElement = renderDocument.getElementById(targetFigureElement);
-			targetElement.appendChild(newDiv);
-		}
+		
+		let targetElement = await waitForElementById(targetFigureElement);
+		targetElement.appendChild(newDiv);
+		// let targetElement;
+		// if (!targetDocument) {
+		// 	targetElement = await waitForElementById(targetFigureElement);
+		// 	targetElement.appendChild(newDiv);
+		// }
+		// if (targetDocument) {
+		// 	targetElement = renderDocument.getElementById(targetFigureElement);
+		// 	targetElement.appendChild(newDiv);
+		// }
 		
 		const numLines = figureArguments['NumberOfLines'];
 
@@ -771,13 +778,15 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 
 		// Set up the plotlyDiv (The div the the plot will be rendered in)
 		//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-		let plotDiv;
-		if (!targetDocument) {
-			plotDiv = document.getElementById(plotlyDivID);
-		}
-		if (targetDocument) {
-			plotDiv = renderDocument.getElementById(plotlyDivID);
-		}
+		
+		let plotDiv = document.getElementById(plotlyDivID);
+		// let plotDiv;
+		// if (!targetDocument) {
+		// 	plotDiv = document.getElementById(plotlyDivID);
+		// }
+		// if (targetDocument) {
+		// 	plotDiv = renderDocument.getElementById(plotlyDivID);
+		// }
 		plotDiv.style.setProperty("width", "100%", "important");
 		plotDiv.style.setProperty("max-width", "none", "important");
 						
@@ -789,21 +798,21 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 			// You need the specific values for the entire yaxis
 			injectOverlays(plotDiv, layout, allLinesPlotly, figureArguments, dataToBePlotted);
 		});
-		
+
 		Plotly.Plots.resize(plotDiv);
 
 
 
-		if (window.location.href.includes('post.php')) {
-			//Save the plotly figure as an html file. 
-			const savedFigure = {
-				data: plotDiv.data,
-				layout: plotDiv.layout,
-				config: { responsive: true }
-			};
+		// if (window.location.href.includes('post.php')) {
+		// 	//Save the plotly figure as an html file. 
+		// 	const savedFigure = {
+		// 		data: plotDiv.data,
+		// 		layout: plotDiv.layout,
+		// 		config: { responsive: true }
+		// 	};
 			
-			const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
-		}
+		// 	const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
+		// }
 
 		// if () {
 		// 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {

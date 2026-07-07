@@ -371,7 +371,7 @@ class Graphic_Data_Admin {
 			// Remove posts from the admin menu.
 			remove_menu_page( 'edit.php' );
 			// V2 - We are not removing page post types anymore. 
-			// remove_menu_page( 'edit.php?post_type=page' );
+			remove_menu_page( 'edit.php?post_type=page' );
 		} else {
 			remove_menu_page( 'edit.php?post_type=instance' );
 			remove_menu_page( 'edit.php?post_type=about' );

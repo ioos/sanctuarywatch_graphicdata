@@ -22,12 +22,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @graphic-data/plotly-timeseries-line */ "./includes/figures/js/interactive/plotly-timeseries-line.js");
 /* harmony import */ var _graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @graphic-data/plotly-bar */ "./includes/figures/js/interactive/plotly-bar.js");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _graphic_data_figure_render__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @graphic-data/figure-render */ "./includes/figures/js/figure-render.js");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__);
+
+
 
 
 
@@ -284,23 +287,23 @@ function Edit({
    */
 
   const figurePathOptions = [{
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Filter by Figure Type...', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Filter by Figure Type...', 'graphic-data-plugin'),
     value: 0
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Interactive', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Interactive', 'graphic-data-plugin'),
     value: 'Interactive'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('External Image', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('External Image', 'graphic-data-plugin'),
     value: 'External'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Code', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Code', 'graphic-data-plugin'),
     value: 'Code'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Internal Image', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Internal Image', 'graphic-data-plugin'),
     value: 'Internal'
   }];
   const figureOptions = [{
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Select a Figure...', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Select a Figure...', 'graphic-data-plugin'),
     value: 0
   }, ...(Array.isArray(figures) ? figures.filter(figure => {
     if (figurePathFilter === 0 || figurePathFilter === '0') {
@@ -408,19 +411,30 @@ function Edit({
         isCurrentRender = false;
       };
     }
-    if (meta.figure_path !== 'Interactive') {
-      setErrorMessage('The selected figure is not marked as Interactive, so the Plotly renderer was not run.');
-      return () => {
-        isCurrentRender = false;
-      };
-    }
-    const interactiveArguments = normalizeInteractiveArguments(meta.figure_interactive_arguments);
-    if (!interactiveArguments) {
-      setErrorMessage('The selected figure does not have figure_interactive_arguments.');
-      return () => {
-        isCurrentRender = false;
-      };
-    }
+
+    // if (meta.figure_path !== 'Interactive') {
+    // 	setErrorMessage(
+    // 		'The selected figure is not marked as Interactive, so the Plotly renderer was not run.'
+    // 	);
+
+    // 	return () => {
+    // 		isCurrentRender = false;
+    // 	};
+    // }
+
+    // const interactiveArguments = normalizeInteractiveArguments(
+    // 	meta.figure_interactive_arguments
+    // );
+
+    // if (!interactiveArguments) {
+    // 	setErrorMessage(
+    // 		'The selected figure does not have figure_interactive_arguments.'
+    // 	);
+
+    // 	return () => {
+    // 		isCurrentRender = false;
+    // 	};
+    // }
 
     /**
      * This ID intentionally ends with the figure ID.
@@ -441,25 +455,77 @@ function Edit({
 
     const targetDocument = previewElement.ownerDocument;
     ensurePlotlyEditorLayerStyles(targetDocument);
+    const containerDiv = targetDocument.createElement('div');
+    containerDiv.id = 'containerDiv';
+    containerDiv.className = 'containerDiv graphic-data-block-container';
+    containerDiv.dataset.figureId = String(figureId);
+    containerDiv.style.width = '100%';
+    previewElement.appendChild(containerDiv);
     const targetDiv = targetDocument.createElement('div');
     targetDiv.id = targetFigureElement;
     targetDiv.className = 'targetFigureElement graphic-data-block-plotly-target';
     targetDiv.dataset.figureId = String(figureId);
     targetDiv.style.width = '100%';
-    previewElement.appendChild(targetDiv);
-    async function renderPlotlyFigure() {
+    containerDiv.appendChild(targetDiv);
+    async function renderFigureInsideBlock() {
       setIsRenderingPlot(true);
       setErrorMessage('');
       try {
-        const rawArgs = meta?.figure_interactive_arguments;
-        const parsedArgs = typeof rawArgs === 'string' ? JSON.parse(rawArgs) : rawArgs;
-        const graphType = Array.isArray(parsedArgs) ? Object.fromEntries(parsedArgs).graphType : parsedArgs?.graphType;
-        if (graphType === 'Plotly line graph (time series)') {
-          await Promise.resolve((0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_4__.producePlotlyLineFigure)(targetFigureElement, interactiveArguments, Number(figureId), targetDocument));
+        function formatFigureMeta(meta = {}, figureId = 0) {
+          return {
+            code: meta.figure_code || '',
+            dataLink: meta.figure_data_link_url || '',
+            dataText: meta.figure_data_link_text || '',
+            externalAlt: meta.figure_external_alt || '',
+            figureTitle: meta.figure_title || '',
+            figureType: meta.figure_path || '',
+            figure_interactive_arguments: typeof meta.figure_interactive_arguments === 'string' ? meta.figure_interactive_arguments : JSON.stringify(meta.figure_interactive_arguments || []),
+            figure_published: meta.figure_published || '',
+            imageLink: meta.figure_image || '',
+            longCaption: meta.figure_caption_long || '',
+            postID: Number(figureId || meta.id || meta.postID || 0),
+            scienceLink: meta.figure_science_link_url || '',
+            scienceText: meta.figure_science_link_text || '',
+            shortCaption: meta.figure_caption_short || ''
+          };
         }
-        if (graphType === 'Plotly bar graph') {
-          await Promise.resolve((0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_5__.producePlotlyBarFigure)(targetFigureElement, interactiveArguments, Number(figureId), targetDocument));
-        }
+
+        // const rawArgs = meta?.figure_interactive_arguments;
+
+        // const parsedArgs =
+        // 	typeof rawArgs === 'string'
+        // 		? JSON.parse(rawArgs)
+        // 		: rawArgs;
+
+        // const graphType = Array.isArray(parsedArgs)
+        // 	? Object.fromEntries(parsedArgs).graphType
+        // 	: parsedArgs?.graphType;
+
+        // if (graphType === 'Plotly line graph (time series)') {
+        // 	await Promise.resolve(
+        // 		producePlotlyLineFigure(
+        // 			targetFigureElement,
+        // 			interactiveArguments,
+        // 			Number(figureId),
+        // 			targetDocument
+        // 		)
+        // 	);
+        // }
+        // if (graphType === 'Plotly bar graph') {
+        // 	await Promise.resolve(
+        // 		producePlotlyBarFigure(
+        // 			targetFigureElement,
+        // 			interactiveArguments,
+        // 			Number(figureId),
+        // 			targetDocument
+        // 		)
+        // 	);
+        // }
+
+        const info_obj = formatFigureMeta(meta, 0);
+        const tabContentContainer = document.getElementById(targetFigureElement);
+        await Promise.resolve((0,_graphic_data_figure_render__WEBPACK_IMPORTED_MODULE_6__.render_tab_info)(targetDiv, containerDiv, info_obj, 0, true));
+        await Promise.resolve((0,_graphic_data_figure_render__WEBPACK_IMPORTED_MODULE_6__.render_interactive_plots)(targetDiv, info_obj, targetDocument));
 
         /**
          * Gutenberg may finish sizing the block after Plotly initially renders.
@@ -490,7 +556,7 @@ function Edit({
         setIsRenderingPlot(false);
       }
     }
-    renderPlotlyFigure();
+    renderFigureInsideBlock();
     return () => {
       isCurrentRender = false;
 
@@ -503,14 +569,14 @@ function Edit({
       }
     };
   }, [figureId, meta?.figure_path, meta?.figure_interactive_arguments]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
     ...blockProps,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
       className: "graphic-data-figure-path-selector",
       style: {
         marginBottom: '16px'
       },
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("label", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("label", {
         className: "graphic-data-figure-path-selector",
         style: {
           display: 'block',
@@ -522,14 +588,14 @@ function Edit({
           lineHeight: '1.4',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif'
         },
-        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Graphic Data - Figure', 'graphic-data-plugin')
+        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Graphic Data - Figure', 'graphic-data-plugin')
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
       className: "graphic-data-figure-path-selector",
       style: {
         marginBottom: '16px'
       },
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.SelectControl
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.SelectControl
       // label={__('Select Figure Type:', 'graphic-data-plugin')}
       , {
         value: figurePathFilter,
@@ -552,16 +618,16 @@ function Edit({
           }
         }
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
       className: "graphic-data-figure-selector",
       style: {
         marginBottom: '16px'
       },
-      children: [figuresAreLoading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.Spinner, {}), Array.isArray(figures) && figures.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.Notice, {
+      children: [figuresAreLoading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Spinner, {}), Array.isArray(figures) && figures.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Notice, {
         status: "warning",
         isDismissible: false,
         children: "No published figures found."
-      }), Array.isArray(figures) && figures.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.SelectControl
+      }), Array.isArray(figures) && figures.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.SelectControl
       // label={__('Select Existing Figure:', 'graphic-data-plugin')}
       , {
         value: Number(figureId),
@@ -583,30 +649,30 @@ function Edit({
           }
         }
       })]
-    }), isLoadingMeta && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
+    }), isLoadingMeta && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
       className: "graphic-data-figure-loading",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
         children: "Loading figure metadata..."
       })]
-    }), isRenderingPlot && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
+    }), isRenderingPlot && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
       className: "graphic-data-figure-rendering",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
         children: "Rendering Plotly figure..."
       })]
-    }), errorMessage && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.Notice, {
+    }), errorMessage && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Notice, {
       status: "error",
       isDismissible: false,
       children: errorMessage
-    }), !figureId && !figuresAreLoading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.Notice, {
+    }), !figureId && !figuresAreLoading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Notice, {
       status: "info",
       isDismissible: false,
-      children: ["Select a Graphic Data \"Figure\" to render it in this block. If you filter by figure type and do not see any figures listed in the drop down menu above, you will need to", ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("a", {
+      children: ["Select a Graphic Data \"Figure\" to render it in this block. If you filter by figure type and do not see any figures listed in the drop down menu above, you will need to", ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("a", {
         href: "/wp-admin/post-new.php?post_type=figure",
         target: "_blank",
         rel: "noreferrer",
         children: "Create a New Figure"
       }), ' ', "of that type."]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
       ref: previewRef,
       className: "graphic-data-figure-preview"
       // style={{
@@ -1953,6 +2019,666 @@ function save() {
 
 /***/ },
 
+/***/ "./includes/figures/js/figure-render.js"
+/*!**********************************************!*\
+  !*** ./includes/figures/js/figure-render.js ***!
+  \**********************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   render_interactive_plots: () => (/* binding */ render_interactive_plots),
+/* harmony export */   render_tab_info: () => (/* binding */ render_tab_info)
+/* harmony export */ });
+/* harmony import */ var _graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @graphic-data/plotly-timeseries-line */ "./includes/figures/js/interactive/plotly-timeseries-line.js");
+/* harmony import */ var _graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @graphic-data/plotly-bar */ "./includes/figures/js/interactive/plotly-bar.js");
+/* harmony import */ var _graphic_data_plotly_map__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @graphic-data/plotly-map */ "./includes/figures/js/interactive/plotly-map.js");
+
+
+
+
+/**
+ * Renders interactive plots (e.g., Plotly graphs) within a specified tab content element.
+ * Handles dynamic loading, resizing for mobile, and tab switching behavior.
+ *
+ * @async
+ * @function render_interactive_plots
+ * @param {HTMLElement} tabContentElement                     - The DOM element representing the tab content where the plot will be rendered.
+ * @param {Object}      info_obj                              - An object containing information about the plot to be rendered.
+ * @param {number}      info_obj.postID                       - The unique identifier for the post associated with the plot.
+ * @param {string}      info_obj.figureType                   - The type of figure to render (e.g., "Interactive").
+ * @param {string}      info_obj.figureTitle                  - The title of the figure.
+ * @param {string}      info_obj.figure_interactive_arguments - A JSON string containing arguments for rendering the interactive figure.
+ *
+ * @throws {Error} Throws an error if required DOM elements are not found within the specified timeout.
+ *
+ * @description
+ * This function dynamically renders interactive plots using Plotly. It includes:
+ * - Polling for required DOM elements before rendering.
+ * - Adjusting layout for mobile devices.
+ * - Handling tab switching events to resize plots appropriately.
+ * - Supporting multiple graph types, such as "Plotly line graph (time series)" and "Plotly bar graph".
+ *
+ * @example
+ * const tabContentElement = document.getElementById('tab-content');
+ * const info_obj = {
+ *   postID: 123,
+ *   figureType: "Interactive",
+ *   figureTitle: "Sample Plot",
+ *   figure_interactive_arguments: JSON.stringify({ graphType: "Plotly line graph (time series)" })
+ * };
+ * await render_interactive_plots(tabContentElement, info_obj);
+ */
+async function render_interactive_plots(tabContentElement, info_obj, targetDocument) {
+  //console.log('tabContentElement render_interactive_plots', tabContentElement);
+  //Lets control if the figure is published or not
+  let figure_published = info_obj.figure_published;
+  if (figure_published != 'published') {
+    if (window.location.href.includes('post.php')) {
+      figure_published = 'published';
+    } else {
+      return; // do not render if the figure is not published
+    }
+  }
+  const postID = info_obj.postID;
+  const figureType = info_obj.figureType;
+  const title = info_obj.figureTitle;
+  const targetId = `javascript_figure_target_${postID}`;
+  const plotlyDivID = `plotlyFigure${postID}`;
+  const interactive_arguments = info_obj.figure_interactive_arguments;
+
+  //Preview error message in admin
+  if (window.location.href.includes('post.php') && figureType === 'Interactive') {
+    document.dispatchEvent(new CustomEvent('graphic-data:figurePreviewError', {
+      detail: {
+        tabContentElement,
+        figureType
+      }
+    }));
+  }
+  async function waitForElementByIdPolling(id, timeout = 15000, interval = 100) {
+    const start = Date.now();
+    return new Promise((resolve, reject) => {
+      (function poll() {
+        const element = document.getElementById(id);
+        if (element) {
+          return resolve(element);
+        }
+        if (Date.now() - start >= timeout) {
+          return reject(new Error(`Element with id ${id} not found after ${timeout}ms`));
+        }
+        setTimeout(poll, interval);
+      })();
+    });
+  }
+
+  // Additional mobile-specific adjustments
+  function adjustPlotlyLayoutForMobile(postID) {
+    const isMobilePreview = window.location.href.includes('post.php') && !!window.mobileBool;
+    if (window.innerWidth <= 768 || isMobilePreview) {
+      // basic mobile width check
+      const plotlyDivID = `plotlyFigure${postID}`;
+      const plotDiv = document.getElementById(plotlyDivID);
+      if (plotDiv) {
+        plotDiv.style.maxWidth = '100%';
+        plotDiv.style.height = '400px'; // Force a good height for mobile
+        plotDiv.style.width = '100%';
+        Plotly.Plots.resize(plotDiv);
+      }
+    }
+  }
+  switch (figureType) {
+    case 'Interactive':
+      const figure_arguments = Object.fromEntries(JSON.parse(interactive_arguments));
+      const graphType = figure_arguments.graphType;
+      if (graphType === 'Plotly line graph (time series)') {
+        async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+          for (let i = 0; i < retries; i++) {
+            const el = document.getElementById(plotlyDivID);
+            if (el) {
+              return el;
+            }
+            await new Promise(resolve => setTimeout(resolve, interval));
+            // producePlotly* call removed — this function only WAITS for the div,
+            // it does not re-render. Re-rendering here caused duplicate fetch calls
+            // and empty charts in admin preview context.
+          }
+          throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+        }
+        try {
+          await waitForElementByIdPolling(targetId, 15000);
+          await (0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__.producePlotlyLineFigure)(targetId, interactive_arguments, postID, targetDocument);
+          await waitForPlotlyDiv(plotlyDivID);
+          adjustPlotlyLayoutForMobile(postID);
+          console.log('RIP - PLOT1', postID);
+
+          // Manually trigger for initially active tab
+          const activeTab = document.querySelector('.tab-pane.active');
+          if (activeTab && activeTab.id === tabContentElement.id) {
+            if (!document.getElementById(plotlyDivID)) {
+              await (0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__.producePlotlyLineFigure)(targetId, interactive_arguments, postID, targetDocument);
+              await waitForPlotlyDiv(plotlyDivID);
+              adjustPlotlyLayoutForMobile(postID);
+              console.log('RIP - PLOT2', postID);
+            }
+          }
+          document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', () => {
+              const plotDiv = document.getElementById(plotlyDivID);
+              if (plotDiv) {
+                setTimeout(() => {
+                  Plotly.Plots.resize(plotDiv);
+                }, 150);
+              }
+            });
+          });
+        } catch (err) {
+          console.error('Plotly interactive plot error:', err);
+        }
+      }
+      if (graphType === 'Plotly bar graph') {
+        async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+          for (let i = 0; i < retries; i++) {
+            const el = document.getElementById(plotlyDivID);
+            if (el) {
+              return el;
+            }
+            await new Promise(resolve => setTimeout(resolve, interval));
+            // producePlotly* call removed — this function only WAITS for the div,
+            // it does not re-render. Re-rendering here caused duplicate fetch calls
+            // and empty charts in admin preview context.
+          }
+          throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+        }
+        try {
+          await waitForElementByIdPolling(targetId, 15000);
+          await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument);
+          await waitForPlotlyDiv(plotlyDivID);
+          adjustPlotlyLayoutForMobile(postID);
+
+          // Manually trigger for initially active tab
+          const activeTab = document.querySelector('.tab-pane.active');
+          if (activeTab && activeTab.id === tabContentElement.id) {
+            if (!document.getElementById(plotlyDivID)) {
+              await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument);
+              await waitForPlotlyDiv(plotlyDivID);
+              adjustPlotlyLayoutForMobile(postID);
+              console.log('RIP - PLOT2', postID);
+            }
+          }
+          document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', () => {
+              const plotDiv = document.getElementById(plotlyDivID);
+              if (plotDiv) {
+                setTimeout(() => {
+                  Plotly.Plots.resize(plotDiv);
+                }, 150);
+              }
+            });
+          });
+        } catch (err) {
+          console.error('Plotly interactive plot error:', err);
+        }
+      }
+      if (graphType === 'Plotly map') {
+        async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+          for (let i = 0; i < retries; i++) {
+            const el = document.getElementById(plotlyDivID);
+            if (el) {
+              return el;
+            }
+            await new Promise(resolve => setTimeout(resolve, interval));
+            // producePlotly* call removed — this function only WAITS for the div,
+            // it does not re-render. Re-rendering here caused duplicate fetch calls
+            // and empty charts in admin preview context.
+          }
+          throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+        }
+        try {
+          await waitForElementByIdPolling(targetId, 15000);
+          await (0,_graphic_data_plotly_map__WEBPACK_IMPORTED_MODULE_2__.producePlotlyMap)(targetId, interactive_arguments, postID, targetDocument);
+          await waitForPlotlyDiv(plotlyDivID);
+          adjustPlotlyLayoutForMobile(postID);
+
+          // Manually trigger for initially active tab
+          const activeTab = document.querySelector('.tab-pane.active');
+          if (activeTab && activeTab.id === tabContentElement.id) {
+            if (!document.getElementById(plotlyDivID)) {
+              await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument);
+              await waitForPlotlyDiv(plotlyDivID);
+              adjustPlotlyLayoutForMobile(postID);
+              console.log('RIP - PLOT2', postID);
+            }
+          }
+          document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', () => {
+              const plotDiv = document.getElementById(plotlyDivID);
+              if (plotDiv) {
+                setTimeout(() => {
+                  Plotly.Plots.resize(plotDiv);
+                }, 150);
+              }
+            });
+          });
+        } catch (err) {
+          console.error('Plotly interactive plot error:', err);
+        }
+      }
+
+      //Google Tags
+      // document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (event) => {  
+      //     console.log('Received graphic-data:figureTimeseriesGraphLoaded', event.detail);
+      // });
+
+      if (!window.location.href.includes('post.php')) {
+        document.dispatchEvent(new CustomEvent('graphic-data:figureTimeseriesGraphLoaded', {
+          detail: {
+            title,
+            postID
+          }
+        }));
+      }
+      break;
+  }
+}
+
+/**
+ * Renders tab content into the provided container element based on the information passed in the `info_obj` object.
+ * This function creates a styled layout that includes links, an image with a caption, and an expandable details section.
+ *
+ * @param    {HTMLElement} tabContentElement   - The HTML element where the content for the tab will be inserted.
+ * @param    {HTMLElement} tabContentContainer - The container element that holds the tab content and allows appending the tab content element.
+ * @param    {Object}      info_obj            - An object containing information used to populate the tab content.
+ * @param                  idx
+ * @property {string}      scienceLink         - URL for the "More Science" link.
+ * @property {string}      scienceText         - Text displayed for the "More Science" link. This text is prepended with a clipboard icon.
+ * @property {string}      dataLink            - URL for the "More Data" link.
+ * @property {string}      code                - HTML or JS code for embedding.
+ * @property {string}      dataText            - Text displayed for the "More Data" link. This text is prepended with a database icon.
+ * @property {string}      imageLink           - URL of the image to be displayed in the figure section.
+ * @property {string}      shortCaption        - Short description that serves as the image caption.
+ * @property {string}      longCaption         - Detailed text that is revealed when the user clicks on the expandable 'Click for Details' section.
+ * @return {void} Modifies dom
+ * Function Workflow:
+ * 1. A container `div` element is created with custom styling, including background color, padding, and border-radius.
+ * 2. Inside this container, a `table-row`-like structure is created using `div` elements that display two links:
+ *      a. A "More Science" link on the left, prepended with a clipboard icon.
+ *      b. A "More Data" link on the right, prepended with a database icon.
+ * 3. The function appends the container to `tabContentElement` only if both the science link text and data link exist.
+ * 4. An image with a caption is added to `tabContentElement`, using the URL and caption provided in `info_obj`.
+ * 5. A `details` element is created, which reveals more information (the long caption) when the user clicks the 'Click for Details' summary.
+ * 6. The function appends the entire tab content (container with links, figure with image, caption, and details) to `tabContentContainer`.
+ *
+ * Styling and Layout:
+ * - The function uses a `table-row` and `table-cell` approach for laying out the links side by side.
+ * - Links are decorated with icons, styled to remove the underline, and open in a new tab.
+ * - The image is styled to be responsive (100% width) and centered within the figure.
+ * - The `details` element is collapsible, providing a clean way to show the long caption when needed.
+ *
+ * Usage:
+ * This function is called for each tab, populating one or more figures (and other corresponding info)
+ */
+async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, isBlock) {
+  // console.log('info_obj', info_obj);
+  // console.log('tabContentElement', tabContentElement);
+  // console.log('tabContentContainer', tabContentContainer);
+
+  //Lets control if the figure is published or not
+  let figure_published = info_obj["figure_published"];
+  if (figure_published != "published") {
+    if (window.location.href.includes('post.php')) {
+      figure_published = "published";
+    } else {
+      return; // do not render if the figure is not published
+    }
+  }
+  let postID = info_obj["postID"];
+  let title = info_obj['figureTitle'];
+
+  // Create the table row div
+  const tableRowDiv = document.createElement(`div`);
+  tableRowDiv.style.display = 'table-row';
+
+  //Create a separator to make this figure distinct from others
+  if (!isBlock || isBlock === null) {
+    const separator = document.createElement('div');
+    separator.classList.add("separator");
+    separator.innerHTML = '<hr style="border-bottom: 1px rgb(252, 252, 252);">';
+    tableRowDiv.appendChild(separator);
+  }
+
+  //CONSTRUCT THE MAIN DIV "FIGURE" WHERE THE CONTENT WILL GO
+  //const figureDiv = document.createElement('div');
+  const figureDiv = tableRowDiv;
+  figureDiv.classList.add('figure');
+
+  //Container for more science and data links
+  const containerDiv = document.createElement(`div`);
+  containerDiv.style.background = '#e3e3e354';
+  containerDiv.style.width = '100%';
+  containerDiv.style.display = 'table';
+  containerDiv.style.fontSize = '120%';
+  containerDiv.style.padding = '10px';
+  containerDiv.style.marginBottom = '15px';
+  containerDiv.style.marginTop = '15px';
+  containerDiv.style.margin = '0 auto';
+  containerDiv.style.borderRadius = '6px 6px 6px 6px';
+  containerDiv.style.borderWidth = '1px';
+  containerDiv.style.borderColor = 'lightgrey';
+
+  // Create the left cell div
+  const leftCellDiv = document.createElement('div');
+  leftCellDiv.style.textAlign = 'left';
+  leftCellDiv.style.display = 'table-cell';
+
+  // More Science Link Here
+  const firstLink = document.createElement('a');
+  firstLink.href = info_obj['scienceLink'];
+  firstLink.target = '_blank';
+  if (info_obj['scienceText'] != '') {
+    firstLink.appendChild(document.createTextNode(info_obj['scienceText']));
+    let icon1 = `<i class="fa fa-clipboard-list" role="presentation" aria-label="clipboard-list icon" style=""></i> `;
+    firstLink.innerHTML = icon1 + firstLink.innerHTML;
+    firstLink.style.textDecoration = 'none';
+    firstLink.classList.add('gray-bar-links');
+    leftCellDiv.appendChild(firstLink);
+  }
+
+  // Create the right cell div
+  const rightCellDiv = document.createElement('div');
+  rightCellDiv.style.textAlign = 'right';
+  rightCellDiv.style.display = 'table-cell';
+
+  // Create the second link
+  if (info_obj['dataLink'] != '') {
+    const secondLink = document.createElement('a');
+    secondLink.href = info_obj['dataLink'];
+    secondLink.target = '_blank';
+    secondLink.classList.add('gray-bar-links');
+    let icon2 = `<i class="fa fa-database" role="presentation" aria-label="database icon"></i>`;
+    secondLink.appendChild(document.createTextNode(info_obj['dataText']));
+    secondLink.innerHTML = icon2 + `  ` + secondLink.innerHTML;
+    secondLink.style.textDecoration = 'none';
+    rightCellDiv.appendChild(secondLink);
+  }
+  if (info_obj['dataLink'] != '' || info_obj['scienceText'] != '') {
+    containerDiv.appendChild(leftCellDiv);
+    containerDiv.appendChild(rightCellDiv);
+    figureDiv.appendChild(containerDiv);
+  }
+
+  //CREATE THE FIGURE TITLE
+  const figureTitle = document.createElement("div");
+  figureTitle.classList.add('figureTitle');
+  figureTitle.innerHTML = info_obj['figureTitle'];
+  figureTitle.style.marginBottom = '2px';
+  figureTitle.style.marginTop = '15px';
+  figureTitle.style.textAlign = 'center';
+  figureDiv.appendChild(figureTitle);
+
+  //CREATE THE FIGURE
+  let img;
+  let figureType = info_obj["figureType"];
+  switch (figureType) {
+    case "Internal":
+      img = document.createElement(`img`);
+      img.id = `img_${postID}`;
+      img.src = info_obj['imageLink'];
+      if (info_obj['externalAlt']) {
+        img.alt = info_obj['externalAlt'];
+      } else {
+        const protocol = window.location.protocol; // Get the current protocol (e.g., http or https)
+        const host = window.location.host; // Get the current host (e.g., domain name)
+        const restURL = protocol + "//" + host + "/wp-json/graphic_data/v1/media/alt-text-by-url?image_url=" + encodeURI(img.src);
+        fetch(restURL).then(response => response.json()).then(data => {
+          const imgAltText = data["alt_text"];
+          if (imgAltText) {
+            img.alt = imgAltText;
+          }
+        })
+        // Log any errors that occur during the fetch process
+        .catch(err => {
+          console.error(err);
+        });
+      }
+      if (img.id === `img_${postID}`) {
+        await figureDiv.appendChild(img);
+
+        //Error in admin preview for handling for missing image
+        if (window.location.href.includes('post.php')) {
+          if (img.src.includes('post.php')) {
+            document.dispatchEvent(new CustomEvent('graphic-data:figurePreviewError', {
+              detail: {
+                tabContentElement,
+                figureType
+              }
+            }));
+          }
+        }
+      } else window.dataLayer = window.dataLayer || [];
+
+      //Google Tags
+      // document.addEventListener('graphic-data:figureInternalImageLoaded', (event) => {  
+      //     console.log('Received graphic-data:figureInternalImageLoaded', event.detail);
+      // });
+
+      if (!window.location.href.includes('post.php')) {
+        document.dispatchEvent(new CustomEvent('graphic-data:figureInternalImageLoaded', {
+          detail: {
+            title,
+            postID
+          }
+        }));
+      }
+      break;
+    case "External":
+      img = document.createElement('img');
+      img.id = `img_${postID}`;
+      img.src = info_obj['imageLink'];
+      if (info_obj['externalAlt']) {
+        img.alt = info_obj['externalAlt'];
+      } else {
+        img.alt = '';
+      }
+      if (img.id === `img_${postID}`) {
+        await figureDiv.appendChild(img);
+
+        //Error in admin preview for handling for missing image
+        if (window.location.href.includes('post.php')) {
+          if (img.src.includes('post.php')) {
+            document.dispatchEvent(new CustomEvent('graphic-data:figurePreviewError', {
+              detail: {
+                tabContentElement,
+                figureType
+              }
+            }));
+          }
+        }
+      } else {}
+
+      //Google Tags
+      // document.addEventListener('graphic-data:figureExternalImageLoaded', (event) => {  
+      //     console.log('Received graphic-data:figureExternalImageLoaded', event.detail);
+      // });
+
+      if (!window.location.href.includes('post.php')) {
+        document.dispatchEvent(new CustomEvent('graphic-data:figureExternalImageLoaded', {
+          detail: {
+            title,
+            postID
+          }
+        }));
+      }
+      break;
+    case "Interactive":
+      // Create a div for the interactive figure, the rest will be handled by the render_interactive_plots function
+      img = document.createElement('div');
+      const uniqueHash = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      //img.id = `javascript_figure_target_${postID}_${uniqueHash}`;
+      img.id = `javascript_figure_target_${postID}`;
+      await figureDiv.appendChild(img);
+      break;
+    case "Code":
+      img = '';
+      // Create a new div to display the embed code
+      const codeDiv = document.createElement("div");
+      codeDiv.id = "code_display_window";
+      codeDiv.style.width = "100%";
+      codeDiv.style.minHeight = "300px";
+      codeDiv.style.padding = "10px";
+      codeDiv.style.backgroundColor = "#ffffff";
+      codeDiv.style.overflow = "auto";
+      // Center the content using Flexbox
+      codeDiv.style.display = "flex";
+      codeDiv.style.justifyContent = "center"; // Centers horizontally
+      codeDiv.style.alignItems = "center"; // Centers vertically (if height is greater than content)
+
+      //Append the codeDiv to the figureDiv
+      await figureDiv.appendChild(codeDiv);
+      let embedCode = info_obj['code'];
+
+      //Error in admin preview for handling for missing image
+      if (!embedCode || embedCode === '') {
+        if (window.location.href.includes('post.php')) {
+          document.dispatchEvent(new CustomEvent('graphic-data:figurePreviewError', {
+            detail: {
+              tabContentElement,
+              figureType
+            }
+          }));
+        }
+      }
+
+      // Parse the embed code and extract <script> tags
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = embedCode;
+
+      // Move <script> tags to the head and inject the rest into the preview div
+      const scripts = tempDiv.querySelectorAll("script");
+      scripts.forEach(script => {
+        const newScript = document.createElement("script");
+        newScript.type = script.type || "text/javascript";
+        if (script.src) {
+          newScript.src = script.src; // External script
+        } else {
+          newScript.textContent = script.textContent; // Inline script
+        }
+        document.head.appendChild(newScript); // Add to <head>
+        script.remove(); // Remove the script tag from tempDiv
+      });
+      // Inject remaining HTML into the codeDiv
+      codeDiv.innerHTML = tempDiv.innerHTML;
+
+      //Google Tags
+      // document.addEventListener('graphic-data:figureCodeDisplayLoaded', (event) => {  
+      //     console.log('Received graphic-data:figureCodeDisplayLoaded', event.detail);
+      // });
+
+      if (!window.location.href.includes('post.php')) {
+        document.dispatchEvent(new CustomEvent('graphic-data:figureCodeDisplayLoaded', {
+          detail: {
+            title,
+            postID
+          }
+        }));
+      }
+      break;
+  }
+
+  //ATTRIBUTES FOR THE FIGURE DIV
+  figureDiv.style.justifyContent = "center"; // Center horizontally
+  figureDiv.style.alignItems = "center";
+  figureDiv.setAttribute("style", "width: 100% !important; height: auto; display: block; margin: 0; margin-top: 2%");
+
+  //CREATE PARAGRAPH ELEMENT UNDER "myTabContent" > div class="figure"
+  const caption = document.createElement('p');
+  caption.classList.add('caption');
+  let tempShortCaption = info_obj['shortCaption'];
+  tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
+  caption.innerHTML = tempShortCaption;
+  caption.style.marginTop = '10px';
+  figureDiv.appendChild(caption);
+  tabContentElement.appendChild(figureDiv);
+  if (!isBlock || isBlock === null) {
+    // Add "Go to Top" link
+    const goToTopLink = document.createElement('a');
+    goToTopLink.href = "#";
+    goToTopLink.textContent = "↑ Back to Top";
+    goToTopLink.style.display = "block";
+    goToTopLink.style.textAlign = "right";
+    goToTopLink.style.marginTop = "5px";
+    goToTopLink.style.color = "#0056b3";
+    goToTopLink.style.textDecoration = "none";
+    goToTopLink.style.fontSize = "0.8em";
+    figureDiv.appendChild(goToTopLink); // append link to figureDiv
+
+    goToTopLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('modal-title').scrollIntoView({
+        top: 0,
+        behavior: 'smooth'
+      });
+      //const modalContent = document.querySelector('.modal-title');
+      //modalContent.scrollTop = 0; // or:
+      //modalContent.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // Create the details element
+  const details = document.createElement('details');
+  const summary = document.createElement('summary');
+  summary.textContent = 'Click for Details';
+  let longCaption = document.createElement("p");
+  let tempLongCaption = info_obj['longCaption'];
+  tempLongCaption = tempLongCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
+  longCaption.innerHTML = tempLongCaption;
+  if (info_obj['longCaption'] != '') {
+    details.appendChild(summary);
+    details.appendChild(longCaption);
+    tabContentElement.appendChild(details);
+  }
+
+  // Add the details element to the tab content element
+  tabContentContainer.appendChild(tabContentElement);
+
+  //Google Tags registration for figure science and data links
+  if (info_obj['scienceText'] != '') {
+    if (!window.location.href.includes('post.php')) {
+      document.dispatchEvent(new CustomEvent('graphic-data:setupFigureScienceLinkTracking', {
+        detail: {
+          postID
+        }
+      }));
+    }
+  }
+  if (info_obj['dataLink'] != '') {
+    document.dispatchEvent(new CustomEvent('graphic-data:setupFigureDataLinkTracking', {
+      detail: {
+        postID
+      }
+    }));
+  }
+  //Finish the containers and give them the correct properties.
+  switch (figureType) {
+    case "Internal":
+      img.setAttribute("style", "width: 100% !important; height: auto; display: block; margin: 0; margin-top: 2%");
+      break;
+    case "External":
+      img.setAttribute("style", "width: 100% !important; height: auto; display: block; margin: 0; margin-top: 2%");
+      break;
+    case "Interactive":
+      img.setAttribute("style", "width: 100% !important; height: auto; display: flex; margin: 0; margin-top: 2%");
+      let plotDiv = document.querySelector(`#plotlyFigure${postID}`);
+      try {
+        plotDiv.style.width = "100%";
+      } catch {}
+      ;
+      break;
+  }
+}
+
+/***/ },
+
 /***/ "./includes/figures/js/interactive/plotly-bar.js"
 /*!*******************************************************!*\
   !*** ./includes/figures/js/interactive/plotly-bar.js ***!
@@ -2295,23 +3021,31 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
       newDiv = renderDocument.createElement('div');
     }
 
-    // considerations for unique hashing for multiple uses vs onetime use. 
-    let plotlyDivID;
-    const uniqueHash = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
+    // considerations for unique hashing for multiple uses vs onetime use.
+    let plotlyDivID = `plotlyFigure${figureID}`;
+    // let plotlyDivID;
+    // const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    // if (!targetDocument) {
+    // 	plotlyDivID = `plotlyFigure${figureID}`;
+    // }
+    // if (targetDocument) {
+    // 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
+    // }
+
     newDiv.id = plotlyDivID;
     newDiv.classList.add("container", `figure_interactive${figureID}`);
-    const targetElementparts = targetFigureElement.split("_");
-    const targetElementpostID = targetElementparts[targetElementparts.length - 1];
-    let targetElement;
-    if (!targetDocument) {
-      targetElement = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.waitForElementById)(targetFigureElement);
-      targetElement.appendChild(newDiv);
-    }
-    if (targetDocument) {
-      targetElement = renderDocument.getElementById(targetFigureElement);
-      targetElement.appendChild(newDiv);
-    }
+    let targetElement = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.waitForElementById)(targetFigureElement);
+    targetElement.appendChild(newDiv);
+    // let targetElement;
+    // if (!targetDocument) {
+    // 	targetElement = await waitForElementById(targetFigureElement);
+    // 	targetElement.appendChild(newDiv);
+    // }
+    // if (targetDocument) {
+    // 	targetElement = renderDocument.getElementById(targetFigureElement);
+    // 	targetElement.appendChild(newDiv);
+    // }
+
     const numBars = figureArguments['NumberOfBars'];
     let plotlyX;
     let plotlyY;
@@ -2681,13 +3415,14 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
     };
 
     // Set up the plotlyDiv (The div the the plot will be rendered in)
-    let plotDiv;
-    if (!targetDocument) {
-      plotDiv = document.getElementById(plotlyDivID);
-    }
-    if (targetDocument) {
-      plotDiv = renderDocument.getElementById(plotlyDivID);
-    }
+    let plotDiv = document.getElementById(plotlyDivID);
+    // let plotDiv;
+    // if (!targetDocument) {
+    // 	plotDiv = document.getElementById(plotlyDivID);
+    // }
+    // if (targetDocument) {
+    // 	plotDiv = renderDocument.getElementById(plotlyDivID);
+    // }      
     plotDiv.style.setProperty("width", "100%", "important");
     plotDiv.style.setProperty("max-width", "none", "important");
 
@@ -3837,6 +4572,422 @@ window.plotlyBarParameterFields = plotlyBarParameterFields;
 
 /***/ },
 
+/***/ "./includes/figures/js/interactive/plotly-map.js"
+/*!*******************************************************!*\
+  !*** ./includes/figures/js/interactive/plotly-map.js ***!
+  \*******************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   producePlotlyMap: () => (/* binding */ producePlotlyMap)
+/* harmony export */ });
+/* harmony import */ var _graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @graphic-data/plotly-utility */ "./includes/figures/js/interactive/plotly-utility.js");
+
+
+// === 1. Wait for Target Element ===
+/**
+ * Polls the DOM until an element with the given ID appears, or the timeout is reached.
+ *
+ * Uses recursive `setTimeout` so each poll waits a full `interval` ms after the
+ * previous check completes.
+ *
+ * @async
+ * @param {string} id - The ID of the element to wait for.
+ * @param {number} [timeout=10000] - Maximum time in milliseconds to wait before rejecting.
+ * @param {number} [interval=100] - Milliseconds between each DOM poll.
+ * @returns {Promise<HTMLElement>} Resolves with the element once it appears in the DOM.
+ * @throws {Error} Rejects if the element is not found within `timeout` milliseconds.
+ */
+async function waitForElementById(id, timeout = 10000, interval = 100) {
+  const start = Date.now();
+  return new Promise((resolve, reject) => {
+    (function poll() {
+      const element = document.getElementById(id);
+      if (element) {
+        return resolve(element);
+      }
+      if (Date.now() - start >= timeout) {
+        return reject(new Error(`Element with id ${id} not found after ${timeout}ms`));
+      }
+      setTimeout(poll, interval);
+    })();
+  });
+}
+
+// === 2. Value Classification Function (equal interval) ===
+/**
+ * Assigns each value to a class index using equal-interval classification.
+ *
+ * Divides the range `[min, max]` into `numClasses` equal-width buckets and returns
+ * the zero-based class index for each input value. The last class index
+ * (`numClasses - 1`) is clamped so that the maximum value doesn't overflow into a
+ * non-existent class.
+ *
+ * @param {number[]} values - Array of numeric values to classify.
+ * @param {number} numClasses - Number of equal-interval classes to divide the range into.
+ * @returns {number[]} Array of zero-based class indices, one per input value, in the range
+ *   `[0, numClasses - 1]`.
+ */
+function classifyValues(values, numClasses) {
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const interval = (max - min) / numClasses;
+  return values.map(v => Math.min(numClasses - 1, Math.floor((v - min) / interval)));
+}
+
+/**
+ * Dynamically builds and injects the map parameter UI into the `#graphGUI` element.
+ *
+ * Fetches the GeoJSON file associated with the current figure post, inspects the geometry
+ * types present (`Point`, `LineString`, `Polygon`, etc.), and renders per-geometry setting
+ * fields (color, thickness, visibility, classification classes, tooltip options). Also renders
+ * global controls for graph type (scattermapbox / densitymapbox / choroplethmapbox), map style,
+ * and an optional Mapbox access token.
+ *
+ * @async
+ * @param {Object} jsonColumns - Key/value map of available data columns, used to populate
+ *   the "Field for Tooltip Hover" dropdowns for each geometry type.
+ * @param {string|null} interactive_arguments - JSON-encoded string containing at minimum a
+ *   `postID` property, used to look up the figure's GeoJSON path via the WP REST API.
+ *   Falls back to the `post_ID` hidden input in the DOM if `null`.
+ * @returns {Promise<void>}
+ */
+async function plotlyMapParameterFields(jsonColumns, interactive_arguments) {
+  const targetElement = document.getElementById('graphGUI');
+  const newDiv = document.createElement('div');
+  newDiv.id = 'secondaryGraphFields';
+
+  // Graph Type
+  const graphTypes = ['scattermapbox', 'densitymapbox', 'choroplethmapbox'];
+  const graphRow = document.createElement('div');
+  graphRow.className = 'row fieldPadding';
+  const graphCol1 = document.createElement('div');
+  graphCol1.className = 'col-3';
+  const graphCol2 = document.createElement('div');
+  graphCol2.className = 'col';
+  const labelGraph = document.createElement('label');
+  labelGraph.for = 'GraphType';
+  labelGraph.textContent = 'Graph Type';
+  const selectGraph = document.createElement('select');
+  selectGraph.id = 'GraphType';
+  selectGraph.name = 'plotFields';
+  graphTypes.forEach(type => {
+    const opt = document.createElement('option');
+    opt.value = type;
+    opt.textContent = type;
+    selectGraph.appendChild(opt);
+  });
+  graphCol1.appendChild(labelGraph);
+  graphCol2.appendChild(selectGraph);
+  graphRow.appendChild(graphCol1);
+  graphRow.appendChild(graphCol2);
+  newDiv.appendChild(graphRow);
+
+  // Map Style (Expandable container for Map Type and Mapbox Style)
+  const mapOptions = {
+    scattermapbox: ['open-street-map', 'white-bg', 'carto-positron', 'stamen-terrain', 'stamen-toner'],
+    densitymapbox: ['light', 'dark', 'satellite', 'streets'],
+    choroplethmapbox: ['light', 'dark', 'carto-positron']
+  };
+  const styleContainer = document.createElement('div');
+  styleContainer.id = 'mapStyleContainer';
+  const selectedGraphType = selectGraph.value;
+  const styles = mapOptions[selectedGraphType] || [];
+  const styleRow = document.createElement('div');
+  styleRow.className = 'row fieldPadding';
+  const styleCol1 = document.createElement('div');
+  styleCol1.className = 'col-3';
+  const styleCol2 = document.createElement('div');
+  styleCol2.className = 'col';
+  const labelStyle = document.createElement('label');
+  labelStyle.for = 'MapStyle';
+  labelStyle.textContent = 'Map Style';
+  const selectStyle = document.createElement('select');
+  selectStyle.id = 'MapStyle';
+  selectStyle.name = 'plotFields';
+  styles.forEach(style => {
+    const opt = document.createElement('option');
+    opt.value = style;
+    opt.textContent = style;
+    selectStyle.appendChild(opt);
+  });
+  styleCol1.appendChild(labelStyle);
+  styleCol2.appendChild(selectStyle);
+  styleRow.appendChild(styleCol1);
+  styleRow.appendChild(styleCol2);
+  styleContainer.appendChild(styleRow);
+
+  // Token field
+  const tokenRow = document.createElement('div');
+  tokenRow.className = 'row fieldPadding';
+  const tokenCol1 = document.createElement('div');
+  tokenCol1.className = 'col-3';
+  const tokenCol2 = document.createElement('div');
+  tokenCol2.className = 'col';
+  const labelToken = document.createElement('label');
+  labelToken.for = 'MapboxToken';
+  labelToken.textContent = 'Mapbox Access Token (if required)';
+  const inputToken = document.createElement('input');
+  inputToken.id = 'MapboxToken';
+  inputToken.name = 'plotFields';
+  inputToken.type = 'text';
+  tokenCol1.appendChild(labelToken);
+  tokenCol2.appendChild(inputToken);
+  tokenRow.appendChild(tokenCol1);
+  tokenRow.appendChild(tokenCol2);
+  styleContainer.appendChild(tokenRow);
+  newDiv.appendChild(styleContainer);
+
+  // Detect geometry types in GeoJSON
+  const rootURL = window.location.origin;
+  const postID = interactive_arguments ? JSON.parse(interactive_arguments).postID : null;
+  const figureID = postID || document.getElementsByName('post_ID')[0]?.value;
+  const res = await fetch(`${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`);
+  const data = await res.json();
+  const geojsonURL = `${rootURL}/wp-content${data.uploaded_path_json.split('wp-content')[1]}`;
+  const geoData = await fetch(geojsonURL).then(r => r.json());
+  const geometrySet = new Set(geoData.features.map(f => f.geometry.type));
+
+  // Create UI for each present geometry
+  geometrySet.forEach(type => {
+    const container = document.createElement('div');
+    container.className = 'row';
+
+    // === Add separator line ===
+    const separator = document.createElement('hr');
+    separator.style.border = 'none';
+    separator.style.borderTop = '2px solid #ccc';
+    separator.style.margin = '20px 0';
+    container.appendChild(separator);
+    const label = document.createElement('label');
+    label.innerText = `${type} Settings`;
+    label.style.fontWeight = 'bold';
+    label.style.marginTop = '10px';
+    container.appendChild(label);
+    const fields = [{
+      id: `${type}Color`,
+      label: 'Color',
+      type: 'color'
+    }, {
+      id: `${type}Thickness`,
+      label: type === 'Point' ? 'Marker Size' : 'Line/Border Width',
+      type: 'number'
+    }, {
+      id: `${type}Visible`,
+      label: 'Visible',
+      type: 'checkbox'
+    }];
+    fields.forEach(f => {
+      const row = document.createElement('div');
+      row.className = 'row fieldPadding';
+      const col1 = document.createElement('div');
+      col1.className = 'col-3';
+      const col2 = document.createElement('div');
+      col2.className = 'col';
+      const fieldLabel = document.createElement('label');
+      fieldLabel.for = f.id;
+      fieldLabel.textContent = f.label;
+      const input = document.createElement('input');
+      input.id = f.id;
+      input.name = 'plotFields';
+      input.type = f.type;
+      if (f.type === 'number') {
+        input.min = '0';
+      }
+      col1.appendChild(fieldLabel);
+      col2.appendChild(input);
+      row.appendChild(col1);
+      row.appendChild(col2);
+      container.appendChild(row);
+    });
+
+    // Classification
+    const classRow = document.createElement('div');
+    classRow.className = 'row fieldPadding';
+    const classCol1 = document.createElement('div');
+    classCol1.className = 'col-3';
+    const classCol2 = document.createElement('div');
+    classCol2.className = 'col';
+    const classLabel = document.createElement('label');
+    classLabel.for = `${type}NumClasses`;
+    classLabel.textContent = 'Classification Classes';
+    const classInput = document.createElement('input');
+    classInput.type = 'number';
+    classInput.id = `${type}NumClasses`;
+    classInput.name = 'plotFields';
+    classInput.value = '5';
+    classInput.min = '2';
+    classCol1.appendChild(classLabel);
+    classCol2.appendChild(classInput);
+    classRow.appendChild(classCol1);
+    classRow.appendChild(classCol2);
+    container.appendChild(classRow);
+
+    // ShowToolTips
+    const tooltipRow = document.createElement('div');
+    tooltipRow.className = 'row fieldPadding';
+    const tipCol1 = document.createElement('div');
+    tipCol1.className = 'col-3';
+    const tipCol2 = document.createElement('div');
+    tipCol2.className = 'col';
+    const tipLabel = document.createElement('label');
+    tipLabel.for = `${type}ShowTooltip`;
+    tipLabel.textContent = 'Show Tooltips';
+    const tipCheckbox = document.createElement('input');
+    tipCheckbox.type = 'checkbox';
+    tipCheckbox.id = `${type}ShowTooltip`;
+    tipCheckbox.name = 'plotFields';
+    tipCol1.appendChild(tipLabel);
+    tipCol2.appendChild(tipCheckbox);
+    tooltipRow.appendChild(tipCol1);
+    tooltipRow.appendChild(tipCol2);
+    container.appendChild(tooltipRow);
+
+    // Tooltip data dropdown
+    const hoverRow = document.createElement('div');
+    hoverRow.className = 'row fieldPadding';
+    const hoverCol1 = document.createElement('div');
+    hoverCol1.className = 'col-3';
+    const hoverCol2 = document.createElement('div');
+    hoverCol2.className = 'col';
+    const hoverLabel = document.createElement('label');
+    hoverLabel.for = `${type}HoverField`;
+    hoverLabel.textContent = 'Field for Tooltip Hover';
+    const selectHover = document.createElement('select');
+    selectHover.id = `${type}HoverField`;
+    selectHover.name = 'plotFields';
+    Object.values(jsonColumns).forEach(val => {
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = val;
+      selectHover.appendChild(opt);
+    });
+    hoverCol1.appendChild(hoverLabel);
+    hoverCol2.appendChild(selectHover);
+    hoverRow.appendChild(hoverCol1);
+    hoverRow.appendChild(hoverCol2);
+    container.appendChild(hoverRow);
+    newDiv.appendChild(container);
+  });
+  targetElement.appendChild(newDiv);
+}
+
+// === 6. Produce Plotly Map with UI-controlled Styles ===
+/**
+ * Renders a Plotly geographic map into the target figure container.
+ *
+ * Loads Plotly if not already available, fetches the GeoJSON file associated with the
+ * figure post via the WP REST API, applies classification and tooltip settings from
+ * `interactive_arguments`, creates a `<div>` inside `targetFigureElement`, and calls
+ * `Plotly.newPlot` to render the chart.
+ *
+ * Only renders if the figure ID derived from `postID` (or the DOM `post_ID` input) matches
+ * the post ID embedded in `targetFigureElement`.
+ *
+ * @async
+ * @param {string} targetFigureElement - The DOM element ID of the figure container,
+ *   expected to end with `_<postID>` (e.g. `"figure_interactive_42"`).
+ * @param {string} interactive_arguments - JSON-encoded array of `[key, value]` pairs
+ *   containing figure settings such as `GeometryType`, `ValueProperty`, `ShowTooltip`,
+ *   and `NumClasses`.
+ * @param {string|number|null} postID - WordPress post ID for the figure. Falls back to
+ *   the `post_ID` hidden input in the DOM if `null` or `undefined`.
+ * @returns {Promise<void>}
+ */
+async function producePlotlyMap(targetFigureElement, interactive_arguments, postID) {
+  await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.loadPlotlyScript)();
+  const args = Object.fromEntries(JSON.parse(interactive_arguments));
+  const rootURL = window.location.origin;
+  const figureID = postID || document.getElementsByName('post_ID')[0]?.value;
+  const res = await fetch(`${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`);
+  const data = await res.json();
+  const geojsonURL = `${rootURL}/wp-content${data.uploaded_path_json.split('wp-content')[1]}`;
+  const geoData = await fetch(geojsonURL).then(r => r.json());
+  const geometryType = args.GeometryType || geoData.features[0].geometry.type;
+  const valueField = args.ValueProperty || null;
+  const showTooltip = args.ShowTooltip === 'on';
+  const numClasses = parseInt(args.NumClasses || 5);
+  const values = valueField ? geoData.features.map(f => parseFloat(f.properties?.[valueField] || 0)) : [];
+  const classIndices = valueField ? classifyValues(values, numClasses) : [];
+  const plotlyDivID = `plotlyFigure${figureID}`;
+  const newDiv = document.createElement('div');
+  newDiv.id = plotlyDivID;
+  newDiv.classList.add('container', `figure_interactive${figureID}`);
+  const targetElementparts = targetFigureElement.split('_');
+  const targetElementpostID = targetElementparts[targetElementparts.length - 1];
+  if (figureID == targetElementpostID) {
+    console.log(`Figure ID ${figureID} matches target element post ID ${targetElementpostID}`);
+    console.log('targetFigureElement', targetFigureElement);
+    const targetElement = await waitForElementById(targetFigureElement); // ✅ await here
+    console.log('targetElement', targetElement);
+    targetElement.appendChild(newDiv);
+    const thisdata = [{
+      type: 'scattergeo',
+      mode: 'markers+text',
+      text: ['Montreal', 'Toronto', 'Vancouver', 'Calgary', 'Edmonton', 'Ottawa', 'Halifax', 'Victoria', 'Winnepeg', 'Regina'],
+      lon: [-73.57, -79.24, -123.06, -114.1, -113.28, -75.43, -63.57, -123.21, -97.13, -104.6],
+      lat: [45.5, 43.4, 49.13, 51.1, 53.34, 45.24, 44.64, 48.25, 49.89, 50.45],
+      marker: {
+        size: 7,
+        color: ['#bebada', '#fdb462', '#fb8072', '#d9d9d9', '#bc80bd', '#b3de69', '#8dd3c7', '#80b1d3', '#fccde5', '#ffffb3'],
+        line: {
+          width: 1
+        }
+      },
+      name: 'Canadian cities',
+      textposition: ['top right', 'top left', 'top center', 'bottom right', 'top right', 'top left', 'bottom right', 'bottom left', 'top right', 'top right']
+    }];
+    const layout = {
+      title: {
+        text: 'Canadian cities',
+        font: {
+          family: 'Droid Serif, serif',
+          size: 16
+        }
+      },
+      geo: {
+        scope: 'north america',
+        resolution: 50,
+        lonaxis: {
+          range: [-130, -55]
+        },
+        lataxis: {
+          range: [40, 70]
+        },
+        showrivers: true,
+        rivercolor: '#fff',
+        showlakes: true,
+        lakecolor: '#fff',
+        showland: true,
+        landcolor: '#EAEAAE',
+        countrycolor: '#d3d3d3',
+        countrywidth: 1.5,
+        subunitcolor: '#d3d3d3'
+      },
+      margin: {
+        t: 60,
+        b: 60,
+        l: 60,
+        r: 60
+      }
+    };
+    const config = {
+      responsive: true,
+      displaylogo: false
+    };
+
+    // Set up the plotlyDiv (The div the the plot will be rendered in)
+    const plotDiv = document.getElementById(plotlyDivID);
+    plotDiv.style.setProperty('width', '100%', 'important');
+    plotDiv.style.setProperty('max-width', 'none', 'important');
+    // Plotly.newPlot(plotlyDivID, trace, layout, config);
+    Plotly.newPlot(plotlyDivID, thisdata, layout, config);
+  }
+}
+
+/***/ },
+
 /***/ "./includes/figures/js/interactive/plotly-timeseries-line.js"
 /*!*******************************************************************!*\
   !*** ./includes/figures/js/interactive/plotly-timeseries-line.js ***!
@@ -4149,33 +5300,43 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
     //console.log('[GD] dataToBePlotted:', dataToBePlotted?.length, 'rows, first row:', JSON.stringify(dataToBePlotted?.[0]));
 
     //Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-    let newDiv;
-    if (!targetDocument) {
-      newDiv = document.createElement('div');
-    }
-    if (targetDocument) {
-      newDiv = renderDocument.createElement('div');
-    }
+    let newDiv = document.createElement('div');
+    // let newDiv;
+    // if (!targetDocument || targetDocument === null) {
+    // 	newDiv = document.createElement('div');
+    // }
+    // if (targetDocument) {
+    // 	newDiv = renderDocument.createElement('div');
+    // }
 
-    // considerations for unique hashing for multiple uses vs onetime use. 
-    let plotlyDivID;
-    const uniqueHash = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
+    // considerations for unique hashing for multiple uses vs onetime use.
+    let plotlyDivID = `plotlyFigure${figureID}`;
+    // let plotlyDivID;
+    // const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    // // if (targetDocument != renderDocument) {
+    // 	plotlyDivID = `plotlyFigure${figureID}`;
+    // }
+    // if (targetDocument === renderDocument) {
+    // 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
+    // }
+
     newDiv.id = plotlyDivID;
     newDiv.classList.add("container", `figure_interactive${figureID}`);
-    const targetElementparts = targetFigureElement.split("_");
-    const targetElementpostID = targetElementparts[targetElementparts.length - 1];
 
     //Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-    let targetElement;
-    if (!targetDocument) {
-      targetElement = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.waitForElementById)(targetFigureElement);
-      targetElement.appendChild(newDiv);
-    }
-    if (targetDocument) {
-      targetElement = renderDocument.getElementById(targetFigureElement);
-      targetElement.appendChild(newDiv);
-    }
+
+    let targetElement = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.waitForElementById)(targetFigureElement);
+    targetElement.appendChild(newDiv);
+    // let targetElement;
+    // if (!targetDocument) {
+    // 	targetElement = await waitForElementById(targetFigureElement);
+    // 	targetElement.appendChild(newDiv);
+    // }
+    // if (targetDocument) {
+    // 	targetElement = renderDocument.getElementById(targetFigureElement);
+    // 	targetElement.appendChild(newDiv);
+    // }
+
     const numLines = figureArguments['NumberOfLines'];
     let plotlyX;
     let plotlyY;
@@ -4599,13 +5760,15 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
 
     // Set up the plotlyDiv (The div the the plot will be rendered in)
     //Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-    let plotDiv;
-    if (!targetDocument) {
-      plotDiv = document.getElementById(plotlyDivID);
-    }
-    if (targetDocument) {
-      plotDiv = renderDocument.getElementById(plotlyDivID);
-    }
+
+    let plotDiv = document.getElementById(plotlyDivID);
+    // let plotDiv;
+    // if (!targetDocument) {
+    // 	plotDiv = document.getElementById(plotlyDivID);
+    // }
+    // if (targetDocument) {
+    // 	plotDiv = renderDocument.getElementById(plotlyDivID);
+    // }
     plotDiv.style.setProperty("width", "100%", "important");
     plotDiv.style.setProperty("max-width", "none", "important");
 
@@ -4618,17 +5781,17 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
       injectOverlays(plotDiv, layout, allLinesPlotly, figureArguments, dataToBePlotted);
     });
     Plotly.Plots.resize(plotDiv);
-    if (window.location.href.includes('post.php')) {
-      //Save the plotly figure as an html file. 
-      const savedFigure = {
-        data: plotDiv.data,
-        layout: plotDiv.layout,
-        config: {
-          responsive: true
-        }
-      };
-      const figureiframeGenerator = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.createFigureIframeHtml)(savedFigure, figureID, rootURL);
-    }
+
+    // if (window.location.href.includes('post.php')) {
+    // 	//Save the plotly figure as an html file. 
+    // 	const savedFigure = {
+    // 		data: plotDiv.data,
+    // 		layout: plotDiv.layout,
+    // 		config: { responsive: true }
+    // 	};
+
+    // 	const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
+    // }
 
     // if () {
     // 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {

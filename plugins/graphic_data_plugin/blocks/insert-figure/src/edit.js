@@ -4,6 +4,8 @@ import { useBlockProps } from '@wordpress/block-editor';
 import apiFetch from '@wordpress/api-fetch';
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
+import { render_tab_info } from '@graphic-data/figure-render';
+import { render_interactive_plots } from '@graphic-data/figure-render';
 
 import {
 	SelectControl,
@@ -440,29 +442,29 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			};
 		}
 
-		if (meta.figure_path !== 'Interactive') {
-			setErrorMessage(
-				'The selected figure is not marked as Interactive, so the Plotly renderer was not run.'
-			);
+		// if (meta.figure_path !== 'Interactive') {
+		// 	setErrorMessage(
+		// 		'The selected figure is not marked as Interactive, so the Plotly renderer was not run.'
+		// 	);
 
-			return () => {
-				isCurrentRender = false;
-			};
-		}
+		// 	return () => {
+		// 		isCurrentRender = false;
+		// 	};
+		// }
 
-		const interactiveArguments = normalizeInteractiveArguments(
-			meta.figure_interactive_arguments
-		);
+		// const interactiveArguments = normalizeInteractiveArguments(
+		// 	meta.figure_interactive_arguments
+		// );
 
-		if (!interactiveArguments) {
-			setErrorMessage(
-				'The selected figure does not have figure_interactive_arguments.'
-			);
+		// if (!interactiveArguments) {
+		// 	setErrorMessage(
+		// 		'The selected figure does not have figure_interactive_arguments.'
+		// 	);
 
-			return () => {
-				isCurrentRender = false;
-			};
-		}
+		// 	return () => {
+		// 		isCurrentRender = false;
+		// 	};
+		// }
 
 		/**
 		 * This ID intentionally ends with the figure ID.
@@ -484,58 +486,106 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 
 		const targetDocument = previewElement.ownerDocument;
-
 		ensurePlotlyEditorLayerStyles(targetDocument);
+
+		const containerDiv = targetDocument.createElement('div');
+		containerDiv.id = 'containerDiv';
+		containerDiv.className = 'containerDiv graphic-data-block-container';
+		containerDiv.dataset.figureId = String(figureId);
+		containerDiv.style.width = '100%';
+
+		previewElement.appendChild(containerDiv);
 
 		const targetDiv = targetDocument.createElement('div');
 		targetDiv.id = targetFigureElement;
-		targetDiv.className =
-			'targetFigureElement graphic-data-block-plotly-target';
+		targetDiv.className = 'targetFigureElement graphic-data-block-plotly-target';
 		targetDiv.dataset.figureId = String(figureId);
 		targetDiv.style.width = '100%';
 
-		previewElement.appendChild(targetDiv);
+		containerDiv.appendChild(targetDiv);
 
 
-		async function renderPlotlyFigure() {
+		async function renderFigureInsideBlock() {
 			setIsRenderingPlot(true);
 			setErrorMessage('');
 
 			try {
 
-				const rawArgs = meta?.figure_interactive_arguments;
-
-				const parsedArgs =
-					typeof rawArgs === 'string'
-						? JSON.parse(rawArgs)
-						: rawArgs;
-
-				const graphType = Array.isArray(parsedArgs)
-					? Object.fromEntries(parsedArgs).graphType
-					: parsedArgs?.graphType;
-
-
-				if (graphType === 'Plotly line graph (time series)') {
-					await Promise.resolve(
-						producePlotlyLineFigure(
-							targetFigureElement,
-							interactiveArguments,
-							Number(figureId),
-							targetDocument
-						)
-					);
-				}
-				if (graphType === 'Plotly bar graph') {
-					await Promise.resolve(
-						producePlotlyBarFigure(
-							targetFigureElement,
-							interactiveArguments,
-							Number(figureId),
-							targetDocument
-						)
-					);
+				function formatFigureMeta(meta = {}, figureId = 0) {
+					return {
+						code: meta.figure_code || '',
+						dataLink: meta.figure_data_link_url || '',
+						dataText: meta.figure_data_link_text || '',
+						externalAlt: meta.figure_external_alt || '',
+						figureTitle: meta.figure_title || '',
+						figureType: meta.figure_path || '',
+						figure_interactive_arguments:
+							typeof meta.figure_interactive_arguments === 'string'
+								? meta.figure_interactive_arguments
+								: JSON.stringify(meta.figure_interactive_arguments || []),
+						figure_published: meta.figure_published || '',
+						imageLink: meta.figure_image || '',
+						longCaption: meta.figure_caption_long || '',
+						postID: Number(figureId || meta.id || meta.postID || 0),
+						scienceLink: meta.figure_science_link_url || '',
+						scienceText: meta.figure_science_link_text || '',
+						shortCaption: meta.figure_caption_short || '',
+					};
 				}
 
+				// const rawArgs = meta?.figure_interactive_arguments;
+
+				// const parsedArgs =
+				// 	typeof rawArgs === 'string'
+				// 		? JSON.parse(rawArgs)
+				// 		: rawArgs;
+
+				// const graphType = Array.isArray(parsedArgs)
+				// 	? Object.fromEntries(parsedArgs).graphType
+				// 	: parsedArgs?.graphType;
+
+
+				// if (graphType === 'Plotly line graph (time series)') {
+				// 	await Promise.resolve(
+				// 		producePlotlyLineFigure(
+				// 			targetFigureElement,
+				// 			interactiveArguments,
+				// 			Number(figureId),
+				// 			targetDocument
+				// 		)
+				// 	);
+				// }
+				// if (graphType === 'Plotly bar graph') {
+				// 	await Promise.resolve(
+				// 		producePlotlyBarFigure(
+				// 			targetFigureElement,
+				// 			interactiveArguments,
+				// 			Number(figureId),
+				// 			targetDocument
+				// 		)
+				// 	);
+				// }
+
+				const info_obj = formatFigureMeta(meta, 0);
+				const tabContentContainer = document.getElementById(targetFigureElement);
+
+				await Promise.resolve(
+					render_tab_info(
+						targetDiv,
+						containerDiv,
+						info_obj,
+						0,
+						true
+					),
+				);
+
+				await Promise.resolve(
+					render_interactive_plots(
+						targetDiv,
+						info_obj,
+						targetDocument
+					)
+				);
 
 				/**
 				 * Gutenberg may finish sizing the block after Plotly initially renders.
@@ -580,8 +630,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			}
 		}
 
-		renderPlotlyFigure();
-
+		renderFigureInsideBlock();
 
 
 		return () => {
