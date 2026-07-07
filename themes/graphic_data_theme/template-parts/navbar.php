@@ -142,13 +142,40 @@
 						get_template_part( 'parts/navbar-dropdown' );
 					}
 					?>
+					<li class="nav-item">
+						<button type="button"
+								class="nav-link"
+								aria-label="Open site search"
+								aria-haspopup="dialog"
+								id="graphic-data-search-trigger">
+							<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+						</button>
+					</li>
 				</ul>
-				<form class="d-flex" role="search" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
-					<label for="graphic-data-search" class="visually-hidden">Search this site</label>
-					<input id="graphic-data-search" class="form-control me-2" type="search" name="s"
-						value="<?php echo esc_attr( get_search_query() ); ?>">
-					<button class="btn btn-outline-light" type="submit">Search</button>
-				</form>
+
+				<dialog id="graphic-data-search-dialog"
+						aria-labelledby="graphic-data-search-dialog-title"
+						class="graphic-data-search-dialog"
+						data-bs-theme="light">
+					<form role="search" action="<?php echo esc_url( home_url( '/' ) ); ?>" method="get">
+						<h2 id="graphic-data-search-dialog-title" class="h5 mb-3">Search this site</h2>
+
+						<label for="graphic-data-search" class="visually-hidden">Search terms</label>
+						<input id="graphic-data-search"
+							class="form-control mb-3"
+							type="search"
+							name="s"
+							value="<?php echo esc_attr( get_search_query() ); ?>"
+							autocomplete="off">
+
+						<div class="d-flex justify-content-end gap-2">
+							<button type="button"
+									class="btn btn-primary"
+									id="graphic-data-search-cancel">Cancel</button>
+							<button type="submit" class="btn btn-primary">Search</button>
+						</div>
+					</form>
+				</dialog>
 			</div>
 		</div>
 	</div>

@@ -777,6 +777,14 @@ function graphic_data_enqueue_scripts() {
 		graphic_data_get_theme_asset_version()
 	);
 	wp_enqueue_script_module( '@graphic-data/googletags' );
+
+	wp_register_script_module(
+		'@graphic-data/search-dialog',
+		get_template_directory_uri() . '/assets/js/search-dialog.js',
+		array(),
+		wp_get_theme()->get( 'Version' )
+	);
+	wp_enqueue_script_module( '@graphic-data/search-dialog' );
 }
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_scripts' );
 
