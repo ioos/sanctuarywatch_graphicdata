@@ -35,7 +35,20 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
     Menu
 </label>
 <aside class="phpdocumentor-column -three phpdocumentor-sidebar">
-                    <section class="phpdocumentor-sidebar__category -packages">
+                    <section class="phpdocumentor-sidebar__category -namespaces">
+            <h2 class="phpdocumentor-sidebar__category-header">Namespaces</h2>
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/graphic-data.html" class="">Graphic_Data</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/graphic-data-table.html" class="">Table</a>
+                
+            </li>
+            </ul>
+
+                        </section>
+                <section class="phpdocumentor-sidebar__category -packages">
             <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="packages/Graphic.html" class="">Graphic</a>
@@ -143,6 +156,18 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
         &nbsp;: mixed&nbsp;= $graphic_data_plugin_data[&#039;Version&#039;]                            </span>
 </dt>
 
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="namespaces/graphic-data-table.html#constant_TABULATOR_VERSION">TABULATOR_VERSION</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;6.3.1&#039;                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="namespaces/graphic-data-table.html#constant_WRAPPER_VERSION">WRAPPER_VERSION</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;1.0.0&#039;                            </span>
+</dt>
+
     </dl>
 
 
@@ -213,6 +238,20 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
                                 &nbsp;: mixed    </span>
 </dt>
 <dd>Begins execution of the plugin.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -function -">
+    <a class="" href="namespaces/graphic-data-table.html#function_register_assets">register_assets()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Register script modules and stylesheet on init.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -function -">
+    <a class="" href="namespaces/graphic-data-table.html#function_render_shortcode">render_shortcode()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Render the `[graphic_data_table]` shortcode.</dd>
 
     </dl>
 
@@ -367,6 +406,66 @@ permalink: /function_documentation/packages/Graphic-Data-Plugin.html
         <span class="phpdocumentor-signature__type">mixed</span>
     <span class="phpdocumentor-signature__name">GRAPHIC_DATA_PLUGIN_VERSION</span>
     = <span class="phpdocumentor-signature__default-value">$graphic_data_plugin_data[&#039;Version&#039;]</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_TABULATOR_VERSION">
+        TABULATOR_VERSION
+        <a href="namespaces/graphic-data-table.html#constant_TABULATOR_VERSION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/figures/admin-graphic-data-table.php"><a href="files/plugins-graphic-data-plugin-includes-figures-admin-graphic-data-table.html"><abbr title="plugins/graphic_data_plugin/includes/figures/admin-graphic-data-table.php">admin-graphic-data-table.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">20</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">TABULATOR_VERSION</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;6.3.1&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_WRAPPER_VERSION">
+        WRAPPER_VERSION
+        <a href="namespaces/graphic-data-table.html#constant_WRAPPER_VERSION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/figures/admin-graphic-data-table.php"><a href="files/plugins-graphic-data-plugin-includes-figures-admin-graphic-data-table.html"><abbr title="plugins/graphic_data_plugin/includes/figures/admin-graphic-data-table.php">admin-graphic-data-table.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">21</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">WRAPPER_VERSION</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;1.0.0&#039;</span>
 </code>
 
 
@@ -725,6 +824,84 @@ not affect the page life cycle.</p>
 
     
 </article>
+                    <article class="phpdocumentor-element -function - ">
+    <h4 class="phpdocumentor-element__name" id="function_register_assets">
+        register_assets()
+        <a href="namespaces/graphic-data-table.html#function_register_assets" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/figures/admin-graphic-data-table.php"><a href="files/plugins-graphic-data-plugin-includes-figures-admin-graphic-data-table.html"><abbr title="plugins/graphic_data_plugin/includes/figures/admin-graphic-data-table.php">admin-graphic-data-table.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">28</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Register script modules and stylesheet on init.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility"></span>
+                    <span class="phpdocumentor-signature__name">register_assets</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    
+    
+    
+
+    
+</article>
+                    <article class="phpdocumentor-element -function - ">
+    <h4 class="phpdocumentor-element__name" id="function_render_shortcode">
+        render_shortcode()
+        <a href="namespaces/graphic-data-table.html#function_render_shortcode" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/figures/admin-graphic-data-table.php"><a href="files/plugins-graphic-data-plugin-includes-figures-admin-graphic-data-table.html"><abbr title="plugins/graphic_data_plugin/includes/figures/admin-graphic-data-table.php">admin-graphic-data-table.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">69</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Render the `[graphic_data_table]` shortcode.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility"></span>
+                    <span class="phpdocumentor-signature__name">render_shortcode</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$atts</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+        <section class="phpdocumentor-description"><p>Accepted attributes:</p>
+<ul>
+<li>source: URL to a JSON file. Defaults to the bundled sample dataset.</li>
+<li>height: CSS min-height for the mount element. Default '480px'.</li>
+</ul>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$atts</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Shortcode attributes.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>HTML mount point.</p>
+</section>
+
+            </section>
+
+</article>
             </section>
 
         
@@ -753,6 +930,8 @@ not affect the page life cycle.</p>
                                                     <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_IS_ACTIVE_THEME">GRAPHIC_DATA_IS_ACTIVE_THEME</a></li>
                                                     <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_DIR">GRAPHIC_DATA_PLUGIN_DIR</a></li>
                                                     <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_PLUGIN_VERSION">GRAPHIC_DATA_PLUGIN_VERSION</a></li>
+                                                    <li class=""><a href="namespaces/graphic-data-table.html#constant_TABULATOR_VERSION">TABULATOR_VERSION</a></li>
+                                                    <li class=""><a href="namespaces/graphic-data-table.html#constant_WRAPPER_VERSION">WRAPPER_VERSION</a></li>
                                             </ul>
                 </li>
             
@@ -768,6 +947,8 @@ not affect the page life cycle.</p>
                                                     <li class=""><a href="namespaces/default.html#function_graphic_data_register_figure_block_meta">graphic_data_register_figure_block_meta()</a></li>
                                                     <li class=""><a href="namespaces/default.html#function_graphic_data_register_figure_block_routes">graphic_data_register_figure_block_routes()</a></li>
                                                     <li class=""><a href="namespaces/default.html#function_graphic_data_save_figure_block_meta">graphic_data_save_figure_block_meta()</a></li>
+                                                    <li class=""><a href="namespaces/graphic-data-table.html#function_register_assets">register_assets()</a></li>
+                                                    <li class=""><a href="namespaces/graphic-data-table.html#function_render_shortcode">render_shortcode()</a></li>
                                             </ul>
                 </li>
                     </ul>
