@@ -9,6 +9,7 @@ jobs:
   eslint:
     name: ESLint Analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout code
@@ -17,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Cache node modules
         uses: actions/cache@v4
@@ -56,8 +57,9 @@ jobs:
           echo "" >> eslint-report.txt
           echo "=== JavaScript Files (.js) ===" >> eslint-report.txt
           echo "" >> eslint-report.txt
-          npx eslint --ext .js plugins/graphic_data_plugin/ themes/graphic_data_theme/ \
-            --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' \
+          npx eslint --ext .js \
+            plugins/graphic_data_plugin/ \
+            themes/graphic_data_theme/ \
             --format stylish >> eslint-report.txt 2>&1 || true
           echo "" >> eslint-report.txt
           echo "=== PHP Files (embedded JavaScript) ===" >> eslint-report.txt
@@ -65,8 +67,9 @@ jobs:
           node lint-php-js.js >> eslint-report.txt 2>&1 || true
           echo "" >> eslint-report.txt
           echo "=== Summary ===" >> eslint-report.txt
-          npx eslint --ext .js plugins/ themes/ \
-            --ignore-pattern 'plugins/graphic_data_plugin/admin/exopite-simple-options/**' \
+          npx eslint --ext .js \
+            plugins/graphic_data_plugin/ \
+            themes/graphic_data_theme/ \
             --format compact >> eslint-report.txt 2>&1 || true
           cat eslint-report.txt
 

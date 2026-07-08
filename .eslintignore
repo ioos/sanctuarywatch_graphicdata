@@ -1,0 +1,17 @@
+# Dependencies and build output
+**/node_modules/**
+**/vendor/**
+**/dist/**
+**/build/**
+
+# Minified and bundled files - these hang ESLint for hours
+**/*.min.js
+**/*.bundle.js
+
+# Third-party admin framework vendored into the plugin
+plugins/graphic_data_plugin/admin/exopite-simple-options/**
+
+# Third-party WordPress plugins (not maintained in this repo)
+plugins/wpdatatables/**
+plugins/svg-support/**
+plugins/visualizer/**
