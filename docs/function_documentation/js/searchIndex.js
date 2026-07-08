@@ -1486,39 +1486,9 @@ Search.appendIndex(
             "summary": "The\u0020current\u0020version\u0020of\u0020the\u0020plugin.",
             "url": "classes/Graphic-Data-Plugin.html#property_version"
         },                {
-            "fqsen": "\\Graphic_Data\\Table\\TABULATOR_VERSION",
-            "name": "TABULATOR_VERSION",
-            "summary": "",
-            "url": "namespaces/graphic-data-table.html#constant_TABULATOR_VERSION"
-        },                {
-            "fqsen": "\\Graphic_Data\\Table\\WRAPPER_VERSION",
-            "name": "WRAPPER_VERSION",
-            "summary": "",
-            "url": "namespaces/graphic-data-table.html#constant_WRAPPER_VERSION"
-        },                {
-            "fqsen": "\\Graphic_Data\\Table\\register_assets\u0028\u0029",
-            "name": "register_assets",
-            "summary": "Register\u0020script\u0020modules\u0020and\u0020stylesheet\u0020on\u0020init.",
-            "url": "namespaces/graphic-data-table.html#function_register_assets"
-        },                {
-            "fqsen": "\\Graphic_Data\\Table\\render_shortcode\u0028\u0029",
-            "name": "render_shortcode",
-            "summary": "Render\u0020the\u0020\u0060\u005Bgraphic_data_table\u005D\u0060\u0020shortcode.",
-            "url": "namespaces/graphic-data-table.html#function_render_shortcode"
-        },                {
             "fqsen": "\\",
             "name": "\\",
             "summary": "",
             "url": "namespaces/default.html"
-        },                {
-            "fqsen": "\\Graphic_Data\\Table",
-            "name": "Table",
-            "summary": "",
-            "url": "namespaces/graphic-data-table.html"
-        },                {
-            "fqsen": "\\Graphic_Data",
-            "name": "Graphic_Data",
-            "summary": "",
-            "url": "namespaces/graphic-data.html"
         }            ]
 );
