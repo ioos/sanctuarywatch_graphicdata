@@ -136,6 +136,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
             let axisType = figureArguments[`EventMarkersEventAxis${i}`];
             const label = figureArguments[`EventMarkersEventText${i}`];
             const color = figureArguments[`EventMarkersEventColor${i}`] || '#000';
+			const lineType = figureArguments[`EventMarkersLineType${i}`] || 'solid';
 
             if (axisType === 'x') {
                 let date = figureArguments[`EventMarkersEventDate${i}`];
@@ -144,7 +145,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     y: [yMin, yMax],
                     type: 'scatter',
                     mode: 'lines',
-                    line: { color, width: 2 },
+                    line: { color, width: 2, dash: lineType, },
                     name: label,
                     showlegend: true,
                     yaxis: 'y',
@@ -162,7 +163,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     y: yArray,
                     type: 'scatter',
                     mode: 'lines',
-                    line: { color, width: 2 },
+                    line: { color, width: 2, dash: lineType, },
                     name: label,
                     showlegend: true,
                     yaxis: 'y',
@@ -186,7 +187,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     line: {
                         color: color,
                         width: 2,
-                        dash: 'solid'
+                        dash: lineType,
                     }
                 });
             }
@@ -204,7 +205,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
                     y1: yValue,
                     line: {
                         color: color,
-                        width: 2
+                        width: 2,
+						dash: lineType,
                     }
                 });
             }
@@ -1472,6 +1474,39 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 								axisSelect.value = savedAxis;
 							}
 
+							// === Line Type Selector ===
+							const lineTypeLabel = document.createElement('label');
+							lineTypeLabel.textContent = `Line Type ${i + 1}`;
+							lineTypeLabel.htmlFor = `${feature}LineType${i}`;
+
+							const lineTypeSelect = document.createElement('select');
+							lineTypeSelect.id = `${feature}LineType${i}`;
+							lineTypeSelect.name = 'plotFields';
+
+							[
+								'solid',
+								'dash',
+								'dot',
+								'dashdot',
+								'longdash',
+								'longdashdot',
+							].forEach((type) => {
+								const opt = document.createElement('option');
+								opt.value = type;
+								opt.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+								lineTypeSelect.appendChild(opt);
+							});
+
+							const savedLineType = fillFormFieldValues(
+								lineTypeSelect.id,
+								interactive_arguments
+							);
+
+							// Important: force a default value even if nothing is saved yet
+							lineTypeSelect.value = savedLineType || 'solid';
+
+							lineTypeSelect.addEventListener('change', logFormFieldValues);
+
 							// === Shared Inputs ===
 							const { label: textLabel, input: textInput } =
 								createTextfield(
@@ -1535,6 +1570,9 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 								axisLabel,
 								document.createElement('br'),
 								axisSelect,
+								document.createElement('br'),
+								document.createElement('br'),
+								lineTypeSelect,
 								document.createElement('br'),
 								document.createElement('br'),
 								xWrapper,
@@ -1768,14 +1806,13 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 					//const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
 					if (fieldLabel[0].includes('Bar')) {
 						selectColumn.addEventListener('change', function () {
-							DropdownValueSaved = selectColumn.value;
+							let DropdownValueSaved = selectColumn.value;
 							if (
 								DropdownValueSaved != 'None' &&
 								fieldValueSaved === undefined
 							) {
-								//console.log('fieldValueSaved2', fieldValueSaved);
 								inputTitle.value = DropdownValueSaved;
-								//console.log('DropdownValueSaved2', DropdownValueSaved);
+								logFormFieldValues();
 							}
 						});
 					}

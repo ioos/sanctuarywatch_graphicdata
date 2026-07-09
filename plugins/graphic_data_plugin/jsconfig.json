@@ -21,6 +21,7 @@
 			"@graphic-data/plotly-utility":       ["includes/figures/js/interactive/plotly-utility.js"],
 			"@graphic-data/plotly-timeseries-line":["includes/figures/js/interactive/plotly-timeseries-line.js"],
 			"@graphic-data/plotly-bar":           ["includes/figures/js/interactive/plotly-bar.js"],
+			"@graphic-data/tabulator-table":           ["includes/figures/js/interactive/tabulator-table.js"],
 			"@graphic-data/plotly-map":           ["includes/figures/js/interactive/plotly-map.js"]
 		}
 	}

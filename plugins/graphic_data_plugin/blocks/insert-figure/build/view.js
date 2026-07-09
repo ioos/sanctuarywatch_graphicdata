@@ -137,6 +137,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
       let axisType = figureArguments[`EventMarkersEventAxis${i}`];
       const label = figureArguments[`EventMarkersEventText${i}`];
       const color = figureArguments[`EventMarkersEventColor${i}`] || '#000';
+      const lineType = figureArguments[`EventMarkersLineType${i}`] || 'solid';
       if (axisType === 'x') {
         let date = figureArguments[`EventMarkersEventDate${i}`];
         overlays.push({
@@ -146,7 +147,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
           mode: 'lines',
           line: {
             color,
-            width: 2
+            width: 2,
+            dash: lineType
           },
           name: label,
           showlegend: true,
@@ -166,7 +168,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
           mode: 'lines',
           line: {
             color,
-            width: 2
+            width: 2,
+            dash: lineType
           },
           name: label,
           showlegend: true,
@@ -193,7 +196,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
           line: {
             color: color,
             width: 2,
-            dash: 'solid'
+            dash: lineType
           }
         });
       }
@@ -214,7 +217,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
           y1: yValue,
           line: {
             color: color,
-            width: 2
+            width: 2,
+            dash: lineType
           }
         });
       }
@@ -1392,6 +1396,25 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
                 axisSelect.value = savedAxis;
               }
 
+              // === Line Type Selector ===
+              const lineTypeLabel = document.createElement('label');
+              lineTypeLabel.textContent = `Line Type ${i + 1}`;
+              lineTypeLabel.htmlFor = `${feature}LineType${i}`;
+              const lineTypeSelect = document.createElement('select');
+              lineTypeSelect.id = `${feature}LineType${i}`;
+              lineTypeSelect.name = 'plotFields';
+              ['solid', 'dash', 'dot', 'dashdot', 'longdash', 'longdashdot'].forEach(type => {
+                const opt = document.createElement('option');
+                opt.value = type;
+                opt.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                lineTypeSelect.appendChild(opt);
+              });
+              const savedLineType = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.fillFormFieldValues)(lineTypeSelect.id, interactive_arguments);
+
+              // Important: force a default value even if nothing is saved yet
+              lineTypeSelect.value = savedLineType || 'solid';
+              lineTypeSelect.addEventListener('change', _graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues);
+
               // === Shared Inputs ===
               const {
                 label: textLabel,
@@ -1424,7 +1447,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 
               // === Container & Toggle Logic ===
               const block = document.createElement('div');
-              block.append(document.createElement('hr'), axisLabel, document.createElement('br'), axisSelect, document.createElement('br'), document.createElement('br'), xWrapper, yWrapper, document.createElement('br'), textLabel, document.createElement('br'), textInput, document.createElement('br'), document.createElement('br'), colorLabel, document.createElement('br'), colorInput, document.createElement('br'));
+              block.append(document.createElement('hr'), axisLabel, document.createElement('br'), axisSelect, document.createElement('br'), document.createElement('br'), lineTypeSelect, document.createElement('br'), document.createElement('br'), xWrapper, yWrapper, document.createElement('br'), textLabel, document.createElement('br'), textInput, document.createElement('br'), document.createElement('br'), colorLabel, document.createElement('br'), colorInput, document.createElement('br'));
 
               // Handle visibility
               const toggleAxisFields = val => {
@@ -1599,11 +1622,10 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
           //const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
           if (fieldLabel[0].includes('Bar')) {
             selectColumn.addEventListener('change', function () {
-              DropdownValueSaved = selectColumn.value;
+              let DropdownValueSaved = selectColumn.value;
               if (DropdownValueSaved != 'None' && fieldValueSaved === undefined) {
-                //console.log('fieldValueSaved2', fieldValueSaved);
                 inputTitle.value = DropdownValueSaved;
-                //console.log('DropdownValueSaved2', DropdownValueSaved);
+                (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
               }
             });
           }
@@ -2025,6 +2047,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
       let axisType = figureArguments[`EventMarkersEventAxis${i}`];
       const label = figureArguments[`EventMarkersEventText${i}`];
       const color = figureArguments[`EventMarkersEventColor${i}`] || '#000';
+      const lineType = figureArguments[`EventMarkersLineType${i}`] || 'solid';
       if (axisType === 'x') {
         let date = figureArguments[`EventMarkersEventDate${i}`];
         overlays.push({
@@ -2034,7 +2057,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
           mode: 'lines',
           line: {
             color,
-            width: 2
+            width: 2,
+            dash: lineType
           },
           name: label,
           showlegend: true,
@@ -2054,7 +2078,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
           mode: 'lines',
           line: {
             color,
-            width: 2
+            width: 2,
+            dash: lineType
           },
           name: label,
           showlegend: true,
@@ -2081,7 +2106,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
           line: {
             color: color,
             width: 2,
-            dash: 'solid'
+            dash: lineType
           }
         });
       }
@@ -2102,13 +2127,14 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
           y1: yValue,
           line: {
             color: color,
-            width: 2
+            width: 2,
+            dash: lineType
           }
         });
       }
     }
   }
-  // Plotly.react(plotDiv, [...overlays, ...mainDataTraces], layout);
+  Plotly.react(plotDiv, [...overlays, ...mainDataTraces], layout);
 }
 
 /**
@@ -2312,6 +2338,15 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
       const markerType = figureArguments[targetLineColumn + 'MarkerType'];
       const markerSize = parseInt(figureArguments[targetLineColumn + 'MarkerSize'], 10);
 
+      //Turn off line if needed
+      let graphModeSetting = 'lines+markers';
+      const removeLine = figureArguments[targetLineColumn + 'RemoveLine'];
+      if (removeLine === 'on') {
+        graphModeSetting = 'markers';
+      } else {
+        graphModeSetting = 'lines+markers';
+      }
+
       //Shows the legend if it is set to 'on' in the figure arguments
       const showLegend = figureArguments[targetLineColumn + 'Legend'];
       if (showLegend === 'on') {
@@ -2361,7 +2396,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
       const singleLinePlotly = {
         x: plotlyX,
         y: plotlyY,
-        mode: 'lines+markers',
+        mode: graphModeSetting,
         type: 'scatter',
         name: `${figureArguments[targetLineColumn + 'Title']}`,
         showlegend: showLegendBool,
@@ -2617,7 +2652,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         },
         linecolor: 'black',
         linewidth: 1,
-        range: [figureArguments['XAxisLowBound'], figureArguments['XAxisHighBound']],
+        range: [figureArguments['XAxisLowBound'], figureArguments['YAxisHighBound']],
         tickmode: graphTickModeBool,
         ticks: graphTickPositionBool,
         showgrid: showGridBool
@@ -2776,6 +2811,8 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
  *   for the interactive line chart.
  */
 function loadDefaultInteractiveLineArguments(jsonColumns) {
+  let interactive_arguments = document.getElementsByName('figure_interactive_arguments')[0].value;
+
   // ---------- helpers ----------
   function safeParseJSON(s) {
     try {
@@ -2851,11 +2888,14 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
   // the settings-page context where the parameter is not passed.
   const field = document.getElementsByName('figure_interactive_arguments')[0];
   const currentStr = interactive_arguments || (field ? field.value : '') || '';
-  console.log('[GD] currentStr length:', currentStr.length, 'preview:', currentStr.substring(0, 100));
-  if (!currentStr) {
-    console.log('[GD] EARLY RETURN — no currentStr');
-    return;
-  }
+  // console.log('[GD] currentStr length:', currentStr.length, 'preview:', currentStr.substring(0, 100));
+  // if (!currentStr) {
+  // 	console.log('[GD] EARLY RETURN — no currentStr');
+  // 	return;
+  // }
+
+  //console.log('_lineDefaults', _lineDefaults);
+  //console.log('_lineDefaults.interactive_line_arguments', _lineDefaults.interactive_line_arguments);
   const defaultsStr = _lineDefaults.interactive_line_arguments || '';
 
   // Parse both to objects and keep original pair order from current
@@ -2896,11 +2936,9 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
 
   // Write back EXACTLY as array-of-pairs JSON
   const mergedPairs_string = JSON.stringify(mergedPairs);
-
-  // console.log('interactive_arguments', currentStr);
-  // console.log('default_interactive_line_arguments', defaultsStr);
-  // console.log('mergedPairs_string', mergedPairs_string);
-
+  console.log('interactive_arguments', currentStr);
+  console.log('default_interactive_line_arguments', defaultsStr);
+  console.log('mergedPairs_string', mergedPairs_string);
   document.getElementsByName('figure_interactive_arguments')[0].value = mergedPairs_string;
   displayLineFields(numberOfLines, jsonColumns, mergedPairs_string);
 }
@@ -3356,6 +3394,25 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
                 axisSelect.value = savedAxis;
               }
 
+              // === Line Type Selector ===
+              const lineTypeLabel = document.createElement('label');
+              lineTypeLabel.textContent = `Line Type ${i + 1}`;
+              lineTypeLabel.htmlFor = `${feature}LineType${i}`;
+              const lineTypeSelect = document.createElement('select');
+              lineTypeSelect.id = `${feature}LineType${i}`;
+              lineTypeSelect.name = 'plotFields';
+              ['solid', 'dash', 'dot', 'dashdot', 'longdash', 'longdashdot'].forEach(type => {
+                const opt = document.createElement('option');
+                opt.value = type;
+                opt.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                lineTypeSelect.appendChild(opt);
+              });
+              const savedLineType = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.fillFormFieldValues)(lineTypeSelect.id, interactive_arguments);
+
+              // Important: force a default value even if nothing is saved yet
+              lineTypeSelect.value = savedLineType || 'solid';
+              lineTypeSelect.addEventListener('change', _graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues);
+
               // === Shared Inputs ===
               const {
                 label: textLabel,
@@ -3388,7 +3445,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 
               // === Container & Toggle Logic ===
               const block = document.createElement('div');
-              block.append(document.createElement('hr'), axisLabel, document.createElement('br'), axisSelect, document.createElement('br'), document.createElement('br'), xWrapper, yWrapper, document.createElement('br'), textLabel, document.createElement('br'), textInput, document.createElement('br'), document.createElement('br'), colorLabel, document.createElement('br'), colorInput, document.createElement('br'));
+              block.append(document.createElement('hr'), axisLabel, document.createElement('br'), axisSelect, document.createElement('br'), document.createElement('br'), lineTypeLabel, document.createElement('br'), lineTypeSelect, document.createElement('br'), document.createElement('br'), xWrapper, yWrapper, document.createElement('br'), textLabel, document.createElement('br'), textInput, document.createElement('br'), document.createElement('br'), colorLabel, document.createElement('br'), colorInput, document.createElement('br'));
 
               // Handle visibility
               const toggleAxisFields = val => {
@@ -3451,7 +3508,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
     // Add event listener
     btnApplyDefaults.addEventListener('click', function () {
       // Call your function here
-      loadDefaultInteractiveLineArguments(jsonColumns, interactive_arguments);
+      loadDefaultInteractiveLineArguments(jsonColumns);
     });
 
     // Wrap in row/col just like your select
@@ -3543,11 +3600,10 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
           //const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
           if (fieldLabel[0].includes('Line')) {
             selectColumn.addEventListener('change', function () {
-              DropdownValueSaved = selectColumn.value;
+              let DropdownValueSaved = selectColumn.value;
               if (DropdownValueSaved != 'None' && fieldValueSaved === undefined) {
-                //console.log('fieldValueSaved2', fieldValueSaved);
                 inputTitle.value = DropdownValueSaved;
-                //console.log('DropdownValueSaved2', DropdownValueSaved);
+                (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
               }
             });
           }
@@ -3688,8 +3744,8 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
         newDiv.append(markerSizeRow);
 
         //Add checkboxes for error bars, standard deviation, mean, and percentiles
-        const features = ['Legend', 'ConnectGaps', 'Mean', 'StdDev', 'ErrorBars', 'Percentiles'];
-        const featureNames = ['Add Line to Legend', 'Connect Missing Data Gaps', 'Mean Line', '+-1 Std Dev Lines ', 'Symmetric Error Bars', '90th & 10th Percentile Lines'];
+        const features = ['RemoveLine', 'Legend', 'ConnectGaps', 'Mean', 'StdDev', 'ErrorBars', 'Percentiles'];
+        const featureNames = ['Scatter Mode (Remove Line)', 'Add Line to Legend', 'Connect Missing Data Gaps', 'Mean Line', '+-1 Std Dev Lines ', 'Symmetric Error Bars', '90th & 10th Percentile Lines'];
         for (let i = 0; i < features.length; i++) {
           const feature = features[i];
           const featureName = featureNames[i];

@@ -30,6 +30,11 @@ module.exports = {
 				'includes/figures/js/interactive/plotly-bar.js'
 			),
 
+			'@graphic-data/tabulator-table': path.resolve(
+				__dirname,
+				'includes/figures/js/interactive/tabulator-table.js'
+			),
+
 			'@graphic-data/plotly-map': path.resolve(
 				__dirname,
 				'includes/figures/js/interactive/plotly-map.js'

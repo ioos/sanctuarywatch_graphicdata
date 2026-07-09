@@ -1,6 +1,7 @@
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { producePlotlyMap } from '@graphic-data/plotly-map';
+import { produceTabulatorTable } from '@graphic-data/tabulator-table';
 
 /**
  * Renders interactive plots (e.g., Plotly graphs) within a specified tab content element.

@@ -23,42 +23,44 @@ class Graphic_Data_Settings_Page {
 	 * styles on the plugin settings page. Only enqueues on the settings page.
 	 *
 	 * @since 1.0.0
+	 * @param string $hook The current admin page hook suffix.
 	 * @return void
 	 */
-	public function enqueue_admin_interactive_default_line_styles() {
+	public function enqueue_admin_interactive_default_line_styles( $hook = '' ) {
 
-		if ( empty( $_GET['page'] ) || 'theme_settings' !== $_GET['page'] ) {
-			return; // stop if not on our settings page.
+		if ( empty( $_GET['page'] ) || 'graphic-data-settings' !== $_GET['page'] ) {
+			return;
 		}
-
 		wp_enqueue_script(
-			'load_default_line_styles', // Handle.
-			plugin_dir_url( __FILE__ ) . '../includes/figures/js/interactive/settings-plotly-timeseries-line.js',
-			[], // Dependencies (e.g., array('jquery')).
-			GRAPHIC_DATA_PLUGIN_VERSION, // Version.
-			true // Load in footer.
+			'load_default_line_styles',
+			plugin_dir_url( dirname( __FILE__ ) ) . 'includes/figures/js/interactive/settings-plotly-timeseries-line.js',
+			[],
+			GRAPHIC_DATA_PLUGIN_VERSION,
+			true
 		);
 	}
 
 	/**
-	 * Enqueues the Plotly bar chart settings script.
+	 * Enqueues the Plotly time series line chart settings script.
 	 *
-	 * Loads the JavaScript file required for configuring default bar chart
+	 * Loads the JavaScript file required for configuring default line chart
 	 * styles on the plugin settings page. Only enqueues on the settings page.
 	 *
 	 * @since 1.0.0
+	 * @param string $hook The current admin page hook suffix.
 	 * @return void
 	 */
-	public function enqueue_admin_interactive_default_bar_styles() {
-		if ( empty( $_GET['page'] ) || 'theme_settings' !== $_GET['page'] ) {
-			return; // stop if not on our settings page.
+	public function enqueue_admin_interactive_default_bar_styles( $hook = '' ) {
+
+		if ( empty( $_GET['page'] ) || 'graphic-data-settings' !== $_GET['page'] ) {
+			return;
 		}
 		wp_enqueue_script(
-			'load_default_bar_styles', // Handle.
-			plugin_dir_url( __FILE__ ) . '../includes/figures/js/interactive/settings-plotly-bar.js',
-			[], // Dependencies (e.g., array('jquery')).
-			GRAPHIC_DATA_PLUGIN_VERSION, // Version.
-			true // Load in footer.
+			'load_default_bar_styles',
+			plugin_dir_url( dirname( __FILE__ ) ) . 'includes/figures/js/interactive/settings-plotly-bar.js',
+			[],
+			GRAPHIC_DATA_PLUGIN_VERSION,
+			true
 		);
 	}
 
@@ -195,7 +197,7 @@ class Graphic_Data_Settings_Page {
 
 		add_settings_field(
 			'interactive_line_defaults',
-			'Line Graph (Time Series) Custom Style Settings',
+			'Line Graph, Time Series, & Scatter Plot Custom Style Settings',
 			[ $this, 'interactive_line_defaults_callback' ],
 			'theme_settings',
 			'interactive_figures_defaults_section'

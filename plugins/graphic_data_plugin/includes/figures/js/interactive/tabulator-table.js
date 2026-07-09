@@ -5,211 +5,14 @@ import {
     computePercentile,
     logFormFieldValues,
     fillFormFieldValues,
-    createFigureIframeHtml
 } from '@graphic-data/plotly-utility';
 
 const _lineDataEl = document.getElementById(
-    'wp-script-module-data-@graphic-data/plotly-timeseries-line'
+    'wp-script-module-data-@graphic-data/tabulator-table'
 );
 let _lineDefaults = {};
 if ( _lineDataEl?.textContent ) {
     try { _lineDefaults = JSON.parse( _lineDataEl.textContent ); } catch {}
-}
-
-/**
- * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
- *
- * This function modifies the provided Plotly layout and data by injecting overlays that visually represent
- * special periods (e.g., evaluation periods) and event markers (vertical or horizontal lines) on the chart.
- * Overlays are constructed based on the configuration in `figureArguments` and the data in `dataToBePlotted`.
- * The function supports both shaded regions (for evaluation periods) and lines (for event markers on x or y axes).
- * After constructing the overlays, the function calls `Plotly.react` to update the chart with the overlays and main data traces.
- *
- * @function injectOverlays
- * @param {HTMLElement} plotDiv         - The DOM element where the Plotly chart is rendered.
- * @param {Object}      layout          - The Plotly layout object, which will be modified to include overlay settings.
- * @param {Array}       mainDataTraces  - The main data traces to be plotted (typically lines).
- * @param {Object}      figureArguments - An object containing user-specified arguments for overlays, such as:
- *                                      - 'EvaluationPeriod': 'on' to enable evaluation period overlay.
- *                                      - 'EvaluationPeriodStartDate', 'EvaluationPeriodEndDate': Date strings for the evaluation period.
- *                                      - 'EvaluationPeriodFillColor': Color for the evaluation period overlay.
- *                                      - 'EvaluationPeriodText': Label for the evaluation period.
- *                                      - 'EventMarkers': 'on' to enable event markers.
- *                                      - 'EventMarkersField': Number of event markers.
- *                                      - 'EventMarkersEventAxis{n}': 'x' or 'y' for each marker.
- *                                      - 'EventMarkersEventText{n}': Label for each marker.
- *                                      - 'EventMarkersEventColor{n}': Color for each marker.
- *                                      - 'EventMarkersEventDate{n}': Date for x-axis marker.
- *                                      - 'EventMarkersEventYValue{n}': Y value for y-axis marker.
- * @param {Object}      dataToBePlotted - The data object containing arrays for each column, used for plotting overlays.
- *
- * @description
- * - If the evaluation period is enabled, a shaded region is added to the chart between the specified start and end dates.
- * - If event markers are enabled, vertical or horizontal lines are added at specified positions, with labels and colors.
- * - The function ensures overlays are drawn using the current y-axis range and x-axis data.
- * - The overlays are combined with the main data traces and rendered using `Plotly.react`.
- *
- * @modifies
- * - Modifies the `layout` object to ensure correct axis types.
- * - Updates the chart in `plotDiv` by calling `Plotly.react`.
- *
- * @example
- * injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted);
- *
- * @return {void}
- */
-function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataToBePlotted) {
-    if (!plotDiv || !layout || !layout.yaxis || !layout.yaxis.range) {
-        console.warn("[Overlay] Missing layout or y-axis range");
-        return;
-    }
-
-    const columnXHeader = figureArguments['XAxis'];
-    const plotlyX = dataToBePlotted[columnXHeader];
-
-    layout.xaxis = layout.xaxis || {};
-    layout.xaxis.type = 'date';
-
-    layout.yaxis = layout.yaxis || {};
-    layout.yaxis.type = 'linear';
-
-    const [yMin, yMax] = layout.yaxis.range || [0, 1];
-    const overlays = [];  
-
-    const dateFormat = figureArguments['XAxisFormat'];
-    let xHoverFormat = '';
-
-    switch (dateFormat) {
-    case 'YYYY':
-        xHoverFormat = '%Y';
-        break;
-    case 'YYYY-MM':
-        xHoverFormat = '%Y-%m';
-        break;
-    case 'YYYY-MM-DD':
-        xHoverFormat = '%Y-%m-%d';
-        break;
-    default:
-        xHoverFormat = ''; // fallback to raw
-    }
-
-    // Then build your hovertemplate:
-    const xHoverValue = xHoverFormat
-    ? `%{x|${xHoverFormat}}`
-    : `%{x}`;
-
-    // === Evaluation Period ===
-    if (figureArguments['EvaluationPeriod'] === 'on') {
-        let start = figureArguments['EvaluationPeriodStartDate'];
-        let end = figureArguments['EvaluationPeriodEndDate'];
-        const startDate = new Date(start).toLocaleDateString();
-        const endDate = new Date(end).toLocaleDateString();     
-        const fillColor = (figureArguments['EvaluationPeriodFillColor'] || '#999') + '15';
-        const EvalDisplayText = figureArguments['EvaluationPeriodText'];
-
-        overlays.push({
-            x: [start, end, end, start],
-            y: [yMax, yMax, yMin, yMin],
-            fill: 'toself',
-            fillcolor: fillColor,
-            type: 'scatter',
-            mode: 'lines',
-            line: { color: fillColor, width: 0 },
-            // hoverinfo: EvalDisplayText,
-            // hovertemplate:
-            // `${startDate}<br>` +
-            // `${endDate}<extra></extra>`,
-            name: EvalDisplayText,
-            showlegend: true,
-            yaxis: 'y',
-            xaxis: 'x'
-        });
-
-    }
-
-    for (let i = 0; i <= Number(figureArguments['EventMarkersField']); i++) {
-        // === Event Markers ===
-        if (figureArguments[`EventMarkers`] === 'on') {
-            let axisType = figureArguments[`EventMarkersEventAxis${i}`];
-            const label = figureArguments[`EventMarkersEventText${i}`];
-            const color = figureArguments[`EventMarkersEventColor${i}`] || '#000';
-			const lineType = figureArguments[`EventMarkersLineType${i}`] || 'solid';
-
-            if (axisType === 'x') {
-                let date = figureArguments[`EventMarkersEventDate${i}`];
-                overlays.push({
-                    x: [date, date],
-                    y: [yMin, yMax],
-                    type: 'scatter',
-                    mode: 'lines',
-                    line: { color, width: 2, dash: lineType, },
-                    name: label,
-                    showlegend: true,
-                    yaxis: 'y',
-                    xaxis: 'x',
-                    //hoverinfo: `x`,
-                    hovertemplate: `${label}: ${xHoverValue}<extra></extra>`,  
-                });
-            }
-            if (axisType === 'y') {
-                let yValue = parseFloat(figureArguments[`EventMarkersEventYValue${i}`], 10);
-                const yArray = Array(plotlyX.length).fill(yValue);
-                overlays.push({
-                    x: plotlyX,
-                    y: yArray,
-                    type: 'scatter',
-                    mode: 'lines',
-                    line: { color, width: 2, dash: lineType, },
-                    name: label,
-                    showlegend: true,
-                    yaxis: 'y',
-                    xaxis: 'x',
-                    //hoverinfo: `${label} y`,
-                    hovertemplate: `${label}: %{y}<extra></extra>`,
-                });
-            }
-            if (axisType === 'x') {
-                let date = figureArguments[`EventMarkersEventDate${i}`];
-                layout.shapes = layout.shapes || [];
-                layout.shapes.push({
-                    type: 'line',
-                    xref: 'x',
-                    yref: 'paper',   // "paper" makes it stretch top-to-bottom
-                    x0: date,
-                    x1: date,
-                    y0: 0,           // bottom edge of the plotting area
-                    y1: 1,           // top edge of the plotting area
-                    line: {
-                        color: color,
-                        width: 2,
-						dash: lineType,
-                    }
-                });
-            }
-            if (axisType === 'y') {
-                let yValue = parseFloat(figureArguments[`EventMarkersEventYValue${i}`], 10);
-                // const yArray = Array(plotlyX.length).fill(yValue);
-                layout.shapes = layout.shapes || [];
-                layout.shapes.push({
-                    type: 'line',
-                    xref: 'paper',  // "paper" means 0–1 relative to full width
-                    yref: 'y',
-                    x0: 0,          // start at left edge of plot
-                    x1: 1,          // end at right edge of plot
-                    y0: yValue,
-                    y1: yValue,
-                    line: {
-                        color: color,
-                        width: 2,
-						dash: lineType,
-                    }
-                });
-            }
-        }
-        
-    }
-    Plotly.react(plotDiv, [...overlays, ...mainDataTraces], layout);
-
 }
 
 /**
@@ -221,7 +24,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * both admin and theme contexts for retrieving the figure's post ID.
  *
  * @async
- * @function producePlotlyLineFigure
+ * @function produceTabulatorTable
  * @param {string}             targetFigureElement   - The ID of the DOM element where the chart should be rendered.
  * @param {string}             interactive_arguments - A JSON string (array of key-value pairs) representing user-specified chart configuration.
  * @param {string|number|null} postID                - The WordPress post ID for the figure. If null, the function attempts to retrieve it from the admin page.
@@ -250,7 +53,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  *
  * @example
  * // Render a Plotly line chart in the element with ID 'figure_123' using saved arguments and post ID 123:
- * producePlotlyLineFigure('figure_123', '[["XAxisTitle","Date"],["YAxisTitle","Value"],...]', 123);
+ * producePlotlyScatterFigure('figure_123', '[["XAxisTitle","Date"],["YAxisTitle","Value"],...]', 123);
  *
  * @throws {Error} Logs errors to the console if Plotly fails to load, network requests fail, or data cannot be parsed.
  *
@@ -263,11 +66,11 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - finalURL: Full URL to the data file.
  * - dataToBePlotted: The parsed data object used for plotting.
  * - plotlyDivID: The ID assigned to the Plotly chart container div.
- * - allLinesPlotly: Array of Plotly trace objects for each line and overlay.
+ * - allScattersPlotly: Array of Plotly trace objects for each line and overlay.
  * - layout: Plotly layout object for axis, legend, and display settings.
  * - config: Plotly configuration object for rendering options.
  */
-export async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document){
+export async function produceTabulatorTable(targetFigureElement, interactive_arguments, postID, targetDocument = document){
 	
 
     try {
@@ -292,8 +95,8 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
             //console.log("figureID THEME:", figureID);
         }
 
-        // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyLineFigure a chance to finish running before the next one kicked off
-        // producePlotlyLineFigure used to fail here because the script was running before the previous iteration finished. 
+        // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyScatterFigure a chance to finish running before the next one kicked off
+        // producePlotlyScatterFigure used to fail here because the script was running before the previous iteration finished. 
         const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
         const response = await fetch(figureRestCall);
 
@@ -353,15 +156,15 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 		// 	targetElement.appendChild(newDiv);
 		// }
 		
-		const numLines = figureArguments['NumberOfLines'];
+		const numScatters = figureArguments['NumberOfScatters'];
 
 		let plotlyX;
 		let plotlyY;
 		let columnXHeader;
 		let columnYHeader;
-		let targetLineColumn;
-		let singleLinePlotly;
-		let allLinesPlotly = [];
+		let targetScatterColumn;
+		let singleScatterPlotly;
+		let allScattersPlotly = [];
 		let shapesForLayout = [];
 
 
@@ -387,10 +190,10 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 		//console.log('graphTickPositionBool', graphTickPositionBool);
 
 		// Plotly figure production logic
-		for (let i = 1; i <= figureArguments['NumberOfLines']; i++) {
-			const targetLineColumn = 'Line' + i;
+		for (let i = 1; i <= figureArguments['NumberOfScatters']; i++) {
+			const targetScatterColumn = 'Scatter' + i;
 			const columnXHeader = figureArguments['XAxis'];
-			const columnYHeader = figureArguments[targetLineColumn];
+			const columnYHeader = figureArguments[targetScatterColumn];
 
 			const plotlyX = dataToBePlotted[columnXHeader];
 			const plotlyY = dataToBePlotted[columnYHeader];
@@ -419,27 +222,17 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 			? `%{x|${xHoverFormat}}`
 			: `%{x}`;
 
-			// Line type, marker type, and marker size
-			const lineType = figureArguments[targetLineColumn + 'LineType'];
+			// Scatter type, marker type, and marker size
+			const lineType = figureArguments[targetScatterColumn + 'ScatterType'];
 			if (lineType === undefined) {
 				const lineType = 'solid';
 			} 
 			//console.log('lineType', lineType);
-			const markerType = figureArguments[targetLineColumn + 'MarkerType'];
-			const markerSize = parseInt(figureArguments[targetLineColumn + 'MarkerSize'], 10);
-
-
-			//Turn off line if needed
-			let graphModeSetting = 'lines+markers';
-			const removeLine = figureArguments[targetLineColumn + 'RemoveLine'];
-			if (removeLine === 'on') {
-				graphModeSetting = 'markers';     
-			} else {
-				graphModeSetting = 'lines+markers';     
-			}
+			const markerType = figureArguments[targetScatterColumn + 'MarkerType'];
+			const markerSize = parseInt(figureArguments[targetScatterColumn + 'MarkerSize'], 10);
 
 			//Shows the legend if it is set to 'on' in the figure arguments
-			const showLegend = figureArguments[targetLineColumn + 'Legend'];
+			const showLegend = figureArguments[targetScatterColumn + 'Legend'];
 			if (showLegend === 'on') {
 				var showLegendBool = true;     
 			} else {
@@ -447,11 +240,11 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 			}
 
 			//Connects gaps in line where there is missing data
-			const connectGapsOpt = figureArguments[targetLineColumn + 'ConnectGaps'] === 'on';     
+			const connectGapsOpt = figureArguments[targetScatterColumn + 'ConnectGaps'] === 'on';     
 
 			//Show Standard error bars
-			const showError = figureArguments[targetLineColumn + 'ErrorBars'];
-			const showError_InputValuesOpt = figureArguments[targetLineColumn + 'ErrorBarsInputValues'];
+			const showError = figureArguments[targetScatterColumn + 'ErrorBars'];
+			const showError_InputValuesOpt = figureArguments[targetScatterColumn + 'ErrorBarsInputValues'];
 			if (showError === 'on') {
 				//Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
 				if (showError_InputValuesOpt === 'auto') {
@@ -459,7 +252,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 						type: 'data',
 						array: new Array(plotlyY.length).fill(stdDev),
 						visible: true,
-						color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+						color: figureArguments[targetScatterColumn + 'ErrorBarsColor'],
 						thickness: 1.5,
 						width: 8
 					};   
@@ -472,7 +265,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 						type: 'data',
 						array: showError_InputValue.map(val => parseFloat(val)), // Convert to number if needed
 						visible: true,
-						color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+						color: figureArguments[targetScatterColumn + 'ErrorBarsColor'],
 						thickness: 1.5,
 						width: 8
 					}; 
@@ -483,18 +276,18 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 			}
 
 			// Main line with or w/o error bars
-			const singleLinePlotly = {
+			const singleScatterPlotly = {
 				x: plotlyX,
 				y: plotlyY,
-				mode: graphModeSetting,
+				mode: 'markers',
 				type: 'scatter',
-				name: `${figureArguments[targetLineColumn + 'Title']}`,
+				name: `${figureArguments[targetScatterColumn + 'Title']}`,
 				showlegend: showLegendBool,
 				line: {
 					dash: lineType // e.g., 'dash', 'dot', etc.
 				},
 				marker: {
-					color: figureArguments[targetLineColumn + 'Color'],
+					color: figureArguments[targetScatterColumn + 'Color'],
 					symbol: markerType,
 					size: markerSize // Convert markerSize to integer
 
@@ -507,12 +300,12 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 					//figureArguments['XAxisTitle'] + ': %{x}<br>' +
 					//figureArguments['YAxisTitle'] + ': %{y}'
 			};
-			allLinesPlotly.push(singleLinePlotly);
+			allScattersPlotly.push(singleScatterPlotly);
 
 
-			//Show Standard Deviation Lines
-			const showSD = figureArguments[targetLineColumn + 'StdDev'];
-			const showSD_InputValuesOpt = figureArguments[targetLineColumn + 'StdDevInputValues'];
+			//Show Standard Deviation Scatters
+			const showSD = figureArguments[targetScatterColumn + 'StdDev'];
+			const showSD_InputValuesOpt = figureArguments[targetScatterColumn + 'StdDevInputValues'];
 			//Standard Deviation of dataset based on dataset Y-axis values (AutoCalculated)
 			if (showSD == 'on' && showSD_InputValuesOpt === 'auto') {
 				const plotlyYSanitized = plotlyY.map(val => {
@@ -535,10 +328,10 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 				const lowerY = plotlyY.map(y => mean - stdDev);
 				const filteredX = plotlyX.filter(item => item !== "");
 				// Shared legend group name
-				const legendGroupName = `${figureArguments[targetLineColumn + 'Title']} ±1 SD`;
+				const legendGroupName = `${figureArguments[targetScatterColumn + 'Title']} ±1 SD`;
 
 				// Upper SD line
-				const stdUpperLine = {
+				const stdUpperScatter = {
 					x: filteredX,
 					y: upperY,
 					type: 'scatter',
@@ -547,7 +340,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 					legendgroup: legendGroupName,
 					line: {
 						dash: 'dash',
-						color: figureArguments[targetLineColumn + 'StdDevColor']
+						color: figureArguments[targetScatterColumn + 'StdDevColor']
 					},
 					hoverinfo: 'skip',
 					showlegend: showLegendBool, // only the first one shows in legend
@@ -555,7 +348,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 				};
 
 				// Lower SD line
-				const stdLowerLine = {
+				const stdLowerScatter = {
 					x: filteredX,
 					y: lowerY,
 					type: 'scatter',
@@ -564,7 +357,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 					legendgroup: legendGroupName,
 					line: {
 						dash: 'dash',
-						color: figureArguments[targetLineColumn + 'StdDevColor']
+						color: figureArguments[targetScatterColumn + 'StdDevColor']
 					},
 					hoverinfo: 'skip',
 					showlegend: false,          // hides duplicate legend entry
@@ -572,7 +365,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 				};
 
 				// Push both to plot
-				allLinesPlotly.push(stdUpperLine, stdLowerLine);
+				allScattersPlotly.push(stdUpperScatter, stdLowerScatter);
 			}
 			//Standard Deviation (values imported from spreadsheet per point in dataset)
 			//Do we want high and low bounds here?
@@ -597,10 +390,10 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 				const lowerY = plotlyY.map(y => mean - stdSingleValue);
 				const filteredX = plotlyX.filter(item => item !== "");
 				// Shared legend group name
-				const legendGroupName = `${figureArguments[targetLineColumn + 'Title']} ±1 SD`;
+				const legendGroupName = `${figureArguments[targetScatterColumn + 'Title']} ±1 SD`;
 
 				// Upper SD line
-				const stdUpperLine = {
+				const stdUpperScatter = {
 					x: filteredX,
 					y: upperY,
 					type: 'scatter',
@@ -609,7 +402,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 					legendgroup: legendGroupName,
 					line: {
 						dash: 'dash',
-						color: figureArguments[targetLineColumn + 'StdDevColor']
+						color: figureArguments[targetScatterColumn + 'StdDevColor']
 					},
 					hoverinfo: 'skip',
 					showlegend: showLegendBool, // only the first one shows in legend
@@ -617,7 +410,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 				};
 
 				// Lower SD line
-				const stdLowerLine = {
+				const stdLowerScatter = {
 					x: filteredX,
 					y: lowerY,
 					type: 'scatter',
@@ -626,7 +419,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 					legendgroup: legendGroupName,
 					line: {
 						dash: 'dash',
-						color: figureArguments[targetLineColumn + 'StdDevColor']
+						color: figureArguments[targetScatterColumn + 'StdDevColor']
 					},
 					hoverinfo: 'skip',
 					showlegend: false,          // hides duplicate legend entry
@@ -634,13 +427,13 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 				};
 
 				// Push both to plot
-				allLinesPlotly.push(stdUpperLine, stdLowerLine);
+				allScattersPlotly.push(stdUpperScatter, stdLowerScatter);
 			}
 			
 			//Percentiles and Mean lines
-			const showPercentiles = figureArguments[targetLineColumn + 'Percentiles'];
-			const showMean = figureArguments[targetLineColumn + 'Mean'];
-			const showMean_ValuesOpt = figureArguments[targetLineColumn + 'MeanField'];
+			const showPercentiles = figureArguments[targetScatterColumn + 'Percentiles'];
+			const showMean = figureArguments[targetScatterColumn + 'Mean'];
+			const showMean_ValuesOpt = figureArguments[targetScatterColumn + 'MeanField'];
 			if (showPercentiles === 'on' || showMean === 'on') {
 
 				//Calculate Percentiles (Auto Calculated) based on dataset Y-axis values
@@ -651,22 +444,22 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 				const xMinPercentile = Math.min(...filteredX);
 				const xMaxPercentile = Math.max(...filteredX);
 				if (showPercentiles === 'on') {
-					allLinesPlotly.push({
+					allScattersPlotly.push({
 						x: [xMinPercentile, xMaxPercentile],
 						y: [p10, p10],
 						mode: 'lines',
-						line: { dash: 'dot', color: figureArguments[targetLineColumn + 'Color'] + '60'},
-						name: `${figureArguments[targetLineColumn + 'Title']} 10th Percentile (Bottom)`,
+						line: { dash: 'dot', color: figureArguments[targetScatterColumn + 'Color'] + '60'},
+						name: `${figureArguments[targetScatterColumn + 'Title']} 10th Percentile (Bottom)`,
 						type: 'scatter',
 						visible: true,
 						showlegend: false
 					});
-					allLinesPlotly.push({
+					allScattersPlotly.push({
 						x: [xMinPercentile, xMaxPercentile],
 						y: [p90, p90],
 						mode: 'lines',
-						line: { dash: 'dot', color: figureArguments[targetLineColumn + 'Color'] + '60'},
-						name: `${figureArguments[targetLineColumn + 'Title']} 10th & 90th Percentile`,
+						line: { dash: 'dot', color: figureArguments[targetScatterColumn + 'Color'] + '60'},
+						name: `${figureArguments[targetScatterColumn + 'Title']} 10th & 90th Percentile`,
 						type: 'scatter',
 						visible: true,
 						showlegend: showLegendBool
@@ -694,12 +487,12 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 						xMax = new Date(filteredX[filteredX.length - 1]);
 					}
 
-					allLinesPlotly.push({
+					allScattersPlotly.push({
 						x: [xMin, xMax],
 						y: [mean, mean],
 						mode: 'lines',
-						line: { dash: 'solid', color: figureArguments[targetLineColumn + 'Color'] + '60'},
-						name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
+						line: { dash: 'solid', color: figureArguments[targetScatterColumn + 'Color'] + '60'},
+						name: `${figureArguments[targetScatterColumn + 'Title']} Mean`,
 						type: 'scatter',
 						visible: true,
 						showlegend: showLegendBool
@@ -720,12 +513,12 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 						xMax = new Date(filteredX[filteredX.length - 1]);
 					}
 					
-					allLinesPlotly.push({
+					allScattersPlotly.push({
 						x: [xMin, xMax],
 						y: [mean, mean],
 						mode: 'lines',
-						line: { dash: 'solid', color: figureArguments[targetLineColumn + 'Color'] + '60'},
-						name: `${figureArguments[targetLineColumn + 'Title']} Mean`,
+						line: { dash: 'solid', color: figureArguments[targetScatterColumn + 'Color'] + '60'},
+						name: `${figureArguments[targetScatterColumn + 'Title']} Mean`,
 						type: 'scatter',
 						visible: true,
 						showlegend: showLegendBool
@@ -803,12 +596,12 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 		plotDiv.style.setProperty("max-width", "none", "important");
 						
 		// Create the plot with all lines
-		// await Plotly.newPlot(plotlyDivID, allLinesPlotly, layout, config);
+		// await Plotly.newPlot(plotlyDivID, allScattersPlotly, layout, config);
 
-		await Plotly.newPlot(plotDiv, allLinesPlotly, layout, config).then(() => {
+		await Plotly.newPlot(plotDiv, allScattersPlotly, layout, config).then(() => {
 			// After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
 			// You need the specific values for the entire yaxis
-			injectOverlays(plotDiv, layout, allLinesPlotly, figureArguments, dataToBePlotted);
+			injectOverlays(plotDiv, layout, allScattersPlotly, figureArguments, dataToBePlotted);
 		});
 
 		Plotly.Plots.resize(plotDiv);
@@ -853,7 +646,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
  * Updates the value of the "figure_interactive_arguments" field and displays
  * the line fields accordingly.
  *
- * @function loadDefaultInteractiveLineArguments
+ * @function loadDefaultInteractiveScatterArguments
  * @param {Object} jsonColumns - JSON object representing the columns of the line chart.
  *
  * @description
@@ -875,8 +668,8 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
  *
  * @modifies
  * - Reads and updates the value of the "figure_interactive_arguments" field in the DOM.
- * - Reads the value of the "NumberOfLines" input field to determine the number of lines.
- * - Calls `displayLineFields` to update the line fields in the UI.
+ * - Reads the value of the "NumberOfScatters" input field to determine the number of lines.
+ * - Calls `displayScatterFields` to update the line fields in the UI.
  *
  * @variables
  * - `field`: The DOM element representing the "figure_interactive_arguments" field.
@@ -885,29 +678,26 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
  * - `currentPairs`: The current arguments as an array of key-value pairs.
  * - `currentObj`: The current arguments as an object.
  * - `defaultsObj`: The default arguments as an object.
- * - `numEl`: The DOM element representing the "NumberOfLines" input field.
- * - `numberOfLines`: The number of lines specified in the "NumberOfLines" input field.
+ * - `numEl`: The DOM element representing the "NumberOfScatters" input field.
+ * - `numberOfScatters`: The number of lines specified in the "NumberOfScatters" input field.
  * - `mergedPairs`: The merged arguments as an array of key-value pairs.
  * - `mergedPairs_string`: The merged arguments as a JSON string.
  *
  * @return {void}
  *
  * @example
- * // Assuming `argumentsDefaultsLine.interactive_line_arguments` contains default arguments
+ * // Assuming `argumentsDefaultsScatter.interactive_line_arguments` contains default arguments
  * // and the "figure_interactive_arguments" field exists in the DOM:
- * loadDefaultInteractiveLineArguments(jsonColumns);
+ * loadDefaultInteractiveScatterArguments(jsonColumns);
  *
  * @throws {Error} This function does not throw errors but may fail silently if
  * required DOM elements are not present.
  *
  * @global
- * - `argumentsDefaultsLine` (optional): A global object containing default arguments
+ * - `argumentsDefaultsScatter` (optional): A global object containing default arguments
  *   for the interactive line chart.
  */
-function loadDefaultInteractiveLineArguments(jsonColumns) {
-
-	let interactive_arguments = document.getElementsByName('figure_interactive_arguments')[0].value;
-
+function loadDefaultInteractiveScatterArguments(jsonColumns) {
 	// ---------- helpers ----------
 	function safeParseJSON(s) {
 		try {
@@ -984,14 +774,12 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
 	// the settings-page context where the parameter is not passed.
 	const field = document.getElementsByName('figure_interactive_arguments')[0];
 	const currentStr = interactive_arguments || (field ? field.value : '') || '';
-	// console.log('[GD] currentStr length:', currentStr.length, 'preview:', currentStr.substring(0, 100));
-	// if (!currentStr) {
-	// 	console.log('[GD] EARLY RETURN — no currentStr');
-	// 	return;
-	// }
+	console.log('[GD] currentStr length:', currentStr.length, 'preview:', currentStr.substring(0, 100));
+	if (!currentStr) {
+		console.log('[GD] EARLY RETURN — no currentStr');
+		return;
+	}
 
-	//console.log('_lineDefaults', _lineDefaults);
-	//console.log('_lineDefaults.interactive_line_arguments', _lineDefaults.interactive_line_arguments);
 	const defaultsStr = _lineDefaults.interactive_line_arguments || '';
 
 	// Parse both to objects and keep original pair order from current
@@ -1000,26 +788,26 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
 	const defaultsObj = toObjectFlexible(defaultsStr);
 
 	// How many lines should be considered?
-	const numEl = document.getElementById('NumberOfLines');
-	const numberOfLines = numEl && numEl.value ? parseInt(numEl.value, 10) : 0;
-	if (numberOfLines > 0) {
-		currentObj.NumberOfLines = String(numberOfLines);
+	const numEl = document.getElementById('NumberOfScatters');
+	const numberOfScatters = numEl && numEl.value ? parseInt(numEl.value, 10) : 0;
+	if (numberOfScatters > 0) {
+		currentObj.NumberOfScatters = String(numberOfScatters);
 	}
 
 	// Overwrite ONLY keys that:
-	//  - start with Line1..Line{N}, AND
+	//  - start with Scatter1..Scatter{N}, AND
 	//  - already exist in currentObj, AND
 	//  - also exist in defaultsObj
-	if (numberOfLines > 0) {
+	if (numberOfScatters > 0) {
 		const linePrefixes = Array.from(
-			{ length: numberOfLines },
-			(_, i) => `Line${i + 1}`
+			{ length: numberOfScatters },
+			(_, i) => `Scatter${i + 1}`
 		);
 		for (const key of Object.keys(currentObj)) {
-			const isWithinLines = linePrefixes.some((prefix) =>
+			const isWithinScatters = linePrefixes.some((prefix) =>
 				key.startsWith(prefix)
 			);
-			if (isWithinLines && key in defaultsObj) {
+			if (isWithinScatters && key in defaultsObj) {
 				currentObj[key] = defaultsObj[key];
 			}
 		}
@@ -1036,14 +824,14 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
 	// Write back EXACTLY as array-of-pairs JSON
 	const mergedPairs_string = JSON.stringify(mergedPairs);
 
-	console.log('interactive_arguments', currentStr);
-	console.log('default_interactive_line_arguments', defaultsStr);
-	console.log('mergedPairs_string', mergedPairs_string);
+	// console.log('interactive_arguments', currentStr);
+	// console.log('default_interactive_line_arguments', defaultsStr);
+	// console.log('mergedPairs_string', mergedPairs_string);
 
 	document.getElementsByName('figure_interactive_arguments')[0].value =
 		mergedPairs_string;
 
-	displayLineFields(numberOfLines, jsonColumns, mergedPairs_string);
+	displayScatterFields(numberOfScatters, jsonColumns, mergedPairs_string);
 }
 
 /**
@@ -1056,7 +844,7 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
  * The function also prepopulates field values using the provided interactive arguments and attaches event listeners
  * to update the underlying data model when fields are changed.
  *
- * @function plotlyLineParameterFields
+ * @function plotlyScatterParameterFields
  * @param {Object}        jsonColumns           - An object representing available data columns, where keys are column identifiers and values are column names.
  * @param {Object|string} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
  *
@@ -1068,32 +856,32 @@ function loadDefaultInteractiveLineArguments(jsonColumns) {
  * 4. Adds a select dropdown for the number of lines to be plotted (1–14).
  * 5. Adds a select dropdown for the X axis date format.
  * 6. Appends all generated fields to the 'graphGUI' element in the DOM.
- * 7. Calls `displayLineFields` to generate additional line-specific configuration fields based on the selected number of lines.
+ * 7. Calls `displayScatterFields` to generate additional line-specific configuration fields based on the selected number of lines.
  * 8. Attaches event listeners to all fields to update the hidden input storing the configuration as a JSON string.
  *
  * @modifies
  * - Appends a new div with ID 'secondaryGraphFields' to the element with ID 'graphGUI'.
  * - Updates the value of the hidden input field named 'figure_interactive_arguments' when any field is changed.
- * - Calls `displayLineFields` to update line-specific fields dynamically.
+ * - Calls `displayScatterFields` to update line-specific fields dynamically.
  *
  * @requires
  * - fillFormFieldValues: Function to retrieve saved values for form fields.
  * - logFormFieldValues: Function to update the hidden input with current form values.
- * - displayLineFields: Function to generate line-specific configuration fields.
+ * - displayScatterFields: Function to generate line-specific configuration fields.
  *
  * @listens change - Updates the hidden input and UI when any field is changed.
  *
  * @example
  * // Example usage:
  * const jsonColumns = { col1: "Column 1", col2: "Column 2" };
- * const interactive_arguments = { XAxisTitle: "Year", NumberOfLines: 2 };
- * plotlyLineParameterFields(jsonColumns, interactive_arguments);
+ * const interactive_arguments = { XAxisTitle: "Year", NumberOfScatters: 2 };
+ * plotlyScatterParameterFields(jsonColumns, interactive_arguments);
  *
  * @global
  * - Assumes the existence of a DOM element with ID 'graphGUI'.
  * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
  */
-function plotlyLineParameterFields(jsonColumns, interactive_arguments){
+function plotlyScatterParameterFields(jsonColumns, interactive_arguments){
   let newDiv = document.createElement("div");
   newDiv.id = 'secondaryGraphFields';
   const targetElement = document.getElementById('graphGUI');
@@ -1105,7 +893,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
 
   //Add checkboxes for showgrid and graphTicks
     const features = ["showGrid", "graphTicks"];
-    const featureNames = ["Show X&Y Lines on Grid", "Remove Outside Graph Ticks"];
+    const featureNames = ["Show X&Y Scatters on Grid", "Remove Outside Graph Ticks"];
     for (let i = 0; i < features.length; i++) {
         const feature = features[i];
         const featureName = featureNames[i];
@@ -1209,27 +997,27 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
 
 
   // Create select field for number of lines to be plotted
-  let labelSelectNumberLines = document.createElement("label");
-  labelSelectNumberLines.for = "NumberOfLines";
-  labelSelectNumberLines.innerHTML = "Number of Lines to Be Plotted";
-  let selectNumberLines = document.createElement("select");
-  selectNumberLines.id = "NumberOfLines";
-  selectNumberLines.name = "plotFields";
-  selectNumberLines.addEventListener('change', function() {
-      displayLineFields(selectNumberLines.value, jsonColumns, interactive_arguments) });
-  selectNumberLines.addEventListener('change', function() {
+  let labelSelectNumberScatters = document.createElement("label");
+  labelSelectNumberScatters.for = "NumberOfScatters";
+  labelSelectNumberScatters.innerHTML = "Number of Scatters to Be Plotted";
+  let selectNumberScatters = document.createElement("select");
+  selectNumberScatters.id = "NumberOfScatters";
+  selectNumberScatters.name = "plotFields";
+  selectNumberScatters.addEventListener('change', function() {
+      displayScatterFields(selectNumberScatters.value, jsonColumns, interactive_arguments) });
+  selectNumberScatters.addEventListener('change', function() {
           logFormFieldValues();
       });
 
   for (let i = 1; i < 15; i++){
-      let selectNumberLinesOption = document.createElement("option");
-      selectNumberLinesOption.value = i;
-      selectNumberLinesOption.innerHTML = i; 
-      selectNumberLines.appendChild(selectNumberLinesOption);
+      let selectNumberScattersOption = document.createElement("option");
+      selectNumberScattersOption.value = i;
+      selectNumberScattersOption.innerHTML = i; 
+      selectNumberScatters.appendChild(selectNumberScattersOption);
   }
-  let fieldValueSaved = fillFormFieldValues(selectNumberLines.id, interactive_arguments);
+  let fieldValueSaved = fillFormFieldValues(selectNumberScatters.id, interactive_arguments);
   if (fieldValueSaved != undefined){
-      selectNumberLines.value = fieldValueSaved;
+      selectNumberScatters.value = fieldValueSaved;
   }
   newRow = document.createElement("div");
   newRow.classList.add("row", "fieldPadding");
@@ -1238,8 +1026,8 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   newColumn2 = document.createElement("div");
   newColumn2.classList.add("col");
 
-  newColumn1.appendChild(labelSelectNumberLines);
-  newColumn2.appendChild(selectNumberLines);
+  newColumn1.appendChild(labelSelectNumberScatters);
+  newColumn2.appendChild(selectNumberScatters);
   newRow.append(newColumn1, newColumn2);
   newDiv.append(newRow);
 
@@ -1287,7 +1075,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   targetElement.appendChild(newDiv);
 
   // Run display line fields
-  displayLineFields(selectNumberLines.value, jsonColumns, interactive_arguments);
+  displayScatterFields(selectNumberScatters.value, jsonColumns, interactive_arguments);
 }
 
 /**
@@ -1302,8 +1090,8 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
  * The function prepopulates field values using the provided interactive arguments and attaches event listeners
  * to update the underlying data model when fields are changed.
  *
- * @function displayLineFields
- * @param {number}        numLines              - The number of lines to generate configuration fields for.
+ * @function displayScatterFields
+ * @param {number}        numScatters              - The number of lines to generate configuration fields for.
  * @param {Object}        jsonColumns           - An object representing available data columns, where keys are column identifiers and values are column names.
  * @param {Object|string} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
  *
@@ -1325,21 +1113,21 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
  * @requires
  * - fillFormFieldValues: Function to retrieve saved values for form fields.
  * - logFormFieldValues: Function to update the hidden input with current form values.
- * - loadDefaultInteractiveLineArguments: Function to apply default line styles.
+ * - loadDefaultInteractiveScatterArguments: Function to apply default line styles.
  *
  * @listens change - Updates the hidden input and UI when any field is changed.
  *
  * @example
  * // Example usage:
  * const jsonColumns = { col1: "Column 1", col2: "Column 2" };
- * const interactive_arguments = { XAxisTitle: "Year", NumberOfLines: 2 };
- * displayLineFields(2, jsonColumns, interactive_arguments);
+ * const interactive_arguments = { XAxisTitle: "Year", NumberOfScatters: 2 };
+ * displayScatterFields(2, jsonColumns, interactive_arguments);
  *
  * @global
  * - Assumes the existence of a DOM element with ID 'graphGUI'.
  * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
  */
-function displayLineFields(numLines, jsonColumns, interactive_arguments) {
+function displayScatterFields(numScatters, jsonColumns, interactive_arguments) {
 	const assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
 	// If the element exists
 	if (assignColumnsToPlot) {
@@ -1347,7 +1135,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 		assignColumnsToPlot.parentNode.removeChild(assignColumnsToPlot);
 	}
 
-	if (numLines > 0) {
+	if (numScatters > 0) {
 		const newDiv = document.createElement('div');
 		newDiv.id = 'assignColumnsToPlot';
 
@@ -1564,13 +1352,13 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 								axisSelect.value = savedAxis;
 							}
 
-							// === Line Type Selector ===
+							// === Scatter Type Selector ===
 							const lineTypeLabel = document.createElement('label');
-							lineTypeLabel.textContent = `Line Type ${i + 1}`;
-							lineTypeLabel.htmlFor = `${feature}LineType${i}`;
+							lineTypeLabel.textContent = `Scatter Type ${i + 1}`;
+							lineTypeLabel.htmlFor = `${feature}ScatterType${i}`;
 
 							const lineTypeSelect = document.createElement('select');
-							lineTypeSelect.id = `${feature}LineType${i}`;
+							lineTypeSelect.id = `${feature}ScatterType${i}`;
 							lineTypeSelect.name = 'plotFields';
 
 							[
@@ -1587,13 +1375,13 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 								lineTypeSelect.appendChild(opt);
 							});
 
-							const savedLineType = fillFormFieldValues(
+							const savedScatterType = fillFormFieldValues(
 								lineTypeSelect.id,
 								interactive_arguments
 							);
 
 							// Important: force a default value even if nothing is saved yet
-							lineTypeSelect.value = savedLineType || 'solid';
+							lineTypeSelect.value = savedScatterType || 'solid';
 
 							lineTypeSelect.addEventListener('change', logFormFieldValues);
 
@@ -1605,7 +1393,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 								);
 							const { label: colorLabel, input: colorInput } =
 								createColorfield(
-									`Line Color ${i + 1}`,
+									`Scatter Color ${i + 1}`,
 									`${feature}EventColor${i}`
 								);
 							fillFormFieldValues(
@@ -1741,11 +1529,11 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 
 		// Create the button for default styles
 		const labelApplyDefaults = document.createElement('label');
-		labelApplyDefaults.for = 'ApplyLineDefaults';
-		labelApplyDefaults.innerHTML = 'Apply Custom Line Styles to All Lines';
+		labelApplyDefaults.for = 'ApplyScatterDefaults';
+		labelApplyDefaults.innerHTML = 'Apply Custom Scatter Styles to All Scatters';
 
 		const btnApplyDefaults = document.createElement('button');
-		btnApplyDefaults.id = 'ApplyLineDefaults';
+		btnApplyDefaults.id = 'ApplyScatterDefaults';
 		btnApplyDefaults.type = 'button'; // prevent accidental form submit
 		btnApplyDefaults.classList.add('button', 'button-primary'); // WP admin button style
 		btnApplyDefaults.innerHTML = 'Click to Apply Styles';
@@ -1753,8 +1541,9 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 		// Add event listener
 		btnApplyDefaults.addEventListener('click', function () {
 			// Call your function here
-			loadDefaultInteractiveLineArguments(
-				jsonColumns
+			loadDefaultInteractiveScatterArguments(
+				jsonColumns,
+				interactive_arguments
 			);
 		});
 
@@ -1771,8 +1560,8 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 		newDiv.append(newRowBtn);
 
 		const fieldLabels = [['XAxis', 'X Axis Column']];
-		for (let i = 1; i <= numLines; i++) {
-			fieldLabels.push(['Line' + i, 'Line ' + i + ' Column']);
+		for (let i = 1; i <= numScatters; i++) {
+			fieldLabels.push(['Scatter' + i, 'Scatter ' + i + ' Column']);
 		}
 
 		fieldLabels.forEach((fieldLabel) => {
@@ -1867,15 +1656,16 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 				if (fieldValueSaved === undefined) {
 					// Make each line's default title set to the name of the column name that is selected for that line. Only if the line title is not already set.
 					//const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
-					if (fieldLabel[0].includes('Line')) {
+					if (fieldLabel[0].includes('Scatter')) {
 						selectColumn.addEventListener('change', function () {
-							let DropdownValueSaved = selectColumn.value;
+							DropdownValueSaved = selectColumn.value;
 							if (
 								DropdownValueSaved != 'None' &&
 								fieldValueSaved === undefined
 							) {
+								//console.log('fieldValueSaved2', fieldValueSaved);
 								inputTitle.value = DropdownValueSaved;
-								logFormFieldValues();
+								//console.log('DropdownValueSaved2', DropdownValueSaved);
 							}
 						});
 					}
@@ -1933,10 +1723,10 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 				lineTypeCol2.classList.add('col');
 
 				const lineTypeLabel = document.createElement('label');
-				lineTypeLabel.textContent = fieldLabel[1] + ' Line Type';
-				lineTypeLabel.htmlFor = fieldLabel[0] + 'LineType';
+				lineTypeLabel.textContent = fieldLabel[1] + ' Scatter Type';
+				lineTypeLabel.htmlFor = fieldLabel[0] + 'ScatterType';
 				const lineTypeSelect = document.createElement('select');
-				lineTypeSelect.id = fieldLabel[0] + 'LineType';
+				lineTypeSelect.id = fieldLabel[0] + 'ScatterType';
 				lineTypeSelect.name = 'plotFields';
 
 				//line types
@@ -2070,7 +1860,6 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 
 				//Add checkboxes for error bars, standard deviation, mean, and percentiles
 				const features = [
-					'RemoveLine',
 					'Legend',
 					'ConnectGaps',
 					'Mean',
@@ -2079,13 +1868,12 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 					'Percentiles',
 				];
 				const featureNames = [
-					'Scatter Mode (Remove Line)',
-					'Add Line to Legend',
+					'Add Scatter to Legend',
 					'Connect Missing Data Gaps',
-					'Mean Line',
-					'+-1 Std Dev Lines ',
+					'Mean Scatter',
+					'+-1 Std Dev Scatters ',
 					'Symmetric Error Bars',
-					'90th & 10th Percentile Lines',
+					'90th & 10th Percentile Scatters',
 				];
 				for (let i = 0; i < features.length; i++) {
 					const feature = features[i];
@@ -2158,7 +1946,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 								if (feature != 'ErrorBars') {
 									autoOpt.value = 'auto';
 									autoOpt.innerHTML =
-										'Auto Calculate Based on Line Column Selection';
+										'Auto Calculate Based on Scatter Column Selection';
 									select.appendChild(autoOpt);
 								}
 								if (feature === 'ErrorBars') {
@@ -2289,4 +2077,4 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 	}
 }
 // Bridge for classic scripts until they are modularized.
-window.plotlyLineParameterFields = plotlyLineParameterFields;
+window.plotlyScatterParameterFields = plotlyScatterParameterFields;
