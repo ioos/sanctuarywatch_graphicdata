@@ -200,13 +200,6 @@ permalink: /function_documentation/
 <dd>Retrieves figure block meta fields for a given post via the REST API.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -function -">
-    <a class="" href="namespaces/default.html#function_graphic_data_save_figure_block_meta">graphic_data_save_figure_block_meta()</a>
-    <span>
-                                &nbsp;: <abbr title="\WP_REST_Response">WP_REST_Response</abbr>|<abbr title="\WP_Error">WP_Error</abbr>    </span>
-</dt>
-<dd>Saves figure block meta fields for a given post via the REST API.</dd>
-
-            <dt class="phpdocumentor-table-of-contents__entry -function -">
     <a class="" href="namespaces/default.html#function_graphic_data_plugin_run">graphic_data_plugin_run()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -566,7 +559,7 @@ so it can be surfaced via admin notices; on success that option is deleted.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">207</span>
+    <span class="phpdocumentor-element-found-in__line">206</span>
 
     </aside>
 
@@ -608,7 +601,7 @@ so it can be surfaced via admin notices; on success that option is deleted.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">265</span>
+    <span class="phpdocumentor-element-found-in__line">264</span>
 
     </aside>
 
@@ -622,7 +615,7 @@ so it can be surfaced via admin notices; on success that option is deleted.</p>
         <section class="phpdocumentor-description"><p>Registers a route at <code class="prettyprint">graphic-data/v1/figure/&lt;id&gt;</code> supporting:</p>
 <ul>
 <li>GET: retrieves figure block meta via <a href="namespaces/default.html#function_graphic_data_get_figure_block_meta"><abbr title="\graphic_data_get_figure_block_meta()">graphic_data_get_figure_block_meta()</abbr></a></li>
-<li>POST/PUT/PATCH: saves figure block meta via <a href="namespaces/default.html#function_graphic_data_save_figure_block_meta"><abbr title="\graphic_data_save_figure_block_meta()">graphic_data_save_figure_block_meta()</abbr></a></li>
+<li>POST/PUT/PATCH: saves figure block meta via <abbr title="\graphic_data_save_figure_block_meta()">graphic_data_save_figure_block_meta()</abbr></li>
 </ul>
 <p>Both endpoints require the current user to have <code class="prettyprint">edit_post</code> capability for the
 requested post ID.</p>
@@ -643,7 +636,7 @@ requested post ID.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">304</span>
+    <span class="phpdocumentor-element-found-in__line">303</span>
 
     </aside>
 
@@ -688,62 +681,6 @@ matching a post of type <code class="prettyprint">figure</code>.</p>
 
 </article>
                     <article class="phpdocumentor-element -function - ">
-    <h4 class="phpdocumentor-element__name" id="function_graphic_data_save_figure_block_meta">
-        graphic_data_save_figure_block_meta()
-        <a href="namespaces/default.html#function_graphic_data_save_figure_block_meta" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">372</span>
-
-    </aside>
-
-        <p class="phpdocumentor-summary">Saves figure block meta fields for a given post via the REST API.</p>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility"></span>
-                    <span class="phpdocumentor-signature__name">graphic_data_save_figure_block_meta</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><abbr title="\WP_REST_Request">WP_REST_Request</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$request</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><abbr title="\WP_REST_Response">WP_REST_Response</abbr>|<abbr title="\WP_Error">WP_Error</abbr></span></code>
-
-        <section class="phpdocumentor-description"><p>Handles POST/PUT/PATCH requests to <code class="prettyprint">graphic-data/v1/figure/&lt;id&gt;</code>. Reads a flat
-JSON body from the request, sanitizes each field, and persists them as post meta.
-The <code class="prettyprint">figure_science_link_*</code> and <code class="prettyprint">figure_data_link_*</code> fields are re-wrapped into
-Exopite-compatible associative arrays before saving.</p>
-<p>On success, delegates to <a href="namespaces/default.html#function_graphic_data_get_figure_block_meta"><abbr title="\graphic_data_get_figure_block_meta()">graphic_data_get_figure_block_meta()</abbr></a> to return
-the full, updated meta object.</p>
-</section>
-
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$request</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\WP_REST_Request">WP_REST_Request</abbr></span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>The REST request. Must contain a numeric <code class="prettyprint">id</code> param
-matching a post of type <code class="prettyprint">figure</code>, and a JSON body
-with any combination of the supported figure meta keys.</p>
-</section>
-
-            </dd>
-            </dl>
-
-    
-
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type"><abbr title="\WP_REST_Response">WP_REST_Response</abbr>|<abbr title="\WP_Error">WP_Error</abbr></span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>Updated figure meta response on success, or a
-400 WP_Error if the post is not of type <code class="prettyprint">figure</code>.</p>
-</section>
-
-            </section>
-
-</article>
-                    <article class="phpdocumentor-element -function - ">
     <h4 class="phpdocumentor-element__name" id="function_graphic_data_plugin_run">
         graphic_data_plugin_run()
         <a href="namespaces/default.html#function_graphic_data_plugin_run" class="headerlink"><i class="fas fa-link"></i></a>
@@ -752,7 +689,7 @@ with any combination of the supported figure meta keys.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/graphic_data_plugin.php"><a href="files/plugins-graphic-data-plugin-graphic-data-plugin.html"><abbr title="plugins/graphic_data_plugin/graphic_data_plugin.php">graphic_data_plugin.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">432</span>
+    <span class="phpdocumentor-element-found-in__line">414</span>
 
     </aside>
 
