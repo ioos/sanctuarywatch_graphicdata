@@ -626,18 +626,6 @@ class Graphic_Data_Utility {
 		// Get selected instance from URL or from stored value.
 		$current_selection = isset( $_GET[ $element_name ] ) ? absint( $_GET[ $element_name ] ) : $this->get_filter_value( "{$element_name}" );
 
-		// Eliminate Placeholder Instance from list if Graphic Data is the active theme.
-		// if ( GRAPHIC_DATA_IS_ACTIVE_THEME ) {
-		// 	$instances = array_values(
-		// 		array_filter(
-		// 			$instances,
-		// 			function ( $instance ) {
-		// 				return ! ( is_object( $instance ) && isset( $instance->post_title ) && 'Placeholder Instance' === $instance->post_title );
-		// 			}
-		// 		)
-		// 	);
-		// }
-
 		// Generate the dropdown HTML.
 		echo '<select name="' . esc_attr( $element_name ) . '" id="' . esc_attr( $element_name ) . '">';
 		echo '<option value="">All Instances</option>';
