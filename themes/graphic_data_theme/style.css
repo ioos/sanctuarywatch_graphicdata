@@ -1295,17 +1295,69 @@ body > nav{
         grid-column: 2;
         margin-right: 0 !important; /* neutralize the .me-auto in navbar.php */
     }
+}
 
-    .navbar-wrapper > .navbar-collapse > form[role="search"] {
-        position: absolute;
-        top: 50%;
-        right: 29px;
-        transform: translateY(-50%);
+/* Native <dialog> resets — center on screen, style backdrop, remove default border. */
+.graphic-data-search-dialog {
+    max-width: 500px;
+    width: 90vw;
+    padding: 1.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 40px rgba( 0, 0, 0, 0.2 );
+}
+
+.graphic-data-search-dialog::backdrop {
+    background: rgba( 0, 0, 0, 0.5 );
+}
+
+/* --------------------------------------------------------------------------
+ * Search-trigger button
+ *
+ * The button lives inside <ul class="navbar-nav"> as a <li class="nav-item">
+ * with the .nav-link class, so it inherits color, padding, and hover styling
+ * from Bootstrap's nav-link. This is what makes it align with the other nav
+ * items on mobile (where the collapsed navbar stacks all items vertically).
+ *
+ * Base rules below cover the button's own quirks that .nav-link doesn't fix:
+ *   - <button> defaults to text-align: center; nav items are left-aligned.
+ *   - Icon is scaled up slightly and given a tight line-height.
+ *
+ * Desktop (>=992px): position against .navbar with a right offset that
+ * mirrors where the More Info / Media accordions' right edge actually is:
+ *   - viewport >= 1400:  #entire_thing right = viewport_center + 700
+ *                        col-md-2 content right = viewport_center + 688
+ *                        distance from viewport right = (viewport - 1400)/2 + 12
+ *   - viewport <  1400:  #entire_thing fills viewport, col-md-2 content
+ *                        right = viewport - 12
+ *                        distance from viewport right = 12
+ * The max() below produces both curves in one expression: at wide viewports
+ * the calc() dominates; at narrow ones it goes negative and 12px wins.
+ * -------------------------------------------------------------------------- */
+
+#graphic-data-search-trigger {
+    font-size: 1.25rem;
+    line-height: 1;
+    text-align: left; /* buttons default to center; nav items are left-aligned */
+    cursor: pointer;
+}
+
+#graphic-data-search-trigger:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+}
+
+@media (min-width: 992px) {
+    .navbar {
+        position: relative;
     }
 
-    /* Keep the input a fixed compact width, so form-control's width: 100%
-       doesn't inflate the form when the nav row has few items. */
-    .navbar-wrapper > .navbar-collapse > form[role="search"] .form-control {
-        width: 200px;
+    #graphic-data-search-trigger {
+        position: absolute;
+        top: 50%;
+        right: max(12px, calc((100% - 1400px) / 2 + 30px));
+        transform: translateY(-50%);
+        padding: 0; /* absolute-positioned by right edge — padding would offset the icon leftward */
     }
 }

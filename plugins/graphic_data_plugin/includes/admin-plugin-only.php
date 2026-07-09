@@ -307,21 +307,23 @@ class Graphic_Data_Plugin_Only_Content {
 	/**
 	 * Copies an image file from the plugin directory to the WordPress media library.
 	 *
-	 * This method takes an image file from within the plugin's directory structure,
-	 * uploads it to the WordPress media library, generates the necessary attachment
-	 * metadata (including image sizes), and associates it with a placeholder ID for
-	 * later reference or cleanup.
+	 * Takes an image file from within the plugin's directory structure, uploads it to
+	 * the WordPress media library, generates attachment metadata (including image sizes),
+	 * and tags the resulting attachment with both a placeholder ID and an instance ID for
+	 * later lookup or cleanup.
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $plugin_relative_path The relative path to the image file from the plugin's includes directory.
-	 *                                     Example: '../example_files/tutorial/image.jpg'
-	 * @param int    $placeholder_id          The placeholder ID to associate with this media library item.
-	 *                                     This is stored in post meta to keep track of placeholder media.
+	 * @param string $plugin_relative_path Relative path to the image file from the plugin root directory.
+	 *                                     Example: 'example_files/tutorial/image.jpg'
+	 * @param int    $placeholder_id       Placeholder ID stored in attachment post meta under
+	 *                                     `graphic_data_placeholder_id` to identify placeholder media.
+	 * @param int    $instance_id          Instance ID stored in attachment post meta under
+	 *                                     `graphic_data_instance_id` to associate the media with a
+	 *                                     specific plugin instance.
 	 *
-	 * @return string|false The URL of the uploaded attachment on success, false on failure.
-	 *                      Failure can occur if the source file doesn't exist or if
-	 *                      the upload process encounters an error.
+	 * @return string|false URL of the uploaded attachment on success, or false if the source
+	 *                      file does not exist or the upload process fails.
 	 */
 	public function copy_image_to_media_library( $plugin_relative_path, $placeholder_id, $instance_id ) {
 		$plugin_image_path = GRAPHIC_DATA_PLUGIN_DIR . $plugin_relative_path;

@@ -189,9 +189,12 @@ function graphic_data_register_blocks() {
 
 add_action( 'init', 'graphic_data_register_blocks' );
 
-add_action( 'enqueue_block_editor_assets', function() {
-	wp_enqueue_editor();
-} );
+add_action(
+	'enqueue_block_editor_assets',
+	function () {
+		wp_enqueue_editor();
+	}
+);
 
 /**
  * Register the figure fields for posts.
@@ -244,6 +247,20 @@ add_action( 'init', 'graphic_data_register_figure_block_meta' );
 
 add_action( 'rest_api_init', 'graphic_data_register_figure_block_routes' );
 
+/**
+ * Registers REST API routes for the figure block.
+ *
+ * Registers a route at `graphic-data/v1/figure/<id>` supporting:
+ * - GET: retrieves figure block meta via {@see graphic_data_get_figure_block_meta()}
+ * - POST/PUT/PATCH: saves figure block meta via {@see graphic_data_save_figure_block_meta()}
+ *
+ * Both endpoints require the current user to have `edit_post` capability for the
+ * requested post ID.
+ *
+ * Hooked to `rest_api_init`.
+ *
+ * @return void
+ */
 function graphic_data_register_figure_block_routes() {
 	register_rest_route(
 		'graphic-data/v1',
@@ -270,6 +287,19 @@ function graphic_data_register_figure_block_routes() {
 }
 
 
+/**
+ * Retrieves figure block meta fields for a given post via the REST API.
+ *
+ * Handles GET requests to `graphic-data/v1/figure/<id>`. Returns a flat object
+ * of all figure-related post meta, including fields from the `figure_science_info`
+ * and `figure_data_info` Exopite fieldsets which are unpacked into top-level keys
+ * for easier consumption by React.
+ *
+ * @param WP_REST_Request $request The REST request. Must contain a numeric `id` param
+ *                                 matching a post of type `figure`.
+ * @return WP_REST_Response|WP_Error Response containing figure meta on success, or a
+ *                                   400 WP_Error if the post is not of type `figure`.
+ */
 function graphic_data_get_figure_block_meta( WP_REST_Request $request ) {
 	$post_id = absint( $request['id'] );
 

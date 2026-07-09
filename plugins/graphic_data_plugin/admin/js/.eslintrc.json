@@ -7,6 +7,7 @@
 		"import/ignore": ["^@graphic-data/"]
 	},
 	"rules": {
-		"no-alert": "off"
+		"no-alert": "off",
+		"import/no-unresolved": ["error", { "ignore": ["^@graphic-data/"] }]
 	}
 }

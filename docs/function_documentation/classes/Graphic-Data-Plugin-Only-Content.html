@@ -218,7 +218,7 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">326</span>
+    <span class="phpdocumentor-element-found-in__line">328</span>
 
     </aside>
 
@@ -226,15 +226,15 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">copy_image_to_media_library</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$plugin_relative_path</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$placeholder_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$instance_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|false</span></code>
+                    <span class="phpdocumentor-signature__name">copy_image_to_media_library</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$plugin_relative_path</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$placeholder_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$instance_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|false</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>This method takes an image file from within the plugin's directory structure,
-uploads it to the WordPress media library, generates the necessary attachment
-metadata (including image sizes), and associates it with a placeholder ID for
-later reference or cleanup.</p>
+        <section class="phpdocumentor-description"><p>Takes an image file from within the plugin's directory structure, uploads it to
+the WordPress media library, generates attachment metadata (including image sizes),
+and tags the resulting attachment with both a placeholder ID and an instance ID for
+later lookup or cleanup.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -244,8 +244,8 @@ later reference or cleanup.</p>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>The relative path to the image file from the plugin's includes directory.
-Example: '../example_files/tutorial/image.jpg'</p>
+                    <section class="phpdocumentor-description"><p>Relative path to the image file from the plugin root directory.
+Example: 'example_files/tutorial/image.jpg'</p>
 </section>
 
             </dd>
@@ -254,17 +254,21 @@ Example: '../example_files/tutorial/image.jpg'</p>
                 : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>The placeholder ID to associate with this media library item.
-This is stored in post meta to keep track of placeholder media.</p>
+                    <section class="phpdocumentor-description"><p>Placeholder ID stored in attachment post meta under
+<code class="prettyprint">graphic_data_placeholder_id</code> to identify placeholder media.</p>
 </section>
 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$instance_id</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                
+                    <section class="phpdocumentor-description"><p>Instance ID stored in attachment post meta under
+<code class="prettyprint">graphic_data_instance_id</code> to associate the media with a
+specific plugin instance.</p>
+</section>
+
             </dd>
             </dl>
 
@@ -290,9 +294,8 @@ This is stored in post meta to keep track of placeholder media.</p>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string|false</span>
                     &mdash;
-                <section class="phpdocumentor-description"><p>The URL of the uploaded attachment on success, false on failure.
-Failure can occur if the source file doesn't exist or if
-the upload process encounters an error.</p>
+                <section class="phpdocumentor-description"><p>URL of the uploaded attachment on success, or false if the source
+file does not exist or the upload process fails.</p>
 </section>
 
             </section>
