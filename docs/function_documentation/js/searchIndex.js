@@ -728,17 +728,17 @@ Search.appendIndex(
         },                {
             "fqsen": "\\graphic_data_register_figure_block_routes\u0028\u0029",
             "name": "graphic_data_register_figure_block_routes",
-            "summary": "",
+            "summary": "Registers\u0020REST\u0020API\u0020routes\u0020for\u0020the\u0020figure\u0020block.",
             "url": "namespaces/default.html#function_graphic_data_register_figure_block_routes"
         },                {
             "fqsen": "\\graphic_data_get_figure_block_meta\u0028\u0029",
             "name": "graphic_data_get_figure_block_meta",
-            "summary": "",
+            "summary": "Retrieves\u0020figure\u0020block\u0020meta\u0020fields\u0020for\u0020a\u0020given\u0020post\u0020via\u0020the\u0020REST\u0020API.",
             "url": "namespaces/default.html#function_graphic_data_get_figure_block_meta"
         },                {
             "fqsen": "\\graphic_data_save_figure_block_meta\u0028\u0029",
             "name": "graphic_data_save_figure_block_meta",
-            "summary": "",
+            "summary": "Saves\u0020figure\u0020block\u0020meta\u0020fields\u0020for\u0020a\u0020given\u0020post\u0020via\u0020the\u0020REST\u0020API.",
             "url": "namespaces/default.html#function_graphic_data_save_figure_block_meta"
         },                {
             "fqsen": "\\graphic_data_plugin_run\u0028\u0029",
