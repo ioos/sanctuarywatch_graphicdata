@@ -214,6 +214,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'admin_footer_text', $plugin_admin, 'remove_thank_you' );
 		$this->loader->add_filter( 'months_dropdown_results', $plugin_admin, 'remove_all_dates' );
 		// V2 - We are not removing gutenberg anymore.
+
 		// $this->loader->add_filter( 'use_block_editor_for_post', $plugin_admin, 'remove_gutenberg' );
 		$this->loader->add_filter( 'screen_options_show_screen', $plugin_admin, 'remove_screen_options' );
 		$this->loader->add_filter( 'upload_mimes', $plugin_admin, 'allow_svg_uploads' );

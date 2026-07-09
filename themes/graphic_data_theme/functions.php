@@ -724,6 +724,7 @@ function graphic_data_enqueue_scripts() {
 			'@graphic-data/plotly-timeseries-line',
 			'@graphic-data/plotly-bar',
 			'@graphic-data/plotly-map',
+			'@graphic-data/tabulator-table',
 		),
 		GRAPHIC_DATA_PLUGIN_VERSION
 	);
@@ -757,6 +758,14 @@ function graphic_data_enqueue_scripts() {
 	wp_register_script_module(
 		'@graphic-data/plotly-bar',
 		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-bar.js',
+		array( '@graphic-data/plotly-utility' ),
+		graphic_data_get_theme_asset_version()
+	);
+
+	// register the plotly scatter module used in interactive figures.
+	wp_register_script_module(
+		'@graphic-data/tabulator-table',
+		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/tabulator-table.js',
 		array( '@graphic-data/plotly-utility' ),
 		graphic_data_get_theme_asset_version()
 	);

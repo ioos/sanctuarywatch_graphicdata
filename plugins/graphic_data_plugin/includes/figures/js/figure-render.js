@@ -1,6 +1,7 @@
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { producePlotlyMap } from '@graphic-data/plotly-map';
+import { produceTabulatorTable } from '@graphic-data/tabulator-table';
 
 /**
  * Renders interactive plots (e.g., Plotly graphs) within a specified tab content element.
@@ -34,7 +35,9 @@ import { producePlotlyMap } from '@graphic-data/plotly-map';
  * };
  * await render_interactive_plots(tabContentElement, info_obj);
  */
-export async function render_interactive_plots(tabContentElement, info_obj) {
+export async function render_interactive_plots(tabContentElement, info_obj, targetDocument) {
+
+    //console.log('tabContentElement render_interactive_plots', tabContentElement);
 	//Lets control if the figure is published or not
 	let figure_published = info_obj.figure_published;
 	if (figure_published != 'published') {
@@ -130,21 +133,22 @@ export async function render_interactive_plots(tabContentElement, info_obj) {
 					await producePlotlyLineFigure(
 						targetId,
 						interactive_arguments,
-						postID
+						postID,
+                        targetDocument,
 					);
 					await waitForPlotlyDiv(plotlyDivID);
 					adjustPlotlyLayoutForMobile(postID);
 					console.log('RIP - PLOT1', postID);
 
 					// Manually trigger for initially active tab
-					const activeTab =
-						document.querySelector('.tab-pane.active');
+					const activeTab = document.querySelector('.tab-pane.active');
 					if (activeTab && activeTab.id === tabContentElement.id) {
 						if (!document.getElementById(plotlyDivID)) {
 							await producePlotlyLineFigure(
 								targetId,
 								interactive_arguments,
-								postID
+								postID,
+                                targetDocument
 							);
 							await waitForPlotlyDiv(plotlyDivID);
 							adjustPlotlyLayoutForMobile(postID);
@@ -190,7 +194,8 @@ export async function render_interactive_plots(tabContentElement, info_obj) {
 					await producePlotlyBarFigure(
 						targetId,
 						interactive_arguments,
-						postID
+						postID,
+                        targetDocument
 					);
 					await waitForPlotlyDiv(plotlyDivID);
 					adjustPlotlyLayoutForMobile(postID);
@@ -203,7 +208,8 @@ export async function render_interactive_plots(tabContentElement, info_obj) {
 							await producePlotlyBarFigure(
 								targetId,
 								interactive_arguments,
-								postID
+								postID,
+                                targetDocument
 							);
 							await waitForPlotlyDiv(plotlyDivID);
 							adjustPlotlyLayoutForMobile(postID);
@@ -249,7 +255,8 @@ export async function render_interactive_plots(tabContentElement, info_obj) {
 					await producePlotlyMap(
 						targetId,
 						interactive_arguments,
-						postID
+						postID,
+                        targetDocument
 					);
 					await waitForPlotlyDiv(plotlyDivID);
 					adjustPlotlyLayoutForMobile(postID);
@@ -262,7 +269,8 @@ export async function render_interactive_plots(tabContentElement, info_obj) {
 							await producePlotlyBarFigure(
 								targetId,
 								interactive_arguments,
-								postID
+								postID,
+                                targetDocument
 							);
 							await waitForPlotlyDiv(plotlyDivID);
 							adjustPlotlyLayoutForMobile(postID);
@@ -289,9 +297,9 @@ export async function render_interactive_plots(tabContentElement, info_obj) {
 			}
 
 			//Google Tags
-            document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (event) => {  
-                console.log('Received graphic-data:figureTimeseriesGraphLoaded', event.detail);
-            });
+            // document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (event) => {  
+            //     console.log('Received graphic-data:figureTimeseriesGraphLoaded', event.detail);
+            // });
 
 
 			if (!window.location.href.includes('post.php')) {
@@ -340,9 +348,11 @@ export async function render_interactive_plots(tabContentElement, info_obj) {
  * Usage:
  * This function is called for each tab, populating one or more figures (and other corresponding info)
  */
-export async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx){
+export async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, isBlock){
 
-    console.log('tabContentElement', tabContentElement);
+    // console.log('info_obj', info_obj);
+    // console.log('tabContentElement', tabContentElement);
+    // console.log('tabContentContainer', tabContentContainer);
 
     //Lets control if the figure is published or not
     let figure_published = info_obj["figure_published"];
@@ -362,10 +372,12 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     tableRowDiv.style.display = 'table-row';
 
     //Create a separator to make this figure distinct from others
-    const separator = document.createElement('div');
-    separator.classList.add("separator");
-    separator.innerHTML = '<hr style="border-bottom: 1px rgb(252, 252, 252);">';
-    tableRowDiv.appendChild(separator);
+    if (!isBlock || isBlock === null) {
+        const separator = document.createElement('div');
+        separator.classList.add("separator");
+        separator.innerHTML = '<hr style="border-bottom: 1px rgb(252, 252, 252);">';
+        tableRowDiv.appendChild(separator);
+    }
 
     //CONSTRUCT THE MAIN DIV "FIGURE" WHERE THE CONTENT WILL GO
     //const figureDiv = document.createElement('div');
@@ -484,9 +496,9 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             window.dataLayer = window.dataLayer || [];
 
             //Google Tags
-            document.addEventListener('graphic-data:figureInternalImageLoaded', (event) => {  
-                console.log('Received graphic-data:figureInternalImageLoaded', event.detail);
-            });
+            // document.addEventListener('graphic-data:figureInternalImageLoaded', (event) => {  
+            //     console.log('Received graphic-data:figureInternalImageLoaded', event.detail);
+            // });
             
             if (!window.location.href.includes('post.php')) {
                 document.dispatchEvent( new CustomEvent( 'graphic-data:figureInternalImageLoaded', {
@@ -520,9 +532,9 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             } else {}
 
             //Google Tags
-            document.addEventListener('graphic-data:figureExternalImageLoaded', (event) => {  
-                console.log('Received graphic-data:figureExternalImageLoaded', event.detail);
-            });
+            // document.addEventListener('graphic-data:figureExternalImageLoaded', (event) => {  
+            //     console.log('Received graphic-data:figureExternalImageLoaded', event.detail);
+            // });
 
             if (!window.location.href.includes('post.php')) {
                 document.dispatchEvent( new CustomEvent( 'graphic-data:figureExternalImageLoaded', {
@@ -534,6 +546,8 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         case "Interactive":
             // Create a div for the interactive figure, the rest will be handled by the render_interactive_plots function
             img = document.createElement('div');
+            const uniqueHash = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+            //img.id = `javascript_figure_target_${postID}_${uniqueHash}`;
             img.id = `javascript_figure_target_${postID}`;
             await figureDiv.appendChild(img);           
         break;
@@ -588,9 +602,9 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             codeDiv.innerHTML = tempDiv.innerHTML;
 
             //Google Tags
-            document.addEventListener('graphic-data:figureCodeDisplayLoaded', (event) => {  
-                console.log('Received graphic-data:figureCodeDisplayLoaded', event.detail);
-            });
+            // document.addEventListener('graphic-data:figureCodeDisplayLoaded', (event) => {  
+            //     console.log('Received graphic-data:figureCodeDisplayLoaded', event.detail);
+            // });
 
             if (!window.location.href.includes('post.php')) {
                 document.dispatchEvent( new CustomEvent( 'graphic-data:figureCodeDisplayLoaded', {
@@ -617,26 +631,28 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     figureDiv.appendChild(caption);
     tabContentElement.appendChild(figureDiv);
 
+    if (!isBlock || isBlock === null) {
+        // Add "Go to Top" link
+        const goToTopLink = document.createElement('a');
+        goToTopLink.href = "#";
+        goToTopLink.textContent = "↑ Back to Top";
+        goToTopLink.style.display = "block";
+        goToTopLink.style.textAlign = "right";
+        goToTopLink.style.marginTop = "5px";
+        goToTopLink.style.color = "#0056b3";
+        goToTopLink.style.textDecoration = "none";
+        goToTopLink.style.fontSize = "0.8em";
+        figureDiv.appendChild(goToTopLink);  // append link to figureDiv
 
-    // Add "Go to Top" link
-    const goToTopLink = document.createElement('a');
-    goToTopLink.href = "#";
-    goToTopLink.textContent = "↑ Back to Top";
-    goToTopLink.style.display = "block";
-    goToTopLink.style.textAlign = "right";
-    goToTopLink.style.marginTop = "5px";
-    goToTopLink.style.color = "#0056b3";
-    goToTopLink.style.textDecoration = "none";
-    goToTopLink.style.fontSize = "0.8em";
-    figureDiv.appendChild(goToTopLink);  // append link to figureDiv
+        goToTopLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('modal-title').scrollIntoView({ top:0, behavior: 'smooth' });
+            //const modalContent = document.querySelector('.modal-title');
+            //modalContent.scrollTop = 0; // or:
+            //modalContent.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 
-    goToTopLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('modal-title').scrollIntoView({ top:0, behavior: 'smooth' });
-        //const modalContent = document.querySelector('.modal-title');
-        //modalContent.scrollTop = 0; // or:
-        //modalContent.scrollTo({ top: 0, behavior: 'smooth' });
-    });
 
     // Create the details element
     const details = document.createElement('details');
@@ -655,7 +671,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     }
     
     // Add the details element to the tab content element
-    tabContentContainer.appendChild(tabContentElement);
+    tabContentContainer.appendChild(tabContentElement); 
 
     //Google Tags registration for figure science and data links
     if (info_obj['scienceText']!=''){

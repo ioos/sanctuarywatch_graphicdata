@@ -37,6 +37,7 @@ async function loadJson(targetContainer) {
 		const labelGraphType = document.createElement('label');
 		labelGraphType.setAttribute('for', 'graphType');
 		labelGraphType.innerHTML = 'Graph Type';
+		labelGraphType.style.display = 'none';
 
 		const selectGraphType = document.createElement('select');
 		selectGraphType.id = 'graphType';
@@ -47,6 +48,8 @@ async function loadJson(targetContainer) {
 			'Plotly line graph (time series)'
 		);
 		selectGraphType.append(optLine);
+
+		selectGraphType.style.display = 'none';
 
 		//Pull saved interactive args (if any)
 		// const iaEl = <?php echo json_encode($interactive_line_arguments_value); ?>;

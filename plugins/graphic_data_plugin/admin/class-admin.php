@@ -113,6 +113,13 @@ class Graphic_Data_Admin {
 			);
 
 			wp_register_script_module(
+				'@graphic-data/tabulator-table',
+				$interactive_base . 'tabulator-table.js',
+				array( '@graphic-data/plotly-utility' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			wp_register_script_module(
 				'@graphic-data/plotly-map',
 				$interactive_base . 'plotly-map.js',
 				array( '@graphic-data/plotly-utility' ),
@@ -122,7 +129,7 @@ class Graphic_Data_Admin {
 			wp_register_script_module(
 				'@graphic-data/figure-render',
 				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/figure-render.js',
-				array( '@graphic-data/plotly-timeseries-line', '@graphic-data/plotly-bar', '@graphic-data/plotly-map' ),
+				array( '@graphic-data/plotly-timeseries-line', '@graphic-data/plotly-bar', '@graphic-data/plotly-map', '@graphic-data/tabulator-table' ),
 				GRAPHIC_DATA_PLUGIN_VERSION
 			);
 
@@ -241,6 +248,7 @@ class Graphic_Data_Admin {
 				dirname( plugin_dir_url( __FILE__ ) ) . '/includes/figures/js/interactive/file-upload.js',
 				array(
 					'@graphic-data/plotly-bar',
+					'@graphic-data/tabulator-table',
 					'@graphic-data/plotly-timeseries-line',
 					'@graphic-data/plotly-map',
 				),
@@ -370,6 +378,9 @@ class Graphic_Data_Admin {
 			remove_menu_page( 'edit-comments.php' );
 			// Remove posts from the admin menu.
 			remove_menu_page( 'edit.php' );
+			// V2 - We are not removing page post types anymore.
+
+			//remove_menu_page( 'edit.php?post_type=page' );
 		} else {
 			remove_menu_page( 'edit.php?post_type=instance' );
 			remove_menu_page( 'edit.php?post_type=about' );

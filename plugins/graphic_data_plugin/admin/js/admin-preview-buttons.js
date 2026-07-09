@@ -108,7 +108,10 @@ let previewFigureOrModalElements;
 
 //Define our post type and the id so we can use it later in the save process for the html
 if (postType === 'figure') {
-    previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"],[id="publish"]');
+	//without publish
+    previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"]');
+	//with publish good for saving graphs. 
+	//previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"],[id="publish"]');
 } 
 if (postType === 'modal') {
     previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"]');
@@ -498,18 +501,18 @@ if (previewFigureOrModalElements.length > 0) {
 				);
 				const idx = 0; // Since we are only rendering one figure here, index is 0
 				(async () => {
-                    console.log('[GD] figure preview info_obj:', JSON.stringify({
-                        figureType: info_obj.figureType,
-                        figure_interactive_arguments_length: info_obj.figure_interactive_arguments?.length,
-                        figure_interactive_arguments_preview: info_obj.figure_interactive_arguments?.substring(0, 100)
-                    }));
+                    // console.log('[GD] figure preview info_obj:', JSON.stringify({
+                    //     figureType: info_obj.figureType,
+                    //     figure_interactive_arguments_length: info_obj.figure_interactive_arguments?.length,
+                    //     figure_interactive_arguments_preview: info_obj.figure_interactive_arguments?.substring(0, 100)
+                    // }));
 					await render_tab_info(
 						tabContentElement,
 						tabContentContainer,
 						info_obj,
 						idx
 					);
-					await render_interactive_plots(tabContentElement, info_obj);
+					await render_interactive_plots(tabContentContainer, info_obj);
 				})();
 			}
 		});
@@ -873,59 +876,59 @@ document.addEventListener('click', function (e) {
 
 //________________________________________________________________________________________
 
-async function plotlySnapshotFromDivAndSave(
-	gd,
-	{
-		config = { responsive: true },
-		figureId = null,
-		sceneSlug = null,
-		endpoint = '/wp-json/sw/v1/plotly-snapshot',
-		meta = {},
-	} = {}
-) {
-	if (!gd?.data || !gd?.layout) {
-		throw new Error('Plotly div not ready');
-	}
+// async function plotlySnapshotFromDivAndSave(
+// 	gd,
+// 	{
+// 		config = { responsive: true },
+// 		figureId = null,
+// 		sceneSlug = null,
+// 		endpoint = '/wp-json/sw/v1/plotly-snapshot',
+// 		meta = {},
+// 	} = {}
+// ) {
+// 	if (!gd?.data || !gd?.layout) {
+// 		throw new Error('Plotly div not ready');
+// 	}
 
-	const snap = {
-		schema: 'plotly-snapshot/v1',
-		createdAt: new Date().toISOString(),
-		figureId,
-		sceneSlug,
-		meta,
-		data: structuredClone(gd.data),
-		layout: structuredClone(gd.layout),
-		config: structuredClone(config),
-	};
+// 	const snap = {
+// 		schema: 'plotly-snapshot/v1',
+// 		createdAt: new Date().toISOString(),
+// 		figureId,
+// 		sceneSlug,
+// 		meta,
+// 		data: structuredClone(gd.data),
+// 		layout: structuredClone(gd.layout),
+// 		config: structuredClone(config),
+// 	};
 
-	// Portable
-	delete snap.layout.width;
-	delete snap.layout.height;
-	snap.layout.autosize = true;
-	snap.config = snap.config || {};
-	snap.config.responsive = true;
+// 	// Portable
+// 	delete snap.layout.width;
+// 	delete snap.layout.height;
+// 	snap.layout.autosize = true;
+// 	snap.config = snap.config || {};
+// 	snap.config.responsive = true;
 
-	// Save to WP
-	const res = await fetch(endpoint, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(snap),
-		credentials: 'same-origin',
-	});
+// 	// Save to WP
+// 	const res = await fetch(endpoint, {
+// 		method: 'POST',
+// 		headers: { 'Content-Type': 'application/json' },
+// 		body: JSON.stringify(snap),
+// 		credentials: 'same-origin',
+// 	});
 
-	if (!res.ok) {
-		const text = await res.text().catch(() => '');
-		throw new Error(`Snapshot save failed (${res.status}): ${text}`);
-	}
+// 	if (!res.ok) {
+// 		const text = await res.text().catch(() => '');
+// 		throw new Error(`Snapshot save failed (${res.status}): ${text}`);
+// 	}
 
-	// Expect server to return: { id, url, ... }
-	const saved = await res.json();
+// 	// Expect server to return: { id, url, ... }
+// 	const saved = await res.json();
 
-	// Add “location” info
-	snap.saved = {
-		id: saved.id || saved.key || null,
-		url: saved.url || null,
-	};
+// 	// Add “location” info
+// 	snap.saved = {
+// 		id: saved.id || saved.key || null,
+// 		url: saved.url || null,
+// 	};
 
-	return snap;
-}
+// 	return snap;
+// }

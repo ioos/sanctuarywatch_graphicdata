@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "create-block/graphic-data-insert-figure",
 	"version": "0.1.0",
-	"title": "Graphic Data Insert Figure Data",
+	"title": "Graphic Data - Figure",
 	"category": "media",
 	"description": "Insert a figure into a post",
 	"example": {},
@@ -15,6 +15,10 @@
 		"figureMode": {
 			"type": "string",
 			"default": "existing"
+		},
+		"instanceId": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {
@@ -27,7 +31,7 @@
 			"fontSize": true
 		}
 	},
-	"textdomain": "graphic-data-insert-figure",
+	"textdomain": "graphic-data-insert-interactive-figure",
 	"editorScript": "file:./index.js",
 	"viewScript": "file:./view.js",
 	"render": "file:./render.php"

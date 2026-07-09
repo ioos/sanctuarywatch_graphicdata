@@ -184,7 +184,6 @@ function graphic_data_ensure_public_data_dir() {
  * @see graphic_data_ensure_public_data_dir()
  */
 function graphic_data_register_blocks() {
-	register_block_type( __DIR__ . '/blocks/copyright-date-block/build' );
 	register_block_type( __DIR__ . '/blocks/insert-figure/build' );
 }
 
@@ -352,75 +351,58 @@ function graphic_data_get_figure_block_meta( WP_REST_Request $request ) {
 	);
 }
 
-/**
- * Saves figure block meta fields for a given post via the REST API.
- *
- * Handles POST/PUT/PATCH requests to `graphic-data/v1/figure/<id>`. Reads a flat
- * JSON body from the request, sanitizes each field, and persists them as post meta.
- * The `figure_science_link_*` and `figure_data_link_*` fields are re-wrapped into
- * Exopite-compatible associative arrays before saving.
- *
- * On success, delegates to {@see graphic_data_get_figure_block_meta()} to return
- * the full, updated meta object.
- *
- * @param WP_REST_Request $request The REST request. Must contain a numeric `id` param
- *                                 matching a post of type `figure`, and a JSON body
- *                                 with any combination of the supported figure meta keys.
- * @return WP_REST_Response|WP_Error Updated figure meta response on success, or a
- *                                   400 WP_Error if the post is not of type `figure`.
- */
-function graphic_data_save_figure_block_meta( WP_REST_Request $request ) {
-	$post_id = absint( $request['id'] );
+// function graphic_data_save_figure_block_meta( WP_REST_Request $request ) {
+// 	$post_id = absint( $request['id'] );
 
-	if ( 'figure' !== get_post_type( $post_id ) ) {
-		return new WP_Error(
-			'invalid_post_type',
-			'This endpoint only supports figure posts.',
-			array( 'status' => 400 )
-		);
-	}
+// 	if ( 'figure' !== get_post_type( $post_id ) ) {
+// 		return new WP_Error(
+// 			'invalid_post_type',
+// 			'This endpoint only supports figure posts.',
+// 			array( 'status' => 400 )
+// 		);
+// 	}
 
-	$params = $request->get_json_params();
+// 	$params = $request->get_json_params();
 
-	update_post_meta( $post_id, 'figure_published', sanitize_text_field( $params['figure_published'] ?? 'draft' ) );
-	update_post_meta( $post_id, 'location', sanitize_text_field( $params['location'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_scene', sanitize_text_field( $params['figure_scene'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_modal', sanitize_text_field( $params['figure_modal'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_tab', sanitize_text_field( $params['figure_tab'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_order', absint( $params['figure_order'] ?? 1 ) );
+// 	update_post_meta( $post_id, 'figure_published', sanitize_text_field( $params['figure_published'] ?? 'draft' ) );
+// 	update_post_meta( $post_id, 'location', sanitize_text_field( $params['location'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_scene', sanitize_text_field( $params['figure_scene'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_modal', sanitize_text_field( $params['figure_modal'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_tab', sanitize_text_field( $params['figure_tab'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_order', absint( $params['figure_order'] ?? 1 ) );
 
-	update_post_meta( $post_id, 'figure_path', sanitize_text_field( $params['figure_path'] ?? 'Internal' ) );
-	update_post_meta( $post_id, 'figure_title', sanitize_text_field( $params['figure_title'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_image', esc_url_raw( $params['figure_image'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_external_url', esc_url_raw( $params['figure_external_url'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_external_alt', sanitize_text_field( $params['figure_external_alt'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_code', wp_kses_post( $params['figure_code'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_upload_file', sanitize_text_field( $params['figure_upload_file'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_interactive_arguments', wp_kses_post( $params['figure_interactive_arguments'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_caption_short', wp_kses_post( $params['figure_caption_short'] ?? '' ) );
-	update_post_meta( $post_id, 'figure_caption_long', wp_kses_post( $params['figure_caption_long'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_path', sanitize_text_field( $params['figure_path'] ?? 'Internal' ) );
+// 	update_post_meta( $post_id, 'figure_title', sanitize_text_field( $params['figure_title'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_image', esc_url_raw( $params['figure_image'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_external_url', esc_url_raw( $params['figure_external_url'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_external_alt', sanitize_text_field( $params['figure_external_alt'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_code', wp_kses_post( $params['figure_code'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_upload_file', sanitize_text_field( $params['figure_upload_file'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_interactive_arguments', wp_kses_post( $params['figure_interactive_arguments'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_caption_short', wp_kses_post( $params['figure_caption_short'] ?? '' ) );
+// 	update_post_meta( $post_id, 'figure_caption_long', wp_kses_post( $params['figure_caption_long'] ?? '' ) );
 
-	// Save fieldsets in Exopite-compatible associative array shape.
-	update_post_meta(
-		$post_id,
-		'figure_science_info',
-		array(
-			'figure_science_link_text' => sanitize_text_field( $params['figure_science_link_text'] ?? '' ),
-			'figure_science_link_url'  => esc_url_raw( $params['figure_science_link_url'] ?? '' ),
-		)
-	);
+// 	// Save fieldsets in Exopite-compatible associative array shape.
+// 	update_post_meta(
+// 		$post_id,
+// 		'figure_science_info',
+// 		array(
+// 			'figure_science_link_text' => sanitize_text_field( $params['figure_science_link_text'] ?? '' ),
+// 			'figure_science_link_url'  => esc_url_raw( $params['figure_science_link_url'] ?? '' ),
+// 		)
+// 	);
 
-	update_post_meta(
-		$post_id,
-		'figure_data_info',
-		array(
-			'figure_data_link_text' => sanitize_text_field( $params['figure_data_link_text'] ?? '' ),
-			'figure_data_link_url'  => esc_url_raw( $params['figure_data_link_url'] ?? '' ),
-		)
-	);
+// 	update_post_meta(
+// 		$post_id,
+// 		'figure_data_info',
+// 		array(
+// 			'figure_data_link_text' => sanitize_text_field( $params['figure_data_link_text'] ?? '' ),
+// 			'figure_data_link_url'  => esc_url_raw( $params['figure_data_link_url'] ?? '' ),
+// 		)
+// 	);
 
-	return graphic_data_get_figure_block_meta( $request );
-}
+// 	return graphic_data_get_figure_block_meta( $request );
+// }
 
 /**
  * Begins execution of the plugin.

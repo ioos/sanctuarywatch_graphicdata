@@ -196,14 +196,17 @@ async function loadJson(targetContainer) {
 						graphType2.innerHTML = 'Plotly bar graph';
 						const graphType3 = document.createElement('option');
 						graphType3.value = 'Plotly line graph (time series)';
-						graphType3.innerHTML =
-							'Plotly line graph (time series)';
+						graphType3.innerHTML ='Plotly line graph, time series, or scatter plot';
+						// const graphType4 = document.createElement('option');
+						// graphType4.value = 'Tabulator Table';
+						// graphType4.innerHTML = 'Tabulator Table';
 						// let graphType4 = document.createElement("option");
 						// graphType4.value = "Plotly map";
 						// graphType4.innerHTML = "Plotly map";
 						selectGraphType.appendChild(graphType1);
 						selectGraphType.appendChild(graphType2);
 						selectGraphType.appendChild(graphType3);
+						// selectGraphType.appendChild(graphType4);
 						// selectGraphType.appendChild(graphType4);
 
 						//Admin is able to call to the interactive_arguments using document.getElementsByName("figure_interactive_arguments")[0].value;
@@ -346,6 +349,11 @@ function secondaryGraphFields(graphType, interactive_arguments, jsonColumns) {
 			clearPreviousGraphFields();
 			plotlyLineParameterFields(jsonColumns, interactive_arguments);
 			break;
+		// case 'Tabulator Table':
+		//tabulator-table
+		// 	// Clear any previously created graph fields
+		// 	clearPreviousGraphFields();
+		// 	break;
 	}
 }
 

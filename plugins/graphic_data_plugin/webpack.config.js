@@ -15,6 +15,31 @@ module.exports = {
 				'includes/figures/js/interactive/plotly-timeseries-line.js'
 			),
 
+			'@graphic-data/figure-render': path.resolve(
+				__dirname,
+				'includes/figures/js/figure-render.js'
+			),
+
+			'@graphic-data/modal-render': path.resolve(
+				__dirname,
+				'includes/modals/js/modal-render.js'
+			),
+
+			'@graphic-data/plotly-bar': path.resolve(
+				__dirname,
+				'includes/figures/js/interactive/plotly-bar.js'
+			),
+
+			'@graphic-data/tabulator-table': path.resolve(
+				__dirname,
+				'includes/figures/js/interactive/tabulator-table.js'
+			),
+
+			'@graphic-data/plotly-map': path.resolve(
+				__dirname,
+				'includes/figures/js/interactive/plotly-map.js'
+			),
+
 			'@graphic-data/plotly-utility': path.resolve(
 				__dirname,
 				'includes/figures/js/interactive/plotly-utility.js'

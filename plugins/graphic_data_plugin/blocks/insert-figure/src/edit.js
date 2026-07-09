@@ -3,6 +3,9 @@ import { useSelect } from '@wordpress/data';
 import { useBlockProps } from '@wordpress/block-editor';
 import apiFetch from '@wordpress/api-fetch';
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
+import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
+import { render_tab_info } from '@graphic-data/figure-render';
+import { render_interactive_plots } from '@graphic-data/figure-render';
 
 import {
 	SelectControl,
@@ -45,6 +48,142 @@ function normalizeInteractiveArguments(value) {
 	return JSON.stringify(value);
 }
 
+
+function ensurePlotlyEditorLayerStyles(rootDocument) {
+	if (!rootDocument) return;
+
+	const styleId = 'graphic-data-plotly-editor-layer-fix';
+
+	if (rootDocument.getElementById(styleId)) {
+		return;
+	}
+
+	const style = rootDocument.createElement('style');
+	style.id = styleId;
+	style.textContent = `
+		.graphic-data-block-plotly-target,
+		.graphic-data-block-plotly-target .js-plotly-plot,
+		.graphic-data-block-plotly-target .plot-container,
+		.graphic-data-block-plotly-target .plot-container.plotly,
+		.graphic-data-block-plotly-target .svg-container {
+			position: relative !important;
+		}
+
+		.graphic-data-block-plotly-target .svg-container {
+			overflow: hidden !important;
+		}
+
+		.graphic-data-block-plotly-target .svg-container > .main-svg {
+			position: absolute !important;
+			top: 0 !important;
+			left: 0 !important;
+		}
+
+		.graphic-data-block-plotly-target .svg-container > .main-svg {
+			width: 100% !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-container {
+			position: absolute !important;
+			top: 0 !important;
+			right: 0 !important;
+			left: auto !important;
+			width: 100% !important;
+			height: 100% !important;
+			z-index: 1001 !important;
+			pointer-events: none !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar {
+			position: absolute !important;
+			top: 2px !important;
+			right: 2px !important;
+			left: auto !important;
+
+			display: flex !important;
+			flex-direction: row !important;
+			flex-wrap: nowrap !important;
+			align-items: center !important;
+			justify-content: flex-end !important;
+
+			width: auto !important;
+			height: auto !important;
+			white-space: nowrap !important;
+			pointer-events: all !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-group {
+			position: relative !important;
+
+			display: flex !important;
+			flex-direction: row !important;
+			flex-wrap: nowrap !important;
+			align-items: center !important;
+
+			float: none !important;
+			clear: none !important;
+
+			width: auto !important;
+			height: 22px !important;
+			min-width: 0 !important;
+			min-height: 0 !important;
+
+			margin: 0 0 0 8px !important;
+			padding: 0 !important;
+
+			white-space: nowrap !important;
+			vertical-align: middle !important;
+			box-sizing: border-box !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-group:first-child {
+			margin-left: 0 !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-btn {
+			position: relative !important;
+
+			display: inline-flex !important;
+			flex: 0 0 auto !important;
+			align-items: center !important;
+			justify-content: center !important;
+
+			float: none !important;
+			clear: none !important;
+
+			width: 22px !important;
+			height: 22px !important;
+			min-width: 22px !important;
+			min-height: 22px !important;
+
+			margin: 0 !important;
+			padding: 3px 4px !important;
+
+			line-height: 1 !important;
+			box-sizing: border-box !important;
+			vertical-align: middle !important;
+			text-decoration: none !important;
+			pointer-events: all !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-btn svg {
+			position: static !important;
+			display: block !important;
+			width: 1em !important;
+			height: 1em !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			flex: 0 0 auto !important;
+		}
+
+		.graphic-data-block-plotly-target .modebar-btn svg path {
+			pointer-events: none !important;
+		}
+	`;
+
+	rootDocument.head.appendChild(style);
+}
+
 /**
  * Edit component
  *
@@ -58,14 +197,14 @@ function normalizeInteractiveArguments(value) {
  * 5. Pass that target div ID, interactive arguments, and figure ID into
  *    producePlotlyLineFigure().
  */
-export default function Edit({ attributes, setAttributes }) {
+export default function Edit({ attributes, setAttributes, clientId }) {
 	/**
 	 * figureId is the only block attribute this editor really needs now.
 	 *
 	 * The saved page should use this same figureId later to render the frontend
 	 * Plotly figure.
 	 */
-	const { figureId = 0 } = attributes;
+	const { figureId = 0, instanceId = '' } = attributes;
 
 	/**
 	 * useBlockProps adds the standard WordPress block classes and editor props.
@@ -98,6 +237,7 @@ export default function Edit({ attributes, setAttributes }) {
 	const [isLoadingMeta, setIsLoadingMeta] = useState(false);
 	const [isRenderingPlot, setIsRenderingPlot] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
+	const [figurePathFilter, setFigurePathFilter] = useState(0);
 
 	/**
 	 * Load published Figure CPT posts for the dropdown.
@@ -127,23 +267,76 @@ export default function Edit({ attributes, setAttributes }) {
 			? `Figure ${figureId}`
 			: '';
 
+
+
 	/**
 	 * Convert Figure CPT posts into SelectControl options.
 	 */
+
+	const figurePathOptions = [
+		{
+			label: __('Filter by Figure Type...', 'graphic-data-plugin'),
+			value: 0,
+		},
+		{
+			label: __('Interactive', 'graphic-data-plugin'),
+			value: 'Interactive',
+		},
+		{
+			label: __('External Image', 'graphic-data-plugin'),
+			value: 'External',
+		},
+		{
+			label: __('Code', 'graphic-data-plugin'),
+			value: 'Code',
+		},
+		{
+			label: __('Internal Image', 'graphic-data-plugin'),
+			value: 'Internal',
+		},
+	];
+
 	const figureOptions = [
 		{
-			label: __('Select a figure', 'graphic-data-plugin'),
+			label: __('Select a Figure...', 'graphic-data-plugin'),
 			value: 0,
 		},
 		...(Array.isArray(figures)
-			? figures.map((figure) => ({
-					label: figure.title?.rendered
+			? figures
+				.filter((figure) => {
+					if (figurePathFilter === 0 || figurePathFilter === '0') {
+						return true;
+					}
+				
+					return figure.figure_path === figurePathFilter;
+				})
+				.map((figure) => {
+					const figureTitle = figure.title?.rendered
 						? stripHTML(figure.title.rendered)
-						: `Figure ${figure.id}`,
-					value: figure.id,
-				}))
+						: 'Untitled figure';
+					
+					return {
+							label: `${figure.figure_path} (id:${figure.id}) - ${figureTitle}`,
+						value: figure.id,
+					};
+					
+				})
 			: []),
 	];
+
+
+	useEffect(() => {
+		if (instanceId) return;
+	
+		const cleanClientId = String(clientId || '')
+			.replace(/[^a-zA-Z0-9_-]/g, '');
+	
+		setAttributes({
+			instanceId:
+				cleanClientId ||
+				`instance-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+		});
+	}, [instanceId, clientId, setAttributes]);
 
 	/**
 	 * When figureId changes, fetch the full figure metadata from your custom
@@ -249,29 +442,29 @@ export default function Edit({ attributes, setAttributes }) {
 			};
 		}
 
-		if (meta.figure_path !== 'Interactive') {
-			setErrorMessage(
-				'The selected figure is not marked as Interactive, so the Plotly renderer was not run.'
-			);
+		// if (meta.figure_path !== 'Interactive') {
+		// 	setErrorMessage(
+		// 		'The selected figure is not marked as Interactive, so the Plotly renderer was not run.'
+		// 	);
 
-			return () => {
-				isCurrentRender = false;
-			};
-		}
+		// 	return () => {
+		// 		isCurrentRender = false;
+		// 	};
+		// }
 
-		const interactiveArguments = normalizeInteractiveArguments(
-			meta.figure_interactive_arguments
-		);
+		// const interactiveArguments = normalizeInteractiveArguments(
+		// 	meta.figure_interactive_arguments
+		// );
 
-		if (!interactiveArguments) {
-			setErrorMessage(
-				'The selected figure does not have figure_interactive_arguments.'
-			);
+		// if (!interactiveArguments) {
+		// 	setErrorMessage(
+		// 		'The selected figure does not have figure_interactive_arguments.'
+		// 	);
 
-			return () => {
-				isCurrentRender = false;
-			};
-		}
+		// 	return () => {
+		// 		isCurrentRender = false;
+		// 	};
+		// }
 
 		/**
 		 * This ID intentionally ends with the figure ID.
@@ -281,72 +474,147 @@ export default function Edit({ attributes, setAttributes }) {
 		 *
 		 * So we keep that same pattern.
 		 */
-		const targetFigureElement = `targetFigureElement_${figureId}`;
+		const safeInstanceId = String(instanceId || clientId || '').replace(/[^a-zA-Z0-9_-]/g, '');
+		const targetFigureElement = `targetFigureElement_${figureId}_${safeInstanceId}`;
+
 
 		/**
 		 * Important:
 		 * Do not assume global document is the same document as the block editor canvas.
 		 * In the block editor, previewElement may live inside an editor iframe.
 		 */
+
+
 		const targetDocument = previewElement.ownerDocument;
+		ensurePlotlyEditorLayerStyles(targetDocument);
+
+		const containerDiv = targetDocument.createElement('div');
+		containerDiv.id = 'containerDiv';
+		containerDiv.className = 'containerDiv graphic-data-block-container';
+		containerDiv.dataset.figureId = String(figureId);
+		containerDiv.style.width = '100%';
+
+		previewElement.appendChild(containerDiv);
+
 		const targetDiv = targetDocument.createElement('div');
 		targetDiv.id = targetFigureElement;
-		targetDiv.className =
-			'targetFigureElement graphic-data-block-plotly-target';
+		targetDiv.className = 'targetFigureElement graphic-data-block-plotly-target';
 		targetDiv.dataset.figureId = String(figureId);
 		targetDiv.style.width = '100%';
 
-		previewElement.appendChild(targetDiv);
+		containerDiv.appendChild(targetDiv);
 
-		// console.log('Target div created for Plotly:', {
-		// 	figureId,
-		// 	targetFigureElement,
-		// 	targetDiv,
-		// 	foundInGlobalDocument: !!document.getElementById(targetFigureElement),
-		// 	foundInTargetDocument: !!targetDocument.getElementById(targetFigureElement),
-		// 	sameDocument: targetDocument === document,
-		// });
 
-		async function renderPlotlyFigure() {
+		async function renderFigureInsideBlock() {
 			setIsRenderingPlot(true);
 			setErrorMessage('');
 
 			try {
+
+				function formatFigureMeta(meta = {}, figureId = 0) {
+					return {
+						code: meta.figure_code || '',
+						dataLink: meta.figure_data_link_url || '',
+						dataText: meta.figure_data_link_text || '',
+						externalAlt: meta.figure_external_alt || '',
+						figureTitle: meta.figure_title || '',
+						figureType: meta.figure_path || '',
+						figure_interactive_arguments:
+							typeof meta.figure_interactive_arguments === 'string'
+								? meta.figure_interactive_arguments
+								: JSON.stringify(meta.figure_interactive_arguments || []),
+						figure_published: meta.figure_published || '',
+						imageLink: meta.figure_image || '',
+						longCaption: meta.figure_caption_long || '',
+						postID: Number(figureId || meta.id || meta.postID || 0),
+						scienceLink: meta.figure_science_link_url || '',
+						scienceText: meta.figure_science_link_text || '',
+						shortCaption: meta.figure_caption_short || '',
+					};
+				}
+
+				// const rawArgs = meta?.figure_interactive_arguments;
+
+				// const parsedArgs =
+				// 	typeof rawArgs === 'string'
+				// 		? JSON.parse(rawArgs)
+				// 		: rawArgs;
+
+				// const graphType = Array.isArray(parsedArgs)
+				// 	? Object.fromEntries(parsedArgs).graphType
+				// 	: parsedArgs?.graphType;
+
+
+				// if (graphType === 'Plotly line graph (time series)') {
+				// 	await Promise.resolve(
+				// 		producePlotlyLineFigure(
+				// 			targetFigureElement,
+				// 			interactiveArguments,
+				// 			Number(figureId),
+				// 			targetDocument
+				// 		)
+				// 	);
+				// }
+				// if (graphType === 'Plotly bar graph') {
+				// 	await Promise.resolve(
+				// 		producePlotlyBarFigure(
+				// 			targetFigureElement,
+				// 			interactiveArguments,
+				// 			Number(figureId),
+				// 			targetDocument
+				// 		)
+				// 	);
+				// }
+
+				const info_obj = formatFigureMeta(meta, 0);
+				const tabContentContainer = document.getElementById(targetFigureElement);
+
 				await Promise.resolve(
-					producePlotlyLineFigure(
-						targetFigureElement,
-						interactiveArguments,
-						Number(figureId),
+					render_tab_info(
+						targetDiv,
+						containerDiv,
+						info_obj,
+						0,
+						true
+					),
+				);
+
+				await Promise.resolve(
+					render_interactive_plots(
+						targetDiv,
+						info_obj,
 						targetDocument
 					)
 				);
 
-				const plotDiv = targetDocument.getElementById(`plotlyFigure${figureId}`);
-				const targetDiv2 = targetDocument.getElementById(`targetFigureElement_${figureId}`);
-
-				console.log('plotDiv', plotDiv);
-				console.log('targetDiv2', targetDiv2);
-
+				/**
+				 * Gutenberg may finish sizing the block after Plotly initially renders.
+				 * Wait two animation frames, then force Plotly to use the actual parent width.
+				 */
+				await new Promise((resolve) => {
+					window.requestAnimationFrame(() => {
+						window.requestAnimationFrame(resolve);
+					});
+				});
+				
+				const targetElement = targetDocument.getElementById(targetFigureElement);
+				
+				const plotDiv =
+					targetElement?.querySelector('.js-plotly-plot') ||
+					targetElement?.querySelector('.plotly') ||
+					targetElement;
+				
+				if (plotDiv && window.Plotly?.Plots?.resize) {
+					window.Plotly.Plots.resize(plotDiv);
+				}
+				
 				if (plotDiv && window.Plotly?.relayout) {
-					plotDiv.style.width = '100%';
-					plotDiv.style.maxWidth = '100%';
-					// plotDiv.style.height = `${editorPlotHeight}px`;
-
 					await window.Plotly.relayout(plotDiv, {
 						autosize: true,
-					
-						'margin.t': 60,
-						'margin.b': 60,
-						'margin.l': 60,
-						'margin.r': 60,
-						'margin.pad': 4,
-					
-						'xaxis.automargin': true,
-						'yaxis.automargin': true,
+						width: targetElement.clientWidth,
 					});
-					
-					await window.Plotly.Plots.resize(plotDiv);
 				}
+
 			} catch (error) {
 				if (!isCurrentRender) return;
 
@@ -362,14 +630,8 @@ export default function Edit({ attributes, setAttributes }) {
 			}
 		}
 
-		renderPlotlyFigure();
+		renderFigureInsideBlock();
 
-		// console.log('targetFigureElement', targetFigureElement);
-		// producePlotlyLineFigure(
-		// 	targetFigureElement,
-		// 	interactiveArguments,
-		// 	Number(figureId)
-		// )
 
 		return () => {
 			isCurrentRender = false;
@@ -391,6 +653,60 @@ export default function Edit({ attributes, setAttributes }) {
 	return (
 		<div {...blockProps}>
 			<div
+				className="graphic-data-figure-path-selector"
+				style={{
+					marginBottom: '16px',
+				}}
+			>
+				<label
+					className="graphic-data-figure-path-selector"
+					style={{
+						display: 'block',
+						marginBottom: '8px',
+						// textTransform: 'uppercase',
+						// textDecoration: 'underline',
+						fontSize: '14px',
+						fontWeight: '600',
+						lineHeight: '1.4',
+						fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
+						}}
+				>
+					{__('Graphic Data - Figure', 'graphic-data-plugin')}
+				</label>
+			</div>
+
+			<div
+				className="graphic-data-figure-path-selector"
+				style={{
+					marginBottom: '16px',
+				}}
+			>
+				<SelectControl
+					// label={__('Select Figure Type:', 'graphic-data-plugin')}
+					value={figurePathFilter}
+					options={figurePathOptions}
+					onChange={(value) => {
+						setFigurePathFilter(value);
+
+						/**
+						 * Clear the selected figure when changing figure type.
+						 * This prevents an old selected figure from staying active
+						 * after the dropdown category changes.
+						 */
+						setAttributes({
+							figureId: 0,
+						});
+
+						setMeta(null);
+						setErrorMessage('');
+
+						if (previewRef.current) {
+							previewRef.current.innerHTML = '';
+						}
+					}}
+				/>
+			</div>
+			<div
 				className="graphic-data-figure-selector"
 				style={{
 					marginBottom: '16px',
@@ -405,8 +721,10 @@ export default function Edit({ attributes, setAttributes }) {
 				)}
 
 				{Array.isArray(figures) && figures.length > 0 && (
+
+					
 					<SelectControl
-						label={__('Figure', 'graphic-data-plugin')}
+						// label={__('Select Existing Figure:', 'graphic-data-plugin')}
 						value={Number(figureId)}
 						options={figureOptions}
 						onChange={(value) => {
@@ -428,18 +746,6 @@ export default function Edit({ attributes, setAttributes }) {
 							}
 						}}
 					/>
-				)}
-
-				{selectedFigureTitle && (
-					<p
-						style={{
-							marginTop: '8px',
-							marginBottom: '0',
-							fontSize: '13px',
-						}}
-					>
-						<strong>Selected:</strong> {selectedFigureTitle}
-					</p>
 				)}
 			</div>
 
@@ -465,7 +771,17 @@ export default function Edit({ attributes, setAttributes }) {
 
 			{!figureId && !figuresAreLoading && (
 				<Notice status="info" isDismissible={false}>
-					Select a figure to render it in this block.
+					Select a Graphic Data "Figure" to render it in this block. If you
+					filter by figure type and do not see any figures listed in the drop
+					down menu above, you will need to{' '}
+					<a
+						href="/wp-admin/post-new.php?post_type=figure"
+						target="_blank"
+						rel="noreferrer"
+					>
+						Create a New Figure
+					</a>{' '}
+					of that type.
 				</Notice>
 			)}
 

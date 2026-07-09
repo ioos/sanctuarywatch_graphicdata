@@ -388,90 +388,90 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 });
 
-
-(function () {
-	// Only run on WordPress post edit screens
-	if (!window.location.pathname.includes('post.php')) return;
+// this is for rendering figure and saving them into an html file when the save button is hit. 
+// (function () {
+// 	// Only run on WordPress post edit screens
+// 	if (!window.location.pathname.includes('post.php')) return;
   
-	// Create hidden container if it doesn't exist
-	let previewDiv = document.getElementById('figure-preview-container');
-	if (!previewDiv) {
-	  previewDiv = document.createElement('div');
-	  previewDiv.id = 'figure-preview-container';
-	  previewDiv.style.display = 'none';
-	  document.body.appendChild(previewDiv);
-	}
+// 	// Create hidden container if it doesn't exist
+// 	let previewDiv = document.getElementById('figure-preview-container');
+// 	if (!previewDiv) {
+// 	  previewDiv = document.createElement('div');
+// 	  previewDiv.id = 'figure-preview-container';
+// 	  previewDiv.style.display = 'none';
+// 	  document.body.appendChild(previewDiv);
+// 	}
   
-	// Get the Save/Publish button
-	const saveBtn = document.getElementById('publish');
-	if (!saveBtn) return;
+// 	// Get the Save/Publish button
+// 	const saveBtn = document.getElementById('publish');
+// 	if (!saveBtn) return;
   
-	saveBtn.addEventListener('click', function (event) {
-	  console.log('Save button clicked on post.php');
+// 	saveBtn.addEventListener('click', function (event) {
+// 	  console.log('Save button clicked on post.php');
   
-	  // Make sure savedFigure exists
-	  if (!window.savedFigure) {
-		console.warn('No savedFigure object found');
-		return;
-	  }
+// 	  // Make sure savedFigure exists
+// 	  if (!window.savedFigure) {
+// 		console.warn('No savedFigure object found');
+// 		return;
+// 	  }
   
-	  // Render the Plotly graph into the hidden div
-	  Plotly.react(
-		previewDiv,
-		window.savedFigure.data,
-		window.savedFigure.layout,
-		window.savedFigure.config
-	  );
+// 	  // Render the Plotly graph into the hidden div
+// 	  Plotly.react(
+// 		previewDiv,
+// 		window.savedFigure.data,
+// 		window.savedFigure.layout,
+// 		window.savedFigure.config
+// 	  );
   
-	  // Generate HTML from the savedFigure object
-	  const figureID = 'plotly-preview-' + window.savedFigure.id;
-	  const htmlContent = `
-  <!doctype html>
-  <html>
-  <head>
-  <meta charset="utf-8">
-  <title>Plotly Embed</title>
-  <style>
-  html, body { width:100%; height:100%; margin:0; padding:0; }
-  #${figureID} { width:100%; height:500px; }
-  </style>
-  </head>
-  <body>
-  <div id="${figureID}"></div>
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-  <script>
-	const fig = ${JSON.stringify(window.savedFigure)};
-	Plotly.react(document.getElementById("${figureID}"), fig.data, fig.layout, fig.config);
-  </script>
-  </body>
-  </html>
-	  `;
+// 	  // Generate HTML from the savedFigure object
+// 	  const figureID = 'plotly-preview-' + window.savedFigure.id;
+// 	  const htmlContent = `
+//   <!doctype html>
+//   <html>
+//   <head>
+//   <meta charset="utf-8">
+//   <title>Plotly Embed</title>
+//   <style>
+//   html, body { width:100%; height:100%; margin:0; padding:0; }
+//   #${figureID} { width:100%; height:500px; }
+//   </style>
+//   </head>
+//   <body>
+//   <div id="${figureID}"></div>
+//   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+//   <script>
+// 	const fig = ${JSON.stringify(window.savedFigure)};
+// 	Plotly.react(document.getElementById("${figureID}"), fig.data, fig.layout, fig.config);
+//   </script>
+//   </body>
+//   </html>
+// 	  `;
   
-	  // Send the HTML to your PHP handler via AJAX
-	  const formData = new FormData();
-	  formData.append('action', 'custom_file_upload');
-	  formData.append('post_id', window.savedFigure.id);
-	  formData.append('figure_nonce', my_ajax_obj.nonce);
-	  formData.append(
-		'uploaded_file',
-		new Blob([htmlContent], { type: 'text/html' }),
-		`plotly-${window.savedFigure.id}.html`
-	  );
+// 	  // Send the HTML to your PHP handler via AJAX
+// 	  const formData = new FormData();
+// 	  formData.append('action', 'custom_file_upload');
+// 	  formData.append('post_id', window.savedFigure.id);
+// 	  formData.append('figure_nonce', my_ajax_obj.nonce);
+// 	  formData.append(
+// 		'uploaded_file',
+// 		new Blob([htmlContent], { type: 'text/html' }),
+// 		`plotly-${window.savedFigure.id}.html`
+// 	  );
   
-	  fetch(my_ajax_obj.ajax_url, {
-		method: 'POST',
-		body: formData,
-		credentials: 'same-origin'
-	  })
-		.then(r => r.json())
-		.then(result => {
-		  if (result.success) {
-			console.log('HTML saved on server:', result.data.path);
-		  } else {
-			console.error('Error saving HTML:', result.data.message);
-		  }
-		})
-		.catch(err => console.error('AJAX error saving HTML:', err));
-	});
-  })();
+// 	  fetch(my_ajax_obj.ajax_url, {
+// 		method: 'POST',
+// 		body: formData,
+// 		credentials: 'same-origin'
+// 	  })
+// 		.then(r => r.json())
+// 		.then(result => {
+// 		  if (result.success) {
+// 			console.log('HTML saved on server:', result.data.path);
+// 		  } else {
+// 			console.error('Error saving HTML:', result.data.message);
+// 		  }
+// 		})
+// 		.catch(err => console.error('AJAX error saving HTML:', err));
+// 	});
+//   })();
 
