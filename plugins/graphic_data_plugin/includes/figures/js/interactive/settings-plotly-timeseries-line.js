@@ -526,8 +526,9 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 				newDiv.append(markerSizeRow);
 
 				//Add checkboxes for error bars, standard deviation, mean, and percentiles
-				const features = ['Legend', 'StdDev', 'ErrorBars'];
+				const features = ['RemoveLine','Legend', 'StdDev', 'ErrorBars'];
 				const featureNames = [
+					'Scatter Mode (Remove Line)',
 					'Add Line to Legend',
 					'+-1 Std Dev Fill ',
 					'Symmetric Error Bars',
@@ -552,24 +553,24 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 					label.innerHTML = `${featureName}`;
 					newColumn1.appendChild(label);
 
-					if (feature == 'Legend') {
+					if (feature == 'Legend' || feature == 'RemoveLine') {
 						const checkbox = document.createElement('input');
 						checkbox.type = 'checkbox';
 						checkbox.id = fieldLabel[0] + feature;
-						checkbox.name = 'plotBarFields';
+						checkbox.name = 'plotFields';
 
-						const fieldValueBarSaved = fillFormFieldBarValues(
+						const fieldValueSaved = fillFormFieldValues(
 							checkbox.id,
 							interactive_arguments
 						);
 						checkbox.value =
-							fieldValueBarSaved === 'on' ? 'on' : '';
-						checkbox.checked = fieldValueBarSaved === 'on';
+						fieldValueSaved === 'on' ? 'on' : '';
+						checkbox.checked = fieldValueSaved === 'on';
 
 						// Toggle visibility dynamically
 						checkbox.addEventListener('change', function () {
 							checkbox.value = checkbox.checked ? 'on' : '';
-							logFormFieldBarValues();
+							logFormFieldValues();
 						});
 						newColumn2.appendChild(checkbox);
 					}

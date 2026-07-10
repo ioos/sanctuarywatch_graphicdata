@@ -5736,6 +5736,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         }
       }
     }
+    console.log('figureArguments', figureArguments);
 
     //const container = document.getElementById(plotlyDivID); 
 
@@ -5747,7 +5748,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
         },
         linecolor: 'black',
         linewidth: 1,
-        range: [figureArguments['XAxisLowBound'], figureArguments['YAxisHighBound']],
+        range: [figureArguments['XAxisLowBound'], figureArguments['XAxisHighBound']],
         tickmode: graphTickModeBool,
         ticks: graphTickPositionBool,
         showgrid: showGridBool
@@ -6137,9 +6138,12 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments) {
     newColumn1.classList.add("col-3");
     newColumn2 = document.createElement("div");
     newColumn2.classList.add("col");
+    let labelInputAxis = document.createElement("label");
+    labelInputAxis.for = axisTitle + "AxisTitle";
+    labelInputAxis.innerHTML = axisTitle + " Axis Options";
     let labelInputAxisTitle = document.createElement("label");
     labelInputAxisTitle.for = axisTitle + "AxisTitle";
-    labelInputAxisTitle.innerHTML = axisTitle + " Axis Title";
+    labelInputAxisTitle.innerHTML = "Title";
     let inputAxisTitle = document.createElement("input");
     inputAxisTitle.id = axisTitle + "AxisTitle";
     inputAxisTitle.name = "plotFields";
@@ -6151,25 +6155,31 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments) {
     inputAxisTitle.addEventListener('change', function () {
       (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
     });
-    newColumn1.appendChild(labelInputAxisTitle);
+    newColumn1.appendChild(labelInputAxis);
+    newColumn2.appendChild(labelInputAxisTitle);
+    newColumn2.appendChild(document.createElement("br"));
     newColumn2.appendChild(inputAxisTitle);
     newRow.append(newColumn1, newColumn2);
     newDiv.append(newRow);
     const rangeBound = ["Low", "High"];
+    newRow = document.createElement("div");
+    newRow.classList.add("row", "fieldPadding");
+    newColumn1 = document.createElement("div");
+    newColumn1.classList.add("col-3");
+    newColumn2 = document.createElement("div");
+    newColumn2.classList.add("col");
+    const boundsWrapper = document.createElement('div');
+    boundsWrapper.classList.add('row');
     rangeBound.forEach(bound => {
-      newRow = document.createElement("div");
-      newRow.classList.add("row", "fieldPadding");
-      newColumn1 = document.createElement("div");
-      newColumn1.classList.add("col-3");
-      newColumn2 = document.createElement("div");
-      newColumn2.classList.add("col");
-      let labelBound = document.createElement("label");
-      labelBound.for = axisTitle + bound + "Bound";
-      labelBound.innerHTML = axisTitle + " Axis, " + bound + " Bound";
+      const boundColumn = document.createElement('div');
+      boundColumn.classList.add('col');
       let inputBound = document.createElement("input");
       inputBound.id = axisTitle + "Axis" + bound + "Bound";
       inputBound.name = "plotFields";
       inputBound.type = "number";
+      let labelBound = document.createElement("label");
+      labelBound.for = axisTitle + bound + "Bound";
+      labelBound.innerHTML = bound + " Bound (both required)";
       fieldValueSaved = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.fillFormFieldValues)(inputBound.id, interactive_arguments);
       if (fieldValueSaved != undefined) {
         inputBound.value = fieldValueSaved;
@@ -6177,11 +6187,12 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments) {
       inputBound.addEventListener('change', function () {
         (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
       });
-      newColumn1.appendChild(labelBound);
-      newColumn2.appendChild(inputBound);
-      newRow.append(newColumn1, newColumn2);
-      newDiv.append(newRow);
+      boundColumn.append(labelBound, document.createElement('br'), inputBound);
+      boundsWrapper.appendChild(boundColumn);
     });
+    newColumn2.appendChild(boundsWrapper);
+    newRow.append(newColumn1, newColumn2);
+    newDiv.append(newRow);
   });
 
   // Create select field for number of lines to be plotted

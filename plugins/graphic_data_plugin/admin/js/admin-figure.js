@@ -14,6 +14,7 @@ function run_admin_figures() {
 	let jsonColumns;
 	let fieldLabelNumber;
 	let fieldValueSaved;
+	redText();
 
 	// Hide the parent element of the "figure_interactive_arguments" field
 	document.getElementsByName(
