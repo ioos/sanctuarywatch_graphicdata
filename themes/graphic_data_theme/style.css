@@ -367,10 +367,11 @@ body > h1{
 
   /* Nav tabs styles */
   .nav-tabs .nav-link {
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-right: 25px;
+    padding-left: 25px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    font-size: 1.15rem;
   }
   
 
