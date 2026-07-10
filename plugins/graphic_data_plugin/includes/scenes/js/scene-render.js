@@ -9,6 +9,7 @@ import {
     get_mobile_layer, remove_outer_div, createAccordionItem,
 } from '@graphic-data/scene-shared';
 import { render_modal } from '@graphic-data/modal-render';
+import { initTabButtons } from '@graphic-data/modal-render';
 
 let graphicDataSceneData = getSceneData();
 
@@ -2408,6 +2409,8 @@ function alertIfMissingModal() {
             if (!modalIds.includes(targetId_lowercase)) {
                 alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
             }
+
+            initTabButtons();
         })();
 
 

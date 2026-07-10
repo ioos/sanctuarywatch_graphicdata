@@ -256,7 +256,7 @@ export function render_modal(key, obj, modal_obj){
  * initTabButtons();
  */
 //After removing tabs that do not contain content or do not contain published figures, we show only the tabs that have content and make the first one active
-function initTabButtons() {
+export function initTabButtons() {
 	// Select all buttons inside nav-item elements
 	// const navButtons = document.querySelectorAll('.nav-item button');
     try {
