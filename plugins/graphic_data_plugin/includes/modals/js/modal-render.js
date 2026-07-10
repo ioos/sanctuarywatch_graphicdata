@@ -381,7 +381,7 @@ function trapFocus(modalElement) {
  * @param               modal_id
  * @param               buttonID
  */
- function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
+ function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID, copyTabLinkID){
     
     const protocol = window.location.protocol;
     const host = window.location.host;
@@ -451,6 +451,11 @@ function trapFocus(modalElement) {
                 if (element.style.display == "none") {
                     //console.log('buttonID', buttonID);
                     element.remove();
+                }
+                const element2 = document.getElementById(copyTabLinkID);
+                if (element2.style.display == "none") {
+                    //console.log('buttonID', buttonID);
+                    element2.remove();
                 }
             }
 
@@ -594,6 +599,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     
     let linkbutton = document.createElement("button");
     linkbutton.classList.add("btn", "btn-primary");
+    linkbutton.id = `copytablink-${tab_id}`;
     linkbutton.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Tab Link';
     linkbutton.type = "button"; 
     linkbutton.setAttribute('style', 'margin-bottom: 7px');
@@ -633,7 +639,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
         //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
     try {
         (async () => {
-            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id);
+            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id, linkbutton.id);
         })();
     } catch (error) {
     }
