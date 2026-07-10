@@ -185,6 +185,9 @@ export function render_modal(key, obj, modal_obj){
                 trapFocus(mdialog);
             }
         }
+
+        initTabButtons();
+
         // Google Tags
         document.dispatchEvent( new CustomEvent( 'graphic-data:modalWindowLoaded', {
             detail: { title, modal_id }
@@ -255,37 +258,65 @@ export function render_modal(key, obj, modal_obj){
 //After removing tabs that do not contain content or do not contain published figures, we show only the tabs that have content and make the first one active
 function initTabButtons() {
 	// Select all buttons inside nav-item elements
-	const navButtons = document.querySelectorAll('.nav-item button');
+	// const navButtons = document.querySelectorAll('.nav-item button');
+    try {
+        const navButtons = Array.from(
+			document.querySelectorAll('button.nav-link.tab-title')
+		);
 
-	const activeButtons = [];
-	const inactiveButtons = [];
+        // const navButtons = Array.from(
+        //     document.querySelectorAll('button.nav-link.tab-title')
+        // ).filter((button) => button.style.display != 'none');
 
-	// Check if any button is active (e.g., class 'active')
-	const anyActiveButton = Array.from(navButtons).some((button) => {
-		const isActiveClass = button.classList.contains('active');
+        let activeButtons = [];
+        const inactiveButtons = [];
 
-		if (!isActiveClass) {
-			inactiveButtons.push(button);
-		}
+        // Check if any button is active (e.g., class 'active')
+        const anyActiveButton = Array.from(navButtons).some((button) => {
+            const isActiveClass = button.classList.contains('active');
 
-		if (isActiveClass) {
-			const buttonExists = document.getElementById(button.id);
-			//console.log('buttonExists', buttonExists);
-			if (buttonExists) {
-				activeButtons.push(button);
-			}
-		}
-	});
+            if (!isActiveClass) {
+                inactiveButtons.push(button);
+            }
 
-	if (activeButtons.length == 0) {
-		// Activate the first one via Bootstrap API
-		if (inactiveButtons.length > 0) {
-			const firstButton = inactiveButtons[0];
-			const tabTrigger = new bootstrap.Tab(firstButton);
-			tabTrigger.show(); // ✅ Properly displays inside modal
-		}
-	}
+            if (isActiveClass) {
+                const buttonExists = document.getElementById(button.id);
+                //console.log('buttonExists', buttonExists);
+                if (buttonExists) {
+                    activeButtons.push(button);
+                }
+            }
+        });
+
+        // Remove active buttons that are display:none
+        activeButtons = activeButtons.filter((button) => {
+            if (button.style.display === 'none') {
+                button.classList.remove('active');
+                button.setAttribute('aria-selected', 'false');
+                return false;
+            }
+
+            return true;
+        });
+
+        if (activeButtons.length == 0) {
+            // Activate the first one via Bootstrap API
+            if (inactiveButtons.length > 0) {
+                const firstButton = inactiveButtons[0];
+                const tabTrigger = new bootstrap.Tab(firstButton);
+                tabTrigger.show(); // ✅ Properly displays inside modal
+            }
+        }
+
+        
+        console.log('activeButtons.length', activeButtons.length);
+        console.log('inactiveButtons.length', inactiveButtons.length);
+        console.log('activeButtons', activeButtons);
+        console.log('inactiveButtons', inactiveButtons);
+    } catch {}
 }
+
+
 
 /**
  * Traps the focus within a specified modal element, ensuring that the user cannot tab out of it.
@@ -381,7 +412,7 @@ function trapFocus(modalElement) {
  * @param               modal_id
  * @param               buttonID
  */
- function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID, copyTabLinkID){
+ function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID, copyTabLinkButtonID){
     
     const protocol = window.location.protocol;
     const host = window.location.host;
@@ -448,13 +479,10 @@ function trapFocus(modalElement) {
                 }
             } else {
                 const element = document.getElementById(buttonID);
+                const element2 = document.getElementById(copyTabLinkButtonID);
                 if (element.style.display == "none") {
                     //console.log('buttonID', buttonID);
                     element.remove();
-                }
-                const element2 = document.getElementById(copyTabLinkID);
-                if (element2.style.display == "none") {
-                    //console.log('buttonID', buttonID);
                     element2.remove();
                 }
             }
@@ -499,7 +527,7 @@ function trapFocus(modalElement) {
                             await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
                             //await new Promise(resolve => setTimeout(resolve, 1000)); // Stagger each render
                             await render_interactive_plots(tabContentElement, info_obj);
-                            initTabButtons();
+                            // initTabButtons();
                         })();
                     }
                 })();
@@ -598,8 +626,8 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     tabContentContainer.appendChild(tabContentElement);
     
     let linkbutton = document.createElement("button");
+    linkbutton.id = `copytablinkbutton-${tab_id}`;
     linkbutton.classList.add("btn", "btn-primary");
-    linkbutton.id = `copytablink-${tab_id}`;
     linkbutton.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Tab Link';
     linkbutton.type = "button"; 
     linkbutton.setAttribute('style', 'margin-bottom: 7px');
