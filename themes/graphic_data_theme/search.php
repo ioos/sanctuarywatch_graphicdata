@@ -402,7 +402,7 @@ $graphic_data_selected_instance = isset( $_GET['graphic_data_instance'] )
 			echo '<ul class="list-unstyled">';
 			foreach ( $graphic_data_results as $graphic_data_result ) {
 				echo '<li class="mb-3">';
-				echo '<span class="badge bg-secondary me-2">' . esc_html( $graphic_data_result['label'] ) . '</span>';
+				echo '<span class="badge bg-secondary me-2">' . esc_html( get_the_title($graphic_data_result['instance_id'] ) ) . '</span>';
 				echo '<a href="' . esc_url( $graphic_data_result['link'] ) . '">' . esc_html( $graphic_data_result['title'] ) . '</a>';
 				if ( '' !== $graphic_data_result['description'] ) {
 					echo '<div class="text-muted small mt-1">' . esc_html( $graphic_data_result['description'] ) . '</div>';
