@@ -1,0 +1,1453 @@
+---
+layout: page
+title: "Documentation"
+permalink: /function_documentation/classes/Graphic-Data-Site-Checker.html
+---
+
+
+<header class="phpdocumentor-header phpdocumentor-section">
+    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">Documentation</a></h1>
+    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button">
+        <i class="fas fa-bars"></i>
+    </label>
+    <section data-search-form class="phpdocumentor-search">
+    <label>
+        <span class="visually-hidden">Search for</span>
+        <svg class="phpdocumentor-search__icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="2"/>
+            <line x1="12.4892" y1="12.2727" x2="19.1559" y2="18.9393" stroke="currentColor" stroke-width="3"/>
+        </svg>
+        <input type="search" class="phpdocumentor-field phpdocumentor-search__field" placeholder="Loading .." disabled />
+    </label>
+</section>
+
+    <nav class="phpdocumentor-topnav">
+    <ul class="phpdocumentor-topnav__menu">
+        </ul>
+</nav>
+</header>
+
+    <main class="phpdocumentor">
+        <div class="phpdocumentor-section">
+            <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
+<label class="phpdocumentor-sidebar__menu-icon" for="sidebar-button">
+    Menu
+</label>
+<aside class="phpdocumentor-column -three phpdocumentor-sidebar">
+                    <section class="phpdocumentor-sidebar__category -packages">
+            <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Graphic.html" class="">Graphic</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="packages/Graphic-Data.html" class="">Data</a>
+                
+            </li>
+            </ul>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Application.html" class="">Application</a>
+</h4>
+
+                        </section>
+            
+    <section class="phpdocumentor-sidebar__category -reports">
+        <h2 class="phpdocumentor-sidebar__category-header">Reports</h2>
+                <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/deprecated.html">Deprecated</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/errors.html">Errors</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/markers.html">Markers</a></h3>
+    </section>
+
+    <section class="phpdocumentor-sidebar__category -indices">
+        <h2 class="phpdocumentor-sidebar__category-header">Indices</h2>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="indices/files.html">Files</a></h3>
+    </section>
+</aside>
+
+            <div class="phpdocumentor-column -nine phpdocumentor-content">
+                                <section>
+                                        <ul class="phpdocumentor-breadcrumbs">
+            <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic.html">Graphic</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic-Data.html">Data</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic-Data-Plugin.html">Plugin</a></li>
+    </ul>
+
+    <article class="phpdocumentor-element -class">
+        <h2 class="phpdocumentor-content__title">
+    Graphic_Data_Site_Checker
+
+    
+            <div class="phpdocumentor-element__package">
+            in package
+            <ul class="phpdocumentor-breadcrumbs">
+                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic.html">Graphic</a></li>
+                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic-Data.html">Data</a></li>
+                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Graphic-Data-Plugin.html">Plugin</a></li>
+                            </ul>
+        </div>
+    
+    
+    </h2>
+
+<div class="phpdocumentor-label-line">
+
+
+</div>
+
+        <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">21</span>
+
+    </aside>
+
+            <p class="phpdocumentor-summary">Class Graphic_Data_Site_Checker.</p>
+
+
+
+
+
+    
+    
+<h3 id="toc">
+    Table of Contents
+    <a href="classes/Graphic-Data-Site-Checker.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h3>
+
+
+
+
+
+
+
+<h4 id="toc-constants">
+    Constants
+    <a href="classes/Graphic-Data-Site-Checker.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#constant_BATCH_SIZE">BATCH_SIZE</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 10                            </span>
+</dt>
+<dd>Number of URLs to check per AJAX batch request.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#constant_CAPABILITY">CAPABILITY</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;edit_others_posts&#039;                            </span>
+</dt>
+<dd>Capability required to access the Site Checker page and endpoints.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#constant_NONCE_ACTION">NONCE_ACTION</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;graphic_data_site_checker&#039;                            </span>
+</dt>
+<dd>Nonce action used for all Site Checker AJAX requests.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#constant_PAGE_SLUG">PAGE_SLUG</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;graphic-data-site-checker&#039;                            </span>
+</dt>
+<dd>This page&#039;s admin menu slug.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#constant_PARENT_SLUG">PARENT_SLUG</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;graphic-data-search&#039;                            </span>
+</dt>
+<dd>Parent admin menu slug that this page hangs off of.</dd>
+
+    </dl>
+
+
+<h4 id="toc-properties">
+    Properties
+    <a href="classes/Graphic-Data-Site-Checker.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#property_page_hook">$page_hook</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>Full hook suffix for this page (populated once WP registers it).</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#property_plugin_url">$plugin_url</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>Absolute URL to the plugin root (for asset URLs).</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#property_version">$version</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>Version string used for asset cache-busting.</dd>
+
+    </dl>
+
+<h4 id="toc-methods">
+    Methods
+    <a href="classes/Graphic-Data-Site-Checker.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method___construct">__construct()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Constructor.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_url_batch">ajax_check_url_batch()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Check a batch of URLs and return their reachability status.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_ajax_gather_urls">ajax_gather_urls()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Return the list of every URL found in Graphic Data postmeta, along
+with the post it belongs to and the meta key it came from.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_enqueue_assets">enqueue_assets()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Enqueue CSS and the ES module for the Site Checker page only.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_print_inline_data">print_inline_data()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Print the configuration global consumed by the ES module.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_register_submenu">register_submenu()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Register the Site Checker submenu page.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_render_page">render_page()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Render the admin page markup.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_check_url">check_url()</a>
+    <span>
+                                &nbsp;: array&lt;string, mixed&gt;    </span>
+</dt>
+<dd>Probe a single URL and return {ok, status, error}.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_extract_urls">extract_urls()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, string&gt;    </span>
+</dt>
+<dd>Recursively walk a meta value (scalar, array, or Exopite fieldset payload)
+and pull out every URL it references.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_figure_meta_keys">figure_meta_keys()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, string&gt;    </span>
+</dt>
+<dd>Meta keys to scan on figure posts.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_gather_from_post_type">gather_from_post_type()</a>
+    <span>
+                                &nbsp;: array&lt;int, array&lt;string, mixed&gt;&gt;    </span>
+</dt>
+<dd>Iterate all posts of a given type and extract URLs from the named meta keys.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key">human_label_for_meta_key()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Return a human-readable label for a given meta key.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen">is_site_checker_screen()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Determine whether the given admin screen is the Site Checker page.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_modal_meta_keys">modal_meta_keys()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, string&gt;    </span>
+</dt>
+<dd>Meta keys to scan on modal posts.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_normalize_url">normalize_url()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Normalize a raw URL string into an absolute, checkable form.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_scene_meta_keys">scene_meta_keys()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, string&gt;    </span>
+</dt>
+<dd>Meta keys to scan on scene posts.</dd>
+
+    </dl>
+
+
+
+        
+    <section class="phpdocumentor-constants">
+        <h3 class="phpdocumentor-elements__header" id="constants">
+            Constants
+            <a href="classes/Graphic-Data-Site-Checker.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_BATCH_SIZE">
+        BATCH_SIZE
+        <a href="classes/Graphic-Data-Site-Checker.html#constant_BATCH_SIZE" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">29</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Number of URLs to check per AJAX batch request.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">BATCH_SIZE</span>
+    = <span class="phpdocumentor-signature__default-value">10</span>
+</code>
+
+
+        <section class="phpdocumentor-description"><p>Kept low so no single request runs long enough to time out. The
+front-end fires batches sequentially and updates progress after each.</p>
+</section>
+
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_CAPABILITY">
+        CAPABILITY
+        <a href="classes/Graphic-Data-Site-Checker.html#constant_CAPABILITY" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">42</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Capability required to access the Site Checker page and endpoints.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">CAPABILITY</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;edit_others_posts&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"><p><code class="prettyprint">edit_others_posts</code> is held by the Editor role and above, so this gates
+the page at &quot;editor or higher&quot; without requiring full admin privileges.</p>
+</section>
+
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_NONCE_ACTION">
+        NONCE_ACTION
+        <a href="classes/Graphic-Data-Site-Checker.html#constant_NONCE_ACTION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">34</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Nonce action used for all Site Checker AJAX requests.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">NONCE_ACTION</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_site_checker&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_PAGE_SLUG">
+        PAGE_SLUG
+        <a href="classes/Graphic-Data-Site-Checker.html#constant_PAGE_SLUG" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">52</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">This page&#039;s admin menu slug.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PAGE_SLUG</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic-data-site-checker&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_PARENT_SLUG">
+        PARENT_SLUG
+        <a href="classes/Graphic-Data-Site-Checker.html#constant_PARENT_SLUG" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">47</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Parent admin menu slug that this page hangs off of.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PARENT_SLUG</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic-data-search&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+            </section>
+
+        
+    <section class="phpdocumentor-properties">
+        <h3 class="phpdocumentor-elements__header" id="properties">
+            Properties
+            <a href="classes/Graphic-Data-Site-Checker.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_page_hook">
+        $page_hook
+        <a href="classes/Graphic-Data-Site-Checker.html#property_page_hook" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">73</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Full hook suffix for this page (populated once WP registers it).</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$page_hook</span>
+     = <span class="phpdocumentor-signature__default-value">&#039;&#039;</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_plugin_url">
+        $plugin_url
+        <a href="classes/Graphic-Data-Site-Checker.html#property_plugin_url" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">59</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Absolute URL to the plugin root (for asset URLs).</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$plugin_url</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_version">
+        $version
+        <a href="classes/Graphic-Data-Site-Checker.html#property_version" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">66</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Version string used for asset cache-busting.</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$version</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+            </section>
+
+            <section class="phpdocumentor-methods">
+        <h3 class="phpdocumentor-elements__header" id="methods">
+            Methods
+            <a href="classes/Graphic-Data-Site-Checker.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method___construct">
+        __construct()
+        <a href="classes/Graphic-Data-Site-Checker.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">82</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Constructor.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$plugin_url</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">''</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$version</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">'1.0.0'</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$plugin_url</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">''</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Absolute URL to the plugin root, with trailing slash.
+Defaults to one directory above this file.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$version</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">'1.0.0'</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Version string for asset URLs.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_ajax_check_url_batch">
+        ajax_check_url_batch()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_url_batch" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">503</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Check a batch of URLs and return their reachability status.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">ajax_check_url_batch</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_ajax_gather_urls">
+        ajax_gather_urls()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_ajax_gather_urls" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">221</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Return the list of every URL found in Graphic Data postmeta, along
+with the post it belongs to and the meta key it came from.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">ajax_gather_urls</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_enqueue_assets">
+        enqueue_assets()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_enqueue_assets" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">115</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Enqueue CSS and the ES module for the Site Checker page only.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">enqueue_assets</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$hook_suffix</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$hook_suffix</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Current admin page hook.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_print_inline_data">
+        print_inline_data()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_print_inline_data" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">142</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Print the configuration global consumed by the ES module.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">print_inline_data</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Script Modules load deferred, so this inline script (printed in the
+head) always runs before the module and can safely set globals.</p>
+</section>
+
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_register_submenu">
+        register_submenu()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_register_submenu" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">99</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Register the Site Checker submenu page.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">register_submenu</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_render_page">
+        render_page()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_render_page" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">177</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Render the admin page markup.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">render_page</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_check_url">
+        check_url()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_check_url" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">544</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Probe a single URL and return {ok, status, error}.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">check_url</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$url</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Tries HEAD first (cheap), falls back to GET when the server returns
+a client/server error or a WP_Error, since many hosts block HEAD.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$url</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Absolute URL.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string, mixed&gt;</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_extract_urls">
+        extract_urls()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_extract_urls" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">394</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Recursively walk a meta value (scalar, array, or Exopite fieldset payload)
+and pull out every URL it references.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">extract_urls</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Handles href/src attributes from rich text, bare <code class="prettyprint">http(s)://</code> URLs
+appearing in strings, and plain-URL scalar fields.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$value</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The value to scan.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Unique list of absolute URLs.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_figure_meta_keys">
+        figure_meta_keys()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_figure_meta_keys" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">278</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Meta keys to scan on figure posts.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">figure_meta_keys</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_gather_from_post_type">
+        gather_from_post_type()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_gather_from_post_type" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">331</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Iterate all posts of a given type and extract URLs from the named meta keys.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">gather_from_post_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, string&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$meta_keys</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;int, array&lt;string, mixed&gt;&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Post type slug.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$meta_keys</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, string&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Meta keys to inspect.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;int, array&lt;string, mixed&gt;&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Flat list of {post_id, post_title, post_type, edit_link, meta_key, url}.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_human_label_for_meta_key">
+        human_label_for_meta_key()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">296</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Return a human-readable label for a given meta key.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">human_label_for_meta_key</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$meta_key</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Used in the broken-links report so operators see field names as they
+appear in the editor UI rather than raw meta keys.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$meta_key</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Meta key.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Human-readable label.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_is_site_checker_screen">
+        is_site_checker_screen()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">166</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Determine whether the given admin screen is the Site Checker page.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">is_site_checker_screen</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$screen_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$screen_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Screen ID / hook suffix.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_modal_meta_keys">
+        modal_meta_keys()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_modal_meta_keys" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">264</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Meta keys to scan on modal posts.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">modal_meta_keys</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_normalize_url">
+        normalize_url()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_normalize_url" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">467</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Normalize a raw URL string into an absolute, checkable form.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">normalize_url</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$url</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Rejects mailto:/tel:/javascript: schemes and pure anchors.
+Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$url</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Raw URL.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Absolute URL, or empty string if not checkable.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_scene_meta_keys">
+        scene_meta_keys()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_scene_meta_keys" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">250</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Meta keys to scan on scene posts.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">scene_meta_keys</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span>
+            </section>
+
+</article>
+            </section>
+
+        
+    </article>
+                                </section>
+                <section class="phpdocumentor-on-this-page__sidebar">
+                                
+    <section class="phpdocumentor-on-this-page__content">
+        <strong class="phpdocumentor-on-this-page__title">On this page</strong>
+
+        <ul class="phpdocumentor-list -clean">
+            <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
+            <li>
+                <ul class="phpdocumentor-list -clean">
+                                        <li><a href="classes/Graphic-Data-Site-Checker.html#toc-constants">Constants</a></li>
+                                                            <li><a href="classes/Graphic-Data-Site-Checker.html#toc-properties">Properties</a></li>
+                                                            <li><a href="classes/Graphic-Data-Site-Checker.html#toc-methods">Methods</a></li>
+                                    </ul>
+            </li>
+                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/Graphic-Data-Site-Checker.html#constant_BATCH_SIZE">BATCH_SIZE</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Site-Checker.html#constant_CAPABILITY">CAPABILITY</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Site-Checker.html#constant_NONCE_ACTION">NONCE_ACTION</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Site-Checker.html#constant_PAGE_SLUG">PAGE_SLUG</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Site-Checker.html#constant_PARENT_SLUG">PARENT_SLUG</a></li>
+                                            </ul>
+                </li>
+            
+                            <li class="phpdocumentor-on-this-page-section__title">Properties</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/Graphic-Data-Site-Checker.html#property_page_hook">$page_hook</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Site-Checker.html#property_plugin_url">$plugin_url</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Site-Checker.html#property_version">$version</a></li>
+                                            </ul>
+                </li>
+            
+                        <li class="phpdocumentor-on-this-page-section__title">Methods</li>
+            <li>
+                <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method___construct">__construct()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_url_batch">ajax_check_url_batch()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_gather_urls">ajax_gather_urls()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_enqueue_assets">enqueue_assets()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_print_inline_data">print_inline_data()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_register_submenu">register_submenu()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_render_page">render_page()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_check_url">check_url()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_extract_urls">extract_urls()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_figure_meta_keys">figure_meta_keys()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_gather_from_post_type">gather_from_post_type()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key">human_label_for_meta_key()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen">is_site_checker_screen()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_modal_meta_keys">modal_meta_keys()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_normalize_url">normalize_url()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_scene_meta_keys">scene_meta_keys()</a></li>
+                                    </ul>
+            </li>
+                    </ul>
+    </section>
+
+                </section>
+                            </div>
+            <section data-search-results class="phpdocumentor-search-results phpdocumentor-search-results--hidden">
+    <section class="phpdocumentor-search-results__dialog">
+        <header class="phpdocumentor-search-results__header">
+            <h2 class="phpdocumentor-search-results__title">Search results</h2>
+            <button class="phpdocumentor-search-results__close"><i class="fas fa-times"></i></button>
+        </header>
+        <section class="phpdocumentor-search-results__body">
+            <ul class="phpdocumentor-search-results__entries"></ul>
+        </section>
+    </section>
+</section>
+        </div>
+        <a href="classes/Graphic-Data-Site-Checker.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+
+    </main>
+
+    <script>
+        cssVars({});
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.min.js"></script>
