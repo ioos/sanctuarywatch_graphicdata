@@ -736,11 +736,6 @@ Search.appendIndex(
             "summary": "Retrieves\u0020figure\u0020block\u0020meta\u0020fields\u0020for\u0020a\u0020given\u0020post\u0020via\u0020the\u0020REST\u0020API.",
             "url": "namespaces/default.html#function_graphic_data_get_figure_block_meta"
         },                {
-            "fqsen": "\\graphic_data_save_figure_block_meta\u0028\u0029",
-            "name": "graphic_data_save_figure_block_meta",
-            "summary": "Saves\u0020figure\u0020block\u0020meta\u0020fields\u0020for\u0020a\u0020given\u0020post\u0020via\u0020the\u0020REST\u0020API.",
-            "url": "namespaces/default.html#function_graphic_data_save_figure_block_meta"
-        },                {
             "fqsen": "\\graphic_data_plugin_run\u0028\u0029",
             "name": "graphic_data_plugin_run",
             "summary": "Begins\u0020execution\u0020of\u0020the\u0020plugin.",
@@ -1248,7 +1243,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Aenqueue_admin_interactive_default_bar_styles\u0028\u0029",
             "name": "enqueue_admin_interactive_default_bar_styles",
-            "summary": "Enqueues\u0020the\u0020Plotly\u0020bar\u0020chart\u0020settings\u0020script.",
+            "summary": "Enqueues\u0020the\u0020Plotly\u0020time\u0020series\u0020line\u0020chart\u0020settings\u0020script.",
             "url": "classes/Graphic-Data-Settings-Page.html#method_enqueue_admin_interactive_default_bar_styles"
         },                {
             "fqsen": "\\Graphic_Data_Settings_Page\u003A\u003Asettings_init\u0028\u0029",
