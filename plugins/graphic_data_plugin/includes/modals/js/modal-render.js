@@ -186,7 +186,7 @@ export function render_modal(key, obj, modal_obj){
             }
         }
 
-        initTabButtons();
+        //initTabButtons();
 
         // Google Tags
         document.dispatchEvent( new CustomEvent( 'graphic-data:modalWindowLoaded', {
@@ -256,64 +256,98 @@ export function render_modal(key, obj, modal_obj){
  * initTabButtons();
  */
 //After removing tabs that do not contain content or do not contain published figures, we show only the tabs that have content and make the first one active
-export function initTabButtons() {
-	// Select all buttons inside nav-item elements
-	// const navButtons = document.querySelectorAll('.nav-item button');
-    try {
-        const navButtons = Array.from(
-			document.querySelectorAll('button.nav-link.tab-title')
-		);
+// export function initTabButtons() {
+// 	// Select all buttons inside nav-item elements
+// 	// const navButtons = document.querySelectorAll('.nav-item button');
+//     try {
+//         const navButtons = Array.from(
+// 			document.querySelectorAll('button.nav-link.tab-title')
+// 		);
 
-        // const navButtons = Array.from(
-        //     document.querySelectorAll('button.nav-link.tab-title')
-        // ).filter((button) => button.style.display != 'none');
+//         // const navButtons = Array.from(
+//         //     document.querySelectorAll('button.nav-link.tab-title')
+//         // ).filter((button) => button.style.display != 'none');
 
-        let activeButtons = [];
-        const inactiveButtons = [];
+//         let activeButtons = [];
+//         const inactiveButtons = [];
 
-        // Check if any button is active (e.g., class 'active')
-        const anyActiveButton = Array.from(navButtons).some((button) => {
-            const isActiveClass = button.classList.contains('active');
+//         // Check if any button is active (e.g., class 'active')
+//         const anyActiveButton = Array.from(navButtons).some((button) => {
+//             const isActiveClass = button.classList.contains('active');
 
-            if (!isActiveClass) {
-                inactiveButtons.push(button);
-            }
+//             if (!isActiveClass) {
+//                 inactiveButtons.push(button);
+//             }
 
-            if (isActiveClass) {
-                const buttonExists = document.getElementById(button.id);
-                //console.log('buttonExists', buttonExists);
-                if (buttonExists) {
-                    activeButtons.push(button);
-                }
-            }
-        });
+//             if (isActiveClass) {
+//                 const buttonExists = document.getElementById(button.id);
+//                 //console.log('buttonExists', buttonExists);
+//                 if (buttonExists) {
+//                     activeButtons.push(button);
+//                 }
+//             }
+//         });
 
-        // Remove active buttons that are display:none
-        activeButtons = activeButtons.filter((button) => {
-            if (button.style.display === 'none') {
-                button.classList.remove('active');
-                button.setAttribute('aria-selected', 'false');
-                return false;
-            }
+//         // Remove active buttons that are display:none
+//         activeButtons = activeButtons.filter((button) => {
+//             if (button.style.display === 'none') {
+//                 button.classList.remove('active');
+//                 button.setAttribute('aria-selected', 'false');
+//                 return false;
+//             }
 
-            return true;
-        });
+//             return true;
+//         });
 
-        if (activeButtons.length == 0) {
-            // Activate the first one via Bootstrap API
-            if (inactiveButtons.length > 0) {
-                const firstButton = inactiveButtons[0];
-                const tabTrigger = new bootstrap.Tab(firstButton);
-                tabTrigger.show(); // ✅ Properly displays inside modal
-            }
-        }
+//         if (activeButtons.length == 0) {
+//             // Activate the first one via Bootstrap API
+//             if (inactiveButtons.length > 0) {
+//                 const firstButton = inactiveButtons[0];
+//                 const tabTrigger = new bootstrap.Tab(firstButton);
+//                 tabTrigger.show(); // ✅ Properly displays inside modal
+//             }
+//         }
 
         
-        console.log('activeButtons.length', activeButtons.length);
-        console.log('inactiveButtons.length', inactiveButtons.length);
-        console.log('activeButtons', activeButtons);
-        console.log('inactiveButtons', inactiveButtons);
-    } catch {}
+//         console.log('activeButtons.length', activeButtons.length);
+//         console.log('inactiveButtons.length', inactiveButtons.length);
+//         console.log('activeButtons', activeButtons);
+//         console.log('inactiveButtons', inactiveButtons);
+//     } catch {}
+// }
+
+export function initTabButtons() {
+	// Select all buttons inside nav-item elements
+	const navButtons = document.querySelectorAll('button.nav-link.tab-title');//document.querySelectorAll('.nav-item button');
+
+	const activeButtons = [];
+	const inactiveButtons = [];
+
+	// Check if any button is active (e.g., class 'active')
+	const anyActiveButton = Array.from(navButtons).some((button) => {
+		const isActiveClass = button.classList.contains('active');
+
+		if (!isActiveClass) {
+			inactiveButtons.push(button);
+		}
+
+		if (isActiveClass) {
+			const buttonExists = document.getElementById(button.id);
+			//console.log('buttonExists', buttonExists);
+			if (buttonExists) {
+				activeButtons.push(button);
+			}
+		}
+	});
+
+	if (activeButtons.length == 0) {
+		// Activate the first one via Bootstrap API
+		if (inactiveButtons.length > 0) {
+			const firstButton = inactiveButtons[0];
+			const tabTrigger = new bootstrap.Tab(firstButton);
+			tabTrigger.show(); // ✅ Properly displays inside modal
+		}
+	}
 }
 
 
@@ -412,7 +446,7 @@ function trapFocus(modalElement) {
  * @param               modal_id
  * @param               buttonID
  */
- function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
+ function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID, copyTabLinkButtonID){
     
     const protocol = window.location.protocol;
     const host = window.location.host;
@@ -479,9 +513,9 @@ function trapFocus(modalElement) {
                 }
             } else {
                 const element = document.getElementById(buttonID);
-                //const element2 = document.getElementById(copyTabLinkButtonID);
+                const element2 = document.getElementById(copyTabLinkButtonID);
                 if (element.style.display == "none") {
-                    //console.log('buttonID', buttonID);
+                    // console.log('buttonID', buttonID);
                     element.remove();
                     element2.remove();
                 }
@@ -527,7 +561,7 @@ function trapFocus(modalElement) {
                             await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
                             //await new Promise(resolve => setTimeout(resolve, 1000)); // Stagger each render
                             await render_interactive_plots(tabContentElement, info_obj);
-                            // initTabButtons();
+                            initTabButtons();
                         })();
                     }
                 })();
@@ -667,7 +701,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
         //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
     try {
         (async () => {
-            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id);
+            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id, linkbutton.id);
         })();
     } catch (error) {
     }
