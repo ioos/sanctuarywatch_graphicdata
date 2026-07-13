@@ -162,7 +162,7 @@ and provides callback functions for rendering each settings field.</p>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Enqueues the Plotly bar chart settings script.</dd>
+<dd>Enqueues the Plotly time series line chart settings script.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Settings-Page.html#method_enqueue_admin_interactive_default_line_styles">enqueue_admin_interactive_default_line_styles()</a>
@@ -332,7 +332,7 @@ and provides callback functions for rendering each settings field.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">955</span>
+    <span class="phpdocumentor-element-found-in__line">957</span>
 
     </aside>
 
@@ -369,24 +369,36 @@ and provides callback functions for rendering each settings field.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">52</span>
+    <span class="phpdocumentor-element-found-in__line">53</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Enqueues the Plotly bar chart settings script.</p>
+        <p class="phpdocumentor-summary">Enqueues the Plotly time series line chart settings script.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">enqueue_admin_interactive_default_bar_styles</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">enqueue_admin_interactive_default_bar_styles</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$hook</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">''</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Loads the JavaScript file required for configuring default bar chart
+        <section class="phpdocumentor-description"><p>Loads the JavaScript file required for configuring default line chart
 styles on the plugin settings page. Only enqueues on the settings page.</p>
 </section>
 
-    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$hook</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">''</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The current admin page hook suffix.</p>
+</section>
+
+            </dd>
+            </dl>
+
     
     <h5 class="phpdocumentor-tag-list__heading" id="method_enqueue_admin_interactive_default_bar_styles_tags">
         Tags
@@ -421,7 +433,7 @@ styles on the plugin settings page. Only enqueues on the settings page.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">28</span>
+    <span class="phpdocumentor-element-found-in__line">29</span>
 
     </aside>
 
@@ -429,7 +441,7 @@ styles on the plugin settings page. Only enqueues on the settings page.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">enqueue_admin_interactive_default_line_styles</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">enqueue_admin_interactive_default_line_styles</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$hook</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">''</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -438,7 +450,19 @@ styles on the plugin settings page. Only enqueues on the settings page.</p>
 styles on the plugin settings page. Only enqueues on the settings page.</p>
 </section>
 
-    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$hook</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">''</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The current admin page hook suffix.</p>
+</section>
+
+            </dd>
+            </dl>
+
     
     <h5 class="phpdocumentor-tag-list__heading" id="method_enqueue_admin_interactive_default_line_styles_tags">
         Tags
@@ -473,7 +497,7 @@ styles on the plugin settings page. Only enqueues on the settings page.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">610</span>
+    <span class="phpdocumentor-element-found-in__line">612</span>
 
     </aside>
 
@@ -522,7 +546,7 @@ styles on the plugin settings page. Only enqueues on the settings page.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">628</span>
+    <span class="phpdocumentor-element-found-in__line">630</span>
 
     </aside>
 
@@ -574,7 +598,7 @@ Only visible to users with the manage_options capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">551</span>
+    <span class="phpdocumentor-element-found-in__line">553</span>
 
     </aside>
 
@@ -646,7 +670,7 @@ as a JSON response for use by external applications or themes.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">681</span>
+    <span class="phpdocumentor-element-found-in__line">683</span>
 
     </aside>
 
@@ -684,7 +708,7 @@ additional instructions and links for users to configure their Google Analytics 
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">806</span>
+    <span class="phpdocumentor-element-found-in__line">808</span>
 
     </aside>
 
@@ -724,7 +748,7 @@ container file with user-provided IDs.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">750</span>
+    <span class="phpdocumentor-element-found-in__line">752</span>
 
     </aside>
 
@@ -776,7 +800,7 @@ used when generating interactive bar charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">773</span>
+    <span class="phpdocumentor-element-found-in__line">775</span>
 
     </aside>
 
@@ -828,7 +852,7 @@ defaults for interactive time series bar charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">703</span>
+    <span class="phpdocumentor-element-found-in__line">705</span>
 
     </aside>
 
@@ -880,7 +904,7 @@ used when generating interactive time series line charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">726</span>
+    <span class="phpdocumentor-element-found-in__line">728</span>
 
     </aside>
 
@@ -932,7 +956,7 @@ defaults for interactive time series line charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">654</span>
+    <span class="phpdocumentor-element-found-in__line">656</span>
 
     </aside>
 
@@ -981,7 +1005,7 @@ defaults for interactive time series line charts.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">452</span>
+    <span class="phpdocumentor-element-found-in__line">454</span>
 
     </aside>
 
@@ -1033,7 +1057,7 @@ The value is saved to wp_options as links_new_tab_by_default.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">526</span>
+    <span class="phpdocumentor-element-found-in__line">528</span>
 
     </aside>
 
@@ -1085,7 +1109,7 @@ that provides read-only access to footer settings data.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">250</span>
+    <span class="phpdocumentor-element-found-in__line">252</span>
 
     </aside>
 
@@ -1159,7 +1183,7 @@ stuffed into the sanitization function, but it was the best place to put this.</
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">76</span>
+    <span class="phpdocumentor-element-found-in__line">78</span>
 
     </aside>
 
@@ -1213,7 +1237,7 @@ access for specific settings.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">920</span>
+    <span class="phpdocumentor-element-found-in__line">922</span>
 
     </aside>
 
@@ -1266,7 +1290,7 @@ administrator capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">585</span>
+    <span class="phpdocumentor-element-found-in__line">587</span>
 
     </aside>
 
@@ -1315,7 +1339,7 @@ administrator capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">567</span>
+    <span class="phpdocumentor-element-found-in__line">569</span>
 
     </aside>
 
@@ -1364,7 +1388,7 @@ administrator capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">359</span>
+    <span class="phpdocumentor-element-found-in__line">361</span>
 
     </aside>
 
@@ -1413,7 +1437,7 @@ administrator capability.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-settings-page.php"><a href="files/plugins-graphic-data-plugin-includes-admin-settings-page.html"><abbr title="plugins/graphic_data_plugin/includes/admin-settings-page.php">admin-settings-page.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">379</span>
+    <span class="phpdocumentor-element-found-in__line">381</span>
 
     </aside>
 

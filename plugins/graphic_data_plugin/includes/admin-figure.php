@@ -584,18 +584,6 @@ class Graphic_Data_Figure {
 					'sanitize'      => 'sanitize_text_field',
 				),
 				array(
-					'id'            => 'figure_attached',
-					'type'          => 'select',
-					'title'         => 'Figure Attached to Modal or Scene*',
-					'options'       => array(
-						'Not attached'        => 'Not attached',
-						'Attached to modal only'       => 'Attached to modal only',
-						'Attached to modal and scene'       => 'Attached to modal and scene',
-					),
-					'default'       => 'Not attached',
-					'sanitize'      => 'sanitize_text_field',
-				),
-				array(
 					'id'             => 'location',
 					'type'           => 'select',
 					'title'          => 'Instance*',

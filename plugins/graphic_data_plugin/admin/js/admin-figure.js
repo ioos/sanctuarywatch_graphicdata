@@ -7,6 +7,9 @@ import {
 	applyPlainTextPaste,
 } from '@graphic-data/admin-utility';
 
+// the last stop in the field validation process (if needed)
+replaceFieldValuesWithTransientValues();
+
 run_admin_figures();
 
 function run_admin_figures() {

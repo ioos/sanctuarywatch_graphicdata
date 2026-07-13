@@ -161,6 +161,13 @@ class Graphic_Data_Plugin {
 		);
 
 		$this->loader = new Graphic_Data_Loader();
+
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-graphic-data-site-checker.php';
+
+		new Graphic_Data_Site_Checker(
+			plugin_dir_url( __FILE__ ),      // pass this only if the default guess is wrong
+			GRAPHIC_DATA_PLUGIN_VERSION      // your existing version constant
+		);
 	}
 
 	/**

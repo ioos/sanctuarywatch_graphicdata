@@ -1,0 +1,108 @@
+/**
+ * Graphic Data Site Checker admin styles.
+ *
+ * @package Graphic_Data_Plugin
+ */
+
+.graphic-data-site-checker__section {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	padding: 16px 20px;
+	margin-top: 20px;
+	max-width: 1200px;
+}
+
+.graphic-data-site-checker__section h2 {
+	margin-top: 0;
+}
+
+.graphic-data-site-checker__status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+	min-height: 20px;
+}
+
+.graphic-data-site-checker__status .spinner {
+	float: none;
+	margin: 0;
+}
+
+.graphic-data-site-checker__progress {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-top: 12px;
+}
+
+.graphic-data-site-checker__progress progress {
+	width: 320px;
+	height: 18px;
+}
+
+.graphic-data-site-checker__report {
+	margin-top: 20px;
+}
+
+.graphic-data-site-checker__report:not(:empty) {
+	min-height: 24px;
+}
+
+.graphic-data-site-checker__notice {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #72aee6;
+	padding: 12px 16px;
+	margin: 0 0 12px;
+	font-size: 14px;
+	line-height: 1.5;
+	box-shadow: 0 1px 1px rgba( 0, 0, 0, 0.04 );
+}
+
+.graphic-data-site-checker__notice p {
+	margin: 0;
+}
+
+.graphic-data-site-checker__notice--info {
+	border-left-color: #72aee6;
+}
+
+.graphic-data-site-checker__notice--success {
+	border-left-color: #00a32a;
+}
+
+.graphic-data-site-checker__notice--warning {
+	border-left-color: #dba617;
+}
+
+.graphic-data-site-checker__table {
+	margin-top: 12px;
+	table-layout: auto;
+}
+
+.graphic-data-site-checker__table td,
+.graphic-data-site-checker__table th {
+	vertical-align: top;
+	word-break: break-word;
+}
+
+.graphic-data-site-checker__url-cell {
+	max-width: 340px;
+}
+
+.graphic-data-site-checker__url-cell a {
+	display: inline-block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	vertical-align: bottom;
+}
+
+.graphic-data-site-checker__table code {
+	background: #f0f0f1;
+	padding: 2px 6px;
+	font-size: 11px;
+	border-radius: 2px;
+}
