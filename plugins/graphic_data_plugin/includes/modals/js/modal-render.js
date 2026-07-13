@@ -412,7 +412,7 @@ function trapFocus(modalElement) {
  * @param               modal_id
  * @param               buttonID
  */
- function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID, copyTabLinkButtonID){
+ function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID){
     
     const protocol = window.location.protocol;
     const host = window.location.host;
@@ -479,7 +479,7 @@ function trapFocus(modalElement) {
                 }
             } else {
                 const element = document.getElementById(buttonID);
-                const element2 = document.getElementById(copyTabLinkButtonID);
+                //const element2 = document.getElementById(copyTabLinkButtonID);
                 if (element.style.display == "none") {
                     //console.log('buttonID', buttonID);
                     element.remove();
@@ -667,7 +667,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
         //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
     try {
         (async () => {
-            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id, linkbutton.id);
+            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id);
         })();
     } catch (error) {
     }
