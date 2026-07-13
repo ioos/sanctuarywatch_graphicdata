@@ -186,8 +186,6 @@ export function render_modal(key, obj, modal_obj){
             }
         }
 
-        //initTabButtons();
-
         // Google Tags
         document.dispatchEvent( new CustomEvent( 'graphic-data:modalWindowLoaded', {
             detail: { title, modal_id }
@@ -256,66 +254,6 @@ export function render_modal(key, obj, modal_obj){
  * initTabButtons();
  */
 //After removing tabs that do not contain content or do not contain published figures, we show only the tabs that have content and make the first one active
-// export function initTabButtons() {
-// 	// Select all buttons inside nav-item elements
-// 	// const navButtons = document.querySelectorAll('.nav-item button');
-//     try {
-//         const navButtons = Array.from(
-// 			document.querySelectorAll('button.nav-link.tab-title')
-// 		);
-
-//         // const navButtons = Array.from(
-//         //     document.querySelectorAll('button.nav-link.tab-title')
-//         // ).filter((button) => button.style.display != 'none');
-
-//         let activeButtons = [];
-//         const inactiveButtons = [];
-
-//         // Check if any button is active (e.g., class 'active')
-//         const anyActiveButton = Array.from(navButtons).some((button) => {
-//             const isActiveClass = button.classList.contains('active');
-
-//             if (!isActiveClass) {
-//                 inactiveButtons.push(button);
-//             }
-
-//             if (isActiveClass) {
-//                 const buttonExists = document.getElementById(button.id);
-//                 //console.log('buttonExists', buttonExists);
-//                 if (buttonExists) {
-//                     activeButtons.push(button);
-//                 }
-//             }
-//         });
-
-//         // Remove active buttons that are display:none
-//         activeButtons = activeButtons.filter((button) => {
-//             if (button.style.display === 'none') {
-//                 button.classList.remove('active');
-//                 button.setAttribute('aria-selected', 'false');
-//                 return false;
-//             }
-
-//             return true;
-//         });
-
-//         if (activeButtons.length == 0) {
-//             // Activate the first one via Bootstrap API
-//             if (inactiveButtons.length > 0) {
-//                 const firstButton = inactiveButtons[0];
-//                 const tabTrigger = new bootstrap.Tab(firstButton);
-//                 tabTrigger.show(); // ✅ Properly displays inside modal
-//             }
-//         }
-
-        
-//         console.log('activeButtons.length', activeButtons.length);
-//         console.log('inactiveButtons.length', inactiveButtons.length);
-//         console.log('activeButtons', activeButtons);
-//         console.log('inactiveButtons', inactiveButtons);
-//     } catch {}
-// }
-
 export function initTabButtons() {
 	// Select all buttons inside nav-item elements
 	const navButtons = document.querySelectorAll('button.nav-link.tab-title');//document.querySelectorAll('.nav-item button');
