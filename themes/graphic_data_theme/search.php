@@ -163,9 +163,15 @@ $graphic_data_selected_instance = isset( $_GET['graphic_data_instance'] )
 				'fields'         => 'ids',
 				'no_found_rows'  => true,
 				'meta_query'     => array(
+					'relation' => 'AND',
 					array(
 						'key'     => 'instance_status',
 						'value'   => 'Published',
+						'compare' => '=',
+					),
+					array(
+						'key'     => 'instance_legacy_content',
+						'value'   => 'no',
 						'compare' => '=',
 					),
 				),
