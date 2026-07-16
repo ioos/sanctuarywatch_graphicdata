@@ -31,7 +31,7 @@
       "step": "installPlugin",
       "pluginData": {
         "resource": "url",
-        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.5.0/graphic_data_plugin.zip"
+        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.5.1/graphic_data_plugin.zip"
       }
     },
     {
@@ -42,7 +42,7 @@
       "step": "installTheme",
       "themeData": {
         "resource": "url",
-        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.5.0/graphic_data_theme.zip"
+        "url": "https://github.com/ioos/sanctuarywatch_graphicdata/releases/download/v1.5.1/graphic_data_theme.zip"
       }
     },
     {
