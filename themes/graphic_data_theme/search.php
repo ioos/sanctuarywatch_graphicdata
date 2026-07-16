@@ -103,11 +103,11 @@ $graphic_data_selected_instance = isset( $_GET['graphic_data_instance'] )
 				'label'    => 'Modal',
 				'link_cb'  => static function ( $post_id ) {
 					$modal_instance = get_post_meta( $post_id, 'modal_location', true );
-					$modal_instance_title = get_the_title( $modal_instance );
+					$modal_instance_slug = get_post_field( 'post_name', $modal_instance );
 					$modal_scene = get_post_meta( $post_id, 'modal_scene', true );
-					$modal_scene_title = get_the_title( $modal_scene );
+					$modal_scene_slug = get_post_field( 'post_name', $modal_scene );
 					$modal_title = get_the_title( $post_id );
-					$relative_link = str_replace( ' ', '-', $modal_instance_title . '/' . $modal_scene_title . '/#' . $modal_title . '/1' );
+					$relative_link = str_replace( ' ', '-', $modal_instance_slug . '/' . $modal_scene_slug . '/#' . sanitize_title( $modal_title ) . '/1' );
 					return home_url( '/' ) . $relative_link;
 				},
 				'description_cb' => static function ( $post_id ) {
@@ -120,13 +120,13 @@ $graphic_data_selected_instance = isset( $_GET['graphic_data_instance'] )
 				'label'    => 'Figure',
 				'link_cb'  => static function ( $post_id ) {
 					$figure_instance = get_post_meta( $post_id, 'location', true );
-					$figure_instance_title = get_the_title( $figure_instance );
+					$figure_instance_slug = get_post_field( 'post_name', $figure_instance );
 					$figure_scene = get_post_meta( $post_id, 'figure_scene', true );
-					$figure_scene_title = get_the_title( $figure_scene );
+					$figure_scene_slug = get_post_field( 'post_name', $figure_scene );
 					$figure_modal = get_post_meta( $post_id, 'figure_modal', true );
 					$modal_title = get_the_title( $figure_modal );
 					$figure_tab = get_post_meta( $post_id, 'figure_tab', true );
-					$relative_link = str_replace( ' ', '-', $figure_instance_title . '/' . $figure_scene_title . '/#' . $modal_title . '/' . $figure_tab );
+					$relative_link = str_replace( ' ', '-', $figure_instance_slug . '/' . $figure_scene_slug . '/#' . sanitize_title( $modal_title ) . '/' . $figure_tab );
 					return home_url( '/' ) . $relative_link;
 				},
 				'description_cb' => static function ( $post_id ) {
