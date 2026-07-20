@@ -546,7 +546,7 @@ class Graphic_Data_Site_Checker {
 			'timeout'     => 10,
 			'redirection' => 5,
 			'sslverify'   => true,
-			'user-agent'  => 'GraphicDataSiteChecker/1.0 (+' . home_url( '/' ) . ')',
+			'user-agent'  => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
 			'headers'     => array(
 				'Accept'          => '*/*',
 				'Accept-Language' => 'en-US,en;q=0.9',
