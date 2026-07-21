@@ -16,6 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Register class that defines the Figure custom content type as well as associated Figure functions
+ */
+include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
+
+/**
  * Class Graphic_Data_Site_Checker.
  */
 class Graphic_Data_Site_Checker {
@@ -187,7 +192,12 @@ class Graphic_Data_Site_Checker {
 
 			<div class="graphic-data-site-checker__section" id="graphic-data-broken-links-section">
 				<h3>Broken Link Checker</h3>
-
+				<p>
+				<?php
+				$function_utilities = new Graphic_Data_Utility();
+				$function_utilities->create_instance_dropdown_filter( 'broken_link_instance' );
+				?>
+				</p>
 				<p>
 					<button type="button" class="button button-primary" id="graphic-data-check-broken-links">
 						Check for Broken Links
