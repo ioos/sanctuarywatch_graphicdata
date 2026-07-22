@@ -96,6 +96,7 @@ class Graphic_Data_Site_Checker {
 		add_action( 'admin_head', array( $this, 'print_inline_data' ) );
 		add_action( 'wp_ajax_graphic_data_gather_urls', array( $this, 'ajax_gather_urls' ) );
 		add_action( 'wp_ajax_graphic_data_check_url_batch', array( $this, 'ajax_check_url_batch' ) );
+		add_action( 'wp_ajax_graphic_data_check_alt_text', array( $this, 'ajax_check_alt_text' ) );
 	}
 
 	/**
@@ -200,7 +201,7 @@ class Graphic_Data_Site_Checker {
 				</p>
 				<p>
 					<button type="button" class="button button-primary" id="graphic-data-check-broken-links">
-						Check for Broken Links
+						Check for Broken Links &amp; Missing Alt Text
 					</button>
 				</p>
 
@@ -214,7 +215,11 @@ class Graphic_Data_Site_Checker {
 					<span class="graphic-data-site-checker__progress-text" role="status" aria-live="polite"></span>
 				</div>
 
+				<h4>Broken Links</h4>
 				<div class="graphic-data-site-checker__report" id="graphic-data-broken-links-report" hidden></div>
+
+				<h4>Missing Alt Text</h4>
+				<div class="graphic-data-site-checker__report" id="graphic-data-alt-text-report" hidden></div>
 			</div>
 		</div>
 		<?php
@@ -351,21 +356,17 @@ class Graphic_Data_Site_Checker {
 	}
 
 	/**
-	 * Iterate all posts of a given type and extract URLs from the named meta keys.
+	 * Build `get_posts()` args for a post type, optionally scoped to the
+	 * posts belonging to a given instance. Shared by every gather routine
+	 * (broken links and missing alt text) so the two checks stay scoped to
+	 * the same set of posts for a given `target_instance` selection.
 	 *
-	 * @param string   $post_type       Post type slug.
-	 * @param string[] $meta_keys       Meta keys to inspect.
-	 * @param int      $target_instance Optional instance post ID to restrict results to.
-	 *                                  0 (the default) means "all instances".
-	 * @return array<int,array<string,mixed>> Flat list of {post_id, post_title, post_type, edit_link, meta_key, url}.
+	 * @param string $post_type       Post type slug.
+	 * @param int    $target_instance Optional instance post ID to restrict results to.
+	 *                                0 means "all instances".
+	 * @return array<string,mixed> `get_posts()` args.
 	 */
-	private function gather_from_post_type( $post_type, $meta_keys, $target_instance = 0 ) {
-		$items = array();
-
-		if ( ! post_type_exists( $post_type ) ) {
-			return $items;
-		}
-
+	private function instance_scoped_query_args( $post_type, $target_instance = 0 ) {
 		$query_args = array(
 			'post_type'        => $post_type,
 			'post_status'      => array( 'publish', 'draft', 'private', 'pending', 'future' ),
@@ -390,7 +391,26 @@ class Graphic_Data_Site_Checker {
 			}
 		}
 
-		$post_ids = get_posts( $query_args );
+		return $query_args;
+	}
+
+	/**
+	 * Iterate all posts of a given type and extract URLs from the named meta keys.
+	 *
+	 * @param string   $post_type       Post type slug.
+	 * @param string[] $meta_keys       Meta keys to inspect.
+	 * @param int      $target_instance Optional instance post ID to restrict results to.
+	 *                                  0 (the default) means "all instances".
+	 * @return array<int,array<string,mixed>> Flat list of {post_id, post_title, post_type, edit_link, meta_key, url}.
+	 */
+	private function gather_from_post_type( $post_type, $meta_keys, $target_instance = 0 ) {
+		$items = array();
+
+		if ( ! post_type_exists( $post_type ) ) {
+			return $items;
+		}
+
+		$post_ids = get_posts( $this->instance_scoped_query_args( $post_type, $target_instance ) );
 
 		foreach ( $post_ids as $post_id ) {
 			$post_id    = (int) $post_id;
@@ -632,5 +652,203 @@ class Graphic_Data_Site_Checker {
 			'status' => $status,
 			'error'  => '',
 		);
+	}
+
+	/* ---------------------------------------------------------------------
+	 * AJAX: check for missing image alt text
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Scan the instance/scene/modal/figure image fields, resolve each one
+	 * that points at a Media Library attachment, and report the ones whose
+	 * attachment has no alt text set.
+	 *
+	 * Unlike the broken-link check this needs no external HTTP requests —
+	 * it's local postmeta lookups only — so it runs as a single request
+	 * rather than a batched scan.
+	 */
+	public function ajax_check_alt_text() {
+		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
+
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Insufficient permissions.', 'graphic-data' ) ),
+				403
+			);
+		}
+
+		$target_instance = isset( $_POST['target_instance'] ) ? absint( $_POST['target_instance'] ) : 0;
+
+		$items = array();
+		foreach ( array( 'instance', 'scene', 'modal', 'figure' ) as $post_type ) {
+			$items = array_merge( $items, $this->gather_image_urls_from_post_type( $post_type, $target_instance ) );
+		}
+
+		$missing = array();
+		foreach ( $items as $item ) {
+			$attachment_id = $this->resolve_attachment_id( $item['url'] );
+
+			// Not a Media Library attachment (e.g. an externally-hosted image)
+			// -- nothing here we can add alt text to, so skip it.
+			if ( ! $attachment_id ) {
+				continue;
+			}
+
+			$alt_text = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
+			if ( '' !== trim( (string) $alt_text ) ) {
+				continue;
+			}
+
+			$missing[] = array(
+				'post_id'         => $item['post_id'],
+				'post_title'      => $item['post_title'],
+				'post_type'       => $item['post_type'],
+				'edit_link'       => $item['edit_link'],
+				'field_label'     => $item['field_label'],
+				'url'             => $item['url'],
+				'attachment_id'   => $attachment_id,
+				// Deep-links into the Media Library grid with this attachment's
+				// details panel open (Alt Text is directly editable there),
+				// rather than the classic single-post "Edit Media" screen.
+				'media_edit_link' => admin_url( 'upload.php?item=' . $attachment_id ),
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'items' => array_values( $missing ),
+				'total' => count( $items ),
+			)
+		);
+	}
+
+	/**
+	 * Image field specs per post type: which meta key holds the image, and
+	 * (for the Exopite fieldset fields) which sub-key inside that meta
+	 * value holds the Media Library URL.
+	 *
+	 * @param string $post_type Post type slug.
+	 * @return array<int,array<string,string>> List of {meta_key, sub_key, label}.
+	 *                                          `sub_key` is '' for flat (non-fieldset) fields.
+	 */
+	private function image_field_specs( $post_type ) {
+		switch ( $post_type ) {
+			case 'instance':
+				return array(
+					array(
+						'meta_key' => 'instance_tile',
+						'sub_key'  => '',
+						'label'    => 'Tile Image',
+					),
+				);
+
+			case 'scene':
+			case 'modal':
+				$specs = array();
+				for ( $i = 1; $i <= 6; $i++ ) {
+					$specs[] = array(
+						'meta_key' => $post_type . '_photo' . $i,
+						'sub_key'  => $post_type . '_photo_internal' . $i,
+						'label'    => 'Media Link ' . $i,
+					);
+				}
+				return $specs;
+
+			case 'figure':
+				return array(
+					array(
+						'meta_key' => 'figure_image',
+						'sub_key'  => '',
+						'label'    => 'Figure Image',
+					),
+				);
+
+			default:
+				return array();
+		}
+	}
+
+	/**
+	 * Iterate all posts of a given type and pull the Media Library image
+	 * URL out of each configured image field.
+	 *
+	 * @param string $post_type       Post type slug.
+	 * @param int    $target_instance Optional instance post ID to restrict results to.
+	 *                                0 means "all instances".
+	 * @return array<int,array<string,mixed>> Flat list of {post_id, post_title, post_type, edit_link, field_label, url}.
+	 */
+	private function gather_image_urls_from_post_type( $post_type, $target_instance = 0 ) {
+		$items = array();
+		$specs = $this->image_field_specs( $post_type );
+
+		if ( ! post_type_exists( $post_type ) || empty( $specs ) ) {
+			return $items;
+		}
+
+		$post_ids = get_posts( $this->instance_scoped_query_args( $post_type, $target_instance ) );
+
+		foreach ( $post_ids as $post_id ) {
+			$post_id    = (int) $post_id;
+			$post_title = get_the_title( $post_id );
+			$edit_link  = get_edit_post_link( $post_id, 'raw' );
+
+			foreach ( $specs as $spec ) {
+				$meta_value = get_post_meta( $post_id, $spec['meta_key'], true );
+
+				if ( '' !== $spec['sub_key'] ) {
+					$url = ( is_array( $meta_value ) && isset( $meta_value[ $spec['sub_key'] ] ) )
+						? $meta_value[ $spec['sub_key'] ]
+						: '';
+				} else {
+					$url = is_string( $meta_value ) ? $meta_value : '';
+				}
+
+				$url = trim( (string) $url );
+				if ( '' === $url ) {
+					continue;
+				}
+
+				$items[] = array(
+					'post_id'     => $post_id,
+					'post_title'  => $post_title,
+					'post_type'   => $post_type,
+					'edit_link'   => $edit_link ? $edit_link : '',
+					'field_label' => $spec['label'],
+					'url'         => $url,
+				);
+			}
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Resolve an image URL to its Media Library attachment ID, if any.
+	 *
+	 * Falls back to stripping a `-WIDTHxHEIGHT` resize suffix (e.g.
+	 * `image-300x200.jpg` -> `image.jpg`) before retrying, since stored
+	 * field values sometimes point at a generated intermediate size rather
+	 * than the original upload that `attachment_url_to_postid()` indexes.
+	 * Mirrors the same fallback in class-validation.php's media linking.
+	 *
+	 * @param string $url Image URL.
+	 * @return int Attachment post ID, or 0 if it doesn't resolve to one.
+	 */
+	private function resolve_attachment_id( $url ) {
+		$url = esc_url_raw( (string) $url );
+		if ( '' === $url ) {
+			return 0;
+		}
+
+		$attachment_id = attachment_url_to_postid( $url );
+
+		if ( ! $attachment_id ) {
+			$stripped = preg_replace( '/-\d+x\d+(\.[a-z0-9]+)$/i', '$1', $url );
+			if ( $stripped !== $url ) {
+				$attachment_id = attachment_url_to_postid( $stripped );
+			}
+		}
+
+		return (int) $attachment_id;
 	}
 }

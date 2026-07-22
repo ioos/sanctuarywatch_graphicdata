@@ -72,6 +72,22 @@
  */
 
 /**
+ * A Media Library image, referenced from Graphic Data postmeta, whose
+ * attachment has no alt text set. Returned by the `graphic_data_check_alt_text`
+ * AJAX action.
+ *
+ * @typedef {Object} AltTextItem
+ * @property {number} post_id         WordPress post ID of the post referencing the image.
+ * @property {string} post_title      Post title; may be empty for untitled drafts.
+ * @property {string} post_type       Post type slug: instance, scene, modal, or figure.
+ * @property {string} edit_link       Absolute URL to the referencing post's editor, or empty string.
+ * @property {string} field_label     Human-readable label for the image field.
+ * @property {string} url             Media Library URL of the image.
+ * @property {number} attachment_id   Media Library attachment post ID.
+ * @property {string} media_edit_link Absolute URL into the Media Library grid with this attachment's details panel open.
+ */
+
+/**
  * Runtime configuration injected by PHP just before this module loads.
  *
  * @type {SiteCheckerConfig}
@@ -100,6 +116,7 @@ const IDS = {
 	status: 'graphic-data-broken-links-status',
 	progress: 'graphic-data-broken-links-progress',
 	report: 'graphic-data-broken-links-report',
+	altTextReport: 'graphic-data-alt-text-report',
 	targetInstance: 'target_instance',
 };
 
@@ -202,6 +219,19 @@ function hideProgress() {
  */
 function clearReport() {
 	const el = byId( IDS.report );
+	if ( el ) {
+		el.hidden = true;
+		el.innerHTML = '';
+	}
+}
+
+/**
+ * Reset the alt-text report region: hide it and empty its contents.
+ *
+ * @returns {void}
+ */
+function clearAltTextReport() {
+	const el = byId( IDS.altTextReport );
 	if ( el ) {
 		el.hidden = true;
 		el.innerHTML = '';
@@ -425,6 +455,96 @@ function renderReport( totalChecked, brokenItems ) {
 }
 
 /**
+ * Render the missing-alt-text report inside its container.
+ *
+ * Mirrors {@link renderReport}'s grouped-by-post table, but links each row
+ * straight to the Media Library attachment editor (rather than an external
+ * URL) since these are, by definition, Media Library images.
+ *
+ * @param {AltTextItem[]} items Images referencing an attachment with no alt text.
+ * @returns {void}
+ */
+function renderAltTextReport( items ) {
+	const reportEl = byId( IDS.altTextReport );
+	if ( ! reportEl ) {
+		return;
+	}
+	reportEl.hidden = false;
+
+	if ( items.length === 0 ) {
+		reportEl.innerHTML = `
+			<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--success">
+				<p><strong>No missing alt text found</strong> on Media Library images referenced by Graphic Data content.</p>
+			</div>
+		`;
+		return;
+	}
+
+	// Group by post so the operator can jump to each affected post once.
+	const groups = new Map();
+	for ( const item of items ) {
+		const key = `${ item.post_type }:${ item.post_id }`;
+		if ( ! groups.has( key ) ) {
+			groups.set( key, {
+				post_title: item.post_title,
+				post_type: item.post_type,
+				edit_link: item.edit_link,
+				rows: [],
+			} );
+		}
+		groups.get( key ).rows.push( item );
+	}
+
+	let html = `
+		<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--warning">
+			<p>
+				<strong>${ items.length } image${ items.length === 1 ? '' : 's' } missing alt text</strong>
+				across ${ groups.size } post${ groups.size === 1 ? '' : 's' }.
+			</p>
+		</div>
+		<table class="wp-list-table widefat striped graphic-data-site-checker__table">
+			<thead>
+				<tr>
+					<th>Post</th>
+					<th>Type</th>
+					<th>Field</th>
+					<th>Image</th>
+				</tr>
+			</thead>
+			<tbody>
+	`;
+
+	for ( const group of groups.values() ) {
+		const title = group.post_title || '(untitled)';
+		const postCell = group.edit_link
+			? `<a href="${ escapeHtml( group.edit_link ) }">${ escapeHtml( title ) }</a>`
+			: escapeHtml( title );
+
+		for ( const row of group.rows ) {
+			const displayUrl = shortenUrl( row.url );
+			const mediaCell = row.media_edit_link
+				? `<a href="${ escapeHtml( row.media_edit_link ) }" target="_blank" rel="noopener noreferrer" title="${ escapeHtml( row.url ) }">${ escapeHtml( displayUrl ) }</a>`
+				: escapeHtml( displayUrl );
+			html += `
+				<tr>
+					<td>${ postCell }</td>
+					<td><code>${ escapeHtml( row.post_type ) }</code></td>
+					<td>${ escapeHtml( row.field_label ) }</td>
+					<td class="graphic-data-site-checker__url-cell">${ mediaCell }</td>
+				</tr>
+			`;
+		}
+	}
+
+	html += `
+			</tbody>
+		</table>
+	`;
+
+	reportEl.innerHTML = html;
+}
+
+/**
  * Kick off the whole broken-link scan and drive the UI through its phases.
  *
  * Sequence:
@@ -436,6 +556,8 @@ function renderReport( totalChecked, brokenItems ) {
  *      batch.
  *   4. Re-associate each URL's result with every occurrence in the original
  *      item list and hand the result to {@link renderReport}.
+ *   5. Run the missing-alt-text check (a single request; no external HTTP
+ *      calls are involved) and hand its result to {@link renderAltTextReport}.
  *
  * Re-entrant guard: no-ops immediately if a scan is already in flight.
  *
@@ -454,65 +576,70 @@ async function runBrokenLinkCheck() {
 	}
 
 	clearReport();
+	clearAltTextReport();
 	hideProgress();
 
 	try {
-		setStatus( 'Gathering URLs from Graphic Data posts…', true );
-
 		const targetInstanceEl = byId( IDS.targetInstance );
 		const targetInstance = targetInstanceEl ? targetInstanceEl.value : '';
-		const gathered = await ajax(
-			'graphic_data_gather_urls',
-			targetInstance ? { target_instance: targetInstance } : {}
-		);
+		const instanceParams = targetInstance ? { target_instance: targetInstance } : {};
+
+		setStatus( 'Gathering URLs from Graphic Data posts…', true );
+
+		const gathered = await ajax( 'graphic_data_gather_urls', instanceParams );
 		const items = Array.isArray( gathered.items ) ? gathered.items : [];
 
 		if ( items.length === 0 ) {
 			hideStatus();
 			renderReport( 0, [] );
-			return;
-		}
+		} else {
+			// Dedupe URLs for the actual network probes — many posts may
+			// reference the same URL, but we only need to check it once.
+			const uniqueUrls = Array.from( new Set( items.map( ( i ) => i.url ) ) );
+			const batchSize = Number( config.batchSize ) > 0 ? Number( config.batchSize ) : 10;
+			const statuses = new Map();
+			let done = 0;
 
-		// Dedupe URLs for the actual network probes — many posts may reference
-		// the same URL, but we only need to check it once.
-		const uniqueUrls = Array.from( new Set( items.map( ( i ) => i.url ) ) );
-		const batchSize = Number( config.batchSize ) > 0 ? Number( config.batchSize ) : 10;
-		const statuses = new Map();
-		let done = 0;
+			hideStatus();
+			setProgress( 0, uniqueUrls.length );
 
-		hideStatus();
-		setProgress( 0, uniqueUrls.length );
-
-		for ( let i = 0; i < uniqueUrls.length; i += batchSize ) {
-			const batch = uniqueUrls.slice( i, i + batchSize );
-			const result = await ajax( 'graphic_data_check_url_batch', {
-				urls: JSON.stringify( batch ),
-			} );
-			const results = result && result.results ? result.results : {};
-			for ( const [ url, status ] of Object.entries( results ) ) {
-				statuses.set( url, status );
-			}
-			done += batch.length;
-			setProgress( Math.min( done, uniqueUrls.length ), uniqueUrls.length );
-		}
-
-		hideProgress();
-
-		// Fan the URL-level results back out over every occurrence so the
-		// report can name every post that references a broken URL.
-		const broken = [];
-		for ( const item of items ) {
-			const status = statuses.get( item.url );
-			if ( status && ! status.ok ) {
-				broken.push( {
-					...item,
-					status: status.status,
-					error: status.error,
+			for ( let i = 0; i < uniqueUrls.length; i += batchSize ) {
+				const batch = uniqueUrls.slice( i, i + batchSize );
+				const result = await ajax( 'graphic_data_check_url_batch', {
+					urls: JSON.stringify( batch ),
 				} );
+				const results = result && result.results ? result.results : {};
+				for ( const [ url, status ] of Object.entries( results ) ) {
+					statuses.set( url, status );
+				}
+				done += batch.length;
+				setProgress( Math.min( done, uniqueUrls.length ), uniqueUrls.length );
 			}
+
+			hideProgress();
+
+			// Fan the URL-level results back out over every occurrence so the
+			// report can name every post that references a broken URL.
+			const broken = [];
+			for ( const item of items ) {
+				const status = statuses.get( item.url );
+				if ( status && ! status.ok ) {
+					broken.push( {
+						...item,
+						status: status.status,
+						error: status.error,
+					} );
+				}
+			}
+
+			renderReport( items.length, broken );
 		}
 
-		renderReport( items.length, broken );
+		setStatus( 'Checking image alt text…', true );
+		const altResult = await ajax( 'graphic_data_check_alt_text', instanceParams );
+		const altItems = Array.isArray( altResult.items ) ? altResult.items : [];
+		hideStatus();
+		renderAltTextReport( altItems );
 	} catch ( err ) {
 		hideProgress();
 		setStatus( `Error: ${ err.message }`, false );
