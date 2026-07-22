@@ -210,6 +210,15 @@ permalink: /function_documentation/classes/Graphic-Data-Site-Checker.html
 <dd>Constructor.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_alt_text">ajax_check_alt_text()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Scan the instance/scene/modal/figure image fields, resolve each one
+that points at a Media Library attachment, and report the ones whose
+attachment has no alt text set.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_url_batch">ajax_check_url_batch()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -282,11 +291,28 @@ and pull out every URL it references.</dd>
 <dd>Iterate all posts of a given type and extract URLs from the named meta keys.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_gather_image_urls_from_post_type">gather_image_urls_from_post_type()</a>
+    <span>
+                                &nbsp;: array&lt;int, array&lt;string, mixed&gt;&gt;    </span>
+</dt>
+<dd>Iterate all posts of a given type and pull the Media Library image
+URL out of each configured image field.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key">human_label_for_meta_key()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
 <dd>Return a human-readable label for a given meta key.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_image_field_specs">image_field_specs()</a>
+    <span>
+                                &nbsp;: array&lt;int, array&lt;string, string&gt;&gt;    </span>
+</dt>
+<dd>Image field specs per post type: which meta key holds the image, and
+(for the Exopite fieldset fields) which sub-key inside that meta
+value holds the Media Library URL.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type">instance_meta_key_for_post_type()</a>
@@ -296,6 +322,16 @@ and pull out every URL it references.</dd>
 <dd>Meta key that links a given post type back to its owning instance,
 mirroring the &quot;Instance&quot; filter columns/dropdowns elsewhere in the
 plugin (see class-utility.php and includes/admin-{modal,figure}.php).</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_instance_scoped_query_args">instance_scoped_query_args()</a>
+    <span>
+                                &nbsp;: array&lt;string, mixed&gt;    </span>
+</dt>
+<dd>Build `get_posts()` args for a post type, optionally scoped to the
+posts belonging to a given instance. Shared by every gather routine
+(broken links and missing alt text) so the two checks stay scoped to
+the same set of posts for a given `target_instance` selection.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen">is_site_checker_screen()</a>
@@ -317,6 +353,13 @@ plugin (see class-utility.php and includes/admin-{modal,figure}.php).</dd>
                                 &nbsp;: string    </span>
 </dt>
 <dd>Normalize a raw URL string into an absolute, checkable form.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_resolve_attachment_id">resolve_attachment_id()</a>
+    <span>
+                                &nbsp;: int    </span>
+</dt>
+<dd>Resolve an image URL to its Media Library attachment ID, if any.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_scene_meta_keys">scene_meta_keys()</a>
@@ -691,6 +734,47 @@ Defaults to one directory above this file.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_ajax_check_alt_text">
+        ajax_check_alt_text()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_alt_text" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">670</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Scan the instance/scene/modal/figure image fields, resolve each one
+that points at a Media Library attachment, and report the ones whose
+attachment has no alt text set.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">ajax_check_alt_text</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Unlike the broken-link check this needs no external HTTP requests —
+it's local postmeta lookups only — so it runs as a single request
+rather than a batched scan.</p>
+</section>
+
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_ajax_check_url_batch">
         ajax_check_url_batch()
         <a href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_url_batch" class="headerlink"><i class="fas fa-link"></i></a>
@@ -699,7 +783,7 @@ Defaults to one directory above this file.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">547</span>
+    <span class="phpdocumentor-element-found-in__line">567</span>
 
     </aside>
 
@@ -734,7 +818,7 @@ Defaults to one directory above this file.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">231</span>
+    <span class="phpdocumentor-element-found-in__line">236</span>
 
     </aside>
 
@@ -770,7 +854,7 @@ with the post it belongs to and the meta key it came from.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">120</span>
+    <span class="phpdocumentor-element-found-in__line">121</span>
 
     </aside>
 
@@ -817,7 +901,7 @@ with the post it belongs to and the meta key it came from.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">147</span>
+    <span class="phpdocumentor-element-found-in__line">148</span>
 
     </aside>
 
@@ -855,7 +939,7 @@ head) always runs before the module and can safely set globals.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">104</span>
+    <span class="phpdocumentor-element-found-in__line">105</span>
 
     </aside>
 
@@ -890,7 +974,7 @@ head) always runs before the module and can safely set globals.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">182</span>
+    <span class="phpdocumentor-element-found-in__line">183</span>
 
     </aside>
 
@@ -925,7 +1009,7 @@ head) always runs before the module and can safely set globals.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">588</span>
+    <span class="phpdocumentor-element-found-in__line">608</span>
 
     </aside>
 
@@ -979,7 +1063,7 @@ a client/server error or a WP_Error, since many hosts block HEAD.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">438</span>
+    <span class="phpdocumentor-element-found-in__line">458</span>
 
     </aside>
 
@@ -1038,7 +1122,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">290</span>
+    <span class="phpdocumentor-element-found-in__line">295</span>
 
     </aside>
 
@@ -1077,7 +1161,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">362</span>
+    <span class="phpdocumentor-element-found-in__line">406</span>
 
     </aside>
 
@@ -1143,6 +1227,72 @@ appearing in strings, and plain-URL scalar fields.</p>
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_gather_image_urls_from_post_type">
+        gather_image_urls_from_post_type()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_gather_image_urls_from_post_type" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">780</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Iterate all posts of a given type and pull the Media Library image
+URL out of each configured image field.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">gather_image_urls_from_post_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$target_instance</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">0</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;int, array&lt;string, mixed&gt;&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Post type slug.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$target_instance</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">0</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Optional instance post ID to restrict results to.
+0 means &quot;all instances&quot;.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;int, array&lt;string, mixed&gt;&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Flat list of {post_id, post_title, post_type, edit_link, field_label, url}.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_human_label_for_meta_key">
         human_label_for_meta_key()
         <a href="classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1151,7 +1301,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">308</span>
+    <span class="phpdocumentor-element-found-in__line">313</span>
 
     </aside>
 
@@ -1201,6 +1351,64 @@ appear in the editor UI rather than raw meta keys.</p>
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_image_field_specs">
+        image_field_specs()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_image_field_specs" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">734</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Image field specs per post type: which meta key holds the image, and
+(for the Exopite fieldset fields) which sub-key inside that meta
+value holds the Media Library URL.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">image_field_specs</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;int, array&lt;string, string&gt;&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Post type slug.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;int, array&lt;string, string&gt;&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>List of {meta_key, sub_key, label}.
+<code class="prettyprint">sub_key</code> is '' for flat (non-fieldset) fields.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_instance_meta_key_for_post_type">
         instance_meta_key_for_post_type()
         <a href="classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1209,7 +1417,7 @@ appear in the editor UI rather than raw meta keys.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">344</span>
+    <span class="phpdocumentor-element-found-in__line">349</span>
 
     </aside>
 
@@ -1258,6 +1466,74 @@ plugin (see class-utility.php and includes/admin-{modal,figure}.php).</p>
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_instance_scoped_query_args">
+        instance_scoped_query_args()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_instance_scoped_query_args" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">369</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Build `get_posts()` args for a post type, optionally scoped to the
+posts belonging to a given instance. Shared by every gather routine
+(broken links and missing alt text) so the two checks stay scoped to
+the same set of posts for a given `target_instance` selection.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">instance_scoped_query_args</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$target_instance</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">0</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Post type slug.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$target_instance</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">0</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Optional instance post ID to restrict results to.
+0 means &quot;all instances&quot;.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p><code class="prettyprint">get_posts()</code> args.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_is_site_checker_screen">
         is_site_checker_screen()
         <a href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1266,7 +1542,7 @@ plugin (see class-utility.php and includes/admin-{modal,figure}.php).</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">171</span>
+    <span class="phpdocumentor-element-found-in__line">172</span>
 
     </aside>
 
@@ -1317,7 +1593,7 @@ plugin (see class-utility.php and includes/admin-{modal,figure}.php).</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">276</span>
+    <span class="phpdocumentor-element-found-in__line">281</span>
 
     </aside>
 
@@ -1356,7 +1632,7 @@ plugin (see class-utility.php and includes/admin-{modal,figure}.php).</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">511</span>
+    <span class="phpdocumentor-element-found-in__line">531</span>
 
     </aside>
 
@@ -1406,6 +1682,67 @@ Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_resolve_attachment_id">
+        resolve_attachment_id()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_resolve_attachment_id" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">837</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Resolve an image URL to its Media Library attachment ID, if any.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">resolve_attachment_id</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$url</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Falls back to stripping a <code class="prettyprint">-WIDTHxHEIGHT</code> resize suffix (e.g.
+<code class="prettyprint">image-300x200.jpg</code> -&gt; <code class="prettyprint">image.jpg</code>) before retrying, since stored
+field values sometimes point at a generated intermediate size rather
+than the original upload that <code class="prettyprint">attachment_url_to_postid()</code> indexes.
+Mirrors the same fallback in class-validation.php's media linking.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$url</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Image URL.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">int</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Attachment post ID, or 0 if it doesn't resolve to one.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_scene_meta_keys">
         scene_meta_keys()
         <a href="classes/Graphic-Data-Site-Checker.html#method_scene_meta_keys" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1414,7 +1751,7 @@ Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">262</span>
+    <span class="phpdocumentor-element-found-in__line">267</span>
 
     </aside>
 
@@ -1482,6 +1819,7 @@ Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method___construct">__construct()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_alt_text">ajax_check_alt_text()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_url_batch">ajax_check_url_batch()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_gather_urls">ajax_gather_urls()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_enqueue_assets">enqueue_assets()</a></li>
@@ -1492,11 +1830,15 @@ Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_extract_urls">extract_urls()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_figure_meta_keys">figure_meta_keys()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_gather_from_post_type">gather_from_post_type()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_gather_image_urls_from_post_type">gather_image_urls_from_post_type()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key">human_label_for_meta_key()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_image_field_specs">image_field_specs()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type">instance_meta_key_for_post_type()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_instance_scoped_query_args">instance_scoped_query_args()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen">is_site_checker_screen()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_modal_meta_keys">modal_meta_keys()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_normalize_url">normalize_url()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_resolve_attachment_id">resolve_attachment_id()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_scene_meta_keys">scene_meta_keys()</a></li>
                                     </ul>
             </li>

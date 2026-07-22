@@ -316,6 +316,11 @@ Search.appendIndex(
             "summary": "Meta\u0020key\u0020that\u0020links\u0020a\u0020given\u0020post\u0020type\u0020back\u0020to\u0020its\u0020owning\u0020instance,\nmirroring\u0020the\u0020\u0022Instance\u0022\u0020filter\u0020columns\/dropdowns\u0020elsewhere\u0020in\u0020the\nplugin\u0020\u0028see\u0020class\u002Dutility.php\u0020and\u0020includes\/admin\u002D\u007Bmodal,figure\u007D.php\u0029.",
             "url": "classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type"
         },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Ainstance_scoped_query_args\u0028\u0029",
+            "name": "instance_scoped_query_args",
+            "summary": "Build\u0020\u0060get_posts\u0028\u0029\u0060\u0020args\u0020for\u0020a\u0020post\u0020type,\u0020optionally\u0020scoped\u0020to\u0020the\nposts\u0020belonging\u0020to\u0020a\u0020given\u0020instance.\u0020Shared\u0020by\u0020every\u0020gather\u0020routine\n\u0028broken\u0020links\u0020and\u0020missing\u0020alt\u0020text\u0029\u0020so\u0020the\u0020two\u0020checks\u0020stay\u0020scoped\u0020to\nthe\u0020same\u0020set\u0020of\u0020posts\u0020for\u0020a\u0020given\u0020\u0060target_instance\u0060\u0020selection.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_instance_scoped_query_args"
+        },                {
             "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Agather_from_post_type\u0028\u0029",
             "name": "gather_from_post_type",
             "summary": "Iterate\u0020all\u0020posts\u0020of\u0020a\u0020given\u0020type\u0020and\u0020extract\u0020URLs\u0020from\u0020the\u0020named\u0020meta\u0020keys.",
@@ -340,6 +345,26 @@ Search.appendIndex(
             "name": "check_url",
             "summary": "Probe\u0020a\u0020single\u0020URL\u0020and\u0020return\u0020\u007Bok,\u0020status,\u0020error\u007D.",
             "url": "classes/Graphic-Data-Site-Checker.html#method_check_url"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aajax_check_alt_text\u0028\u0029",
+            "name": "ajax_check_alt_text",
+            "summary": "Scan\u0020the\u0020instance\/scene\/modal\/figure\u0020image\u0020fields,\u0020resolve\u0020each\u0020one\nthat\u0020points\u0020at\u0020a\u0020Media\u0020Library\u0020attachment,\u0020and\u0020report\u0020the\u0020ones\u0020whose\nattachment\u0020has\u0020no\u0020alt\u0020text\u0020set.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_ajax_check_alt_text"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aimage_field_specs\u0028\u0029",
+            "name": "image_field_specs",
+            "summary": "Image\u0020field\u0020specs\u0020per\u0020post\u0020type\u003A\u0020which\u0020meta\u0020key\u0020holds\u0020the\u0020image,\u0020and\n\u0028for\u0020the\u0020Exopite\u0020fieldset\u0020fields\u0029\u0020which\u0020sub\u002Dkey\u0020inside\u0020that\u0020meta\nvalue\u0020holds\u0020the\u0020Media\u0020Library\u0020URL.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_image_field_specs"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Agather_image_urls_from_post_type\u0028\u0029",
+            "name": "gather_image_urls_from_post_type",
+            "summary": "Iterate\u0020all\u0020posts\u0020of\u0020a\u0020given\u0020type\u0020and\u0020pull\u0020the\u0020Media\u0020Library\u0020image\nURL\u0020out\u0020of\u0020each\u0020configured\u0020image\u0020field.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_gather_image_urls_from_post_type"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aresolve_attachment_id\u0028\u0029",
+            "name": "resolve_attachment_id",
+            "summary": "Resolve\u0020an\u0020image\u0020URL\u0020to\u0020its\u0020Media\u0020Library\u0020attachment\u0020ID,\u0020if\u0020any.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_resolve_attachment_id"
         },                {
             "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003ABATCH_SIZE",
             "name": "BATCH_SIZE",
