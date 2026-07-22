@@ -100,6 +100,7 @@ const IDS = {
 	status: 'graphic-data-broken-links-status',
 	progress: 'graphic-data-broken-links-progress',
 	report: 'graphic-data-broken-links-report',
+	targetInstance: 'target_instance',
 };
 
 /**
@@ -458,7 +459,12 @@ async function runBrokenLinkCheck() {
 	try {
 		setStatus( 'Gathering URLs from Graphic Data posts…', true );
 
-		const gathered = await ajax( 'graphic_data_gather_urls' );
+		const targetInstanceEl = byId( IDS.targetInstance );
+		const targetInstance = targetInstanceEl ? targetInstanceEl.value : '';
+		const gathered = await ajax(
+			'graphic_data_gather_urls',
+			targetInstance ? { target_instance: targetInstance } : {}
+		);
 		const items = Array.isArray( gathered.items ) ? gathered.items : [];
 
 		if ( items.length === 0 ) {

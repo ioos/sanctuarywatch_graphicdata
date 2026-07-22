@@ -195,7 +195,7 @@ class Graphic_Data_Site_Checker {
 				<p>
 				<?php
 				$function_utilities = new Graphic_Data_Utility();
-				$function_utilities->create_instance_dropdown_filter( 'broken_link_instance' );
+				$function_utilities->create_instance_dropdown_filter( 'target_instance' );
 				?>
 				</p>
 				<p>
@@ -238,11 +238,13 @@ class Graphic_Data_Site_Checker {
 			);
 		}
 
+		$target_instance = isset( $_POST['target_instance'] ) ? absint( $_POST['target_instance'] ) : 0;
+
 		$items = array();
-		$items = array_merge( $items, $this->gather_from_post_type( 'instance', array( 'instance_legacy_content_url' ) ) );
-		$items = array_merge( $items, $this->gather_from_post_type( 'scene', $this->scene_meta_keys() ) );
-		$items = array_merge( $items, $this->gather_from_post_type( 'modal', $this->modal_meta_keys() ) );
-		$items = array_merge( $items, $this->gather_from_post_type( 'figure', $this->figure_meta_keys() ) );
+		$items = array_merge( $items, $this->gather_from_post_type( 'instance', array( 'instance_legacy_content_url' ), $target_instance ) );
+		$items = array_merge( $items, $this->gather_from_post_type( 'scene', $this->scene_meta_keys(), $target_instance ) );
+		$items = array_merge( $items, $this->gather_from_post_type( 'modal', $this->modal_meta_keys(), $target_instance ) );
+		$items = array_merge( $items, $this->gather_from_post_type( 'figure', $this->figure_meta_keys(), $target_instance ) );
 
 		wp_send_json_success(
 			array(
@@ -332,31 +334,63 @@ class Graphic_Data_Site_Checker {
 	}
 
 	/**
+	 * Meta key that links a given post type back to its owning instance,
+	 * mirroring the "Instance" filter columns/dropdowns elsewhere in the
+	 * plugin (see class-utility.php and includes/admin-{modal,figure}.php).
+	 *
+	 * @param string $post_type Post type slug.
+	 * @return string Meta key, or empty string if the post type has no such link.
+	 */
+	private function instance_meta_key_for_post_type( $post_type ) {
+		$keys = array(
+			'scene'  => 'scene_location',
+			'modal'  => 'modal_location',
+			'figure' => 'location',
+		);
+		return isset( $keys[ $post_type ] ) ? $keys[ $post_type ] : '';
+	}
+
+	/**
 	 * Iterate all posts of a given type and extract URLs from the named meta keys.
 	 *
-	 * @param string   $post_type Post type slug.
-	 * @param string[] $meta_keys Meta keys to inspect.
+	 * @param string   $post_type       Post type slug.
+	 * @param string[] $meta_keys       Meta keys to inspect.
+	 * @param int      $target_instance Optional instance post ID to restrict results to.
+	 *                                  0 (the default) means "all instances".
 	 * @return array<int,array<string,mixed>> Flat list of {post_id, post_title, post_type, edit_link, meta_key, url}.
 	 */
-	private function gather_from_post_type( $post_type, $meta_keys ) {
+	private function gather_from_post_type( $post_type, $meta_keys, $target_instance = 0 ) {
 		$items = array();
 
 		if ( ! post_type_exists( $post_type ) ) {
 			return $items;
 		}
 
-		$post_ids = get_posts(
-			array(
-				'post_type'        => $post_type,
-				'post_status'      => array( 'publish', 'draft', 'private', 'pending', 'future' ),
-				'posts_per_page'   => -1,
-				'no_found_rows'    => true,
-				'fields'           => 'ids',
-				'suppress_filters' => true,
-				'orderby'          => 'ID',
-				'order'            => 'ASC',
-			)
+		$query_args = array(
+			'post_type'        => $post_type,
+			'post_status'      => array( 'publish', 'draft', 'private', 'pending', 'future' ),
+			'posts_per_page'   => -1,
+			'no_found_rows'    => true,
+			'fields'           => 'ids',
+			'suppress_filters' => true,
+			'orderby'          => 'ID',
+			'order'            => 'ASC',
 		);
+
+		if ( $target_instance ) {
+			if ( 'instance' === $post_type ) {
+				// The instance post type has no self-referential meta key; it IS the instance.
+				$query_args['post__in'] = array( $target_instance );
+			} else {
+				$instance_meta_key = $this->instance_meta_key_for_post_type( $post_type );
+				if ( '' !== $instance_meta_key ) {
+					$query_args['meta_key']   = $instance_meta_key; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					$query_args['meta_value'] = $target_instance; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				}
+			}
+		}
+
+		$post_ids = get_posts( $query_args );
 
 		foreach ( $post_ids as $post_id ) {
 			$post_id    = (int) $post_id;
