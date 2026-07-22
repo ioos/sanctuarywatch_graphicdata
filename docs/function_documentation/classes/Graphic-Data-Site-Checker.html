@@ -289,6 +289,15 @@ and pull out every URL it references.</dd>
 <dd>Return a human-readable label for a given meta key.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type">instance_meta_key_for_post_type()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Meta key that links a given post type back to its owning instance,
+mirroring the &quot;Instance&quot; filter columns/dropdowns elsewhere in the
+plugin (see class-utility.php and includes/admin-{modal,figure}.php).</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen">is_site_checker_screen()</a>
     <span>
                                 &nbsp;: bool    </span>
@@ -690,7 +699,7 @@ Defaults to one directory above this file.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">513</span>
+    <span class="phpdocumentor-element-found-in__line">547</span>
 
     </aside>
 
@@ -916,7 +925,7 @@ head) always runs before the module and can safely set globals.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">554</span>
+    <span class="phpdocumentor-element-found-in__line">588</span>
 
     </aside>
 
@@ -970,7 +979,7 @@ a client/server error or a WP_Error, since many hosts block HEAD.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">404</span>
+    <span class="phpdocumentor-element-found-in__line">438</span>
 
     </aside>
 
@@ -1029,7 +1038,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">288</span>
+    <span class="phpdocumentor-element-found-in__line">290</span>
 
     </aside>
 
@@ -1068,7 +1077,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">341</span>
+    <span class="phpdocumentor-element-found-in__line">362</span>
 
     </aside>
 
@@ -1076,7 +1085,7 @@ appearing in strings, and plain-URL scalar fields.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">gather_from_post_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, string&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$meta_keys</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;int, array&lt;string, mixed&gt;&gt;</span></code>
+                    <span class="phpdocumentor-signature__name">gather_from_post_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, string&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$meta_keys</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$target_instance</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">0</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;int, array&lt;string, mixed&gt;&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1099,6 +1108,16 @@ appearing in strings, and plain-URL scalar fields.</p>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                     <section class="phpdocumentor-description"><p>Meta keys to inspect.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$target_instance</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">0</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Optional instance post ID to restrict results to.
+0 (the default) means &quot;all instances&quot;.</p>
 </section>
 
             </dd>
@@ -1132,7 +1151,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">306</span>
+    <span class="phpdocumentor-element-found-in__line">308</span>
 
     </aside>
 
@@ -1171,6 +1190,63 @@ appear in the editor UI rather than raw meta keys.</p>
         <span class="phpdocumentor-signature__response_type">string</span>
                     &mdash;
                 <section class="phpdocumentor-description"><p>Human-readable label.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_instance_meta_key_for_post_type">
+        instance_meta_key_for_post_type()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">344</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Meta key that links a given post type back to its owning instance,
+mirroring the &quot;Instance&quot; filter columns/dropdowns elsewhere in the
+plugin (see class-utility.php and includes/admin-{modal,figure}.php).</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">instance_meta_key_for_post_type</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Post type slug.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Meta key, or empty string if the post type has no such link.</p>
 </section>
 
             </section>
@@ -1241,7 +1317,7 @@ appear in the editor UI rather than raw meta keys.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">274</span>
+    <span class="phpdocumentor-element-found-in__line">276</span>
 
     </aside>
 
@@ -1280,7 +1356,7 @@ appear in the editor UI rather than raw meta keys.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">477</span>
+    <span class="phpdocumentor-element-found-in__line">511</span>
 
     </aside>
 
@@ -1338,7 +1414,7 @@ Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">260</span>
+    <span class="phpdocumentor-element-found-in__line">262</span>
 
     </aside>
 
@@ -1417,6 +1493,7 @@ Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_figure_meta_keys">figure_meta_keys()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_gather_from_post_type">gather_from_post_type()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key">human_label_for_meta_key()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type">instance_meta_key_for_post_type()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen">is_site_checker_screen()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_modal_meta_keys">modal_meta_keys()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_normalize_url">normalize_url()</a></li>
