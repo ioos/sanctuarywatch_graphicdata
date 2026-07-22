@@ -1341,6 +1341,11 @@ Search.appendIndex(
             "summary": "Add\u0020custom\u0020rewrite\u0020rules\u0020for\u0020scene\u0020permalinks.",
             "url": "classes/Graphic-Data-Scene.html#method_add_scene_rewrite_rules"
         },                {
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aadd_scene_query_vars\u0028\u0029",
+            "name": "add_scene_query_vars",
+            "summary": "Register\u0020\u0027instance_slug\u0027\u0020as\u0020a\u0020public\u0020query\u0020var.",
+            "url": "classes/Graphic-Data-Scene.html#method_add_scene_query_vars"
+        },                {
             "fqsen": "\\Graphic_Data_Scene\u003A\u003Aremove_scene_slug\u0028\u0029",
             "name": "remove_scene_slug",
             "summary": "Rewrite\u0020the\u0020permalink\u0020for\u0020scene\u0020posts\u0020to\u0020use\u0020the\u0020instance\u0020slug.",
