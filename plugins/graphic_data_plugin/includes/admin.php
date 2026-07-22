@@ -296,6 +296,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_scene, 'register_scene_rest_fields' );
 		$this->loader->add_filter( 'rest_scene_query', $plugin_admin_scene, 'filter_scene_by_scene_location', 10, 2 );
 		$this->loader->add_filter( 'rewrite_rules_array', $plugin_admin_scene, 'add_scene_rewrite_rules' );
+		$this->loader->add_filter( 'query_vars', $plugin_admin_scene, 'add_scene_query_vars' );
 		$this->loader->add_filter( 'post_type_link', $plugin_admin_scene, 'remove_scene_slug', 10, 3 );
 		$this->loader->add_filter( 'manage_edit-scene_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_scene, 'orderby_status_column' ); // This action orders by the status column for scene, modal, and figure content types.

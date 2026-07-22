@@ -37,6 +37,18 @@ if ( ! is_user_logged_in() && 'draft' === $graphic_data_scene_published ) {
 	exit;
 }
 
+// Check that the {instance-slug} URL segment actually matches the scene's real instance - redirect if not.
+if ( ! is_preview() ) {
+	$graphic_data_url_instance_slug = get_query_var( 'instance_slug' );
+	$graphic_data_scene_instance_id = get_post_meta( $graphic_data_post_id, 'scene_location', true );
+	$graphic_data_actual_instance_slug = get_post_meta( $graphic_data_scene_instance_id, 'instance_slug', true );
+
+	if ( '' === $graphic_data_url_instance_slug || $graphic_data_url_instance_slug !== $graphic_data_actual_instance_slug ) {
+		wp_redirect( home_url( '/' ) );
+		exit;
+	}
+}
+
 get_header();
 
 // ALL CURRENTLY ASSUME THERE IS THE CORRECT POSTMETA DATA AND THERE ALL SUFFICIENT INFORMATION EXISTS
