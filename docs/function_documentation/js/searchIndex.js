@@ -311,6 +311,11 @@ Search.appendIndex(
             "summary": "Return\u0020a\u0020human\u002Dreadable\u0020label\u0020for\u0020a\u0020given\u0020meta\u0020key.",
             "url": "classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key"
         },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Ainstance_meta_key_for_post_type\u0028\u0029",
+            "name": "instance_meta_key_for_post_type",
+            "summary": "Meta\u0020key\u0020that\u0020links\u0020a\u0020given\u0020post\u0020type\u0020back\u0020to\u0020its\u0020owning\u0020instance,\nmirroring\u0020the\u0020\u0022Instance\u0022\u0020filter\u0020columns\/dropdowns\u0020elsewhere\u0020in\u0020the\nplugin\u0020\u0028see\u0020class\u002Dutility.php\u0020and\u0020includes\/admin\u002D\u007Bmodal,figure\u007D.php\u0029.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type"
+        },                {
             "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Agather_from_post_type\u0028\u0029",
             "name": "gather_from_post_type",
             "summary": "Iterate\u0020all\u0020posts\u0020of\u0020a\u0020given\u0020type\u0020and\u0020extract\u0020URLs\u0020from\u0020the\u0020named\u0020meta\u0020keys.",
