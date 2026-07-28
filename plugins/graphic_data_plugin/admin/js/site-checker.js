@@ -99,10 +99,11 @@ const config = window.graphicDataSiteChecker || {};
  * "Check for Broken Links" button cannot start a second scan while one is
  * already in flight.
  *
- * @type {{ running: boolean }}
+ * @type {{ running: boolean, rebuildingMedia: boolean }}
  */
 const state = {
 	running: false,
+	rebuildingMedia: false,
 };
 
 /**
@@ -118,6 +119,8 @@ const IDS = {
 	report: 'graphic-data-broken-links-report',
 	altTextReport: 'graphic-data-alt-text-report',
 	targetInstance: 'target_instance',
+	mediaAssocButton: 'graphic-data-rebuild-media-associations',
+	mediaAssocStatus: 'graphic-data-media-association-status',
 };
 
 /**
@@ -137,13 +140,15 @@ function byId( id ) {
  * count is not yet known, so a determinate progress bar is impossible) and
  * to surface fatal errors from the AJAX layer.
  *
- * @param {string}  text     Message to display.
- * @param {boolean} spinning When true, the WordPress `.is-active` spinner
- *                           animates alongside the text.
+ * @param {string}  text          Message to display.
+ * @param {boolean} spinning      When true, the WordPress `.is-active` spinner
+ *                                animates alongside the text.
+ * @param {string}  [statusId]    ID of the status region. Defaults to the
+ *                                broken-link checker's status region.
  * @returns {void}
  */
-function setStatus( text, spinning ) {
-	const el = byId( IDS.status );
+function setStatus( text, spinning, statusId = IDS.status ) {
+	const el = byId( statusId );
 	if ( ! el ) {
 		return;
 	}
@@ -159,12 +164,14 @@ function setStatus( text, spinning ) {
 }
 
 /**
- * Hide the status region. No-op if the region is not on the page.
+ * Hide a status region. No-op if the region is not on the page.
  *
+ * @param {string} [statusId] ID of the status region. Defaults to the
+ *                             broken-link checker's status region.
  * @returns {void}
  */
-function hideStatus() {
-	const el = byId( IDS.status );
+function hideStatus( statusId = IDS.status ) {
+	const el = byId( statusId );
 	if ( el ) {
 		el.hidden = true;
 	}
@@ -654,10 +661,63 @@ async function runBrokenLinkCheck() {
 }
 
 /**
- * Attach the broken-link scan handler to the trigger button.
+ * Delete every `graphic_data_instance_id` postmeta record, then rescan all
+ * Instance/Scene/Modal/Figure posts and re-derive those associations from
+ * scratch server-side. Destructive (drops existing associations first), so
+ * the operator is asked to confirm before the request goes out.
  *
- * No-op if the button is not on the page (e.g. if this module was
- * accidentally loaded on the wrong screen).
+ * Re-entrant guard: no-ops immediately if a rebuild is already in flight.
+ *
+ * @returns {Promise<void>} Resolves once the rebuild finishes (or errors)
+ *                          and the UI is back to an idle state.
+ */
+async function runRebuildMediaAssociations() {
+	if ( state.rebuildingMedia ) {
+		return;
+	}
+
+	const confirmed = window.confirm(
+		'This will delete every existing Media ↔ Instance association and rebuild them from scratch. Continue?'
+	);
+	if ( ! confirmed ) {
+		return;
+	}
+
+	state.rebuildingMedia = true;
+
+	const button = byId( IDS.mediaAssocButton );
+	if ( button ) {
+		button.disabled = true;
+	}
+
+	try {
+		setStatus( 'Deleting existing associations and rescanning content…', true, IDS.mediaAssocStatus );
+		const result = await ajax( 'graphic_data_rebuild_media_associations' );
+		const deleted = Number( result.deleted ) || 0;
+		const associated = Number( result.associated ) || 0;
+		setStatus(
+			`Done. Deleted ${ deleted } existing association${ deleted === 1 ? '' : 's' } and created ${ associated } new association${ associated === 1 ? '' : 's' }.`,
+			false,
+			IDS.mediaAssocStatus
+		);
+	} catch ( err ) {
+		setStatus( `Error: ${ err.message }`, false, IDS.mediaAssocStatus );
+		// eslint-disable-next-line no-console
+		console.error( '[graphic-data/site-checker]', err );
+	} finally {
+		state.rebuildingMedia = false;
+		if ( button ) {
+			button.disabled = false;
+		}
+	}
+}
+
+/**
+ * Attach the broken-link scan and media-association-rebuild handlers to
+ * their trigger buttons.
+ *
+ * No-op for a given button if it is not on the page (e.g. if this module
+ * was accidentally loaded on the wrong screen).
  *
  * @returns {void}
  */
@@ -665,6 +725,11 @@ function init() {
 	const button = byId( IDS.button );
 	if ( button ) {
 		button.addEventListener( 'click', runBrokenLinkCheck );
+	}
+
+	const mediaAssocButton = byId( IDS.mediaAssocButton );
+	if ( mediaAssocButton ) {
+		mediaAssocButton.addEventListener( 'click', runRebuildMediaAssociations );
 	}
 }
 

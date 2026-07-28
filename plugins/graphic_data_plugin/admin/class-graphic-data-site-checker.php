@@ -97,6 +97,7 @@ class Graphic_Data_Site_Checker {
 		add_action( 'wp_ajax_graphic_data_gather_urls', array( $this, 'ajax_gather_urls' ) );
 		add_action( 'wp_ajax_graphic_data_check_url_batch', array( $this, 'ajax_check_url_batch' ) );
 		add_action( 'wp_ajax_graphic_data_check_alt_text', array( $this, 'ajax_check_alt_text' ) );
+		add_action( 'wp_ajax_graphic_data_rebuild_media_associations', array( $this, 'ajax_rebuild_media_associations' ) );
 	}
 
 	/**
@@ -220,6 +221,26 @@ class Graphic_Data_Site_Checker {
 
 				<h4>Missing Alt Text</h4>
 				<div class="graphic-data-site-checker__report" id="graphic-data-alt-text-report" hidden></div>
+			</div>
+
+			<div class="graphic-data-site-checker__section" id="graphic-data-media-association-section">
+				<h3>Media &amp; Instance Association Rebuild</h3>
+				<p class="description">
+					Deletes every existing <code>graphic_data_instance_id</code> postmeta record, then rescans
+					all Instance, Scene, Modal, and Figure posts and re-associates each referenced Media Library
+					attachment with its owning instance. Use this if attachment-to-instance associations have
+					drifted or need to be regenerated from scratch.
+				</p>
+				<p>
+					<button type="button" class="button button-secondary" id="graphic-data-rebuild-media-associations">
+						Rebuild Media Associations
+					</button>
+				</p>
+
+				<div class="graphic-data-site-checker__status" id="graphic-data-media-association-status" hidden>
+					<span class="spinner is-active" aria-hidden="true"></span>
+					<span class="graphic-data-site-checker__status-text" role="status" aria-live="polite"></span>
+				</div>
 			</div>
 		</div>
 		<?php
@@ -820,6 +841,149 @@ class Graphic_Data_Site_Checker {
 		}
 
 		return $items;
+	}
+
+	/* ---------------------------------------------------------------------
+	 * AJAX: rebuild instance <-> media associations
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Delete every `graphic_data_instance_id` postmeta record, then rescan
+	 * all Instance/Scene/Modal/Figure posts and re-derive the associations
+	 * from their image fields.
+	 *
+	 * Ported from the one-off `iterate-posts1.php` migration script.
+	 */
+	public function ajax_rebuild_media_associations() {
+		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
+
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Insufficient permissions.', 'graphic-data' ) ),
+				403
+			);
+		}
+
+		global $wpdb;
+		$deleted = $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key = 'graphic_data_instance_id'" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$associated = $this->rebuild_instance_media_associations();
+
+		wp_send_json_success(
+			array(
+				'deleted'    => (int) $deleted,
+				'associated' => $associated,
+			)
+		);
+	}
+
+	/**
+	 * Re-derive `graphic_data_instance_id` associations for every Media
+	 * Library attachment referenced from Instance/Scene/Modal/Figure postmeta.
+	 *
+	 * Mirrors `iterate-posts1.php`'s post-type switch, with two corrections:
+	 * the figure branch there associated media with `$modal_location` (an
+	 * undefined variable) instead of `$figure_location`; and the scene
+	 * branch read the infographic image from the `instance_tile` meta key
+	 * (which only ever exists on `instance` posts) instead of `scene_infographic`,
+	 * the key scene posts actually store it under (see admin-scene.php).
+	 *
+	 * @return int Number of attachments newly associated.
+	 */
+	private function rebuild_instance_media_associations() {
+		$count = 0;
+
+		foreach ( array( 'instance', 'scene', 'modal', 'figure' ) as $post_type ) {
+			if ( ! post_type_exists( $post_type ) ) {
+				continue;
+			}
+
+			$post_ids = get_posts( $this->instance_scoped_query_args( $post_type ) );
+
+			foreach ( $post_ids as $post_id ) {
+				$post_id = (int) $post_id;
+
+				switch ( $post_type ) {
+					case 'instance':
+						$instance_tile = get_post_meta( $post_id, 'instance_tile', true );
+						if ( $instance_tile ) {
+							$count += (int) $this->associate_media( $instance_tile, $post_id );
+						}
+						break;
+
+					case 'scene':
+						$scene_location = get_post_meta( $post_id, 'scene_location', true );
+						if ( $scene_location ) {
+							$scene_infographic = get_post_meta( $post_id, 'scene_infographic', true );
+							if ( $scene_infographic ) {
+								$count += (int) $this->associate_media( $scene_infographic, $scene_location );
+							}
+							for ( $i = 1; $i <= 6; $i++ ) {
+								$scene_photo = get_post_meta( $post_id, 'scene_photo' . $i, true );
+								if ( $scene_photo && isset( $scene_photo[ 'scene_photo_internal' . $i ] ) ) {
+									$scene_photo_internal = $scene_photo[ 'scene_photo_internal' . $i ];
+									if ( '' !== $scene_photo_internal ) {
+										$count += (int) $this->associate_media( $scene_photo_internal, $scene_location );
+									}
+								}
+							}
+						}
+						break;
+
+					case 'modal':
+						$modal_location = get_post_meta( $post_id, 'modal_location', true );
+						if ( $modal_location ) {
+							for ( $i = 1; $i <= 6; $i++ ) {
+								$modal_photo = get_post_meta( $post_id, 'modal_photo' . $i, true );
+								if ( $modal_photo && isset( $modal_photo[ 'modal_photo_internal' . $i ] ) ) {
+									$modal_photo_internal = $modal_photo[ 'modal_photo_internal' . $i ];
+									if ( '' !== $modal_photo_internal ) {
+										$count += (int) $this->associate_media( $modal_photo_internal, $modal_location );
+									}
+								}
+							}
+						}
+						break;
+
+					case 'figure':
+						$figure_location = get_post_meta( $post_id, 'location', true );
+						if ( $figure_location ) {
+							$figure_image = get_post_meta( $post_id, 'figure_image', true );
+							if ( $figure_image ) {
+								$count += (int) $this->associate_media( $figure_image, $figure_location );
+							}
+						}
+						break;
+				}
+			}
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Associate an instance with a media attachment via post meta, resolving
+	 * the attachment from its URL. No-ops if the URL doesn't resolve to a
+	 * Media Library attachment or if that attachment already has an
+	 * association.
+	 *
+	 * @param string $image_url   Full URL of the image (may include a size suffix).
+	 * @param int    $instance_id The instance post ID to associate with the attachment.
+	 * @return bool True if a new association was written.
+	 */
+	private function associate_media( $image_url, $instance_id ) {
+		$attachment_id = $this->resolve_attachment_id( $image_url );
+		if ( ! $attachment_id ) {
+			return false;
+		}
+
+		$existing = get_post_meta( $attachment_id, 'graphic_data_instance_id', true );
+		if ( ! empty( $existing ) ) {
+			return false;
+		}
+
+		update_post_meta( $attachment_id, 'graphic_data_instance_id', $instance_id );
+		return true;
 	}
 
 	/**
