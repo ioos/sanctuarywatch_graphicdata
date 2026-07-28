@@ -361,6 +361,21 @@ Search.appendIndex(
             "summary": "Iterate\u0020all\u0020posts\u0020of\u0020a\u0020given\u0020type\u0020and\u0020pull\u0020the\u0020Media\u0020Library\u0020image\nURL\u0020out\u0020of\u0020each\u0020configured\u0020image\u0020field.",
             "url": "classes/Graphic-Data-Site-Checker.html#method_gather_image_urls_from_post_type"
         },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aajax_rebuild_media_associations\u0028\u0029",
+            "name": "ajax_rebuild_media_associations",
+            "summary": "Delete\u0020every\u0020\u0060graphic_data_instance_id\u0060\u0020postmeta\u0020record,\u0020then\u0020rescan\nall\u0020Instance\/Scene\/Modal\/Figure\u0020posts\u0020and\u0020re\u002Dderive\u0020the\u0020associations\nfrom\u0020their\u0020image\u0020fields.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_ajax_rebuild_media_associations"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Arebuild_instance_media_associations\u0028\u0029",
+            "name": "rebuild_instance_media_associations",
+            "summary": "Re\u002Dderive\u0020\u0060graphic_data_instance_id\u0060\u0020associations\u0020for\u0020every\u0020Media\nLibrary\u0020attachment\u0020referenced\u0020from\u0020Instance\/Scene\/Modal\/Figure\u0020postmeta.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_rebuild_instance_media_associations"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aassociate_media\u0028\u0029",
+            "name": "associate_media",
+            "summary": "Associate\u0020an\u0020instance\u0020with\u0020a\u0020media\u0020attachment\u0020via\u0020post\u0020meta,\u0020resolving\nthe\u0020attachment\u0020from\u0020its\u0020URL.\u0020No\u002Dops\u0020if\u0020the\u0020URL\u0020doesn\u0027t\u0020resolve\u0020to\u0020a\nMedia\u0020Library\u0020attachment\u0020or\u0020if\u0020that\u0020attachment\u0020already\u0020has\u0020an\nassociation.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_associate_media"
+        },                {
             "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aresolve_attachment_id\u0028\u0029",
             "name": "resolve_attachment_id",
             "summary": "Resolve\u0020an\u0020image\u0020URL\u0020to\u0020its\u0020Media\u0020Library\u0020attachment\u0020ID,\u0020if\u0020any.",

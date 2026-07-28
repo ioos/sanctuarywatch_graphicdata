@@ -234,6 +234,15 @@ attachment has no alt text set.</dd>
 with the post it belongs to and the meta key it came from.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_ajax_rebuild_media_associations">ajax_rebuild_media_associations()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Delete every `graphic_data_instance_id` postmeta record, then rescan
+all Instance/Scene/Modal/Figure posts and re-derive the associations
+from their image fields.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_enqueue_assets">enqueue_assets()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -260,6 +269,16 @@ with the post it belongs to and the meta key it came from.</dd>
                                 &nbsp;: mixed    </span>
 </dt>
 <dd>Render the admin page markup.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_associate_media">associate_media()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Associate an instance with a media attachment via post meta, resolving
+the attachment from its URL. No-ops if the URL doesn&#039;t resolve to a
+Media Library attachment or if that attachment already has an
+association.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_check_url">check_url()</a>
@@ -353,6 +372,14 @@ the same set of posts for a given `target_instance` selection.</dd>
                                 &nbsp;: string    </span>
 </dt>
 <dd>Normalize a raw URL string into an absolute, checkable form.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Site-Checker.html#method_rebuild_instance_media_associations">rebuild_instance_media_associations()</a>
+    <span>
+                                &nbsp;: int    </span>
+</dt>
+<dd>Re-derive `graphic_data_instance_id` associations for every Media
+Library attachment referenced from Instance/Scene/Modal/Figure postmeta.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/Graphic-Data-Site-Checker.html#method_resolve_attachment_id">resolve_attachment_id()</a>
@@ -742,7 +769,7 @@ Defaults to one directory above this file.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">670</span>
+    <span class="phpdocumentor-element-found-in__line">691</span>
 
     </aside>
 
@@ -783,7 +810,7 @@ rather than a batched scan.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">567</span>
+    <span class="phpdocumentor-element-found-in__line">588</span>
 
     </aside>
 
@@ -818,7 +845,7 @@ rather than a batched scan.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">236</span>
+    <span class="phpdocumentor-element-found-in__line">257</span>
 
     </aside>
 
@@ -846,6 +873,45 @@ with the post it belongs to and the meta key it came from.</p>
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_ajax_rebuild_media_associations">
+        ajax_rebuild_media_associations()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_ajax_rebuild_media_associations" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">857</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Delete every `graphic_data_instance_id` postmeta record, then rescan
+all Instance/Scene/Modal/Figure posts and re-derive the associations
+from their image fields.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">ajax_rebuild_media_associations</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Ported from the one-off <code class="prettyprint">iterate-posts1.php</code> migration script.</p>
+</section>
+
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_enqueue_assets">
         enqueue_assets()
         <a href="classes/Graphic-Data-Site-Checker.html#method_enqueue_assets" class="headerlink"><i class="fas fa-link"></i></a>
@@ -854,7 +920,7 @@ with the post it belongs to and the meta key it came from.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">121</span>
+    <span class="phpdocumentor-element-found-in__line">122</span>
 
     </aside>
 
@@ -901,7 +967,7 @@ with the post it belongs to and the meta key it came from.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">148</span>
+    <span class="phpdocumentor-element-found-in__line">149</span>
 
     </aside>
 
@@ -939,7 +1005,7 @@ head) always runs before the module and can safely set globals.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">105</span>
+    <span class="phpdocumentor-element-found-in__line">106</span>
 
     </aside>
 
@@ -974,7 +1040,7 @@ head) always runs before the module and can safely set globals.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">183</span>
+    <span class="phpdocumentor-element-found-in__line">184</span>
 
     </aside>
 
@@ -1001,6 +1067,73 @@ head) always runs before the module and can safely set globals.</p>
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_associate_media">
+        associate_media()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_associate_media" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">974</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Associate an instance with a media attachment via post meta, resolving
+the attachment from its URL. No-ops if the URL doesn&#039;t resolve to a
+Media Library attachment or if that attachment already has an
+association.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">associate_media</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$image_url</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$instance_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$image_url</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Full URL of the image (may include a size suffix).</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$instance_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The instance post ID to associate with the attachment.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>True if a new association was written.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_check_url">
         check_url()
         <a href="classes/Graphic-Data-Site-Checker.html#method_check_url" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1009,7 +1142,7 @@ head) always runs before the module and can safely set globals.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">608</span>
+    <span class="phpdocumentor-element-found-in__line">629</span>
 
     </aside>
 
@@ -1063,7 +1196,7 @@ a client/server error or a WP_Error, since many hosts block HEAD.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">458</span>
+    <span class="phpdocumentor-element-found-in__line">479</span>
 
     </aside>
 
@@ -1122,7 +1255,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">295</span>
+    <span class="phpdocumentor-element-found-in__line">316</span>
 
     </aside>
 
@@ -1161,7 +1294,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">406</span>
+    <span class="phpdocumentor-element-found-in__line">427</span>
 
     </aside>
 
@@ -1235,7 +1368,7 @@ appearing in strings, and plain-URL scalar fields.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">780</span>
+    <span class="phpdocumentor-element-found-in__line">801</span>
 
     </aside>
 
@@ -1301,7 +1434,7 @@ URL out of each configured image field.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">313</span>
+    <span class="phpdocumentor-element-found-in__line">334</span>
 
     </aside>
 
@@ -1359,7 +1492,7 @@ appear in the editor UI rather than raw meta keys.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">734</span>
+    <span class="phpdocumentor-element-found-in__line">755</span>
 
     </aside>
 
@@ -1417,7 +1550,7 @@ value holds the Media Library URL.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">349</span>
+    <span class="phpdocumentor-element-found-in__line">370</span>
 
     </aside>
 
@@ -1474,7 +1607,7 @@ plugin (see class-utility.php and includes/admin-{modal,figure}.php).</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">369</span>
+    <span class="phpdocumentor-element-found-in__line">390</span>
 
     </aside>
 
@@ -1542,7 +1675,7 @@ the same set of posts for a given `target_instance` selection.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">172</span>
+    <span class="phpdocumentor-element-found-in__line">173</span>
 
     </aside>
 
@@ -1593,7 +1726,7 @@ the same set of posts for a given `target_instance` selection.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">281</span>
+    <span class="phpdocumentor-element-found-in__line">302</span>
 
     </aside>
 
@@ -1632,7 +1765,7 @@ the same set of posts for a given `target_instance` selection.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">531</span>
+    <span class="phpdocumentor-element-found-in__line">552</span>
 
     </aside>
 
@@ -1682,6 +1815,57 @@ Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_rebuild_instance_media_associations">
+        rebuild_instance_media_associations()
+        <a href="classes/Graphic-Data-Site-Checker.html#method_rebuild_instance_media_associations" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">893</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Re-derive `graphic_data_instance_id` associations for every Media
+Library attachment referenced from Instance/Scene/Modal/Figure postmeta.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">rebuild_instance_media_associations</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Mirrors <code class="prettyprint">iterate-posts1.php</code>'s post-type switch, with two corrections:
+the figure branch there associated media with <code class="prettyprint">$modal_location</code> (an
+undefined variable) instead of <code class="prettyprint">$figure_location</code>; and the scene
+branch read the infographic image from the <code class="prettyprint">instance_tile</code> meta key
+(which only ever exists on <code class="prettyprint">instance</code> posts) instead of <code class="prettyprint">scene_infographic</code>,
+the key scene posts actually store it under (see admin-scene.php).</p>
+</section>
+
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">int</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Number of attachments newly associated.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_resolve_attachment_id">
         resolve_attachment_id()
         <a href="classes/Graphic-Data-Site-Checker.html#method_resolve_attachment_id" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1690,7 +1874,7 @@ Turns protocol-relative and site-root-relative URLs into absolute ones.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">837</span>
+    <span class="phpdocumentor-element-found-in__line">1001</span>
 
     </aside>
 
@@ -1751,7 +1935,7 @@ Mirrors the same fallback in class-validation.php's media linking.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php"><a href="files/plugins-graphic-data-plugin-admin-class-graphic-data-site-checker.html"><abbr title="plugins/graphic_data_plugin/admin/class-graphic-data-site-checker.php">class-graphic-data-site-checker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">267</span>
+    <span class="phpdocumentor-element-found-in__line">288</span>
 
     </aside>
 
@@ -1822,10 +2006,12 @@ Mirrors the same fallback in class-validation.php's media linking.</p>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_alt_text">ajax_check_alt_text()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_check_url_batch">ajax_check_url_batch()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_gather_urls">ajax_gather_urls()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_ajax_rebuild_media_associations">ajax_rebuild_media_associations()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_enqueue_assets">enqueue_assets()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_print_inline_data">print_inline_data()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_register_submenu">register_submenu()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_render_page">render_page()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_associate_media">associate_media()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_check_url">check_url()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_extract_urls">extract_urls()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_figure_meta_keys">figure_meta_keys()</a></li>
@@ -1838,6 +2024,7 @@ Mirrors the same fallback in class-validation.php's media linking.</p>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_is_site_checker_screen">is_site_checker_screen()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_modal_meta_keys">modal_meta_keys()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_normalize_url">normalize_url()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_rebuild_instance_media_associations">rebuild_instance_media_associations()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_resolve_attachment_id">resolve_attachment_id()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Site-Checker.html#method_scene_meta_keys">scene_meta_keys()</a></li>
                                     </ul>
