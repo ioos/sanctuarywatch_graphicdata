@@ -361,20 +361,30 @@ Search.appendIndex(
             "summary": "Iterate\u0020all\u0020posts\u0020of\u0020a\u0020given\u0020type\u0020and\u0020pull\u0020the\u0020Media\u0020Library\u0020image\nURL\u0020out\u0020of\u0020each\u0020configured\u0020image\u0020field.",
             "url": "classes/Graphic-Data-Site-Checker.html#method_gather_image_urls_from_post_type"
         },                {
-            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aajax_rebuild_media_associations\u0028\u0029",
-            "name": "ajax_rebuild_media_associations",
-            "summary": "Delete\u0020every\u0020\u0060graphic_data_instance_id\u0060\u0020postmeta\u0020record,\u0020then\u0020rescan\nall\u0020Instance\/Scene\/Modal\/Figure\u0020posts\u0020and\u0020re\u002Dderive\u0020the\u0020associations\nfrom\u0020their\u0020image\u0020fields.",
-            "url": "classes/Graphic-Data-Site-Checker.html#method_ajax_rebuild_media_associations"
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aajax_check_content_structure\u0028\u0029",
+            "name": "ajax_check_content_structure",
+            "summary": "Run\u0020the\u0020instance,\u0020scene,\u0020and\u0020modal\u0020structural\u0020integrity\u0020checks\u0020and\nreturn\u0020their\u0020issues\u0020grouped\u0020by\u0020post\u0020type.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_ajax_check_content_structure"
         },                {
-            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Arebuild_instance_media_associations\u0028\u0029",
-            "name": "rebuild_instance_media_associations",
-            "summary": "Re\u002Dderive\u0020\u0060graphic_data_instance_id\u0060\u0020associations\u0020for\u0020every\u0020Media\nLibrary\u0020attachment\u0020referenced\u0020from\u0020Instance\/Scene\/Modal\/Figure\u0020postmeta.",
-            "url": "classes/Graphic-Data-Site-Checker.html#method_rebuild_instance_media_associations"
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Acheck_instance_overview_scenes\u0028\u0029",
+            "name": "check_instance_overview_scenes",
+            "summary": "Verify\u0020every\u0020Instance\u0020post\u0020has\u0020an\u0020overview\u0020scene\u0020selected,\u0020and\u0020that\nthe\u0020selected\u0020scene\u0020is\u0020published.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_check_instance_overview_scenes"
         },                {
-            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aassociate_media\u0028\u0029",
-            "name": "associate_media",
-            "summary": "Associate\u0020an\u0020instance\u0020with\u0020a\u0020media\u0020attachment\u0020via\u0020post\u0020meta,\u0020resolving\nthe\u0020attachment\u0020from\u0020its\u0020URL.\u0020No\u002Dops\u0020if\u0020the\u0020URL\u0020doesn\u0027t\u0020resolve\u0020to\u0020a\nMedia\u0020Library\u0020attachment\u0020or\u0020if\u0020that\u0020attachment\u0020already\u0020has\u0020an\nassociation.",
-            "url": "classes/Graphic-Data-Site-Checker.html#method_associate_media"
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Acheck_scene_icon_associations\u0028\u0029",
+            "name": "check_scene_icon_associations",
+            "summary": "For\u0020every\u0020Scene\u0020post,\u0020verify\u0020the\u0020infographic\u0020SVG\u0020can\u0020be\u0020located\u0020and\nparsed,\u0020and\u0020that\u0020every\u0020clickable\u0020icon\u0020in\u0020it\u0020has\u0020exactly\u0020one\u0020associated\n\u0028and\u0020published\u0029\u0020Modal\u0020post.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_check_scene_icon_associations"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Acheck_modal_tab_figures\u0028\u0029",
+            "name": "check_modal_tab_figures",
+            "summary": "For\u0020every\u0020Modal\u0020post,\u0020verify\u0020every\u0020tab\u0020from\u00201\u0020through\u0020its\u0020configured\ntab\u0020count\u0020has\u0020at\u0020least\u0020one\u0020associated\u0020Figure\u0020post,\u0020and\u0020that\u0020a\u0020tab\u0020with\nexactly\u0020one\u0020Figure\u0020has\u0020that\u0020figure\u0020published.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_check_modal_tab_figures"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Abuild_issue\u0028\u0029",
+            "name": "build_issue",
+            "summary": "Build\u0020a\u0020single\u0020\u007Bpost_id,\u0020post_title,\u0020post_type,\u0020edit_link,\u0020message\u007D\u0020issue\u0020row.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_build_issue"
         },                {
             "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aresolve_attachment_id\u0028\u0029",
             "name": "resolve_attachment_id",
