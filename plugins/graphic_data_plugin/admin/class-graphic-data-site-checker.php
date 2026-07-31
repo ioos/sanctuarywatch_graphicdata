@@ -97,7 +97,7 @@ class Graphic_Data_Site_Checker {
 		add_action( 'wp_ajax_graphic_data_gather_urls', array( $this, 'ajax_gather_urls' ) );
 		add_action( 'wp_ajax_graphic_data_check_url_batch', array( $this, 'ajax_check_url_batch' ) );
 		add_action( 'wp_ajax_graphic_data_check_alt_text', array( $this, 'ajax_check_alt_text' ) );
-		add_action( 'wp_ajax_graphic_data_rebuild_media_associations', array( $this, 'ajax_rebuild_media_associations' ) );
+		add_action( 'wp_ajax_graphic_data_check_content_structure', array( $this, 'ajax_check_content_structure' ) );
 	}
 
 	/**
@@ -193,7 +193,7 @@ class Graphic_Data_Site_Checker {
 			</p>
 
 			<div class="graphic-data-site-checker__section" id="graphic-data-broken-links-section">
-				<h3>Broken Link Checker</h3>
+				<h3>Content Health Checks</h3>
 				<p>
 				<?php
 				$function_utilities = new Graphic_Data_Utility();
@@ -202,7 +202,7 @@ class Graphic_Data_Site_Checker {
 				</p>
 				<p>
 					<button type="button" class="button button-primary" id="graphic-data-check-broken-links">
-						Check for Broken Links &amp; Missing Alt Text
+						Run Content Checks
 					</button>
 				</p>
 
@@ -216,30 +216,29 @@ class Graphic_Data_Site_Checker {
 					<span class="graphic-data-site-checker__progress-text" role="status" aria-live="polite"></span>
 				</div>
 
-				<h4>Broken Links</h4>
-				<div class="graphic-data-site-checker__report" id="graphic-data-broken-links-report" hidden></div>
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-broken-links-block" hidden>
+					<h4>Broken Links</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-broken-links-report" hidden></div>
+				</div>
 
-				<h4>Missing Alt Text</h4>
-				<div class="graphic-data-site-checker__report" id="graphic-data-alt-text-report" hidden></div>
-			</div>
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-alt-text-block" hidden>
+					<h4>Missing Alt Text</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-alt-text-report" hidden></div>
+				</div>
 
-			<div class="graphic-data-site-checker__section" id="graphic-data-media-association-section">
-				<h3>Media &amp; Instance Association Rebuild</h3>
-				<p class="description">
-					Deletes every existing <code>graphic_data_instance_id</code> postmeta record, then rescans
-					all Instance, Scene, Modal, and Figure posts and re-associates each referenced Media Library
-					attachment with its owning instance. Use this if attachment-to-instance associations have
-					drifted or need to be regenerated from scratch.
-				</p>
-				<p>
-					<button type="button" class="button button-secondary" id="graphic-data-rebuild-media-associations">
-						Rebuild Media Associations
-					</button>
-				</p>
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-instance-issues-block" hidden>
+					<h4>Instance Issues</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-instance-issues-report" hidden></div>
+				</div>
 
-				<div class="graphic-data-site-checker__status" id="graphic-data-media-association-status" hidden>
-					<span class="spinner is-active" aria-hidden="true"></span>
-					<span class="graphic-data-site-checker__status-text" role="status" aria-live="polite"></span>
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-scene-issues-block" hidden>
+					<h4>Scene Issues</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-scene-issues-report" hidden></div>
+				</div>
+
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-modal-issues-block" hidden>
+					<h4>Modal Issues</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-modal-issues-report" hidden></div>
 				</div>
 			</div>
 		</div>
@@ -844,17 +843,14 @@ class Graphic_Data_Site_Checker {
 	}
 
 	/* ---------------------------------------------------------------------
-	 * AJAX: rebuild instance <-> media associations
+	 * AJAX: check content structure (instance/scene/modal integrity)
 	 * ------------------------------------------------------------------ */
 
 	/**
-	 * Delete every `graphic_data_instance_id` postmeta record, then rescan
-	 * all Instance/Scene/Modal/Figure posts and re-derive the associations
-	 * from their image fields.
-	 *
-	 * Ported from the one-off `iterate-posts1.php` migration script.
+	 * Run the instance, scene, and modal structural integrity checks and
+	 * return their issues grouped by post type.
 	 */
-	public function ajax_rebuild_media_associations() {
+	public function ajax_check_content_structure() {
 		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
 		if ( ! current_user_can( self::CAPABILITY ) ) {
@@ -864,126 +860,220 @@ class Graphic_Data_Site_Checker {
 			);
 		}
 
-		global $wpdb;
-		$deleted = $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key = 'graphic_data_instance_id'" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-
-		$associated = $this->rebuild_instance_media_associations();
+		$target_instance = isset( $_POST['target_instance'] ) ? absint( $_POST['target_instance'] ) : 0;
 
 		wp_send_json_success(
 			array(
-				'deleted'    => (int) $deleted,
-				'associated' => $associated,
+				'instance_issues' => $this->check_instance_overview_scenes( $target_instance ),
+				'scene_issues'    => $this->check_scene_icon_associations( $target_instance ),
+				'modal_issues'    => $this->check_modal_tab_figures( $target_instance ),
 			)
 		);
 	}
 
 	/**
-	 * Re-derive `graphic_data_instance_id` associations for every Media
-	 * Library attachment referenced from Instance/Scene/Modal/Figure postmeta.
+	 * Verify every Instance post has an overview scene selected, and that
+	 * the selected scene is published.
 	 *
-	 * Mirrors `iterate-posts1.php`'s post-type switch, with two corrections:
-	 * the figure branch there associated media with `$modal_location` (an
-	 * undefined variable) instead of `$figure_location`; and the scene
-	 * branch read the infographic image from the `instance_tile` meta key
-	 * (which only ever exists on `instance` posts) instead of `scene_infographic`,
-	 * the key scene posts actually store it under (see admin-scene.php).
-	 *
-	 * @return int Number of attachments newly associated.
+	 * @param int $target_instance Optional instance post ID to restrict results to. 0 means "all instances".
+	 * @return array<int,array<string,mixed>> List of {post_id, post_title, post_type, edit_link, message}.
 	 */
-	private function rebuild_instance_media_associations() {
-		$count = 0;
+	private function check_instance_overview_scenes( $target_instance = 0 ) {
+		$issues = array();
 
-		foreach ( array( 'instance', 'scene', 'modal', 'figure' ) as $post_type ) {
-			if ( ! post_type_exists( $post_type ) ) {
+		if ( ! post_type_exists( 'instance' ) ) {
+			return $issues;
+		}
+
+		$post_ids = get_posts( $this->instance_scoped_query_args( 'instance', $target_instance ) );
+
+		foreach ( $post_ids as $instance_id ) {
+			$instance_id    = (int) $instance_id;
+			$overview_scene = get_post_meta( $instance_id, 'instance_overview_scene', true );
+
+			if ( '' === $overview_scene || ! $overview_scene ) {
+				$issues[] = $this->build_issue( $instance_id, 'instance', 'No overview scene selected.' );
 				continue;
 			}
 
-			$post_ids = get_posts( $this->instance_scoped_query_args( $post_type ) );
+			$overview_scene_status = get_post_meta( (int) $overview_scene, 'scene_published', true );
+			if ( 'published' !== $overview_scene_status ) {
+				$issues[] = $this->build_issue(
+					$instance_id,
+					'instance',
+					'Overview scene "' . get_the_title( (int) $overview_scene ) . '" is not published.'
+				);
+			}
+		}
 
-			foreach ( $post_ids as $post_id ) {
-				$post_id = (int) $post_id;
+		return $issues;
+	}
 
-				switch ( $post_type ) {
-					case 'instance':
-						$instance_tile = get_post_meta( $post_id, 'instance_tile', true );
-						if ( $instance_tile ) {
-							$count += (int) $this->associate_media( $instance_tile, $post_id );
-						}
-						break;
+	/**
+	 * For every Scene post, verify the infographic SVG can be located and
+	 * parsed, and that every clickable icon in it has exactly one associated
+	 * (and published) Modal post.
+	 *
+	 * @param int $target_instance Optional instance post ID to restrict results to. 0 means "all instances".
+	 * @return array<int,array<string,mixed>> List of {post_id, post_title, post_type, edit_link, message}.
+	 */
+	private function check_scene_icon_associations( $target_instance = 0 ) {
+		$issues = array();
 
-					case 'scene':
-						$scene_location = get_post_meta( $post_id, 'scene_location', true );
-						if ( $scene_location ) {
-							$scene_infographic = get_post_meta( $post_id, 'scene_infographic', true );
-							if ( $scene_infographic ) {
-								$count += (int) $this->associate_media( $scene_infographic, $scene_location );
-							}
-							for ( $i = 1; $i <= 6; $i++ ) {
-								$scene_photo = get_post_meta( $post_id, 'scene_photo' . $i, true );
-								if ( $scene_photo && isset( $scene_photo[ 'scene_photo_internal' . $i ] ) ) {
-									$scene_photo_internal = $scene_photo[ 'scene_photo_internal' . $i ];
-									if ( '' !== $scene_photo_internal ) {
-										$count += (int) $this->associate_media( $scene_photo_internal, $scene_location );
-									}
-								}
-							}
-						}
-						break;
+		if ( ! post_type_exists( 'scene' ) ) {
+			return $issues;
+		}
 
-					case 'modal':
-						$modal_location = get_post_meta( $post_id, 'modal_location', true );
-						if ( $modal_location ) {
-							for ( $i = 1; $i <= 6; $i++ ) {
-								$modal_photo = get_post_meta( $post_id, 'modal_photo' . $i, true );
-								if ( $modal_photo && isset( $modal_photo[ 'modal_photo_internal' . $i ] ) ) {
-									$modal_photo_internal = $modal_photo[ 'modal_photo_internal' . $i ];
-									if ( '' !== $modal_photo_internal ) {
-										$count += (int) $this->associate_media( $modal_photo_internal, $modal_location );
-									}
-								}
-							}
-						}
-						break;
+		$function_utilities = new Graphic_Data_Utility();
+		$post_ids           = get_posts( $this->instance_scoped_query_args( 'scene', $target_instance ) );
 
-					case 'figure':
-						$figure_location = get_post_meta( $post_id, 'location', true );
-						if ( $figure_location ) {
-							$figure_image = get_post_meta( $post_id, 'figure_image', true );
-							if ( $figure_image ) {
-								$count += (int) $this->associate_media( $figure_image, $figure_location );
-							}
-						}
-						break;
+		foreach ( $post_ids as $scene_id ) {
+			$scene_id = (int) $scene_id;
+			$error    = null;
+			$icon_ids = $function_utilities->return_icons( $scene_id, $error );
+
+			if ( null !== $error ) {
+				$issues[] = $this->build_issue( $scene_id, 'scene', $error );
+				continue;
+			}
+
+			// return_icons() always seeds the list with a '' placeholder entry
+			// used for the "select one" dropdown option; it isn't a real icon.
+			unset( $icon_ids[''] );
+
+			foreach ( $icon_ids as $icon_id ) {
+				$modal_ids = get_posts(
+					array(
+						'post_type'      => 'modal',
+						'post_status'    => array( 'publish', 'draft', 'private', 'pending', 'future' ),
+						'posts_per_page' => -1,
+						'no_found_rows'  => true,
+						'fields'         => 'ids',
+						'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+							'relation' => 'AND',
+							array(
+								'key'   => 'modal_icons',
+								'value' => $icon_id,
+							),
+							array(
+								'key'   => 'modal_scene',
+								'value' => $scene_id,
+								'type'  => 'NUMERIC',
+							),
+						),
+					)
+				);
+
+				if ( 1 !== count( $modal_ids ) ) {
+					$issues[] = $this->build_issue(
+						$scene_id,
+						'scene',
+						count( $modal_ids ) > 1
+							? 'Icon "' . $icon_id . '" is associated with more than one modal.'
+							: 'Icon "' . $icon_id . '" has no associated modal.'
+					);
+					continue;
+				}
+
+				$modal_id         = (int) $modal_ids[0];
+				$modal_published  = get_post_meta( $modal_id, 'modal_published', true );
+				if ( 'published' !== $modal_published ) {
+					$issues[] = $this->build_issue(
+						$scene_id,
+						'scene',
+						'Modal "' . get_the_title( $modal_id ) . '" (icon "' . $icon_id . '") is set to draft.'
+					);
 				}
 			}
 		}
 
-		return $count;
+		return $issues;
 	}
 
 	/**
-	 * Associate an instance with a media attachment via post meta, resolving
-	 * the attachment from its URL. No-ops if the URL doesn't resolve to a
-	 * Media Library attachment or if that attachment already has an
-	 * association.
+	 * For every Modal post, verify every tab from 1 through its configured
+	 * tab count has at least one associated Figure post, and that a tab with
+	 * exactly one Figure has that figure published.
 	 *
-	 * @param string $image_url   Full URL of the image (may include a size suffix).
-	 * @param int    $instance_id The instance post ID to associate with the attachment.
-	 * @return bool True if a new association was written.
+	 * @param int $target_instance Optional instance post ID to restrict results to. 0 means "all instances".
+	 * @return array<int,array<string,mixed>> List of {post_id, post_title, post_type, edit_link, message}.
 	 */
-	private function associate_media( $image_url, $instance_id ) {
-		$attachment_id = $this->resolve_attachment_id( $image_url );
-		if ( ! $attachment_id ) {
-			return false;
+	private function check_modal_tab_figures( $target_instance = 0 ) {
+		$issues = array();
+
+		if ( ! post_type_exists( 'modal' ) ) {
+			return $issues;
 		}
 
-		$existing = get_post_meta( $attachment_id, 'graphic_data_instance_id', true );
-		if ( ! empty( $existing ) ) {
-			return false;
+		$post_ids = get_posts( $this->instance_scoped_query_args( 'modal', $target_instance ) );
+
+		foreach ( $post_ids as $modal_id ) {
+			$modal_id = (int) $modal_id;
+			$max_tab  = (int) get_post_meta( $modal_id, 'modal_tab_number', true );
+
+			for ( $tab = 1; $tab <= $max_tab; $tab++ ) {
+				$figure_ids = get_posts(
+					array(
+						'post_type'      => 'figure',
+						'post_status'    => array( 'publish', 'draft', 'private', 'pending', 'future' ),
+						'posts_per_page' => -1,
+						'no_found_rows'  => true,
+						'fields'         => 'ids',
+						'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+							'relation' => 'AND',
+							array(
+								'key'   => 'figure_modal',
+								'value' => $modal_id,
+								'type'  => 'NUMERIC',
+							),
+							array(
+								'key'   => 'figure_tab',
+								'value' => $tab,
+								'type'  => 'NUMERIC',
+							),
+						),
+					)
+				);
+
+				if ( 0 === count( $figure_ids ) ) {
+					$issues[] = $this->build_issue( $modal_id, 'modal', 'No figure found for tab ' . $tab . '.' );
+					continue;
+				}
+
+				if ( 1 === count( $figure_ids ) ) {
+					$figure_id        = (int) $figure_ids[0];
+					$figure_published = get_post_meta( $figure_id, 'figure_published', true );
+					if ( 'published' !== $figure_published ) {
+						$issues[] = $this->build_issue(
+							$modal_id,
+							'modal',
+							'Figure "' . get_the_title( $figure_id ) . '" in tab ' . $tab . ' is set to draft.'
+						);
+					}
+				}
+			}
 		}
 
-		update_post_meta( $attachment_id, 'graphic_data_instance_id', $instance_id );
-		return true;
+		return $issues;
+	}
+
+	/**
+	 * Build a single {post_id, post_title, post_type, edit_link, message} issue row.
+	 *
+	 * @param int    $post_id   Post ID the issue is attached to.
+	 * @param string $post_type Post type slug.
+	 * @param string $message   Human-readable description of the issue.
+	 * @return array<string,mixed>
+	 */
+	private function build_issue( $post_id, $post_type, $message ) {
+		$edit_link = get_edit_post_link( $post_id, 'raw' );
+		return array(
+			'post_id'    => $post_id,
+			'post_title' => get_the_title( $post_id ),
+			'post_type'  => $post_type,
+			'edit_link'  => $edit_link ? $edit_link : '',
+			'message'    => $message,
+		);
 	}
 
 	/**

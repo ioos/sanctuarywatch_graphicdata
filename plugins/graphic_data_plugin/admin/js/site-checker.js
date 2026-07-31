@@ -88,6 +88,18 @@
  */
 
 /**
+ * A single structural-integrity issue found on an Instance, Scene, or Modal
+ * post, returned by the `graphic_data_check_content_structure` AJAX action.
+ *
+ * @typedef {Object} ContentIssue
+ * @property {number} post_id     WordPress post ID the issue is attached to.
+ * @property {string} post_title  Post title; may be empty for untitled drafts.
+ * @property {string} post_type   Post type slug: instance, scene, or modal.
+ * @property {string} edit_link   Absolute URL to the post editor, or empty string.
+ * @property {string} message     Human-readable description of the issue.
+ */
+
+/**
  * Runtime configuration injected by PHP just before this module loads.
  *
  * @type {SiteCheckerConfig}
@@ -99,11 +111,10 @@ const config = window.graphicDataSiteChecker || {};
  * "Check for Broken Links" button cannot start a second scan while one is
  * already in flight.
  *
- * @type {{ running: boolean, rebuildingMedia: boolean }}
+ * @type {{ running: boolean }}
  */
 const state = {
 	running: false,
-	rebuildingMedia: false,
 };
 
 /**
@@ -117,10 +128,16 @@ const IDS = {
 	status: 'graphic-data-broken-links-status',
 	progress: 'graphic-data-broken-links-progress',
 	report: 'graphic-data-broken-links-report',
+	reportBlock: 'graphic-data-broken-links-block',
 	altTextReport: 'graphic-data-alt-text-report',
+	altTextBlock: 'graphic-data-alt-text-block',
+	instanceIssuesReport: 'graphic-data-instance-issues-report',
+	instanceIssuesBlock: 'graphic-data-instance-issues-block',
+	sceneIssuesReport: 'graphic-data-scene-issues-report',
+	sceneIssuesBlock: 'graphic-data-scene-issues-block',
+	modalIssuesReport: 'graphic-data-modal-issues-report',
+	modalIssuesBlock: 'graphic-data-modal-issues-block',
 	targetInstance: 'target_instance',
-	mediaAssocButton: 'graphic-data-rebuild-media-associations',
-	mediaAssocStatus: 'graphic-data-media-association-status',
 };
 
 /**
@@ -217,7 +234,23 @@ function hideProgress() {
 }
 
 /**
- * Reset the report region: hide it and empty its contents.
+ * Show or hide a report block — the wrapper around a report's `<h4>` heading
+ * and its content region. Headings stay hidden until a scan has actually
+ * produced a result for that report, rather than being visible up front.
+ *
+ * @param {string}  blockId ID of the report block wrapper.
+ * @param {boolean} hidden  Whether the block should be hidden.
+ * @returns {void}
+ */
+function setBlockHidden( blockId, hidden ) {
+	const el = byId( blockId );
+	if ( el ) {
+		el.hidden = hidden;
+	}
+}
+
+/**
+ * Reset the report region: hide it (and its heading) and empty its contents.
  *
  * Called at the start of every scan so a stale report from a previous run
  * never bleeds into a new one.
@@ -230,10 +263,12 @@ function clearReport() {
 		el.hidden = true;
 		el.innerHTML = '';
 	}
+	setBlockHidden( IDS.reportBlock, true );
 }
 
 /**
- * Reset the alt-text report region: hide it and empty its contents.
+ * Reset the alt-text report region: hide it (and its heading) and empty its
+ * contents.
  *
  * @returns {void}
  */
@@ -243,6 +278,24 @@ function clearAltTextReport() {
 		el.hidden = true;
 		el.innerHTML = '';
 	}
+	setBlockHidden( IDS.altTextBlock, true );
+}
+
+/**
+ * Reset a content-issues report region (instance/scene/modal): hide it (and
+ * its heading) and empty its contents.
+ *
+ * @param {string} reportId ID of the report region.
+ * @param {string} blockId  ID of the report region's block wrapper.
+ * @returns {void}
+ */
+function clearIssuesReport( reportId, blockId ) {
+	const el = byId( reportId );
+	if ( el ) {
+		el.hidden = true;
+		el.innerHTML = '';
+	}
+	setBlockHidden( blockId, true );
 }
 
 /**
@@ -372,6 +425,7 @@ function renderReport( totalChecked, brokenItems ) {
 	reportEl.hidden = false;
 	reportEl.removeAttribute( 'hidden' );
 	reportEl.style.display = '';
+	setBlockHidden( IDS.reportBlock, false );
 
 	if ( brokenItems.length === 0 ) {
 		if ( totalChecked === 0 ) {
@@ -432,7 +486,7 @@ function renderReport( totalChecked, brokenItems ) {
 	for ( const group of groups.values() ) {
 		const title = group.post_title || '(untitled)';
 		const postCell = group.edit_link
-			? `<a href="${ escapeHtml( group.edit_link ) }">${ escapeHtml( title ) }</a>`
+			? `<a href="${ escapeHtml( group.edit_link ) }" target="_blank" rel="noopener noreferrer">${ escapeHtml( title ) }</a>`
 			: escapeHtml( title );
 
 		for ( const row of group.rows ) {
@@ -477,6 +531,7 @@ function renderAltTextReport( items ) {
 		return;
 	}
 	reportEl.hidden = false;
+	setBlockHidden( IDS.altTextBlock, false );
 
 	if ( items.length === 0 ) {
 		reportEl.innerHTML = `
@@ -524,7 +579,7 @@ function renderAltTextReport( items ) {
 	for ( const group of groups.values() ) {
 		const title = group.post_title || '(untitled)';
 		const postCell = group.edit_link
-			? `<a href="${ escapeHtml( group.edit_link ) }">${ escapeHtml( title ) }</a>`
+			? `<a href="${ escapeHtml( group.edit_link ) }" target="_blank" rel="noopener noreferrer">${ escapeHtml( title ) }</a>`
 			: escapeHtml( title );
 
 		for ( const row of group.rows ) {
@@ -552,6 +607,72 @@ function renderAltTextReport( items ) {
 }
 
 /**
+ * Render a content-structure issues report (instance/scene/modal) inside its
+ * container.
+ *
+ * Simpler than {@link renderReport} and {@link renderAltTextReport}: each
+ * issue is already a fully-formed, human-readable message rather than a
+ * field/URL that needs a status column, so rows aren't grouped by post.
+ *
+ * @param {string}         reportId     ID of the report region.
+ * @param {ContentIssue[]} issues       Issues found for this post type.
+ * @param {string}         nounSingular Singular label for the issue's post type (e.g. "instance").
+ * @param {string}         blockId      ID of the report region's block wrapper.
+ * @returns {void}
+ */
+function renderIssuesReport( reportId, issues, nounSingular, blockId ) {
+	const reportEl = byId( reportId );
+	if ( ! reportEl ) {
+		return;
+	}
+	reportEl.hidden = false;
+	setBlockHidden( blockId, false );
+
+	if ( issues.length === 0 ) {
+		reportEl.innerHTML = `
+			<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--success">
+				<p><strong>No ${ escapeHtml( nounSingular ) } issues found.</strong></p>
+			</div>
+		`;
+		return;
+	}
+
+	let html = `
+		<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--warning">
+			<p><strong>${ issues.length } issue${ issues.length === 1 ? '' : 's' } found.</strong></p>
+		</div>
+		<table class="wp-list-table widefat striped graphic-data-site-checker__table graphic-data-site-checker__table--issues">
+			<thead>
+				<tr>
+					<th>Post</th>
+					<th>Issue</th>
+				</tr>
+			</thead>
+			<tbody>
+	`;
+
+	for ( const issue of issues ) {
+		const title = issue.post_title || '(untitled)';
+		const postCell = issue.edit_link
+			? `<a href="${ escapeHtml( issue.edit_link ) }" target="_blank" rel="noopener noreferrer">${ escapeHtml( title ) }</a>`
+			: escapeHtml( title );
+		html += `
+			<tr>
+				<td>${ postCell }</td>
+				<td>${ escapeHtml( issue.message ) }</td>
+			</tr>
+		`;
+	}
+
+	html += `
+			</tbody>
+		</table>
+	`;
+
+	reportEl.innerHTML = html;
+}
+
+/**
  * Kick off the whole broken-link scan and drive the UI through its phases.
  *
  * Sequence:
@@ -565,6 +686,9 @@ function renderAltTextReport( items ) {
  *      item list and hand the result to {@link renderReport}.
  *   5. Run the missing-alt-text check (a single request; no external HTTP
  *      calls are involved) and hand its result to {@link renderAltTextReport}.
+ *   6. Run the content-structure checks (instance overview scenes, scene
+ *      icon/modal associations, modal tab/figure associations) and hand
+ *      each post type's issues to {@link renderIssuesReport}.
  *
  * Re-entrant guard: no-ops immediately if a scan is already in flight.
  *
@@ -584,6 +708,9 @@ async function runBrokenLinkCheck() {
 
 	clearReport();
 	clearAltTextReport();
+	clearIssuesReport( IDS.instanceIssuesReport, IDS.instanceIssuesBlock );
+	clearIssuesReport( IDS.sceneIssuesReport, IDS.sceneIssuesBlock );
+	clearIssuesReport( IDS.modalIssuesReport, IDS.modalIssuesBlock );
 	hideProgress();
 
 	try {
@@ -647,6 +774,28 @@ async function runBrokenLinkCheck() {
 		const altItems = Array.isArray( altResult.items ) ? altResult.items : [];
 		hideStatus();
 		renderAltTextReport( altItems );
+
+		setStatus( 'Checking instance, scene, and modal structure…', true );
+		const structureResult = await ajax( 'graphic_data_check_content_structure', instanceParams );
+		hideStatus();
+		renderIssuesReport(
+			IDS.instanceIssuesReport,
+			Array.isArray( structureResult.instance_issues ) ? structureResult.instance_issues : [],
+			'instance',
+			IDS.instanceIssuesBlock
+		);
+		renderIssuesReport(
+			IDS.sceneIssuesReport,
+			Array.isArray( structureResult.scene_issues ) ? structureResult.scene_issues : [],
+			'scene',
+			IDS.sceneIssuesBlock
+		);
+		renderIssuesReport(
+			IDS.modalIssuesReport,
+			Array.isArray( structureResult.modal_issues ) ? structureResult.modal_issues : [],
+			'modal',
+			IDS.modalIssuesBlock
+		);
 	} catch ( err ) {
 		hideProgress();
 		setStatus( `Error: ${ err.message }`, false );
@@ -661,63 +810,10 @@ async function runBrokenLinkCheck() {
 }
 
 /**
- * Delete every `graphic_data_instance_id` postmeta record, then rescan all
- * Instance/Scene/Modal/Figure posts and re-derive those associations from
- * scratch server-side. Destructive (drops existing associations first), so
- * the operator is asked to confirm before the request goes out.
+ * Attach the broken-link scan handler to its trigger button.
  *
- * Re-entrant guard: no-ops immediately if a rebuild is already in flight.
- *
- * @returns {Promise<void>} Resolves once the rebuild finishes (or errors)
- *                          and the UI is back to an idle state.
- */
-async function runRebuildMediaAssociations() {
-	if ( state.rebuildingMedia ) {
-		return;
-	}
-
-	const confirmed = window.confirm(
-		'This will delete every existing Media ↔ Instance association and rebuild them from scratch. Continue?'
-	);
-	if ( ! confirmed ) {
-		return;
-	}
-
-	state.rebuildingMedia = true;
-
-	const button = byId( IDS.mediaAssocButton );
-	if ( button ) {
-		button.disabled = true;
-	}
-
-	try {
-		setStatus( 'Deleting existing associations and rescanning content…', true, IDS.mediaAssocStatus );
-		const result = await ajax( 'graphic_data_rebuild_media_associations' );
-		const deleted = Number( result.deleted ) || 0;
-		const associated = Number( result.associated ) || 0;
-		setStatus(
-			`Done. Deleted ${ deleted } existing association${ deleted === 1 ? '' : 's' } and created ${ associated } new association${ associated === 1 ? '' : 's' }.`,
-			false,
-			IDS.mediaAssocStatus
-		);
-	} catch ( err ) {
-		setStatus( `Error: ${ err.message }`, false, IDS.mediaAssocStatus );
-		// eslint-disable-next-line no-console
-		console.error( '[graphic-data/site-checker]', err );
-	} finally {
-		state.rebuildingMedia = false;
-		if ( button ) {
-			button.disabled = false;
-		}
-	}
-}
-
-/**
- * Attach the broken-link scan and media-association-rebuild handlers to
- * their trigger buttons.
- *
- * No-op for a given button if it is not on the page (e.g. if this module
- * was accidentally loaded on the wrong screen).
+ * No-op if the button is not on the page (e.g. if this module was
+ * accidentally loaded on the wrong screen).
  *
  * @returns {void}
  */
@@ -725,11 +821,6 @@ function init() {
 	const button = byId( IDS.button );
 	if ( button ) {
 		button.addEventListener( 'click', runBrokenLinkCheck );
-	}
-
-	const mediaAssocButton = byId( IDS.mediaAssocButton );
-	if ( mediaAssocButton ) {
-		mediaAssocButton.addEventListener( 'click', runRebuildMediaAssociations );
 	}
 }
 
