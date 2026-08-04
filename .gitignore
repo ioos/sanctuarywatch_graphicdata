@@ -12,6 +12,8 @@ debug.log
 /plugins/graphic_data_plugin/.DS_Store
 /plugins/debug-bar/
 plugins/maintenance/
+/plugins/visualizer/
+/plugins/wpdatatables/
 /plugins/query-monitor/
 /plugins/svg-support/
 plugins/contact-form-7/
