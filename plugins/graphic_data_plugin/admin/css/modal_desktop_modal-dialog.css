@@ -268,3 +268,11 @@ svg{
 iframe{
   max-width: 100%;
 }
+
+.caption > p {
+	font-size: 1.1rem !important;
+}
+
+details > p > p {
+  font-size: 1.1rem !important;
+}

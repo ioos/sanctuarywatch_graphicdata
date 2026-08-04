@@ -629,49 +629,64 @@ if (previewFigureOrModalElements.length > 0) {
 					)[0]?.value,
 				};
 
-				// info_obj.shortCaption = getWordPressEditorContent('figure_caption_short');
-				// info_obj.longCaption = getWordPressEditorContent('figure_caption_long');
+				info_obj.shortCaption = getWordPressEditorContent('figure_caption_short');
+				info_obj.longCaption = getWordPressEditorContent('figure_caption_long');
 
 				const info_obj_figure_only = {
 					figure_published:
-						document.getElementsByName('figure_published')[0]
-							?.value,
-					postID: document.getElementsByName('post_ID')[0]?.value,
+						document.getElementsByName('figure_published')[0]?.value ?? '',
+				
+					postID:
+						document.getElementsByName('post_ID')[0]?.value ?? '',
+				
 					status: 'figure_only',
+				
 					scienceLink: '',
 					scienceText: '',
 					dataLink: '',
 					dataText: '',
+				
 					imageLink: (function () {
 						const type =
-							document.getElementsByName('figure_path')[0]?.value;
+							document.getElementsByName('figure_path')[0]?.value ?? '';
+				
 						if (type === 'Internal') {
-							return document.getElementsByName('figure_image')[0]
-								?.value;
+							return (
+								document.getElementsByName('figure_image')[0]?.value ?? ''
+							);
 						}
+				
 						if (type === 'External') {
-							return document.getElementsByName(
-								'figure_external_url'
-							)[0]?.value;
+							return (
+								document.getElementsByName('figure_external_url')[0]?.value ?? ''
+							);
 						}
-						return ''; // no image for Interactive/Code
+				
+						return ''; // No image for Interactive or Code
 					})(),
-					code: document.getElementsByName('figure_code')[0]?.value,
+				
+					code:
+						document.getElementsByName('figure_code')[0]?.value ?? '',
+				
 					externalAlt:
-						document.getElementsByName('figure_external_alt')[0]
-							?.value ?? '',
+						document.getElementsByName('figure_external_alt')[0]?.value ?? '',
+				
 					shortCaption: '',
 					longCaption: '',
+				
 					figureType:
-						document.getElementsByName('figure_path')[0]?.value,
+						document.getElementsByName('figure_path')[0]?.value ?? '',
+				
 					figureTitle:
-						document.getElementsByName('figure_title')[0]?.value,
-					figure_interactive_arguments: document.getElementsByName(
-						'figure_interactive_arguments'
-					)[0]?.value,
-					figure_interactive_args_rendered: document.getElementsByName(
-						'figure_interactive_args_rendered'
-					)[0]?.value,
+						document.getElementsByName('figure_title')[0]?.value ?? '',
+				
+					figure_interactive_arguments:
+						document.getElementsByName('figure_interactive_arguments')[0]?.value ??
+						'',
+				
+					figure_interactive_args_rendered:
+						document.getElementsByName('figure_interactive_args_rendered')[0]
+							?.value ?? '',
 				};
 
 				const tabContentContainer =
@@ -1065,64 +1080,33 @@ document.addEventListener('click', function (e) {
 //________________________________________________________________________________________
 
 /**
- * Gets the current TinyMCE content and preserves the editor's
- * visible typography on a wrapper element.
+ * Gets the current content from a WordPress TinyMCE editor.
  *
- * @param {string} editorID WordPress editor ID.
+ * Uses TinyMCE directly when Visual mode is active and falls back
+ * to the original textarea when Text mode is active.
  *
- * @return {string} Caption HTML with typography styles.
+ * @param {string} editorID WordPress editor/textarea ID.
+ *
+ * @return {string} Current editor HTML.
  */
 function getWordPressEditorContent(editorID) {
-	const textarea = document.getElementById(editorID);
-	const editor = window.tinymce?.get(editorID);
+	const editor =
+		window.tinymce?.get(editorID);
 
-	/*
-	 * Text/HTML mode or TinyMCE unavailable.
-	 */
-	if (!editor || editor.isHidden()) {
-		return textarea?.value || '';
-	}
-
-	const editorBody = editor.getBody();
-
-	if (!editorBody) {
+	if (
+		editor &&
+		editor.initialized &&
+		!editor.isHidden()
+	) {
 		return editor.getContent({
 			format: 'html'
 		});
 	}
 
-	const content = editor.getContent({
-		format: 'html'
-	});
-
-	const styles = editor.getWin().getComputedStyle(
-		editorBody
+	return (
+		document.getElementById(editorID)?.value ??
+		''
 	);
-
-	const wrapperStyles = [
-		`font-family: ${styles.fontFamily}`,
-		`font-size: ${styles.fontSize}`,
-		`font-weight: ${styles.fontWeight}`,
-		`font-style: ${styles.fontStyle}`,
-		`line-height: ${styles.lineHeight}`,
-		`letter-spacing: ${styles.letterSpacing}`,
-		`color: ${styles.color}`,
-		`text-align: ${styles.textAlign}`
-	].join('; ');
-
-	/*
-	 * Also synchronize the hidden textarea before WordPress saves.
-	 */
-	editor.save();
-
-	return `
-		<div
-			class="saved-editor-content"
-			style="${wrapperStyles}"
-		>
-			${content}
-		</div>
-	`;
 }
 
 //________________________________________________________________________________________
@@ -1342,16 +1326,52 @@ async function generateAndSaveFigureFromPreview(
 	const figureType = info_obj['figureType'];
 	const postForm = document.getElementById('post');
 
+	// const newPostPage = isNewFigurePostPage();
+	// const postID = getFigurePostIDFromURL();
+
+	// const isFinishingInitialSave =
+	// 	Boolean(
+	// 		sessionStorage.getItem(
+	// 			pendingFigureHtmlSaveKey
+	// 		)
+	// 	) &&
+	// 	Boolean(postID);
+
 	const newPostPage = isNewFigurePostPage();
 	const postID = getFigurePostIDFromURL();
 
+	const pendingFigureHtmlSave =
+		sessionStorage.getItem(
+			pendingFigureHtmlSaveKey
+		);
+
 	const isFinishingInitialSave =
-		Boolean(
-			sessionStorage.getItem(
-				pendingFigureHtmlSaveKey
-			)
-		) &&
+		Boolean(pendingFigureHtmlSave) &&
 		Boolean(postID);
+
+	/*
+	* Restore the objects saved before WordPress redirected from
+	* post-new.php to post.php.
+	*/
+	if (isFinishingInitialSave) {
+		try {
+			const pendingData =
+				JSON.parse(pendingFigureHtmlSave);
+
+			info_obj =
+				pendingData.info_obj ?? info_obj;
+
+			info_obj2 =
+				pendingData.info_obj2 ?? info_obj2;
+		} catch (error) {
+			throw new Error(
+				'The pending figure information could not be restored.',
+				{
+					cause: error
+				}
+			);
+		}
+	}
 
 	function setButtonText(button, text) {
 		if (button.tagName === 'INPUT') {
@@ -1527,21 +1547,15 @@ async function generateAndSaveFigureFromPreview(
 		 */
 		const rootURL = window.location.origin;
 
+
+		//First object file with full figure context
+
 		const figureIframeGenerator =
 			await createFigureHtml(
 				renderedValueJSON,
 				postID,
 				rootURL,
 				info_obj,
-				figureType
-			);
-
-		const figureIframeGenerator2 =
-			await createFigureHtml(
-				renderedValueJSON,
-				postID,
-				rootURL,
-				info_obj2,
 				figureType
 			);
 
@@ -1580,6 +1594,47 @@ async function generateAndSaveFigureFromPreview(
 			`${figureIframeGenerator.figIframeHtmlFileName}.html`,
 			figureIframeGenerator.figIframeHtmlPath,
 			postID
+		);
+
+		//Second object with figure and title only
+
+		const figureIframeGenerator2 =
+			await createFigureHtml(
+				renderedValueJSON,
+				postID,
+				rootURL,
+				info_obj2,
+				figureType
+			);
+
+			const iframeCodeBox2 =
+			document.querySelector(
+				'textarea[data-depend-id="' +
+				'figure_iframe_code"]'
+			);
+
+		if (!iframeCodeBox2) {
+			throw new Error(
+				'figure_iframe_code was not found.'
+			);
+		}
+
+		iframeCodeBox2.value =
+			figureIframeGenerator2.figIframeHtmlPath;
+
+		/*
+		 * Notify any input/change listeners that the field changed.
+		 */
+		iframeCodeBox2.dispatchEvent(
+			new Event('input', {
+				bubbles: true
+			})
+		);
+
+		iframeCodeBox2.dispatchEvent(
+			new Event('change', {
+				bubbles: true
+			})
 		);
 
 		await saveHtmlToServer(
@@ -2911,7 +2966,7 @@ export async function createFigureHtml(
 			? `
 				<details class="figure-long-caption-container">
 					<summary class="figure-long-caption-toggle">
-						Details
+						Click for Details
 					</summary>
 
 					<div class="figure-long-caption-content">
@@ -3025,7 +3080,7 @@ export async function createFigureHtml(
 
 					.figureTitle {
 						margin-top: 15px;
-						margin-bottom: 2px;
+						margin-bottom: 28px;
 						text-align: center;
 						font-size: 1rem;
 						font-weight: 500;
@@ -3086,7 +3141,7 @@ export async function createFigureHtml(
 					}
 
 					.modebar-container {
-						top: -20px !important;
+						top: -28px !important;
 					}
 
 					.code-display-window {
@@ -3126,10 +3181,13 @@ export async function createFigureHtml(
 					.caption {
 						width: 100%;
 						line-height: 1.5;
+						font-size: 1.1rem !important;
 					}
 
 					.figure-caption-short {
 						margin-top: 0;
+						margin-left: 1%;
+						font-size: 1.1rem !important;
 					}
 
 					.figure-caption-long {
@@ -3139,13 +3197,14 @@ export async function createFigureHtml(
 					.figure-long-caption-container {
 						width: 100%;
 						margin-top: 12px;
+
 					}
 
 					.figure-long-caption-toggle {
 						padding: 10px 12px;
 						color: rgba(0, 0, 0, 0.8);
-						font-size: 1rem;
-						font-weight: 500;
+						font-size: 1.1rem;
+						font-weight: 550;
 						cursor: pointer;
 						user-select: none;
 					}
@@ -3200,31 +3259,6 @@ export async function createFigureHtml(
 					@media screen and (max-width: 767px) {
 						.figure-embed-document {
 							padding: 8px;
-						}
-
-						.figure-information-bar {
-							align-items: flex-start;
-							flex-direction: column;
-							gap: 8px;
-							font-size: 1rem;
-						}
-
-						.figure-information-right {
-							margin-left: 0;
-							text-align: left;
-						}
-
-						.plotly-figure {
-							height: 400px;
-						}
-
-						.code-display-window {
-							min-height: 250px;
-							padding: 6px;
-						}
-
-						.figure-footer-links {
-							justify-content: center;
 						}
 
 						${mobileCSS}

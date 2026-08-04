@@ -85,7 +85,7 @@ async function renderSavedFigure(
             const modebar = plotlyElement?.querySelector('.modebar');
 
             if (modebar) {
-                modebar.style.top = '-20px';
+                modebar.style.top = '-28px';
             }
 
             return targetElement;
@@ -459,7 +459,7 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
                 const plotlyElement = document.getElementById(plotlyDivID);
                 const modebar = plotlyElement?.querySelector('.modebar');
                 if (modebar) {
-                    modebar.style.top = '-20px';
+                    modebar.style.top = '-28px';
                 }
 
         		//Google Tags
@@ -594,7 +594,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         const embedLink = document.createElement('a');
 
         embedLink.href = '#';
-        embedLink.textContent = '</> Embed Full Figure';
+        embedLink.textContent = '</> Embed Figure & Context';
         embedLink.style.color = 'rgba(68, 68, 68, 0.45)';
         embedLink.style.textDecoration = 'none';
         embedLink.style.fontSize = '0.8em';
@@ -737,6 +737,9 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         
                 // Redirect the current page to the new share URL.
                 window.location.assign(shareUrl);
+                alert(
+                    'Link copied successfully.'
+                );
             } catch (err) {
                 console.error('Failed to copy:', err);
         
@@ -773,16 +776,20 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         shareDropdownMenu.className = 'figure-share-dropdown-menu';
         shareDropdownMenu.style.position = 'absolute';
         shareDropdownMenu.style.top = 'calc(100% + 6px)';
-        shareDropdownMenu.style.left = '0';
+        shareDropdownMenu.style.right = '0';
+        shareDropdownMenu.style.left = 'auto';
         shareDropdownMenu.style.zIndex = '1000';
         shareDropdownMenu.style.display = 'flex';
         shareDropdownMenu.style.flexDirection = 'column';
         shareDropdownMenu.style.alignItems = 'stretch';
         shareDropdownMenu.style.gap = '8px';
-        shareDropdownMenu.style.minWidth = '185px';
+        shareDropdownMenu.style.width = '185px';
+        shareDropdownMenu.style.maxWidth = 'calc(100vw - 30px)';
+        shareDropdownMenu.style.boxSizing = 'border-box';
         shareDropdownMenu.style.padding = '10px';
         shareDropdownMenu.style.backgroundColor = '#ffffff';
-        shareDropdownMenu.style.border = '1px solid rgba(68, 68, 68, 0.18)';
+        shareDropdownMenu.style.border =
+            '1px solid rgba(68, 68, 68, 0.18)';
         shareDropdownMenu.style.borderRadius = '6px';
         shareDropdownMenu.style.boxShadow =
             '0 4px 12px rgba(0, 0, 0, 0.12)';
@@ -909,6 +916,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     figureTitle.innerHTML = info_obj['figureTitle'];
     figureTitle.style.marginBottom = '2px';
     figureTitle.style.marginTop = '15px';
+    figureTitle.style.marginBottom = '28px';
     figureTitle.style.textAlign = 'center';
     figureDiv.appendChild(figureTitle);
 

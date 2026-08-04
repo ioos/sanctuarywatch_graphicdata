@@ -206,6 +206,29 @@ ul {
 } */
 
 
+.caption {
+	margin-left: 4% !important;
+}
+
+.caption > p {
+	font-size: 1.1rem !important;
+}
+
+summary {
+	margin-left: 4%;
+  margin-bottom: 4%;
+}
+
+details > p {
+	padding-left: 4%;
+
+}
+
+details > p > p {
+  font-size: 1.1rem !important;
+}
+
+
 
 #myTab .nav-link.active{
   content: "▼";
