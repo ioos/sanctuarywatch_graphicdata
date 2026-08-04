@@ -19,9 +19,17 @@ function run_admin_figures() {
 	let fieldValueSaved;
 	redText();
 
-	// Hide the parent element of the "figure_interactive_arguments" field
+	// Hide the parent element of the "figure_interactive_arguments" and the "figure_interactive_args_rendered" field
 	document.getElementsByName(
 		'figure_interactive_arguments'
+	)[0].parentElement.parentElement.style.display = 'none';
+
+	document.getElementsByName(
+		'figure_interactive_args_rendered'
+	)[0].parentElement.parentElement.style.display = 'none';
+
+	document.getElementsByName(
+		'figure_iframe_code'
 	)[0].parentElement.parentElement.style.display = 'none';
 
 	/**
@@ -392,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 });
 
-// this is for rendering figure and saving them into an html file when the save button is hit. 
+// //this is for rendering figure and saving them into an html file when the save button is hit. 
 // (function () {
 // 	// Only run on WordPress post edit screens
 // 	if (!window.location.pathname.includes('post.php')) return;

@@ -748,6 +748,16 @@ class Graphic_Data_Figure {
 					),
 				),
 				array(
+					'id'          => 'figure_interactive_args_rendered',
+					'type'        => 'textarea',
+					'title'       => 'Figure: full render interactive arguments',
+				),
+				array(
+					'id'          => 'figure_iframe_code',
+					'type'        => 'textarea',
+					'title'       => 'Figure: iframe code',
+				),
+				array(
 					'id'          => 'figure_interactive_arguments',
 					'type'        => 'textarea',
 					'title'       => 'Figure: interactive arguments',
@@ -828,10 +838,12 @@ class Graphic_Data_Figure {
 			array( 'figure_external_url', 'string', 'The figure external url' ),
 			array( 'figure_external_alt', 'string', 'The alt text for external figure' ),
 			array( 'figure_code', 'string', 'HTML or JS code' ),
+			array( 'figure_iframe_code', 'string', 'HTML or JS code' ),
 			array( 'figure_upload_file', 'string', 'Upload the .csv or .json file for an interactive figure' ),
 			array( 'figure_caption_short', 'string', 'The short figure caption' ),
 			array( 'figure_caption_long', 'string', 'The long figure caption' ),
 			array( 'figure_interactive_arguments', 'string', 'Arguments used in interactive figures' ),
+			array( 'figure_interactive_args_rendered', 'string', 'Full arguments used to render interactive figures' ),
 			array( 'figure_title', 'string', 'The title of the figure, for any figure type.' ),
 		);
 		// Register fields in REST API.
@@ -881,7 +893,7 @@ class Graphic_Data_Figure {
 	 * @since    1.0.0
 	 */
 	public function register_figure_rest_fields() {
-		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'uploaded_path_json', 'figure_title' ); // figure_temp_filepath.
+		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_iframe_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'figure_interactive_args_rendered', 'uploaded_path_json', 'figure_title' ); // figure_temp_filepath.
 		$function_utilities = new Graphic_Data_Utility();
 		$function_utilities->register_custom_rest_fields( 'figure', $figure_rest_fields );
 	}

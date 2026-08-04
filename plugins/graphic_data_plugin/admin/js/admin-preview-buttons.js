@@ -39,7 +39,7 @@ document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
 		} catch {}
 
 		if (
-			(window.location.href.includes('post.php') &&
+			( (window.location.href.includes('post.php') || window.location.href.includes('post-new.php')) &&
 				(fileInputElement === '' ||
 					graphTypeInputElement === 'None')) ||
 			lineTypeInputElement === 'None' ||
@@ -47,6 +47,7 @@ document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
 			existingFileInputElement === ''
 		) {
 			const errorMessageSummary = document.createElement('div');
+			errorMessageSummary.id = 'errorMessageSummary';
 			errorMessageSummary.style.textAlign = 'center';
 			errorMessageSummary.style.color = 'red';
 			errorMessageSummary.style.fontWeight = 'bold';
@@ -60,7 +61,7 @@ document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
 				divID.appendChild(errorMessageSummary);
 			}
 		}
-	} else if (window.location.href.includes('post.php')) {
+	} else if (window.location.href.includes('post.php') || window.location.href.includes('post-new.php')) {
 		setTimeout(() => {
 			const figure = document.querySelector('#myTabContent .figure');
 			figure.remove();
@@ -85,6 +86,120 @@ document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
 	}
 } );
 
+
+
+/**
+ * Waits for a Plotly graph to finish rendering in the WordPress admin.
+ *
+ * The promise resolves with the Plotly element when the
+ * `plotly_afterplot` event fires.
+ *
+ * The promise rejects when:
+ * - The figure validation error appears.
+ * - Plotly does not finish rendering before the timeout expires.
+ *
+ * @param {number} timeoutMs Maximum time to wait in milliseconds.
+ * @return {Promise<HTMLElement>} Resolves with the rendered Plotly element.
+ */
+function waitForPlotlyToFinish(timeoutMs = 10000) {
+	return new Promise((resolve, reject) => {
+		const expectedErrorMessage =
+			'Please upload a file, choose a graph type, and make data selections to preview an interactive figure. Be sure to check all options.';
+
+		let observer = null;
+		let plotDiv = null;
+		let plotListenerAdded = false;
+		let settled = false;
+
+		const cleanup = () => {
+			if (observer) {
+				observer.disconnect();
+			}
+
+			clearTimeout(timeoutId);
+		};
+
+		const finishWithError = (message) => {
+			if (settled) {
+				return;
+			}
+
+			settled = true;
+			cleanup();
+			reject(new Error(message));
+		};
+
+		const handleAfterPlot = () => {
+			if (settled) {
+				return;
+			}
+
+			settled = true;
+			cleanup();
+			resolve(plotDiv);
+		};
+
+		const checkForErrorMessage = () => {
+			const errorMessageSummary = document.querySelector(
+				'#errorMessageSummary'
+			);
+
+			if (
+				errorMessageSummary &&
+				errorMessageSummary.textContent.trim() === expectedErrorMessage
+			) {
+				finishWithError(expectedErrorMessage);
+				return true;
+			}
+
+			return false;
+		};
+
+		const checkForPlot = () => {
+			if (plotListenerAdded) {
+				return;
+			}
+
+			plotDiv = document.querySelector('.js-plotly-plot');
+
+			if (!plotDiv) {
+				return;
+			}
+
+			plotListenerAdded = true;
+			plotDiv.once('plotly_afterplot', handleAfterPlot);
+		};
+
+		const timeoutId = setTimeout(() => {
+			finishWithError(
+				`Plotly did not finish rendering within ${timeoutMs}ms.`
+			);
+		}, timeoutMs);
+
+		// Check whether either element already exists.
+		if (checkForErrorMessage()) {
+			return;
+		}
+
+		checkForPlot();
+
+		// Continue watching for either the plot or the error message.
+		observer = new MutationObserver(() => {
+			if (checkForErrorMessage()) {
+				return;
+			}
+
+			checkForPlot();
+		});
+
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true,
+			characterData: true
+		});
+	});
+}
+
 //PREVIEW BUTTON LOGIC FOR MODALS AND FIGURES
 /**
  * Handles the click event for the modal preview button, generating a live preview of the modal.
@@ -102,16 +217,14 @@ document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
 // );
 
 // We're going to iterate through all the types of buttons (preview and save) on the admin screen and have different behaviors when a button is clicked
-let postId = document.querySelector('[name="post_id"], [name="post_ID"]').value;
+let postID = document.querySelector('[name="post_id"], [name="post_ID"]').value;
 let postType = document.querySelector('[name="post_type"]').value;
 let previewFigureOrModalElements; 
 
 //Define our post type and the id so we can use it later in the save process for the html
 if (postType === 'figure') {
-	//without publish
-    previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"]');
-	//with publish good for saving graphs. 
-	//previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"],[id="publish"]');
+	//with publish included in the list for saving graphs. 
+	previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"],[data-depend-id="figure_preview_mobile"],[data-depend-id="figure_preview"],[id="publish"]');
 } 
 if (postType === 'modal') {
     previewFigureOrModalElements = document.querySelectorAll('[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"]');
@@ -121,14 +234,15 @@ if (!previewFigureOrModalElements) {
 	previewFigureOrModalElements = [];
 }
 
-console.log('previewFigureOrModalElements', previewFigureOrModalElements);
+//console.log('previewFigureOrModalElements', previewFigureOrModalElements);
 
 // If the number of elements in previewFigureOrModalElements list is greater than 0, let's iterate through these options.
 if (previewFigureOrModalElements.length > 0) {
 	previewFigureOrModalElements.forEach((el) => {
-		el.addEventListener('click', async function () {
+		el.addEventListener('click', async function (event) {
 			window.mobileBool =
 				el.getAttribute('data-depend-id') === 'scene_preview_mobile';
+
 
 			// Prevent duplicate injection, remove existing to make way for new.
 			if (
@@ -183,8 +297,15 @@ if (previewFigureOrModalElements.length > 0) {
 
 			document.body.insertAdjacentHTML('beforeend', markup);
 
+
 			const modalEl2 = document.getElementById('myModal');
 			const dialog2 = modalEl2?.querySelector('.modal-dialog');
+			
+			//if we hit the save button, we do not want to show the modal window with the graph.
+			if (el.id === 'publish') {
+				dialog2.style.setProperty('visibility', 'hidden', 'important');
+			}
+			
 			// Apply mobile preview sizing ONLY for mobile preview trigger
 			if (
 				el.getAttribute('data-depend-id') === 'modal_preview_mobile' ||
@@ -206,6 +327,7 @@ if (previewFigureOrModalElements.length > 0) {
 				window.mobileBool = false;
 				document.getElementById('sw-modal-accordion-btn-css')?.remove();
 			}
+
 
 			// Wait for DOM update, then show the modal (Bootstrap 5 API)
 			setTimeout(() => {
@@ -353,11 +475,20 @@ if (previewFigureOrModalElements.length > 0) {
 					},
 				};
 
+
 				render_modal(iconSelected, child_obj, modal_data);
+
 			}
 
 			// --- GATHER FIGURE DATA FROM FORM FIELDS ---
 			if (hasFigurePreview !== null && hasFigurePreview.length > 0) {
+
+				// we're going to pause the save if we're saving a figure to allow for it to load.
+				const figureType = document.getElementsByName('figure_path')[0]?.value;
+				if (el.id === 'publish' && figureType === "Interactive") {
+					event.preventDefault();
+				}
+
 				//MODAL PREVIEW LOGIC
 				const iconSelected = 'ExampleKey';
 				const modal_data = {
@@ -442,7 +573,7 @@ if (previewFigureOrModalElements.length > 0) {
 						document.getElementsByName('figure_published')[0]
 							?.value,
 					postID: document.getElementsByName('post_ID')[0]?.value,
-
+					status: 'full_figure',
 					scienceLink: document.getElementsByName(
 						'figure_science_info[figure_science_link_url]'
 					)[0]?.value,
@@ -492,6 +623,55 @@ if (previewFigureOrModalElements.length > 0) {
 					figure_interactive_arguments: document.getElementsByName(
 						'figure_interactive_arguments'
 					)[0]?.value,
+
+					figure_interactive_args_rendered: document.getElementsByName(
+						'figure_interactive_args_rendered'
+					)[0]?.value,
+				};
+
+				// info_obj.shortCaption = getWordPressEditorContent('figure_caption_short');
+				// info_obj.longCaption = getWordPressEditorContent('figure_caption_long');
+
+				const info_obj_figure_only = {
+					figure_published:
+						document.getElementsByName('figure_published')[0]
+							?.value,
+					postID: document.getElementsByName('post_ID')[0]?.value,
+					status: 'figure_only',
+					scienceLink: '',
+					scienceText: '',
+					dataLink: '',
+					dataText: '',
+					imageLink: (function () {
+						const type =
+							document.getElementsByName('figure_path')[0]?.value;
+						if (type === 'Internal') {
+							return document.getElementsByName('figure_image')[0]
+								?.value;
+						}
+						if (type === 'External') {
+							return document.getElementsByName(
+								'figure_external_url'
+							)[0]?.value;
+						}
+						return ''; // no image for Interactive/Code
+					})(),
+					code: document.getElementsByName('figure_code')[0]?.value,
+					externalAlt:
+						document.getElementsByName('figure_external_alt')[0]
+							?.value ?? '',
+					shortCaption: '',
+					longCaption: '',
+					figureType:
+						document.getElementsByName('figure_path')[0]?.value,
+					figureTitle:
+						document.getElementsByName('figure_title')[0]?.value,
+					figure_interactive_arguments: document.getElementsByName(
+						'figure_interactive_arguments'
+					)[0]?.value,
+					figure_interactive_args_rendered: document.getElementsByName(
+						'figure_interactive_args_rendered'
+					)[0]?.value,
 				};
 
 				const tabContentContainer =
@@ -501,18 +681,24 @@ if (previewFigureOrModalElements.length > 0) {
 				);
 				const idx = 0; // Since we are only rendering one figure here, index is 0
 				(async () => {
-                    // console.log('[GD] figure preview info_obj:', JSON.stringify({
-                    //     figureType: info_obj.figureType,
-                    //     figure_interactive_arguments_length: info_obj.figure_interactive_arguments?.length,
-                    //     figure_interactive_arguments_preview: info_obj.figure_interactive_arguments?.substring(0, 100)
-                    // }));
-					await render_tab_info(
+
+
+					//When saving a form on the admin side, have the save wait until the graph is loaded.	
+					const tabInfoResult = await render_tab_info(
 						tabContentElement,
 						tabContentContainer,
 						info_obj,
 						idx
 					);
-					await render_interactive_plots(tabContentContainer, info_obj);
+
+					//Render the interactive plots, this function also saves the figure_interactive_args_rendered to the field
+					await render_interactive_plots(tabContentContainer, info_obj, null, tabInfoResult);
+
+
+					if (el.id === 'publish') {
+						generateAndSaveFigureFromPreview(el, info_obj, info_obj_figure_only);
+					}
+							
 				})();
 			}
 		});
@@ -556,6 +742,7 @@ if (previewFigureOrModalElements.length > 0) {
 					css2.href = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css/modal_mobile_modal-dialog.css`;
 					document.head.appendChild(css2);
 				}
+
 			}
 		});
 	});
@@ -874,61 +1061,2454 @@ document.addEventListener('click', function (e) {
 	}
 });
 
+
 //________________________________________________________________________________________
 
-// async function plotlySnapshotFromDivAndSave(
-// 	gd,
-// 	{
-// 		config = { responsive: true },
-// 		figureId = null,
-// 		sceneSlug = null,
-// 		endpoint = '/wp-json/sw/v1/plotly-snapshot',
-// 		meta = {},
-// 	} = {}
-// ) {
-// 	if (!gd?.data || !gd?.layout) {
-// 		throw new Error('Plotly div not ready');
+/**
+ * Gets the current TinyMCE content and preserves the editor's
+ * visible typography on a wrapper element.
+ *
+ * @param {string} editorID WordPress editor ID.
+ *
+ * @return {string} Caption HTML with typography styles.
+ */
+function getWordPressEditorContent(editorID) {
+	const textarea = document.getElementById(editorID);
+	const editor = window.tinymce?.get(editorID);
+
+	/*
+	 * Text/HTML mode or TinyMCE unavailable.
+	 */
+	if (!editor || editor.isHidden()) {
+		return textarea?.value || '';
+	}
+
+	const editorBody = editor.getBody();
+
+	if (!editorBody) {
+		return editor.getContent({
+			format: 'html'
+		});
+	}
+
+	const content = editor.getContent({
+		format: 'html'
+	});
+
+	const styles = editor.getWin().getComputedStyle(
+		editorBody
+	);
+
+	const wrapperStyles = [
+		`font-family: ${styles.fontFamily}`,
+		`font-size: ${styles.fontSize}`,
+		`font-weight: ${styles.fontWeight}`,
+		`font-style: ${styles.fontStyle}`,
+		`line-height: ${styles.lineHeight}`,
+		`letter-spacing: ${styles.letterSpacing}`,
+		`color: ${styles.color}`,
+		`text-align: ${styles.textAlign}`
+	].join('; ');
+
+	/*
+	 * Also synchronize the hidden textarea before WordPress saves.
+	 */
+	editor.save();
+
+	return `
+		<div
+			class="saved-editor-content"
+			style="${wrapperStyles}"
+		>
+			${content}
+		</div>
+	`;
+}
+
+//________________________________________________________________________________________
+
+/**
+ * Prepares a figure and saves its standalone HTML file.
+ *
+ * New figures use a two-stage save:
+ *
+ * 1. Render and save the WordPress post so an ID is assigned.
+ * 2. After WordPress reloads to post.php?post=NUMBER, generate the
+ *    standalone HTML file and submit the post a second time.
+ *
+ * Existing figures generate the HTML immediately before saving.
+ *
+ * @param {HTMLElement} el WordPress publish/update button.
+ * @param {Object} info_obj Figure information.
+ *
+ * @return {Promise<void>}
+ */
+// async function generateAndSaveFigureFromPreview(el, info_obj) {
+
+// 	let publishButton = el;
+// 	let figureType = info_obj['figureType'];
+
+// 	function setButtonText(button, text) {
+// 		if (button.tagName === 'INPUT') {
+// 			button.value = text;
+// 		} else {
+// 			button.textContent = text;
+// 		}
 // 	}
-
-// 	const snap = {
-// 		schema: 'plotly-snapshot/v1',
-// 		createdAt: new Date().toISOString(),
-// 		figureId,
-// 		sceneSlug,
-// 		meta,
-// 		data: structuredClone(gd.data),
-// 		layout: structuredClone(gd.layout),
-// 		config: structuredClone(config),
-// 	};
-
-// 	// Portable
-// 	delete snap.layout.width;
-// 	delete snap.layout.height;
-// 	snap.layout.autosize = true;
-// 	snap.config = snap.config || {};
-// 	snap.config.responsive = true;
-
-// 	// Save to WP
-// 	const res = await fetch(endpoint, {
-// 		method: 'POST',
-// 		headers: { 'Content-Type': 'application/json' },
-// 		body: JSON.stringify(snap),
-// 		credentials: 'same-origin',
-// 	});
-
-// 	if (!res.ok) {
-// 		const text = await res.text().catch(() => '');
-// 		throw new Error(`Snapshot save failed (${res.status}): ${text}`);
+	
+// 	function getButtonText(button) {
+// 		if (button.tagName === 'INPUT') {
+// 			return button.value;
+// 		}
+	
+// 		return button.textContent;
 // 	}
+	
+// 	const originalButtonText = getButtonText(publishButton);
+	
+// 	// Use the existing WordPress spinner or create one if missing.
+// 	let spinner = publishButton.parentElement.querySelector('.spinner');
+	
+// 	if (!spinner) {
+// 		spinner = document.createElement('span');
+// 		spinner.className = 'spinner';
+// 		publishButton.insertAdjacentElement('afterend', spinner);
+// 	}
+	
+// 	publishButton.disabled = true;
+// 	setButtonText(publishButton, 'Preparing Interactive figure…');
+// 	spinner.classList.add('is-active');
 
-// 	// Expect server to return: { id, url, ... }
-// 	const saved = await res.json();
+// 	try {
+// 		const postForm = document.getElementById('post');
 
-// 	// Add “location” info
-// 	snap.saved = {
-// 		id: saved.id || saved.key || null,
-// 		url: saved.url || null,
-// 	};
+// 		if (figureType === "Interactive") {
 
-// 	return snap;
+// 			const figureInteractiveArgsRendered = document.querySelector('textarea[data-depend-id="figure_interactive_args_rendered"]');
+
+// 			/*
+// 			* The other publish click listener renders the modal and graph.
+// 			* This waits until Plotly has finished.
+// 			*/
+// 			try {
+// 				await waitForPlotlyToFinish();
+// 			} catch (error) {
+// 				postForm.requestSubmit(publishButton);
+// 			}
+
+
+// 			if (!figureInteractiveArgsRendered) {
+// 				throw new Error(
+// 					'figure_interactive_args_rendered was not found.'
+// 				);
+// 			}
+
+// 			if (!postForm) {
+// 				throw new Error(
+// 					'The WordPress post form was not found.'
+// 				);
+// 			}
+
+// 			/*
+// 			* The Plotly rendering process has already written the JSON
+// 			* into this textarea.
+// 			*/
+// 			let renderedValue;
+// 			let renderedValueJSON;
+// 			try {
+// 				renderedValue = document.getElementsByName('figure_interactive_args_rendered')[0]?.value;
+// 				renderedValueJSON = JSON.parse(renderedValue);
+// 			} catch {
+// 			}
+
+// 			//Create and Write the HTML file to the server for embed codes
+// 			if (renderedValueJSON) {
+// 				const rootURL = window.location.origin;
+// 				const figureiframeGenerator = await createFigureHtml(renderedValueJSON, postID, rootURL, info_obj, figureType);
+// 				const iframeCodeBox = document.querySelector('textarea[data-depend-id="figure_iframe_code"]');
+// 				iframeCodeBox.value = `${figureiframeGenerator.figIframeHtmlPath}`;
+// 				await saveHtmlToServer(figureiframeGenerator.figIframeHtml, `${figureiframeGenerator.figIframeHtmlFileName}.html`, figureiframeGenerator.figIframeHtmlPath, postID);
+// 			}
+
+// 		} else {
+// 			const rootURL = window.location.origin;
+// 			const figureiframeGenerator = await createFigureHtml(null, postID, rootURL, info_obj, figureType);
+// 			const iframeCodeBox = document.querySelector('textarea[data-depend-id="figure_iframe_code"]');
+// 			iframeCodeBox.value = `${figureiframeGenerator.figIframeHtmlPath}`;
+// 			await saveHtmlToServer(figureiframeGenerator.figIframeHtml, `${figureiframeGenerator.figIframeHtmlFileName}.html`, figureiframeGenerator.figIframeHtmlPath, postID);
+// 		}
+
+// 		/*
+// 		* Allow input/change handlers to finish.
+// 		*/
+// 		await new Promise((resolve) =>
+// 			setTimeout(resolve, 0)
+// 		);
+
+// 		publishButton.disabled = false;
+// 		setButtonText(
+// 			publishButton,
+// 			originalButtonText
+// 		);
+
+// 		/*
+// 			* Submit without creating another click event.
+// 			* This prevents the modal-rendering click listener from
+// 			* running a second time.
+// 			*/
+// 		postForm.requestSubmit(publishButton);
+
+// 	} catch (error) {
+// 		console.error(
+// 			'Interactive figure preparation failed:',
+// 			error
+// 		);
+
+// 		publishButton.disabled = false;
+// 		setButtonText(
+// 			publishButton,
+// 			originalButtonText
+// 		);
+// 	}
 // }
+
+
+const pendingFigureHtmlSaveKey =
+	'graphic-data-pending-figure-html-save';
+
+/**
+ * Checks whether the current page is the new Figure screen.
+ *
+ * @return {boolean}
+ */
+function isNewFigurePostPage() {
+	const url = new URL(window.location.href);
+
+	return (
+		url.pathname.endsWith('/post-new.php') &&
+		url.searchParams.get('post_type') === 'figure'
+	);
+}
+
+/**
+ * Gets the figure post ID from an existing-post URL.
+ *
+ * Expected URL:
+ * post.php?post=379&action=edit
+ *
+ * @return {number|null}
+ */
+function getFigurePostIDFromURL() {
+	const url = new URL(window.location.href);
+
+	if (!url.pathname.endsWith('/post.php')) {
+		return null;
+	}
+
+	const postID = Number.parseInt(
+		url.searchParams.get('post'),
+		10
+	);
+
+	if (!Number.isInteger(postID) || postID <= 0) {
+		return null;
+	}
+
+	return postID;
+}
+
+/**
+ * Prepares a figure and saves its standalone HTML file.
+ *
+ * New figures use a two-stage save:
+ *
+ * 1. Render and save the WordPress post so an ID is assigned.
+ * 2. After WordPress reloads to post.php?post=NUMBER, generate the
+ *    standalone HTML file and submit the post a second time.
+ *
+ * Existing figures generate the HTML immediately before saving.
+ *
+ * @param {HTMLElement} el WordPress publish/update button.
+ * @param {Object} info_obj Figure information.
+ *
+ * @return {Promise<void>}
+ */
+async function generateAndSaveFigureFromPreview(
+	el,
+	info_obj,
+	info_obj2
+) {
+	const publishButton = el;
+	const figureType = info_obj['figureType'];
+	const postForm = document.getElementById('post');
+
+	const newPostPage = isNewFigurePostPage();
+	const postID = getFigurePostIDFromURL();
+
+	const isFinishingInitialSave =
+		Boolean(
+			sessionStorage.getItem(
+				pendingFigureHtmlSaveKey
+			)
+		) &&
+		Boolean(postID);
+
+	function setButtonText(button, text) {
+		if (button.tagName === 'INPUT') {
+			button.value = text;
+		} else {
+			button.textContent = text;
+		}
+	}
+
+	function getButtonText(button) {
+		if (button.tagName === 'INPUT') {
+			return button.value;
+		}
+
+		return button.textContent;
+	}
+
+	function restorePublishButton(
+		button,
+		originalText,
+		spinner
+	) {
+		button.disabled = false;
+
+		setButtonText(
+			button,
+			originalText
+		);
+
+		spinner.classList.remove('is-active');
+	}
+
+	if (!postForm) {
+		throw new Error(
+			'The WordPress post form was not found.'
+		);
+	}
+
+	const originalButtonText =
+		getButtonText(publishButton);
+
+	/*
+	 * Use the existing WordPress spinner or create one.
+	 */
+	let spinner =
+		publishButton.parentElement
+			?.querySelector('.spinner');
+
+	if (!spinner) {
+		spinner = document.createElement('span');
+		spinner.className = 'spinner';
+
+		publishButton.insertAdjacentElement(
+			'afterend',
+			spinner
+		);
+	}
+
+	publishButton.disabled = true;
+
+	setButtonText(
+		publishButton,
+		isFinishingInitialSave
+			? 'Generating figure HTML…'
+			: 'Preparing figure…'
+	);
+
+	spinner.classList.add('is-active');
+
+	try {
+		let renderedValueJSON = null;
+
+		/*
+		 * Interactive figures need the Plotly JSON.
+		 */
+		if (figureType === 'Interactive') {
+			const renderedTextarea =
+				document.querySelector(
+					'textarea[data-depend-id="' +
+					'figure_interactive_args_rendered"]'
+				);
+
+			if (!renderedTextarea) {
+				throw new Error(
+					'figure_interactive_args_rendered ' +
+					'was not found.'
+				);
+			}
+
+			/*
+			 * During the initial click, wait for the preview listener
+			 * to finish rendering Plotly.
+			 *
+			 * After the first WordPress save and reload, the rendered
+			 * JSON should already be stored in the textarea, so there
+			 * is no need to render Plotly again.
+			 */
+			if (!isFinishingInitialSave) {
+				await waitForPlotlyToFinish();
+			}
+
+			const renderedValue =
+				renderedTextarea.value?.trim();
+
+			if (!renderedValue) {
+				throw new Error(
+					'No rendered Plotly JSON was found.'
+				);
+			}
+
+			try {
+				renderedValueJSON =
+					JSON.parse(renderedValue);
+			} catch (error) {
+				throw new Error(
+					'The rendered Plotly JSON could not ' +
+					'be parsed.',
+					{
+						cause: error
+					}
+				);
+			}
+		}
+
+		/*
+		 * FIRST SAVE
+		 *
+		 * The new-post URL has no post ID. Save the info object and
+		 * submit WordPress normally. WordPress will reload the browser
+		 * at post.php?post=NUMBER&action=edit.
+		 */
+		if (newPostPage && !postID) {
+			sessionStorage.setItem(
+				pendingFigureHtmlSaveKey,
+				JSON.stringify({
+					info_obj,
+					info_obj2
+				})
+			);
+
+
+			restorePublishButton(
+				publishButton,
+				originalButtonText,
+				spinner
+			);
+
+			/*
+			 * requestSubmit() submits the form without generating
+			 * another click event.
+			 */
+			postForm.requestSubmit(
+				publishButton
+			);
+
+			return;
+		}
+
+		/*
+		 * The HTML file must never be created without a valid post ID.
+		 */
+		if (!postID) {
+			throw new Error(
+				'The figure post ID could not be determined.'
+			);
+		}
+
+		/*
+		 * SECOND SAVE OR NORMAL EXISTING-POST SAVE
+		 *
+		 * The post ID now exists, so generate and save the standalone
+		 * figure HTML.
+		 */
+		const rootURL = window.location.origin;
+
+		const figureIframeGenerator =
+			await createFigureHtml(
+				renderedValueJSON,
+				postID,
+				rootURL,
+				info_obj,
+				figureType
+			);
+
+		const figureIframeGenerator2 =
+			await createFigureHtml(
+				renderedValueJSON,
+				postID,
+				rootURL,
+				info_obj2,
+				figureType
+			);
+
+		const iframeCodeBox =
+			document.querySelector(
+				'textarea[data-depend-id="' +
+				'figure_iframe_code"]'
+			);
+
+		if (!iframeCodeBox) {
+			throw new Error(
+				'figure_iframe_code was not found.'
+			);
+		}
+
+		iframeCodeBox.value =
+			figureIframeGenerator.figIframeHtmlPath;
+
+		/*
+		 * Notify any input/change listeners that the field changed.
+		 */
+		iframeCodeBox.dispatchEvent(
+			new Event('input', {
+				bubbles: true
+			})
+		);
+
+		iframeCodeBox.dispatchEvent(
+			new Event('change', {
+				bubbles: true
+			})
+		);
+
+		await saveHtmlToServer(
+			figureIframeGenerator.figIframeHtml,
+			`${figureIframeGenerator.figIframeHtmlFileName}.html`,
+			figureIframeGenerator.figIframeHtmlPath,
+			postID
+		);
+
+		await saveHtmlToServer(
+			figureIframeGenerator2.figIframeHtml,
+			`${figureIframeGenerator2.figIframeHtmlFileName}.html`,
+			figureIframeGenerator2.figIframeHtmlPath,
+			postID
+		);
+
+
+		/*
+		 * Remove the flag before the second submission. Otherwise,
+		 * the next reload would trigger another save.
+		 */
+		sessionStorage.removeItem(
+			pendingFigureHtmlSaveKey
+		);
+
+		/*
+		 * Allow input/change handlers to finish.
+		 */
+		await new Promise((resolve) => {
+			setTimeout(resolve, 0);
+		});
+
+		restorePublishButton(
+			publishButton,
+			originalButtonText,
+			spinner
+		);
+
+		/*
+		 * Submit without creating another click event.
+		 */
+		postForm.requestSubmit(
+			publishButton
+		);
+	} catch (error) {
+		console.error(
+			'Figure preparation failed:',
+			error
+		);
+
+		restorePublishButton(
+			publishButton,
+			originalButtonText,
+			spinner
+		);
+
+		if (!window.location.href.includes('post-new.php')) {
+			alert(
+				'The figure could not be prepared for saving.'
+			);
+		}
+	}
+}
+
+/**
+ * Finishes the second stage of a new Figure save.
+ *
+ * WordPress has now redirected from:
+ *
+ * post-new.php?post_type=figure
+ *
+ * to:
+ *
+ * post.php?post=NUMBER&action=edit
+ */
+window.addEventListener('load', async function () {
+	const pendingSaveJSON =
+		sessionStorage.getItem(
+			pendingFigureHtmlSaveKey
+		);
+
+	if (!pendingSaveJSON) {
+		return;
+	}
+
+	const postID = getFigurePostIDFromURL();
+
+	if (!postID) {
+		return;
+	}
+
+	let pendingSave;
+
+	try {
+		pendingSave =
+			JSON.parse(pendingSaveJSON);
+	} catch (error) {
+		console.error(
+			'The pending figure-save information ' +
+			'could not be parsed:',
+			error
+		);
+
+		sessionStorage.removeItem(
+			pendingFigureHtmlSaveKey
+		);
+
+		return;
+	}
+
+	const publishButton =
+		document.getElementById('publish');
+
+	if (
+		!publishButton ||
+		!pendingSave.info_obj
+	) {
+		return;
+	}
+
+	await generateAndSaveFigureFromPreview(
+		publishButton,
+		pendingSave.info_obj
+	);
+});
+
+
+/**
+ * Generates the HTML document and embed metadata needed to display a Plotly figure in an iframe.
+ *
+ * Builds a self-contained HTML page that loads Plotly from CDN (if not already present) and
+ * renders the figure responsively. Width/height are stripped from the layout so the chart fills
+ * its container automatically.
+ *
+ * @param {Object} savedFigure - Plotly figure object with `data`, `layout`, and `config` properties.
+ * @param {string|number} figureID - Unique identifier for the figure, used in element IDs and the output filename.
+ * @param {string} rootURL - WordPress site root URL (no trailing slash), used to construct the iframe `src` path.
+ * @returns {{
+*   figIframeHtml: string,
+*   figIframeHtmlFileName: string,
+*   figIframeHtmlPath: string,
+*   figIframeCode: string
+* }} Object containing the full HTML document string, the filename (without extension), the
+*    expected server path, and a ready-to-insert `<iframe>` tag.
+*/
+// export async function createFigureHtml(savedFigure, figureID, rootURL, info_obj, figureType) {
+
+//    function insertTheFigureIntoHTML(savedFigure, figureID, figureType) {
+// 	   const cleanFigure = {
+// 	   data: savedFigure.data || [],
+// 	   layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
+// 	   config: savedFigure.config || {}
+// 	   };
+   
+// 	   delete cleanFigure.layout.width;
+// 	   delete cleanFigure.layout.height;
+// 	   cleanFigure.layout.autosize = true;
+   
+// 	   const jsonString = JSON
+// 	   .stringify(cleanFigure)
+// 	   .replace(/<\/script/gi, "<\\/script");
+   
+// 	   return `
+// 		<script>
+// 		(function () {
+// 			const currentScript = document.currentScript;
+		
+// 			const chart = document.createElement("div");
+// 			chart.id = "${figureID}";
+// 			chart.style.position = "absolute";
+// 			chart.style.width = "100%";
+// 			chart.style.height = "100%";
+// 			chart.style.minHeight = "400px";
+
+// 			currentScript.parentNode.insertBefore(chart, currentScript);
+		
+// 			const fig = ${jsonString};
+		
+// 			function renderPlot() {
+// 			Plotly.react(
+// 				chart,
+// 				fig.data || [],
+// 				fig.layout || {},
+// 				fig.config || {}
+// 			).then(function () {
+// 				Plotly.Plots.resize(chart);
+// 			});
+		
+// 			window.addEventListener("resize", function () {
+// 				Plotly.Plots.resize(chart);
+// 			});
+// 			}
+		
+// 			if (typeof Plotly !== "undefined") {
+// 			renderPlot();
+// 			return;
+// 			}
+		
+// 			const script = document.createElement("script");
+// 			script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
+// 			script.onload = renderPlot;
+// 			document.head.appendChild(script);
+// 		})();
+// 		</script>
+// 		`;
+//    }
+
+//    const figIframeHtml = `
+// 			   <!doctype html>
+// 			   <html>
+// 			   <head>
+// 			   <meta charset="utf-8">
+// 			   <title>Figure Embed</title>
+// 			   <style>
+// 				   html, body {
+// 				   width: 100%;
+// 				   min-height: 400px;
+// 				   margin: 0;
+// 				   padding: 0;
+// 				   }
+
+// 				   body {
+// 				   overflow: hidden;
+// 				   }
+
+// 				   #figure-embed-${figureID} {
+// 				   width: 100%;
+// 				   height: 100%;
+// 				   min-height: 400px;
+// 				   }
+// 			   </style>
+// 			   </head>
+// 			   <body>
+// 			   ${insertTheFigureIntoHTML(savedFigure, `figure-embed-${figureID}`, figureType)}
+// 			   </body>
+// 			   </html>
+//    `;
+//    const figIframeHtmlFileName = `figure-${figureID}`
+//    const figIframeHtmlPath = `${rootURL}/wp-content/data/figure_${figureID}/${figIframeHtmlFileName}.html`;
+//    const figIframeCode = `<iframe src="${figIframeHtmlPath}" width="100%" height="400px !important" min-height="400px !important"></iframe>`;
+
+//    return {
+// 	   figIframeHtml,
+// 	   figIframeHtmlFileName,
+// 	   figIframeHtmlPath,
+// 	   figIframeCode
+// 	 };
+// }
+
+
+/**
+ * Creates a standalone HTML document for a complete figure.
+ *
+ * Supported figure types:
+ * - Interactive: renders a saved Plotly figure.
+ * - Internal: renders an image stored in WordPress.
+ * - External: renders an externally hosted image.
+ * - Code: injects trusted HTML, CSS, and JavaScript.
+ *
+ * The generated document also includes:
+ * - Science/source and data links
+ * - Figure title
+ * - Short caption
+ * - Expandable long caption
+ * - Primary-site and Graphic Data footer links
+ * - Responsive iframe-height communication
+ *
+ * Rich-text captions, custom CSS, and code figures are inserted as HTML.
+ * These values should be sanitized or restricted appropriately in WordPress.
+ *
+ * @param {Object|null} savedFigure Saved Plotly figure data.
+ * @param {number|string} figureID WordPress figure post ID.
+ * @param {string} rootURL Primary website root URL.
+ * @param {Object} info_obj Figure content and metadata.
+ * @param {string} figureType Interactive, Internal, External, or Code.
+ *
+ * @return {Promise<Object>} Generated HTML and iframe information.
+ */
+export async function createFigureHtml(
+	savedFigure,
+	figureID,
+	rootURL,
+	info_obj = {},
+	figureType = 'Interactive'
+) {
+	/**
+	 * Returns the first populated property found in info_obj.
+	 *
+	 * @param {string[]} keys Property names to check.
+	 * @param {*} fallback Default value.
+	 *
+	 * @return {*} First populated value or fallback.
+	 */
+	function getInfoValue(keys, fallback = '') {
+		for (const key of keys) {
+			if (
+				Object.prototype.hasOwnProperty.call(info_obj, key) &&
+				info_obj[key] !== null &&
+				info_obj[key] !== undefined &&
+				info_obj[key] !== ''
+			) {
+				return info_obj[key];
+			}
+		}
+
+		return fallback;
+	}
+
+	/**
+	 * Escapes text before inserting it into HTML.
+	 *
+	 * @param {*} value Value to escape.
+	 *
+	 * @return {string} Escaped HTML.
+	 */
+	function escapeHtml(value) {
+		return String(value ?? '')
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#039;');
+	}
+
+	/**
+	 * Validates a URL before inserting it into an href attribute.
+	 *
+	 * @param {*} value URL value.
+	 * @param {string} fallback Fallback URL.
+	 *
+	 * @return {string} Escaped safe URL.
+	 */
+	function safeUrl(value, fallback = '#') {
+		const url = String(value ?? '').trim();
+
+		if (!url) {
+			return escapeHtml(fallback);
+		}
+
+		const allowedUrl =
+			/^(https?:|mailto:|tel:|\/|#|\.\/|\.\.\/)/i.test(url);
+
+		return escapeHtml(
+			allowedUrl
+				? url
+				: fallback
+		);
+	}
+
+	/**
+	 * Validates a URL before inserting it into an image src attribute.
+	 *
+	 * @param {*} value Image URL.
+	 * @param {string} fallback Fallback image URL.
+	 *
+	 * @return {string} Escaped safe image URL.
+	 */
+	function safeImageUrl(value, fallback = '') {
+		const url = String(value ?? '').trim();
+
+		if (!url) {
+			return escapeHtml(fallback);
+		}
+
+		const allowedUrl =
+			/^(https?:|\/\/|blob:|data:image\/|\/|\.\/|\.\.\/)/i.test(
+				url
+			);
+
+		return escapeHtml(
+			allowedUrl
+				? url
+				: fallback
+		);
+	}
+
+	/**
+	 * Makes a value safe for placement inside an inline script.
+	 *
+	 * @param {*} value Value to serialize.
+	 *
+	 * @return {string} Serialized JavaScript value.
+	 */
+	function serializeForScript(value) {
+		return JSON
+			.stringify(value)
+			.replace(/<\/script/gi, '<\\/script');
+	}
+
+	/**
+	 * Creates an optional source or data link.
+	 *
+	 * @param {Object} options Link options.
+	 * @param {string} options.url Link URL.
+	 * @param {string} options.text Link text.
+	 * @param {string} options.icon Display icon.
+	 * @param {string} options.className Additional CSS class.
+	 *
+	 * @return {string} Link HTML or an empty string.
+	 */
+	function buildInformationLink({
+		url,
+		text,
+		icon,
+		className
+	}) {
+		if (!url) {
+			return '';
+		}
+
+		return `
+			<a
+				href="${safeUrl(url)}"
+				target="_blank"
+				rel="noopener noreferrer"
+				class="figure-information-link ${escapeHtml(className)}"
+			>
+				<span aria-hidden="true">${escapeHtml(icon)}</span>
+				<span>${escapeHtml(text)}</span>
+			</a>
+		`;
+	}
+
+	const normalizedFigureID = String(figureID);
+
+	const normalizedRootURL = String(rootURL ?? '')
+		.trim()
+		.replace(/\/+$/, '');
+
+
+	let figIframeHtmlFileName;
+	let figIframeHtmlPath;
+	if (info_obj['status'] === 'full_figure') {
+		figIframeHtmlFileName = `figure-${normalizedFigureID}`;
+		figIframeHtmlPath =
+			`${normalizedRootURL}/wp-content/data/` +
+			`figure_${normalizedFigureID}/` +
+			`${figIframeHtmlFileName}.html`;
+	}
+	if (info_obj['status'] === 'figure_only') {
+		figIframeHtmlFileName = `figure-${normalizedFigureID}_figure_only`;
+		figIframeHtmlPath =
+			`${normalizedRootURL}/wp-content/data/` +
+			`figure_${normalizedFigureID}/` +
+			`${figIframeHtmlFileName}.html`;
+	}
+
+	const figureContentElementID =
+		`figure-content-${normalizedFigureID}`;
+
+	const iframeElementID =
+		`figure-iframe-${normalizedFigureID}`;
+
+	/*
+	 * General figure information.
+	 */
+	const figureTitle = getInfoValue(
+		[
+			'figureTitle',
+			'figure_title',
+			'title'
+		],
+		``
+	);
+
+	const requestedFigureType = getInfoValue(
+		[
+			'figureType',
+			'figure_type'
+		],
+		figureType
+	);
+
+	const supportedFigureTypes = {
+		interactive: 'Interactive',
+		internal: 'Internal',
+		external: 'External',
+		code: 'Code'
+	};
+
+	const normalizedFigureType =
+		supportedFigureTypes[
+			String(requestedFigureType)
+				.trim()
+				.toLowerCase()
+		] || String(requestedFigureType).trim();
+
+	/*
+	 * Science/source link.
+	 */
+	const sourceURL = getInfoValue([
+		'scienceLink',
+		'scienceURL',
+		'sourceLink',
+		'sourceURL',
+		'figureScienceLink',
+		'figure_science_link_url'
+	]);
+
+	const sourceText = getInfoValue(
+		[
+			'scienceText',
+			'sourceText',
+			'figureScienceLinkText',
+			'figure_science_link_text'
+		],
+		'Source'
+	);
+
+	/*
+	 * Data link.
+	 */
+	const dataURL = getInfoValue([
+		'dataLink',
+		'dataURL',
+		'figureDataLink',
+		'figure_data_link_url'
+	]);
+
+	const dataText = getInfoValue(
+		[
+			'dataText',
+			'figureDataLinkText',
+			'figure_data_link_text'
+		],
+		'Data'
+	);
+
+	/*
+	 * Captions.
+	 */
+	const shortCaption = getInfoValue([
+		'caption',
+		'shortCaption',
+		'captionShort',
+		'figureCaptionShort',
+		'figure_caption_short'
+	]);
+
+	const longCaption = getInfoValue([
+		'extendedCaption',
+		'longCaption',
+		'captionLong',
+		'figureCaptionLong',
+		'figure_caption_long'
+	]);
+
+	/*
+	 * Internal and external image values.
+	 */
+	const imageURL = getInfoValue([
+		'imageLink',
+		'imageURL',
+		'imageUrl',
+		'image_link',
+		'figureImage',
+		'figure_image',
+		'externalURL',
+		'externalUrl',
+		'figureExternalURL',
+		'figure_external_url'
+	]);
+
+	const imageAlt = getInfoValue([
+		'externalAlt',
+		'external_alt',
+		'imageAlt',
+		'image_alt',
+		'figureExternalAlt',
+		'figure_external_alt'
+	]);
+
+	/*
+	 * Code figure value.
+	 */
+	const embedCode = getInfoValue([
+		'code',
+		'embedCode',
+		'embed_code',
+		'figureCode',
+		'figure_code'
+	]);
+
+	/*
+	 * Optional CSS generated by the preview system.
+	 */
+	const desktopCSS = getInfoValue([
+		'desktopCSS',
+		'desktopCss',
+		'desktop_css'
+	]);
+
+	const mobileCSS = getInfoValue([
+		'mobileCSS',
+		'mobileCss',
+		'mobile_css'
+	]);
+
+	/**
+	 * Creates the image markup for Internal and External figures.
+	 *
+	 * Internal figures request WordPress media alt text when no explicit
+	 * alt text was supplied. External figures use an empty alt attribute
+	 * when no alt text was supplied.
+	 *
+	 * @param {string} imageType Internal or External.
+	 *
+	 * @return {string} Image markup and supporting script.
+	 */
+	function buildImageFigureHTML(imageType) {
+		const imageElementID =
+			`img_${normalizedFigureID}`;
+
+		const errorElementID =
+			`${imageElementID}-error`;
+
+		if (!imageURL) {
+			return `
+				<div
+					class="figure-error"
+					role="alert"
+				>
+					No image URL was supplied for this
+					${escapeHtml(imageType)} figure.
+				</div>
+			`;
+		}
+
+		const shouldRetrieveAltText =
+			imageType === 'Internal' &&
+			!imageAlt;
+
+		return `
+			<div class="figure-image-container">
+				<img
+					id="${escapeHtml(imageElementID)}"
+					class="figure-image"
+					src="${safeImageUrl(imageURL)}"
+					alt="${escapeHtml(imageAlt)}"
+					loading="lazy"
+					decoding="async"
+				>
+
+				<p
+					id="${escapeHtml(errorElementID)}"
+					class="figure-error"
+					role="alert"
+					hidden
+				>
+					The figure image could not be loaded.
+				</p>
+			</div>
+
+			<script>
+				(function () {
+					"use strict";
+
+					const imageElementID =
+						${serializeForScript(imageElementID)};
+
+					const errorElementID =
+						${serializeForScript(errorElementID)};
+
+					const image =
+						document.getElementById(
+							imageElementID
+						);
+
+					const errorElement =
+						document.getElementById(
+							errorElementID
+						);
+
+					const sendDocumentHeight =
+						window.graphicDataFigureEmbed &&
+						window.graphicDataFigureEmbed.sendHeight;
+
+					if (!image) {
+						console.error(
+							"Figure image element was not found:",
+							imageElementID
+						);
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+
+						return;
+					}
+
+					function handleImageLoaded() {
+						image.hidden = false;
+
+						if (errorElement) {
+							errorElement.hidden = true;
+						}
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+
+							requestAnimationFrame(
+								sendDocumentHeight
+							);
+						}
+					}
+
+					function handleImageError() {
+						console.error(
+							"Unable to load figure image:",
+							image.src
+						);
+
+						image.hidden = true;
+
+						if (errorElement) {
+							errorElement.hidden = false;
+						}
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+					}
+
+					image.addEventListener(
+						"load",
+						handleImageLoaded
+					);
+
+					image.addEventListener(
+						"error",
+						handleImageError
+					);
+
+					${
+						shouldRetrieveAltText
+							? `
+								const siteRoot =
+									${serializeForScript(
+										normalizedRootURL
+									)};
+
+								const altTextEndpoint =
+									siteRoot +
+									"/wp-json/graphic_data/v1/" +
+									"media/alt-text-by-url?image_url=" +
+									encodeURIComponent(image.src);
+
+								fetch(
+									altTextEndpoint,
+									{
+										credentials: "same-origin"
+									}
+								)
+									.then(function (response) {
+										if (!response.ok) {
+											throw new Error(
+												"Alt-text request failed " +
+												"with status " +
+												response.status
+											);
+										}
+
+										return response.json();
+									})
+									.then(function (data) {
+										if (
+											data &&
+											data.alt_text
+										) {
+											image.alt =
+												data.alt_text;
+										}
+									})
+									.catch(function (error) {
+										console.error(
+											"Unable to retrieve image alt text:",
+											error
+										);
+									});
+							`
+							: ''
+					}
+
+					if (image.complete) {
+						if (image.naturalWidth > 0) {
+							handleImageLoaded();
+						} else {
+							handleImageError();
+						}
+					}
+				})();
+			</script>
+		`;
+	}
+
+	/**
+	 * Creates the Plotly markup for an Interactive figure.
+	 *
+	 * @return {string} Plotly markup and rendering script.
+	 */
+	function buildInteractiveFigureHTML() {
+		const cleanFigure = {
+			data: savedFigure?.data || [],
+			layout: JSON.parse(
+				JSON.stringify(
+					savedFigure?.layout || {}
+				)
+			),
+			config: {
+				...(savedFigure?.config || {}),
+				responsive: true
+			}
+		};
+
+		delete cleanFigure.layout.width;
+		delete cleanFigure.layout.height;
+
+		cleanFigure.layout.autosize = true;
+
+		const figureJSON =
+			serializeForScript(cleanFigure);
+
+		const targetIDJSON =
+			serializeForScript(
+				figureContentElementID
+			);
+
+		return `
+			<div
+				id="${escapeHtml(figureContentElementID)}"
+				class="plotly-figure"
+				role="img"
+				aria-label="${escapeHtml(figureTitle)}"
+			></div>
+
+			<script>
+				(function () {
+					"use strict";
+
+					const chartID = ${targetIDJSON};
+
+					const chart =
+						document.getElementById(chartID);
+
+					const fig = ${figureJSON};
+
+					const sendDocumentHeight =
+						window.graphicDataFigureEmbed &&
+						window.graphicDataFigureEmbed.sendHeight;
+
+					if (!chart) {
+						console.error(
+							"Plotly figure target was not found:",
+							chartID
+						);
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+
+						return;
+					}
+
+					function resizePlot() {
+						if (
+							typeof Plotly === "undefined" ||
+							!chart.classList.contains(
+								"js-plotly-plot"
+							)
+						) {
+							return;
+						}
+
+						Plotly.Plots.resize(chart);
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+					}
+
+					function renderPlot() {
+						Plotly.react(
+							chart,
+							fig.data || [],
+							fig.layout || {},
+							fig.config || {}
+						)
+							.then(function () {
+								resizePlot();
+
+								requestAnimationFrame(
+									resizePlot
+								);
+							})
+							.catch(function (error) {
+								console.error(
+									"Unable to render Plotly figure:",
+									error
+								);
+
+								chart.innerHTML =
+									'<p class="figure-error">' +
+									'The interactive figure ' +
+									'could not be loaded.' +
+									'</p>';
+
+								if (sendDocumentHeight) {
+									sendDocumentHeight();
+								}
+							});
+					}
+
+					function loadPlotly() {
+						if (
+							typeof Plotly !== "undefined"
+						) {
+							renderPlot();
+							return;
+						}
+
+						const existingScript =
+							document.querySelector(
+								'script[data-plotly-library="true"]'
+							);
+
+						if (existingScript) {
+							existingScript.addEventListener(
+								"load",
+								renderPlot,
+								{ once: true }
+							);
+
+							return;
+						}
+
+						const plotlyScript =
+							document.createElement(
+								"script"
+							);
+
+						plotlyScript.src =
+							"https://cdn.plot.ly/" +
+							"plotly-2.35.2.min.js";
+
+						plotlyScript.async = true;
+
+						plotlyScript.dataset.plotlyLibrary =
+							"true";
+
+						plotlyScript.addEventListener(
+							"load",
+							renderPlot,
+							{ once: true }
+						);
+
+						plotlyScript.addEventListener(
+							"error",
+							function () {
+								chart.innerHTML =
+									'<p class="figure-error">' +
+									'The Plotly library ' +
+									'could not be loaded.' +
+									'</p>';
+
+								if (sendDocumentHeight) {
+									sendDocumentHeight();
+								}
+							},
+							{ once: true }
+						);
+
+						document.head.appendChild(
+							plotlyScript
+						);
+					}
+
+					let resizeTimer = null;
+
+					window.addEventListener(
+						"resize",
+						function () {
+							window.clearTimeout(
+								resizeTimer
+							);
+
+							resizeTimer =
+								window.setTimeout(
+									resizePlot,
+									100
+								);
+						}
+					);
+
+					loadPlotly();
+
+					if (sendDocumentHeight) {
+						sendDocumentHeight();
+					}
+				})();
+			</script>
+		`;
+	}
+
+	/**
+	 * Creates a Code figure.
+	 *
+	 * Script elements are recreated because scripts inserted through
+	 * innerHTML do not execute automatically.
+	 *
+	 * External scripts are loaded sequentially so their original order
+	 * is preserved.
+	 *
+	 * @return {string} Code target and executable injection script.
+	 */
+	function buildCodeFigureHTML() {
+		const codeElementID =
+			`code-display-window-${normalizedFigureID}`;
+
+		const codeJSON =
+			serializeForScript(embedCode || '');
+
+		return `
+			<div
+				id="${escapeHtml(codeElementID)}"
+				class="code-display-window"
+			></div>
+
+			<script>
+				(async function () {
+					"use strict";
+
+					const codeElementID =
+						${serializeForScript(codeElementID)};
+
+					const codeDisplay =
+						document.getElementById(
+							codeElementID
+						);
+
+					const suppliedCode = ${codeJSON};
+
+					const sendDocumentHeight =
+						window.graphicDataFigureEmbed &&
+						window.graphicDataFigureEmbed.sendHeight;
+
+					if (!codeDisplay) {
+						console.error(
+							"Code figure target was not found:",
+							codeElementID
+						);
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+
+						return;
+					}
+
+					if (!suppliedCode.trim()) {
+						codeDisplay.innerHTML =
+							'<p class="figure-error">' +
+							'No embed code was supplied ' +
+							'for this figure.' +
+							'</p>';
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+
+						return;
+					}
+
+					/**
+					 * Appends a parsed node to the document.
+					 *
+					 * Script elements are recreated so they execute.
+					 *
+					 * @param {Node} parent Parent DOM element.
+					 * @param {Node} sourceNode Parsed source node.
+					 *
+					 * @return {Promise<void>}
+					 */
+					async function appendExecutableNode(
+						parent,
+						sourceNode
+					) {
+						if (
+							sourceNode.nodeType ===
+								Node.ELEMENT_NODE &&
+							sourceNode.tagName === "SCRIPT"
+						) {
+							const executableScript =
+								document.createElement(
+									"script"
+								);
+
+							Array.from(
+								sourceNode.attributes
+							).forEach(function (attribute) {
+								if (
+									attribute.name === "src" ||
+									attribute.name === "async"
+								) {
+									return;
+								}
+
+								executableScript.setAttribute(
+									attribute.name,
+									attribute.value
+								);
+							});
+
+							const scriptSource =
+								sourceNode.getAttribute("src");
+
+							if (scriptSource) {
+								await new Promise(
+									function (resolve) {
+										executableScript.async =
+											false;
+
+										executableScript.addEventListener(
+											"load",
+											resolve,
+											{ once: true }
+										);
+
+										executableScript.addEventListener(
+											"error",
+											function () {
+												console.error(
+													"Unable to load " +
+													"code-figure script:",
+													scriptSource
+												);
+
+												resolve();
+											},
+											{ once: true }
+										);
+
+										executableScript.src =
+											scriptSource;
+
+										parent.appendChild(
+											executableScript
+										);
+									}
+								);
+
+								return;
+							}
+
+							executableScript.textContent =
+								sourceNode.textContent;
+
+							parent.appendChild(
+								executableScript
+							);
+
+							return;
+						}
+
+						if (
+							sourceNode.nodeType ===
+							Node.ELEMENT_NODE
+						) {
+							const clonedElement =
+								sourceNode.cloneNode(false);
+
+							parent.appendChild(
+								clonedElement
+							);
+
+							const childNodes =
+								Array.from(
+									sourceNode.childNodes
+								);
+
+							for (
+								const childNode of childNodes
+							) {
+								await appendExecutableNode(
+									clonedElement,
+									childNode
+								);
+							}
+
+							return;
+						}
+
+						parent.appendChild(
+							sourceNode.cloneNode(true)
+						);
+					}
+
+					try {
+						const template =
+							document.createElement(
+								"template"
+							);
+
+						template.innerHTML = suppliedCode;
+
+						codeDisplay.replaceChildren();
+
+						const sourceNodes =
+							Array.from(
+								template.content.childNodes
+							);
+
+						for (
+							const sourceNode of sourceNodes
+						) {
+							await appendExecutableNode(
+								codeDisplay,
+								sourceNode
+							);
+						}
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+
+							requestAnimationFrame(
+								sendDocumentHeight
+							);
+						}
+					} catch (error) {
+						console.error(
+							"Unable to render code figure:",
+							error
+						);
+
+						codeDisplay.innerHTML =
+							'<p class="figure-error">' +
+							'The code figure could not ' +
+							'be rendered.' +
+							'</p>';
+
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+					}
+				})();
+			</script>
+		`;
+	}
+
+	/**
+	 * Selects the correct figure renderer.
+	 *
+	 * @return {string} Figure-specific HTML.
+	 */
+	function insertTheFigureIntoHTML() {
+		switch (normalizedFigureType) {
+			case 'Internal':
+				return buildImageFigureHTML(
+					'Internal'
+				);
+
+			case 'External':
+				return buildImageFigureHTML(
+					'External'
+				);
+
+			case 'Code':
+				return buildCodeFigureHTML();
+
+			case 'Interactive':
+				return buildInteractiveFigureHTML();
+
+			default:
+				return `
+					<div
+						class="figure-error"
+						role="alert"
+					>
+						Unsupported figure type:
+						${escapeHtml(normalizedFigureType)}
+					</div>
+				`;
+		}
+	}
+
+	const sourceLinkHTML =
+		buildInformationLink({
+			url: sourceURL,
+			text: sourceText,
+			icon: '\u{1F4CB}',
+			className: 'source-link'
+		});
+
+	const dataLinkHTML =
+		buildInformationLink({
+			url: dataURL,
+			text: dataText,
+			icon: '\u{1F4C1}',
+			className: 'data-link'
+		});
+
+	const informationBarHTML =
+		sourceLinkHTML || dataLinkHTML
+			? `
+				<div class="figure-information-bar">
+					<div class="figure-information-left">
+						${sourceLinkHTML}
+					</div>
+
+					<div class="figure-information-right">
+						${dataLinkHTML}
+					</div>
+				</div>
+			`
+			: '';
+
+	const shortCaptionHTML =
+		shortCaption
+			? `
+				<div class="caption figure-caption-short">
+					${shortCaption}
+				</div>
+			`
+			: '';
+
+	const longCaptionHTML =
+		longCaption
+			? `
+				<div class="caption figure-caption-long">
+					${longCaption}
+				</div>
+			`
+			: '';
+
+	const longCaptionContainerHTML =
+		longCaptionHTML
+			? `
+				<details class="figure-long-caption-container">
+					<summary class="figure-long-caption-toggle">
+						Details
+					</summary>
+
+					<div class="figure-long-caption-content">
+						${longCaptionHTML}
+					</div>
+				</details>
+			`
+			: '';
+
+	const figureContentHTML =
+		insertTheFigureIntoHTML();
+
+	const figureTypeClass =
+		String(normalizedFigureType)
+			.toLowerCase()
+			.replace(/[^a-z0-9_-]/g, '-');
+
+	const figIframeHtml = `
+		<!doctype html>
+
+		<html lang="en">
+			<head>
+				<meta charset="utf-8">
+
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1"
+				>
+
+				<title>${escapeHtml(figureTitle)}</title>
+
+				<style>
+					* {
+						box-sizing: border-box;
+					}
+
+					html,
+					body {
+						width: 100%;
+						min-height: 100%;
+						margin: 0;
+						padding: 0;
+					}
+
+					body {
+						overflow-x: hidden;
+						background: #ffffff;
+						color: #222222;
+						font-family:
+							Arial,
+							Helvetica,
+							sans-serif;
+					}
+
+					a {
+						color: inherit;
+					}
+
+					img,
+					svg,
+					canvas,
+					video,
+					iframe {
+						max-width: 100%;
+					}
+
+					.figure-embed-document {
+						width: 100%;
+						max-width: none;
+						margin: 0 auto;
+						padding: 12px;
+					}
+
+					.figure-information-bar {
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						gap: 16px;
+						width: 100%;
+						margin: 0 auto;
+						padding: 10px;
+						border: 1px solid lightgrey;
+						border-radius: 6px;
+						background: rgba(227, 227, 227, 0.33);
+						font-size: 1.2rem;
+					}
+
+					.figure-information-left,
+					.figure-information-right {
+						display: flex;
+						align-items: center;
+						min-width: 0;
+					}
+
+					.figure-information-right {
+						margin-left: auto;
+						text-align: right;
+					}
+
+					.figure-information-link {
+						display: inline-flex;
+						align-items: center;
+						gap: 6px;
+						text-decoration: none;
+					}
+
+					.figure-information-link:hover,
+					.figure-information-link:focus {
+						text-decoration: underline;
+					}
+
+					.figureTitle {
+						margin-top: 15px;
+						margin-bottom: 2px;
+						text-align: center;
+						font-size: 1rem;
+						font-weight: 500;
+					}
+
+					.figure-type {
+						position: absolute;
+						width: 1px;
+						height: 1px;
+						padding: 0;
+						margin: -1px;
+						overflow: hidden;
+						clip: rect(0, 0, 0, 0);
+						white-space: nowrap;
+						border: 0;
+					}
+
+					.figure-content-wrapper {
+						position: relative;
+						display: block;
+						width: 100%;
+						margin-top: 2%;
+					}
+
+					.figure-content-interactive {
+						min-height: 400px;
+					}
+
+					.figure-image-container {
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						width: 100%;
+					}
+
+					.figure-image {
+						display: block;
+						width: auto;
+						max-width: 100%;
+						height: auto;
+						margin: 0 auto;
+					}
+
+					.plotly-figure {
+						position: relative;
+						display: block;
+						width: 100%;
+						height: 450px;
+						min-height: 400px;
+						margin: 0;
+					}
+
+					.plotly-figure .plot-container,
+					.plotly-figure .svg-container,
+					.plotly-figure .main-svg {
+						width: 100% !important;
+						max-width: none !important;
+					}
+
+					.modebar-container {
+						top: -20px !important;
+					}
+
+					.code-display-window {
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						width: 100%;
+						min-height: 300px;
+						padding: 10px;
+						overflow: auto;
+						background: #ffffff;
+					}
+
+					.code-display-window > * {
+						max-width: 100%;
+					}
+
+					.figure-error {
+						margin: 1rem;
+						padding: 1rem;
+						border: 1px solid #b32d2e;
+						border-radius: 4px;
+						color: #b32d2e;
+						text-align: center;
+					}
+
+					.figure-short-caption-container {
+						width: 100%;
+						margin-top: 10px;
+						margin-bottom: 10px;
+					}
+
+					.figure-short-caption-container:empty {
+						display: none;
+					}
+
+					.caption {
+						width: 100%;
+						line-height: 1.5;
+					}
+
+					.figure-caption-short {
+						margin-top: 0;
+					}
+
+					.figure-caption-long {
+						margin-top: 0;
+					}
+
+					.figure-long-caption-container {
+						width: 100%;
+						margin-top: 12px;
+					}
+
+					.figure-long-caption-toggle {
+						padding: 10px 12px;
+						color: rgba(0, 0, 0, 0.8);
+						font-size: 1rem;
+						font-weight: 500;
+						cursor: pointer;
+						user-select: none;
+					}
+
+					.figure-long-caption-toggle:hover,
+					.figure-long-caption-toggle:focus {
+						color: rgba(68, 68, 68, 1);
+						background: rgba(227, 227, 227, 0.3);
+					}
+
+					.figure-long-caption-content {
+						padding: 0 12px 12px;
+						line-height: 1.5;
+					}
+
+					.figure-long-caption-content > :first-child {
+						margin-top: 0;
+					}
+
+					.figure-long-caption-content > :last-child {
+						margin-bottom: 0;
+					}
+
+					.figure-footer {
+						width: 100%;
+						margin-top: 24px;
+						padding-top: 12px;
+					}
+
+					.figure-footer-links {
+						display: flex;
+						justify-content: flex-end;
+						align-items: center;
+						flex-wrap: wrap;
+						gap: 16px;
+					}
+
+					.figure-footer-link {
+						color: rgba(68, 68, 68, 0.55);
+						font-size: 0.8rem;
+						text-decoration: none;
+					}
+
+					.figure-footer-link:hover,
+					.figure-footer-link:focus {
+						color: rgba(68, 68, 68, 0.9);
+						text-decoration: underline;
+					}
+
+					${desktopCSS}
+
+					@media screen and (max-width: 767px) {
+						.figure-embed-document {
+							padding: 8px;
+						}
+
+						.figure-information-bar {
+							align-items: flex-start;
+							flex-direction: column;
+							gap: 8px;
+							font-size: 1rem;
+						}
+
+						.figure-information-right {
+							margin-left: 0;
+							text-align: left;
+						}
+
+						.plotly-figure {
+							height: 400px;
+						}
+
+						.code-display-window {
+							min-height: 250px;
+							padding: 6px;
+						}
+
+						.figure-footer-links {
+							justify-content: center;
+						}
+
+						${mobileCSS}
+					}
+				</style>
+			</head>
+
+			<body>
+				<script>
+					(function () {
+						"use strict";
+
+						const figureID =
+							${serializeForScript(normalizedFigureID)};
+
+						function sendHeight() {
+							const documentHeight = Math.max(
+								document.body.scrollHeight,
+								document.body.offsetHeight,
+								document.documentElement.clientHeight,
+								document.documentElement.scrollHeight,
+								document.documentElement.offsetHeight
+							);
+
+							window.parent.postMessage(
+								{
+									type: "figure-embed-resize",
+									figureID: figureID,
+									height: documentHeight
+								},
+								"*"
+							);
+						}
+
+						window.graphicDataFigureEmbed = {
+							sendHeight: sendHeight
+						};
+
+						if (
+							typeof ResizeObserver !== "undefined"
+						) {
+							const documentResizeObserver =
+								new ResizeObserver(
+									function () {
+										sendHeight();
+									}
+								);
+
+							documentResizeObserver.observe(
+								document.body
+							);
+						}
+
+						window.addEventListener(
+							"load",
+							function () {
+								sendHeight();
+
+								requestAnimationFrame(
+									sendHeight
+								);
+							}
+						);
+
+						window.addEventListener(
+							"resize",
+							sendHeight
+						);
+
+						sendHeight();
+					})();
+				</script>
+
+				<main
+					class="figure-embed-document"
+					data-figure-id="${escapeHtml(normalizedFigureID)}"
+					data-figure-type="${escapeHtml(normalizedFigureType)}"
+				>
+					${informationBarHTML}
+
+					<header>
+						<div class="figureTitle">
+							${escapeHtml(figureTitle)}
+						</div>
+
+						<span class="figure-type">
+							${escapeHtml(normalizedFigureType)}
+						</span>
+					</header>
+
+					<section
+						class="figure-content-wrapper figure-content-${escapeHtml(
+							figureTypeClass
+						)}"
+						aria-label="${escapeHtml(
+							`${normalizedFigureType} figure`
+						)}"
+					>
+						${figureContentHTML}
+					</section>
+
+					<div class="figure-short-caption-container">
+						${shortCaptionHTML}
+					</div>
+
+					${longCaptionContainerHTML}
+
+					<footer class="figure-footer">
+						<nav
+							class="figure-footer-links"
+							aria-label="Figure resources"
+						>
+							<a
+								href="${safeUrl(normalizedRootURL)}"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="figure-footer-link"
+							>
+								${escapeHtml(normalizedRootURL)}
+							</a>
+
+							<a
+								href="https://ioos.github.io/sanctuarywatch_graphicdata/"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="figure-footer-link"
+							>
+								Graphic Data
+							</a>
+						</nav>
+					</footer>
+				</main>
+			</body>
+		</html>
+	`;
+
+	/*
+	 * The iframe uses a fallback height. The embedded HTML sends its
+	 * actual document height to the parent page after content changes.
+	 */
+	const figIframeCode = `
+		<iframe
+			id="${escapeHtml(iframeElementID)}"
+			src="${safeUrl(figIframeHtmlPath)}"
+			title="${escapeHtml(figureTitle)}"
+			width="100%"
+			height="650"
+			loading="lazy"
+			style="
+				display: block;
+				width: 100%;
+				min-height: 400px;
+				border: 0;
+			"
+		></iframe>
+
+		<script>
+			(function () {
+				"use strict";
+
+				const iframe =
+					document.getElementById(
+						${serializeForScript(iframeElementID)}
+					);
+
+				const figureID =
+					${serializeForScript(normalizedFigureID)};
+
+				if (!iframe) {
+					return;
+				}
+
+				window.addEventListener(
+					"message",
+					function (event) {
+						if (
+							event.source !==
+							iframe.contentWindow
+						) {
+							return;
+						}
+
+						if (
+							!event.data ||
+							event.data.type !==
+								"figure-embed-resize" ||
+							String(event.data.figureID) !==
+								figureID
+						) {
+							return;
+						}
+
+						const requestedHeight =
+							Number(event.data.height);
+
+						if (
+							!Number.isFinite(
+								requestedHeight
+							) ||
+							requestedHeight < 100
+						) {
+							return;
+						}
+
+						iframe.style.height =
+							Math.ceil(
+								requestedHeight + 2
+							) + "px";
+					}
+				);
+			})();
+		</script>
+	`;
+
+	return {
+		figIframeHtml,
+		figIframeHtmlFileName,
+		figIframeHtmlPath,
+		figIframeCode
+	};
+}
+
+
+/**
+ * Uploads an HTML string to the server as a file via the WordPress AJAX API.
+ *
+ * Wraps `htmlContent` in a `File` object and POSTs it to `wp-admin/admin-ajax.php` using
+ * the `custom_file_upload` action. Requires a `[name="figure_nonce"]` input to be present
+ * in the DOM; alerts and returns early if it is missing.
+ *
+ * @param {string} htmlContent - The raw HTML string to save.
+ * @param {string} fileName - The filename (including extension) to use when creating the uploaded file.
+ * @param {string|number} postId - The WordPress post ID to associate the uploaded file with.
+ * @returns {Promise<Object>|undefined} Resolves with the parsed JSON response from the server on
+ *   success or failure (`result.success` indicates outcome), or `undefined` if the nonce is missing.
+ * @throws {Error} Rejects if the `fetch` call itself fails (network error, etc.).
+ */
+export async function saveHtmlToServer(htmlContent, fileName, filePath, postId) {
+	// Send the HTML content and filename to the server via AJAX
+
+
+	const htmlBlob = new Blob([htmlContent], {
+		type: "text/html"
+	  });
+	
+	const htmlFile = new File([htmlBlob], fileName, {
+	type: "text/html"
+	});
+
+	const figureNonceInput = document.querySelector('[name="figure_nonce"]');
+	if (!figureNonceInput || !figureNonceInput.value) {
+		alert("Error: figure_nonce is missing in the form!");
+		return;
+	}
+	
+	const formData = new FormData();
+
+	// Must match your WP AJAX action hook
+	formData.append("action", "custom_file_upload");
+
+	// Must match your PHP expected fields
+	formData.append("post_id", postId);
+	formData.append("figure_nonce", figureNonceInput.value);
+	formData.append("uploaded_file", htmlFile);
+
+	const ajaxUrl = window.location.origin + "/wp-admin/admin-ajax.php";
+
+	return fetch(ajaxUrl, {
+		method: "POST",
+		body: formData,
+		credentials: "same-origin"
+	})
+		.then((response) => response.json())
+		.then((result) => {
+		if (!result.success) {
+			console.error("HTML upload failed:", result.data);
+			return result;
+		}
+
+		console.log("HTML uploaded successfully:", result.data);
+		return result;
+		})
+		.catch((error) => {
+		console.error("AJAX error uploading HTML:", error);
+		throw error;
+		});
+}

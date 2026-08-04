@@ -303,127 +303,6 @@ export function fillFormFieldValues(elementID) {
 }
 
 
-/**
- * Generates the HTML document and embed metadata needed to display a Plotly figure in an iframe.
- *
- * Builds a self-contained HTML page that loads Plotly from CDN (if not already present) and
- * renders the figure responsively. Width/height are stripped from the layout so the chart fills
- * its container automatically.
- *
- * @param {Object} savedFigure - Plotly figure object with `data`, `layout`, and `config` properties.
- * @param {string|number} figureID - Unique identifier for the figure, used in element IDs and the output filename.
- * @param {string} rootURL - WordPress site root URL (no trailing slash), used to construct the iframe `src` path.
- * @returns {{
- *   figIframeHtml: string,
- *   figIframeHtmlFileName: string,
- *   figIframeHtmlPath: string,
- *   figIframeCode: string
- * }} Object containing the full HTML document string, the filename (without extension), the
- *    expected server path, and a ready-to-insert `<iframe>` tag.
- */
-export function createFigureIframeHtml(savedFigure, figureID, rootURL) {
-
-	function buildStandalonePlotlyEmbedCode(savedFigure, figureID) {
-		const cleanFigure = {
-		data: savedFigure.data || [],
-		layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
-		config: savedFigure.config || {}
-		};
-	
-		delete cleanFigure.layout.width;
-		delete cleanFigure.layout.height;
-		cleanFigure.layout.autosize = true;
-	
-		const jsonString = JSON
-		.stringify(cleanFigure)
-		.replace(/<\/script/gi, "<\\/script");
-	
-		return `
-	<script>
-	(function () {
-		const currentScript = document.currentScript;
-	
-		const chart = document.createElement("div");
-		chart.id = "${figureID}";
-		chart.style.position = "absolute";
-		chart.style.width = "100%";
-		chart.style.height = "100%";
-		chart.style.minHeight = "400px";
-
-		currentScript.parentNode.insertBefore(chart, currentScript);
-	
-		const fig = ${jsonString};
-	
-		function renderPlot() {
-		Plotly.react(
-			chart,
-			fig.data || [],
-			fig.layout || {},
-			fig.config || {}
-		).then(function () {
-			Plotly.Plots.resize(chart);
-		});
-	
-		window.addEventListener("resize", function () {
-			Plotly.Plots.resize(chart);
-		});
-		}
-	
-		if (typeof Plotly !== "undefined") {
-		renderPlot();
-		return;
-		}
-	
-		const script = document.createElement("script");
-		script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
-		script.onload = renderPlot;
-		document.head.appendChild(script);
-	})();
-	</script>
-	`;
-	}
-	const figIframeHtml = `
-				<!doctype html>
-				<html>
-				<head>
-				<meta charset="utf-8">
-				<title>Plotly Embed</title>
-				<style>
-					html, body {
-					width: 100%;
-					min-height: 400px;
-					margin: 0;
-					padding: 0;
-					}
-
-					body {
-					overflow: hidden;
-					}
-
-					#plotly-embed-${figureID} {
-					width: 100%;
-					height: 100%;
-					min-height: 400px;
-					}
-				</style>
-				</head>
-				<body>
-				${buildStandalonePlotlyEmbedCode(savedFigure, `plotly-embed-${figureID}`)}
-				</body>
-				</html>
-	`;
-
-	const figIframeHtmlFileName = `plotly-${figureID}`
-	const figIframeHtmlPath = `${rootURL}/wp-content/data/figure_${figureID}/${figIframeHtmlFileName}.html`;
-	const figIframeCode = `<iframe src="${figIframeHtmlPath}" width="100%" height="400px !important" min-height="400px !important"></iframe>`;
-
-	return {
-		figIframeHtml,
-		figIframeHtmlFileName,
-		figIframeHtmlPath,
-		figIframeCode
-	  };
-}
 
 
 /**
@@ -440,148 +319,82 @@ export function createFigureIframeHtml(savedFigure, figureID, rootURL) {
  * @returns {string} An HTML string containing the wrapper div and self-executing script tag, ready
  *   to be injected into a page.
  */
-export function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
-	const cleanFigure = {
-	  data: savedFigure.data || [],
-	  layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
-	  config: savedFigure.config || {}
-	};
+// export function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
+// 	const cleanFigure = {
+// 	  data: savedFigure.data || [],
+// 	  layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
+// 	  config: savedFigure.config || {}
+// 	};
   
-	delete cleanFigure.layout.width;
-	delete cleanFigure.layout.height;
+// 	delete cleanFigure.layout.width;
+// 	delete cleanFigure.layout.height;
   
-	cleanFigure.layout.autosize = true;
-	cleanFigure.config.responsive = true;
+// 	cleanFigure.layout.autosize = true;
+// 	cleanFigure.config.responsive = true;
   
-	const jsonString = JSON
-	  .stringify(cleanFigure)
-	  .replace(/<\/script/gi, "<\\/script");
+// 	const jsonString = JSON
+// 	  .stringify(cleanFigure)
+// 	  .replace(/<\/script/gi, "<\\/script");
   
-	return `
-	<div id="${embedID}-wrap" style="width:100%; min-height:400px; height:500px; position:relative;">
-		<div id="${embedID}" style="width:100%; height:100%; min-height:400px;"></div>
-	</div>
+// 	return `
+// 	<div id="${embedID}-wrap" style="width:100%; min-height:400px; height:500px; position:relative;">
+// 		<div id="${embedID}" style="width:100%; height:100%; min-height:400px;"></div>
+// 	</div>
 	
-	<script>
-	(function () {
-		const fig = ${jsonString};
-		const target = document.getElementById("${embedID}");
+// 	<script>
+// 	(function () {
+// 		const fig = ${jsonString};
+// 		const target = document.getElementById("${embedID}");
 	
-		function renderPlot() {
-		const target2 = document.getElementById("${embedID}");
+// 		function renderPlot() {
+// 		const target2 = document.getElementById("${embedID}");
 
-		if (!target || typeof Plotly === "undefined") return;
+// 		if (!target || typeof Plotly === "undefined") return;
 
-		Plotly.react(
-		  target,
-		  fig.data || [],
-		  fig.layout || {},
-		  fig.config || {}
-		).then(function () {
-		  Plotly.Plots.resize(target2);
-		});
+// 		Plotly.react(
+// 		  target,
+// 		  fig.data || [],
+// 		  fig.layout || {},
+// 		  fig.config || {}
+// 		).then(function () {
+// 		  Plotly.Plots.resize(target2);
+// 		});
 
-		window.addEventListener("resize", function () {
-		  Plotly.Plots.resize(target);
-		});
-	  }
+// 		window.addEventListener("resize", function () {
+// 		  Plotly.Plots.resize(target);
+// 		});
+// 	  }
 
-	  if (typeof Plotly !== "undefined") {
-		renderPlot();
-		return;
-	  }
+// 	  if (typeof Plotly !== "undefined") {
+// 		renderPlot();
+// 		return;
+// 	  }
 
-	  const existing = document.querySelector('script[src*="cdn.plot.ly"]');
+// 	  const existing = document.querySelector('script[src*="cdn.plot.ly"]');
 
-	  if (existing) {
-		const waitForPlotly = setInterval(function () {
-		  if (typeof Plotly !== "undefined") {
-			clearInterval(waitForPlotly);
-			renderPlot();
-		  }
-		}, 50);
+// 	  if (existing) {
+// 		const waitForPlotly = setInterval(function () {
+// 		  if (typeof Plotly !== "undefined") {
+// 			clearInterval(waitForPlotly);
+// 			renderPlot();
+// 		  }
+// 		}, 50);
 
-		setTimeout(function () {
-		  clearInterval(waitForPlotly);
-		}, 10000);
+// 		setTimeout(function () {
+// 		  clearInterval(waitForPlotly);
+// 		}, 10000);
 
-		return;
-	  }
+// 		return;
+// 	  }
 
-	  const script = document.createElement("script");
-	  script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
-	  script.onload = renderPlot;
-	  document.head.appendChild(script);
-	})();
-	</script>
-	`;
-}
-
-
-/**
- * Uploads an HTML string to the server as a file via the WordPress AJAX API.
- *
- * Wraps `htmlContent` in a `File` object and POSTs it to `wp-admin/admin-ajax.php` using
- * the `custom_file_upload` action. Requires a `[name="figure_nonce"]` input to be present
- * in the DOM; alerts and returns early if it is missing.
- *
- * @param {string} htmlContent - The raw HTML string to save.
- * @param {string} fileName - The filename (including extension) to use when creating the uploaded file.
- * @param {string|number} postId - The WordPress post ID to associate the uploaded file with.
- * @returns {Promise<Object>|undefined} Resolves with the parsed JSON response from the server on
- *   success or failure (`result.success` indicates outcome), or `undefined` if the nonce is missing.
- * @throws {Error} Rejects if the `fetch` call itself fails (network error, etc.).
- */
-export function saveHtmlToServer(htmlContent, fileName, postId) {
-	// Send the HTML content and filename to the server via AJAX
+// 	  const script = document.createElement("script");
+// 	  script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
+// 	  script.onload = renderPlot;
+// 	  document.head.appendChild(script);
+// 	})();
+// 	</script>
+// 	`;
+// }
 
 
-	const htmlBlob = new Blob([htmlContent], {
-		type: "text/html"
-	  });
-	
-	const htmlFile = new File([htmlBlob], fileName, {
-	type: "text/html"
-	});
 
-	const figureNonceInput = document.querySelector('[name="figure_nonce"]');
-	if (!figureNonceInput || !figureNonceInput.value) {
-		alert("Error: figure_nonce is missing in the form!");
-		return;
-	}
-	
-	const formData = new FormData();
-
-	// Must match your WP AJAX action hook
-	formData.append("action", "custom_file_upload");
-
-	// Must match your PHP expected fields
-	formData.append("post_id", postId);
-	formData.append("figure_nonce", figureNonce);
-	formData.append("uploaded_file", htmlFile);
-
-	const ajaxUrl = window.location.origin + "/wp-admin/admin-ajax.php";
-
-	return fetch(ajaxUrl, {
-		method: "POST",
-		body: formData,
-		credentials: "same-origin"
-	})
-		.then((response) => response.json())
-		.then((result) => {
-		if (!result.success) {
-			console.error("HTML upload failed:", result.data);
-			return result;
-		}
-
-		console.log("HTML uploaded successfully:", result.data);
-		return result;
-		})
-		.catch((error) => {
-		console.error("AJAX error uploading HTML:", error);
-		throw error;
-		});
-  }
-
-  // Bridge for classic scripts (admin-preview-buttons.js) until they are modularized.
-  window.fillFormFieldValues = fillFormFieldValues;

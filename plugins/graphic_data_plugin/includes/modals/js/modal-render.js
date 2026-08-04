@@ -49,7 +49,7 @@ export function render_modal(key, obj, modal_obj){
             }
         }
         // FRONTEND MODE: set title normally
-        if (!window.location.href.includes('post.php')) {
+        if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
             modal_title.innerHTML = title;
         }
    
@@ -174,7 +174,7 @@ export function render_modal(key, obj, modal_obj){
             let tab_key = `modal_tab_title${i}`;
             let tab_title = modal_data[tab_key];
 
-            if (window.location.href.includes('post.php') && (tab_title === '' || tab_title === null || tab_title === undefined)) {
+            if ((window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) && (tab_title === '' || tab_title === null || tab_title === undefined)) {
                 tab_title = "No Tab Title Set";
             }   
 
@@ -193,13 +193,13 @@ export function render_modal(key, obj, modal_obj){
     }
 
     // Fetch modal data and populate content PREVIEW MODE vs FRONTEND MODE
-    if (window.location.href.includes("post.php")) {
+    if (window.location.href.includes("post.php") || window.location.href.includes("post-new.php")) {
         let modal_data = modal_obj;
         populateModalContent(modal_data, resolvedChildObj, key);  
     } 
 
     // Fetch modal data and populate content FRONTEND MODE
-    if (!window.location.href.includes("post.php")) {
+    if (!window.location.href.includes("post.php") && !window.location.href.includes("post-new.php")) {
         const protocol = window.location.protocol;
         const host = window.location.host;
         const fetchURL  =  protocol + "//" + host  + `/wp-json/wp/v2/modal/${id}`;
@@ -257,9 +257,24 @@ export function render_modal(key, obj, modal_obj){
 export function initTabButtons() {
 	// Select all buttons inside nav-item elements
 	const navButtons = document.querySelectorAll('button.nav-link.tab-title');//document.querySelectorAll('.nav-item button');
-
 	const activeButtons = [];
 	const inactiveButtons = [];
+
+
+    function moveActiveTabToEnd(e) {
+        const target = e?.target;
+        if (!(target instanceof Element)) return;
+        
+        const navItem = target.closest('.nav-item');
+        const nav = target.closest('.nav-tabs');
+        
+        if (!navItem || !nav) return;
+        nav.appendChild(navItem);
+    }
+
+
+
+      
 
 	// Check if any button is active (e.g., class 'active')
 	const anyActiveButton = Array.from(navButtons).some((button) => {
@@ -286,6 +301,26 @@ export function initTabButtons() {
 			tabTrigger.show(); // ✅ Properly displays inside modal
 		}
 	}
+
+    // const items = Array.from(document.querySelectorAll('button.nav-link.tab-title'));
+    // const top = items[0].getBoundingClientRect().top;
+    // const isWrapped = items.some(it => Math.abs(it.getBoundingClientRect().top - top) > 1);
+
+    // console.log('isWrapped', isWrapped);
+
+    
+    // if (isWrapped) {
+    //     document.querySelectorAll('.nav-tabs').forEach((nav) => {
+    //         const active = nav.querySelector('.nav-link.active, .nav-item.show .nav-link');
+    //         if (active) {
+    //             nav.appendChild(active.closest('.nav-item'));
+    //         }
+    //     });
+
+    //     document.addEventListener('shown.bs.tab', (e) => {
+    //         moveActiveTabToEnd(e);
+    //     });
+    // }
 }
 
 
@@ -384,11 +419,12 @@ function trapFocus(modalElement) {
  * @param               modal_id
  * @param               buttonID
  */
- function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID, copyTabLinkButtonID){
+ function fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, buttonID, copyTabLinkButtonID, tab_title){
     
     const protocol = window.location.protocol;
     const host = window.location.host;
     const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + tab_id;
+    
     
     fetch(fetchURL)
         .then(response => response.json())
@@ -449,13 +485,36 @@ function trapFocus(modalElement) {
                 if (element) {
                     element.style.display = "block";
                 }
+
+                // Container for links
+                const modalLinkContainer = document.createElement("div");
+                modalLinkContainer.style.display = "flex";
+                // modalLinkContainer.style.justifyContent = "right";
+                modalLinkContainer.style.gap = "12px";
+                modalLinkContainer.style.marginBottom = "1rem";
+
+                const number_of_figures_text = document.createElement('span');
+                if (total_published_figures === 1) {
+                    number_of_figures_text.textContent = `${total_published_figures} Figure Available`;
+                } else {
+                    number_of_figures_text.textContent = `${total_published_figures} Figures Available`;
+
+                }
+                number_of_figures_text.style.color = 'rgba(68, 68, 68, 0.65)';
+                number_of_figures_text.style.marginLeft = '.5%';
+                number_of_figures_text.style.fontSize = "0.8em";
+                number_of_figures_text.style.color = "rgba(68, 68, 68, 0.45)";
+                modalLinkContainer.textContent = "";
+                modalLinkContainer.append(number_of_figures_text);
+                tabContentElement.append(modalLinkContainer);
+
             } else {
                 const element = document.getElementById(buttonID);
-                const element2 = document.getElementById(copyTabLinkButtonID);
+                //const element2 = document.getElementById(copyTabLinkButtonID);
                 if (element.style.display == "none") {
                     // console.log('buttonID', buttonID);
                     element.remove();
-                    element2.remove();
+                    //element2.remove();
                 }
             }
 
@@ -487,18 +546,22 @@ function trapFocus(modalElement) {
                             dataText: figure_data["figure_data_info"]["figure_data_link_text"],
                             imageLink: img,
                             code: figure_data["figure_code"],
+                            iframeCode: figure_data["figure_iframe_code"],
                             externalAlt: external_alt,
                             shortCaption: figure_data["figure_caption_short"],
                             longCaption: figure_data["figure_caption_long"],
                             figureType: figure_data["figure_path"],
                             figureTitle: figure_data["figure_title"],
-                            figure_interactive_arguments: figure_data["figure_interactive_arguments"]
+                            figure_interactive_arguments: figure_data["figure_interactive_arguments"],
+                            figure_interactive_args_rendered: figure_data["figure_interactive_args_rendered"],
                         };
                 
                         (async () => {
-                            await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx);
+                            //await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, null, tab_id, tab_title);
                             //await new Promise(resolve => setTimeout(resolve, 1000)); // Stagger each render
-                            await render_interactive_plots(tabContentElement, info_obj);
+
+                            const tabInfoResult = await render_tab_info(  tabContentElement,  tabContentContainer,  info_obj,  idx,  null,  tab_id,  tab_title);
+                            await render_interactive_plots(tabContentElement, info_obj, null, tabInfoResult);
                             initTabButtons();
                         })();
                     }
@@ -572,7 +635,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     button.setAttribute('aria-controls', tab_controls);
     button.textContent = tab_label;
 
-    if (window.location.href.includes('post.php')) {
+    if (window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) {
         button.style.display = "block";
     } else {
         button.style.display = "none";   //hide all tabs initially, will show only those that have published figures in fetch_tab_info
@@ -594,6 +657,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     tabContentElement.setAttribute('role', 'tabpanel');
     tabContentElement.setAttribute('aria-labelledby', `${title}-${tab_id}`);
     tabContentElement.setAttribute('tabindex', '0');
+    tabContentElement.style.textAlign = "left";
 
     tabContentContainer.appendChild(tabContentElement);
     
@@ -602,8 +666,10 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     linkbutton.classList.add("btn", "btn-primary");
     linkbutton.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Tab Link';
     linkbutton.type = "button"; 
-    linkbutton.setAttribute('style', 'margin-bottom: 7px');
-    tabContentElement.prepend(linkbutton);
+    linkbutton.setAttribute('style', 'margin-bottom: 7px', 'margin-top: 7px');
+    // linkbutton.style.marginLeft = "1%";
+    linkbutton.style.marginTop = "7px";
+    // tabContentElement.prepend(linkbutton);
 
 
     if (iter === 1) {
@@ -639,7 +705,7 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
         //fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id);
     try {
         (async () => {
-            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id, linkbutton.id);
+            await fetch_tab_info(tabContentElement, tabContentContainer, tab_label, tab_id, modal_id, button.id, linkbutton.id, title);
         })();
     } catch (error) {
     }
@@ -664,6 +730,68 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     
 
 }
+
+
+//This function is for allowing direct links to figures
+function handleShareLinkRedirect() {
+	const fragment = window.location.hash.slice(1);
+
+	if (!fragment) {
+		return;
+	}
+
+	const [tabPath, fragmentQuery = ''] = fragment.split('?');
+	const pathParts = tabPath.split('/');
+
+	const tabTitle = decodeURIComponent(pathParts[0] || '');
+	const tabId = decodeURIComponent(pathParts[1] || '');
+
+	const fragmentParams = new URLSearchParams(fragmentQuery);
+	const figureId = fragmentParams.get('figure');
+
+	// Adjust this selector to match the actual tab button ID.
+	const tabButton = document.getElementById(`${tabTitle}-${tabId}`);
+
+	if (!tabButton) {
+		console.warn('Share-link tab button was not found:', {
+			tabTitle,
+			tabId,
+		});
+
+		return;
+	}
+
+	const scrollToFigure = () => {
+		const figureDiv = figureId
+			? document.getElementById(figureId)
+			: null;
+
+		if (figureDiv) {
+			figureDiv.scrollIntoView({
+				behavior: 'smooth',
+				block: 'start',
+			});
+		}
+	};
+
+	// Wait until Bootstrap has displayed the tab pane.
+	tabButton.addEventListener(
+		'shown.bs.tab',
+		scrollToFigure,
+		{ once: true }
+	);
+
+	const tabTrigger = bootstrap.Tab.getOrCreateInstance(tabButton);
+	tabTrigger.show();
+
+	// Handle cases where the requested tab is already active.
+	if (tabButton.classList.contains('active')) {
+		scrollToFigure();
+	}
+}
+
+// document.addEventListener('DOMContentLoaded', handleShareLinkRedirect);
+window.addEventListener('hashchange', handleShareLinkRedirect);
 
 /**
  * Dump computed CSS for every element under a root selector.

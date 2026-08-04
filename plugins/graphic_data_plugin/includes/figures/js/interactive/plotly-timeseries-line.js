@@ -5,7 +5,6 @@ import {
     computePercentile,
     logFormFieldValues,
     fillFormFieldValues,
-    createFigureIframeHtml
 } from '@graphic-data/plotly-utility';
 
 const _lineDataEl = document.getElementById(
@@ -267,7 +266,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - layout: Plotly layout object for axis, legend, and display settings.
  * - config: Plotly configuration object for rendering options.
  */
-export async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document){
+export async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document, plotlyDivID){
 	
 
     try {
@@ -323,18 +322,6 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 		// if (targetDocument) {
         // 	newDiv = renderDocument.createElement('div');
 		// }
-
-		// considerations for unique hashing for multiple uses vs onetime use.
-		let plotlyDivID = `plotlyFigure${figureID}`;
-		// let plotlyDivID;
-		// const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-		// // if (targetDocument != renderDocument) {
-		// 	plotlyDivID = `plotlyFigure${figureID}`;
-		// }
-		// if (targetDocument === renderDocument) {
-		// 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
-		// }
-
 
         newDiv.id = plotlyDivID
         newDiv.classList.add("container", `figure_interactive${figureID}`);
@@ -814,35 +801,20 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 		});
 
 		Plotly.Plots.resize(plotDiv);
-
-
-
-		// if (window.location.href.includes('post.php')) {
-		// 	//Save the plotly figure as an html file. 
-		// 	const savedFigure = {
-		// 		data: plotDiv.data,
-		// 		layout: plotDiv.layout,
-		// 		config: { responsive: true }
-		// 	};
-			
-		// 	const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
-		// }
-
-		// if () {
-		// 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
-		// 		saveHtmlFileToServer(figureiframeGenerator.figIframeHtml, figureiframeGenerator.figIframeHtmlFileName, figureiframeGenerator.figIframeHtmlPath, postId);
-		// 	});
-		// }	
-
-		//STANDALONE CODE TO INJECT INTO CODE BLOCK> WORKS INTERMITTENTLY
-		// const snippet = buildPlotlySnippetEmbedCode(
-		// 	savedFigure,
-		// 	`plotly-snippet-${figureID}`
-		// );
 		
-		// console.log("snippet", snippet);
+		//When the graph is rendered in preview save the full arguments into the field.
+		if (window.location.href.includes('post.php')) {
+			//Save the plotly figure as an html file. 
+			const savedFigure = {
+				data: plotDiv.data,
+				layout: plotDiv.layout,
+				config: config
+			};
 
-        
+			const figure_interactive_args_rendered = document.querySelector('textarea[data-depend-id="figure_interactive_args_rendered"]');
+			figure_interactive_args_rendered.value = JSON.stringify(savedFigure, null, 2);
+			
+		}       
 
     } catch (error) {
         console.error('Error loading scripts:', error);

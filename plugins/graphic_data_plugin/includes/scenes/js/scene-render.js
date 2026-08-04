@@ -2417,6 +2417,237 @@ function alertIfMissingModal() {
     });
 }
 
+/**
+ * Figure share-link handler
+ *
+ * Expected URL:
+ * #tab-title/tab-id?figure=figure-4
+ *
+ * This code:
+ * 1. Captures the figure ID immediately, before other code cleans the hash.
+ * 2. Replaces the URL with the clean tab hash.
+ * 3. Waits for the DOM and Bootstrap tab to load.
+ * 4. Opens the requested tab.
+ * 5. Scrolls to the requested figure.
+ */
 
+let pendingFigureShareTarget = captureFigureShareTarget();
+
+/**
+ * Read the tab and figure information from the current URL hash.
+ *
+ * @returns {Object|null}
+ */
+function captureFigureShareTarget() {
+	const fragment = window.location.hash.substring(1);
+	if (!fragment || !fragment.includes('?')) {
+		return null;
+	}
+	const [tabPath, fragmentQuery = ''] = fragment.split('?');
+	const fragmentParams = new URLSearchParams(fragmentQuery);
+	const figureId = fragmentParams.get('figure');
+	if (!figureId) {
+		return null;
+	}
+
+	/*
+	 * Separate:
+	 *
+	 * paphanaumokuakea-shipwrecks-archaeological-resources-1/1
+	 *
+	 * Into:
+	 *
+	 * tabTitle = paphanaumokuakea-shipwrecks-archaeological-resources-1
+	 * tabId    = 1
+	 */
+	const lastSlashIndex = tabPath.lastIndexOf('/');
+
+	if (lastSlashIndex === -1) {
+		console.warn('Invalid share-link tab path:', tabPath);
+		return null;
+	}
+
+	const tabTitle = decodeURIComponent(
+		tabPath.substring(0, lastSlashIndex)
+	);
+
+	const tabId = decodeURIComponent(
+		tabPath.substring(lastSlashIndex + 1)
+	);
+
+	const target = {
+		tabTitle,
+		tabId,
+		figureId: decodeURIComponent(figureId),
+		cleanHash: `#${tabPath}`,
+	};
+
+	/*
+	 * Remove ?figure=figure-4 from the visible URL without reloading
+	 * the page or firing another hashchange event.
+	 *
+	 * The figure ID remains stored in pendingFigureShareTarget.
+	 */
+	window.history.replaceState(
+		null,
+		'',
+		`${window.location.pathname}${window.location.search}${target.cleanHash}`
+	);
+
+	return target;
+}
+
+/**
+ * Wait until an element exists in the DOM.
+ *
+ * @param {string} elementId Element ID to locate.
+ * @param {number} timeoutMs Maximum wait time.
+ *
+ * @returns {Promise<HTMLElement>}
+ */
+function waitForElementById(elementId, timeoutMs = 10000) {
+	return new Promise((resolve, reject) => {
+		const existingElement = document.getElementById(elementId);
+
+		if (existingElement) {
+			resolve(existingElement);
+			return;
+		}
+
+		const observer = new MutationObserver(() => {
+			const element = document.getElementById(elementId);
+
+			if (!element) {
+				return;
+			}
+
+			observer.disconnect();
+			clearTimeout(timeoutId);
+			resolve(element);
+		});
+
+		observer.observe(document.documentElement, {
+			childList: true,
+			subtree: true,
+		});
+
+		const timeoutId = window.setTimeout(() => {
+			observer.disconnect();
+
+			reject(
+				new Error(
+					`Element with ID "${elementId}" was not found within ${timeoutMs}ms.`
+				)
+			);
+		}, timeoutMs);
+	});
+}
+
+/**
+ * Scroll to the figure after its Bootstrap tab is visible.
+ *
+ * @param {Object} target Parsed share-link target.
+ *
+ * @returns {Promise<void>}
+ */
+async function openSharedFigure(target) {
+	if (!target) {
+		return;
+	}
+
+	/*
+	 * Your button IDs appear to use this format:
+	 *
+	 * {tabTitle}-{tabId}
+	 *
+	 * Example:
+	 * paphanaumokuakea-shipwrecks-archaeological-resources-1-1
+	 */
+	const tabButtonId = `${target.tabTitle}-${target.tabId}`;
+
+	try {
+		const tabButton = await waitForElementById(tabButtonId);
+
+		let scrollCompleted = false;
+
+		const scrollToFigure = async () => {
+			if (scrollCompleted) {
+				return;
+			}
+
+			scrollCompleted = true;
+
+			try {
+				const figureElement = await waitForElementById(
+					target.figureId
+				);
+
+				/*
+				 * Wait two animation frames so Bootstrap can finish making
+				 * the tab pane visible and the browser can calculate layout.
+				 */
+				window.requestAnimationFrame(() => {
+					window.requestAnimationFrame(() => {
+						figureElement.scrollIntoView({
+							behavior: 'smooth',
+							block: 'start',
+						});
+					});
+				});
+			} catch (error) {
+				console.error(
+					'Shared figure could not be found:',
+					error
+				);
+			}
+		};
+
+		/*
+		 * If the correct tab is already active, Bootstrap will not emit
+		 * shown.bs.tab again, so scroll immediately.
+		 */
+		if (tabButton.classList.contains('active')) {
+			await scrollToFigure();
+			return;
+		}
+
+		/*
+		 * Otherwise, wait until Bootstrap confirms the tab is visible.
+		 */
+		tabButton.addEventListener(
+			'shown.bs.tab',
+			scrollToFigure,
+			{ once: true }
+		);
+
+		const tabInstance =
+			bootstrap.Tab.getOrCreateInstance(tabButton);
+
+		tabInstance.show();
+	} catch (error) {
+		console.error('Could not open shared figure:', error);
+	}
+}
+
+/**
+ * Handle the initially entered browser URL.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+	openSharedFigure(pendingFigureShareTarget);
+});
+
+/**
+ * Also support entering another share hash while the page is already open.
+ */
+window.addEventListener('hashchange', () => {
+	const newTarget = captureFigureShareTarget();
+    console.log('newTarget', newTarget);
+	if (!newTarget) {
+		return;
+	}
+
+	pendingFigureShareTarget = newTarget;
+	openSharedFigure(newTarget);
+});
 
 
