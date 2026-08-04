@@ -121,6 +121,46 @@ Search.appendIndex(
             "summary": "Display\u0020the\u0020content\u0020of\u0020the\u0020Create\u0020SVG\u0020admin\u0020page.",
             "url": "classes/Graphic-Data-Create-SVG.html#method_create_svg_page"
         },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup",
+            "name": "Graphic_Data_Deactivation_Cleanup",
+            "summary": "Prompts\u0020for\u0020and\u0020performs\u0020a\u0020full\u0020data\u0020wipe\u0020when\u0020the\u0020plugin\u0020is\u0020deactivated.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Aenqueue_deactivation_script\u0028\u0029",
+            "name": "enqueue_deactivation_script",
+            "summary": "Enqueue\u0020the\u0020deactivation\u0020confirmation\u0020script\u0020on\u0020the\u0020Plugins\u0020screen.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_enqueue_deactivation_script"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Aajax_delete_all_data\u0028\u0029",
+            "name": "ajax_delete_all_data",
+            "summary": "AJAX\u0020handler\u0020that\u0020deletes\u0020all\u0020data\u0020associated\u0020with\u0020the\u0020plugin.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_delete_all_data"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_data_directory\u0028\u0029",
+            "name": "delete_data_directory",
+            "summary": "Recursively\u0020delete\u0020the\u0020wp\u002Dcontent\/data\u0020directory.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_data_directory"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_custom_post_type_posts\u0028\u0029",
+            "name": "delete_custom_post_type_posts",
+            "summary": "Delete\u0020every\u0020post\u0020of\u0020the\u0020about,\u0020instance,\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_custom_post_type_posts"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_instance_type_taxonomy\u0028\u0029",
+            "name": "delete_instance_type_taxonomy",
+            "summary": "Delete\u0020every\u0020instance_type\u0020taxonomy\u0020term,\u0020along\u0020with\u0020its\u0020term\u0020meta\u0020and\nterm\u0020relationships.\u0020Taxonomy\u0020registration\u0020itself\u0020is\u0020code\u002Dbased\u0020and\u0020has\nnothing\u0020persisted\u0020in\u0020the\u0020database\u0020beyond\u0020its\u0020terms.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_instance_type_taxonomy"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_instance_associated_images\u0028\u0029",
+            "name": "delete_instance_associated_images",
+            "summary": "Delete\u0020every\u0020attachment\u0020that\u0020has\u0020a\u0020graphic_data_instance_id\u0020postmeta\u0020value.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_instance_associated_images"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003ANONCE_ACTION",
+            "name": "NONCE_ACTION",
+            "summary": "Nonce\u0020action\u0020used\u0020to\u0020authorize\u0020the\u0020deletion\u0020AJAX\u0020request.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#constant_NONCE_ACTION"
+        },                {
             "fqsen": "\\Graphic_Data_Export_Figures",
             "name": "Graphic_Data_Export_Figures",
             "summary": "Class\u0020Graphic_Data_Export_Figures",
