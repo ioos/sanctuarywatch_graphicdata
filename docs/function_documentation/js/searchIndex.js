@@ -121,6 +121,46 @@ Search.appendIndex(
             "summary": "Display\u0020the\u0020content\u0020of\u0020the\u0020Create\u0020SVG\u0020admin\u0020page.",
             "url": "classes/Graphic-Data-Create-SVG.html#method_create_svg_page"
         },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup",
+            "name": "Graphic_Data_Deactivation_Cleanup",
+            "summary": "Prompts\u0020for\u0020and\u0020performs\u0020a\u0020full\u0020data\u0020wipe\u0020when\u0020the\u0020plugin\u0020is\u0020deactivated.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Aenqueue_deactivation_script\u0028\u0029",
+            "name": "enqueue_deactivation_script",
+            "summary": "Enqueue\u0020the\u0020deactivation\u0020confirmation\u0020script\u0020on\u0020the\u0020Plugins\u0020screen.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_enqueue_deactivation_script"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Aajax_delete_all_data\u0028\u0029",
+            "name": "ajax_delete_all_data",
+            "summary": "AJAX\u0020handler\u0020that\u0020deletes\u0020all\u0020data\u0020associated\u0020with\u0020the\u0020plugin.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_delete_all_data"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_data_directory\u0028\u0029",
+            "name": "delete_data_directory",
+            "summary": "Recursively\u0020delete\u0020the\u0020wp\u002Dcontent\/data\u0020directory.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_data_directory"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_custom_post_type_posts\u0028\u0029",
+            "name": "delete_custom_post_type_posts",
+            "summary": "Delete\u0020every\u0020post\u0020of\u0020the\u0020about,\u0020instance,\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_custom_post_type_posts"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_instance_type_taxonomy\u0028\u0029",
+            "name": "delete_instance_type_taxonomy",
+            "summary": "Delete\u0020every\u0020instance_type\u0020taxonomy\u0020term,\u0020along\u0020with\u0020its\u0020term\u0020meta\u0020and\nterm\u0020relationships.\u0020Taxonomy\u0020registration\u0020itself\u0020is\u0020code\u002Dbased\u0020and\u0020has\nnothing\u0020persisted\u0020in\u0020the\u0020database\u0020beyond\u0020its\u0020terms.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_instance_type_taxonomy"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_instance_associated_images\u0028\u0029",
+            "name": "delete_instance_associated_images",
+            "summary": "Delete\u0020every\u0020attachment\u0020that\u0020has\u0020a\u0020graphic_data_instance_id\u0020postmeta\u0020value.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_instance_associated_images"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003ANONCE_ACTION",
+            "name": "NONCE_ACTION",
+            "summary": "Nonce\u0020action\u0020used\u0020to\u0020authorize\u0020the\u0020deletion\u0020AJAX\u0020request.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#constant_NONCE_ACTION"
+        },                {
             "fqsen": "\\Graphic_Data_Export_Figures",
             "name": "Graphic_Data_Export_Figures",
             "summary": "Class\u0020Graphic_Data_Export_Figures",
@@ -311,6 +351,16 @@ Search.appendIndex(
             "summary": "Return\u0020a\u0020human\u002Dreadable\u0020label\u0020for\u0020a\u0020given\u0020meta\u0020key.",
             "url": "classes/Graphic-Data-Site-Checker.html#method_human_label_for_meta_key"
         },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Ainstance_meta_key_for_post_type\u0028\u0029",
+            "name": "instance_meta_key_for_post_type",
+            "summary": "Meta\u0020key\u0020that\u0020links\u0020a\u0020given\u0020post\u0020type\u0020back\u0020to\u0020its\u0020owning\u0020instance,\nmirroring\u0020the\u0020\u0022Instance\u0022\u0020filter\u0020columns\/dropdowns\u0020elsewhere\u0020in\u0020the\nplugin\u0020\u0028see\u0020class\u002Dutility.php\u0020and\u0020includes\/admin\u002D\u007Bmodal,figure\u007D.php\u0029.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_instance_meta_key_for_post_type"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Ainstance_scoped_query_args\u0028\u0029",
+            "name": "instance_scoped_query_args",
+            "summary": "Build\u0020\u0060get_posts\u0028\u0029\u0060\u0020args\u0020for\u0020a\u0020post\u0020type,\u0020optionally\u0020scoped\u0020to\u0020the\nposts\u0020belonging\u0020to\u0020a\u0020given\u0020instance.\u0020Shared\u0020by\u0020every\u0020gather\u0020routine\n\u0028broken\u0020links\u0020and\u0020missing\u0020alt\u0020text\u0029\u0020so\u0020the\u0020two\u0020checks\u0020stay\u0020scoped\u0020to\nthe\u0020same\u0020set\u0020of\u0020posts\u0020for\u0020a\u0020given\u0020\u0060target_instance\u0060\u0020selection.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_instance_scoped_query_args"
+        },                {
             "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Agather_from_post_type\u0028\u0029",
             "name": "gather_from_post_type",
             "summary": "Iterate\u0020all\u0020posts\u0020of\u0020a\u0020given\u0020type\u0020and\u0020extract\u0020URLs\u0020from\u0020the\u0020named\u0020meta\u0020keys.",
@@ -335,6 +385,51 @@ Search.appendIndex(
             "name": "check_url",
             "summary": "Probe\u0020a\u0020single\u0020URL\u0020and\u0020return\u0020\u007Bok,\u0020status,\u0020error\u007D.",
             "url": "classes/Graphic-Data-Site-Checker.html#method_check_url"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aajax_check_alt_text\u0028\u0029",
+            "name": "ajax_check_alt_text",
+            "summary": "Scan\u0020the\u0020instance\/scene\/modal\/figure\u0020image\u0020fields,\u0020resolve\u0020each\u0020one\nthat\u0020points\u0020at\u0020a\u0020Media\u0020Library\u0020attachment,\u0020and\u0020report\u0020the\u0020ones\u0020whose\nattachment\u0020has\u0020no\u0020alt\u0020text\u0020set.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_ajax_check_alt_text"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aimage_field_specs\u0028\u0029",
+            "name": "image_field_specs",
+            "summary": "Image\u0020field\u0020specs\u0020per\u0020post\u0020type\u003A\u0020which\u0020meta\u0020key\u0020holds\u0020the\u0020image,\u0020and\n\u0028for\u0020the\u0020Exopite\u0020fieldset\u0020fields\u0029\u0020which\u0020sub\u002Dkey\u0020inside\u0020that\u0020meta\nvalue\u0020holds\u0020the\u0020Media\u0020Library\u0020URL.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_image_field_specs"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Agather_image_urls_from_post_type\u0028\u0029",
+            "name": "gather_image_urls_from_post_type",
+            "summary": "Iterate\u0020all\u0020posts\u0020of\u0020a\u0020given\u0020type\u0020and\u0020pull\u0020the\u0020Media\u0020Library\u0020image\nURL\u0020out\u0020of\u0020each\u0020configured\u0020image\u0020field.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_gather_image_urls_from_post_type"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aajax_check_content_structure\u0028\u0029",
+            "name": "ajax_check_content_structure",
+            "summary": "Run\u0020the\u0020instance,\u0020scene,\u0020and\u0020modal\u0020structural\u0020integrity\u0020checks\u0020and\nreturn\u0020their\u0020issues\u0020grouped\u0020by\u0020post\u0020type.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_ajax_check_content_structure"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Acheck_instance_overview_scenes\u0028\u0029",
+            "name": "check_instance_overview_scenes",
+            "summary": "Verify\u0020every\u0020Instance\u0020post\u0020has\u0020an\u0020overview\u0020scene\u0020selected,\u0020and\u0020that\nthe\u0020selected\u0020scene\u0020is\u0020published.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_check_instance_overview_scenes"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Acheck_scene_icon_associations\u0028\u0029",
+            "name": "check_scene_icon_associations",
+            "summary": "For\u0020every\u0020Scene\u0020post,\u0020verify\u0020the\u0020infographic\u0020SVG\u0020can\u0020be\u0020located\u0020and\nparsed,\u0020and\u0020that\u0020every\u0020clickable\u0020icon\u0020in\u0020it\u0020has\u0020exactly\u0020one\u0020associated\n\u0028and\u0020published\u0029\u0020Modal\u0020post.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_check_scene_icon_associations"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Acheck_modal_tab_figures\u0028\u0029",
+            "name": "check_modal_tab_figures",
+            "summary": "For\u0020every\u0020Modal\u0020post,\u0020verify\u0020every\u0020tab\u0020from\u00201\u0020through\u0020its\u0020configured\ntab\u0020count\u0020has\u0020at\u0020least\u0020one\u0020associated\u0020Figure\u0020post,\u0020and\u0020that\u0020a\u0020tab\u0020with\nexactly\u0020one\u0020Figure\u0020has\u0020that\u0020figure\u0020published.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_check_modal_tab_figures"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Abuild_issue\u0028\u0029",
+            "name": "build_issue",
+            "summary": "Build\u0020a\u0020single\u0020\u007Bpost_id,\u0020post_title,\u0020post_type,\u0020edit_link,\u0020message\u007D\u0020issue\u0020row.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_build_issue"
+        },                {
+            "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003Aresolve_attachment_id\u0028\u0029",
+            "name": "resolve_attachment_id",
+            "summary": "Resolve\u0020an\u0020image\u0020URL\u0020to\u0020its\u0020Media\u0020Library\u0020attachment\u0020ID,\u0020if\u0020any.",
+            "url": "classes/Graphic-Data-Site-Checker.html#method_resolve_attachment_id"
         },                {
             "fqsen": "\\Graphic_Data_Site_Checker\u003A\u003ABATCH_SIZE",
             "name": "BATCH_SIZE",
@@ -1340,6 +1435,11 @@ Search.appendIndex(
             "name": "add_scene_rewrite_rules",
             "summary": "Add\u0020custom\u0020rewrite\u0020rules\u0020for\u0020scene\u0020permalinks.",
             "url": "classes/Graphic-Data-Scene.html#method_add_scene_rewrite_rules"
+        },                {
+            "fqsen": "\\Graphic_Data_Scene\u003A\u003Aadd_scene_query_vars\u0028\u0029",
+            "name": "add_scene_query_vars",
+            "summary": "Register\u0020\u0027instance_slug\u0027\u0020as\u0020a\u0020public\u0020query\u0020var.",
+            "url": "classes/Graphic-Data-Scene.html#method_add_scene_query_vars"
         },                {
             "fqsen": "\\Graphic_Data_Scene\u003A\u003Aremove_scene_slug\u0028\u0029",
             "name": "remove_scene_slug",

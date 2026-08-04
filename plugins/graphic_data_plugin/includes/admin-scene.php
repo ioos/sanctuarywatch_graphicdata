@@ -1237,6 +1237,26 @@ class Graphic_Data_Scene {
 	}
 
 	/**
+	 * Register 'instance_slug' as a public query var.
+	 *
+	 * Without this, WordPress strips the 'instance_slug' value produced by
+	 * add_scene_rewrite_rules() before it reaches $wp->query_vars, so the
+	 * first URL segment can never be read or validated against the scene's
+	 * actual instance.
+	 *
+	 * Intended as a callback for the 'query_vars' filter.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $vars Existing public query vars.
+	 * @return array Modified array including 'instance_slug'.
+	 */
+	public function add_scene_query_vars( $vars ) {
+		$vars[] = 'instance_slug';
+		return $vars;
+	}
+
+	/**
 	 * Rewrite the permalink for scene posts to use the instance slug.
 	 *
 	 * Replaces the default scene permalink with a custom structure:

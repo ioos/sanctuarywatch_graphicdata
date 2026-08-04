@@ -43,6 +43,7 @@
 
 .graphic-data-site-checker__report {
 	margin-top: 20px;
+	margin-bottom: 20px;
 }
 
 .graphic-data-site-checker__report:not(:empty) {
@@ -105,4 +106,19 @@
 	padding: 2px 6px;
 	font-size: 11px;
 	border-radius: 2px;
+}
+
+/*
+ * The Instance/Scene/Modal issue tables all share the same two columns
+ * (Post, Issue). Fix their widths so the columns line up at the same
+ * horizontal position across all three reports, regardless of how long any
+ * individual report's post titles or messages happen to be.
+ */
+.graphic-data-site-checker__table--issues {
+	table-layout: fixed;
+}
+
+.graphic-data-site-checker__table--issues th:first-child,
+.graphic-data-site-checker__table--issues td:first-child {
+	width: 260px;
 }

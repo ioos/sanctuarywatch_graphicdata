@@ -142,6 +142,9 @@ class Graphic_Data_Plugin {
 		// The class that defines general utility functions for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
+		// The class that defines the optional data wipe offered on plugin deactivation.
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-deactivation-cleanup.php';
+
 		// The class that defines plugin only functions for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'includes/admin-plugin-only.php';
 
@@ -296,6 +299,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_scene, 'register_scene_rest_fields' );
 		$this->loader->add_filter( 'rest_scene_query', $plugin_admin_scene, 'filter_scene_by_scene_location', 10, 2 );
 		$this->loader->add_filter( 'rewrite_rules_array', $plugin_admin_scene, 'add_scene_rewrite_rules' );
+		$this->loader->add_filter( 'query_vars', $plugin_admin_scene, 'add_scene_query_vars' );
 		$this->loader->add_filter( 'post_type_link', $plugin_admin_scene, 'remove_scene_slug', 10, 3 );
 		$this->loader->add_filter( 'manage_edit-scene_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column' );
 		$this->loader->add_action( 'pre_get_posts', $plugin_admin_scene, 'orderby_status_column' ); // This action orders by the status column for scene, modal, and figure content types.
@@ -351,6 +355,11 @@ class Graphic_Data_Plugin {
 		// Load class and functions associated with Plugin only class.
 		$plugin_admin_plugin_only = new Graphic_Data_Plugin_Only_Content();
 		$this->loader->add_action( 'init', $plugin_admin_plugin_only, 'placeholder_content_director' );
+
+		// Load class and functions associated with the optional data wipe on deactivation.
+		$plugin_deactivation_cleanup = new Graphic_Data_Deactivation_Cleanup();
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_deactivation_cleanup, 'enqueue_deactivation_script' );
+		$this->loader->add_action( 'wp_ajax_graphic_data_delete_all_data', $plugin_deactivation_cleanup, 'ajax_delete_all_data' );
 	}
 
 	/**

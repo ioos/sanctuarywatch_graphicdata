@@ -866,27 +866,36 @@ class Graphic_Data_Utility {
 	 * Parses the SVG file linked to the scene's infographic meta field and extracts
 	 * the IDs of all child elements within the 'icons' group element.
 	 *
-	 * @param int $scene_id The post ID of the scene.
+	 * @param int         $scene_id The post ID of the scene.
+	 * @param string|null $error    Optional. Set by reference to a human-readable
+	 *                              description of why no icons could be resolved
+	 *                              (no infographic set, file missing/unreadable,
+	 *                              file unreadable, or no 'icons' element found).
+	 *                              Left `null` on success.
 	 * @return array Associative array of icon IDs where both key and value are the icon ID.
 	 *               Returns array with single empty key/value pair if no infographic exists
 	 *               or if the 'icons' element is not found in the SVG.
 	 */
-	public function return_icons( $scene_id ) {
+	public function return_icons( $scene_id, &$error = null ) {
+		$error = null;
 		$modal_icons = array( '' => '' );
 		$scene_infographic = get_post_meta( $scene_id, 'scene_infographic', true );
 		if ( ! $scene_infographic ) {
+			$error = 'There is no scene infographic.';
 			return $modal_icons;
 		}
 
 		$full_path = $this->site_url_to_filesystem_path( $scene_infographic );
 		if ( null === $full_path || ! is_readable( $full_path ) ) {
 			error_log( "Utility::return_icons - Could not locate SVG on disk for URL: {$scene_infographic}" );
+			$error = 'Could not locate the scene infographic on disk.';
 			return $modal_icons;
 		}
 
 		$svg_content = file_get_contents( $full_path );
 		if ( false === $svg_content ) {
 			error_log( "Utility::return_icons - file_get_contents failed for: {$full_path}" );
+			$error = 'Could not retrieve the scene infographic from disk.';
 			return $modal_icons;
 		}
 
@@ -906,6 +915,7 @@ class Graphic_Data_Utility {
 
 		if ( null === $icons_element ) {
 			error_log( "Utility::return_icons - Element with ID 'icons' (case-insensitive) not found in SVG: " . $full_path );
+			$error = 'There are no clickable icons in the infographic.';
 			return $modal_icons; // Element not found.
 		}
 

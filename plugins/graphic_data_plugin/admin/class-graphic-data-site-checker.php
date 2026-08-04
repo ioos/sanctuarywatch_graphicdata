@@ -16,6 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Register class that defines the Figure custom content type as well as associated Figure functions
+ */
+include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
+
+/**
  * Class Graphic_Data_Site_Checker.
  */
 class Graphic_Data_Site_Checker {
@@ -91,6 +96,8 @@ class Graphic_Data_Site_Checker {
 		add_action( 'admin_head', array( $this, 'print_inline_data' ) );
 		add_action( 'wp_ajax_graphic_data_gather_urls', array( $this, 'ajax_gather_urls' ) );
 		add_action( 'wp_ajax_graphic_data_check_url_batch', array( $this, 'ajax_check_url_batch' ) );
+		add_action( 'wp_ajax_graphic_data_check_alt_text', array( $this, 'ajax_check_alt_text' ) );
+		add_action( 'wp_ajax_graphic_data_check_content_structure', array( $this, 'ajax_check_content_structure' ) );
 	}
 
 	/**
@@ -186,11 +193,16 @@ class Graphic_Data_Site_Checker {
 			</p>
 
 			<div class="graphic-data-site-checker__section" id="graphic-data-broken-links-section">
-				<h3>Broken Link Checker</h3>
-
+				<h3>Content Health Checks</h3>
+				<p>
+				<?php
+				$function_utilities = new Graphic_Data_Utility();
+				$function_utilities->create_instance_dropdown_filter( 'target_instance' );
+				?>
+				</p>
 				<p>
 					<button type="button" class="button button-primary" id="graphic-data-check-broken-links">
-						Check for Broken Links
+						Run Content Checks
 					</button>
 				</p>
 
@@ -204,7 +216,30 @@ class Graphic_Data_Site_Checker {
 					<span class="graphic-data-site-checker__progress-text" role="status" aria-live="polite"></span>
 				</div>
 
-				<div class="graphic-data-site-checker__report" id="graphic-data-broken-links-report" hidden></div>
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-broken-links-block" hidden>
+					<h4>Broken Links</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-broken-links-report" hidden></div>
+				</div>
+
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-alt-text-block" hidden>
+					<h4>Missing Alt Text</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-alt-text-report" hidden></div>
+				</div>
+
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-instance-issues-block" hidden>
+					<h4>Instance Issues</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-instance-issues-report" hidden></div>
+				</div>
+
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-scene-issues-block" hidden>
+					<h4>Scene Issues</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-scene-issues-report" hidden></div>
+				</div>
+
+				<div class="graphic-data-site-checker__report-block" id="graphic-data-modal-issues-block" hidden>
+					<h4>Modal Issues</h4>
+					<div class="graphic-data-site-checker__report" id="graphic-data-modal-issues-report" hidden></div>
+				</div>
 			</div>
 		</div>
 		<?php
@@ -228,11 +263,13 @@ class Graphic_Data_Site_Checker {
 			);
 		}
 
+		$target_instance = isset( $_POST['target_instance'] ) ? absint( $_POST['target_instance'] ) : 0;
+
 		$items = array();
-		$items = array_merge( $items, $this->gather_from_post_type( 'instance', array( 'instance_legacy_content_url' ) ) );
-		$items = array_merge( $items, $this->gather_from_post_type( 'scene', $this->scene_meta_keys() ) );
-		$items = array_merge( $items, $this->gather_from_post_type( 'modal', $this->modal_meta_keys() ) );
-		$items = array_merge( $items, $this->gather_from_post_type( 'figure', $this->figure_meta_keys() ) );
+		$items = array_merge( $items, $this->gather_from_post_type( 'instance', array( 'instance_legacy_content_url' ), $target_instance ) );
+		$items = array_merge( $items, $this->gather_from_post_type( 'scene', $this->scene_meta_keys(), $target_instance ) );
+		$items = array_merge( $items, $this->gather_from_post_type( 'modal', $this->modal_meta_keys(), $target_instance ) );
+		$items = array_merge( $items, $this->gather_from_post_type( 'figure', $this->figure_meta_keys(), $target_instance ) );
 
 		wp_send_json_success(
 			array(
@@ -322,31 +359,78 @@ class Graphic_Data_Site_Checker {
 	}
 
 	/**
+	 * Meta key that links a given post type back to its owning instance,
+	 * mirroring the "Instance" filter columns/dropdowns elsewhere in the
+	 * plugin (see class-utility.php and includes/admin-{modal,figure}.php).
+	 *
+	 * @param string $post_type Post type slug.
+	 * @return string Meta key, or empty string if the post type has no such link.
+	 */
+	private function instance_meta_key_for_post_type( $post_type ) {
+		$keys = array(
+			'scene'  => 'scene_location',
+			'modal'  => 'modal_location',
+			'figure' => 'location',
+		);
+		return isset( $keys[ $post_type ] ) ? $keys[ $post_type ] : '';
+	}
+
+	/**
+	 * Build `get_posts()` args for a post type, optionally scoped to the
+	 * posts belonging to a given instance. Shared by every gather routine
+	 * (broken links and missing alt text) so the two checks stay scoped to
+	 * the same set of posts for a given `target_instance` selection.
+	 *
+	 * @param string $post_type       Post type slug.
+	 * @param int    $target_instance Optional instance post ID to restrict results to.
+	 *                                0 means "all instances".
+	 * @return array<string,mixed> `get_posts()` args.
+	 */
+	private function instance_scoped_query_args( $post_type, $target_instance = 0 ) {
+		$query_args = array(
+			'post_type'        => $post_type,
+			'post_status'      => array( 'publish', 'draft', 'private', 'pending', 'future' ),
+			'posts_per_page'   => -1,
+			'no_found_rows'    => true,
+			'fields'           => 'ids',
+			'suppress_filters' => true,
+			'orderby'          => 'ID',
+			'order'            => 'ASC',
+		);
+
+		if ( $target_instance ) {
+			if ( 'instance' === $post_type ) {
+				// The instance post type has no self-referential meta key; it IS the instance.
+				$query_args['post__in'] = array( $target_instance );
+			} else {
+				$instance_meta_key = $this->instance_meta_key_for_post_type( $post_type );
+				if ( '' !== $instance_meta_key ) {
+					$query_args['meta_key']   = $instance_meta_key; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+					$query_args['meta_value'] = $target_instance; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+				}
+			}
+		}
+
+		return $query_args;
+	}
+
+	/**
 	 * Iterate all posts of a given type and extract URLs from the named meta keys.
 	 *
-	 * @param string   $post_type Post type slug.
-	 * @param string[] $meta_keys Meta keys to inspect.
+	 * @param string   $post_type       Post type slug.
+	 * @param string[] $meta_keys       Meta keys to inspect.
+	 * @param int      $target_instance Optional instance post ID to restrict results to.
+	 *                                  0 (the default) means "all instances".
 	 * @return array<int,array<string,mixed>> Flat list of {post_id, post_title, post_type, edit_link, meta_key, url}.
 	 */
-	private function gather_from_post_type( $post_type, $meta_keys ) {
+	private function gather_from_post_type( $post_type, $meta_keys, $target_instance = 0 ) {
 		$items = array();
 
 		if ( ! post_type_exists( $post_type ) ) {
 			return $items;
 		}
 
-		$post_ids = get_posts(
-			array(
-				'post_type'        => $post_type,
-				'post_status'      => array( 'publish', 'draft', 'private', 'pending', 'future' ),
-				'posts_per_page'   => -1,
-				'no_found_rows'    => true,
-				'fields'           => 'ids',
-				'suppress_filters' => true,
-				'orderby'          => 'ID',
-				'order'            => 'ASC',
-			)
-		);
+		$post_ids = get_posts( $this->instance_scoped_query_args( $post_type, $target_instance ) );
 
 		foreach ( $post_ids as $post_id ) {
 			$post_id    = (int) $post_id;
@@ -546,7 +630,7 @@ class Graphic_Data_Site_Checker {
 			'timeout'     => 10,
 			'redirection' => 5,
 			'sslverify'   => true,
-			'user-agent'  => 'GraphicDataSiteChecker/1.0 (+' . home_url( '/' ) . ')',
+			'user-agent'  => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
 			'headers'     => array(
 				'Accept'          => '*/*',
 				'Accept-Language' => 'en-US,en;q=0.9',
@@ -588,5 +672,437 @@ class Graphic_Data_Site_Checker {
 			'status' => $status,
 			'error'  => '',
 		);
+	}
+
+	/* ---------------------------------------------------------------------
+	 * AJAX: check for missing image alt text
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Scan the instance/scene/modal/figure image fields, resolve each one
+	 * that points at a Media Library attachment, and report the ones whose
+	 * attachment has no alt text set.
+	 *
+	 * Unlike the broken-link check this needs no external HTTP requests —
+	 * it's local postmeta lookups only — so it runs as a single request
+	 * rather than a batched scan.
+	 */
+	public function ajax_check_alt_text() {
+		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
+
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Insufficient permissions.', 'graphic-data' ) ),
+				403
+			);
+		}
+
+		$target_instance = isset( $_POST['target_instance'] ) ? absint( $_POST['target_instance'] ) : 0;
+
+		$items = array();
+		foreach ( array( 'instance', 'scene', 'modal', 'figure' ) as $post_type ) {
+			$items = array_merge( $items, $this->gather_image_urls_from_post_type( $post_type, $target_instance ) );
+		}
+
+		$missing = array();
+		foreach ( $items as $item ) {
+			$attachment_id = $this->resolve_attachment_id( $item['url'] );
+
+			// Not a Media Library attachment (e.g. an externally-hosted image)
+			// -- nothing here we can add alt text to, so skip it.
+			if ( ! $attachment_id ) {
+				continue;
+			}
+
+			$alt_text = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true );
+			if ( '' !== trim( (string) $alt_text ) ) {
+				continue;
+			}
+
+			$missing[] = array(
+				'post_id'         => $item['post_id'],
+				'post_title'      => $item['post_title'],
+				'post_type'       => $item['post_type'],
+				'edit_link'       => $item['edit_link'],
+				'field_label'     => $item['field_label'],
+				'url'             => $item['url'],
+				'attachment_id'   => $attachment_id,
+				// Deep-links into the Media Library grid with this attachment's
+				// details panel open (Alt Text is directly editable there),
+				// rather than the classic single-post "Edit Media" screen.
+				'media_edit_link' => admin_url( 'upload.php?item=' . $attachment_id ),
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'items' => array_values( $missing ),
+				'total' => count( $items ),
+			)
+		);
+	}
+
+	/**
+	 * Image field specs per post type: which meta key holds the image, and
+	 * (for the Exopite fieldset fields) which sub-key inside that meta
+	 * value holds the Media Library URL.
+	 *
+	 * @param string $post_type Post type slug.
+	 * @return array<int,array<string,string>> List of {meta_key, sub_key, label}.
+	 *                                          `sub_key` is '' for flat (non-fieldset) fields.
+	 */
+	private function image_field_specs( $post_type ) {
+		switch ( $post_type ) {
+			case 'instance':
+				return array(
+					array(
+						'meta_key' => 'instance_tile',
+						'sub_key'  => '',
+						'label'    => 'Tile Image',
+					),
+				);
+
+			case 'scene':
+			case 'modal':
+				$specs = array();
+				for ( $i = 1; $i <= 6; $i++ ) {
+					$specs[] = array(
+						'meta_key' => $post_type . '_photo' . $i,
+						'sub_key'  => $post_type . '_photo_internal' . $i,
+						'label'    => 'Media Link ' . $i,
+					);
+				}
+				return $specs;
+
+			case 'figure':
+				return array(
+					array(
+						'meta_key' => 'figure_image',
+						'sub_key'  => '',
+						'label'    => 'Figure Image',
+					),
+				);
+
+			default:
+				return array();
+		}
+	}
+
+	/**
+	 * Iterate all posts of a given type and pull the Media Library image
+	 * URL out of each configured image field.
+	 *
+	 * @param string $post_type       Post type slug.
+	 * @param int    $target_instance Optional instance post ID to restrict results to.
+	 *                                0 means "all instances".
+	 * @return array<int,array<string,mixed>> Flat list of {post_id, post_title, post_type, edit_link, field_label, url}.
+	 */
+	private function gather_image_urls_from_post_type( $post_type, $target_instance = 0 ) {
+		$items = array();
+		$specs = $this->image_field_specs( $post_type );
+
+		if ( ! post_type_exists( $post_type ) || empty( $specs ) ) {
+			return $items;
+		}
+
+		$post_ids = get_posts( $this->instance_scoped_query_args( $post_type, $target_instance ) );
+
+		foreach ( $post_ids as $post_id ) {
+			$post_id    = (int) $post_id;
+			$post_title = get_the_title( $post_id );
+			$edit_link  = get_edit_post_link( $post_id, 'raw' );
+
+			foreach ( $specs as $spec ) {
+				$meta_value = get_post_meta( $post_id, $spec['meta_key'], true );
+
+				if ( '' !== $spec['sub_key'] ) {
+					$url = ( is_array( $meta_value ) && isset( $meta_value[ $spec['sub_key'] ] ) )
+						? $meta_value[ $spec['sub_key'] ]
+						: '';
+				} else {
+					$url = is_string( $meta_value ) ? $meta_value : '';
+				}
+
+				$url = trim( (string) $url );
+				if ( '' === $url ) {
+					continue;
+				}
+
+				$items[] = array(
+					'post_id'     => $post_id,
+					'post_title'  => $post_title,
+					'post_type'   => $post_type,
+					'edit_link'   => $edit_link ? $edit_link : '',
+					'field_label' => $spec['label'],
+					'url'         => $url,
+				);
+			}
+		}
+
+		return $items;
+	}
+
+	/* ---------------------------------------------------------------------
+	 * AJAX: check content structure (instance/scene/modal integrity)
+	 * ------------------------------------------------------------------ */
+
+	/**
+	 * Run the instance, scene, and modal structural integrity checks and
+	 * return their issues grouped by post type.
+	 */
+	public function ajax_check_content_structure() {
+		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
+
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Insufficient permissions.', 'graphic-data' ) ),
+				403
+			);
+		}
+
+		$target_instance = isset( $_POST['target_instance'] ) ? absint( $_POST['target_instance'] ) : 0;
+
+		wp_send_json_success(
+			array(
+				'instance_issues' => $this->check_instance_overview_scenes( $target_instance ),
+				'scene_issues'    => $this->check_scene_icon_associations( $target_instance ),
+				'modal_issues'    => $this->check_modal_tab_figures( $target_instance ),
+			)
+		);
+	}
+
+	/**
+	 * Verify every Instance post has an overview scene selected, and that
+	 * the selected scene is published.
+	 *
+	 * @param int $target_instance Optional instance post ID to restrict results to. 0 means "all instances".
+	 * @return array<int,array<string,mixed>> List of {post_id, post_title, post_type, edit_link, message}.
+	 */
+	private function check_instance_overview_scenes( $target_instance = 0 ) {
+		$issues = array();
+
+		if ( ! post_type_exists( 'instance' ) ) {
+			return $issues;
+		}
+
+		$post_ids = get_posts( $this->instance_scoped_query_args( 'instance', $target_instance ) );
+
+		foreach ( $post_ids as $instance_id ) {
+			$instance_id    = (int) $instance_id;
+			$overview_scene = get_post_meta( $instance_id, 'instance_overview_scene', true );
+
+			if ( '' === $overview_scene || ! $overview_scene ) {
+				$issues[] = $this->build_issue( $instance_id, 'instance', 'No overview scene selected.' );
+				continue;
+			}
+
+			$overview_scene_status = get_post_meta( (int) $overview_scene, 'scene_published', true );
+			if ( 'published' !== $overview_scene_status ) {
+				$issues[] = $this->build_issue(
+					$instance_id,
+					'instance',
+					'Overview scene "' . get_the_title( (int) $overview_scene ) . '" is not published.'
+				);
+			}
+		}
+
+		return $issues;
+	}
+
+	/**
+	 * For every Scene post, verify the infographic SVG can be located and
+	 * parsed, and that every clickable icon in it has exactly one associated
+	 * (and published) Modal post.
+	 *
+	 * @param int $target_instance Optional instance post ID to restrict results to. 0 means "all instances".
+	 * @return array<int,array<string,mixed>> List of {post_id, post_title, post_type, edit_link, message}.
+	 */
+	private function check_scene_icon_associations( $target_instance = 0 ) {
+		$issues = array();
+
+		if ( ! post_type_exists( 'scene' ) ) {
+			return $issues;
+		}
+
+		$function_utilities = new Graphic_Data_Utility();
+		$post_ids           = get_posts( $this->instance_scoped_query_args( 'scene', $target_instance ) );
+
+		foreach ( $post_ids as $scene_id ) {
+			$scene_id = (int) $scene_id;
+			$error    = null;
+			$icon_ids = $function_utilities->return_icons( $scene_id, $error );
+
+			if ( null !== $error ) {
+				$issues[] = $this->build_issue( $scene_id, 'scene', $error );
+				continue;
+			}
+
+			// return_icons() always seeds the list with a '' placeholder entry
+			// used for the "select one" dropdown option; it isn't a real icon.
+			unset( $icon_ids[''] );
+
+			foreach ( $icon_ids as $icon_id ) {
+				$modal_ids = get_posts(
+					array(
+						'post_type'      => 'modal',
+						'post_status'    => array( 'publish', 'draft', 'private', 'pending', 'future' ),
+						'posts_per_page' => -1,
+						'no_found_rows'  => true,
+						'fields'         => 'ids',
+						'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+							'relation' => 'AND',
+							array(
+								'key'   => 'modal_icons',
+								'value' => $icon_id,
+							),
+							array(
+								'key'   => 'modal_scene',
+								'value' => $scene_id,
+								'type'  => 'NUMERIC',
+							),
+						),
+					)
+				);
+
+				if ( 1 !== count( $modal_ids ) ) {
+					$issues[] = $this->build_issue(
+						$scene_id,
+						'scene',
+						count( $modal_ids ) > 1
+							? 'Icon "' . $icon_id . '" is associated with more than one modal.'
+							: 'Icon "' . $icon_id . '" has no associated modal.'
+					);
+					continue;
+				}
+
+				$modal_id         = (int) $modal_ids[0];
+				$modal_published  = get_post_meta( $modal_id, 'modal_published', true );
+				if ( 'published' !== $modal_published ) {
+					$issues[] = $this->build_issue(
+						$scene_id,
+						'scene',
+						'Modal "' . get_the_title( $modal_id ) . '" (icon "' . $icon_id . '") is set to draft.'
+					);
+				}
+			}
+		}
+
+		return $issues;
+	}
+
+	/**
+	 * For every Modal post, verify every tab from 1 through its configured
+	 * tab count has at least one associated Figure post, and that a tab with
+	 * exactly one Figure has that figure published.
+	 *
+	 * @param int $target_instance Optional instance post ID to restrict results to. 0 means "all instances".
+	 * @return array<int,array<string,mixed>> List of {post_id, post_title, post_type, edit_link, message}.
+	 */
+	private function check_modal_tab_figures( $target_instance = 0 ) {
+		$issues = array();
+
+		if ( ! post_type_exists( 'modal' ) ) {
+			return $issues;
+		}
+
+		$post_ids = get_posts( $this->instance_scoped_query_args( 'modal', $target_instance ) );
+
+		foreach ( $post_ids as $modal_id ) {
+			$modal_id = (int) $modal_id;
+			$max_tab  = (int) get_post_meta( $modal_id, 'modal_tab_number', true );
+
+			for ( $tab = 1; $tab <= $max_tab; $tab++ ) {
+				$figure_ids = get_posts(
+					array(
+						'post_type'      => 'figure',
+						'post_status'    => array( 'publish', 'draft', 'private', 'pending', 'future' ),
+						'posts_per_page' => -1,
+						'no_found_rows'  => true,
+						'fields'         => 'ids',
+						'meta_query'     => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+							'relation' => 'AND',
+							array(
+								'key'   => 'figure_modal',
+								'value' => $modal_id,
+								'type'  => 'NUMERIC',
+							),
+							array(
+								'key'   => 'figure_tab',
+								'value' => $tab,
+								'type'  => 'NUMERIC',
+							),
+						),
+					)
+				);
+
+				if ( 0 === count( $figure_ids ) ) {
+					$issues[] = $this->build_issue( $modal_id, 'modal', 'No figure found for tab ' . $tab . '.' );
+					continue;
+				}
+
+				if ( 1 === count( $figure_ids ) ) {
+					$figure_id        = (int) $figure_ids[0];
+					$figure_published = get_post_meta( $figure_id, 'figure_published', true );
+					if ( 'published' !== $figure_published ) {
+						$issues[] = $this->build_issue(
+							$modal_id,
+							'modal',
+							'Figure "' . get_the_title( $figure_id ) . '" in tab ' . $tab . ' is set to draft.'
+						);
+					}
+				}
+			}
+		}
+
+		return $issues;
+	}
+
+	/**
+	 * Build a single {post_id, post_title, post_type, edit_link, message} issue row.
+	 *
+	 * @param int    $post_id   Post ID the issue is attached to.
+	 * @param string $post_type Post type slug.
+	 * @param string $message   Human-readable description of the issue.
+	 * @return array<string,mixed>
+	 */
+	private function build_issue( $post_id, $post_type, $message ) {
+		$edit_link = get_edit_post_link( $post_id, 'raw' );
+		return array(
+			'post_id'    => $post_id,
+			'post_title' => get_the_title( $post_id ),
+			'post_type'  => $post_type,
+			'edit_link'  => $edit_link ? $edit_link : '',
+			'message'    => $message,
+		);
+	}
+
+	/**
+	 * Resolve an image URL to its Media Library attachment ID, if any.
+	 *
+	 * Falls back to stripping a `-WIDTHxHEIGHT` resize suffix (e.g.
+	 * `image-300x200.jpg` -> `image.jpg`) before retrying, since stored
+	 * field values sometimes point at a generated intermediate size rather
+	 * than the original upload that `attachment_url_to_postid()` indexes.
+	 * Mirrors the same fallback in class-validation.php's media linking.
+	 *
+	 * @param string $url Image URL.
+	 * @return int Attachment post ID, or 0 if it doesn't resolve to one.
+	 */
+	private function resolve_attachment_id( $url ) {
+		$url = esc_url_raw( (string) $url );
+		if ( '' === $url ) {
+			return 0;
+		}
+
+		$attachment_id = attachment_url_to_postid( $url );
+
+		if ( ! $attachment_id ) {
+			$stripped = preg_replace( '/-\d+x\d+(\.[a-z0-9]+)$/i', '$1', $url );
+			if ( $stripped !== $url ) {
+				$attachment_id = attachment_url_to_postid( $stripped );
+			}
+		}
+
+		return (int) $attachment_id;
 	}
 }

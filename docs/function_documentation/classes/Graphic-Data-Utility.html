@@ -646,7 +646,7 @@ $this-&gt;create_instance_dropdown_filter('scene_instance');</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1186</span>
+    <span class="phpdocumentor-element-found-in__line">1196</span>
 
     </aside>
 
@@ -1125,7 +1125,7 @@ editor ID is not in the allowed fields list.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1168</span>
+    <span class="phpdocumentor-element-found-in__line">1178</span>
 
     </aside>
 
@@ -1300,7 +1300,7 @@ Notices are displayed only on the post type edit screen after a post has been up
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1145</span>
+    <span class="phpdocumentor-element-found-in__line">1155</span>
 
     </aside>
 
@@ -1578,7 +1578,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1099</span>
+    <span class="phpdocumentor-element-found-in__line">1109</span>
 
     </aside>
 
@@ -1639,7 +1639,7 @@ as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">874</span>
+    <span class="phpdocumentor-element-found-in__line">879</span>
 
     </aside>
 
@@ -1647,7 +1647,7 @@ as values. Includes a leading empty entry.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">return_icons</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+                    <span class="phpdocumentor-signature__name">return_icons</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$error</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1664,6 +1664,19 @@ the IDs of all child elements within the 'icons' group element.</p>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                     <section class="phpdocumentor-description"><p>The post ID of the scene.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$error</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string|null</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Optional. Set by reference to a human-readable
+description of why no icons could be resolved
+(no infographic set, file missing/unreadable,
+file unreadable, or no 'icons' element found).
+Left <code class="prettyprint">null</code> on success.</p>
 </section>
 
             </dd>
@@ -1754,7 +1767,7 @@ or if the 'icons' element is not found in the SVG.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">987</span>
+    <span class="phpdocumentor-element-found-in__line">997</span>
 
     </aside>
 
@@ -1815,7 +1828,7 @@ with section titles as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1073</span>
+    <span class="phpdocumentor-element-found-in__line">1083</span>
 
     </aside>
 
@@ -1939,7 +1952,7 @@ as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">942</span>
+    <span class="phpdocumentor-element-found-in__line">952</span>
 
     </aside>
 
@@ -1994,7 +2007,7 @@ as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1016</span>
+    <span class="phpdocumentor-element-found-in__line">1026</span>
 
     </aside>
 
@@ -2055,7 +2068,7 @@ Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1055</span>
+    <span class="phpdocumentor-element-found-in__line">1065</span>
 
     </aside>
 

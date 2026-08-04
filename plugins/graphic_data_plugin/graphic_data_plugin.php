@@ -14,7 +14,7 @@
  * Plugin Name:       Graphic Data Plugin
  * Plugin URI:        https://github.com/ioos/sanctuarywatch_graphicdata
  * Description:       This plugin customizes a Wordpress installation for the requirements of the Graphic Data framework.
- * Version:           1.4.6
+ * Version:           1.5.2
  * Author:            Graphic Data Team
  * Author URI:        https://www.noaa.gov
  * License:           GPL-2.0+
@@ -141,6 +141,19 @@ add_action( 'admin_init', 'graphic_data_ensure_public_data_dir' ); // fallback a
  * @return void
  */
 function graphic_data_ensure_public_data_dir() {
+	// Bail during this plugin's own deactivation request. admin_init fires
+	// before plugins.php processes the deactivate action, so without this
+	// check the data directory (and any deletion a user just confirmed via
+	// Graphic_Data_Deactivation_Cleanup) would be recreated out from under
+	// the deactivation that is about to happen.
+	if (
+		isset( $_GET['action'], $_GET['plugin'] ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		&& 'deactivate' === $_GET['action'] // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		&& plugin_basename( __FILE__ ) === sanitize_text_field( wp_unslash( $_GET['plugin'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	) {
+		return;
+	}
+
 	// Create dir if missing.
 	if ( ! is_dir( GRAPHIC_DATA_DATA_DIR ) ) {
 		if ( ! wp_mkdir_p( GRAPHIC_DATA_DATA_DIR ) ) {
