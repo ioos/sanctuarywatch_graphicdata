@@ -5,6 +5,8 @@
  * @package Graphic_Data_Plugin
  */
 
+require_once __DIR__ . '/admin-tutorial-figure-preview.php';
+
 /**
  * Class Graphic_Data_Tutorial_Content
  *
@@ -883,6 +885,62 @@ class Graphic_Data_Tutorial_Content {
 								}
 								break;
 						}
+
+						// Generate the standalone preview HTML files for this figure (mirrors what
+						// admin/js/admin-preview-buttons.js does in the browser for editor-created figures).
+						$preview_science_info = isset( $target_figure_details_element['figure_science_info'] ) && is_array( $target_figure_details_element['figure_science_info'] ) ? $target_figure_details_element['figure_science_info'] : array();
+						$preview_data_info    = isset( $target_figure_details_element['figure_data_info'] ) && is_array( $target_figure_details_element['figure_data_info'] ) ? $target_figure_details_element['figure_data_info'] : array();
+
+						$preview_image_url = '';
+						if ( 'Internal' === $target_figure_details_element['figure_path'] && isset( $figure_image ) ) {
+							$preview_image_url = $figure_image;
+						} elseif ( 'External' === $target_figure_details_element['figure_path'] && isset( $target_figure_details_element['figure_external_url'] ) ) {
+							$preview_image_url = $target_figure_details_element['figure_external_url'];
+						}
+
+						$preview_info_obj_full = array(
+							'status'                   => 'full_figure',
+							'figureType'               => $target_figure_details_element['figure_path'],
+							'figureTitle'              => $target_figure_details_element['title'],
+							'figure_science_link_url'  => isset( $preview_science_info['figure_science_link_url'] ) ? $preview_science_info['figure_science_link_url'] : '',
+							'figure_science_link_text' => isset( $preview_science_info['figure_science_link_text'] ) ? $preview_science_info['figure_science_link_text'] : '',
+							'figure_data_link_url'     => isset( $preview_data_info['figure_data_link_url'] ) ? $preview_data_info['figure_data_link_url'] : '',
+							'figure_data_link_text'    => isset( $preview_data_info['figure_data_link_text'] ) ? $preview_data_info['figure_data_link_text'] : '',
+							'figure_caption_short'     => isset( $target_figure_details_element['figure_caption_short'] ) ? $target_figure_details_element['figure_caption_short'] : '',
+							'figure_caption_long'      => isset( $target_figure_details_element['figure_caption_long'] ) ? $target_figure_details_element['figure_caption_long'] : '',
+							'figure_image'             => $preview_image_url,
+							'figure_external_alt'      => isset( $target_figure_details_element['figure_external_alt'] ) ? $target_figure_details_element['figure_external_alt'] : '',
+							'figure_code'              => isset( $target_figure_details_element['figure_code'] ) ? $target_figure_details_element['figure_code'] : '',
+						);
+
+						$preview_info_obj_figure_only                             = $preview_info_obj_full;
+						$preview_info_obj_figure_only['status']                   = 'figure_only';
+						$preview_info_obj_figure_only['figure_science_link_url']  = '';
+						$preview_info_obj_figure_only['figure_science_link_text'] = '';
+						$preview_info_obj_figure_only['figure_data_link_url']     = '';
+						$preview_info_obj_figure_only['figure_data_link_text']    = '';
+						$preview_info_obj_figure_only['figure_caption_short']     = '';
+						$preview_info_obj_figure_only['figure_caption_long']      = '';
+
+						$preview_saved_figure = null;
+						if ( 'Interactive' === $target_figure_details_element['figure_path'] && isset( $figure_file_path ) && false !== $figure_file_path ) {
+							$preview_saved_figure = Graphic_Data_Tutorial_Figure_Preview::build_interactive_figure_data(
+								$target_figure_details_element['figure_interactive_arguments'],
+								$figure_file_path . '.json'
+							);
+							// The theme side (includes/figures/js/figure-render.js) replays this saved
+							// {data, layout, config} directly instead of recomputing the chart, exactly
+							// as it does for figures generated through the live editor.
+							update_post_meta( $post_id, 'figure_interactive_args_rendered', wp_json_encode( $preview_saved_figure ) );
+						}
+
+						Graphic_Data_Tutorial_Figure_Preview::generate_and_save_figure_previews(
+							$post_id,
+							$preview_info_obj_full,
+							$preview_info_obj_figure_only,
+							$preview_saved_figure
+						);
+
 						++$figure_tutorial_id;
 					}
 				}
