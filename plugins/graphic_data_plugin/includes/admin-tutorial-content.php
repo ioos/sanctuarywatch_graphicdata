@@ -99,7 +99,20 @@ class Graphic_Data_Tutorial_Content {
 				}
 			}
 		}
-		// Save post ID to wp_options.
+		$this->record_tutorial_figure_data_folder( $post_id );
+		return $initial_destination_path;
+	}
+
+	/**
+	 * Records a figure post ID in the 'graphic_data_tutorial_figure_post_ids' option so that
+	 * its wp-content/data/figure_{$post_id}/ folder can later be found and removed by
+	 * delete_data_json_files(). Must be called for every figure that gets such a folder,
+	 * regardless of figure type, since that option is the only record of which folders exist.
+	 *
+	 * @param int $post_id ID of the figure post whose data folder should be tracked.
+	 * @return void
+	 */
+	private function record_tutorial_figure_data_folder( $post_id ) {
 		$option_name = 'graphic_data_tutorial_figure_post_ids';
 		$post_ids    = get_option( $option_name, [] );
 
@@ -113,7 +126,6 @@ class Graphic_Data_Tutorial_Content {
 			$post_ids[] = $post_id;
 			update_option( $option_name, $post_ids, false );
 		}
-		return $initial_destination_path;
 	}
 
 	/**
@@ -940,6 +952,11 @@ class Graphic_Data_Tutorial_Content {
 							$preview_info_obj_figure_only,
 							$preview_saved_figure
 						);
+
+						// generate_and_save_figure_previews() always creates a
+						// wp-content/data/figure_{$post_id}/ folder, regardless of figure type, so
+						// every figure (not just Interactive ones) must be tracked for cleanup.
+						$this->record_tutorial_figure_data_folder( $post_id );
 
 						++$figure_tutorial_id;
 					}
