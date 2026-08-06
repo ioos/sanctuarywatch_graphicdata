@@ -983,7 +983,7 @@ class Graphic_Data_Figure {
 
 		// Get the file extension and check it to make sure it is of the type that are allowed.
 		$file_ext = pathinfo( $file_name, PATHINFO_EXTENSION );
-		$allowed_types = [ 'json', 'csv', 'geojson', 'html' ];
+		$allowed_types = [ 'json', 'csv', 'geojson', 'html', 'png' ];
 		if ( ! in_array( $file_ext, $allowed_types ) ) {
 			wp_send_json_error( [ 'message' => 'Invalid file type.' ], 400 );
 		}

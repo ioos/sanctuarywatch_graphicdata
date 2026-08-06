@@ -3,6 +3,163 @@
 const instanceButton = document.getElementById('chooseInstance');
 instanceButton.addEventListener('click', generateFigureOptions);
 
+// Module-level replacement for wp_localize_script (this file is a script module).
+const moduleData = JSON.parse(
+	document.getElementById(
+		'wp-script-module-data-@graphic-data/admin-export-figures'
+	)?.textContent ?? '{}'
+);
+const figureNonce = moduleData.figureNonce ?? '';
+
+/**
+ * Renders a figure's standalone "figure only" HTML page in a hidden iframe, waits for its
+ * Plotly chart to finish rendering, and snapshots it as a PNG saved to the figure's data
+ * folder on the server.
+ *
+ * @param {string|number} figureID         The figure's post ID.
+ * @param {string}        figureIframeCode The figure's full_figure standalone HTML path (the figure_iframe_code post meta field).
+ * @return {Promise<string|null>} The server-side path to the saved PNG, or null if the figure had no iframe path, no Plotly figure, or the snapshot/upload failed.
+ */
+async function getInteractiveFigureImageURL(figureID, figureIframeCode) {
+	if (!figureIframeCode || typeof figureIframeCode !== 'string') {
+		return null;
+	}
+
+	const figureOnlyURL = figureIframeCode.replace(
+		/\.html$/,
+		'_figure_only.html'
+	);
+
+	const iframe = document.createElement('iframe');
+	iframe.style.position = 'fixed';
+	iframe.style.left = '-9999px';
+	iframe.style.top = '-9999px';
+	iframe.style.width = '1200px';
+	iframe.style.height = '800px';
+	iframe.style.border = '0';
+
+	const cleanup = () => {
+		if (iframe.parentNode) {
+			iframe.parentNode.removeChild(iframe);
+		}
+	};
+
+	try {
+		await new Promise((resolve, reject) => {
+			iframe.addEventListener('load', resolve, { once: true });
+			iframe.addEventListener(
+				'error',
+				() => reject(new Error(`Unable to load ${figureOnlyURL}`)),
+				{ once: true }
+			);
+			iframe.src = figureOnlyURL;
+			document.body.appendChild(iframe);
+		});
+
+		// Presence of this marker class is what tells us the page actually contains a
+		// Plotly figure (see buildInteractiveFigureHTML in admin-preview-buttons.js).
+		const chart = iframe.contentDocument?.querySelector('.plotly-figure');
+		if (!chart) {
+			cleanup();
+			return null;
+		}
+
+		// Wait for Plotly.react(), which the page's own script triggers automatically,
+		// to finish rendering.
+		const renderTimeout = 15000;
+		const pollInterval = 200;
+		const start = Date.now();
+		while (!chart.classList.contains('js-plotly-plot')) {
+			if (Date.now() - start > renderTimeout) {
+				console.error(
+					`Timed out waiting for the Plotly chart to render: ${figureOnlyURL}`
+				);
+				cleanup();
+				return null;
+			}
+			await new Promise((resolve) => setTimeout(resolve, pollInterval));
+		}
+
+		const win = iframe.contentWindow;
+		if (!win || typeof win.Plotly === 'undefined') {
+			cleanup();
+			return null;
+		}
+
+		// Must use the iframe's own Plotly instance; chart state is scoped to the
+		// window that rendered it.
+		const dataURL = await win.Plotly.toImage(chart, {
+			format: 'png',
+			width: 1200,
+			height: 800,
+		});
+
+		const pngBlob = await (await fetch(dataURL)).blob();
+
+		cleanup();
+
+		return await savePngToServer(
+			pngBlob,
+			`figure-${figureID}_snapshot.png`,
+			figureID,
+			figureNonce
+		);
+	} catch (error) {
+		console.error('Unable to snapshot interactive figure:', error);
+		cleanup();
+		return null;
+	}
+}
+
+/**
+ * Uploads a PNG blob to the server via the same custom_file_upload AJAX action used to save
+ * generated figure HTML files, saving it into the figure's wp-content/data/figure_{id}/
+ * folder.
+ *
+ * @param {Blob}          pngBlob  The PNG image data.
+ * @param {string}        fileName The filename (including extension) to save as.
+ * @param {string|number} postId   The figure's post ID.
+ * @param {string}        nonce    A nonce valid for the 'save_figure_fields' action.
+ * @return {Promise<string|null>} The server-side path the file was saved to, or null on failure.
+ */
+async function savePngToServer(pngBlob, fileName, postId, nonce) {
+	if (!nonce) {
+		console.error('Error: figure upload nonce is missing.');
+		return null;
+	}
+
+	const pngFile = new File([pngBlob], fileName, {
+		type: 'image/png',
+	});
+
+	const formData = new FormData();
+	formData.append('action', 'custom_file_upload');
+	formData.append('post_id', postId);
+	formData.append('figure_nonce', nonce);
+	formData.append('uploaded_file', pngFile);
+
+	const ajaxUrl = window.location.origin + '/wp-admin/admin-ajax.php';
+
+	try {
+		const response = await fetch(ajaxUrl, {
+			method: 'POST',
+			body: formData,
+			credentials: 'same-origin',
+		});
+		const result = await response.json();
+
+		if (!result.success) {
+			console.error('PNG upload failed:', result.data);
+			return null;
+		}
+
+		return result.data.path;
+	} catch (error) {
+		console.error('AJAX error uploading PNG:', error);
+		return null;
+	}
+}
+
 function downloadFile() {
 	const instanceSelect = document.getElementById('location');
 	const instanceValue = instanceSelect.value;
@@ -81,7 +238,7 @@ async function downloadPPTX(introText, selectedCheckBoxes) {
 
 		const protocol = window.location.protocol;
 		const host = window.location.host;
-		const restFigureURL = `${protocol}//${host}/wp-json/wp/v2/figure?_fields=id,title,figure_path,figure_image,figure_external_url,figure_caption_short,figure_caption_long&id=${targetFields[0]}`;
+		const restFigureURL = `${protocol}//${host}/wp-json/wp/v2/figure?_fields=id,title,figure_path,figure_image,figure_external_url,figure_iframe_code,figure_caption_short,figure_caption_long&id=${targetFields[0]}`;
 		const figureResponse = await fetch(restFigureURL);
 		const figureData = await figureResponse.json();
 
@@ -127,6 +284,13 @@ async function downloadPPTX(introText, selectedCheckBoxes) {
 				await addImageToSlide(newSlide, figureImageURL);
 				break;
 			case 'Interactive':
+				figureImageURL = await getInteractiveFigureImageURL(
+					figureData[0].id,
+					figureData[0].figure_iframe_code
+				);
+				if (figureImageURL) {
+					await addImageToSlide(newSlide, figureImageURL);
+				}
 				break;
 		}
 	}
@@ -303,7 +467,7 @@ async function downloadRTF(introText, selectedCheckBoxes) {
 			')';
 		rtfContent =
 			rtfContent + '\\fs32\\pard\\par ' + titleRow + '\\par\\par';
-		const restFigureURL = `${protocol}//${host}/wp-json/wp/v2/figure?_fields=id,title,figure_path,figure_image,figure_external_url,figure_caption_short,figure_caption_long&include=${targetFields[0]}`;
+		const restFigureURL = `${protocol}//${host}/wp-json/wp/v2/figure?_fields=id,title,figure_path,figure_image,figure_external_url,figure_iframe_code,figure_caption_short,figure_caption_long&include=${targetFields[0]}`;
 		const figureResponse = await fetch(restFigureURL);
 		const figureData = await figureResponse.json();
 		figureCaptionShort = htmlToRtfText(figureData[0].figure_caption_short);
@@ -320,6 +484,14 @@ async function downloadRTF(introText, selectedCheckBoxes) {
 				rtfContent = rtfContent + (await imageToRtf(figureImageURL));
 				break;
 			case 'Interactive':
+				figureImageURL = await getInteractiveFigureImageURL(
+					figureData[0].id,
+					figureData[0].figure_iframe_code
+				);
+				if (figureImageURL) {
+					rtfContent =
+						rtfContent + (await imageToRtf(figureImageURL));
+				}
 				break;
 		}
 
