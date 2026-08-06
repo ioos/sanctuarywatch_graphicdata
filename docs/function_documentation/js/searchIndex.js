@@ -1586,6 +1586,11 @@ Search.appendIndex(
             "summary": "Copies\u0020a\u0020pair\u0020of\u0020.json\u0020and\u0020.csv\u0020files\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020a\u0020per\u002Dpost\u0020data\u0020folder.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_copy_files_to_data_folder"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Arecord_tutorial_figure_data_folder\u0028\u0029",
+            "name": "record_tutorial_figure_data_folder",
+            "summary": "Records\u0020a\u0020figure\u0020post\u0020ID\u0020in\u0020the\u0020\u0027graphic_data_tutorial_figure_post_ids\u0027\u0020option\u0020so\u0020that\nits\u0020wp\u002Dcontent\/data\/figure_\u007B\u0024post_id\u007D\/\u0020folder\u0020can\u0020later\u0020be\u0020found\u0020and\u0020removed\u0020by\ndelete_data_json_files\u0028\u0029.\u0020Must\u0020be\u0020called\u0020for\u0020every\u0020figure\u0020that\u0020gets\u0020such\u0020a\u0020folder,\nregardless\u0020of\u0020figure\u0020type,\u0020since\u0020that\u0020option\u0020is\u0020the\u0020only\u0020record\u0020of\u0020which\u0020folders\u0020exist.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_record_tutorial_figure_data_folder"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_playground_tutorial_content\u0028\u0029",
             "name": "create_playground_tutorial_content",
             "summary": "Create\u0020tutorial\u0020content\u0020within\u0020a\u0020WordPress\u0020playground\u0020context.",
