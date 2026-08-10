@@ -560,17 +560,56 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     //const figureDiv = document.createElement('div');
     const figureDiv = tableRowDiv;
     figureDiv.classList.add('figure');
-    figureDiv.id = `figure-${idx}`;
+    // figureDiv.id = `figure-${idx+1}`;
+    figureDiv.id = `figure-${postID}`;
+
+
 
     //CREATE THE EMBED, COPY LINK, & RETURN BUTTONS
     if (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php")) {
         // Container for links
-        const figureLinkContainer = document.createElement("div");
-        figureLinkContainer.style.display = "flex";
-        figureLinkContainer.style.justifyContent = 'flex-end';
-        figureLinkContainer.style.alignItems = 'flex-end';
-        figureLinkContainer.style.gap = "12px";
-        figureLinkContainer.style.marginBottom = "1rem";
+        const figureLinkContainer = document.createElement('div');
+        figureLinkContainer.style.display = 'flex';
+        figureLinkContainer.style.justifyContent = 'space-between';
+        figureLinkContainer.style.alignItems = 'center';
+        figureLinkContainer.style.width = '100%';
+        figureLinkContainer.style.gap = '12px';
+        figureLinkContainer.style.marginBottom = '1rem';
+
+
+        //Add "figure" index
+        const targetId = `figure-${idx + 1}`;
+
+        const figureIndex = document.createElement('div');
+        figureIndex.textContent = `Figure ${idx + 1}`;
+        figureIndex.style.color = 'rgba(68, 68, 68, 0.45)';
+        figureIndex.style.textDecoration = 'none';
+        figureIndex.style.fontSize = '0.8em';
+        figureIndex.style.marginRight = '2em';
+        figureIndex.style.marginLeft = '.2em';
+        figureIndex.style.cursor = 'pointer';
+
+        /*
+        * Make the div usable with a keyboard.
+        */
+        figureIndex.setAttribute('role', 'button');
+        figureIndex.setAttribute('tabindex', '0');
+
+        figureIndex.addEventListener('click', () => {
+            navigateToFigureHash(targetId);
+        });
+
+        figureIndex.addEventListener('keydown', (event) => {
+            if (
+                event.key !== 'Enter' &&
+                event.key !== ' '
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+            navigateToFigureHash(targetId);
+        });
     
         // Add "Return" link
         const goToTopLink = document.createElement("a");
@@ -588,6 +627,30 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
                 top: 0,
                 behavior: "smooth"
             });
+        });
+
+        // Add "Close" link
+        const closeLink = document.createElement('a');
+
+        closeLink.href = '#';
+        closeLink.textContent = '× Close Window';
+        closeLink.style.color = 'rgba(68, 68, 68, 0.45)';
+        closeLink.style.textDecoration = 'none';
+        closeLink.style.fontSize = '0.8em';
+        closeLink.style.marginRight = '0.8em';
+        // closeLink.style.marginLeft = '0.8em';
+
+        closeLink.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const closeButton = document.getElementById('close');
+
+            if (!closeButton) {
+                console.error('The close button with id="close" was not found.');
+                return;
+            }
+
+            closeButton.click();
         });
     
         // Add "Embed" link
@@ -727,7 +790,10 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             url.hash =
                 `${encodeURIComponent(tab_title)}/` +
                 `${encodeURIComponent(tab_id)}` +
-                `?figure=${encodeURIComponent(figureDiv.id)}`;
+                // `?figure=${encodeURIComponent(figureDiv.id)}`;
+                `?figure=${encodeURIComponent(postID)}`;
+
+                postID
         
             const shareUrl = url.toString();
         
@@ -767,6 +833,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         shareDropdownButton.style.cursor = 'pointer';
         shareDropdownButton.style.userSelect = 'none';
         shareDropdownButton.style.whiteSpace = 'nowrap';
+        shareDropdownButton.style.marginRight = ".5rem";
 
         /*
         * Create the dropdown menu that opens below Share.
@@ -835,11 +902,23 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         shareDropdown.appendChild(shareDropdownButton);
         shareDropdown.appendChild(shareDropdownMenu);
 
-        /*
-        * Keep Return and Share horizontal at the top left.
+       /*
+        * Keep the figure index on the left and all other controls on the right.
         */
-        figureLinkContainer.appendChild(goToTopLink);
-        figureLinkContainer.appendChild(shareDropdown);
+        const figureLinkControls = document.createElement('div');
+
+        figureLinkControls.style.display = 'flex';
+        figureLinkControls.style.justifyContent = 'flex-end';
+        figureLinkControls.style.alignItems = 'center';
+        figureLinkControls.style.gap = '12px';
+        figureLinkControls.style.marginLeft = 'auto';
+
+        // figureLinkControls.appendChild(goToTopLink);
+        figureLinkControls.appendChild(closeLink);
+        figureLinkControls.appendChild(shareDropdown);
+
+        figureLinkContainer.appendChild(figureIndex);
+        figureLinkContainer.appendChild(figureLinkControls);
 
         figureDiv.appendChild(figureLinkContainer);
 
@@ -1103,7 +1182,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     // Create the details element
     const details = document.createElement('details');
     const summary = document.createElement('summary');
-    summary.textContent = 'Click for Details';
+    summary.textContent = 'More Details';
 
     let longCaption = document.createElement("p");
     let tempLongCaption = info_obj['longCaption'];

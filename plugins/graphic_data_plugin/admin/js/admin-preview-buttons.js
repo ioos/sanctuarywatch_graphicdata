@@ -2966,7 +2966,7 @@ export async function createFigureHtml(
 			? `
 				<details class="figure-long-caption-container">
 					<summary class="figure-long-caption-toggle">
-						Click for Details
+						More Details
 					</summary>
 
 					<div class="figure-long-caption-content">
