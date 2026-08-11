@@ -2294,7 +2294,7 @@ function add_modal(){
  *
  * @returns {void}
  */
-function handleSharedModalAndFigureNavigation() { {
+function handleSharedModalAndFigureNavigation()  {
 
     const raw = window.location.hash.slice(1);
     if (!raw) return;
