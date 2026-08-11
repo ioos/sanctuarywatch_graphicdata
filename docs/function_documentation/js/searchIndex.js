@@ -1076,6 +1076,11 @@ Search.appendIndex(
             "summary": "Handles\u0020the\u0020custom\u0020file\u0020upload\u0020process\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
             "url": "classes/Graphic-Data-Figure.html#method_custom_file_upload_handler"
         },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aproxy_external_image_handler\u0028\u0029",
+            "name": "proxy_external_image_handler",
+            "summary": "AJAX\u0020handler\u0020that\u0020fetches\u0020an\u0020\u0022External\u0022\u0020figure\u0027s\u0020image\u0020URL\u0020server\u002Dside\u0020and\nreturns\u0020its\u0020bytes\u0020as\u0020base64.",
+            "url": "classes/Graphic-Data-Figure.html#method_proxy_external_image_handler"
+        },                {
             "fqsen": "\\Graphic_Data_Figure\u003A\u003Acustom_file_delete_handler\u0028\u0029",
             "name": "custom_file_delete_handler",
             "summary": "Handles\u0020the\u0020custom\u0020file\u0020deletion\u0020process\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
