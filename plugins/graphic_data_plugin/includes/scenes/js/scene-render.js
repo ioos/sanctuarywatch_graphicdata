@@ -8,8 +8,7 @@ import {
     is_mobile, is_touchscreen, slugify, debounce, hexToRgba,
     get_mobile_layer, remove_outer_div, createAccordionItem,
 } from '@graphic-data/scene-shared';
-import { render_modal } from '@graphic-data/modal-render';
-import { initTabButtons } from '@graphic-data/modal-render';
+import { render_modal } from '@graphic-data/modal-render'; 
 
 let graphicDataSceneData = getSceneData();
 
@@ -26,7 +25,7 @@ window.location.href.includes('edit.php');
  *
  * This asynchronous function serves as the driver for the script. It performs the following tasks:
  * 1. Fetches instance details by calling `load_instance_details()` and stores the data in a global variable.
- * 2. Determines the scene location by calling `make_title()` (which also makes the title, other scene elemsnts) and stores the result in `sceneLoc`, which is also a global variable.
+ * 2. Determines the scene location by calling `make_title()` (which also makes the title, other scene elements) and stores the result in `sceneLoc`, which is also a global variable.
  * 3. Finds the instance object corresponding to the scene location and assigns it to `thisInstance`.
  * 4. Extracts the hover colors for the instance and assigns them to a global variable `colors`.
  * 5. Calls `loadSVG(url, "svg1")` to load and render an SVG based on the provided URL.
@@ -2754,8 +2753,6 @@ function handleSharedModalAndFigureNavigation()  {
             if (!modalIds.includes(targetId_lowercase)) {
                 alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
             } 
-
-            // initTabButtons();
 
             if (figureId) {
                 try {
