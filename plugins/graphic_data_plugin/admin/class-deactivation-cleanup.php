@@ -49,8 +49,10 @@ class Graphic_Data_Deactivation_Cleanup {
 				'nonce'       => wp_create_nonce( self::NONCE_ACTION ),
 				'pluginFile'  => plugin_basename( GRAPHIC_DATA_PLUGIN_DIR . 'graphic_data_plugin.php' ),
 				/* translators: confirmation shown when deactivating the plugin. */
-				'confirmText' => 'The Graphic Data plugin is being deactivated. Do you also want to permanently delete all data and images associated with the plugin? This cannot be undone.',
-				'errorText'   => 'Something went wrong while deleting Graphic Data plugin data. The plugin has still been deactivated.',
+				'confirmText'      => 'The Graphic Data plugin is being deactivated. Do you also want to permanently delete all data and images associated with the plugin? This cannot be undone.',
+				/* translators: final "are you sure" confirmation shown before permanently deleting all plugin data. */
+				'confirmAgainText' => 'Are you sure? All Graphic Data plugin data and images will be permanently deleted. This cannot be undone.',
+				'errorText'        => 'Something went wrong while deleting Graphic Data plugin data. The plugin has still been deactivated.',
 			)
 		);
 	}

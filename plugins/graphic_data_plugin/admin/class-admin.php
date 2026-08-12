@@ -305,7 +305,7 @@ class Graphic_Data_Admin {
 
 		// Load Figure Export Javascript, but only when on Figure Export Tool page.
 		$current_screen = get_current_screen();
-		if ( 'tools_page_export-figures' == $current_screen->base ) {
+		if ( 'graphic-data_page_graphic-data-export-figures' == $current_screen->base ) {
 
 			wp_register_script_module(
 				'@graphic-data/admin-export-figures',
@@ -314,6 +314,17 @@ class Graphic_Data_Admin {
 				GRAPHIC_DATA_PLUGIN_VERSION
 			);
 			wp_enqueue_script_module( '@graphic-data/admin-export-figures' );
+
+			// Pass a figure-upload nonce via script_module_data (replaces wp_localize_script).
+			// This page never loads the Figure edit screen's hidden nonce field, but still
+			// needs to POST to custom_file_upload (verified against the same action).
+			add_filter(
+				'script_module_data_@graphic-data/admin-export-figures',
+				function ( array $data ): array {
+					$data['figureNonce'] = wp_create_nonce( 'save_figure_fields' );
+					return $data;
+				}
+			);
 
 			// Enqueue Bootstrap JavaScript.
 			wp_enqueue_script( 'PptxGenJS', 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js', array(), '3.12.0', true );

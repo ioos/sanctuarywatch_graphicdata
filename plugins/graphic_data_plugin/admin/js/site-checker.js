@@ -16,7 +16,7 @@
  * on `window.graphicDataSiteChecker`.
  *
  * @module @graphic-data/site-checker
- * @package Graphic_Data_Plugin
+ * @package
  */
 
 /**
@@ -67,8 +67,8 @@
  * @property {string} meta_key
  * @property {string} field_label
  * @property {string} url
- * @property {number} status HTTP status code, or 0 on transport failure.
- * @property {string} error  Error message when the request could not complete.
+ * @property {number} status      HTTP status code, or 0 on transport failure.
+ * @property {string} error       Error message when the request could not complete.
  */
 
 /**
@@ -92,11 +92,11 @@
  * post, returned by the `graphic_data_check_content_structure` AJAX action.
  *
  * @typedef {Object} ContentIssue
- * @property {number} post_id     WordPress post ID the issue is attached to.
- * @property {string} post_title  Post title; may be empty for untitled drafts.
- * @property {string} post_type   Post type slug: instance, scene, or modal.
- * @property {string} edit_link   Absolute URL to the post editor, or empty string.
- * @property {string} message     Human-readable description of the issue.
+ * @property {number} post_id    WordPress post ID the issue is attached to.
+ * @property {string} post_title Post title; may be empty for untitled drafts.
+ * @property {string} post_type  Post type slug: instance, scene, or modal.
+ * @property {string} edit_link  Absolute URL to the post editor, or empty string.
+ * @property {string} message    Human-readable description of the issue.
  */
 
 /**
@@ -144,10 +144,10 @@ const IDS = {
  * Shorthand for `document.getElementById`.
  *
  * @param {string} id Element ID.
- * @returns {HTMLElement|null} The matching element, or `null` if none exists.
+ * @return {HTMLElement|null} The matching element, or `null` if none exists.
  */
-function byId( id ) {
-	return document.getElementById( id );
+function byId(id) {
+	return document.getElementById(id);
 }
 
 /**
@@ -157,26 +157,26 @@ function byId( id ) {
  * count is not yet known, so a determinate progress bar is impossible) and
  * to surface fatal errors from the AJAX layer.
  *
- * @param {string}  text          Message to display.
- * @param {boolean} spinning      When true, the WordPress `.is-active` spinner
- *                                animates alongside the text.
- * @param {string}  [statusId]    ID of the status region. Defaults to the
- *                                broken-link checker's status region.
- * @returns {void}
+ * @param {string}  text       Message to display.
+ * @param {boolean} spinning   When true, the WordPress `.is-active` spinner
+ *                             animates alongside the text.
+ * @param {string}  [statusId] ID of the status region. Defaults to the
+ *                             broken-link checker's status region.
+ * @return {void}
  */
-function setStatus( text, spinning, statusId = IDS.status ) {
-	const el = byId( statusId );
-	if ( ! el ) {
+function setStatus(text, spinning, statusId = IDS.status) {
+	const el = byId(statusId);
+	if (!el) {
 		return;
 	}
 	el.hidden = false;
-	const textEl = el.querySelector( '.graphic-data-site-checker__status-text' );
-	if ( textEl ) {
+	const textEl = el.querySelector('.graphic-data-site-checker__status-text');
+	if (textEl) {
 		textEl.textContent = text;
 	}
-	const spinner = el.querySelector( '.spinner' );
-	if ( spinner ) {
-		spinner.classList.toggle( 'is-active', Boolean( spinning ) );
+	const spinner = el.querySelector('.spinner');
+	if (spinner) {
+		spinner.classList.toggle('is-active', Boolean(spinning));
 	}
 }
 
@@ -184,12 +184,12 @@ function setStatus( text, spinning, statusId = IDS.status ) {
  * Hide a status region. No-op if the region is not on the page.
  *
  * @param {string} [statusId] ID of the status region. Defaults to the
- *                             broken-link checker's status region.
- * @returns {void}
+ *                            broken-link checker's status region.
+ * @return {void}
  */
-function hideStatus( statusId = IDS.status ) {
-	const el = byId( statusId );
-	if ( el ) {
+function hideStatus(statusId = IDS.status) {
+	const el = byId(statusId);
+	if (el) {
 		el.hidden = true;
 	}
 }
@@ -202,33 +202,35 @@ function hideStatus( statusId = IDS.status ) {
  *
  * @param {number} done  Number of URLs already probed.
  * @param {number} total Total number of URLs that will be probed.
- * @returns {void}
+ * @return {void}
  */
-function setProgress( done, total ) {
-	const el = byId( IDS.progress );
-	if ( ! el ) {
+function setProgress(done, total) {
+	const el = byId(IDS.progress);
+	if (!el) {
 		return;
 	}
 	el.hidden = false;
-	const progressEl = el.querySelector( 'progress' );
-	if ( progressEl ) {
+	const progressEl = el.querySelector('progress');
+	if (progressEl) {
 		progressEl.max = total;
 		progressEl.value = done;
 	}
-	const textEl = el.querySelector( '.graphic-data-site-checker__progress-text' );
-	if ( textEl ) {
-		textEl.textContent = `${ done } / ${ total } URLs checked`;
+	const textEl = el.querySelector(
+		'.graphic-data-site-checker__progress-text'
+	);
+	if (textEl) {
+		textEl.textContent = `${done} / ${total} URLs checked`;
 	}
 }
 
 /**
  * Hide the progress region. No-op if the region is not on the page.
  *
- * @returns {void}
+ * @return {void}
  */
 function hideProgress() {
-	const el = byId( IDS.progress );
-	if ( el ) {
+	const el = byId(IDS.progress);
+	if (el) {
 		el.hidden = true;
 	}
 }
@@ -240,11 +242,11 @@ function hideProgress() {
  *
  * @param {string}  blockId ID of the report block wrapper.
  * @param {boolean} hidden  Whether the block should be hidden.
- * @returns {void}
+ * @return {void}
  */
-function setBlockHidden( blockId, hidden ) {
-	const el = byId( blockId );
-	if ( el ) {
+function setBlockHidden(blockId, hidden) {
+	const el = byId(blockId);
+	if (el) {
 		el.hidden = hidden;
 	}
 }
@@ -255,30 +257,30 @@ function setBlockHidden( blockId, hidden ) {
  * Called at the start of every scan so a stale report from a previous run
  * never bleeds into a new one.
  *
- * @returns {void}
+ * @return {void}
  */
 function clearReport() {
-	const el = byId( IDS.report );
-	if ( el ) {
+	const el = byId(IDS.report);
+	if (el) {
 		el.hidden = true;
 		el.innerHTML = '';
 	}
-	setBlockHidden( IDS.reportBlock, true );
+	setBlockHidden(IDS.reportBlock, true);
 }
 
 /**
  * Reset the alt-text report region: hide it (and its heading) and empty its
  * contents.
  *
- * @returns {void}
+ * @return {void}
  */
 function clearAltTextReport() {
-	const el = byId( IDS.altTextReport );
-	if ( el ) {
+	const el = byId(IDS.altTextReport);
+	if (el) {
 		el.hidden = true;
 		el.innerHTML = '';
 	}
-	setBlockHidden( IDS.altTextBlock, true );
+	setBlockHidden(IDS.altTextBlock, true);
 }
 
 /**
@@ -287,15 +289,15 @@ function clearAltTextReport() {
  *
  * @param {string} reportId ID of the report region.
  * @param {string} blockId  ID of the report region's block wrapper.
- * @returns {void}
+ * @return {void}
  */
-function clearIssuesReport( reportId, blockId ) {
-	const el = byId( reportId );
-	if ( el ) {
+function clearIssuesReport(reportId, blockId) {
+	const el = byId(reportId);
+	if (el) {
 		el.hidden = true;
 		el.innerHTML = '';
 	}
-	setBlockHidden( blockId, true );
+	setBlockHidden(blockId, true);
 }
 
 /**
@@ -305,35 +307,36 @@ function clearIssuesReport( reportId, blockId ) {
  * responses and `wp_send_json_error()` payloads both surface as thrown
  * `Error` instances, so the caller only needs one `try`/`catch`.
  *
- * @param {string}                action Registered `wp_ajax_*` action name.
+ * @param {string}                action   Registered `wp_ajax_*` action name.
  * @param {Object<string,string>} [params] Additional form fields to POST.
- * @returns {Promise<Object>} Resolves to the server's `data` payload on success.
+ * @return {Promise<Object>} Resolves to the server's `data` payload on success.
  * @throws {Error} On HTTP failure, invalid JSON, or a `success: false` response.
  */
-async function ajax( action, params = {} ) {
+async function ajax(action, params = {}) {
 	const body = new URLSearchParams();
-	body.append( 'action', action );
-	body.append( 'nonce', config.nonce || '' );
-	for ( const [ key, value ] of Object.entries( params ) ) {
-		body.append( key, value );
+	body.append('action', action);
+	body.append('nonce', config.nonce || '');
+	for (const [key, value] of Object.entries(params)) {
+		body.append(key, value);
 	}
 
-	const res = await fetch( config.ajaxUrl, {
+	const res = await fetch(config.ajaxUrl, {
 		method: 'POST',
 		credentials: 'same-origin',
 		body,
-	} );
+	});
 
-	if ( ! res.ok ) {
-		throw new Error( `HTTP ${ res.status }` );
+	if (!res.ok) {
+		throw new Error(`HTTP ${res.status}`);
 	}
 
 	const payload = await res.json();
-	if ( ! payload || ! payload.success ) {
-		const message = payload && payload.data && payload.data.message
-			? payload.data.message
-			: 'Request failed.';
-		throw new Error( message );
+	if (!payload || !payload.success) {
+		const message =
+			payload && payload.data && payload.data.message
+				? payload.data.message
+				: 'Request failed.';
+		throw new Error(message);
 	}
 	return payload.data;
 }
@@ -346,19 +349,25 @@ async function ajax( action, params = {} ) {
  * touches `innerHTML`.
  *
  * @param {*} input Any value. `null` and `undefined` become the empty string.
- * @returns {string} HTML-escaped string.
+ * @return {string} HTML-escaped string.
  */
-function escapeHtml( input ) {
-	return String( input == null ? '' : input ).replace( /[&<>"']/g, ( c ) => {
-		switch ( c ) {
-			case '&': return '&amp;';
-			case '<': return '&lt;';
-			case '>': return '&gt;';
-			case '"': return '&quot;';
-			case "'": return '&#39;';
-			default: return c;
+function escapeHtml(input) {
+	return String(input == null ? '' : input).replace(/[&<>"']/g, (c) => {
+		switch (c) {
+			case '&':
+				return '&amp;';
+			case '<':
+				return '&lt;';
+			case '>':
+				return '&gt;';
+			case '"':
+				return '&quot;';
+			case "'":
+				return '&#39;';
+			default:
+				return c;
 		}
-	} );
+	});
 }
 
 /**
@@ -372,33 +381,33 @@ function escapeHtml( input ) {
  *
  * @param {string} url            Full URL.
  * @param {number} [maxLength=55] Approximate visible character budget.
- * @returns {string} Shortened display string.
+ * @return {string} Shortened display string.
  */
-function shortenUrl( url, maxLength = 55 ) {
-	if ( typeof url !== 'string' || url.length <= maxLength ) {
+function shortenUrl(url, maxLength = 55) {
+	if (typeof url !== 'string' || url.length <= maxLength) {
 		return url;
 	}
 
 	try {
-		const parsed = new URL( url );
+		const parsed = new URL(url);
 		const host = parsed.host;
 		const path = parsed.pathname + parsed.search + parsed.hash;
 
 		// If the host alone eats the budget, just end-truncate the whole URL.
-		if ( host.length + 4 >= maxLength ) {
-			return url.slice( 0, maxLength - 1 ) + '…';
+		if (host.length + 4 >= maxLength) {
+			return url.slice(0, maxLength - 1) + '…';
 		}
 
 		const budget = maxLength - host.length - 1; // room after "host…"
-		if ( path.length <= budget ) {
+		if (path.length <= budget) {
 			return host + path;
 		}
 
-		const startLen = Math.max( 1, Math.floor( budget * 0.35 ) );
-		const endLen = Math.max( 1, budget - startLen - 1 );
-		return host + path.slice( 0, startLen ) + '…' + path.slice( -endLen );
-	} catch ( e ) {
-		return url.slice( 0, maxLength - 1 ) + '…';
+		const startLen = Math.max(1, Math.floor(budget * 0.35));
+		const endLen = Math.max(1, budget - startLen - 1);
+		return host + path.slice(0, startLen) + '…' + path.slice(-endLen);
+	} catch (e) {
+		return url.slice(0, maxLength - 1) + '…';
 	}
 }
 
@@ -415,20 +424,20 @@ function shortenUrl( url, maxLength = 55 ) {
  *
  * @param {number}          totalChecked Total number of URL occurrences examined.
  * @param {BrokenLinkRow[]} brokenItems  Items whose URL failed the reachability check.
- * @returns {void}
+ * @return {void}
  */
-function renderReport( totalChecked, brokenItems ) {
-	const reportEl = byId( IDS.report );
-	if ( ! reportEl ) {
+function renderReport(totalChecked, brokenItems) {
+	const reportEl = byId(IDS.report);
+	if (!reportEl) {
 		return;
 	}
 	reportEl.hidden = false;
-	reportEl.removeAttribute( 'hidden' );
+	reportEl.removeAttribute('hidden');
 	reportEl.style.display = '';
-	setBlockHidden( IDS.reportBlock, false );
+	setBlockHidden(IDS.reportBlock, false);
 
-	if ( brokenItems.length === 0 ) {
-		if ( totalChecked === 0 ) {
+	if (brokenItems.length === 0) {
+		if (totalChecked === 0) {
 			reportEl.innerHTML = `
 				<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--info">
 					<p><strong>No URLs were found</strong> in the scanned Graphic Data postmeta fields, so there is nothing to check.</p>
@@ -439,7 +448,7 @@ function renderReport( totalChecked, brokenItems ) {
 				<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--success">
 					<p>
 						<strong>No broken links found.</strong>
-						All ${ totalChecked } URL${ totalChecked === 1 ? '' : 's' } across Graphic Data content responded successfully.
+						All ${totalChecked} URL${totalChecked === 1 ? '' : 's'} across Graphic Data content responded successfully.
 					</p>
 				</div>
 			`;
@@ -449,25 +458,25 @@ function renderReport( totalChecked, brokenItems ) {
 
 	// Group by post so the operator can jump to each affected post once.
 	const groups = new Map();
-	for ( const item of brokenItems ) {
-		const key = `${ item.post_type }:${ item.post_id }`;
-		if ( ! groups.has( key ) ) {
-			groups.set( key, {
+	for (const item of brokenItems) {
+		const key = `${item.post_type}:${item.post_id}`;
+		if (!groups.has(key)) {
+			groups.set(key, {
 				post_title: item.post_title,
 				post_type: item.post_type,
 				edit_link: item.edit_link,
 				rows: [],
-			} );
+			});
 		}
-		groups.get( key ).rows.push( item );
+		groups.get(key).rows.push(item);
 	}
 
 	let html = `
 		<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--warning">
 			<p>
-				<strong>${ brokenItems.length } broken link${ brokenItems.length === 1 ? '' : 's' } found</strong>
-				across ${ groups.size } post${ groups.size === 1 ? '' : 's' }
-				(of ${ totalChecked } total URL${ totalChecked === 1 ? '' : 's' } checked).
+				<strong>${brokenItems.length} broken link${brokenItems.length === 1 ? '' : 's'} found</strong>
+				across ${groups.size} post${groups.size === 1 ? '' : 's'}
+				(of ${totalChecked} total URL${totalChecked === 1 ? '' : 's'} checked).
 			</p>
 		</div>
 		<table class="wp-list-table widefat striped graphic-data-site-checker__table">
@@ -483,25 +492,25 @@ function renderReport( totalChecked, brokenItems ) {
 			<tbody>
 	`;
 
-	for ( const group of groups.values() ) {
+	for (const group of groups.values()) {
 		const title = group.post_title || '(untitled)';
 		const postCell = group.edit_link
-			? `<a href="${ escapeHtml( group.edit_link ) }" target="_blank" rel="noopener noreferrer">${ escapeHtml( title ) }</a>`
-			: escapeHtml( title );
+			? `<a href="${escapeHtml(group.edit_link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a>`
+			: escapeHtml(title);
 
-		for ( const row of group.rows ) {
+		for (const row of group.rows) {
 			const statusText = row.status
-				? String( row.status )
-				: ( row.error || 'Unreachable' );
+				? String(row.status)
+				: row.error || 'Unreachable';
 			const fieldLabel = row.field_label || row.meta_key;
-			const displayUrl = shortenUrl( row.url );
+			const displayUrl = shortenUrl(row.url);
 			html += `
 				<tr>
-					<td>${ postCell }</td>
-					<td><code>${ escapeHtml( row.post_type ) }</code></td>
-					<td>${ escapeHtml( fieldLabel ) }</td>
-					<td class="graphic-data-site-checker__url-cell"><a href="${ escapeHtml( row.url ) }" target="_blank" rel="noopener noreferrer" title="${ escapeHtml( row.url ) }">${ escapeHtml( displayUrl ) }</a></td>
-					<td>${ escapeHtml( statusText ) }</td>
+					<td>${postCell}</td>
+					<td><code>${escapeHtml(row.post_type)}</code></td>
+					<td>${escapeHtml(fieldLabel)}</td>
+					<td class="graphic-data-site-checker__url-cell"><a href="${escapeHtml(row.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(row.url)}">${escapeHtml(displayUrl)}</a></td>
+					<td>${escapeHtml(statusText)}</td>
 				</tr>
 			`;
 		}
@@ -523,17 +532,17 @@ function renderReport( totalChecked, brokenItems ) {
  * URL) since these are, by definition, Media Library images.
  *
  * @param {AltTextItem[]} items Images referencing an attachment with no alt text.
- * @returns {void}
+ * @return {void}
  */
-function renderAltTextReport( items ) {
-	const reportEl = byId( IDS.altTextReport );
-	if ( ! reportEl ) {
+function renderAltTextReport(items) {
+	const reportEl = byId(IDS.altTextReport);
+	if (!reportEl) {
 		return;
 	}
 	reportEl.hidden = false;
-	setBlockHidden( IDS.altTextBlock, false );
+	setBlockHidden(IDS.altTextBlock, false);
 
-	if ( items.length === 0 ) {
+	if (items.length === 0) {
 		reportEl.innerHTML = `
 			<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--success">
 				<p><strong>No missing alt text found</strong> on Media Library images referenced by Graphic Data content.</p>
@@ -544,24 +553,24 @@ function renderAltTextReport( items ) {
 
 	// Group by post so the operator can jump to each affected post once.
 	const groups = new Map();
-	for ( const item of items ) {
-		const key = `${ item.post_type }:${ item.post_id }`;
-		if ( ! groups.has( key ) ) {
-			groups.set( key, {
+	for (const item of items) {
+		const key = `${item.post_type}:${item.post_id}`;
+		if (!groups.has(key)) {
+			groups.set(key, {
 				post_title: item.post_title,
 				post_type: item.post_type,
 				edit_link: item.edit_link,
 				rows: [],
-			} );
+			});
 		}
-		groups.get( key ).rows.push( item );
+		groups.get(key).rows.push(item);
 	}
 
 	let html = `
 		<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--warning">
 			<p>
-				<strong>${ items.length } image${ items.length === 1 ? '' : 's' } missing alt text</strong>
-				across ${ groups.size } post${ groups.size === 1 ? '' : 's' }.
+				<strong>${items.length} image${items.length === 1 ? '' : 's'} missing alt text</strong>
+				across ${groups.size} post${groups.size === 1 ? '' : 's'}.
 			</p>
 		</div>
 		<table class="wp-list-table widefat striped graphic-data-site-checker__table">
@@ -576,23 +585,23 @@ function renderAltTextReport( items ) {
 			<tbody>
 	`;
 
-	for ( const group of groups.values() ) {
+	for (const group of groups.values()) {
 		const title = group.post_title || '(untitled)';
 		const postCell = group.edit_link
-			? `<a href="${ escapeHtml( group.edit_link ) }" target="_blank" rel="noopener noreferrer">${ escapeHtml( title ) }</a>`
-			: escapeHtml( title );
+			? `<a href="${escapeHtml(group.edit_link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a>`
+			: escapeHtml(title);
 
-		for ( const row of group.rows ) {
-			const displayUrl = shortenUrl( row.url );
+		for (const row of group.rows) {
+			const displayUrl = shortenUrl(row.url);
 			const mediaCell = row.media_edit_link
-				? `<a href="${ escapeHtml( row.media_edit_link ) }" target="_blank" rel="noopener noreferrer" title="${ escapeHtml( row.url ) }">${ escapeHtml( displayUrl ) }</a>`
-				: escapeHtml( displayUrl );
+				? `<a href="${escapeHtml(row.media_edit_link)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(row.url)}">${escapeHtml(displayUrl)}</a>`
+				: escapeHtml(displayUrl);
 			html += `
 				<tr>
-					<td>${ postCell }</td>
-					<td><code>${ escapeHtml( row.post_type ) }</code></td>
-					<td>${ escapeHtml( row.field_label ) }</td>
-					<td class="graphic-data-site-checker__url-cell">${ mediaCell }</td>
+					<td>${postCell}</td>
+					<td><code>${escapeHtml(row.post_type)}</code></td>
+					<td>${escapeHtml(row.field_label)}</td>
+					<td class="graphic-data-site-checker__url-cell">${mediaCell}</td>
 				</tr>
 			`;
 		}
@@ -618,20 +627,20 @@ function renderAltTextReport( items ) {
  * @param {ContentIssue[]} issues       Issues found for this post type.
  * @param {string}         nounSingular Singular label for the issue's post type (e.g. "instance").
  * @param {string}         blockId      ID of the report region's block wrapper.
- * @returns {void}
+ * @return {void}
  */
-function renderIssuesReport( reportId, issues, nounSingular, blockId ) {
-	const reportEl = byId( reportId );
-	if ( ! reportEl ) {
+function renderIssuesReport(reportId, issues, nounSingular, blockId) {
+	const reportEl = byId(reportId);
+	if (!reportEl) {
 		return;
 	}
 	reportEl.hidden = false;
-	setBlockHidden( blockId, false );
+	setBlockHidden(blockId, false);
 
-	if ( issues.length === 0 ) {
+	if (issues.length === 0) {
 		reportEl.innerHTML = `
 			<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--success">
-				<p><strong>No ${ escapeHtml( nounSingular ) } issues found.</strong></p>
+				<p><strong>No ${escapeHtml(nounSingular)} issues found.</strong></p>
 			</div>
 		`;
 		return;
@@ -639,7 +648,7 @@ function renderIssuesReport( reportId, issues, nounSingular, blockId ) {
 
 	let html = `
 		<div class="graphic-data-site-checker__notice graphic-data-site-checker__notice--warning">
-			<p><strong>${ issues.length } issue${ issues.length === 1 ? '' : 's' } found.</strong></p>
+			<p><strong>${issues.length} issue${issues.length === 1 ? '' : 's'} found.</strong></p>
 		</div>
 		<table class="wp-list-table widefat striped graphic-data-site-checker__table graphic-data-site-checker__table--issues">
 			<thead>
@@ -651,15 +660,15 @@ function renderIssuesReport( reportId, issues, nounSingular, blockId ) {
 			<tbody>
 	`;
 
-	for ( const issue of issues ) {
+	for (const issue of issues) {
 		const title = issue.post_title || '(untitled)';
 		const postCell = issue.edit_link
-			? `<a href="${ escapeHtml( issue.edit_link ) }" target="_blank" rel="noopener noreferrer">${ escapeHtml( title ) }</a>`
-			: escapeHtml( title );
+			? `<a href="${escapeHtml(issue.edit_link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a>`
+			: escapeHtml(title);
 		html += `
 			<tr>
-				<td>${ postCell }</td>
-				<td>${ escapeHtml( issue.message ) }</td>
+				<td>${postCell}</td>
+				<td>${escapeHtml(issue.message)}</td>
 			</tr>
 		`;
 	}
@@ -692,62 +701,68 @@ function renderIssuesReport( reportId, issues, nounSingular, blockId ) {
  *
  * Re-entrant guard: no-ops immediately if a scan is already in flight.
  *
- * @returns {Promise<void>} Resolves once the scan finishes (or errors) and
+ * @return {Promise<void>} Resolves once the scan finishes (or errors) and
  *                          the UI is back to an idle state.
  */
 async function runBrokenLinkCheck() {
-	if ( state.running ) {
+	if (state.running) {
 		return;
 	}
 	state.running = true;
 
-	const button = byId( IDS.button );
-	if ( button ) {
+	const button = byId(IDS.button);
+	if (button) {
 		button.disabled = true;
 	}
 
 	clearReport();
 	clearAltTextReport();
-	clearIssuesReport( IDS.instanceIssuesReport, IDS.instanceIssuesBlock );
-	clearIssuesReport( IDS.sceneIssuesReport, IDS.sceneIssuesBlock );
-	clearIssuesReport( IDS.modalIssuesReport, IDS.modalIssuesBlock );
+	clearIssuesReport(IDS.instanceIssuesReport, IDS.instanceIssuesBlock);
+	clearIssuesReport(IDS.sceneIssuesReport, IDS.sceneIssuesBlock);
+	clearIssuesReport(IDS.modalIssuesReport, IDS.modalIssuesBlock);
 	hideProgress();
 
 	try {
-		const targetInstanceEl = byId( IDS.targetInstance );
+		const targetInstanceEl = byId(IDS.targetInstance);
 		const targetInstance = targetInstanceEl ? targetInstanceEl.value : '';
-		const instanceParams = targetInstance ? { target_instance: targetInstance } : {};
+		const instanceParams = targetInstance
+			? { target_instance: targetInstance }
+			: {};
 
-		setStatus( 'Gathering URLs from Graphic Data posts…', true );
+		setStatus('Gathering URLs from Graphic Data posts…', true);
 
-		const gathered = await ajax( 'graphic_data_gather_urls', instanceParams );
-		const items = Array.isArray( gathered.items ) ? gathered.items : [];
+		const gathered = await ajax('graphic_data_gather_urls', instanceParams);
+		const items = Array.isArray(gathered.items) ? gathered.items : [];
 
-		if ( items.length === 0 ) {
+		if (items.length === 0) {
 			hideStatus();
-			renderReport( 0, [] );
+			renderReport(0, []);
 		} else {
 			// Dedupe URLs for the actual network probes — many posts may
 			// reference the same URL, but we only need to check it once.
-			const uniqueUrls = Array.from( new Set( items.map( ( i ) => i.url ) ) );
-			const batchSize = Number( config.batchSize ) > 0 ? Number( config.batchSize ) : 10;
+			const uniqueUrls = Array.from(new Set(items.map((i) => i.url)));
+			const batchSize =
+				Number(config.batchSize) > 0 ? Number(config.batchSize) : 10;
 			const statuses = new Map();
 			let done = 0;
 
 			hideStatus();
-			setProgress( 0, uniqueUrls.length );
+			setProgress(0, uniqueUrls.length);
 
-			for ( let i = 0; i < uniqueUrls.length; i += batchSize ) {
-				const batch = uniqueUrls.slice( i, i + batchSize );
-				const result = await ajax( 'graphic_data_check_url_batch', {
-					urls: JSON.stringify( batch ),
-				} );
+			for (let i = 0; i < uniqueUrls.length; i += batchSize) {
+				const batch = uniqueUrls.slice(i, i + batchSize);
+				const result = await ajax('graphic_data_check_url_batch', {
+					urls: JSON.stringify(batch),
+				});
 				const results = result && result.results ? result.results : {};
-				for ( const [ url, status ] of Object.entries( results ) ) {
-					statuses.set( url, status );
+				for (const [url, status] of Object.entries(results)) {
+					statuses.set(url, status);
 				}
 				done += batch.length;
-				setProgress( Math.min( done, uniqueUrls.length ), uniqueUrls.length );
+				setProgress(
+					Math.min(done, uniqueUrls.length),
+					uniqueUrls.length
+				);
 			}
 
 			hideProgress();
@@ -755,55 +770,67 @@ async function runBrokenLinkCheck() {
 			// Fan the URL-level results back out over every occurrence so the
 			// report can name every post that references a broken URL.
 			const broken = [];
-			for ( const item of items ) {
-				const status = statuses.get( item.url );
-				if ( status && ! status.ok ) {
-					broken.push( {
+			for (const item of items) {
+				const status = statuses.get(item.url);
+				if (status && !status.ok) {
+					broken.push({
 						...item,
 						status: status.status,
 						error: status.error,
-					} );
+					});
 				}
 			}
 
-			renderReport( items.length, broken );
+			renderReport(items.length, broken);
 		}
 
-		setStatus( 'Checking image alt text…', true );
-		const altResult = await ajax( 'graphic_data_check_alt_text', instanceParams );
-		const altItems = Array.isArray( altResult.items ) ? altResult.items : [];
+		setStatus('Checking image alt text…', true);
+		const altResult = await ajax(
+			'graphic_data_check_alt_text',
+			instanceParams
+		);
+		const altItems = Array.isArray(altResult.items) ? altResult.items : [];
 		hideStatus();
-		renderAltTextReport( altItems );
+		renderAltTextReport(altItems);
 
-		setStatus( 'Checking instance, scene, and modal structure…', true );
-		const structureResult = await ajax( 'graphic_data_check_content_structure', instanceParams );
+		setStatus('Checking instance, scene, and modal structure…', true);
+		const structureResult = await ajax(
+			'graphic_data_check_content_structure',
+			instanceParams
+		);
 		hideStatus();
 		renderIssuesReport(
 			IDS.instanceIssuesReport,
-			Array.isArray( structureResult.instance_issues ) ? structureResult.instance_issues : [],
+			Array.isArray(structureResult.instance_issues)
+				? structureResult.instance_issues
+				: [],
 			'instance',
 			IDS.instanceIssuesBlock
 		);
 		renderIssuesReport(
 			IDS.sceneIssuesReport,
-			Array.isArray( structureResult.scene_issues ) ? structureResult.scene_issues : [],
+			Array.isArray(structureResult.scene_issues)
+				? structureResult.scene_issues
+				: [],
 			'scene',
 			IDS.sceneIssuesBlock
 		);
 		renderIssuesReport(
 			IDS.modalIssuesReport,
-			Array.isArray( structureResult.modal_issues ) ? structureResult.modal_issues : [],
+			Array.isArray(structureResult.modal_issues)
+				? structureResult.modal_issues
+				: [],
 			'modal',
 			IDS.modalIssuesBlock
 		);
-	} catch ( err ) {
+	} catch (err) {
 		hideProgress();
-		setStatus( `Error: ${ err.message }`, false );
+		setStatus(`Error: ${err.message}`, false);
 		// eslint-disable-next-line no-console
-		console.error( '[graphic-data/site-checker]', err );
+		console.error('[graphic-data/site-checker]', err);
 	} finally {
 		state.running = false;
-		if ( button ) {
+		if (button) {
 			button.disabled = false;
 		}
 	}
@@ -815,12 +842,12 @@ async function runBrokenLinkCheck() {
  * No-op if the button is not on the page (e.g. if this module was
  * accidentally loaded on the wrong screen).
  *
- * @returns {void}
+ * @return {void}
  */
 function init() {
-	const button = byId( IDS.button );
-	if ( button ) {
-		button.addEventListener( 'click', runBrokenLinkCheck );
+	const button = byId(IDS.button);
+	if (button) {
+		button.addEventListener('click', runBrokenLinkCheck);
 	}
 }
 
@@ -829,8 +856,8 @@ function init() {
  * with `defer` semantics, so `readyState === 'loading'` is unlikely, but
  * the double-branch keeps the module safe if load order ever changes.
  */
-if ( document.readyState === 'loading' ) {
-	document.addEventListener( 'DOMContentLoaded', init );
+if (document.readyState === 'loading') {
+	document.addEventListener('DOMContentLoaded', init);
 } else {
 	init();
 }

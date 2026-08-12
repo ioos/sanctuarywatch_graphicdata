@@ -238,6 +238,14 @@ and file upload/delete handlers for interactive figure data.</p>
 <dd>Check if stored filter values are still valid and retrieve them if they are.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_proxy_external_image_handler">proxy_external_image_handler()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>AJAX handler that fetches an &quot;External&quot; figure&#039;s image URL server-side and
+returns its bytes as base64.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Figure.html#method_register_figure_rest_fields">register_figure_rest_fields()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -609,7 +617,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1043</span>
+    <span class="phpdocumentor-element-found-in__line">1120</span>
 
     </aside>
 
@@ -654,7 +662,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">933</span>
+    <span class="phpdocumentor-element-found-in__line">945</span>
 
     </aside>
 
@@ -908,7 +916,7 @@ over instance.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">902</span>
+    <span class="phpdocumentor-element-found-in__line">914</span>
 
     </aside>
 
@@ -990,7 +998,7 @@ to be hooked into the 'rest_figure_query' filter.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1166</span>
+    <span class="phpdocumentor-element-found-in__line">1243</span>
 
     </aside>
 
@@ -1132,6 +1140,57 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
         class="phpdocumentor-element
             -method
             -public
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_proxy_external_image_handler">
+        proxy_external_image_handler()
+        <a href="classes/Graphic-Data-Figure.html#method_proxy_external_image_handler" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1061</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">AJAX handler that fetches an &quot;External&quot; figure&#039;s image URL server-side and
+returns its bytes as base64.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">proxy_external_image_handler</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Browsers block a page's own fetch() of a third-party image unless that
+third party opts in with an Access-Control-Allow-Origin header, which most
+external image hosts (eg NASA's SDO) don't send - so the Export Figures
+tool can't download External figures directly from the client. Server-side
+HTTP requests aren't subject to that same-origin restriction, so this
+proxies the request through WordPress instead.</p>
+</section>
+
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">void</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Outputs a JSON response with the image's base64 data and MIME type.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
                                                         "
 >
     <h4 class="phpdocumentor-element__name" id="method_register_figure_rest_fields">
@@ -1142,7 +1201,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">883</span>
+    <span class="phpdocumentor-element-found-in__line">895</span>
 
     </aside>
 
@@ -1191,7 +1250,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1135</span>
+    <span class="phpdocumentor-element-found-in__line">1212</span>
 
     </aside>
 
@@ -1322,6 +1381,7 @@ It handles all three filter types: instance, scene, and icon.</p>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_filter_figure_by_figure_modal">filter_figure_by_figure_modal()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_get_alt_text_by_url_callback">get_alt_text_by_url_callback()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_get_figure_filter_value">get_figure_filter_value()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_proxy_external_image_handler">proxy_external_image_handler()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_register_figure_rest_fields">register_figure_rest_fields()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_register_get_alt_text_by_url_route">register_get_alt_text_by_url_route()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_store_figure_filter_values">store_figure_filter_values()</a></li>

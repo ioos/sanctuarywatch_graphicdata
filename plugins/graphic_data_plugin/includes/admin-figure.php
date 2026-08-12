@@ -983,7 +983,7 @@ class Graphic_Data_Figure {
 
 		// Get the file extension and check it to make sure it is of the type that are allowed.
 		$file_ext = pathinfo( $file_name, PATHINFO_EXTENSION );
-		$allowed_types = [ 'json', 'csv', 'geojson', 'html' ];
+		$allowed_types = [ 'json', 'csv', 'geojson', 'html', 'png' ];
 		if ( ! in_array( $file_ext, $allowed_types ) ) {
 			wp_send_json_error( [ 'message' => 'Invalid file type.' ], 400 );
 		}
@@ -1043,6 +1043,71 @@ class Graphic_Data_Figure {
 			// Send an error response if the file upload fails.
 			wp_send_json_error( [ 'message' => 'File upload failed.' ], 500 );
 		}
+	}
+
+	/**
+	 * AJAX handler that fetches an "External" figure's image URL server-side and
+	 * returns its bytes as base64.
+	 *
+	 * Browsers block a page's own fetch() of a third-party image unless that
+	 * third party opts in with an Access-Control-Allow-Origin header, which most
+	 * external image hosts (eg NASA's SDO) don't send - so the Export Figures
+	 * tool can't download External figures directly from the client. Server-side
+	 * HTTP requests aren't subject to that same-origin restriction, so this
+	 * proxies the request through WordPress instead.
+	 *
+	 * @return void Outputs a JSON response with the image's base64 data and MIME type.
+	 */
+	public static function proxy_external_image_handler() {
+		ob_clean(); // Ensure no unwanted output.
+
+		// First, verify nonce.
+		if (
+			! isset( $_REQUEST['figure_nonce'] ) ||
+			! wp_verify_nonce(
+				sanitize_text_field( wp_unslash( $_REQUEST['figure_nonce'] ) ),
+				'save_figure_fields'
+			)
+		) {
+			wp_send_json_error( [ 'message' => 'Security check failed.' ], 403 );
+		}
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error( [ 'message' => 'Insufficient permissions.' ], 403 );
+		}
+
+		$image_url = isset( $_REQUEST['image_url'] ) ? esc_url_raw( wp_unslash( $_REQUEST['image_url'] ) ) : '';
+		if ( empty( $image_url ) || ! filter_var( $image_url, FILTER_VALIDATE_URL ) ) {
+			wp_send_json_error( [ 'message' => 'Invalid image URL.' ], 400 );
+		}
+
+		$response = wp_remote_get(
+			$image_url,
+			[
+				'timeout' => 20,
+				'redirection' => 3,
+			]
+		);
+
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error( [ 'message' => 'Unable to fetch image: ' . $response->get_error_message() ], 502 );
+		}
+
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			wp_send_json_error( [ 'message' => 'External server returned status ' . wp_remote_retrieve_response_code( $response ) ], 502 );
+		}
+
+		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
+		if ( ! in_array( $content_type, [ 'image/png', 'image/jpeg' ], true ) ) {
+			wp_send_json_error( [ 'message' => 'Unsupported image type: ' . $content_type ], 415 );
+		}
+
+		wp_send_json_success(
+			[
+				'contentType' => $content_type,
+				'base64' => base64_encode( wp_remote_retrieve_body( $response ) ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+			]
+		);
 	}
 
 

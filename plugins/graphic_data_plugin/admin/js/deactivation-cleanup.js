@@ -32,6 +32,11 @@
 			return;
 		}
 
+		if ( ! window.confirm( config.confirmAgainText ) ) {
+			window.location.href = href;
+			return;
+		}
+
 		fetch( config.ajaxUrl, {
 			method: 'POST',
 			credentials: 'same-origin',
