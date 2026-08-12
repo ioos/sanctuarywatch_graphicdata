@@ -242,11 +242,37 @@ async function waitForElement(selector) {
 async function handleHashNavigation() {
 	//maybe in here check that the scene is/is not an overview
 	if (window.location.hash) {
-		let tabId = window.location.hash.substring(1);
+		// let tabId2 = window.location.hash.substring(1);
+		// let modalName2 = tabId.split('/')[0];
+		// tabId2 = tabId.replace(/\//g, '-');
+		// console.log('tabId2', tabId2);
 
-		let modalName = tabId.split('/')[0];
+		function getTargetIdFromHash(rawHash) {
+			let decoded = rawHash;
+			try {
+				decoded = decodeURIComponent(rawHash);
+			} catch (_) {}
+		
+			return decoded.split("/")[0] || "";
+		}
+		
+		function getTabFromHash(rawHash) {
+			let decoded = rawHash;
+			try {
+			  decoded = decodeURIComponent(rawHash);
+			} catch (_) {}
+	
+			if (decoded.includes('?')) {
+				const hashWithoutQuery = decoded.split('?')[0];
+				return hashWithoutQuery.split('/')[1] || hashWithoutQuery || '';
+			} else {
+				return decoded.split("/")[1] || "";
+			}
+		}
 
-		tabId = tabId.replace(/\//g, '-');
+		const raw = window.location.hash.slice(1);
+		let modalName = getTargetIdFromHash(raw);
+		let tabId = getTabFromHash(raw);
 
 		history.pushState(
 			'',
@@ -273,7 +299,7 @@ async function handleHashNavigation() {
 			modalButton.click();
 		}
 
-		let tabButton = await waitForElement(`#${tabId}`);
+		let tabButton = await waitForElement(`#${modName}-${tabId}`);
 		tabButton.click();
 	} else {
 	}

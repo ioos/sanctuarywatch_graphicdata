@@ -8,12 +8,11 @@ import {
     is_mobile, is_touchscreen, slugify, debounce, hexToRgba,
     get_mobile_layer, remove_outer_div, createAccordionItem,
 } from '@graphic-data/scene-shared';
-import { render_modal } from '@graphic-data/modal-render';
-import { initTabButtons } from '@graphic-data/modal-render';
+import { render_modal } from '@graphic-data/modal-render'; 
 
 let graphicDataSceneData = getSceneData();
 
-alertIfMissingModal();
+handleSharedModalAndFigureNavigation();
 
 const isAdminEditor =
 window.location.href.includes('post.php') ||
@@ -26,7 +25,7 @@ window.location.href.includes('edit.php');
  *
  * This asynchronous function serves as the driver for the script. It performs the following tasks:
  * 1. Fetches instance details by calling `load_instance_details()` and stores the data in a global variable.
- * 2. Determines the scene location by calling `make_title()` (which also makes the title, other scene elemsnts) and stores the result in `sceneLoc`, which is also a global variable.
+ * 2. Determines the scene location by calling `make_title()` (which also makes the title, other scene elements) and stores the result in `sceneLoc`, which is also a global variable.
  * 3. Finds the instance object corresponding to the scene location and assigns it to `thisInstance`.
  * 4. Extracts the hover colors for the instance and assigns them to a global variable `colors`.
  * 5. Calls `loadSVG(url, "svg1")` to load and render an SVG based on the provided URL.
@@ -2294,7 +2293,7 @@ function add_modal(){
  *
  * @returns {void}
  */
-function alertIfMissingModal() {
+function handleSharedModalAndFigureNavigation()  {
 
     const raw = window.location.hash.slice(1);
     if (!raw) return;
@@ -2315,9 +2314,18 @@ function alertIfMissingModal() {
         try {
           decoded = decodeURIComponent(rawHash);
         } catch (_) {}
-    
-        return decoded.split("/")[1] || "";
-      }
+
+        if (decoded.includes('?')) {
+            /*
+            * Remove the question mark and everything after it.
+            */
+            const hashWithoutQuery = decoded.split('?')[0];
+
+            return hashWithoutQuery.split('/')[1] || hashWithoutQuery || '';
+        } else {
+            return decoded.split("/")[1] || "";
+        }
+    }
   
     function collectModalIds() {
       return [...document.querySelectorAll(".modal-link")]
@@ -2347,27 +2355,28 @@ function alertIfMissingModal() {
             const hasModalLinks = document.querySelectorAll(".modal-link").length > 0;
             const hasSvg = document.querySelectorAll("svg").length > 0;
             // or: const hasSvg = document.querySelectorAll(".svg-elem").length > 0;
-      
+        
             if (hasModalLinks && hasSvg) {
-              resolve();
-              return;
+                resolve();
+                return;
             }
-      
+        
             if (Date.now() - start >= timeoutMs) {
-              reject(
+                reject(
                 new Error(
-                  `Timed out waiting. modal-links: ${document.querySelectorAll(".modal-link").length}, svgs: ${document.querySelectorAll("svg").length}`
+                    `Timed out waiting. modal-links: ${document.querySelectorAll(".modal-link").length}, svgs: ${document.querySelectorAll("svg").length}`
                 )
-              );
-              return;
+                );
+                return;
             }
-      
+        
             setTimeout(check, intervalMs);
           }
       
           check();
         });
     }
+
 
     function activateCaseLink(wrongLink, correctLink, tab) {
         if (wrongLink === correctLink) return;
@@ -2384,16 +2393,351 @@ function alertIfMissingModal() {
         targetLink.click();
     }
 
+    // function waitForMeasurableElement(
+    //     figureElement,
+    //     timeoutMs = 30000
+    // ) {
+    //     const selector = [
+    //         '.main-svg',
+    //         'iframe',
+    //         'img',
+    //         '.code_display_window'
+    //     ].join(', ');
     
+    //     return new Promise((resolve, reject) => {
+    //         // Check immediately.
+    //         const existingElement =
+    //             figureElement.querySelector(selector);
+    
+    //         if (existingElement) {
+    //             resolve(existingElement);
+    //             return;
+    //         }
+    
+    //         const observer = new MutationObserver(() => {
+    //             const measurableElement =
+    //                 figureElement.querySelector(selector);
+    
+    //             if (measurableElement) {
+    //                 clearTimeout(timeoutId);
+    //                 observer.disconnect();
+    
+    //                 resolve(measurableElement);
+    //             }
+    //         });
+    
+    //         observer.observe(figureElement, {
+    //             childList: true,
+    //             subtree: true
+    //         });
+    
+    //         const timeoutId = setTimeout(() => {
+    //             observer.disconnect();
+    
+    //             reject(
+    //                 new Error(
+    //                     `Timed out waiting for measurable content inside #${figureElement.id}`
+    //                 )
+    //             );
+    //         }, timeoutMs);
+    //     });
+    // }
+    function waitForSingleMeasurableElement(
+        figureElement,
+        timeoutMs = 30000
+    ) {
+        const selector = [
+            '.main-svg',
+            'iframe',
+            'img',
+            '.code_display_window'
+        ].join(', ');
+    
+        return new Promise((resolve, reject) => {
+            const checkElement = () => {
+                const measurableElement =
+                    figureElement.querySelector(selector);
+    
+                if (!measurableElement) {
+                    return false;
+                }
+    
+                /*
+                 * Image must actually be loaded.
+                 */
+                if (measurableElement.matches('img')) {
+                    if (
+                        !measurableElement.complete ||
+                        measurableElement.naturalWidth === 0
+                    ) {
+                        return false;
+                    }
+                }
+    
+                /*
+                 * Plotly SVG must have dimensions.
+                 */
+                if (measurableElement.matches('.main-svg')) {
+                    const rect =
+                        measurableElement.getBoundingClientRect();
+    
+                    if (
+                        rect.width <= 0 ||
+                        rect.height <= 0
+                    ) {
+                        return false;
+                    }
+                }
+    
+                /*
+                 * Code window must contain something.
+                 */
+                if (
+                    measurableElement.matches(
+                        '.code_display_window'
+                    )
+                ) {
+                    if (
+                        measurableElement.children.length === 0 &&
+                        measurableElement.textContent.trim() === ''
+                    ) {
+                        return false;
+                    }
+                }
+    
+                return measurableElement;
+            };
+    
+    
+            const existingElement = checkElement();
+    
+            if (existingElement) {
+                resolve(existingElement);
+                return;
+            }
+    
+    
+            const observer = new MutationObserver(() => {
+                const measurableElement = checkElement();
+    
+                if (measurableElement) {
+                    clearTimeout(timeoutId);
+                    observer.disconnect();
+    
+                    resolve(measurableElement);
+                }
+            });
+    
+    
+            observer.observe(figureElement, {
+                childList: true,
+                subtree: true,
+                attributes: true
+            });
+    
+    
+            const timeoutId = setTimeout(() => {
+                observer.disconnect();
+    
+                reject(
+                    new Error(
+                        `Timed out waiting for measurable content inside #${figureElement.id}`
+                    )
+                );
+            }, timeoutMs);
+        });
+    }
+
+    async function waitForMeasurableElement(
+        figureElement,
+        timeoutMs = 30000
+    ) {
+        /*
+         * Find the tab pane containing this figure.
+         */
+        const tabPane =
+            figureElement.closest('.tab-pane');
+    
+        if (!tabPane) {
+            throw new Error(
+                `Could not find tab pane for #${figureElement.id}`
+            );
+        }
+    
+    
+        /*
+         * Get all figures in DOM order.
+         */
+        const figures =
+            Array.from(
+                tabPane.querySelectorAll('.figure')
+            );
+    
+    
+        /*
+         * Find our target's position.
+         */
+        const targetIndex =
+            figures.indexOf(figureElement);
+    
+        if (targetIndex === -1) {
+            throw new Error(
+                `Could not find #${figureElement.id} in its tab pane`
+            );
+        }
+    
+        const figuresToWaitFor =
+		figures.slice(
+			0,
+			targetIndex + 1
+		);
+
+        console.log(
+            'Target figure:',
+            figureElement.id
+        );
+
+        console.log(
+            'Figures before and including target:',
+            figuresToWaitFor.map(
+                (figure) => figure.id
+            )
+        );
+       
+        let targetMeasurableElement = null;
+    
+    
+        /*
+         * Wait for every preceding figure in order.
+         */
+        for (const currentFigure of figuresToWaitFor) {
+            console.log(
+                `Waiting for ${currentFigure.id}`
+            );
+    
+            const measurableElement =
+                await waitForSingleMeasurableElement(
+                    currentFigure,
+                    timeoutMs
+                );
+    
+            console.log(
+                `${currentFigure.id} loaded:`,
+                measurableElement
+            );
+    
+    
+            if (currentFigure === figureElement) {
+                targetMeasurableElement =
+                    measurableElement;
+            }
+        }
+    
+    
+        return targetMeasurableElement;
+    }
+
+    function waitForElementById(id, timeoutMs = 30000) {
+        return new Promise((resolve, reject) => {
+            // Element already exists.
+            const existingElement = document.getElementById(id);
+
+            if (existingElement) {
+                resolve(existingElement);
+                return;
+            }
+
+            const observer = new MutationObserver(() => {
+                const element = document.getElementById(id);
+
+                if (element) {
+                    clearTimeout(timeoutId);
+                    observer.disconnect();
+                    resolve(element);
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            const timeoutId = setTimeout(() => {
+                observer.disconnect();
+
+                reject(
+                    new Error(
+                        `Timed out waiting for element #${id}`
+                    )
+                );
+            }, timeoutMs);
+        });
+    }
+
+    function waitForElement(parentElement, selector, timeoutMs = 30000) {
+        return new Promise((resolve, reject) => {
+            // Check immediately.
+            const existingElement =
+                parentElement.querySelector(selector);
+    
+            if (existingElement) {
+                resolve(existingElement);
+                return;
+            }
+    
+            const observer = new MutationObserver(() => {
+                const element =
+                    parentElement.querySelector(selector);
+    
+                if (element) {
+                    clearTimeout(timeoutId);
+                    observer.disconnect();
+    
+                    resolve(element);
+                }
+            });
+    
+            observer.observe(parentElement, {
+                childList: true,
+                subtree: true
+            });
+    
+            const timeoutId = setTimeout(() => {
+                observer.disconnect();
+    
+                reject(
+                    new Error(
+                        `Timed out waiting for ${selector}`
+                    )
+                );
+            }, timeoutMs);
+        });
+    }
+
 
     const targetId = getTargetIdFromHash(raw);
     const targetId_lowercase = targetId.toLowerCase();
     const tabNumber = getTabFromHash(raw);
+    const targetTabButtonId = `${targetId}-${tabNumber}`;
+    const targetTabPaneId = `${targetId}-${tabNumber}-pane`;
+
+    const fragment = window.location.hash.substring(1); 
+    const [tabPath, fragmentQuery = ''] = fragment.split('?');
+    const fragmentParams = new URLSearchParams(fragmentQuery);
+    let figureId;
+    if (fragmentQuery != '') {
+        figureId = fragmentParams.get('figure');
+        console.log('figureId', figureId);
+    } else {
+        return null;
+    }
+
 
     if (!targetId) return;
 
     window.addEventListener("load", function () {
         (async () => {
+
             await waitForDomState();
 
             try {
@@ -2408,246 +2752,84 @@ function alertIfMissingModal() {
     
             if (!modalIds.includes(targetId_lowercase)) {
                 alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+            } 
+
+            if (figureId) {
+                try {
+
+
+                    const tabPane =
+                    await waitForElementById(targetTabPaneId);
+
+                    console.log('tabPane', tabPane);
+
+
+                    const figureElement =
+                        await waitForElement(
+                            tabPane,
+                            `#figure-${figureId}`
+                        );
+
+                    console.log('figureElement', figureElement);
+
+                    /*s
+                    * Wait until the figure actually contains its rendered content.
+                    */
+                    const measurableElement =
+                    await waitForMeasurableElement(
+                        figureElement
+                    );
+
+                    console.log(
+                    'measurableElement',
+                    measurableElement
+                    );
+
+                    /*
+                     * Give the browser two final layout frames after
+                     * the figure has been confirmed stable.
+                     */
+                    await new Promise((resolve) => {
+                        window.requestAnimationFrame(() => {
+                            window.requestAnimationFrame(
+                                resolve
+                            );
+                        });
+                    });
+            
+                    figureElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'nearest'
+                    });
+
+
+                    const figureSuffix =
+                    figureId
+                        ? `?figure=${encodeURIComponent(figureId)}`
+                        : '';
+
+                    const newHash =
+                        `#${targetId_lowercase}/${tabNumber}${figureSuffix}`;
+
+                    window.history.replaceState(
+                        null,
+                        '',
+                        `${window.location.pathname}${window.location.search}${newHash}`
+                    );
+
+
+                } catch (error) {
+                    console.error(
+                        'Could not scroll to shared figure:',
+                        error
+                    );
+                }
             }
-
-            initTabButtons();
         })();
-
-
     });
 }
 
-/**
- * Figure share-link handler
- *
- * Expected URL:
- * #tab-title/tab-id?figure=figure-4
- *
- * This code:
- * 1. Captures the figure ID immediately, before other code cleans the hash.
- * 2. Replaces the URL with the clean tab hash.
- * 3. Waits for the DOM and Bootstrap tab to load.
- * 4. Opens the requested tab.
- * 5. Scrolls to the requested figure.
- */
 
-let pendingFigureShareTarget = captureFigureShareTarget();
-
-/**
- * Read the tab and figure information from the current URL hash.
- *
- * @returns {Object|null}
- */
-function captureFigureShareTarget() {
-	const fragment = window.location.hash.substring(1);
-	if (!fragment || !fragment.includes('?')) {
-		return null;
-	}
-	const [tabPath, fragmentQuery = ''] = fragment.split('?');
-	const fragmentParams = new URLSearchParams(fragmentQuery);
-	const figureId = fragmentParams.get('figure');
-	if (!figureId) {
-		return null;
-	}
-
-	/*
-	 * Separate:
-	 *
-	 * paphanaumokuakea-shipwrecks-archaeological-resources-1/1
-	 *
-	 * Into:
-	 *
-	 * tabTitle = paphanaumokuakea-shipwrecks-archaeological-resources-1
-	 * tabId    = 1
-	 */
-	const lastSlashIndex = tabPath.lastIndexOf('/');
-
-	if (lastSlashIndex === -1) {
-		console.warn('Invalid share-link tab path:', tabPath);
-		return null;
-	}
-
-	const tabTitle = decodeURIComponent(
-		tabPath.substring(0, lastSlashIndex)
-	);
-
-	const tabId = decodeURIComponent(
-		tabPath.substring(lastSlashIndex + 1)
-	);
-
-	const target = {
-		tabTitle,
-		tabId,
-		figureId: decodeURIComponent(figureId),
-		cleanHash: `#${tabPath}`,
-	};
-
-	/*
-	 * Remove ?figure=figure-4 from the visible URL without reloading
-	 * the page or firing another hashchange event.
-	 *
-	 * The figure ID remains stored in pendingFigureShareTarget.
-	 */
-	window.history.replaceState(
-		null,
-		'',
-		`${window.location.pathname}${window.location.search}${target.cleanHash}`
-	);
-
-	return target;
-}
-
-/**
- * Wait until an element exists in the DOM.
- *
- * @param {string} elementId Element ID to locate.
- * @param {number} timeoutMs Maximum wait time.
- *
- * @returns {Promise<HTMLElement>}
- */
-function waitForElementById(elementId, timeoutMs = 10000) {
-	return new Promise((resolve, reject) => {
-		const existingElement = document.getElementById(elementId);
-
-		if (existingElement) {
-			resolve(existingElement);
-			return;
-		}
-
-		const observer = new MutationObserver(() => {
-			const element = document.getElementById(elementId);
-
-			if (!element) {
-				return;
-			}
-
-			observer.disconnect();
-			clearTimeout(timeoutId);
-			resolve(element);
-		});
-
-		observer.observe(document.documentElement, {
-			childList: true,
-			subtree: true,
-		});
-
-		const timeoutId = window.setTimeout(() => {
-			observer.disconnect();
-
-			reject(
-				new Error(
-					`Element with ID "${elementId}" was not found within ${timeoutMs}ms.`
-				)
-			);
-		}, timeoutMs);
-	});
-}
-
-/**
- * Scroll to the figure after its Bootstrap tab is visible.
- *
- * @param {Object} target Parsed share-link target.
- *
- * @returns {Promise<void>}
- */
-async function openSharedFigure(target) {
-	if (!target) {
-		return;
-	}
-
-	/*
-	 * Your button IDs appear to use this format:
-	 *
-	 * {tabTitle}-{tabId}
-	 *
-	 * Example:
-	 * paphanaumokuakea-shipwrecks-archaeological-resources-1-1
-	 */
-	const tabButtonId = `${target.tabTitle}-${target.tabId}`;
-
-	try {
-		const tabButton = await waitForElementById(tabButtonId);
-
-		let scrollCompleted = false;
-
-		const scrollToFigure = async () => {
-			if (scrollCompleted) {
-				return;
-			}
-
-			scrollCompleted = true;
-
-			try {
-				const figureElement = await waitForElementById(
-					target.figureId
-				);
-
-				/*
-				 * Wait two animation frames so Bootstrap can finish making
-				 * the tab pane visible and the browser can calculate layout.
-				 */
-				window.requestAnimationFrame(() => {
-					window.requestAnimationFrame(() => {
-						figureElement.scrollIntoView({
-							behavior: 'smooth',
-							block: 'start',
-						});
-					});
-				});
-			} catch (error) {
-				console.error(
-					'Shared figure could not be found:',
-					error
-				);
-			}
-		};
-
-		/*
-		 * If the correct tab is already active, Bootstrap will not emit
-		 * shown.bs.tab again, so scroll immediately.
-		 */
-		if (tabButton.classList.contains('active')) {
-			await scrollToFigure();
-			return;
-		}
-
-		/*
-		 * Otherwise, wait until Bootstrap confirms the tab is visible.
-		 */
-		tabButton.addEventListener(
-			'shown.bs.tab',
-			scrollToFigure,
-			{ once: true }
-		);
-
-		const tabInstance =
-			bootstrap.Tab.getOrCreateInstance(tabButton);
-
-		tabInstance.show();
-	} catch (error) {
-		console.error('Could not open shared figure:', error);
-	}
-}
-
-/**
- * Handle the initially entered browser URL.
- */
-document.addEventListener('DOMContentLoaded', () => {
-	openSharedFigure(pendingFigureShareTarget);
-});
-
-/**
- * Also support entering another share hash while the page is already open.
- */
-window.addEventListener('hashchange', () => {
-	const newTarget = captureFigureShareTarget();
-    console.log('newTarget', newTarget);
-	if (!newTarget) {
-		return;
-	}
-
-	pendingFigureShareTarget = newTarget;
-	openSharedFigure(newTarget);
-});
 
 

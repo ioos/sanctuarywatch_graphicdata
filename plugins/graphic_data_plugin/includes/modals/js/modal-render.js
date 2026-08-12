@@ -489,19 +489,19 @@ function trapFocus(modalElement) {
                 // Container for links
                 const modalLinkContainer = document.createElement("div");
                 modalLinkContainer.style.display = "flex";
-                // modalLinkContainer.style.justifyContent = "right";
+                modalLinkContainer.style.justifyContent = "center";
                 modalLinkContainer.style.gap = "12px";
                 modalLinkContainer.style.marginBottom = "1rem";
 
                 const number_of_figures_text = document.createElement('span');
                 if (total_published_figures === 1) {
-                    number_of_figures_text.textContent = `${total_published_figures} Figure Available`;
+                    number_of_figures_text.textContent = `${total_published_figures} Figure Below`;
                 } else {
-                    number_of_figures_text.textContent = `${total_published_figures} Figures Available`;
+                    number_of_figures_text.textContent = `${total_published_figures} Figures Below`;
 
                 }
                 number_of_figures_text.style.color = 'rgba(68, 68, 68, 0.65)';
-                number_of_figures_text.style.marginLeft = '.5%';
+                number_of_figures_text.style.marginLeft = '.2em';
                 number_of_figures_text.style.fontSize = "0.8em";
                 number_of_figures_text.style.color = "rgba(68, 68, 68, 0.45)";
                 modalLinkContainer.textContent = "";
@@ -562,7 +562,7 @@ function trapFocus(modalElement) {
 
                             const tabInfoResult = await render_tab_info(  tabContentElement,  tabContentContainer,  info_obj,  idx,  null,  tab_id,  tab_title);
                             await render_interactive_plots(tabContentElement, info_obj, null, tabInfoResult);
-                            initTabButtons();
+                            // initTabButtons();
                         })();
                     }
                 })();
