@@ -105,7 +105,7 @@ $graphic_data_instance = get_post_meta( $graphic_data_post_id, 'scene_location',
 		
 	  </ul>
 
-	  <div class="tab-content" id="myTabContent" style="margin-top: 2%; margin-left: 1%; margin-right: 1%">
+	  <div class="tab-content" id="myTabContent" style="margin-left: 1%; margin-right: 1%">
 
 	  </div>
 	  <!-- image stuff ends here -->

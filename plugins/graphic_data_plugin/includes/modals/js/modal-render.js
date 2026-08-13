@@ -487,26 +487,26 @@ function trapFocus(modalElement) {
                 }
 
                 // Container for links
-                const modalLinkContainer = document.createElement("div");
-                modalLinkContainer.style.display = "flex";
-                modalLinkContainer.style.justifyContent = "center";
-                modalLinkContainer.style.gap = "12px";
-                modalLinkContainer.style.marginBottom = "1rem";
+                // const modalLinkContainer = document.createElement("div");
+                // modalLinkContainer.style.display = "flex";
+                // modalLinkContainer.style.justifyContent = "center";
+                // modalLinkContainer.style.gap = "12px";
+                // modalLinkContainer.style.marginBottom = "1rem";
 
-                const number_of_figures_text = document.createElement('span');
-                if (total_published_figures === 1) {
-                    number_of_figures_text.textContent = `${total_published_figures} Figure Below`;
-                } else {
-                    number_of_figures_text.textContent = `${total_published_figures} Figures Below`;
+                // const number_of_figures_text = document.createElement('span');
+                // if (total_published_figures === 1) {
+                //     number_of_figures_text.textContent = `${total_published_figures} Figure Below`;
+                // } else {
+                //     number_of_figures_text.textContent = `${total_published_figures} Figures Below`;
 
-                }
-                number_of_figures_text.style.color = 'rgba(68, 68, 68, 0.65)';
-                number_of_figures_text.style.marginLeft = '.2em';
-                number_of_figures_text.style.fontSize = "0.8em";
-                number_of_figures_text.style.color = "rgba(68, 68, 68, 0.55)";
-                modalLinkContainer.textContent = "";
-                modalLinkContainer.append(number_of_figures_text);
-                tabContentElement.append(modalLinkContainer);
+                // }
+                // number_of_figures_text.style.color = 'rgba(68, 68, 68, 0.65)';
+                // number_of_figures_text.style.marginLeft = '.2em';
+                // number_of_figures_text.style.fontSize = "0.8em";
+                // number_of_figures_text.style.color = "rgba(68, 68, 68, 0.55)";
+                // modalLinkContainer.textContent = "";
+                // modalLinkContainer.append(number_of_figures_text);
+                // tabContentElement.append(modalLinkContainer);
 
             } else {
                 const element = document.getElementById(buttonID);
@@ -560,7 +560,7 @@ function trapFocus(modalElement) {
                             //await render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, null, tab_id, tab_title);
                             //await new Promise(resolve => setTimeout(resolve, 1000)); // Stagger each render
 
-                            const tabInfoResult = await render_tab_info(  tabContentElement,  tabContentContainer,  info_obj,  idx,  null,  tab_id,  tab_title);
+                            const tabInfoResult = await render_tab_info(  tabContentElement,  tabContentContainer,  info_obj,  idx,  null,  tab_id,  tab_title, total_published_figures);
                             await render_interactive_plots(tabContentElement, info_obj, null, tabInfoResult);
                             // initTabButtons();
                         })();

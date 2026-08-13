@@ -516,7 +516,7 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
  * Usage:
  * This function is called for each tab, populating one or more figures (and other corresponding info)
  */
-export async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, isBlock, tab_id, tab_title){
+export async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, isBlock, tab_id, tab_title, total_published_figures){
 
     // console.log('info_obj', info_obj);
     // console.log('tabContentElement', tabContentElement);
@@ -582,7 +582,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         const targetId = `figure-${idx + 1}`;
 
         const figureIndex = document.createElement('div');
-        figureIndex.textContent = `Figure ${idx + 1}`;
+        figureIndex.textContent = `Figure ${idx + 1} of ${total_published_figures}`;
         figureIndex.style.color = 'rgba(68, 68, 68, 0.55)';
         figureIndex.style.textDecoration = 'none';
         figureIndex.style.fontSize = '0.8em';
@@ -1202,6 +1202,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     // Create the details element
     const details = document.createElement('details');
     const summary = document.createElement('summary');
+    summary.style.fontWeight = '500';
     if (is_mobile()) {
         summary.style.marginBottom = '5%';
     } else {
