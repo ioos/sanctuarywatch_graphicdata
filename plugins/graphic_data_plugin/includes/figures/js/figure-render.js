@@ -3,6 +3,7 @@ import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { producePlotlyMap } from '@graphic-data/plotly-map';
 import { produceTabulatorTable } from '@graphic-data/tabulator-table';
 import { loadPlotlyScript, waitForElementById } from '@graphic-data/plotly-utility';
+import { is_mobile } from '@graphic-data/scene-shared';
 
 
 function waitForPlotly() {
@@ -582,7 +583,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
 
         const figureIndex = document.createElement('div');
         figureIndex.textContent = `Figure ${idx + 1}`;
-        figureIndex.style.color = 'rgba(68, 68, 68, 0.45)';
+        figureIndex.style.color = 'rgba(68, 68, 68, 0.55)';
         figureIndex.style.textDecoration = 'none';
         figureIndex.style.fontSize = '0.8em';
         figureIndex.style.marginRight = '2em';
@@ -615,7 +616,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         const goToTopLink = document.createElement("a");
         goToTopLink.href = "#";
         goToTopLink.textContent = "↑ Return";
-        goToTopLink.style.color = "rgba(68, 68, 68, 0.45)";
+        goToTopLink.style.color = "rgba(68, 68, 68, 0.55)";
         goToTopLink.style.textDecoration = "none";
         goToTopLink.style.fontSize = "0.8em";
         goToTopLink.style.marginRight = "0.8em";
@@ -633,8 +634,8 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         const closeLink = document.createElement('a');
 
         closeLink.href = '#';
-        closeLink.textContent = '× Close Window';
-        closeLink.style.color = 'rgba(68, 68, 68, 0.45)';
+        closeLink.textContent = '× Close';
+        closeLink.style.color = 'rgba(68, 68, 68, 0.55)';
         closeLink.style.textDecoration = 'none';
         closeLink.style.fontSize = '0.8em';
         closeLink.style.marginRight = '0.8em';
@@ -658,7 +659,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
 
         embedLink.href = '#';
         embedLink.textContent = '</> Embed Figure & Context';
-        embedLink.style.color = 'rgba(68, 68, 68, 0.45)';
+        embedLink.style.color = 'rgba(68, 68, 68, 0.55)';
         embedLink.style.textDecoration = 'none';
         embedLink.style.fontSize = '0.8em';
         embedLink.style.marginRight = '0.8em';
@@ -712,7 +713,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
 
         embedLinkFigureOnly.href = '#';
         embedLinkFigureOnly.textContent = '</> Embed Figure Only';
-        embedLinkFigureOnly.style.color = 'rgba(68, 68, 68, 0.45)';
+        embedLinkFigureOnly.style.color = 'rgba(68, 68, 68, 0.55)';
         embedLinkFigureOnly.style.textDecoration = 'none';
         embedLinkFigureOnly.style.fontSize = '0.8em';
         embedLinkFigureOnly.style.marginRight = '0.8em';
@@ -767,7 +768,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         // Add "Share" link
         const shareLink = document.createElement("a");
         shareLink.href = "#";
-        shareLink.style.color = "rgba(68, 68, 68, 0.45)";
+        shareLink.style.color = "rgba(68, 68, 68, 0.55)";
         shareLink.style.textDecoration = "none";
         shareLink.style.fontSize = "0.8em";
         shareLink.style.display = "inline-flex";
@@ -829,7 +830,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         const shareDropdownButton = document.createElement('summary');
 
         shareDropdownButton.textContent = 'Share';
-        shareDropdownButton.style.color = 'rgba(68, 68, 68, 0.45)';
+        shareDropdownButton.style.color = 'rgba(68, 68, 68, 0.55)';
         shareDropdownButton.style.cursor = 'pointer';
         shareDropdownButton.style.userSelect = 'none';
         shareDropdownButton.style.whiteSpace = 'nowrap';
@@ -935,11 +936,30 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     containerDiv.style.background = '#e3e3e354';
     containerDiv.style.width = '100%';
     containerDiv.style.display = 'table';
-    containerDiv.style.fontSize = '120%';
+    if (is_mobile()) {
+        containerDiv.style.fontSize = '1rem';
+
+        // Prevent the container itself from overflowing.
+        containerDiv.style.width = '100%';
+        containerDiv.style.maxWidth = '100%';
+        containerDiv.style.overflow = 'hidden';
+
+        // Allow both the left and right sides to shrink and wrap.
+        Array.from(containerDiv.children).forEach((child) => {
+            child.style.minWidth = '0';
+            child.style.maxWidth = '100%';
+
+            child.style.whiteSpace = 'normal';
+            child.style.overflowWrap = 'anywhere';
+            child.style.wordBreak = 'break-word';
+        });
+    } else {
+        containerDiv.style.fontSize = '1.25rem';
+    }
     containerDiv.style.padding = '10px';
-    containerDiv.style.marginBottom = '15px';
     containerDiv.style.marginTop = '15px';
-    containerDiv.style.margin = '0 auto'; 
+    containerDiv.style.marginBottom = '40px';
+    // containerDiv.style.margin = '0 auto'; 
     containerDiv.style.borderRadius = '6px 6px 6px 6px'; 
     containerDiv.style.borderWidth = '1px'; 
     containerDiv.style.borderColor = 'lightgrey'; 
@@ -1174,7 +1194,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     let tempShortCaption = info_obj['shortCaption'];
     tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     caption.innerHTML = tempShortCaption;
-    caption.style.marginTop = '10px';
+    caption.style.marginTop = '20px';
     figureDiv.appendChild(caption);
     tabContentElement.appendChild(figureDiv);
 
@@ -1182,6 +1202,11 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     // Create the details element
     const details = document.createElement('details');
     const summary = document.createElement('summary');
+    if (is_mobile()) {
+        summary.style.marginBottom = '5%';
+    } else {
+        summary.style.marginBottom = '2%';
+    }
     summary.textContent = 'More Details';
 
     let longCaption = document.createElement("p");

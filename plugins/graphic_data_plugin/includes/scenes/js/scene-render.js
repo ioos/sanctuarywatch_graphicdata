@@ -2393,55 +2393,6 @@ function handleSharedModalAndFigureNavigation()  {
         targetLink.click();
     }
 
-    // function waitForMeasurableElement(
-    //     figureElement,
-    //     timeoutMs = 30000
-    // ) {
-    //     const selector = [
-    //         '.main-svg',
-    //         'iframe',
-    //         'img',
-    //         '.code_display_window'
-    //     ].join(', ');
-    
-    //     return new Promise((resolve, reject) => {
-    //         // Check immediately.
-    //         const existingElement =
-    //             figureElement.querySelector(selector);
-    
-    //         if (existingElement) {
-    //             resolve(existingElement);
-    //             return;
-    //         }
-    
-    //         const observer = new MutationObserver(() => {
-    //             const measurableElement =
-    //                 figureElement.querySelector(selector);
-    
-    //             if (measurableElement) {
-    //                 clearTimeout(timeoutId);
-    //                 observer.disconnect();
-    
-    //                 resolve(measurableElement);
-    //             }
-    //         });
-    
-    //         observer.observe(figureElement, {
-    //             childList: true,
-    //             subtree: true
-    //         });
-    
-    //         const timeoutId = setTimeout(() => {
-    //             observer.disconnect();
-    
-    //             reject(
-    //                 new Error(
-    //                     `Timed out waiting for measurable content inside #${figureElement.id}`
-    //                 )
-    //             );
-    //         }, timeoutMs);
-    //     });
-    // }
     function waitForSingleMeasurableElement(
         figureElement,
         timeoutMs = 30000
@@ -2592,17 +2543,17 @@ function handleSharedModalAndFigureNavigation()  {
 			targetIndex + 1
 		);
 
-        console.log(
-            'Target figure:',
-            figureElement.id
-        );
+        // console.log(
+        //     'Target figure:',
+        //     figureElement.id
+        // );
 
-        console.log(
-            'Figures before and including target:',
-            figuresToWaitFor.map(
-                (figure) => figure.id
-            )
-        );
+        // console.log(
+        //     'Figures before and including target:',
+        //     figuresToWaitFor.map(
+        //         (figure) => figure.id
+        //     )
+        // );
        
         let targetMeasurableElement = null;
     
@@ -2611,9 +2562,9 @@ function handleSharedModalAndFigureNavigation()  {
          * Wait for every preceding figure in order.
          */
         for (const currentFigure of figuresToWaitFor) {
-            console.log(
-                `Waiting for ${currentFigure.id}`
-            );
+            // console.log(
+            //     `Waiting for ${currentFigure.id}`
+            // );
     
             const measurableElement =
                 await waitForSingleMeasurableElement(
@@ -2621,10 +2572,10 @@ function handleSharedModalAndFigureNavigation()  {
                     timeoutMs
                 );
     
-            console.log(
-                `${currentFigure.id} loaded:`,
-                measurableElement
-            );
+            // console.log(
+            //     `${currentFigure.id} loaded:`,
+            //     measurableElement
+            // );
     
     
             if (currentFigure === figureElement) {
@@ -2727,7 +2678,7 @@ function handleSharedModalAndFigureNavigation()  {
     let figureId;
     if (fragmentQuery != '') {
         figureId = fragmentParams.get('figure');
-        console.log('figureId', figureId);
+        // console.log('figureId', figureId);
     } else {
         return null;
     }
@@ -2738,21 +2689,23 @@ function handleSharedModalAndFigureNavigation()  {
     window.addEventListener("load", function () {
         (async () => {
 
-            await waitForDomState();
+            if (!is_mobile()) {
+                await waitForDomState();
 
-            try {
-                activateCaseLink(targetId, targetId_lowercase, tabNumber);
-            } catch {}
+                try {
+                    activateCaseLink(targetId, targetId_lowercase, tabNumber);
+                } catch {}
 
-            try {
-                expandAccordionForLink(targetId_lowercase);
-            } catch {}
+                try {
+                    expandAccordionForLink(targetId_lowercase);
+                } catch {}
 
-            const modalIds = collectModalIds();
-    
-            if (!modalIds.includes(targetId_lowercase)) {
-                alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
-            } 
+                const modalIds = collectModalIds();
+        
+                if (!modalIds.includes(targetId_lowercase)) {
+                    alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+                } 
+            }
 
             if (figureId) {
                 try {
@@ -2761,7 +2714,7 @@ function handleSharedModalAndFigureNavigation()  {
                     const tabPane =
                     await waitForElementById(targetTabPaneId);
 
-                    console.log('tabPane', tabPane);
+                    //console.log('tabPane', tabPane);
 
 
                     const figureElement =
@@ -2770,7 +2723,7 @@ function handleSharedModalAndFigureNavigation()  {
                             `#figure-${figureId}`
                         );
 
-                    console.log('figureElement', figureElement);
+                    // console.log('figureElement', figureElement);
 
                     /*s
                     * Wait until the figure actually contains its rendered content.
@@ -2780,10 +2733,10 @@ function handleSharedModalAndFigureNavigation()  {
                         figureElement
                     );
 
-                    console.log(
-                    'measurableElement',
-                    measurableElement
-                    );
+                    //console.log(
+                    // 'measurableElement',
+                    // measurableElement
+                    // );
 
                     /*
                      * Give the browser two final layout frames after
