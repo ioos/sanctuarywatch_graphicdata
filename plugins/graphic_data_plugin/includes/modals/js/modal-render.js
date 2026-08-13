@@ -503,7 +503,7 @@ function trapFocus(modalElement) {
                 number_of_figures_text.style.color = 'rgba(68, 68, 68, 0.65)';
                 number_of_figures_text.style.marginLeft = '.2em';
                 number_of_figures_text.style.fontSize = "0.8em";
-                number_of_figures_text.style.color = "rgba(68, 68, 68, 0.45)";
+                number_of_figures_text.style.color = "rgba(68, 68, 68, 0.55)";
                 modalLinkContainer.textContent = "";
                 modalLinkContainer.append(number_of_figures_text);
                 tabContentElement.append(modalLinkContainer);

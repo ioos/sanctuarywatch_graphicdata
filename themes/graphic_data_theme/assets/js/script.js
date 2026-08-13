@@ -282,12 +282,17 @@ async function handleHashNavigation() {
 		let modName;
 		if (is_mobile()) {
 			let modModal = modalName.replace(/_/g, ' ');
-			modName = child_ids_helper[modModal] + '-container';
+			const modModalCapitalized = modModal.replace(
+				/\b\w/g,
+				char => char.toUpperCase()
+			);
+			modName = modModalCapitalized + '-container';
 		} else {
 			modName = modalName;
 		}
 
 		let modalButton = await waitForElement(`#${modName}`);
+
 
 		// Sometimes a <g tag is sent insteast of an <a tag. This break the way the modal loads. This is a good work around
 		// if <g then change method of waiting for click, if not then proceed as normal
