@@ -937,7 +937,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     containerDiv.style.width = '100%';
     containerDiv.style.display = 'table';
     if (is_mobile()) {
-        containerDiv.style.fontSize = '1rem';
+        containerDiv.style.fontSize = '.8rem';
 
         // Prevent the container itself from overflowing.
         containerDiv.style.width = '100%';
@@ -954,7 +954,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             child.style.wordBreak = 'break-word';
         });
     } else {
-        containerDiv.style.fontSize = '1.25rem';
+        containerDiv.style.fontSize = '1rem';
     }
     containerDiv.style.padding = '10px';
     containerDiv.style.marginTop = '15px';
