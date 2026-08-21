@@ -1027,9 +1027,34 @@ class Graphic_Data_Figure {
 				update_post_meta( $post_id, 'uploaded_path_json', $destination );
 				update_post_meta( $post_id, 'uploaded_file', $file_name );
 			}
+			// if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'html' ) {
+			// 	update_post_meta( $post_id, 'uploaded_path_html', $destination );
+			// 	update_post_meta( $post_id, 'uploaded_html_file', $file_name );
+			// }
 			if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'html' ) {
-				update_post_meta( $post_id, 'uploaded_path_html', $destination );
-				update_post_meta( $post_id, 'uploaded_html_file', $file_name );
+
+				$updated_file_name = $file_name;
+
+				if ( strpos( $file_name, '_figure_only.html' ) !== false ) {
+					$updated_file_name = str_replace(
+						'_figure_only.html',
+						'.html',
+						$file_name
+					);
+				}
+
+				$updated_destination = $destination;
+
+				if ( strpos( $destination, '_figure_only.html' ) !== false ) {
+				$updated_destination = str_replace(
+					'_figure_only.html',
+					'.html',
+					$destination
+				);
+			}
+
+				update_post_meta( $post_id, 'uploaded_path_html', $updated_destination );
+				update_post_meta( $post_id, 'uploaded_html_file', $updated_file_name );
 			}
 			// Send a success response with the file path.
 			wp_send_json_success(

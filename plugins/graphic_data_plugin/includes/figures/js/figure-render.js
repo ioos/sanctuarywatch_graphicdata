@@ -899,7 +899,6 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         shareDropdownMenu.appendChild(embedLink);
         shareDropdownMenu.appendChild(embedLinkFigureOnly);
         shareDropdownMenu.appendChild(shareLink);
-
         shareDropdown.appendChild(shareDropdownButton);
         shareDropdown.appendChild(shareDropdownMenu);
 
