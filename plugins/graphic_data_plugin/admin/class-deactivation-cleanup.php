@@ -1,26 +1,41 @@
 <?php
 /**
- * Handles the optional deletion of all Graphic Data plugin data on deactivation.
+ * Handles the optional deletion of all Graphic Data plugin data on uninstall.
  *
  * @package Graphic_Data_Plugin
  */
 
 /**
- * Prompts for and performs a full data wipe when the plugin is deactivated.
+ * Asks, on deactivation, whether all Graphic Data plugin data should be
+ * permanently deleted if the plugin is later deleted, and performs that wipe
+ * from uninstall.php if the answer was yes.
  *
- * The confirmation and the deletion both happen on the Plugins screen, before
- * the deactivate link is followed. A deactivated plugin's PHP is no longer
- * loaded on subsequent requests, so any admin_notices/admin-post flow tried
- * after deactivation would never run.
+ * The question is asked on the Plugins screen, before the deactivate link is
+ * followed, because a deactivated plugin's PHP is no longer loaded on
+ * subsequent requests — including the request where the "Delete" link is
+ * clicked, since WordPress only shows that link once a plugin is inactive.
+ * That means this plugin cannot interactively ask anything at the actual
+ * moment of deletion, so deactivation is used as a stand-in: the answer is
+ * stored in the graphic_data_delete_on_uninstall option and read back by
+ * uninstall.php when the plugin is eventually removed. Answering the
+ * question again on a later deactivation overwrites the stored answer.
  *
  * @see Graphic_Data_Plugin::define_admin_hooks()
+ * @see uninstall.php
  */
 class Graphic_Data_Deactivation_Cleanup {
 
 	/**
-	 * Nonce action used to authorize the deletion AJAX request.
+	 * Nonce action used to authorize the preference-saving AJAX request.
 	 */
-	const NONCE_ACTION = 'graphic_data_delete_all_data';
+	const NONCE_ACTION = 'graphic_data_set_uninstall_preference';
+
+	/**
+	 * Option storing whether uninstall.php should wipe all plugin data.
+	 * Absent (falsy) by default, so deleting the plugin leaves its data in
+	 * place unless the admin opted in on a prior deactivation.
+	 */
+	const PREFERENCE_OPTION = 'graphic_data_delete_on_uninstall';
 
 	/**
 	 * Enqueue the deactivation confirmation script on the Plugins screen.
@@ -45,20 +60,20 @@ class Graphic_Data_Deactivation_Cleanup {
 			'graphic-data-deactivation-cleanup',
 			'graphicDataDeactivation',
 			array(
-				'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-				'nonce'       => wp_create_nonce( self::NONCE_ACTION ),
-				'pluginFile'  => plugin_basename( GRAPHIC_DATA_PLUGIN_DIR . 'graphic_data_plugin.php' ),
-				/* translators: confirmation shown when deactivating the plugin. */
-				'confirmText'      => 'The Graphic Data plugin is being deactivated. Do you also want to permanently delete all data and images associated with the plugin? This cannot be undone.',
-				/* translators: final "are you sure" confirmation shown before permanently deleting all plugin data. */
-				'confirmAgainText' => 'Are you sure? All Graphic Data plugin data and images will be permanently deleted. This cannot be undone.',
-				'errorText'        => 'Something went wrong while deleting Graphic Data plugin data. The plugin has still been deactivated.',
+				'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+				'nonce'      => wp_create_nonce( self::NONCE_ACTION ),
+				'pluginFile' => plugin_basename( GRAPHIC_DATA_PLUGIN_DIR . 'graphic_data_plugin.php' ),
+				/* translators: asked when deactivating the plugin, to decide the data-wipe behavior of a later deletion. */
+				'confirmText' => 'The Graphic Data plugin is being deactivated. If this plugin is deleted later, should all of its data and images be permanently deleted too? Choose OK to delete the data on a future deletion, or Cancel to keep it.',
+				/* translators: shown if saving that preference fails; deactivation still proceeds either way. */
+				'errorText'   => 'Something went wrong while saving your Graphic Data deletion preference. The plugin has still been deactivated, and its data will be kept if it is deleted.',
 			)
 		);
 	}
 
 	/**
-	 * AJAX handler that deletes all data associated with the plugin.
+	 * AJAX handler that stores whether the plugin's data should be wiped the
+	 * next time it is deleted.
 	 *
 	 * Runs while the plugin is still active (triggered before the deactivate
 	 * link is followed), so it must be safe to call independently of
@@ -66,20 +81,34 @@ class Graphic_Data_Deactivation_Cleanup {
 	 *
 	 * @return void
 	 */
-	public function ajax_delete_all_data() {
+	public function ajax_set_uninstall_preference() {
 		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
 		if ( ! current_user_can( 'activate_plugins' ) ) {
 			wp_send_json_error( 'Insufficient permissions.', 403 );
 		}
 
+		$delete_on_uninstall = ! empty( $_POST['delete_on_uninstall'] );
+		update_option( self::PREFERENCE_OPTION, $delete_on_uninstall );
+
+		wp_send_json_success();
+	}
+
+	/**
+	 * Delete all data and images associated with the plugin.
+	 *
+	 * Called from uninstall.php once it has confirmed the admin opted in via
+	 * the PREFERENCE_OPTION; performs no capability or nonce checks of its
+	 * own.
+	 *
+	 * @return void
+	 */
+	public function delete_all_data() {
 		$this->delete_data_directory();
 		$this->delete_custom_post_type_posts();
 		$this->delete_instance_type_taxonomy();
 		delete_option( 'graphic_data_settings' );
 		$this->delete_instance_associated_images();
-
-		wp_send_json_success();
 	}
 
 	/**

@@ -2,22 +2,15 @@
 /**
  * Fired when the plugin is uninstalled.
  *
- * When populating this file, consider the following flow
- * of control:
+ * Deletes all data and images associated with the plugin, but only if the
+ * site admin opted in via the deactivation-time prompt (WordPress only shows
+ * the "Delete" link for an already-inactive plugin, and never loads an
+ * inactive plugin's PHP, so this code cannot ask anything interactively at
+ * the actual moment of deletion). By default the plugin's data is left in
+ * place so it survives a reinstall.
  *
- * - This method should be static
- * - Check if the $_REQUEST content actually is the plugin name
- * - Run an admin referrer check to make sure it goes through authentication
- * - Verify the output of $_GET makes sense
- * - Repeat with other user roles. Best directly by using the links/query string parameters.
- * - Repeat things for multisite. Once for a single site in the network, once sitewide.
- *
- * This file may be updated more in future version of the Boilerplate; however, this is the
- * general skeleton and outline for how the file should work.
- *
- * For more information, see the following discussion:
- * https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecomment-28541913
- *
+ * @see Graphic_Data_Deactivation_Cleanup::ajax_set_uninstall_preference()
+ * @see Graphic_Data_Deactivation_Cleanup::delete_all_data()
  * @link       https://github.com/ioos/sanctuarywatch_graphicdata
  * @since      1.0.0
  * @package    Graphic_Data_Plugin
@@ -27,3 +20,19 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+$graphic_data_delete_on_uninstall = get_option( 'graphic_data_delete_on_uninstall' );
+delete_option( 'graphic_data_delete_on_uninstall' );
+
+if ( empty( $graphic_data_delete_on_uninstall ) ) {
+	return;
+}
+
+if ( ! defined( 'GRAPHIC_DATA_DATA_DIR' ) ) {
+	define( 'GRAPHIC_DATA_DATA_DIR', WP_CONTENT_DIR . '/data' );
+}
+
+require_once __DIR__ . '/admin/class-deactivation-cleanup.php';
+
+$graphic_data_uninstall_cleanup = new Graphic_Data_Deactivation_Cleanup();
+$graphic_data_uninstall_cleanup->delete_all_data();

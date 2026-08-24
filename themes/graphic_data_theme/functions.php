@@ -368,21 +368,30 @@ function graphic_data_set_theme_default_site_icon() {
 add_action( 'after_setup_theme', 'graphic_data_set_theme_default_site_icon' );
 
 
+// is_plugin_active() lives in wp-admin/includes/plugin.php, which isn't loaded on the front end.
+if ( ! function_exists( 'is_plugin_active' ) ) {
+	include_once ABSPATH . 'wp-admin/includes/plugin.php';
+}
+
 // Include the GitHub Updater class if not already included by the plugin.
 if ( is_plugin_active( 'graphic_data_plugin/graphic_data_plugin.php' ) ) {
+	$graphic_data_github_updater_class_file = get_template_directory() . '/admin/class-github-updater.php';
+
 	// Include the GitHub Updater class if not already included by the plugin.
-	if ( ! class_exists( 'Graphic_Data_GitHub_Updater' ) ) {
-		require_once get_template_directory() . '/admin/class-github-updater.php';
+	if ( ! class_exists( 'Graphic_Data_GitHub_Updater' ) && file_exists( $graphic_data_github_updater_class_file ) ) {
+		require_once $graphic_data_github_updater_class_file;
 	}
 
-	// Initialize the theme updater (only if not in development environment).
-	new Graphic_Data_GitHub_Updater(
-		get_template_directory() . '/style.css',
-		'ioos', // GitHub username.
-		'sanctuarywatch_graphicdata', // Repository name.
-		true, // This is a theme, not a plugin.
-		'themes/graphic_data_theme' // Subdirectory path in the repository.
-	);
+	// Initialize the theme updater (only if the class is available).
+	if ( class_exists( 'Graphic_Data_GitHub_Updater' ) ) {
+		new Graphic_Data_GitHub_Updater(
+			get_template_directory() . '/style.css',
+			'ioos', // GitHub username.
+			'sanctuarywatch_graphicdata', // Repository name.
+			true, // This is a theme, not a plugin.
+			'themes/graphic_data_theme' // Subdirectory path in the repository.
+		);
+	}
 }
 
 /**
@@ -433,44 +442,38 @@ function graphic_data_post_query( $icon_name ) {
  */
 function graphic_data_modal_helper( $child_post_id, $child_ids, $child_id, $idx = 0 ) {
 	// Get icon_type to check if modal.
-	$icon_type = get_post_meta( $child_post_id, 'icon_function' );
-	$icon_title = get_post_meta( $child_post_id, 'post_title' );
+	$icon_type = get_post_meta( $child_post_id, 'icon_function', true ) ?? '';
+	$icon_title = get_post_meta( $child_post_id, 'post_title', true ) ?? '';
 	$modal = false;
 	$external_url = '';
-	$external_scene_id = '';
-	$is_modal = get_post_meta( $child_post_id, 'post_type' ); // [0]; error here?
-	$icon_order = get_post_meta( $child_post_id, 'modal_icon_order' );
+	$is_modal = get_post_meta( $child_post_id, 'post_type', true ) ?? '';
+	$icon_order = get_post_meta( $child_post_id, 'modal_icon_order', true ) ?? '';
 	// Create array/map from child id to different attributes (ie hyperlinks).
 	if ( $is_modal ) {
-		if ( 'Modal' === $icon_type[0] ) {
+		if ( 'Modal' === $icon_type ) {
 			$modal = true;
-		} elseif ( 'External URL' === $icon_type[0] ) {
-			$external_url = get_post_meta( $child_post_id, 'icon_external_url' )[0];
-		} elseif ( 'Scene' === $icon_type[0] ) {
-			$external_scene_id = get_post_meta( $child_post_id, 'icon_scene_out' );
-			$external_url = get_permalink( $external_scene_id[0] );
-
+		} elseif ( 'External URL' === $icon_type ) {
+			$external_url = get_post_meta( $child_post_id, 'icon_external_url', true ) ?? '';
+		} elseif ( 'Scene' === $icon_type ) {
+			$external_scene_id = get_post_meta( $child_post_id, 'icon_scene_out', true ) ?? '';
+			$external_url = $external_scene_id ? ( get_permalink( $external_scene_id ) ?: '' ) : '';
 		}
-		$scene_id = get_post_meta( $child_post_id, 'modal_scene' );
-		$scene_post = get_post( $scene_id[0] )->ID;
 
-		$section_name = isset( get_post_meta( $child_post_id, 'icon_toc_section' )[0] ) ? get_post_meta( $child_post_id, 'icon_toc_section' )[0] : '';
+		$scene_id = get_post_meta( $child_post_id, 'modal_scene', true ) ?? '';
+		$scene_post_obj = $scene_id ? get_post( $scene_id ) : null;
+		$scene_post = $scene_post_obj ? $scene_post_obj->ID : 0;
+
+		$section_name = get_post_meta( $child_post_id, 'icon_toc_section', true ) ?? '';
 		$child = $child_id;
 
 		if ( array_key_exists( $child_id, $child_ids ) ) {
 			$child = ( $child_id . $idx );
 		}
 
-		if ( count( $icon_order ) == 0 ) {
-			$modal_icon_order = 1;
-		} elseif ( null == $icon_order[0] ) {
-			$modal_icon_order = 1;
-		} else {
-			$modal_icon_order = (int) $icon_order[0];
-		}
+		$modal_icon_order = is_numeric( $icon_order ) ? (int) $icon_order : 1;
 
 		$child_ids[ $child ] = array(
-			'title' => $icon_title[0],
+			'title' => $icon_title,
 			'modal_id' => $child_post_id,
 			'external_url' => $external_url,
 			'modal' => $modal,
@@ -516,9 +519,9 @@ function graphic_data_get_modal_array( $svg_url ) {
 
         $svg_content = file_get_contents( $full_path ); // phpcs:ignore
 
-		// If the SVG content could not be loaded, terminate with an error message.
+		// If the SVG content could not be loaded, log it and let the caller render without icons.
 		if ( ! $svg_content ) {
-			die( 'Fail to load SVG file' );
+			error_log( "graphic_data_get_modal_array: failed to load SVG file at {$full_path}" ); // phpcs:ignore
 			return null;
 		}
 		// Load the SVG content into a DOMDocument.
@@ -533,9 +536,9 @@ function graphic_data_get_modal_array( $svg_url ) {
 		// Find the element with ID "icons".
 		$icons_element = $xpath->query( '//*[@id="icons"]' )->item( 0 );
 
-		// If the element with ID "icons" is not found, terminate with an error message.
+		// If the element with ID "icons" is not found, log it and let the caller render without icons.
 		if ( null === $icons_element ) {
-			die( 'Element with ID "icons" not found' );
+			error_log( "graphic_data_get_modal_array: element with ID \"icons\" not found in SVG at {$full_path}" ); // phpcs:ignore
 			return null;
 		}
 
@@ -698,85 +701,89 @@ function graphic_data_enqueue_scripts() {
 		wp_enqueue_script_module( '@graphic-data/theme-index' );
 	}
 
-	// Enqueue the scene render script.
-	wp_register_script_module(
-		'@graphic-data/scene-render',
-		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js',
-		array( '@graphic-data/scene-shared', '@graphic-data/modal-render' ),
-		GRAPHIC_DATA_PLUGIN_VERSION
-	);
-	wp_enqueue_script_module( '@graphic-data/scene-render' );
+	// If this variable doesn't exist then the Graphic Data plugin is not installed.
+	// Fail gracefully, by just not loading files from the plugin.
+	if ( defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) && GRAPHIC_DATA_PLUGIN_VERSION ){
+		// Enqueue the scene render script.
+		wp_register_script_module(
+			'@graphic-data/scene-render',
+			content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-render.js',
+			array( '@graphic-data/scene-shared', '@graphic-data/modal-render' ),
+			GRAPHIC_DATA_PLUGIN_VERSION
+		);
+		wp_enqueue_script_module( '@graphic-data/scene-render' );
 
-	// Enqueue the modal render module.
-	wp_register_script_module(
-		'@graphic-data/modal-render',
-		content_url() . '/plugins/graphic_data_plugin/includes/modals/js/modal-render.js',
-		array( '@graphic-data/figure-render' ),
-		GRAPHIC_DATA_PLUGIN_VERSION
-	);
-	wp_enqueue_script_module( '@graphic-data/modal-render' );
+		// Enqueue the modal render module.
+		wp_register_script_module(
+			'@graphic-data/modal-render',
+			content_url() . '/plugins/graphic_data_plugin/includes/modals/js/modal-render.js',
+			array( '@graphic-data/figure-render' ),
+			GRAPHIC_DATA_PLUGIN_VERSION
+		);
+		wp_enqueue_script_module( '@graphic-data/modal-render' );
 
-	// Enqueue the figure render module.
-	wp_register_script_module(
-		'@graphic-data/figure-render',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/figure-render.js',
-		array(
+		// Enqueue the figure render module.
+		wp_register_script_module(
+			'@graphic-data/figure-render',
+			content_url() . '/plugins/graphic_data_plugin/includes/figures/js/figure-render.js',
+			array(
+				'@graphic-data/plotly-timeseries-line',
+				'@graphic-data/plotly-bar',
+				'@graphic-data/plotly-map',
+				'@graphic-data/tabulator-table',
+			),
+			GRAPHIC_DATA_PLUGIN_VERSION
+		);
+		wp_enqueue_script_module( '@graphic-data/figure-render' );
+
+		// register the plotly utility module used for interactive figures.
+		wp_register_script_module(
+			'@graphic-data/plotly-utility',
+			content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-utility.js',
+			array(),
+			graphic_data_get_theme_asset_version()
+		);
+
+		// register the plotly line chart module used in interactive figures.
+		wp_register_script_module(
 			'@graphic-data/plotly-timeseries-line',
+			content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-line.js',
+			array( '@graphic-data/plotly-utility' ),
+			graphic_data_get_theme_asset_version()
+		);
+
+		// register the scene shared module that contains utility functions and values needed to render scenes.
+		wp_register_script_module(
+			'@graphic-data/scene-shared',
+			content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-shared.js',
+			array(),
+			GRAPHIC_DATA_PLUGIN_VERSION
+		);
+
+		// register the plotly bar chart module used in interactive figures.
+		wp_register_script_module(
 			'@graphic-data/plotly-bar',
-			'@graphic-data/plotly-map',
+			content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-bar.js',
+			array( '@graphic-data/plotly-utility' ),
+			graphic_data_get_theme_asset_version()
+		);
+
+		// register the plotly scatter module used in interactive figures.
+		wp_register_script_module(
 			'@graphic-data/tabulator-table',
-		),
-		GRAPHIC_DATA_PLUGIN_VERSION
-	);
-	wp_enqueue_script_module( '@graphic-data/figure-render' );
+			content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/tabulator-table.js',
+			array( '@graphic-data/plotly-utility' ),
+			graphic_data_get_theme_asset_version()
+		);
 
-	// register the plotly utility module used for interactive figures.
-	wp_register_script_module(
-		'@graphic-data/plotly-utility',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-utility.js',
-		array(),
-		graphic_data_get_theme_asset_version()
-	);
-
-	// register the plotly line chart module used in interactive figures.
-	wp_register_script_module(
-		'@graphic-data/plotly-timeseries-line',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-timeseries-line.js',
-		array( '@graphic-data/plotly-utility' ),
-		graphic_data_get_theme_asset_version()
-	);
-
-	// register the scene shared module that contains utility functions and values needed to render scenes.
-	wp_register_script_module(
-		'@graphic-data/scene-shared',
-		content_url() . '/plugins/graphic_data_plugin/includes/scenes/js/scene-shared.js',
-		array(),
-		GRAPHIC_DATA_PLUGIN_VERSION
-	);
-
-	// register the plotly bar chart module used in interactive figures.
-	wp_register_script_module(
-		'@graphic-data/plotly-bar',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-bar.js',
-		array( '@graphic-data/plotly-utility' ),
-		graphic_data_get_theme_asset_version()
-	);
-
-	// register the plotly scatter module used in interactive figures.
-	wp_register_script_module(
-		'@graphic-data/tabulator-table',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/tabulator-table.js',
-		array( '@graphic-data/plotly-utility' ),
-		graphic_data_get_theme_asset_version()
-	);
-
-	// register the plotly map module used in interactive figures.
-	wp_register_script_module(
-		'@graphic-data/plotly-map',
-		content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-map.js',
-		array( '@graphic-data/plotly-utility' ),
-		graphic_data_get_theme_asset_version()
-	);
+		// register the plotly map module used in interactive figures.
+		wp_register_script_module(
+			'@graphic-data/plotly-map',
+			content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/plotly-map.js',
+			array( '@graphic-data/plotly-utility' ),
+			graphic_data_get_theme_asset_version()
+		);
+	}
 
 	// Enqueue the google tag script used to log user behavior with tag manager.
 	wp_register_script_module(

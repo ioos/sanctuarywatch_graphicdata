@@ -53,7 +53,6 @@ get_header();
 
 // ALL CURRENTLY ASSUME THERE IS THE CORRECT POSTMETA DATA AND THERE ALL SUFFICIENT INFORMATION EXISTS
 // IMPLEMENT ERROR CHECKS LATER.
-$graphic_data_scene_url = get_post_meta( $graphic_data_post_id, 'scene_infographic' );
 $graphic_data_instance = get_post_meta( $graphic_data_post_id, 'scene_location', true );
 ?>
 
@@ -250,7 +249,7 @@ echo wp_json_encode(
 	array(
 		'childIds'                    => $graphic_data_child_ids,
 		'postId'                      => absint( $graphic_data_post_id ),
-		'svgUrl'                      => $graphic_data_scene_url,
+		'svgUrl'                      => $graphic_data_svg_url,
 		'sceneSameHoverColorSections' => $graphic_data_scene_same_hover_color_sections,
 		'sceneDefaultHoverColor'      => $graphic_data_scene_default_hover_color,
 		'sceneDefaultHoverTextColor'  => $graphic_data_scene_default_hover_text_color,

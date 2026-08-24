@@ -357,10 +357,10 @@ class Graphic_Data_Plugin {
 		$plugin_admin_plugin_only = new Graphic_Data_Plugin_Only_Content();
 		$this->loader->add_action( 'init', $plugin_admin_plugin_only, 'placeholder_content_director' );
 
-		// Load class and functions associated with the optional data wipe on deactivation.
+		// Load class and functions associated with the optional data wipe on uninstall.
 		$plugin_deactivation_cleanup = new Graphic_Data_Deactivation_Cleanup();
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_deactivation_cleanup, 'enqueue_deactivation_script' );
-		$this->loader->add_action( 'wp_ajax_graphic_data_delete_all_data', $plugin_deactivation_cleanup, 'ajax_delete_all_data' );
+		$this->loader->add_action( 'wp_ajax_graphic_data_set_uninstall_preference', $plugin_deactivation_cleanup, 'ajax_set_uninstall_preference' );
 	}
 
 	/**
