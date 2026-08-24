@@ -566,6 +566,15 @@ class Graphic_Data_Figure {
 			}
 		}
 
+		$figure_path_options = array(
+			'Internal' => 'Internal image',
+			'External' => 'External image',
+			'Interactive' => 'Interactive',
+		);
+		if ( current_user_can( 'manage_options' ) ) {
+			$figure_path_options['Code'] = 'Code';
+		}
+
 		$fields[] = array(
 			'name'   => 'basic',
 			'title'  => 'Basic',
@@ -674,12 +683,7 @@ class Graphic_Data_Figure {
 					'id'             => 'figure_path',
 					'type'           => 'select',
 					'title'          => 'Figure type*',
-					'options'        => array(
-						'Internal' => 'Internal image',
-						'External' => 'External image',
-						'Interactive' => 'Interactive',
-						'Code' => 'Code',
-					),
+					'options'        => $figure_path_options,
 					'default'        => 'Internal',
 					'description' => 'Is the figure type an image stored within this website, or at some external location, is it piece a code, or does it need to be an interactive figure generated from data?',
 					'sanitize'      => 'sanitize_text_field',
@@ -714,26 +718,28 @@ class Graphic_Data_Figure {
 					'description' => 'What is the "alternative text" that should be associated with this image for accessibility?',
 					'sanitize'      => 'sanitize_text_field',
 				),
-				// New HTML/JS Code Editor Field.
-				array(
-					'id'          => 'figure_code',
-					'type'        => 'ace_editor',
-					'title'       => 'HTML/JavaScript Code',
-					'class'       => 'text-class',
-					'description' => 'Insert your custom HTML or JavaScript code here.',
-					'options' => array(
-						'theme'                     => 'ace/theme/chrome',
-						'mode'                      => 'ace/mode/javascript',
-						'showGutter'                => true,
-						'showPrintMargin'           => false,
-						'enableBasicAutocompletion' => true,
-						'enableSnippets'            => true,
-						'enableLiveAutocompletion'  => true,
+				// New HTML/JS Code Editor Field. Only administrators may author raw HTML/JS for a figure.
+				...( current_user_can( 'manage_options' ) ? array(
+					array(
+						'id'          => 'figure_code',
+						'type'        => 'ace_editor',
+						'title'       => 'HTML/JavaScript Code',
+						'class'       => 'text-class',
+						'description' => 'Insert your custom HTML or JavaScript code here.',
+						'options' => array(
+							'theme'                     => 'ace/theme/chrome',
+							'mode'                      => 'ace/mode/javascript',
+							'showGutter'                => true,
+							'showPrintMargin'           => false,
+							'enableBasicAutocompletion' => true,
+							'enableSnippets'            => true,
+							'enableLiveAutocompletion'  => true,
+						),
+						'attributes'    => array(
+							'style'        => 'height: 150px; max-width: 100%;',
+						),
 					),
-					'attributes'    => array(
-						'style'        => 'height: 150px; max-width: 100%;',
-					),
-				),
+				) : array() ),
 				// FILE UPLOAD ARRAY BOX
 				// This is a custom programmed upload box, the call for this field uses the Exopite_Simple_Options_Framework_Field_upload class.
 				// The functionality inside upload.php has been drastically reprogrammed to the current upload file functionality.
@@ -885,6 +891,30 @@ class Graphic_Data_Figure {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Strip the figure_code value from a Figure metabox save unless the
+	 * saving user is an administrator.
+	 *
+	 * The 'figure_code' field (raw HTML/JS) is hidden from the edit form
+	 * for non-admins in create_figure_fields(), but that only controls
+	 * what's rendered. This closes the same restriction on the save path,
+	 * so a crafted POST request can't persist figure_code for a lower role.
+	 *
+	 * @since 1.0.0
+	 * @hooked exopite_sof_save_meta_options
+	 *
+	 * @param array  $fields Sanitized field values keyed by field id, about to be saved as post meta.
+	 * @param string $unique The metabox's config id.
+	 * @param int    $post_id The post being saved.
+	 * @return array The filtered field values.
+	 */
+	public function restrict_figure_code_save( $fields, $unique, $post_id ) {
+		if ( 'graphic_data_plugin' === $unique && ! current_user_can( 'manage_options' ) ) {
+			unset( $fields['figure_code'] );
+		}
+		return $fields;
 	}
 
 	/**

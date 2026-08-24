@@ -342,6 +342,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'wp_ajax_custom_file_delete', $plugin_admin_figure, 'custom_file_delete_handler' );
 		$this->loader->add_action( 'wp_ajax_proxy_external_image', $plugin_admin_figure, 'proxy_external_image_handler' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script', 20 );
+		$this->loader->add_filter( 'exopite_sof_save_meta_options', $plugin_admin_figure, 'restrict_figure_code_save', 10, 3 );
 
 		// Load class and functions connected to login screen customization.
 		$plugin_admin_logo = new Graphic_Data_Login();
