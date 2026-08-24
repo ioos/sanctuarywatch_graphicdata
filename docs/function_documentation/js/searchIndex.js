@@ -1071,6 +1071,11 @@ Search.appendIndex(
             "summary": "Create\u0020custom\u0020fields,\u0020using\u0020metaboxes,\u0020for\u0020Figure\u0020custom\u0020content\u0020type.",
             "url": "classes/Graphic-Data-Figure.html#method_create_figure_fields"
         },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Arestrict_figure_code_save\u0028\u0029",
+            "name": "restrict_figure_code_save",
+            "summary": "Strip\u0020the\u0020figure_code\u0020value\u0020from\u0020a\u0020Figure\u0020metabox\u0020save\u0020unless\u0020the\nsaving\u0020user\u0020is\u0020an\u0020administrator.",
+            "url": "classes/Graphic-Data-Figure.html#method_restrict_figure_code_save"
+        },                {
             "fqsen": "\\Graphic_Data_Figure\u003A\u003Aregister_figure_rest_fields\u0028\u0029",
             "name": "register_figure_rest_fields",
             "summary": "Register\u0020Figure\u0020custom\u0020fields\u0020for\u0020use\u0020by\u0020REST\u0020API.",
