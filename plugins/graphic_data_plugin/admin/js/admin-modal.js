@@ -13,9 +13,6 @@ let hoverColor = 'red'; // hacky solution to solving problem of hoverColor in pr
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
 
-// Hide Instance dropdown if Graphic Data is not active theme.
-document.addEventListener('DOMContentLoaded', hideModalDropdownOrInstance);
-
 const opening_scene_info_entries = document.querySelector(
 	".range[data-depend-id='modal_info_entries']"
 ).value;
@@ -51,117 +48,6 @@ modalWindow();
 modal_scene_change();
 modal_location_change();
 hideIconSection();
-//hideFieldsBasedOnModalAttachedToScene(); TEMPORARILY TURNED OFF.
-
-document
-	.getElementsByName('modal_attached_to_scene')[0]
-	.addEventListener('change', hideFieldsBasedOnModalAttachedToScene);
-
-/**
- * Conditionally hides fields in the modal form based on the active theme.
- *
- * Reads the `isActiveTheme` flag from the PHP data island injected by the
- * `script_module_data_@graphic-data/admin-modal` filter, then hides the
- * field that is irrelevant for the current theme:
- *
- * - Graphic Data theme active: hides `modal_attached_to_scene`, since modals
- *   are located via the scene relationship field (`modal_location`) instead.
- * - Different theme active: hides the `modal_location` label and input, since
- *   scene-based location is only meaningful under the Graphic Data theme.
- *
- * @return {void}
- */
-function hideModalDropdownOrInstance() {
-	const _dataEl = document.getElementById(
-		'wp-script-module-data-@graphic-data/admin-modal'
-	);
-	let _moduleData = null;
-	if (_dataEl?.textContent) {
-		try {
-			_moduleData = JSON.parse(_dataEl.textContent);
-		} catch {}
-	}
-	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
-	if (isActiveTheme) {
-		document.getElementsByName(
-			'modal_attached_to_scene'
-		)[0].parentElement.style.display = 'none';
-		document.getElementsByName(
-			'modal_attached_to_scene'
-		)[0].parentElement.previousElementSibling.style.display = 'none';
-	} else {
-		document.getElementsByName(
-			'modal_location'
-		)[0].parentElement.previousElementSibling.style.display = 'none';
-		document.getElementsByName(
-			'modal_location'
-		)[0].parentElement.style.display = 'none';
-	}
-}
-
-/**
- * Toggles visibility of modal fields based on the "modal_attached_to_scene" field value.
- *
- * When the field value is "Yes", shows the preview window, modal scene, modal icons,
- * and icon function fields, then calls hideIconSection() to conditionally hide the icon
- * subsection. When the value is "No", hide all four of those fields and also
- * hide the icon TOC section field if it has fewer than two options.
- *
- * @return {void}
- */
-function hideFieldsBasedOnModalAttachedToScene() {
-	const _dataEl = document.getElementById(
-		'wp-script-module-data-@graphic-data/admin-modal'
-	);
-	let _moduleData = null;
-	if (_dataEl?.textContent) {
-		try {
-			_moduleData = JSON.parse(_dataEl.textContent);
-		} catch {}
-	}
-	const isActiveTheme = _moduleData?.isActiveTheme ?? false;
-	console.log(isActiveTheme);
-	if (!isActiveTheme) {
-		const fieldValue = document.getElementsByName(
-			'modal_attached_to_scene'
-		)[0].value;
-		const previewWindow = document.getElementById('preview_window');
-		const modalScene =
-			document.getElementsByName('modal_scene')[0].parentElement
-				.parentElement;
-		const modalIcons =
-			document.getElementsByName('modal_icons')[0].parentElement
-				.parentElement;
-		const iconFunctionField =
-			document.getElementsByName('icon_function')[0].parentElement
-				.parentElement;
-		const modalIconOrder =
-			document.getElementsByName('modal_icon_order')[0].parentElement
-				.parentElement;
-		if (fieldValue === 'Yes') {
-			if (previewWindow) {
-				previewWindow.style.display = 'block';
-			}
-			modalScene.style.display = 'block';
-			modalIcons.style.display = 'block';
-			iconFunctionField.style.display = 'block';
-			modalIconOrder.style.display = 'block';
-			hideIconSection();
-		} else {
-			if (previewWindow) {
-				previewWindow.style.display = 'none';
-			}
-			modalScene.style.display = 'none';
-			modalIcons.style.display = 'none';
-			iconFunctionField.style.display = 'none';
-			modalIconOrder.style.display = 'none';
-			const sectionField = document.getElementsByName('icon_toc_section')[0];
-			if (sectionField.options.length < 2) {
-				sectionField.parentElement.parentElement.style.display = 'none';
-			}
-		}
-	}
-}
 
 /**
  * Hides or shows the "Icon Section" field in the modal form based on the number of available section options.
