@@ -80,20 +80,12 @@ permalink: /function_documentation/files/plugins-graphic-data-plugin-uninstall.h
             <p class="phpdocumentor-summary">Fired when the plugin is uninstalled.</p>
 
         
-            <section class="phpdocumentor-description"><p>When populating this file, consider the following flow
-of control:</p>
-<ul>
-<li>This method should be static</li>
-<li>Check if the $_REQUEST content actually is the plugin name</li>
-<li>Run an admin referrer check to make sure it goes through authentication</li>
-<li>Verify the output of $_GET makes sense</li>
-<li>Repeat with other user roles. Best directly by using the links/query string parameters.</li>
-<li>Repeat things for multisite. Once for a single site in the network, once sitewide.</li>
-</ul>
-<p>This file may be updated more in future version of the Boilerplate; however, this is the
-general skeleton and outline for how the file should work.</p>
-<p>For more information, see the following discussion:
-https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecomment-28541913</p>
+            <section class="phpdocumentor-description"><p>Deletes all data and images associated with the plugin, but only if the
+site admin opted in via the deactivation-time prompt (WordPress only shows
+the &quot;Delete&quot; link for an already-inactive plugin, and never loads an
+inactive plugin's PHP, so this code cannot ask anything interactively at
+the actual moment of deletion). By default the plugin's data is left in
+place so it survives a reinstall.</p>
 </section>
 
         
@@ -104,6 +96,17 @@ https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecommen
     </h5>
     <dl class="phpdocumentor-tag-list">
                     <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">see</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                    <span class="phpdocumentor-tag-link"><a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_set_uninstall_preference"><abbr title="\Graphic_Data_Deactivation_Cleanup::ajax_set_uninstall_preference()">Graphic_Data_Deactivation_Cleanup::ajax_set_uninstall_preference()</abbr></a></span>
+                                                                
+                                    </dd>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                    <span class="phpdocumentor-tag-link"><a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_all_data"><abbr title="\Graphic_Data_Deactivation_Cleanup::delete_all_data()">Graphic_Data_Deactivation_Cleanup::delete_all_data()</abbr></a></span>
+                                                                
+                                    </dd>
+                                <dt class="phpdocumentor-tag-list__entry">
                 <span class="phpdocumentor-tag__name">link</span>
             </dt>
                             <dd class="phpdocumentor-tag-list__definition">
@@ -132,6 +135,19 @@ https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecommen
 
 
 
+<h4 id="toc-constants">
+    Constants
+    <a href="files/plugins-graphic-data-plugin-uninstall.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR">GRAPHIC_DATA_DATA_DIR</a>
+    <span>
+        &nbsp;: mixed&nbsp;= \WP_CONTENT_DIR . &#039;/data&#039;                            </span>
+</dt>
+
+    </dl>
 
 
 
@@ -139,6 +155,43 @@ https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecommen
 
 
         
+    <section class="phpdocumentor-constants">
+        <h3 class="phpdocumentor-elements__header" id="constants">
+            Constants
+            <a href="files/plugins-graphic-data-plugin-uninstall.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_GRAPHIC_DATA_DATA_DIR">
+        GRAPHIC_DATA_DATA_DIR
+        <a href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/uninstall.php"><a href="files/plugins-graphic-data-plugin-uninstall.html"><abbr title="plugins/graphic_data_plugin/uninstall.php">uninstall.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">32</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">GRAPHIC_DATA_DATA_DIR</span>
+    = <span class="phpdocumentor-signature__default-value">\WP_CONTENT_DIR . &#039;/data&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+            </section>
 
         
         
@@ -153,9 +206,16 @@ https://github.com/tommcfarlin/WordPress-Plugin-Boilerplate/pull/123#issuecommen
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                                                                                                                                                                </ul>
+                                                                                                                                                                    <li><a href="files/plugins-graphic-data-plugin-uninstall.html#toc-constants">Constants</a></li>
+                                                        </ul>
             </li>
 
+                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR">GRAPHIC_DATA_DATA_DIR</a></li>
+                                            </ul>
+                </li>
             
                     </ul>
     </section>

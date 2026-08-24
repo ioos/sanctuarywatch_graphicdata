@@ -77,7 +77,7 @@ permalink: /function_documentation/files/plugins-graphic-data-plugin-admin-class
     <article class="phpdocumentor-element -file">
         <h2 class="phpdocumentor-content__title">class-deactivation-cleanup.php</h2>
 
-            <p class="phpdocumentor-summary">Handles the optional deletion of all Graphic Data plugin data on deactivation.</p>
+            <p class="phpdocumentor-summary">Handles the optional deletion of all Graphic Data plugin data on uninstall.</p>
 
         
         
@@ -100,7 +100,9 @@ permalink: /function_documentation/files/plugins-graphic-data-plugin-admin-class
 
     </h4>
     <dl class="phpdocumentor-table-of-contents">
-                    <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Deactivation-Cleanup.html"><abbr title="\Graphic_Data_Deactivation_Cleanup">Graphic_Data_Deactivation_Cleanup</abbr></a></dt><dd>Prompts for and performs a full data wipe when the plugin is deactivated.</dd>    </dl>
+                    <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/Graphic-Data-Deactivation-Cleanup.html"><abbr title="\Graphic_Data_Deactivation_Cleanup">Graphic_Data_Deactivation_Cleanup</abbr></a></dt><dd>Asks, on deactivation, whether all Graphic Data plugin data should be
+permanently deleted if the plugin is later deleted, and performs that wipe
+from uninstall.php if the answer was yes.</dd>    </dl>
 
 
 

@@ -123,7 +123,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Deactivation_Cleanup",
             "name": "Graphic_Data_Deactivation_Cleanup",
-            "summary": "Prompts\u0020for\u0020and\u0020performs\u0020a\u0020full\u0020data\u0020wipe\u0020when\u0020the\u0020plugin\u0020is\u0020deactivated.",
+            "summary": "Asks,\u0020on\u0020deactivation,\u0020whether\u0020all\u0020Graphic\u0020Data\u0020plugin\u0020data\u0020should\u0020be\npermanently\u0020deleted\u0020if\u0020the\u0020plugin\u0020is\u0020later\u0020deleted,\u0020and\u0020performs\u0020that\u0020wipe\nfrom\u0020uninstall.php\u0020if\u0020the\u0020answer\u0020was\u0020yes.",
             "url": "classes/Graphic-Data-Deactivation-Cleanup.html"
         },                {
             "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Aenqueue_deactivation_script\u0028\u0029",
@@ -131,10 +131,15 @@ Search.appendIndex(
             "summary": "Enqueue\u0020the\u0020deactivation\u0020confirmation\u0020script\u0020on\u0020the\u0020Plugins\u0020screen.",
             "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_enqueue_deactivation_script"
         },                {
-            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Aajax_delete_all_data\u0028\u0029",
-            "name": "ajax_delete_all_data",
-            "summary": "AJAX\u0020handler\u0020that\u0020deletes\u0020all\u0020data\u0020associated\u0020with\u0020the\u0020plugin.",
-            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_delete_all_data"
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Aajax_set_uninstall_preference\u0028\u0029",
+            "name": "ajax_set_uninstall_preference",
+            "summary": "AJAX\u0020handler\u0020that\u0020stores\u0020whether\u0020the\u0020plugin\u0027s\u0020data\u0020should\u0020be\u0020wiped\u0020the\nnext\u0020time\u0020it\u0020is\u0020deleted.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_set_uninstall_preference"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_all_data\u0028\u0029",
+            "name": "delete_all_data",
+            "summary": "Delete\u0020all\u0020data\u0020and\u0020images\u0020associated\u0020with\u0020the\u0020plugin.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_all_data"
         },                {
             "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003Adelete_data_directory\u0028\u0029",
             "name": "delete_data_directory",
@@ -158,8 +163,13 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003ANONCE_ACTION",
             "name": "NONCE_ACTION",
-            "summary": "Nonce\u0020action\u0020used\u0020to\u0020authorize\u0020the\u0020deletion\u0020AJAX\u0020request.",
+            "summary": "Nonce\u0020action\u0020used\u0020to\u0020authorize\u0020the\u0020preference\u002Dsaving\u0020AJAX\u0020request.",
             "url": "classes/Graphic-Data-Deactivation-Cleanup.html#constant_NONCE_ACTION"
+        },                {
+            "fqsen": "\\Graphic_Data_Deactivation_Cleanup\u003A\u003APREFERENCE_OPTION",
+            "name": "PREFERENCE_OPTION",
+            "summary": "Option\u0020storing\u0020whether\u0020uninstall.php\u0020should\u0020wipe\u0020all\u0020plugin\u0020data.",
+            "url": "classes/Graphic-Data-Deactivation-Cleanup.html#constant_PREFERENCE_OPTION"
         },                {
             "fqsen": "\\Graphic_Data_Export_Figures",
             "name": "Graphic_Data_Export_Figures",
@@ -908,7 +918,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\GRAPHIC_DATA_DATA_DIR",
             "name": "GRAPHIC_DATA_DATA_DIR",
-            "summary": "The\u0020data\u0020directory\u0020inside\u0020of\u0020wp\u002Dcontent",
+            "summary": "",
             "url": "namespaces/default.html#constant_GRAPHIC_DATA_DATA_DIR"
         },                {
             "fqsen": "\\GRAPHIC_DATA_DATA_URL",
