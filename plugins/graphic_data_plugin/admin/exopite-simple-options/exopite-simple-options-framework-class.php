@@ -616,19 +616,22 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 			$retval = 'error';
 
-			$nonce_v = wp_verify_nonce( $_POST['wpnonce'], 'exopite_sof_backup' );
-			$nonce = $_POST['wpnonce'];
-
-			if ( isset( $_POST['unique'] ) && ! empty( $_POST['value'] ) && isset( $_POST['wpnonce'] ) && wp_verify_nonce( $_POST['wpnonce'], 'exopite_sof_backup' ) ) {
-
-				$option_key = sanitize_key( $_POST['unique'] );
+			// Require both permission to manage this settings page and a valid nonce.
+			// The option key is always this instance's own option ($this->unique) -
+			// it must never be taken from client input, or a caller could target any option in the site.
+			if (
+				current_user_can( $this->config['capability'] ) &&
+				! empty( $_POST['value'] ) &&
+				isset( $_POST['wpnonce'] ) &&
+				wp_verify_nonce( $_POST['wpnonce'], 'exopite_sof_backup' )
+			) {
 
 				//Using json_decode
 				$value = json_decode( stripslashes( $_POST['value'] ), true );
 
 				if ( is_array( $value ) ) {
 
-					update_option( $option_key, $value );
+					update_option( $this->unique, $value );
 					$retval = 'success';
 
 				}
@@ -641,9 +644,11 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 		public function export_options() {
 
-			if ( isset( $_GET['export'] ) && isset( $_GET['wpnonce'] ) && wp_verify_nonce( $_GET['wpnonce'], 'exopite_sof_backup' ) ) {
-
-				$option_key = sanitize_key( $_GET['export'] );
+			if (
+				current_user_can( $this->config['capability'] ) &&
+				isset( $_GET['wpnonce'] ) &&
+				wp_verify_nonce( $_GET['wpnonce'], 'exopite_sof_backup' )
+			) {
 
 				header( 'Content-Type: plain/text' );
 				header( 'Content-disposition: attachment; filename=exopite-sof-options-' . gmdate( 'd-m-Y' ) . '.txt' );
@@ -652,7 +657,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				header( 'Expires: 0' );
 
 				// Using json_encode()
-				echo json_encode( get_option( $option_key ) );
+				echo json_encode( get_option( $this->unique ) );
 
 			}
 
@@ -663,9 +668,13 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 
 			$retval = 'error';
 
-			if ( isset( $_POST['unique'] ) && isset( $_POST['wpnonce'] ) && wp_verify_nonce( $_POST['wpnonce'], 'exopite_sof_backup' ) ) {
+			if (
+				current_user_can( $this->config['capability'] ) &&
+				isset( $_POST['wpnonce'] ) &&
+				wp_verify_nonce( $_POST['wpnonce'], 'exopite_sof_backup' )
+			) {
 
-				delete_option( sanitize_key( $_POST['unique'] ) );
+				delete_option( $this->unique );
 
 				$retval = 'success';
 
@@ -1066,7 +1075,16 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 				return null;
 			}
 
-			//TODO Verify nonce
+			// Verify nonce for metabox saves (menu saves go through the Settings API, which nonce-checks on its own).
+			if ( $this->is_metabox() ) {
+
+				$nonce_field = 'exopite_sof_nonce_' . $this->unique;
+
+				if ( ! isset( $_POST[ $nonce_field ] ) || ! wp_verify_nonce( $_POST[ $nonce_field ], 'exopite_sof_save_' . $this->unique ) ) {
+					return null;
+				}
+
+			}
 
 			$valid   = array();
 			$post_id = null;
@@ -1909,6 +1927,8 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework' ) ) :
 						$meta_options     = get_post_meta( get_the_ID(), $this->unique, true );
 						$this->db_options = apply_filters( 'exopite-simple-options-framework-meta-get-options', $meta_options, $this->unique, get_the_ID() );
 					}
+
+					wp_nonce_field( 'exopite_sof_save_' . $this->unique, 'exopite_sof_nonce_' . $this->unique );
 
 					if ( $this->debug ) {
 						$meta_options = get_post_meta( get_the_ID() );
