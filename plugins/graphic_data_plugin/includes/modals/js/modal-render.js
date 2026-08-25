@@ -431,8 +431,8 @@ function trapFocus(modalElement) {
         .then(data => {
 
             let all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
-            all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id));
-            //console.log('all_figure_data1', all_figure_data);
+            all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id) && String(figure.figure_published).toLowerCase() === 'published');
+            // console.log('all_figure_data1', all_figure_data);
 
 
             // Third filter: If user is not logged in, only show published figures
