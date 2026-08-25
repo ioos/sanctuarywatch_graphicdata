@@ -523,6 +523,9 @@ class Graphic_Data_Figure {
 		$function_utilities = new Graphic_Data_Utility();
 		$locations = $function_utilities->return_all_instances();
 
+		// Only administrators may edit the raw HTML/JS code field; everyone else sees it grayed out and read-only.
+		$user_can_edit_figure_code = current_user_can( 'manage_options' );
+
 		$transient_fields_exist = false;
 
 		// Get current user ID.
@@ -564,15 +567,6 @@ class Graphic_Data_Figure {
 			} else {
 				$modal_tabs = $function_utilities->return_modal_tabs( $modal_id );
 			}
-		}
-
-		$figure_path_options = array(
-			'Internal' => 'Internal image',
-			'External' => 'External image',
-			'Interactive' => 'Interactive',
-		);
-		if ( current_user_can( 'manage_options' ) ) {
-			$figure_path_options['Code'] = 'Code';
 		}
 
 		$fields[] = array(
@@ -683,7 +677,12 @@ class Graphic_Data_Figure {
 					'id'             => 'figure_path',
 					'type'           => 'select',
 					'title'          => 'Figure type*',
-					'options'        => $figure_path_options,
+					'options'        => array(
+						'Internal' => 'Internal image',
+						'External' => 'External image',
+						'Interactive' => 'Interactive',
+						'Code' => 'Code',
+					),
 					'default'        => 'Internal',
 					'description' => 'Is the figure type an image stored within this website, or at some external location, is it piece a code, or does it need to be an interactive figure generated from data?',
 					'sanitize'      => 'sanitize_text_field',
@@ -718,28 +717,31 @@ class Graphic_Data_Figure {
 					'description' => 'What is the "alternative text" that should be associated with this image for accessibility?',
 					'sanitize'      => 'sanitize_text_field',
 				),
-				// New HTML/JS Code Editor Field. Only administrators may author raw HTML/JS for a figure.
-				...( current_user_can( 'manage_options' ) ? array(
-					array(
-						'id'          => 'figure_code',
-						'type'        => 'ace_editor',
-						'title'       => 'HTML/JavaScript Code',
-						'class'       => 'text-class',
-						'description' => 'Insert your custom HTML or JavaScript code here.',
-						'options' => array(
-							'theme'                     => 'ace/theme/chrome',
-							'mode'                      => 'ace/mode/javascript',
-							'showGutter'                => true,
-							'showPrintMargin'           => false,
-							'enableBasicAutocompletion' => true,
-							'enableSnippets'            => true,
-							'enableLiveAutocompletion'  => true,
-						),
-						'attributes'    => array(
-							'style'        => 'height: 150px; max-width: 100%;',
-						),
+				// New HTML/JS Code Editor Field. Only administrators may author raw HTML/JS for a figure; everyone else gets a read-only, grayed-out view.
+				array(
+					'id'          => 'figure_code',
+					'type'        => 'ace_editor',
+					'title'       => 'HTML/JavaScript Code',
+					'class'       => 'text-class',
+					'description' => $user_can_edit_figure_code
+						? 'Insert your custom HTML or JavaScript code here.'
+						: 'Insert your custom HTML or JavaScript code here. Only administrators can edit this field.',
+					'options' => array(
+						'theme'                     => 'ace/theme/chrome',
+						'mode'                      => 'ace/mode/javascript',
+						'showGutter'                => true,
+						'showPrintMargin'           => false,
+						'enableBasicAutocompletion' => true,
+						'enableSnippets'            => true,
+						'enableLiveAutocompletion'  => true,
+						'readOnly'                  => ! $user_can_edit_figure_code,
 					),
-				) : array() ),
+					'attributes'    => array(
+						'style' => 'height: 150px; max-width: 100%;' . ( $user_can_edit_figure_code
+							? ''
+							: ' opacity: 0.5; background-color: #f0f0f0; cursor: not-allowed;' ),
+					),
+				),
 				// FILE UPLOAD ARRAY BOX
 				// This is a custom programmed upload box, the call for this field uses the Exopite_Simple_Options_Framework_Field_upload class.
 				// The functionality inside upload.php has been drastically reprogrammed to the current upload file functionality.
