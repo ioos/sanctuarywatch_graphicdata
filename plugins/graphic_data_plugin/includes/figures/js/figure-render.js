@@ -684,7 +684,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             src="${iframePath}"
             title="${info_obj['figureTitle'] || `Figure ${postID}`}"
             width="100%"
-            height="725"
+            height="100%"
             loading="lazy"
             style="display: block; width: 100%; min-height: 550px; border: 0;"
         ></iframe>`;
@@ -740,7 +740,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
                 src="${iframePath}"
                 title="${info_obj['figureTitle'] || `Figure ${postID}`}"
                 width="100%"
-                height="725"
+                height="100%"
                 loading="lazy"
                 style="display: block; width: 100%; min-height: 550px; border: 0;"
             ></iframe>`;
