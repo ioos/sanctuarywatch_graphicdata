@@ -168,8 +168,8 @@ class Graphic_Data_Plugin {
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-graphic-data-site-checker.php';
 
 		new Graphic_Data_Site_Checker(
-			plugin_dir_url( __FILE__ ),      // pass this only if the default guess is wrong
-			GRAPHIC_DATA_PLUGIN_VERSION      // your existing version constant
+			plugin_dir_url( __FILE__ ),
+			GRAPHIC_DATA_PLUGIN_VERSION
 		);
 	}
 
@@ -223,9 +223,6 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'admin_head', $plugin_admin, 'remove_header_row' );
 		$this->loader->add_filter( 'admin_footer_text', $plugin_admin, 'remove_thank_you' );
 		$this->loader->add_filter( 'months_dropdown_results', $plugin_admin, 'remove_all_dates' );
-		// V2 - We are not removing gutenberg anymore.
-
-		// $this->loader->add_filter( 'use_block_editor_for_post', $plugin_admin, 'remove_gutenberg' );
 		$this->loader->add_filter( 'screen_options_show_screen', $plugin_admin, 'remove_screen_options' );
 		$this->loader->add_filter( 'upload_mimes', $plugin_admin, 'allow_svg_uploads' );
 		$this->loader->add_filter( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_bootstrap_admin', 5 );
