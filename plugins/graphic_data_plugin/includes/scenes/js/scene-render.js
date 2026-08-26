@@ -2295,7 +2295,7 @@ function add_modal(){
  */
 function handleSharedModalAndFigureNavigation()  {
 
-    if  (!window.location.href.includes('post.php') && !window.location.href.includes('new-post.php')) {
+    if  (!window.location.href.includes('post.php') && !window.location.href.includes('post-new.php')) {
         const submittedURL = window.location.href;
         const submittedURLParts = submittedURL.split('/');
         const submittedInstance = submittedURLParts[3];
@@ -2304,10 +2304,9 @@ function handleSharedModalAndFigureNavigation()  {
 
 
 
-        const raw = window.location.hash.slice(1);
+        const raw = window.location.hash.slice(1);//.replace(/(^|-)038(?=-|$)/g, '$1').replace(/-+/g, '-');
         if (!raw) return;
-    
-        if (window.location.href.includes("post.php")) return;
+        if (window.location.href.includes("post.php") || window.location.href.includes("post-new.php")) return;
 
     
         function getTargetIdFromHash(rawHash) {
@@ -2676,11 +2675,16 @@ function handleSharedModalAndFigureNavigation()  {
         }
 
 
+
         const targetId = getTargetIdFromHash(raw);
+        // console.log('targetId', targetId);
         const targetId_lowercase = targetId.toLowerCase();
         const tabNumber = getTabFromHash(raw);
         const targetTabButtonId = `${targetId}-${tabNumber}`;
-        const targetTabPaneId = `${targetId}-${tabNumber}-pane`;
+        const targetTabPane = `${targetId}-${tabNumber}-pane`;
+        // console.log('targetTabPane', targetTabPane);
+        const targetTabPaneId = slugify(targetTabPane);
+        // console.log('targetTabPaneId', targetTabPaneId);
 
         const fragment = window.location.hash.substring(1); 
         const [tabPath, fragmentQuery = ''] = fragment.split('?');
@@ -2699,7 +2703,7 @@ function handleSharedModalAndFigureNavigation()  {
         window.addEventListener("load", function () {
             (async () => {
 
-                if (!is_mobile() && (!window.location.href.includes('post.php') && !window.location.href.includes('new-post.php'))) {
+                if (!is_mobile() && (!window.location.href.includes('post.php') && !window.location.href.includes('post-new.php'))) {
                     await waitForDomState();
 
                     try {
@@ -2717,10 +2721,16 @@ function handleSharedModalAndFigureNavigation()  {
                     } 
                 }
 
-                if (figureId && !(!window.location.href.includes('post.php') && !window.location.href.includes('new-post.php'))) {
+                if (figureId && (!window.location.href.includes('post.php') && !window.location.href.includes('post-new.php'))) {
                     try {
 
                         try {
+
+                            function decodeHtmlEntities(value) {
+                                const textarea = document.createElement('textarea');
+                                textarea.innerHTML = value;
+                                return textarea.value;
+                            }
                             const protocol = window.location.protocol;
                             const host = window.location.host;
 
@@ -2733,8 +2743,11 @@ function handleSharedModalAndFigureNavigation()  {
                             const modalFetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/modal/" + figureModalNumber;
                             const modalResponse = await fetch(modalFetchURL);
                             const modalData = await modalResponse.json();
-                            const modalTitle = modalData.title.rendered;
-                            const modalSlug = slugify(modalTitle);
+                            let modalTitle = modalData.title.rendered;
+                            modalTitle = decodeHtmlEntities(modalTitle);
+                            // console.log('modalTitle', modalTitle);
+                            let modalSlug = slugify(modalTitle);
+                            // console.log('modalSlug', modalSlug);
                             const modalSceneNumber = modalData.modal_scene;
 
                             const sceneFetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/scene/" + modalSceneNumber;

@@ -684,9 +684,10 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             src="${iframePath}"
             title="${info_obj['figureTitle'] || `Figure ${postID}`}"
             width="100%"
-            height="725"
+            height="100%"
             loading="lazy"
-            style="display: block; width: 100%; min-height: 550px; border: 0;"
+            scrolling="no"
+            style="display: block; width: 100%; height: 100%; min-height: 1000px; border: 0;"
         ></iframe>`;
 
 
@@ -740,9 +741,10 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
                 src="${iframePath}"
                 title="${info_obj['figureTitle'] || `Figure ${postID}`}"
                 width="100%"
-                height="725"
+                height="100%"
                 loading="lazy"
-                style="display: block; width: 100%; min-height: 550px; border: 0;"
+                scrolling="no"
+                style="display: block; width: 100%; height: 100%; min-height: 1000px; border: 0;"
             ></iframe>`;
 
 
@@ -767,6 +769,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
 
         // Add "Share" link
         const shareLink = document.createElement("a");
+
         shareLink.href = "#";
         shareLink.style.color = "rgba(68, 68, 68, 0.55)";
         shareLink.style.textDecoration = "none";
@@ -774,44 +777,88 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         shareLink.style.display = "inline-flex";
         shareLink.style.alignItems = "center";
         shareLink.style.gap = "6px";
-        // shareLink.style.marginRight = ".5rem";
-        // shareLink.style.marginleft = "1rem";
 
         // Swoop/share-style SVG icon (inline, no external assets)
         shareLink.innerHTML = `
-            <span><i class="fa-solid fa-copy"></i> Copy Figure Link</span>
+            <span>
+                <i class="fa-solid fa-copy"></i>
+                Copy Figure Link
+            </span>
         `;
-      
-        shareLink.addEventListener('click', async function (e) {
+
+        shareLink.addEventListener("click", async function (e) {
             e.preventDefault();
-        
+
+            /*
+            * ---------------------------------------------------------
+            * FULL SHARE URL
+            * ---------------------------------------------------------
+            *
+            * This is what we want reflected in the browser address bar.
+            *
+            * Example:
+            *
+            * /example-instance-2/space-base/#video/1?figure=127
+            */
             const url = new URL(window.location.href);
-        
-            // Setting .hash replaces any existing hash.
+
             url.hash =
                 `${encodeURIComponent(tab_title)}/` +
                 `${encodeURIComponent(tab_id)}` +
-                // `?figure=${encodeURIComponent(figureDiv.id)}`;
                 `?figure=${encodeURIComponent(postID)}`;
 
-                postID
-        
             const shareUrl = url.toString();
-        
+
+            /*
+            * ---------------------------------------------------------
+            * SHORT FIGURE URL
+            * ---------------------------------------------------------
+            *
+            * This is what actually gets copied to the clipboard.
+            *
+            * Example:
+            *
+            * https://graphicdata.local/f/127/
+            */
+            const shortShareUrl =
+                `${window.location.origin}/f/${encodeURIComponent(postID)}/`;
+
+            /*
+            * Update the address bar to reflect the actual current
+            * figure location without causing a page reload.
+            */
+            window.history.replaceState(
+                null,
+                "",
+                shareUrl
+            );
+
             try {
-                await navigator.clipboard.writeText(shareUrl);
-                console.log('Copied:', shareUrl);
-        
-                // Redirect the current page to the new share URL.
-                window.location.assign(shareUrl);
+                /*
+                * Copy the permanent short figure URL.
+                */
+                await navigator.clipboard.writeText(
+                    shortShareUrl
+                );
+
+                console.log(
+                    "Copied short figure link:",
+                    shortShareUrl
+                );
+
+                console.log(
+                    "Address bar updated to:",
+                    shareUrl
+                );
+
                 alert(
-                    'Link copied successfully.'
+                    "Figure link copied successfully."
                 );
             } catch (err) {
-                console.error('Failed to copy:', err);
-        
-                // Redirect even if clipboard access fails.
-                window.location.assign(shareUrl);
+                console.error(
+                    "Failed to copy figure link:",
+                    err
+                );
             }
         });
     

@@ -1473,23 +1473,23 @@ async function generateAndSaveFigureFromPreview(
 			);
 		}
 
-		iframeCodeBox2.value =
-			figureIframeGenerator2.figIframeHtmlPath;
+		// iframeCodeBox2.value =
+		// 	figureIframeGenerator2.figIframeHtmlPath;
 
 		/*
 		 * Notify any input/change listeners that the field changed.
 		 */
-		iframeCodeBox2.dispatchEvent(
-			new Event('input', {
-				bubbles: true
-			})
-		);
+		// iframeCodeBox2.dispatchEvent(
+		// 	new Event('input', {
+		// 		bubbles: true
+		// 	})
+		// );
 
-		iframeCodeBox2.dispatchEvent(
-			new Event('change', {
-				bubbles: true
-			})
-		);
+		// iframeCodeBox2.dispatchEvent(
+		// 	new Event('change', {
+		// 		bubbles: true
+		// 	})
+		// );
 
 		await saveHtmlToServer(
 			figureIframeGenerator2.figIframeHtml,

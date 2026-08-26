@@ -45,6 +45,8 @@ if ( ! defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) ) {
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/admin.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/figure-shortlinks.php';
+
 
 /**
  * The directory path of the plugin.
@@ -91,6 +93,14 @@ function graphic_data_activate() {
 	$author_role->add_cap( 'publish_scenes' );
 	$author_role->add_cap( 'delete_scenes' );
 	$author_role->add_cap( 'delete_published_scenes' );
+
+	/*
+	 * Regenerate WordPress rewrite rules.
+	 *
+	 * Our rewrite_rules_array filter will be applied
+	 * automatically while the rules are regenerated.
+	 */
+	flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'graphic_data_activate' );
 
