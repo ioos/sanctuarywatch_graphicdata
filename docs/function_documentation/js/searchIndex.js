@@ -1861,6 +1861,21 @@ Search.appendIndex(
             "summary": "The\u0020current\u0020version\u0020of\u0020the\u0020plugin.",
             "url": "classes/Graphic-Data-Plugin.html#property_version"
         },                {
+            "fqsen": "\\graphic_data_add_figure_shortlink_rewrite\u0028\u0029",
+            "name": "graphic_data_add_figure_shortlink_rewrite",
+            "summary": "Force\u0020figure\u0020shortlinks\u0020to\u0020the\u0020beginning\u0020of\u0020WordPress\u0020rewrite\u0020rules.",
+            "url": "namespaces/default.html#function_graphic_data_add_figure_shortlink_rewrite"
+        },                {
+            "fqsen": "\\graphic_data_add_figure_query_var\u0028\u0029",
+            "name": "graphic_data_add_figure_query_var",
+            "summary": "Register\u0020the\u0020custom\u0020figure\u0020shortlink\u0020query\u0020variable.",
+            "url": "namespaces/default.html#function_graphic_data_add_figure_query_var"
+        },                {
+            "fqsen": "\\graphic_data_redirect_figure_shortlink\u0028\u0029",
+            "name": "graphic_data_redirect_figure_shortlink",
+            "summary": "Redirect\u0020a\u0020figure\u0020shortlink\u0020to\u0020its\u0020actual\u0020location.",
+            "url": "namespaces/default.html#function_graphic_data_redirect_figure_shortlink"
+        },                {
             "fqsen": "\\",
             "name": "\\",
             "summary": "",
