@@ -99,17 +99,24 @@ permalink: /function_documentation/classes/Graphic-Data-Deactivation-Cleanup.htm
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">18</span>
+    <span class="phpdocumentor-element-found-in__line">26</span>
 
     </aside>
 
-            <p class="phpdocumentor-summary">Prompts for and performs a full data wipe when the plugin is deactivated.</p>
+            <p class="phpdocumentor-summary">Asks, on deactivation, whether all Graphic Data plugin data should be
+permanently deleted if the plugin is later deleted, and performs that wipe
+from uninstall.php if the answer was yes.</p>
 
 
-    <section class="phpdocumentor-description"><p>The confirmation and the deletion both happen on the Plugins screen, before
-the deactivate link is followed. A deactivated plugin's PHP is no longer
-loaded on subsequent requests, so any admin_notices/admin-post flow tried
-after deactivation would never run.</p>
+    <section class="phpdocumentor-description"><p>The question is asked on the Plugins screen, before the deactivate link is
+followed, because a deactivated plugin's PHP is no longer loaded on
+subsequent requests — including the request where the &quot;Delete&quot; link is
+clicked, since WordPress only shows that link once a plugin is inactive.
+That means this plugin cannot interactively ask anything at the actual
+moment of deletion, so deactivation is used as a stand-in: the answer is
+stored in the graphic_data_delete_on_uninstall option and read back by
+uninstall.php when the plugin is eventually removed. Answering the
+question again on a later deactivation overwrites the stored answer.</p>
 </section>
 
 
@@ -125,6 +132,11 @@ after deactivation would never run.</p>
                             <dd class="phpdocumentor-tag-list__definition">
                                                                                     <span class="phpdocumentor-tag-link"><a href="classes/Graphic-Data-Plugin.html#method_define_admin_hooks"><abbr title="\Graphic_Data_Plugin::define_admin_hooks()">Graphic_Data_Plugin::define_admin_hooks()</abbr></a></span>
                                                                 
+                                    </dd>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>uninstall.php</p>
+</section>
+
                                     </dd>
                         </dl>
 
@@ -151,9 +163,16 @@ after deactivation would never run.</p>
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="classes/Graphic-Data-Deactivation-Cleanup.html#constant_NONCE_ACTION">NONCE_ACTION</a>
     <span>
-        &nbsp;: mixed&nbsp;= &#039;graphic_data_delete_all_data&#039;                            </span>
+        &nbsp;: mixed&nbsp;= &#039;graphic_data_set_uninstall_preference&#039;                            </span>
 </dt>
-<dd>Nonce action used to authorize the deletion AJAX request.</dd>
+<dd>Nonce action used to authorize the preference-saving AJAX request.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Deactivation-Cleanup.html#constant_PREFERENCE_OPTION">PREFERENCE_OPTION</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;graphic_data_delete_on_uninstall&#039;                            </span>
+</dt>
+<dd>Option storing whether uninstall.php should wipe all plugin data.</dd>
 
     </dl>
 
@@ -166,11 +185,19 @@ after deactivation would never run.</p>
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_delete_all_data">ajax_delete_all_data()</a>
+    <a class="" href="classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_set_uninstall_preference">ajax_set_uninstall_preference()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>AJAX handler that deletes all data associated with the plugin.</dd>
+<dd>AJAX handler that stores whether the plugin&#039;s data should be wiped the
+next time it is deleted.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_all_data">delete_all_data()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Delete all data and images associated with the plugin.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Deactivation-Cleanup.html#method_enqueue_deactivation_script">enqueue_deactivation_script()</a>
@@ -230,22 +257,56 @@ nothing persisted in the database beyond its terms.</dd>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">23</span>
+    <span class="phpdocumentor-element-found-in__line">31</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Nonce action used to authorize the deletion AJAX request.</p>
+        <p class="phpdocumentor-summary">Nonce action used to authorize the preference-saving AJAX request.</p>
 
     
     <code class="phpdocumentor-signature phpdocumentor-code ">
     <span class="phpdocumentor-signature__visibility">public</span>
         <span class="phpdocumentor-signature__type">mixed</span>
     <span class="phpdocumentor-signature__name">NONCE_ACTION</span>
-    = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_delete_all_data&#039;</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_set_uninstall_preference&#039;</span>
 </code>
 
 
     
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_PREFERENCE_OPTION">
+        PREFERENCE_OPTION
+        <a href="classes/Graphic-Data-Deactivation-Cleanup.html#constant_PREFERENCE_OPTION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">38</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Option storing whether uninstall.php should wipe all plugin data.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PREFERENCE_OPTION</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_delete_on_uninstall&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"><p>Absent (falsy) by default, so deleting the plugin leaves its data in
+place unless the admin opted in on a prior deactivation.</p>
+</section>
+
     
     
 
@@ -267,23 +328,24 @@ nothing persisted in the database beyond its terms.</dd>
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_ajax_delete_all_data">
-        ajax_delete_all_data()
-        <a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_delete_all_data" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_ajax_set_uninstall_preference">
+        ajax_set_uninstall_preference()
+        <a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_set_uninstall_preference" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">69</span>
+    <span class="phpdocumentor-element-found-in__line">84</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">AJAX handler that deletes all data associated with the plugin.</p>
+        <p class="phpdocumentor-summary">AJAX handler that stores whether the plugin&#039;s data should be wiped the
+next time it is deleted.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">ajax_delete_all_data</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">ajax_set_uninstall_preference</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -291,6 +353,45 @@ nothing persisted in the database beyond its terms.</dd>
         <section class="phpdocumentor-description"><p>Runs while the plugin is still active (triggered before the deactivate
 link is followed), so it must be safe to call independently of
 deactivation actually completing afterward.</p>
+</section>
+
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_delete_all_data">
+        delete_all_data()
+        <a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_all_data" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">106</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Delete all data and images associated with the plugin.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">delete_all_data</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Called from uninstall.php once it has confirmed the admin opted in via
+the PREFERENCE_OPTION; performs no capability or nonce checks of its
+own.</p>
 </section>
 
     
@@ -314,7 +415,7 @@ deactivation actually completing afterward.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">31</span>
+    <span class="phpdocumentor-element-found-in__line">46</span>
 
     </aside>
 
@@ -361,7 +462,7 @@ deactivation actually completing afterward.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">112</span>
+    <span class="phpdocumentor-element-found-in__line">141</span>
 
     </aside>
 
@@ -396,7 +497,7 @@ deactivation actually completing afterward.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">90</span>
+    <span class="phpdocumentor-element-found-in__line">119</span>
 
     </aside>
 
@@ -431,7 +532,7 @@ deactivation actually completing afterward.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">156</span>
+    <span class="phpdocumentor-element-found-in__line">185</span>
 
     </aside>
 
@@ -466,7 +567,7 @@ deactivation actually completing afterward.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php"><a href="files/plugins-graphic-data-plugin-admin-class-deactivation-cleanup.html"><abbr title="plugins/graphic_data_plugin/admin/class-deactivation-cleanup.php">class-deactivation-cleanup.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">134</span>
+    <span class="phpdocumentor-element-found-in__line">163</span>
 
     </aside>
 
@@ -511,6 +612,7 @@ nothing persisted in the database beyond its terms.</p>
                 <li>
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/Graphic-Data-Deactivation-Cleanup.html#constant_NONCE_ACTION">NONCE_ACTION</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Deactivation-Cleanup.html#constant_PREFERENCE_OPTION">PREFERENCE_OPTION</a></li>
                                             </ul>
                 </li>
             
@@ -518,7 +620,8 @@ nothing persisted in the database beyond its terms.</p>
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                            <li class=""><a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_delete_all_data">ajax_delete_all_data()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_ajax_set_uninstall_preference">ajax_set_uninstall_preference()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_all_data">delete_all_data()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_enqueue_deactivation_script">enqueue_deactivation_script()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_custom_post_type_posts">delete_custom_post_type_posts()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Deactivation-Cleanup.html#method_delete_data_directory">delete_data_directory()</a></li>

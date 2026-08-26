@@ -331,7 +331,7 @@ class Graphic_Data_Modal {
 			$photo_fields[] = array(
 				'type' => 'fieldset',
 				'id' => 'modal_photo' . $i,
-				'title'   => 'Modal Photo Link ' . $i,
+				'title'   => 'Media Link ' . $i,
 				'fields' => array(
 					array(
 						'id'             => 'modal_photo_location' . $i,
@@ -382,9 +382,9 @@ class Graphic_Data_Modal {
 		}
 
 		// Step 3: Insert the new sub-arrays after the second element in the original 'fields' array.
-		array_splice( $fields, 12, 0, $info_fields );
-		array_splice( $fields, 19, 0, $photo_fields );
-		array_splice( $fields, 26, 0, $tab_fields );
+		array_splice( $fields, 11, 0, $info_fields );
+		array_splice( $fields, 18, 0, $photo_fields );
+		array_splice( $fields, 25, 0, $tab_fields );
 
 		// If we're just running this function to get the custom field list for field validation, return early.
 		if ( $return_fields_only ) {

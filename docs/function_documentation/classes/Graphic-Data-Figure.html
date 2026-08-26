@@ -260,6 +260,14 @@ returns its bytes as base64.</dd>
 <dd>Registers a custom REST API route to get alt text by image URL.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_restrict_figure_code_save">restrict_figure_code_save()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Strip the figure_code value from a Figure metabox save unless the
+saving user is an administrator.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Figure.html#method_store_figure_filter_values">store_figure_filter_values()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -617,7 +625,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1120</span>
+    <span class="phpdocumentor-element-found-in__line">1177</span>
 
     </aside>
 
@@ -662,7 +670,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">945</span>
+    <span class="phpdocumentor-element-found-in__line">977</span>
 
     </aside>
 
@@ -916,7 +924,7 @@ over instance.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">914</span>
+    <span class="phpdocumentor-element-found-in__line">946</span>
 
     </aside>
 
@@ -998,7 +1006,7 @@ to be hooked into the 'rest_figure_query' filter.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1243</span>
+    <span class="phpdocumentor-element-found-in__line">1300</span>
 
     </aside>
 
@@ -1150,7 +1158,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1061</span>
+    <span class="phpdocumentor-element-found-in__line">1118</span>
 
     </aside>
 
@@ -1201,7 +1209,7 @@ proxies the request through WordPress instead.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">895</span>
+    <span class="phpdocumentor-element-found-in__line">927</span>
 
     </aside>
 
@@ -1250,7 +1258,7 @@ proxies the request through WordPress instead.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1212</span>
+    <span class="phpdocumentor-element-found-in__line">1269</span>
 
     </aside>
 
@@ -1284,6 +1292,107 @@ proxies the request through WordPress instead.</p>
         
     
     
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_restrict_figure_code_save">
+        restrict_figure_code_save()
+        <a href="classes/Graphic-Data-Figure.html#method_restrict_figure_code_save" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">915</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Strip the figure_code value from a Figure metabox save unless the
+saving user is an administrator.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">restrict_figure_code_save</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fields</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$unique</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>The 'figure_code' field (raw HTML/JS) is hidden from the edit form
+for non-admins in create_figure_fields(), but that only controls
+what's rendered. This closes the same restriction on the save path,
+so a crafted POST request can't persist figure_code for a lower role.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$fields</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Sanitized field values keyed by field id, about to be saved as post meta.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$unique</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The metabox's config id.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The post being saved.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_restrict_figure_code_save_tags">
+        Tags
+        <a href="classes/Graphic-Data-Figure.html#method_restrict_figure_code_save_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">hooked</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>exopite_sof_save_meta_options</p>
+</section>
+
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The filtered field values.</p>
+</section>
+
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -1384,6 +1493,7 @@ It handles all three filter types: instance, scene, and icon.</p>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_proxy_external_image_handler">proxy_external_image_handler()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_register_figure_rest_fields">register_figure_rest_fields()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_register_get_alt_text_by_url_route">register_get_alt_text_by_url_route()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_restrict_figure_code_save">restrict_figure_code_save()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_store_figure_filter_values">store_figure_filter_values()</a></li>
                                     </ul>
             </li>

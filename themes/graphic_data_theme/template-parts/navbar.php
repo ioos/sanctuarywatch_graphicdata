@@ -68,12 +68,13 @@
 						$graphic_data_post_titles = array();
 						while ( $graphic_data_query->have_posts() ) {
 							$graphic_data_query->the_post();
-							$graphic_data_scene_loc = get_post_meta( get_the_ID(), 'scene_location' )[0];
+							$graphic_data_scene_loc = get_post_meta( get_the_ID(), 'scene_location', true ) ?? '';
 							$graphic_data_scene_published = get_post_meta( get_the_ID(), 'scene_published', true );
-							$graphic_data_inst_overview_scene = get_post_meta( $graphic_data_scene_loc, 'instance_overview_scene' )[0];
-							$graphic_data_scene_order = get_post_meta( get_the_ID(), 'scene_order' );
+							$graphic_data_inst_overview_scene = get_post_meta( $graphic_data_scene_loc, 'instance_overview_scene', true ) ?? '';
+							$graphic_data_scene_order = get_post_meta( get_the_ID(), 'scene_order', true );
+							$graphic_data_scene_order = is_numeric( $graphic_data_scene_order ) ? (int) $graphic_data_scene_order : 0;
 							if ( get_the_ID() != $graphic_data_inst_overview_scene && 'draft' != $graphic_data_scene_published ) {
-								$graphic_data_post_titles[] = [ get_the_title(), $graphic_data_scene_order[0], get_the_ID() ];
+								$graphic_data_post_titles[] = [ get_the_title(), $graphic_data_scene_order, get_the_ID() ];
 							}
 						}
 						wp_reset_postdata();

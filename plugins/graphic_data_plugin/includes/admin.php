@@ -342,6 +342,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'wp_ajax_custom_file_delete', $plugin_admin_figure, 'custom_file_delete_handler' );
 		$this->loader->add_action( 'wp_ajax_proxy_external_image', $plugin_admin_figure, 'proxy_external_image_handler' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script', 20 );
+		$this->loader->add_filter( 'exopite_sof_save_meta_options', $plugin_admin_figure, 'restrict_figure_code_save', 10, 3 );
 
 		// Load class and functions connected to login screen customization.
 		$plugin_admin_logo = new Graphic_Data_Login();
@@ -357,10 +358,10 @@ class Graphic_Data_Plugin {
 		$plugin_admin_plugin_only = new Graphic_Data_Plugin_Only_Content();
 		$this->loader->add_action( 'init', $plugin_admin_plugin_only, 'placeholder_content_director' );
 
-		// Load class and functions associated with the optional data wipe on deactivation.
+		// Load class and functions associated with the optional data wipe on uninstall.
 		$plugin_deactivation_cleanup = new Graphic_Data_Deactivation_Cleanup();
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_deactivation_cleanup, 'enqueue_deactivation_script' );
-		$this->loader->add_action( 'wp_ajax_graphic_data_delete_all_data', $plugin_deactivation_cleanup, 'ajax_delete_all_data' );
+		$this->loader->add_action( 'wp_ajax_graphic_data_set_uninstall_preference', $plugin_deactivation_cleanup, 'ajax_set_uninstall_preference' );
 	}
 
 	/**

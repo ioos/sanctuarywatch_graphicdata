@@ -48,6 +48,10 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Upload' ) ) {
 		 */
 		public static function file_uploader_callback() {
 
+			if ( ! current_user_can( 'upload_files' ) || ! check_ajax_referer( 'exopite_sof_upload', 'nonce', false ) ) {
+				wp_send_json_error( 'Permission denied.', 403 );
+			}
+
 			// file_put_contents( dirname(__FILE__) . '\test.log', var_export( $_POST, true ) . PHP_EOL . PHP_EOL, FILE_APPEND );
 
 			if ( strtoupper( sanitize_key( $_POST['_method'] ) ) == 'DELETE' && isset( $_POST['qquuid'] ) ) {
@@ -80,6 +84,10 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Upload' ) ) {
 
 		public static function file_batch_delete_callback() {
 
+			if ( ! current_user_can( 'upload_files' ) || ! check_ajax_referer( 'exopite_sof_upload', 'nonce', false ) ) {
+				wp_send_json_error( 'Permission denied.', 403 );
+			}
+
 			$deleted = array();
 
 			if ( isset( $_POST['media-ids'] ) && is_array( $_POST['media-ids'] ) ) {
@@ -90,8 +98,16 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Upload' ) ) {
 
 				foreach ( $attachment_id_array as $attachmentid ) {
 
+					// Only delete attachments the current user is actually allowed to delete.
+					if ( ! current_user_can( 'delete_post', $attachmentid ) ) {
+						continue;
+					}
+
 					$deleted_item = wp_delete_attachment( $attachmentid, true );
-					$deleted[]    = $deleted_item->ID;
+
+					if ( $deleted_item ) {
+						$deleted[] = $deleted_item->ID;
+					}
 
 				}
 

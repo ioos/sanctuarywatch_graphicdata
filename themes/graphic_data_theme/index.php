@@ -213,7 +213,7 @@ foreach ( $graphic_data_terms_array as $graphic_data_term ) {
 			$graphic_data_instance = isset( $graphic_data_instances[ $graphic_data_current_row ] ) ? $graphic_data_instances[ $graphic_data_current_row ] : null;
 
 			if ( null != $graphic_data_instance ) {
-				$graphic_data_tile_image = get_post_meta( $graphic_data_instance['id'], 'instance_tile' )[0];
+				$graphic_data_tile_image = get_post_meta( $graphic_data_instance['id'], 'instance_tile', true ) ?? '';
 				$graphic_data_raw_title = $graphic_data_instance['post_title'];
 				$graphic_data_formatted_title = esc_html( $graphic_data_raw_title );
 				if ( '' !== $graphic_data_break_text && false !== strpos( $graphic_data_raw_title, $graphic_data_break_text ) ) {
@@ -229,9 +229,10 @@ foreach ( $graphic_data_terms_array as $graphic_data_term ) {
 					}
 				}
 				if ( 'no' == $graphic_data_instance['instance_legacy_content'] ) {
-					$graphic_data_instance_slug = get_post_meta( $graphic_data_instance['id'], 'instance_slug' )[0];
+					$graphic_data_instance_slug = get_post_meta( $graphic_data_instance['id'], 'instance_slug', true ) ?? '';
 					$graphic_data_instance_overview_scene = get_post_meta( $graphic_data_instance['id'], 'instance_overview_scene', true );
-					$graphic_data_instance_post_name = get_post( $graphic_data_instance_overview_scene )->post_name;
+					$graphic_data_instance_overview_post = $graphic_data_instance_overview_scene ? get_post( $graphic_data_instance_overview_scene ) : null;
+					$graphic_data_instance_post_name = $graphic_data_instance_overview_post ? $graphic_data_instance_overview_post->post_name : '';
 					$graphic_data_instance_link = get_site_url() . '/' . $graphic_data_instance_slug . '/' . $graphic_data_instance_post_name;
 				} else {
 					$graphic_data_instance_link = $graphic_data_instance['instance_legacy_content_url'];

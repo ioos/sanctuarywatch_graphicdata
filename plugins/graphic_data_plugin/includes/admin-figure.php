@@ -523,6 +523,9 @@ class Graphic_Data_Figure {
 		$function_utilities = new Graphic_Data_Utility();
 		$locations = $function_utilities->return_all_instances();
 
+		// Only administrators may edit the raw HTML/JS code field; everyone else sees it grayed out and read-only.
+		$user_can_edit_figure_code = current_user_can( 'manage_options' );
+
 		$transient_fields_exist = false;
 
 		// Get current user ID.
@@ -714,13 +717,15 @@ class Graphic_Data_Figure {
 					'description' => 'What is the "alternative text" that should be associated with this image for accessibility?',
 					'sanitize'      => 'sanitize_text_field',
 				),
-				// New HTML/JS Code Editor Field.
+				// New HTML/JS Code Editor Field. Only administrators may author raw HTML/JS for a figure; everyone else gets a read-only, grayed-out view.
 				array(
 					'id'          => 'figure_code',
 					'type'        => 'ace_editor',
 					'title'       => 'HTML/JavaScript Code',
 					'class'       => 'text-class',
-					'description' => 'Insert your custom HTML or JavaScript code here.',
+					'description' => $user_can_edit_figure_code
+						? 'Insert your custom HTML or JavaScript code here.'
+						: 'Insert your custom HTML or JavaScript code here. Only administrators can edit this field.',
 					'options' => array(
 						'theme'                     => 'ace/theme/chrome',
 						'mode'                      => 'ace/mode/javascript',
@@ -729,9 +734,12 @@ class Graphic_Data_Figure {
 						'enableBasicAutocompletion' => true,
 						'enableSnippets'            => true,
 						'enableLiveAutocompletion'  => true,
+						'readOnly'                  => ! $user_can_edit_figure_code,
 					),
 					'attributes'    => array(
-						'style'        => 'height: 150px; max-width: 100%;',
+						'style' => 'height: 150px; max-width: 100%;' . ( $user_can_edit_figure_code
+							? ''
+							: ' opacity: 0.5; background-color: #f0f0f0; cursor: not-allowed;' ),
 					),
 				),
 				// FILE UPLOAD ARRAY BOX
@@ -885,6 +893,30 @@ class Graphic_Data_Figure {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Strip the figure_code value from a Figure metabox save unless the
+	 * saving user is an administrator.
+	 *
+	 * The 'figure_code' field (raw HTML/JS) is hidden from the edit form
+	 * for non-admins in create_figure_fields(), but that only controls
+	 * what's rendered. This closes the same restriction on the save path,
+	 * so a crafted POST request can't persist figure_code for a lower role.
+	 *
+	 * @since 1.0.0
+	 * @hooked exopite_sof_save_meta_options
+	 *
+	 * @param array  $fields Sanitized field values keyed by field id, about to be saved as post meta.
+	 * @param string $unique The metabox's config id.
+	 * @param int    $post_id The post being saved.
+	 * @return array The filtered field values.
+	 */
+	public function restrict_figure_code_save( $fields, $unique, $post_id ) {
+		if ( 'graphic_data_plugin' === $unique && ! current_user_can( 'manage_options' ) ) {
+			unset( $fields['figure_code'] );
+		}
+		return $fields;
 	}
 
 	/**
