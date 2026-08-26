@@ -26,10 +26,10 @@ function graphic_data_add_figure_shortlink_rewrite( $rules ) {
 
 	return $figure_rules + $rules;
 
-    error_log(
-		'FIGURE SHORTLINK: First rewrite rule after filter = ' .
-		array_key_first( $rules )
-	);
+    // error_log(
+	// 	'FIGURE SHORTLINK: First rewrite rule after filter = ' .
+	// 	array_key_first( $rules )
+	// );
 
 	return $rules;
 }
@@ -49,7 +49,7 @@ add_filter(
  */
 function graphic_data_add_figure_query_var( $vars ) {
 
-	error_log( 'FIGURE SHORTLINK: Registering graphic_data_figure_id query var.' );
+	// error_log( 'FIGURE SHORTLINK: Registering graphic_data_figure_id query var.' );
 
 	$vars[] = 'graphic_data_figure_id';
 
@@ -70,26 +70,26 @@ function graphic_data_redirect_figure_shortlink() {
 
     global $wp;
 
-	error_log(
-		'FIGURE SHORTLINK DEBUG request = ' .
-		print_r( $wp->request, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK DEBUG request = ' .
+	// 	print_r( $wp->request, true )
+	// );
 
-	error_log(
-		'FIGURE SHORTLINK DEBUG matched_rule = ' .
-		print_r( $wp->matched_rule, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK DEBUG matched_rule = ' .
+	// 	print_r( $wp->matched_rule, true )
+	// );
 
 	$raw_figure_id = get_query_var(
 		'graphic_data_figure_id'
 	);
 
-	error_log(
-		'FIGURE SHORTLINK DEBUG figure ID = ' .
-		print_r( $raw_figure_id, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK DEBUG figure ID = ' .
+	// 	print_r( $raw_figure_id, true )
+	// );
 
-	error_log( 'FIGURE SHORTLINK: Redirect function fired.' );
+	// error_log( 'FIGURE SHORTLINK: Redirect function fired.' );
 
 	/*
 	 * ---------------------------------------------------------
@@ -101,10 +101,10 @@ function graphic_data_redirect_figure_shortlink() {
 		'graphic_data_figure_id'
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Raw figure ID = ' .
-		print_r( $raw_figure_id, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Raw figure ID = ' .
+	// 	print_r( $raw_figure_id, true )
+	// );
 
 	$figure_id = absint(
 		$raw_figure_id
@@ -126,10 +126,10 @@ function graphic_data_redirect_figure_shortlink() {
 		$figure_id
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Figure post type = ' .
-		print_r( $figure_post_type, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Figure post type = ' .
+	// 	print_r( $figure_post_type, true )
+	// );
 
 	if ( 'figure' !== $figure_post_type ) {
 		error_log(
@@ -154,15 +154,15 @@ function graphic_data_redirect_figure_shortlink() {
 		)
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: figure_modal = ' .
-		$figure_modal_number
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: figure_modal = ' .
+	// 	$figure_modal_number
+	// );
 
-	error_log(
-		'FIGURE SHORTLINK: figure_tab = ' .
-		$figure_tab
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: figure_tab = ' .
+	// 	$figure_tab
+	// );
 
 	if (
 		! $figure_modal_number ||
@@ -183,19 +183,19 @@ function graphic_data_redirect_figure_shortlink() {
 
 	$modal_id = $figure_modal_number;
 
-	error_log(
-		'FIGURE SHORTLINK: Modal ID = ' .
-		$modal_id
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Modal ID = ' .
+	// 	$modal_id
+	// );
 
 	$modal_post_type = get_post_type(
 		$modal_id
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Modal post type = ' .
-		print_r( $modal_post_type, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Modal post type = ' .
+	// 	print_r( $modal_post_type, true )
+	// );
 
 	if ( 'modal' !== $modal_post_type ) {
 		error_log(
@@ -208,20 +208,20 @@ function graphic_data_redirect_figure_shortlink() {
 		$modal_id
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Raw modal title = ' .
-		$modal_title
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Raw modal title = ' .
+	// 	$modal_title
+	// );
 
 	$modal_title = wp_specialchars_decode(
 		$modal_title,
 		ENT_QUOTES
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Decoded modal title = ' .
-		$modal_title
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Decoded modal title = ' .
+	// 	$modal_title
+	// );
 
 	$modal_slug = sanitize_title(
 		$modal_title
@@ -240,10 +240,10 @@ function graphic_data_redirect_figure_shortlink() {
 		)
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: modal_scene = ' .
-		$modal_scene_number
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: modal_scene = ' .
+	// 	$modal_scene_number
+	// );
 
 	if (
 		empty( $modal_slug ) ||
@@ -264,19 +264,19 @@ function graphic_data_redirect_figure_shortlink() {
 
 	$scene_id = $modal_scene_number;
 
-	error_log(
-		'FIGURE SHORTLINK: Scene ID = ' .
-		$scene_id
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Scene ID = ' .
+	// 	$scene_id
+	// );
 
 	$scene_post_type = get_post_type(
 		$scene_id
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Scene post type = ' .
-		print_r( $scene_post_type, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Scene post type = ' .
+	// 	print_r( $scene_post_type, true )
+	// );
 
 	if ( 'scene' !== $scene_post_type ) {
 		error_log(
@@ -290,10 +290,10 @@ function graphic_data_redirect_figure_shortlink() {
 		$scene_id
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Scene slug = ' .
-		print_r( $scene_slug, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Scene slug = ' .
+	// 	print_r( $scene_slug, true )
+	// );
 
 	$scene_instance_number = absint(
 		get_post_meta(
@@ -303,10 +303,10 @@ function graphic_data_redirect_figure_shortlink() {
 		)
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: scene_location = ' .
-		$scene_instance_number
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: scene_location = ' .
+	// 	$scene_instance_number
+	// );
 
 	if (
 		empty( $scene_slug ) ||
@@ -327,19 +327,19 @@ function graphic_data_redirect_figure_shortlink() {
 
 	$instance_id = $scene_instance_number;
 
-	error_log(
-		'FIGURE SHORTLINK: Instance ID = ' .
-		$instance_id
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Instance ID = ' .
+	// 	$instance_id
+	// );
 
 	$instance_post_type = get_post_type(
 		$instance_id
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Instance post type = ' .
-		print_r( $instance_post_type, true )
-	);
+	// error_log(
+    //         'FIGURE SHORTLINK: Instance post type = ' .
+    //         print_r( $instance_post_type, true )
+	// );
 
 	if ( 'instance' !== $instance_post_type ) {
 		error_log(
@@ -354,10 +354,10 @@ function graphic_data_redirect_figure_shortlink() {
 		true
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: instance_slug = ' .
-		print_r( $instance_slug, true )
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: instance_slug = ' .
+	// 	print_r( $instance_slug, true )
+	// );
 
 	if ( empty( $instance_slug ) ) {
 		error_log(
@@ -381,10 +381,10 @@ function graphic_data_redirect_figure_shortlink() {
 		'/'
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Base URL = ' .
-		$base_url
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Base URL = ' .
+	// 	$base_url
+	// );
 
 	$constructed_figure_url =
 		$base_url .
@@ -395,10 +395,10 @@ function graphic_data_redirect_figure_shortlink() {
 		'?figure=' .
 		$figure_id;
 
-	error_log(
-		'FIGURE SHORTLINK: Constructed URL = ' .
-		$constructed_figure_url
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Constructed URL = ' .
+	// 	$constructed_figure_url
+	// );
 
 
 	/*
@@ -407,9 +407,9 @@ function graphic_data_redirect_figure_shortlink() {
 	 * ---------------------------------------------------------
 	 */
 
-	error_log(
-		'FIGURE SHORTLINK: Redirecting now.'
-	);
+	// error_log(
+	// 	'FIGURE SHORTLINK: Redirecting now.'
+	// );
 
 	wp_redirect(
 		$constructed_figure_url,
