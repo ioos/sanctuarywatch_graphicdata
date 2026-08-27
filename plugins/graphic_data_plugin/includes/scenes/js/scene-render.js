@@ -43,6 +43,7 @@ export async function init() {
     try {
         await make_title();
         const url = graphicDataSceneData.svgUrl;
+        // console.log('url', url);
         await loadSVG(url, 'svg1');
     } catch (error) {
         if (!isAdminEditor) {
@@ -2337,9 +2338,18 @@ function handleSharedModalAndFigureNavigation()  {
         }
     
         function collectModalIds() {
-        return [...document.querySelectorAll(".modal-link")]
-            .map((el) => el.id)
-            .filter(Boolean);
+
+            if (!is_mobile()) {
+                return [...document.querySelectorAll(".modal-link")]
+                .map((el) => el.id)
+                .filter(Boolean);
+            }
+
+            if (is_mobile()) {
+            return [...document.querySelectorAll('div[id$="-container"]')]
+                .map((el) => el.id)
+                .filter(Boolean);
+            }
         }
 
         function expandAccordionForLink(targetLink) {
@@ -2361,8 +2371,23 @@ function handleSharedModalAndFigureNavigation()  {
             const start = Date.now();
         
             function check() {
-                const hasModalLinks = document.querySelectorAll(".modal-link").length > 0;
-                const hasSvg = document.querySelectorAll("svg").length > 0;
+
+                let hasModalLinks;
+                let hasSvg;
+
+                if (!is_mobile()) {
+                    hasModalLinks = document.querySelectorAll(".modal-link").length > 0;
+                    hasSvg = document.querySelectorAll("svg").length > 0;
+                }
+                if (is_mobile()) {
+                    hasModalLinks = document.querySelectorAll(
+                        'div.row[id^="row-"]'
+                    ).length > 0;
+
+                    hasSvg = document.querySelectorAll(
+                        'div[id$="-container"]'
+                    ).length > 0;
+                }
                 // or: const hasSvg = document.querySelectorAll(".svg-elem").length > 0;
             
                 if (hasModalLinks && hasSvg) {
@@ -2674,8 +2699,6 @@ function handleSharedModalAndFigureNavigation()  {
             });
         }
 
-
-
         const targetId = getTargetIdFromHash(raw);
         // console.log('targetId', targetId);
         const targetId_lowercase = targetId.toLowerCase();
@@ -2703,7 +2726,8 @@ function handleSharedModalAndFigureNavigation()  {
         window.addEventListener("load", function () {
             (async () => {
 
-                if (!is_mobile() && (!window.location.href.includes('post.php') && !window.location.href.includes('post-new.php'))) {
+                // if (!is_mobile() && (!window.location.href.includes('post.php') && !window.location.href.includes('post-new.php'))) {
+                if (!window.location.href.includes('post.php') && !window.location.href.includes('post-new.php')) {
                     await waitForDomState();
 
                     try {
@@ -2715,10 +2739,25 @@ function handleSharedModalAndFigureNavigation()  {
                     } catch {}
 
                     const modalIds = collectModalIds();
+                    // console.log('modalIds', modalIds);
             
-                    if (!modalIds.includes(targetId_lowercase)) {
+                    if (!is_mobile() && !modalIds.includes(targetId_lowercase)) {
                         alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
-                    } 
+                    }
+
+                    if (
+                        is_mobile() &&
+                        !modalIds.some(
+                            modalId =>
+                                modalId
+                                    .toLowerCase()
+                                    .replace(/-container$/, '') === targetId_lowercase
+                        )
+                    ) {
+                        alert(
+                            "We couldn't find that content. It may have been moved, renamed, or deleted."
+                        );
+                    }
                 }
 
                 if (figureId && (!window.location.href.includes('post.php') && !window.location.href.includes('post-new.php'))) {
