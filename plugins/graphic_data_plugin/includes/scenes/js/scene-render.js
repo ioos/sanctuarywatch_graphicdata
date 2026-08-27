@@ -2906,10 +2906,10 @@ function handleSharedModalAndFigureNavigation()  {
                             figureElement
                         );
 
-                        console.log(
-                        'measurableElement',
-                        measurableElement
-                        );
+                        // console.log(
+                        // 'measurableElement',
+                        // measurableElement
+                        // );
 
                         /*
                         * Give the browser two final layout frames after
