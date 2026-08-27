@@ -797,7 +797,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             * This is what we want reflected in the browser address bar.
             *
             * Example:
-            *
+            *+
             * /example-instance-2/space-base/#video/1?figure=127
             */
             const url = new URL(window.location.href);

@@ -2366,7 +2366,7 @@ function handleSharedModalAndFigureNavigation()  {
             }
         }
 
-        function waitForDomState({ timeoutMs = 10000, intervalMs = 100 } = {}) {
+        function waitForDomState({ timeoutMs = 15000, intervalMs = 100 } = {}) {
             return new Promise((resolve, reject) => {
             const start = Date.now();
         
@@ -2702,7 +2702,8 @@ function handleSharedModalAndFigureNavigation()  {
         const targetId = getTargetIdFromHash(raw);
         // console.log('targetId', targetId);
         const targetId_lowercase = targetId.toLowerCase();
-        const tabNumber = getTabFromHash(raw);
+        let tabNumber = getTabFromHash(raw);
+        tabNumber = Number(tabNumber);
         const targetTabButtonId = `${targetId}-${tabNumber}`;
         const targetTabPane = `${targetId}-${tabNumber}-pane`;
         // console.log('targetTabPane', targetTabPane);
@@ -2777,7 +2778,8 @@ function handleSharedModalAndFigureNavigation()  {
                             const figureResponse = await fetch(figureFetchURL);
                             const figureData = await figureResponse.json();
                             const figureModalNumber = figureData.figure_modal;
-                            const figureTab = figureData.figure_tab;
+                            let figureTab = figureData.figure_tab;
+                            figureTab = Number(figureTab);
 
                             const modalFetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/modal/" + figureModalNumber;
                             const modalResponse = await fetch(modalFetchURL);
@@ -2818,6 +2820,7 @@ function handleSharedModalAndFigureNavigation()  {
 
                                 if (submittedScene != sceneSlug) {
                                     window.location.href = constructedRestFigureURL;
+                                    window.location.reload();
                                 }
 
                                 if ((submittedInstance === instanceSlug && submittedScene === sceneSlug && submittedModal != modalSlug) || (submittedInstance === instanceSlug && submittedScene === sceneSlug && submittedModal === modalSlug && figureTab !== tabNumber)) {
@@ -2838,9 +2841,53 @@ function handleSharedModalAndFigureNavigation()  {
                             console.error('Error fetching figure/modal/scene/instance data:', error);
                         }
 
+                        if (is_mobile()) {
+                            const targetTabButton =
+                                document.getElementById(
+                                    targetTabButtonId
+                                );
+
+                            if (targetTabButton) {
+                                const tabTrigger =
+                                    bootstrap.Tab.getOrCreateInstance(
+                                        targetTabButton
+                                    );
+
+                                tabTrigger.show();
+                            }
+                        }
+
 
                         const tabPane = await waitForElementById(targetTabPaneId);
-                        //console.log('tabPane', tabPane);
+                        // console.log('targetTabPaneId', targetTabPaneId);
+                        // console.log('tabPane', tabPane);
+
+
+                        if (is_mobile()) {
+                            await new Promise((resolve) => {
+
+                                function checkTabState() {
+
+                                    const isActive =
+                                        tabPane.classList.contains('active');
+
+                                    const isShown =
+                                        tabPane.classList.contains('show');
+
+                                    if (isActive && isShown) {
+                                        resolve();
+                                        return;
+                                    }
+
+                                    requestAnimationFrame(
+                                        checkTabState
+                                    );
+                                }
+
+                                checkTabState();
+                            });
+                                                    
+                        }
 
 
                         const figureElement =
@@ -2859,10 +2906,10 @@ function handleSharedModalAndFigureNavigation()  {
                             figureElement
                         );
 
-                        //console.log(
-                        // 'measurableElement',
-                        // measurableElement
-                        // );
+                        console.log(
+                        'measurableElement',
+                        measurableElement
+                        );
 
                         /*
                         * Give the browser two final layout frames after
