@@ -671,6 +671,21 @@ Search.appendIndex(
             "summary": "The\u0020meta\u0020key\u0020that\u0020stores\u0020whether\u0020the\u0020page\u0020is\u0020included\u0020in\u0020the\u0020navigation\u0020bar.",
             "url": "classes/Graphic-Data-Page-Options.html#constant_NAVBAR_META_KEY"
         },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003AORDER_META_KEY",
+            "name": "ORDER_META_KEY",
+            "summary": "The\u0020meta\u0020key\u0020that\u0020stores\u0020the\u0020page\u0027s\u0020order\u0020within\u0020the\u0020navigation\u0020bar.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_ORDER_META_KEY"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003AORDER_MIN",
+            "name": "ORDER_MIN",
+            "summary": "The\u0020lowest\u0020value\u0020offered\u0020by\u0020the\u0020navigation\u002Dbar\u0020order\u0020select.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_ORDER_MIN"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003AORDER_MAX",
+            "name": "ORDER_MAX",
+            "summary": "The\u0020highest\u0020value\u0020offered\u0020by\u0020the\u0020navigation\u002Dbar\u0020order\u0020select.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_ORDER_MAX"
+        },                {
             "fqsen": "\\Graphic_Data_Page_Options\u003A\u003ANONCE_ACTION",
             "name": "NONCE_ACTION",
             "summary": "The\u0020nonce\u0020action\u0020used\u0020when\u0020saving\u0020the\u0020Instance\u0020section.",

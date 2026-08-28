@@ -95,19 +95,20 @@ permalink: /function_documentation/classes/Graphic-Data-Page-Options.html
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">13</span>
+    <span class="phpdocumentor-element-found-in__line">14</span>
 
     </aside>
 
             <p class="phpdocumentor-summary">Adds a required &quot;Instance&quot; section to the Page options of the Gutenberg page editor.</p>
 
 
-    <section class="phpdocumentor-description"><p>Registers a meta box on the <code class="prettyprint">page</code> post type that exposes two controls:
+    <section class="phpdocumentor-description"><p>Registers a meta box on the <code class="prettyprint">page</code> post type that exposes three controls:
 an Instance select (None, Global, or any Instance returned by
-Graphic_Data_Utility::return_all_instances()) and an &quot;Include in navigation
-bar?&quot; checkbox. The selected values are persisted as the
-<code class="prettyprint">graphic_data_page_instance</code> and <code class="prettyprint">graphic_data_page_instance_in_navbar</code>
-post meta and registered with the REST API so the block editor can read them.</p>
+Graphic_Data_Utility::return_all_instances()), an &quot;Include in navigation
+bar?&quot; checkbox, and a navigation-bar order select (1 through 10). The
+selected values are persisted as the <code class="prettyprint">scene_location</code>,
+<code class="prettyprint">graphic_data_page_instance_in_navbar</code>, and <code class="prettyprint">scene_order</code> post meta and
+registered with the REST API so the block editor can read them.</p>
 </section>
 
 
@@ -159,6 +160,27 @@ post meta and registered with the REST API so the block editor can read them.</p
         &nbsp;: string&nbsp;= &#039;graphic_data_page_instance_nonce&#039;                            </span>
 </dt>
 <dd>The nonce field name used when saving the Instance section.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MAX">ORDER_MAX</a>
+    <span>
+        &nbsp;: int&nbsp;= 10                            </span>
+</dt>
+<dd>The highest value offered by the navigation-bar order select.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_ORDER_META_KEY">ORDER_META_KEY</a>
+    <span>
+        &nbsp;: string&nbsp;= &#039;scene_order&#039;                            </span>
+</dt>
+<dd>The meta key that stores the page&#039;s order within the navigation bar.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MIN">ORDER_MIN</a>
+    <span>
+        &nbsp;: int&nbsp;= 1                            </span>
+</dt>
+<dd>The lowest value offered by the navigation-bar order select.</dd>
 
     </dl>
 
@@ -226,7 +248,7 @@ post meta and registered with the REST API so the block editor can read them.</p
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">20</span>
+    <span class="phpdocumentor-element-found-in__line">21</span>
 
     </aside>
 
@@ -257,7 +279,7 @@ post meta and registered with the REST API so the block editor can read them.</p
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">27</span>
+    <span class="phpdocumentor-element-found-in__line">28</span>
 
     </aside>
 
@@ -288,7 +310,7 @@ post meta and registered with the REST API so the block editor can read them.</p
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">34</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -319,7 +341,7 @@ post meta and registered with the REST API so the block editor can read them.</p
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">41</span>
+    <span class="phpdocumentor-element-found-in__line">63</span>
 
     </aside>
 
@@ -331,6 +353,99 @@ post meta and registered with the REST API so the block editor can read them.</p
         <span class="phpdocumentor-signature__type">string</span>
     <span class="phpdocumentor-signature__name">NONCE_NAME</span>
     = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_page_instance_nonce&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_ORDER_MAX">
+        ORDER_MAX
+        <a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MAX" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">49</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The highest value offered by the navigation-bar order select.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">ORDER_MAX</span>
+    = <span class="phpdocumentor-signature__default-value">10</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_ORDER_META_KEY">
+        ORDER_META_KEY
+        <a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_META_KEY" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">35</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The meta key that stores the page&#039;s order within the navigation bar.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">ORDER_META_KEY</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;scene_order&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_ORDER_MIN">
+        ORDER_MIN
+        <a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MIN" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">42</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The lowest value offered by the navigation-bar order select.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">ORDER_MIN</span>
+    = <span class="phpdocumentor-signature__default-value">1</span>
 </code>
 
 
@@ -364,7 +479,7 @@ post meta and registered with the REST API so the block editor can read them.</p
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">93</span>
+    <span class="phpdocumentor-element-found-in__line">130</span>
 
     </aside>
 
@@ -417,7 +532,7 @@ the block editor.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">51</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
@@ -468,7 +583,7 @@ the block editor.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">115</span>
+    <span class="phpdocumentor-element-found-in__line">155</span>
 
     </aside>
 
@@ -481,8 +596,11 @@ the block editor.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Outputs the required Instance select and the &quot;Include in navigation bar?&quot;
-checkbox, pre-filled with any previously saved values.</p>
+        <section class="phpdocumentor-description"><p>Outputs the required Instance select, the &quot;Include in navigation bar?&quot;
+checkbox, and the navigation-bar order select, pre-filled with any
+previously saved values. The order select is only shown while the
+checkbox is checked (handled with a CSS <code class="prettyprint">:has()</code> rule so it toggles
+live without JavaScript).</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -532,7 +650,7 @@ checkbox, pre-filled with any previously saved values.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">160</span>
+    <span class="phpdocumentor-element-found-in__line">231</span>
 
     </aside>
 
@@ -546,9 +664,10 @@ checkbox, pre-filled with any previously saved values.</p>
         </div>
     
         <section class="phpdocumentor-description"><p>Hooked to <code class="prettyprint">save_post_page</code>. Validates the nonce, capability, and request
-context before writing the <code class="prettyprint">graphic_data_page_instance</code> and
-<code class="prettyprint">graphic_data_page_instance_in_navbar</code> post meta. Unrecognised Instance
-values fall back to <code class="prettyprint">none</code>.</p>
+context before writing the <code class="prettyprint">scene_location</code>,
+<code class="prettyprint">graphic_data_page_instance_in_navbar</code>, and <code class="prettyprint">scene_order</code> post meta.
+Unrecognised Instance values fall back to <code class="prettyprint">none</code>, and an out-of-range
+order falls back to the lowest allowed value.</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -598,7 +717,7 @@ values fall back to <code class="prettyprint">none</code>.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">214</span>
+    <span class="phpdocumentor-element-found-in__line">291</span>
 
     </aside>
 
@@ -671,6 +790,9 @@ return_all_instances() seeds its result with is skipped.</p>
                                                     <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_NAVBAR_META_KEY">NAVBAR_META_KEY</a></li>
                                                     <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_NONCE_ACTION">NONCE_ACTION</a></li>
                                                     <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_NONCE_NAME">NONCE_NAME</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MAX">ORDER_MAX</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_META_KEY">ORDER_META_KEY</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MIN">ORDER_MIN</a></li>
                                             </ul>
                 </li>
             
