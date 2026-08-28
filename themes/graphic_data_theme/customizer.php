@@ -320,6 +320,7 @@ class Graphic_Data_Customizer_Settings {
 						'This color is used for the following:<br>
                 • Front page section titles<br>
                 • Scene titles<br>
+                • Page titles<br>
                 • Modal titles<br>
                 • Modal tab titles',
 					'section'  => 'theme_color_settings',
@@ -894,7 +895,7 @@ class Graphic_Data_Customizer_Settings {
 			}
 
 			/* Theme Color 3 */
-			.theme-title > h2, #title-container > h1, .modal-title, .instance_type_title {
+			.theme-title > h2, #title-container > h1, .modal-title, .instance_type_title, .graphic-data-page-title {
 				color: <?php echo esc_attr( get_theme_mod( 'theme_color_3', '#024880' ) ); ?> !important;
 			}
 

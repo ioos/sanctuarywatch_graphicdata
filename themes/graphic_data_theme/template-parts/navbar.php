@@ -33,12 +33,10 @@
 			$graphic_data_post_meta = get_post_meta( get_the_ID() );
 			$graphic_data_scene_location = isset( $graphic_data_post_meta['scene_location'][0] ) ? $graphic_data_post_meta['scene_location'][0] : '';
 
-			// A scene_location of 'global' means the scene is site-wide and should display the same
-			// navigation as the front page (the instance-type dropdown menu) rather than a
-			// scene-specific list of links.
-			$graphic_data_use_front_page_nav = ( 'global' === $graphic_data_scene_location );
-
-			$graphic_data_inst_overview_scene = isset( $graphic_data_post_meta['instance_overview_scene'][0] ) ? $graphic_data_post_meta['instance_overview_scene'][0] : '';
+			// A scene_location of 'global' means the page (or scene) is site-wide and should
+			// display the same navigation as the front page (the instance-type dropdown menu,
+			// plus any global Pages) rather than an Instance-specific list of links.
+			$graphic_data_use_front_page_nav = graphic_data_scene_location_is_global();
 
 			$graphic_data_single_instance = graphic_data_single_instance_check();
 			if ( false != $graphic_data_single_instance ) {
@@ -69,45 +67,30 @@
 						),
 					);
 					$graphic_data_query = $graphic_data_use_front_page_nav ? null : new WP_Query( $graphic_data_args );
-					if ( null !== $graphic_data_query && $graphic_data_query->have_posts() ) {
+
+					// Pages that opted in to this Instance's navigation bar, ready to be
+					// sorted in among the scenes by scene_order.
+					$graphic_data_navbar_pages = $graphic_data_use_front_page_nav ? array() : graphic_data_get_navbar_pages( $graphic_data_scene_location );
+
+					if ( null !== $graphic_data_query && ( $graphic_data_query->have_posts() || ! empty( $graphic_data_navbar_pages ) ) ) {
 						$graphic_data_post_titles = array();
 						while ( $graphic_data_query->have_posts() ) {
 							$graphic_data_query->the_post();
-							$graphic_data_scene_loc = get_post_meta( get_the_ID(), 'scene_location', true ) ?? '';
 							$graphic_data_scene_published = get_post_meta( get_the_ID(), 'scene_published', true );
-							$graphic_data_inst_overview_scene = get_post_meta( $graphic_data_scene_loc, 'instance_overview_scene', true ) ?? '';
 							$graphic_data_scene_order = get_post_meta( get_the_ID(), 'scene_order', true );
 							$graphic_data_scene_order = is_numeric( $graphic_data_scene_order ) ? (int) $graphic_data_scene_order : 0;
-							if ( get_the_ID() != $graphic_data_inst_overview_scene && 'draft' != $graphic_data_scene_published ) {
+							if ( 'draft' != $graphic_data_scene_published ) {
 								$graphic_data_post_titles[] = [ get_the_title(), $graphic_data_scene_order, get_the_ID() ];
 							}
 						}
 						wp_reset_postdata();
 
+						// Merge in the Pages that opted in to this Instance's navigation bar, then
+						// order every entry - the Instance overview scene, the other scenes, and the
+						// Pages - together by scene_order.
+						$graphic_data_post_titles = array_merge( $graphic_data_post_titles, $graphic_data_navbar_pages );
 
-						/**
-						 * Comparison callback for sorting post title arrays.
-						 *
-						 * Sorts primarily by the numeric sort order (index 1), then
-						 * alphabetically by title (index 0) as a tiebreaker.
-						 *
-						 * @param array $a First array with [title, sort_order, post_id].
-						 * @param array $b Second array with [title, sort_order, post_id].
-						 * @return int Negative if $a < $b, positive if $a > $b, zero if equal.
-						 */
-						function graphic_data_custom_compare( $a, $b ) {
-							$result = $a[1] - $b[1];
-							if ( 0 == $result ) {
-								$result = strcmp( $a[0], $b[0] );
-							}
-							return $result;
-						}
-
-						usort( $graphic_data_post_titles, 'graphic_data_custom_compare' );
-
-						if ( $graphic_data_inst_overview_scene ) {
-							echo "<li class='nav-item'><a class='nav-link' href='" . esc_url( get_permalink( $graphic_data_inst_overview_scene ) ) . "'>" . esc_html( get_the_title( $graphic_data_inst_overview_scene ) ) . '</a></li>';
-						}
+						usort( $graphic_data_post_titles, 'graphic_data_compare_navbar_items' );
 
 						foreach ( $graphic_data_post_titles as $graphic_data_post_title ) {
 							echo "<li class='nav-item'><a class='nav-link' href='" . esc_url( get_permalink( $graphic_data_post_title[2] ) ) . "'>" . esc_html( $graphic_data_post_title[0] ) . '</a></li>';

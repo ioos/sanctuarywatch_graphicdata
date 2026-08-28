@@ -3,12 +3,13 @@
 /**
  * Adds a required "Instance" section to the Page options of the Gutenberg page editor.
  *
- * Registers a meta box on the `page` post type that exposes two controls:
+ * Registers a meta box on the `page` post type that exposes three controls:
  * an Instance select (None, Global, or any Instance returned by
- * Graphic_Data_Utility::return_all_instances()) and an "Include in navigation
- * bar?" checkbox. The selected values are persisted as the
- * `graphic_data_page_instance` and `graphic_data_page_instance_in_navbar`
- * post meta and registered with the REST API so the block editor can read them.
+ * Graphic_Data_Utility::return_all_instances()), an "Include in navigation
+ * bar?" checkbox, and a navigation-bar order select (1 through 10). The
+ * selected values are persisted as the `scene_location`,
+ * `graphic_data_page_instance_in_navbar`, and `scene_order` post meta and
+ * registered with the REST API so the block editor can read them.
  */
 class Graphic_Data_Page_Options {
 
@@ -25,6 +26,27 @@ class Graphic_Data_Page_Options {
 	 * @var string
 	 */
 	const NAVBAR_META_KEY = 'graphic_data_page_instance_in_navbar';
+
+	/**
+	 * The meta key that stores the page's order within the navigation bar.
+	 *
+	 * @var string
+	 */
+	const ORDER_META_KEY = 'scene_order';
+
+	/**
+	 * The lowest value offered by the navigation-bar order select.
+	 *
+	 * @var int
+	 */
+	const ORDER_MIN = 1;
+
+	/**
+	 * The highest value offered by the navigation-bar order select.
+	 *
+	 * @var int
+	 */
+	const ORDER_MAX = 10;
 
 	/**
 	 * The nonce action used when saving the Instance section.
@@ -78,6 +100,21 @@ class Graphic_Data_Page_Options {
 				},
 			)
 		);
+
+		register_post_meta(
+			'page',
+			self::ORDER_META_KEY,
+			array(
+				'show_in_rest'      => true,
+				'single'            => true,
+				'type'              => 'integer',
+				'default'           => self::ORDER_MIN,
+				'sanitize_callback' => 'absint',
+				'auth_callback'     => function () {
+					return current_user_can( 'edit_pages' );
+				},
+			)
+		);
 	}
 
 	/**
@@ -105,8 +142,11 @@ class Graphic_Data_Page_Options {
 	/**
 	 * Render the Instance section controls.
 	 *
-	 * Outputs the required Instance select and the "Include in navigation bar?"
-	 * checkbox, pre-filled with any previously saved values.
+	 * Outputs the required Instance select, the "Include in navigation bar?"
+	 * checkbox, and the navigation-bar order select, pre-filled with any
+	 * previously saved values. The order select is only shown while the
+	 * checkbox is checked (handled with a CSS `:has()` rule so it toggles
+	 * live without JavaScript).
 	 *
 	 * @since 1.0.0
 	 * @param WP_Post $post The page being edited.
@@ -120,28 +160,58 @@ class Graphic_Data_Page_Options {
 
 		$in_navbar = ! empty( get_post_meta( $post->ID, self::NAVBAR_META_KEY, true ) );
 
+		$stored_order   = get_post_meta( $post->ID, self::ORDER_META_KEY, true );
+		$selected_order = is_numeric( $stored_order ) ? (int) $stored_order : self::ORDER_MIN;
+		if ( $selected_order < self::ORDER_MIN || $selected_order > self::ORDER_MAX ) {
+			$selected_order = self::ORDER_MIN;
+		}
+
 		$options = $this->get_instance_options();
 		?>
-		<p>
-			<label for="graphic_data_page_instance" style="display:inline-flex;align-items:center;gap:4px;">
-				<span class="dashicons dashicons-admin-site-alt3" aria-hidden="true"></span>
-				<strong><?php esc_html_e( 'Instance', 'graphic-data' ); ?></strong>
-				<span class="description">(<?php esc_html_e( 'required', 'graphic-data' ); ?>)</span>
-			</label>
-		</p>
-		<p>
-			<select name="graphic_data_page_instance" id="graphic_data_page_instance" class="widefat" style="width:100%;max-width:100%;box-sizing:border-box;" required>
-				<?php foreach ( $options as $value => $label ) : ?>
-					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $selected_instance, (string) $value ); ?>>
-						<?php echo esc_html( $label ); ?>
-					</option>
-				<?php endforeach; ?>
-			</select>
-		</p>
-		<p>
-			<input type="checkbox" name="graphic_data_page_instance_in_navbar" id="graphic_data_page_instance_in_navbar" value="1" <?php checked( $in_navbar ); ?> />
-			<label for="graphic_data_page_instance_in_navbar"><?php esc_html_e( 'Include in navigation bar?', 'graphic-data' ); ?></label>
-		</p>
+		<style>
+			#graphic-data-page-instance-fields .graphic-data-order-row {
+				display: none;
+			}
+			#graphic-data-page-instance-fields:has( #graphic_data_page_instance_in_navbar:checked ) .graphic-data-order-row {
+				display: block;
+			}
+		</style>
+		<div id="graphic-data-page-instance-fields">
+			<p>
+				<label for="graphic_data_page_instance" style="display:inline-flex;align-items:center;gap:4px;">
+					<span class="dashicons dashicons-admin-site-alt3" aria-hidden="true"></span>
+					<strong><?php esc_html_e( 'Instance', 'graphic-data' ); ?></strong>
+					<span class="description">(<?php esc_html_e( 'required', 'graphic-data' ); ?>)</span>
+				</label>
+			</p>
+			<p>
+				<select name="graphic_data_page_instance" id="graphic_data_page_instance" class="widefat" style="width:100%;max-width:100%;box-sizing:border-box;" required>
+					<?php foreach ( $options as $value => $label ) : ?>
+						<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $selected_instance, (string) $value ); ?>>
+							<?php echo esc_html( $label ); ?>
+						</option>
+					<?php endforeach; ?>
+				</select>
+			</p>
+			<p>
+				<input type="checkbox" name="graphic_data_page_instance_in_navbar" id="graphic_data_page_instance_in_navbar" value="1" <?php checked( $in_navbar ); ?> />
+				<label for="graphic_data_page_instance_in_navbar"><?php esc_html_e( 'Include in navigation bar?', 'graphic-data' ); ?></label>
+			</p>
+			<div class="graphic-data-order-row">
+				<p>
+					<label for="scene_order"><?php esc_html_e( 'What is the order of the page in the navigation bar?', 'graphic-data' ); ?></label>
+				</p>
+				<p>
+					<select name="scene_order" id="scene_order" class="widefat" style="width:100%;max-width:100%;box-sizing:border-box;">
+						<?php for ( $order_option = self::ORDER_MIN; $order_option <= self::ORDER_MAX; $order_option++ ) : ?>
+							<option value="<?php echo esc_attr( (string) $order_option ); ?>" <?php selected( $selected_order, $order_option ); ?>>
+								<?php echo esc_html( (string) $order_option ); ?>
+							</option>
+						<?php endfor; ?>
+					</select>
+				</p>
+			</div>
+		</div>
 		<?php
 	}
 
@@ -149,9 +219,10 @@ class Graphic_Data_Page_Options {
 	 * Persist the Instance section values when a page is saved.
 	 *
 	 * Hooked to `save_post_page`. Validates the nonce, capability, and request
-	 * context before writing the `graphic_data_page_instance` and
-	 * `graphic_data_page_instance_in_navbar` post meta. Unrecognised Instance
-	 * values fall back to `none`.
+	 * context before writing the `scene_location`,
+	 * `graphic_data_page_instance_in_navbar`, and `scene_order` post meta.
+	 * Unrecognised Instance values fall back to `none`, and an out-of-range
+	 * order falls back to the lowest allowed value.
 	 *
 	 * @since 1.0.0
 	 * @param int $post_id The ID of the page being saved.
@@ -198,6 +269,12 @@ class Graphic_Data_Page_Options {
 		} else {
 			delete_post_meta( $post_id, self::NAVBAR_META_KEY );
 		}
+
+		$submitted_order = isset( $_POST['scene_order'] ) ? absint( wp_unslash( $_POST['scene_order'] ) ) : self::ORDER_MIN;
+		if ( $submitted_order < self::ORDER_MIN || $submitted_order > self::ORDER_MAX ) {
+			$submitted_order = self::ORDER_MIN;
+		}
+		update_post_meta( $post_id, self::ORDER_META_KEY, $submitted_order );
 	}
 
 	/**

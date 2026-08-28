@@ -1084,7 +1084,7 @@ button:focus,
   } 
 
   #title-container{
-     padding-left: 4%; 
+     padding-left: 4%;
   }
 
   #title-container > div > div.col-md-10{
@@ -1205,11 +1205,11 @@ body > nav{
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   .graphic-data-page-title {
-    color: #033c73;
+    /* Color is set from Theme Customizer "Color 3" in customizer.php. */
     margin-bottom: 1.5rem;
-    text-align: center;
+    text-align: left;
   }
   
   .graphic-data-page-content > .alignwide {
