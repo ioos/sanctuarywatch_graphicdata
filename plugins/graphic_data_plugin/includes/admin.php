@@ -142,6 +142,9 @@ class Graphic_Data_Plugin {
 		// The class that defines general utility functions for the plugin.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
 
+		// The class that adds the required Instance section to the Gutenberg page editor.
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-page-options.php';
+
 		// The class that defines the optional data wipe offered on plugin deactivation.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-deactivation-cleanup.php';
 
@@ -253,6 +256,12 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'bulk_actions-edit-instance', $plugin_admin_instance, 'remove_bulk_actions' );
 		$this->loader->add_filter( 'post_row_actions', $plugin_admin_instance, 'custom_content_remove_quick_edit_link', 10, 2 );
 		$this->loader->add_filter( 'rest_api_init', $plugin_admin_instance, 'register_instance_rest_fields' );
+
+		// Load class and functions that add the required Instance section to the Gutenberg page editor.
+		$plugin_page_options = new Graphic_Data_Page_Options();
+		$this->loader->add_action( 'init', $plugin_page_options, 'register_page_instance_meta' );
+		$this->loader->add_action( 'add_meta_boxes', $plugin_page_options, 'add_instance_meta_box' );
+		$this->loader->add_action( 'save_post_page', $plugin_page_options, 'save_instance_meta_box' );
 
 		// Load class and functions associated with media manager.
 		$plugin_media_manager = new Graphic_Data_Media_Manager();

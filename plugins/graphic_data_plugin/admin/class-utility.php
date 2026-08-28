@@ -611,8 +611,8 @@ class Graphic_Data_Utility {
 			}
 			// If author has no assigned instances, $instances remains empty, so only "All Instances" shows.
 
-		} else {
-			// Administrators or other roles see all instances.
+		} elseif ( in_array( $user_role, array( 'editor', 'administrator' ), true ) || is_super_admin( $current_user->ID ) ) {
+			// Editors, administrators, and super administrators see all instances.
 			$instances = $wpdb->get_results(
 				"
 				SELECT ID, post_title
@@ -621,6 +621,9 @@ class Graphic_Data_Utility {
 				AND post_status = 'publish'
 				ORDER BY post_title ASC"
 			);
+		} else {
+			// Any other role gets no instance list.
+			$instances = null;
 		}
 
 		// Get selected instance from URL or from stored value.

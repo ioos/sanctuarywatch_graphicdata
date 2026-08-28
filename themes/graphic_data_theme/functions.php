@@ -84,6 +84,77 @@ function graphic_data_single_instance_front_page_redirect() {
 add_action( 'template_redirect', 'graphic_data_single_instance_front_page_redirect' );
 
 /**
+ * Retrieve the raw scene_location meta value for a scene.
+ *
+ * The scene_location meta normally holds the post ID of the instance a scene
+ * belongs to. Two sentinel values receive special treatment on the front end:
+ * 'none' (the scene is not browsable and is redirected to the front page) and
+ * 'global' (the scene is site-wide and shares the front page navigation).
+ *
+ * @since 1.6.3
+ *
+ * @param int $post_id Optional. Scene post ID. Defaults to the current post in the loop.
+ * @return string The scene_location meta value, or an empty string when it is not set.
+ */
+function graphic_data_get_scene_location( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : (int) get_the_ID();
+
+	if ( ! $post_id ) {
+		return '';
+	}
+
+	$scene_location = get_post_meta( $post_id, 'scene_location', true );
+
+	return is_string( $scene_location ) ? $scene_location : '';
+}
+
+/**
+ * Determine whether a scene is configured as a site-wide ("global") scene.
+ *
+ * Global scenes are not attached to a specific instance and therefore display
+ * the same navigation bar as the site's front page.
+ *
+ * @since 1.6.3
+ *
+ * @param int $post_id Optional. Scene post ID. Defaults to the current post in the loop.
+ * @return bool True when the scene_location meta value is 'global', false otherwise.
+ */
+function graphic_data_scene_location_is_global( $post_id = 0 ) {
+	return 'global' === graphic_data_get_scene_location( $post_id );
+}
+
+/**
+ * Redirect scenes with no usable scene_location to the front page.
+ *
+ * A scene whose scene_location meta is empty or explicitly set to 'none' is not
+ * attached to a browsable instance, so any front-end request for that scene is
+ * sent to the site's front page. Preview requests are left alone so that scenes
+ * can be configured before they are published.
+ *
+ * @since 1.6.3
+ *
+ * @uses is_singular()           To limit the redirect to single scene views.
+ * @uses get_queried_object_id() To identify the scene being requested.
+ * @uses graphic_data_get_scene_location() To read the scene_location meta value.
+ * @uses wp_safe_redirect()      To send the visitor to the front page.
+ *
+ * @return void
+ */
+function graphic_data_scene_location_redirect() {
+	if ( is_admin() || is_preview() || ! is_singular( 'scene' ) ) {
+		return;
+	}
+
+	$scene_location = graphic_data_get_scene_location( get_queried_object_id() );
+
+	if ( '' === $scene_location || 'none' === $scene_location ) {
+		wp_safe_redirect( home_url( '/' ) );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'graphic_data_scene_location_redirect' );
+
+/**
  * Enqueues Google Fonts for the theme.
  *
  * Loads the Roboto and Open Sans font families from Google Fonts

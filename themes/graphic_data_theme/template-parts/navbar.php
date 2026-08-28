@@ -33,6 +33,11 @@
 			$graphic_data_post_meta = get_post_meta( get_the_ID() );
 			$graphic_data_scene_location = isset( $graphic_data_post_meta['scene_location'][0] ) ? $graphic_data_post_meta['scene_location'][0] : '';
 
+			// A scene_location of 'global' means the scene is site-wide and should display the same
+			// navigation as the front page (the instance-type dropdown menu) rather than a
+			// scene-specific list of links.
+			$graphic_data_use_front_page_nav = ( 'global' === $graphic_data_scene_location );
+
 			$graphic_data_inst_overview_scene = isset( $graphic_data_post_meta['instance_overview_scene'][0] ) ? $graphic_data_post_meta['instance_overview_scene'][0] : '';
 
 			$graphic_data_single_instance = graphic_data_single_instance_check();
@@ -40,7 +45,7 @@
 				$graphic_data_scene_location = $graphic_data_single_instance['instanceID'];
 			}
 
-			if ( ! empty( $graphic_data_scene_location ) ) {
+			if ( ! $graphic_data_use_front_page_nav && ! empty( $graphic_data_scene_location ) ) {
 				$graphic_data_title = get_the_title( $graphic_data_scene_location );
 				if ( ! empty( $graphic_data_title ) ) {
 					echo "<span class='navbar-brand'>" . esc_html( $graphic_data_title ) . '</span>';
@@ -63,8 +68,8 @@
 							),
 						),
 					);
-					$graphic_data_query = new WP_Query( $graphic_data_args );
-					if ( $graphic_data_query->have_posts() ) {
+					$graphic_data_query = $graphic_data_use_front_page_nav ? null : new WP_Query( $graphic_data_args );
+					if ( null !== $graphic_data_query && $graphic_data_query->have_posts() ) {
 						$graphic_data_post_titles = array();
 						while ( $graphic_data_query->have_posts() ) {
 							$graphic_data_query->the_post();

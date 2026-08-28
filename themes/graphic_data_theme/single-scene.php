@@ -38,9 +38,13 @@ if ( ! is_user_logged_in() && 'draft' === $graphic_data_scene_published ) {
 }
 
 // Check that the {instance-slug} URL segment actually matches the scene's real instance - redirect if not.
-if ( ! is_preview() ) {
+// Scenes with an empty or 'none' scene_location are already redirected to the front page on
+// 'template_redirect' (see graphic_data_scene_location_redirect()). Scenes with a scene_location of
+// 'global' are intentionally not tied to an instance, so the instance-slug match does not apply to them.
+$graphic_data_scene_instance_id = get_post_meta( $graphic_data_post_id, 'scene_location', true );
+
+if ( ! is_preview() && 'global' !== $graphic_data_scene_instance_id ) {
 	$graphic_data_url_instance_slug = get_query_var( 'instance_slug' );
-	$graphic_data_scene_instance_id = get_post_meta( $graphic_data_post_id, 'scene_location', true );
 	$graphic_data_actual_instance_slug = get_post_meta( $graphic_data_scene_instance_id, 'instance_slug', true );
 
 	if ( '' === $graphic_data_url_instance_slug || $graphic_data_url_instance_slug !== $graphic_data_actual_instance_slug ) {
