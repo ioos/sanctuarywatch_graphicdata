@@ -613,9 +613,18 @@ class Graphic_Data_Admin {
 	 * @since    1.0.0
 	 */
 	public function remove_view_link_from_post_type( $actions, $post ) {
-		if ( ( 'instance' === $post->post_type || 'modal' === $post->post_type || 'figure' === $post->post_type ) && isset( $actions['view'] ) ) {
+		if ( ( 'instance' === $post->post_type || 'modal' === $post->post_type) && isset( $actions['view'] ) ) {
 			unset( $actions['view'] ); // Remove the "View" link.
 		}
+
+		// Replace Figure "View" with the shortlink: rootURL/f/{post_id}
+		if ( 'figure' === $post->post_type ) {
+			$actions['view'] = sprintf(
+				'<a href="%s" target="_blank" rel="noopener noreferrer">View</a>',
+				esc_url( home_url( '/f/' . $post->ID . '/' ) )
+			);
+		}
+		
 		return $actions;
 	}
 
