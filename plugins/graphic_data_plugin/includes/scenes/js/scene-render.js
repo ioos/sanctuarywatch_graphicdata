@@ -115,6 +115,10 @@ export async function make_title() {
 		const row = document.createElement('div');
 		row.classList.add('row');
 
+        if (is_mobile()) {
+            row.classList.add('justify-content-center');
+        }
+
 		const col1 = document.createElement('div');
 		col1.appendChild(accgroup);
 
