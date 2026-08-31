@@ -13,6 +13,13 @@ Version: 1.6.3
   width: 100% !important;
 }
 
+/*
+Adjust padding of page headers
+*/
+#primary {
+  padding-top: 12px;
+}
+
 
 #above_entire_thing { 
   max-width: 1100px !important;

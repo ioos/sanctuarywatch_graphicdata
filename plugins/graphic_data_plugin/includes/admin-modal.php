@@ -205,6 +205,7 @@ class Graphic_Data_Modal {
 				'title'            => 'Icon Action*',
 				'options'          => array(
 					'External URL' => 'Link to External URL',
+					'Page'        => 'Link to Page',
 					'Scene'        => 'Link to Scene',
 					'Modal'        => 'Open Modal',
 				),
@@ -219,6 +220,15 @@ class Graphic_Data_Modal {
 				'class'       => 'text-class',
 				'description' => 'What is the external URL that the user should be taken to when the icon is clicked?',
 				'sanitize'    => 'sanitize_url',
+			),
+			array(
+				'id'          => 'icon_page_out',
+				'type'        => 'select',
+				'title'       => 'Icon Page Out*',
+				'options'     => $icon_scene_out,
+				'description' => 'What is the page that the user should be taken to when the icon is clicked?',
+				'default'     => '',
+				'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],
 			),
 			array(
 				'id'          => 'icon_scene_out',
@@ -382,9 +392,9 @@ class Graphic_Data_Modal {
 		}
 
 		// Step 3: Insert the new sub-arrays after the second element in the original 'fields' array.
-		array_splice( $fields, 11, 0, $info_fields );
-		array_splice( $fields, 18, 0, $photo_fields );
-		array_splice( $fields, 25, 0, $tab_fields );
+		array_splice( $fields, 12, 0, $info_fields );
+		array_splice( $fields, 19, 0, $photo_fields );
+		array_splice( $fields, 26, 0, $tab_fields );
 
 		// If we're just running this function to get the custom field list for field validation, return early.
 		if ( $return_fields_only ) {
