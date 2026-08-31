@@ -9,6 +9,11 @@ if ( typeof window.graphicDataSceneData === 'undefined' ) {
 }
 const graphicDataSceneData = window.graphicDataSceneData;
 
+const graphicDataSiteTitle =
+	document.querySelector('#wp-admin-bar-site-name > .ab-item')
+		?.textContent
+		.trim() ?? '';
+
 // FIGURES Admin error handling for missing figure data in preview mode. Operates in figure-render.js
 document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
     const { tabContentElement: divID, figureType } = e.detail;
@@ -1790,6 +1795,14 @@ export async function createFigureHtml(
 		.replace(/\/+$/, '');
 
 
+	const normalizedFigureURL = `${rootURL}/f/${figureID}`
+		.trim()
+		.replace(/\/+$/, '');
+
+
+	const siteTitle = graphicDataSiteTitle;
+
+
 	let figIframeHtmlFileName;
 	let figIframeHtmlPath;
 	if (info_obj['status'] === 'full_figure') {
@@ -2874,6 +2887,7 @@ export async function createFigureHtml(
 
 					.modebar-container {
 						top: -28px !important;
+						margin-top: 10px !important;
 					}
 
 					.code-display-window {
@@ -2962,16 +2976,15 @@ export async function createFigureHtml(
 
 					.figure-footer {
 						width: 100%;
-						margin-top: 24px;
-						padding-top: 12px;
+						margin-bottom: 10px;
 					}
 
 					.figure-footer-links {
 						display: flex;
-						justify-content: flex-end;
+						justify-content: space-between;
 						align-items: center;
-						flex-wrap: wrap;
-						gap: 16px;
+						width: 100%;
+						gap: 1rem;
 					}
 
 					.figure-footer-link {
@@ -2991,6 +3004,56 @@ export async function createFigureHtml(
 					@media screen and (max-width: 767px) {
 						.figure-embed-document {
 							padding: 8px;
+						}
+
+						.figure-footer-link {
+							color: rgba(68, 68, 68, 0.55);
+							font-size: 0.65rem;
+							text-decoration: none;
+						}
+
+						.figure-footer-links {
+							display: flex;
+							justify-content: space-between;
+							align-items: center;
+							width: 100%;
+							gap: 1rem;
+						}
+
+						.caption {
+							width: 100%;
+							line-height: 1.3;
+							font-size: .9rem !important;
+						}
+
+						.figure-caption-short {
+							margin-top: 0;
+							margin-left: 1%;
+							font-size: .9rem !important;
+						}
+
+
+						.figure-long-caption-toggle {
+							padding: 10px 12px;
+							color: rgba(0, 0, 0, 0.8);
+							font-size: .9rem;
+							font-weight: 550;
+							cursor: pointer;
+							user-select: none;
+						}
+
+						.figure-information-bar {
+							display: flex;
+							justify-content: space-between;
+							align-items: center;
+							gap: 16px;
+							width: 100%;
+							margin: 0 auto;
+							padding: 10px;
+							border: 1px solid lightgrey;
+							border-radius: 6px;
+							background: rgba(227, 227, 227, 0.33);
+							font-size: .9rem;
 						}
 
 						${mobileCSS}
@@ -3069,6 +3132,31 @@ export async function createFigureHtml(
 					data-figure-id="${escapeHtml(normalizedFigureID)}"
 					data-figure-type="${escapeHtml(normalizedFigureType)}"
 				>
+					<div class="figure-footer">
+						<nav
+							class="figure-footer-links"
+							aria-label="Figure resources"
+						>
+							<a
+								href="https://ioos.github.io/sanctuarywatch_graphicdata/"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="figure-footer-link"
+							>
+								 Get GraphicData
+							</a>
+
+							<a
+								href="${safeUrl(normalizedFigureURL)}"
+								target="_blank"
+								rel="noopener noreferrer"
+								class="figure-footer-link"
+							>
+								Visit @ ${siteTitle}
+							</a>
+						</nav>
+					</div>
+				
 					${informationBarHTML}
 
 					<header>
@@ -3098,30 +3186,6 @@ export async function createFigureHtml(
 
 					${longCaptionContainerHTML}
 
-					<footer class="figure-footer">
-						<nav
-							class="figure-footer-links"
-							aria-label="Figure resources"
-						>
-							<a
-								href="${safeUrl(normalizedRootURL)}"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="figure-footer-link"
-							>
-								${escapeHtml(normalizedRootURL)}
-							</a>
-
-							<a
-								href="https://ioos.github.io/sanctuarywatch_graphicdata/"
-								target="_blank"
-								rel="noopener noreferrer"
-								class="figure-footer-link"
-							>
-								Graphic Data
-							</a>
-						</nav>
-					</footer>
 				</main>
 			</body>
 		</html>

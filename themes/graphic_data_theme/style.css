@@ -1056,6 +1056,8 @@ button:focus,
     position: relative;
     font-size: large;
     text-align: left; 
+    border-top-left-radius: var(--bs-accordion-border-radius);
+    border-top-right-radius: var(--bs-accordion-border-radius);
   }
 
 }
