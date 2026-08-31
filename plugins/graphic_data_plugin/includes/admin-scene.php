@@ -829,7 +829,7 @@ class Graphic_Data_Scene {
 				'id'          => 'scene_order',
 				'type'        => 'number',
 				'title'       => 'Order',
-				'description' => 'What is the order of the scene in the menu bar?',
+				'description' => 'What is the order of the scene in the navigation bar?',
 				'default'     => '1',
 				'min'         => '1',
 				'max'         => '10',

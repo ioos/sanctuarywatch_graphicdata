@@ -61,8 +61,8 @@ class Graphic_Data_Media_Manager {
 			}
 			// If author has no assigned instances, $instances remains empty, so only "All Instances" shows.
 
-		} else {
-			// Administrators or other roles see all instances.
+		} elseif ( in_array( $user_role, array( 'editor', 'administrator' ), true ) || is_super_admin( $current_user->ID ) ) {
+			// Editors, administrators, and super administrators see all instances.
 			$instances = $wpdb->get_results(
 				"
 				SELECT ID, post_title
@@ -71,6 +71,9 @@ class Graphic_Data_Media_Manager {
 				AND post_status = 'publish'
 				ORDER BY post_title ASC"
 			);
+		} else {
+			// Any other role gets no instance list.
+			$instances = null;
 		}
 		return $instances;
 	}
@@ -89,6 +92,9 @@ class Graphic_Data_Media_Manager {
 	public function add_instance_field_to_media( array $form_fields, WP_Post $post ): array {
 
 		$instances = $this->create_instance_list();
+		if ( ! is_array( $instances ) ) {
+			$instances = array();
+		}
 
 		$saved_id = get_post_meta( $post->ID, 'graphic_data_instance_id', true );
 
@@ -158,6 +164,9 @@ class Graphic_Data_Media_Manager {
 		}
 
 		$instances = $this->create_instance_list();
+		if ( ! is_array( $instances ) ) {
+			$instances = array();
+		}
 
 		$instance_data = array_map(
 			function ( $instance ) {
