@@ -312,4 +312,162 @@ class Graphic_Data_Page_Options {
 
 		return $options;
 	}
+
+	/**
+	 * Resolve the public URL slug of the Instance assigned to a page.
+	 *
+	 * Reads the page's `scene_location` meta and, when it holds a real Instance
+	 * ID (not `none` or `global`), returns that Instance's `instance_slug` meta
+	 * with any surrounding slashes trimmed. Returns an empty string when no
+	 * Instance is assigned, the referenced post is not an Instance, or the
+	 * Instance has no slug.
+	 *
+	 * @since 1.0.0
+	 * @param int $post_id The page ID.
+	 * @return string The Instance URL slug, or '' when the page has no Instance.
+	 */
+	private function get_page_instance_web_slug( $post_id ) {
+		$stored_instance = get_post_meta( $post_id, self::INSTANCE_META_KEY, true );
+
+		if ( ! is_numeric( $stored_instance ) ) {
+			return '';
+		}
+
+		$instance = get_post( (int) $stored_instance );
+		if ( ! $instance || 'instance' !== $instance->post_type ) {
+			return '';
+		}
+
+		$web_slug = get_post_meta( (int) $stored_instance, 'instance_slug', true );
+
+		return is_string( $web_slug ) ? trim( $web_slug, '/' ) : '';
+	}
+
+	/**
+	 * Rewrite a page permalink to include its assigned Instance slug.
+	 *
+	 * Filter callback for `page_link`. When a published page has a real
+	 * Instance selected in its `scene_location` meta, its permalink becomes
+	 * `{home_url}/{instance_slug}/{page_slug}/`. Pages with no Instance (or a
+	 * `none`/`global` selection), unpublished pages, and pages whose Instance
+	 * has no slug keep the default permalink.
+	 *
+	 * @since 1.0.0
+	 * @param string $link    The page's default permalink.
+	 * @param int    $post_id The page ID.
+	 * @param bool   $sample  Whether this is a sample (draft) permalink. Unused.
+	 * @return string The Instance-scoped permalink, or the original link.
+	 */
+	public function filter_instance_page_link( $link, $post_id, $sample = false ) {
+		$post = get_post( $post_id );
+
+		if ( ! $post || 'page' !== $post->post_type || 'publish' !== $post->post_status ) {
+			return $link;
+		}
+
+		if ( '' === $post->post_name ) {
+			return $link;
+		}
+
+		$web_slug = $this->get_page_instance_web_slug( $post_id );
+		if ( '' === $web_slug ) {
+			return $link;
+		}
+
+		return home_url( '/' . $web_slug . '/' . $post->post_name . '/' );
+	}
+
+	/**
+	 * Route an `{instance_slug}/{page_slug}` request to the matching page.
+	 *
+	 * Filter callback for `request`. The Scene custom post type registers a
+	 * catch-all rewrite rule that maps every two-segment URL to
+	 * `post_type=scene&name={segment2}&instance_slug={segment1}`. This callback
+	 * inspects that resolved query: if no published Scene in the named Instance
+	 * owns the slug, but a published page does carry that slug and is assigned
+	 * to the Instance whose `instance_slug` matches the first segment, the
+	 * query is redirected to that page. All other requests pass through
+	 * untouched so Scene routing is unaffected.
+	 *
+	 * @since 1.0.0
+	 * @param array $query_vars The query vars produced by rewrite matching.
+	 * @return array The original query vars, or `array( 'page_id' => ... )`.
+	 */
+	public function resolve_instance_page_request( $query_vars ) {
+		if ( ! is_array( $query_vars ) ) {
+			return $query_vars;
+		}
+
+		if ( empty( $query_vars['instance_slug'] ) || empty( $query_vars['name'] ) ) {
+			return $query_vars;
+		}
+
+		if ( ! isset( $query_vars['post_type'] ) || 'scene' !== $query_vars['post_type'] ) {
+			return $query_vars;
+		}
+
+		$instance_slug = sanitize_title( $query_vars['instance_slug'] );
+		$page_slug     = sanitize_title( $query_vars['name'] );
+
+		// A Scene that genuinely belongs to this Instance keeps priority; leave
+		// the query alone so the existing Scene routing resolves it.
+		if ( $this->scene_belongs_to_instance( $page_slug, $instance_slug ) ) {
+			return $query_vars;
+		}
+
+		$page = get_page_by_path( $page_slug, OBJECT, 'page' );
+		if ( ! $page || 'publish' !== $page->post_status ) {
+			return $query_vars;
+		}
+
+		if ( $this->get_page_instance_web_slug( $page->ID ) !== $instance_slug ) {
+			return $query_vars;
+		}
+
+		return array( 'page_id' => $page->ID );
+	}
+
+	/**
+	 * Determine whether a published Scene with the given slug belongs to an Instance.
+	 *
+	 * Used to decide whether an `{instance_slug}/{slug}` request should stay on
+	 * the Scene routing path or fall through to page routing.
+	 *
+	 * @since 1.0.0
+	 * @param string $scene_slug    The Scene post slug (second URL segment).
+	 * @param string $instance_slug The Instance URL slug (first URL segment).
+	 * @return bool True when a published Scene with that slug is assigned to the
+	 *              Instance whose `instance_slug` matches $instance_slug.
+	 */
+	private function scene_belongs_to_instance( $scene_slug, $instance_slug ) {
+		$scene_ids = get_posts(
+			array(
+				'post_type'        => 'scene',
+				'name'             => $scene_slug,
+				'post_status'      => 'publish',
+				'posts_per_page'   => -1,
+				'fields'           => 'ids',
+				'no_found_rows'    => true,
+				'suppress_filters' => true,
+			)
+		);
+
+		if ( empty( $scene_ids ) ) {
+			return false;
+		}
+
+		foreach ( $scene_ids as $scene_id ) {
+			$scene_instance_id = get_post_meta( $scene_id, 'scene_location', true );
+			if ( ! is_numeric( $scene_instance_id ) ) {
+				continue;
+			}
+
+			$web_slug = get_post_meta( (int) $scene_instance_id, 'instance_slug', true );
+			if ( is_string( $web_slug ) && trim( $web_slug, '/' ) === $instance_slug ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

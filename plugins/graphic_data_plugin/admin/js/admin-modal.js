@@ -278,13 +278,14 @@ function iconSceneOutDropdown() {
 function modalWindow() {
 	const iconFunctionValue =
 		document.getElementsByName('icon_function')[0].value;
-	if (iconFunctionValue == 'Modal') {
+	if (iconFunctionValue === 'Modal') {
 		//  document.getElementsByName("icon_out_type")[0].value = "External";
 		document.getElementsByName(
 			'icon_external_url'
 		)[0].parentElement.parentElement.style.display = 'none';
 		document.getElementsByName('icon_external_url')[0].value = '';
 		document.getElementsByName('icon_scene_out')[0].value = '';
+		document.getElementsByName('icon_page_out')[0].value = '';
 		document.getElementsByName(
 			'icon_scene_out'
 		)[0].parentElement.parentElement.style.display = 'none';
@@ -393,6 +394,9 @@ function iconFunction() {
 				'icon_scene_out'
 			)[0].parentElement.parentElement.style.display = 'none';
 			document.getElementsByName(
+				'icon_page_out'
+			)[0].parentElement.parentElement.style.display = 'none';
+			document.getElementsByName(
 				'icon_external_url'
 			)[0].parentElement.parentElement.style.display = 'block';
 			break;
@@ -403,6 +407,9 @@ function iconFunction() {
 				'icon_scene_out'
 			)[0].parentElement.parentElement.style.display = 'none';
 			document.getElementsByName(
+				'icon_page_out'
+			)[0].parentElement.parentElement.style.display = 'none';
+			document.getElementsByName(
 				'icon_external_url'
 			)[0].parentElement.parentElement.style.display = 'none';
 			break;
@@ -410,6 +417,21 @@ function iconFunction() {
 			document.getElementsByName('icon_external_url')[0].value = '';
 			document.getElementsByName(
 				'icon_scene_out'
+			)[0].parentElement.parentElement.style.display = 'block';
+			document.getElementsByName(
+				'icon_page_out'
+			)[0].parentElement.parentElement.style.display = 'none';
+			document.getElementsByName(
+				'icon_external_url'
+			)[0].parentElement.parentElement.style.display = 'none';
+			break;
+		case 'Page':
+			document.getElementsByName('icon_external_url')[0].value = '';
+			document.getElementsByName(
+				'icon_scene_out'
+			)[0].parentElement.parentElement.style.display = 'none';
+			document.getElementsByName(
+				'icon_page_out'
 			)[0].parentElement.parentElement.style.display = 'block';
 			document.getElementsByName(
 				'icon_external_url'

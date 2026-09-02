@@ -107,6 +107,7 @@ class Graphic_Data_Modal {
 
 		$scene_titles = [];
 		$modal_icons = [];
+		$icon_page_out = [];
 		$icon_scene_out = [];
 		$modal_section = [];
 		// used by both scene and icon dropdowns.
@@ -130,6 +131,12 @@ class Graphic_Data_Modal {
 				$icon_scene_out = $function_utilities->return_scenes_except_current( $transient_fields['modal_scene'] );
 			} else {
 				$icon_scene_out = $function_utilities->return_scenes_except_current( $scene_id );
+			}
+
+			if ( $transient_fields_exist ) {
+				$icon_page_out = $function_utilities->return_pages( $transient_fields['modal_scene'] );
+			} else {
+				$icon_page_out = $function_utilities->return_pages( $scene_id );
 			}
 
 			if ( $transient_fields_exist ) {
@@ -225,7 +232,7 @@ class Graphic_Data_Modal {
 				'id'          => 'icon_page_out',
 				'type'        => 'select',
 				'title'       => 'Icon Page Out*',
-				'options'     => $icon_scene_out,
+				'options'     => $icon_page_out,
 				'description' => 'What is the page that the user should be taken to when the icon is clicked?',
 				'default'     => '',
 				'sanitize'    => [ $function_utilities, 'sanitize_number_or_quotes_field' ],

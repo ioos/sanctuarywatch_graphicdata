@@ -618,6 +618,9 @@ function graphic_data_modal_helper( $child_post_id, $child_ids, $child_id, $idx 
 		} elseif ( 'Scene' === $icon_type ) {
 			$external_scene_id = get_post_meta( $child_post_id, 'icon_scene_out', true ) ?? '';
 			$external_url = $external_scene_id ? ( get_permalink( $external_scene_id ) ?: '' ) : '';
+		} elseif ( 'Page' === $icon_type ) {
+			$external_page_id = get_post_meta( $child_post_id, 'icon_page_out', true ) ?? '';
+			$external_url = $external_page_id ? ( get_permalink( $external_page_id ) ?: '' ) : '';
 		}
 
 		$scene_id = get_post_meta( $child_post_id, 'modal_scene', true ) ?? '';
