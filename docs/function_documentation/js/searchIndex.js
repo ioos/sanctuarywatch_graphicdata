@@ -661,6 +661,26 @@ Search.appendIndex(
             "summary": "Build\u0020the\u0020list\u0020of\u0020options\u0020for\u0020the\u0020Instance\u0020select.",
             "url": "classes/Graphic-Data-Page-Options.html#method_get_instance_options"
         },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aget_page_instance_web_slug\u0028\u0029",
+            "name": "get_page_instance_web_slug",
+            "summary": "Resolve\u0020the\u0020public\u0020URL\u0020slug\u0020of\u0020the\u0020Instance\u0020assigned\u0020to\u0020a\u0020page.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_get_page_instance_web_slug"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Afilter_instance_page_link\u0028\u0029",
+            "name": "filter_instance_page_link",
+            "summary": "Rewrite\u0020a\u0020page\u0020permalink\u0020to\u0020include\u0020its\u0020assigned\u0020Instance\u0020slug.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_filter_instance_page_link"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aresolve_instance_page_request\u0028\u0029",
+            "name": "resolve_instance_page_request",
+            "summary": "Route\u0020an\u0020\u0060\u007Binstance_slug\u007D\/\u007Bpage_slug\u007D\u0060\u0020request\u0020to\u0020the\u0020matching\u0020page.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_resolve_instance_page_request"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Ascene_belongs_to_instance\u0028\u0029",
+            "name": "scene_belongs_to_instance",
+            "summary": "Determine\u0020whether\u0020a\u0020published\u0020Scene\u0020with\u0020the\u0020given\u0020slug\u0020belongs\u0020to\u0020an\u0020Instance.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_scene_belongs_to_instance"
+        },                {
             "fqsen": "\\Graphic_Data_Page_Options\u003A\u003AINSTANCE_META_KEY",
             "name": "INSTANCE_META_KEY",
             "summary": "The\u0020meta\u0020key\u0020that\u0020stores\u0020the\u0020selected\u0020Instance\u0020for\u0020a\u0020page.",
@@ -875,6 +895,11 @@ Search.appendIndex(
             "name": "return_scenes_except_current",
             "summary": "Return\u0020an\u0020array\u0020of\u0020scenes,\u0020other\u0020than\u0020the\u0020current\u0020scene,\u0020for\u0020a\u0020given\u0020location.",
             "url": "classes/Graphic-Data-Utility.html#method_return_scenes_except_current"
+        },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_pages\u0028\u0029",
+            "name": "return_pages",
+            "summary": "Return\u0020an\u0020array\u0020of\u0020pages\u0020for\u0020a\u0020given\u0020location.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_pages"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_modal_sections\u0028\u0029",
             "name": "return_modal_sections",

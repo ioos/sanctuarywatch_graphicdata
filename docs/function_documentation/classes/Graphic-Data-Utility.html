@@ -310,6 +310,13 @@ permalink: /function_documentation/classes/Graphic-Data-Utility.html
 <dd>Retrieve tab titles for a given modal.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_return_pages">return_pages()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Return an array of pages for a given location.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_return_scene_titles">return_scene_titles()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
@@ -646,7 +653,7 @@ $this-&gt;create_instance_dropdown_filter('scene_instance');</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1199</span>
+    <span class="phpdocumentor-element-found-in__line">1236</span>
 
     </aside>
 
@@ -1125,7 +1132,7 @@ editor ID is not in the allowed fields list.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1181</span>
+    <span class="phpdocumentor-element-found-in__line">1218</span>
 
     </aside>
 
@@ -1300,7 +1307,7 @@ Notices are displayed only on the post type edit screen after a post has been up
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1158</span>
+    <span class="phpdocumentor-element-found-in__line">1195</span>
 
     </aside>
 
@@ -1578,7 +1585,7 @@ posts reloads after the save.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1112</span>
+    <span class="phpdocumentor-element-found-in__line">1149</span>
 
     </aside>
 
@@ -1767,7 +1774,7 @@ or if the 'icons' element is not found in the SVG.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1000</span>
+    <span class="phpdocumentor-element-found-in__line">1037</span>
 
     </aside>
 
@@ -1828,7 +1835,7 @@ with section titles as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1086</span>
+    <span class="phpdocumentor-element-found-in__line">1123</span>
 
     </aside>
 
@@ -1869,6 +1876,61 @@ includes a leading empty entry for use as a default dropdown option.</p>
                     &mdash;
                 <section class="phpdocumentor-description"><p>Associative array keyed by tab number (1-6) with tab titles
 as values. Includes a leading empty entry.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_return_pages">
+        return_pages()
+        <a href="classes/Graphic-Data-Utility.html#method_return_pages" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">994</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Return an array of pages for a given location.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">return_pages</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$scene_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The current scene ID to exclude from results.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Associative array of scene IDs to titles with an empty option first, sorted alphabetically.</p>
 </section>
 
             </section>
@@ -2007,7 +2069,7 @@ as values. Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1029</span>
+    <span class="phpdocumentor-element-found-in__line">1066</span>
 
     </aside>
 
@@ -2068,7 +2130,7 @@ Includes a leading empty entry.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1068</span>
+    <span class="phpdocumentor-element-found-in__line">1105</span>
 
     </aside>
 
@@ -2338,6 +2400,7 @@ file within this install, null otherwise.</p>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_instance_scenes">return_instance_scenes()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_modal_sections">return_modal_sections()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_modal_tabs">return_modal_tabs()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_pages">return_pages()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scene_titles">return_scene_titles()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scenes_except_current">return_scenes_except_current()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_return_scenes_figure">return_scenes_figure()</a></li>
