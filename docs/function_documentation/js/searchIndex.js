@@ -641,6 +641,36 @@ Search.appendIndex(
             "summary": "Register\u0020the\u0020page\u0020meta\u0020so\u0020the\u0020block\u0020editor\u0020and\u0020REST\u0020API\u0020are\u0020aware\u0020of\u0020it.",
             "url": "classes/Graphic-Data-Page-Options.html#method_register_page_instance_meta"
         },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Achange_page_columns\u0028\u0029",
+            "name": "change_page_columns",
+            "summary": "Replace\u0020the\u0020columns\u0020shown\u0020on\u0020the\u0020Pages\u0020admin\u0020list\u0020table.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_change_page_columns"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Acustom_page_column\u0028\u0029",
+            "name": "custom_page_column",
+            "summary": "Populate\u0020custom\u0020fields\u0020for\u0020page\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_custom_page_column"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Ais_instance_overview_scene\u0028\u0029",
+            "name": "is_instance_overview_scene",
+            "summary": "Determine\u0020whether\u0020a\u0020page\u0020is\u0020the\u0020overview\u0020scene\u0020of\u0020the\u0020Instance\u0020it\u0020belongs\u0020to.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_is_instance_overview_scene"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aoverview_scene_notice_message\u0028\u0029",
+            "name": "overview_scene_notice_message",
+            "summary": "Build\u0020the\u0020notice\u0020text\u0020shown\u0020when\u0020a\u0020page\u0020is\u0020its\u0020Instance\u0027s\u0020overview\u0020scene.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_overview_scene_notice_message"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aoverview_scene_editor_notice\u0028\u0029",
+            "name": "overview_scene_editor_notice",
+            "summary": "Print\u0020a\u0020dismissible\u0020notice\u0020on\u0020the\u0020classic\u0020page\u0020editor\u0020when\u0020the\u0020page\u0020is\u0020its\u0020Instance\u0027s\u0020overview\u0020scene.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_overview_scene_editor_notice"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aenqueue_overview_scene_notice\u0028\u0029",
+            "name": "enqueue_overview_scene_notice",
+            "summary": "Push\u0020a\u0020dismissible\u0020block\u002Deditor\u0020notice\u0020when\u0020the\u0020page\u0020is\u0020its\u0020Instance\u0027s\u0020overview\u0020scene.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_enqueue_overview_scene_notice"
+        },                {
             "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aadd_instance_meta_box\u0028\u0029",
             "name": "add_instance_meta_box",
             "summary": "Register\u0020the\u0020Instance\u0020meta\u0020box\u0020on\u0020the\u0020page\u0020editor.",
