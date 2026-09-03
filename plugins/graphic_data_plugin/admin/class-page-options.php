@@ -118,6 +118,187 @@ class Graphic_Data_Page_Options {
 	}
 
 	/**
+	 * Replace the columns shown on the Pages admin list table.
+	 *
+	 * Filter callback for `manage_page_posts_columns`. Rebuilds the column set so
+	 * the Pages list surfaces the Instance a page is attached to and whether the
+	 * page acts as that Instance's overview scene, while keeping the checkbox,
+	 * author, comments and date columns provided by WordPress core.
+	 *
+	 * The `scene_location` and `scene_overview` cells are populated by
+	 * change_page_columns()'s companion method custom_page_column().
+	 *
+	 * @since 1.0.0
+	 * @link https://www.smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/
+	 *
+	 * @param array $columns Column ID => label map supplied by WordPress for the
+	 *                       `page` list table.
+	 * @return array The reordered column map:
+	 *               - 'cb': Row selection checkbox, carried over from core.
+	 *               - 'title': Page title.
+	 *               - 'scene_location': Labelled "Instance"; the Instance the page belongs to.
+	 *               - 'scene_overview': Labelled "Overview"; marks the page as its Instance's overview scene.
+	 *               - 'author': Page author, carried over from core.
+	 *               - 'comments': Comment count, shown as the core comments-bubble icon.
+	 *               - 'date': Published/modified date, carried over from core.
+	 */
+	public function change_page_columns( $columns ) {
+		$columns = array(
+			'cb' => $columns['cb'],
+			'title' => 'Title',
+			'scene_location' => 'Instance',
+			'scene_overview' => 'Overview',
+			'author' => 'Author',
+			// Render the default WordPress comments-bubble icon instead of the word "Comments".
+			'comments' => '<span class="vers comment-grey-bubble" title="Comments" aria-hidden="true"></span><span class="screen-reader-text">Comments</span>',
+			'date' => 'Date',
+		);
+		return $columns;
+	}
+
+	/**
+	 * Populate custom fields for page content type in the admin screen.
+	 *
+	 * @param string $column The name of the column.
+	 * @param int    $post_id The database id of the post.
+	 * @since    1.0.0
+	 */
+	public function custom_page_column( $column, $post_id ) {
+
+		// Populate columns based on the determined field_length.
+		if ( 'scene_location' === $column ) {
+			$instance_id = get_post_meta( $post_id, 'scene_location', true );
+			echo esc_html( get_the_title( $instance_id ) );
+		}
+
+		if ( 'scene_overview' === $column && $this->is_instance_overview_scene( $post_id ) ) {
+			echo '<span class="dashicons dashicons-yes"></span>';
+		}
+	}
+
+	/**
+	 * Determine whether a page is the overview scene of the Instance it belongs to.
+	 *
+	 * A page points at an Instance through its `scene_location` meta, and that
+	 * Instance names a single overview scene through its `instance_overview_scene`
+	 * meta. When the two match, the page doubles as the Instance's landing page.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $post_id The page ID to test.
+	 * @return bool True when the page is its Instance's overview scene, false otherwise.
+	 */
+	private function is_instance_overview_scene( $post_id ) {
+		$post_id = (int) $post_id;
+
+		if ( ! $post_id ) {
+			return false;
+		}
+
+		$instance_id = get_post_meta( $post_id, self::INSTANCE_META_KEY, true );
+
+		if ( empty( $instance_id ) ) {
+			return false;
+		}
+
+		$instance_overview_scene = get_post_meta( $instance_id, 'instance_overview_scene', true );
+
+		return (int) $instance_overview_scene === $post_id;
+	}
+
+	/**
+	 * Build the notice text shown when a page is its Instance's overview scene.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param int $post_id The page the notice is about.
+	 * @return string Translated, human-readable message naming the Instance where possible.
+	 */
+	private function overview_scene_notice_message( $post_id ) {
+		$instance_title = get_the_title( get_post_meta( (int) $post_id, self::INSTANCE_META_KEY, true ) );
+
+		if ( '' !== $instance_title ) {
+			return sprintf(
+				/* translators: %s: Instance title. */
+				__( 'This page is the overview scene for the "%s" Instance and serves as its landing page.', 'graphic-data' ),
+				$instance_title
+			);
+		}
+
+		return __( 'This page is the overview scene for its Instance and serves as its landing page.', 'graphic-data' );
+	}
+
+	/**
+	 * Print a dismissible notice on the classic page editor when the page is its Instance's overview scene.
+	 *
+	 * Hooked to `admin_notices`. The block editor relocates raw `admin_notices`
+	 * markup into a hidden container, so this path is limited to the classic
+	 * editor; enqueue_overview_scene_notice() covers the block editor.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function overview_scene_editor_notice() {
+		$screen = get_current_screen();
+
+		if ( ! $screen || 'post' !== $screen->base || 'page' !== $screen->post_type || $screen->is_block_editor() ) {
+			return;
+		}
+
+		$post_id = (int) get_the_ID();
+
+		if ( ! $this->is_instance_overview_scene( $post_id ) ) {
+			return;
+		}
+
+		printf(
+			'<div class="notice notice-info is-dismissible"><p>%s</p></div>',
+			esc_html( $this->overview_scene_notice_message( $post_id ) )
+		);
+	}
+
+	/**
+	 * Push a dismissible block-editor notice when the page is its Instance's overview scene.
+	 *
+	 * Hooked to `enqueue_block_editor_assets`. Adds an inline script that inserts
+	 * an informational notice into the editor's `core/notices` store, since raw
+	 * `admin_notices` output is not reliably shown on the block editor screen.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function enqueue_overview_scene_notice() {
+		$screen = get_current_screen();
+
+		if ( ! $screen || 'page' !== $screen->post_type || ! $screen->is_block_editor() ) {
+			return;
+		}
+
+		$post_id = (int) get_the_ID();
+
+		if ( ! $this->is_instance_overview_scene( $post_id ) ) {
+			return;
+		}
+
+		$message = wp_json_encode( $this->overview_scene_notice_message( $post_id ) );
+
+		if ( false === $message ) {
+			return;
+		}
+
+		$handle = 'graphic-data-overview-scene-notice';
+		wp_register_script( $handle, false, array( 'wp-data', 'wp-notices', 'wp-dom-ready' ), GRAPHIC_DATA_PLUGIN_VERSION, true );
+		wp_enqueue_script( $handle );
+		wp_add_inline_script(
+			$handle,
+			'wp.domReady( function () {'
+				. ' wp.data.dispatch( "core/notices" ).createNotice( "info", ' . $message . ','
+				. ' { id: "graphic-data-overview-scene", isDismissible: true } );'
+				. ' } );'
+		);
+	}
+
+	/**
 	 * Register the Instance meta box on the page editor.
 	 *
 	 * Hooked to `add_meta_boxes`. The box is placed in the `side` context with a

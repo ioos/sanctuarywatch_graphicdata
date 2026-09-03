@@ -76,10 +76,12 @@
 						$graphic_data_post_titles = array();
 						while ( $graphic_data_query->have_posts() ) {
 							$graphic_data_query->the_post();
+							$graphic_data_scene_loc = get_post_meta( get_the_ID(), 'scene_location' )[0];
+							$graphic_data_inst_overview_scene = get_post_meta( $graphic_data_scene_loc, 'instance_overview_scene' )[0];
 							$graphic_data_scene_published = get_post_meta( get_the_ID(), 'scene_published', true );
 							$graphic_data_scene_order = get_post_meta( get_the_ID(), 'scene_order', true );
 							$graphic_data_scene_order = is_numeric( $graphic_data_scene_order ) ? (int) $graphic_data_scene_order : 0;
-							if ( 'draft' != $graphic_data_scene_published ) {
+							if ( get_the_ID() != $graphic_data_inst_overview_scene && 'draft' != $graphic_data_scene_published ) {
 								$graphic_data_post_titles[] = [ get_the_title(), $graphic_data_scene_order, get_the_ID() ];
 							}
 						}
@@ -92,8 +94,14 @@
 
 						usort( $graphic_data_post_titles, 'graphic_data_compare_navbar_items' );
 
+						if ( $graphic_data_inst_overview_scene ) {
+							echo "<li class='nav-item'><a class='nav-link' href='" . esc_url( get_permalink( $graphic_data_inst_overview_scene ) ) . "'>" . esc_html( get_the_title( $graphic_data_inst_overview_scene ) ) . '</a></li>';
+						}
+
 						foreach ( $graphic_data_post_titles as $graphic_data_post_title ) {
-							echo "<li class='nav-item'><a class='nav-link' href='" . esc_url( get_permalink( $graphic_data_post_title[2] ) ) . "'>" . esc_html( $graphic_data_post_title[0] ) . '</a></li>';
+							if ( $graphic_data_post_title[2] != $graphic_data_inst_overview_scene ) {
+								echo "<li class='nav-item'><a class='nav-link' href='" . esc_url( get_permalink( $graphic_data_post_title[2] ) ) . "'>" . esc_html( $graphic_data_post_title[0] ) . '</a></li>';
+							}
 						}
 
 						// Add about option to the end of scene list, if this is a single instance view.

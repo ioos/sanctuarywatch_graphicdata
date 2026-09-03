@@ -264,6 +264,10 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'save_post_page', $plugin_page_options, 'save_instance_meta_box' );
 		$this->loader->add_filter( 'page_link', $plugin_page_options, 'filter_instance_page_link', 10, 3 ); // Prefix page permalinks with the assigned Instance slug.
 		$this->loader->add_filter( 'request', $plugin_page_options, 'resolve_instance_page_request' ); // Route {instance-slug}/{page-slug} URLs to the page.
+		$this->loader->add_action( 'manage_page_posts_columns', $plugin_page_options, 'change_page_columns' );
+		$this->loader->add_action( 'manage_page_posts_custom_column', $plugin_page_options, 'custom_page_column', 10, 2 );
+		$this->loader->add_action( 'admin_notices', $plugin_page_options, 'overview_scene_editor_notice' );
+		$this->loader->add_action( 'enqueue_block_editor_assets', $plugin_page_options, 'enqueue_overview_scene_notice' );
 
 		// Load class and functions associated with media manager.
 		$plugin_media_manager = new Graphic_Data_Media_Manager();
