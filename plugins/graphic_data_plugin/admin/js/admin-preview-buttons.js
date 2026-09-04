@@ -490,7 +490,7 @@ if (previewFigureOrModalElements.length > 0) {
 
 				// we're going to pause the save if we're saving a figure to allow for it to load.
 				const figureType = document.getElementsByName('figure_path')[0]?.value;
-				if (el.id === 'publish' && figureType === "Interactive") {
+				if (el.id === 'publish' && figureType === "Interactive" && !window.location.href.includes('post-new.php')) {
 					event.preventDefault();
 				}
 
@@ -715,7 +715,7 @@ if (previewFigureOrModalElements.length > 0) {
 					await render_interactive_plots(tabContentContainer, info_obj, null, tabInfoResult);
 
 
-					if (el.id === 'publish') {
+					if (el.id === 'publish' && (figureType !== "Interactive" && !window.location.href.includes('post-new.php'))) {
 						generateAndSaveFigureFromPreview(el, info_obj, info_obj_figure_only);
 					}
 							
