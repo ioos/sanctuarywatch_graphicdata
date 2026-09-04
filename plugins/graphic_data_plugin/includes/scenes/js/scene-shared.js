@@ -429,38 +429,85 @@ function waitForElementById(
 }
 
 
-async function waitForEitherElementHash(
+// async function waitForEitherElementHash(
+// 	selector1,
+// 	selector2
+// ) {
+// 	return new Promise((resolve) => {
+
+// 		function findElement() {
+// 			return (
+// 				document.querySelector(selector1) ||
+// 				document.querySelector(selector2)
+// 			);
+// 		}
+
+// 		const existingElement =
+// 			findElement();
+
+// 		if (existingElement) {
+// 			resolve(existingElement);
+// 			return;
+// 		}
+
+// 		const observer =
+// 			new MutationObserver(() => {
+
+// 				const element =
+// 					findElement();
+
+// 				if (element) {
+// 					observer.disconnect();
+// 					resolve(element);
+// 				}
+// 			});
+
+// 		observer.observe(
+// 			document.body,
+// 			{
+// 				childList: true,
+// 				subtree: true
+// 			}
+// 		);
+// 	});
+// }
+
+export async function waitForEitherElementHash(
 	selector1,
-	selector2
+	selector2,
+	selector3 = null,
+	timeoutMs = 20000
 ) {
 	return new Promise((resolve) => {
 
-		function findElement() {
+		const findElement = () => {
 			return (
 				document.querySelector(selector1) ||
-				document.querySelector(selector2)
+				document.querySelector(selector2) ||
+				(
+					selector3
+						? document.querySelector(selector3)
+						: null
+				)
 			);
-		}
+		};
 
-		const existingElement =
-			findElement();
+		const element = findElement();
 
-		if (existingElement) {
-			resolve(existingElement);
+		if (element) {
+			resolve(element);
 			return;
 		}
 
-		const observer =
-			new MutationObserver(() => {
+		const observer = new MutationObserver(() => {
+			const element = findElement();
 
-				const element =
-					findElement();
-
-				if (element) {
-					observer.disconnect();
-					resolve(element);
-				}
-			});
+			if (element) {
+				clearTimeout(timeoutId);
+				observer.disconnect();
+				resolve(element);
+			}
+		});
 
 		observer.observe(
 			document.body,
@@ -469,6 +516,16 @@ async function waitForEitherElementHash(
 				subtree: true
 			}
 		);
+
+		const timeoutId = setTimeout(() => {
+			observer.disconnect();
+
+			alert(
+				'The requested modal cannot be found.'
+			);
+
+			resolve(null);
+		}, timeoutMs);
 	});
 }
 
@@ -733,112 +790,6 @@ export async function handleHashNavigation() {
 			});
 		}
 
-		// function waitForSingleMeasurableElement(
-        //     figureElement,
-        //     timeoutMs = 30000
-        // ) {
-        //     const selector = [
-        //         '.main-svg',
-        //         'iframe',
-        //         'img',
-        //         '.code_display_window'
-        //     ].join(', ');
-        
-        //     return new Promise((resolve, reject) => {
-        //         const checkElement = () => {
-        //             const measurableElement =
-        //                 figureElement.querySelector(selector);
-        
-        //             if (!measurableElement) {
-        //                 return false;
-        //             }
-        
-        //             /*
-        //             * Image must actually be loaded.
-        //             */
-        //             if (measurableElement.matches('img')) {
-        //                 if (
-        //                     !measurableElement.complete ||
-        //                     measurableElement.naturalWidth === 0
-        //                 ) {
-        //                     return false;
-        //                 }
-        //             }
-        
-        //             /*
-        //             * Plotly SVG must have dimensions.
-        //             */
-        //             if (measurableElement.matches('.main-svg')) {
-        //                 const rect =
-        //                     measurableElement.getBoundingClientRect();
-        
-        //                 if (
-        //                     rect.width <= 0 ||
-        //                     rect.height <= 0
-        //                 ) {
-        //                     return false;
-        //                 }
-        //             }
-        
-        //             /*
-        //             * Code window must contain something.
-        //             */
-        //             if (
-        //                 measurableElement.matches(
-        //                     '.code_display_window'
-        //                 )
-        //             ) {
-        //                 if (
-        //                     measurableElement.children.length === 0 &&
-        //                     measurableElement.textContent.trim() === ''
-        //                 ) {
-        //                     return false;
-        //                 }
-        //             }
-        
-        //             return measurableElement;
-        //         };
-        
-        
-        //         const existingElement = checkElement();
-        
-        //         if (existingElement) {
-        //             resolve(existingElement);
-        //             return;
-        //         }
-        
-        
-        //         const observer = new MutationObserver(() => {
-        //             const measurableElement = checkElement();
-        
-        //             if (measurableElement) {
-        //                 clearTimeout(timeoutId);
-        //                 observer.disconnect();
-        
-        //                 resolve(measurableElement);
-        //             }
-        //         });
-        
-        
-        //         observer.observe(figureElement, {
-        //             childList: true,
-        //             subtree: true,
-        //             attributes: true
-        //         });
-        
-        
-        //         const timeoutId = setTimeout(() => {
-        //             observer.disconnect();
-        
-        //             reject(
-        //                 new Error(
-        //                     `Timed out waiting for measurable content inside #${figureElement.id}`
-        //                 )
-        //             );
-        //         }, timeoutMs);
-        //     });
-        // }
-
 		async function waitForMeasurableElement(
             figureElement,
             timeoutMs = 30000
@@ -945,7 +896,7 @@ export async function handleHashNavigation() {
 		}
 
 		//____________________________
-		//MODAL OPEN CONTROL SELECTION 
+		//URL validations and parsing
 		//____________________________
 		const raw = window.location.hash.slice(1);
 		let modalName = getTargetIdFromHash(raw);
@@ -1060,9 +1011,207 @@ export async function handleHashNavigation() {
 		// 	window.location.pathname + window.location.search
 		// );
 
+		// //____________________________
+		// //MODAL OPEN CONTROL SELECTION 
+		// //____________________________
+
+		// let modName;
+		// let modModal;
+		// let modNameCapitalized;
+
+		// if (is_mobile()) {
+
+		// 	/*
+		// 	* Convert hash-safe modal name back into
+		// 	* the readable modal name.
+		// 	*
+		// 	* Example:
+		// 	* contaminants -> contaminants
+		// 	* code_block   -> code block
+		// 	*/
+		// 	modModal = modalName.replace(/_/g, ' ');
+
+		// 	/*
+		// 	* PRIMARY MOBILE ID
+		// 	*
+		// 	* Actual mobile containers are generally:
+		// 	*
+		// 	* contaminants-container
+		// 	* phytoplankton-container
+		// 	* code-block-container
+		// 	*/
+		// 	modName =
+		// 		`${modModal
+		// 			.toLowerCase()
+		// 			.replace(/\s+/g, '-')}-container`;
+
+		// 	/*
+		// 	* FALLBACK:
+		// 	*
+		// 	* Keep support for any existing mobile
+		// 	* containers that may have been created
+		// 	* with capitalized words.
+		// 	*/
+		// 	const modModalCapitalized =
+		// 		modModal.replace(
+		// 			/\b\w/g,
+		// 			char => char.toUpperCase()
+		// 		);
+
+		// 	modNameCapitalized =
+		// 		`${modModalCapitalized
+		// 			.replace(/\s+/g, '-')}-container`;
+
+		// } else {
+
+		// 	/*
+		// 	* Desktop IDs already use the modal
+		// 	* slug directly.
+		// 	*/
+		// 	modName = modalName;
+		// }
+
+
+		// //____________________________
+		// // FIND MODAL OPEN CONTROL
+		// //____________________________
+
+		// let modalButton;
+
+		// if (is_mobile()) {
+
+		// 	console.log(
+		// 		'MOBILE modalName',
+		// 		modalName
+		// 	);
+
+		// 	console.log(
+		// 		'MOBILE modModal',
+		// 		modModal
+		// 	);
+
+		// 	console.log(
+		// 		'MOBILE modName',
+		// 		modName
+		// 	);
+
+		// 	console.log(
+		// 		'MOBILE modNameCapitalized',
+		// 		modNameCapitalized
+		// 	);
+
+
+		// 	/*
+		// 	* Use getElementById() here instead of
+		// 	* querySelector().
+		// 	*
+		// 	* This is safer for dynamically-generated
+		// 	* IDs and avoids CSS-selector issues.
+		// 	*/
+		// 	const modNameElement =
+		// 		document.getElementById(
+		// 			modName
+		// 		);
+
+		// 	const modNameCapitalizedElement =
+		// 		document.getElementById(
+		// 			modNameCapitalized
+		// 		);
+
+		// 	const modModalElement =
+		// 		document.getElementById(
+		// 			modModal
+		// 		);
+
+
+		// 	/*
+		// 	* 1. Preferred mobile container:
+		// 	*
+		// 	* contaminants-container
+		// 	*/
+		// 	if (modNameElement) {
+
+		// 		modalButton =
+		// 			modNameElement;
+
+		// 		console.log(
+		// 			'MOBILE modalButton found using modName',
+		// 			modalButton
+		// 		);
+
+		// 	/*
+		// 	* 2. Fallback for older/mixed-case IDs:
+		// 	*
+		// 	* Contaminants-container
+		// 	*/
+		// 	} else if (
+		// 		modNameCapitalizedElement
+		// 	) {
+
+		// 		modalButton =
+		// 			modNameCapitalizedElement;
+
+		// 		console.log(
+		// 			'MOBILE modalButton found using modNameCapitalized',
+		// 			modalButton
+		// 		);
+
+		// 	/*
+		// 	* 3. Final direct-ID fallback.
+		// 	*/
+		// 	} else if (
+		// 		modModalElement
+		// 	) {
+
+		// 		modalButton =
+		// 			modModalElement;
+
+		// 		console.log(
+		// 			'MOBILE modalButton found using modModal',
+		// 			modalButton
+		// 		);
+
+		// 	} else {
+
+		// 		/*
+		// 		* The mobile DOM is generated dynamically,
+		// 		* so none of the controls may exist yet.
+		// 		*
+		// 		* Wait for the normal lowercase container
+		// 		* first, with the capitalized version as
+		// 		* the alternate.
+		// 		*/
+		// 		modalButton =
+		// 			await waitForEitherElementHash(
+		// 				`#${modName}`,
+		// 				`#${modNameCapitalized}`
+		// 			);
+		// 	}
+
+		// 	console.log(
+		// 		'MOBILE modalButton',
+		// 		modalButton
+		// 	);
+		// }
+
+		// if (!is_mobile()) {
+
+		// 	console.log('DESKTOP modName', modName);
+		// 	console.log('DESKTOP modModal', modModal);
+
+
+		// 	modalButton = await waitForElementHash(`#${modName}`);
+		// 	console.log('DESKTOP modalButton', modalButton);
+		// }
+
+		//____________________________
+		//MODAL OPEN CONTROL SELECTION 
+		//____________________________
+
 		let modName;
 		let modModal;
 		let modNameCapitalized;
+		let modNameFirstCapitalized;
 
 		if (is_mobile()) {
 
@@ -1107,6 +1256,21 @@ export async function handleHashNavigation() {
 				`${modModalCapitalized
 					.replace(/\s+/g, '-')}-container`;
 
+			/*
+			* FALLBACK:
+			*
+			* Only the first letter is capitalized.
+			*
+			* Maritime-heritage-resources-container
+			*/
+			const modModalFirstCapitalized =
+				modModal.charAt(0).toUpperCase() +
+				modModal.slice(1).toLowerCase();
+
+			modNameFirstCapitalized =
+				`${modModalFirstCapitalized
+					.replace(/\s+/g, '-')}-container`;
+
 		} else {
 
 			/*
@@ -1145,14 +1309,12 @@ export async function handleHashNavigation() {
 				modNameCapitalized
 			);
 
+			console.log(
+				'MOBILE modNameFirstCapitalized',
+				modNameFirstCapitalized
+			);
 
-			/*
-			* Use getElementById() here instead of
-			* querySelector().
-			*
-			* This is safer for dynamically-generated
-			* IDs and avoids CSS-selector issues.
-			*/
+
 			const modNameElement =
 				document.getElementById(
 					modName
@@ -1168,11 +1330,30 @@ export async function handleHashNavigation() {
 					modModal
 				);
 
+			const modNameFirstCapitalizedElement =
+				document.getElementById(
+					modNameFirstCapitalized
+				);
+
+			console.log(
+				'MOBILE modNameElement',
+				modNameElement
+			);
+			console.log(
+				'MOBILE modNameCapitalizedElement',
+				modNameCapitalizedElement
+			);
+			console.log(
+				'MOBILE modModalElement',
+				modModalElement
+			);
+			console.log(
+				'MOBILE modNameFirstCapitalizedElement',
+				modNameFirstCapitalizedElement
+			);
 
 			/*
-			* 1. Preferred mobile container:
-			*
-			* contaminants-container
+			* 1. Preferred mobile container
 			*/
 			if (modNameElement) {
 
@@ -1185,9 +1366,7 @@ export async function handleHashNavigation() {
 				);
 
 			/*
-			* 2. Fallback for older/mixed-case IDs:
-			*
-			* Contaminants-container
+			* 2. Every word capitalized
 			*/
 			} else if (
 				modNameCapitalizedElement
@@ -1202,7 +1381,7 @@ export async function handleHashNavigation() {
 				);
 
 			/*
-			* 3. Final direct-ID fallback.
+			* 3. Direct-ID fallback
 			*/
 			} else if (
 				modModalElement
@@ -1216,20 +1395,30 @@ export async function handleHashNavigation() {
 					modalButton
 				);
 
+			/*
+			* 4. Only first letter capitalized
+			*
+			* Maritime-heritage-resources-container
+			*/
+			} else if (
+				modNameFirstCapitalizedElement
+			) {
+
+				modalButton =
+					modNameFirstCapitalizedElement;
+
+				console.log(
+					'MOBILE modalButton found using modNameFirstCapitalized',
+					modalButton
+				);
+
 			} else {
 
-				/*
-				* The mobile DOM is generated dynamically,
-				* so none of the controls may exist yet.
-				*
-				* Wait for the normal lowercase container
-				* first, with the capitalized version as
-				* the alternate.
-				*/
 				modalButton =
 					await waitForEitherElementHash(
 						`#${modName}`,
-						`#${modNameCapitalized}`
+						`#${modNameCapitalized}`,
+						`#${modNameFirstCapitalized}`
 					);
 			}
 
@@ -1244,9 +1433,12 @@ export async function handleHashNavigation() {
 			console.log('DESKTOP modName', modName);
 			console.log('DESKTOP modModal', modModal);
 
-
 			modalButton = await waitForElementHash(`#${modName}`);
-			console.log('DESKTOP modalButton', modalButton);
+
+			console.log(
+				'DESKTOP modalButton',
+				modalButton
+			);
 		}
 
 
