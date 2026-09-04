@@ -732,66 +732,66 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
 }
 
 
-//This function is for allowing direct links to figures
-function handleShareLinkRedirect() {
-	const fragment = window.location.hash.slice(1);
+// //This function is for allowing direct links to figures
+// function handleShareLinkRedirect() {
+// 	const fragment = window.location.hash.slice(1);
 
-	if (!fragment) {
-		return;
-	}
+// 	if (!fragment) {
+// 		return;
+// 	}
 
-	const [tabPath, fragmentQuery = ''] = fragment.split('?');
-	const pathParts = tabPath.split('/');
+// 	const [tabPath, fragmentQuery = ''] = fragment.split('?');
+// 	const pathParts = tabPath.split('/');
 
-	const tabTitle = decodeURIComponent(pathParts[0] || '');
-	const tabId = decodeURIComponent(pathParts[1] || '');
+// 	const tabTitle = decodeURIComponent(pathParts[0] || '');
+// 	const tabId = decodeURIComponent(pathParts[1] || '');
 
-	const fragmentParams = new URLSearchParams(fragmentQuery);
-	const figureId = fragmentParams.get('figure');
+// 	const fragmentParams = new URLSearchParams(fragmentQuery);
+// 	const figureId = fragmentParams.get('figure');
 
-	// Adjust this selector to match the actual tab button ID.
-	const tabButton = document.getElementById(`${tabTitle}-${tabId}`);
+// 	// Adjust this selector to match the actual tab button ID.
+// 	const tabButton = document.getElementById(`${tabTitle}-${tabId}`);
 
-	if (!tabButton) {
-		console.warn('Share-link tab button was not found:', {
-			tabTitle,
-			tabId,
-		});
+// 	if (!tabButton) {
+// 		console.warn('Share-link tab button was not found:', {
+// 			tabTitle,
+// 			tabId,
+// 		});
 
-		return;
-	}
+// 		return;
+// 	}
 
-	const scrollToFigure = () => {
-		const figureDiv = figureId
-			? document.getElementById(figureId)
-			: null;
+// 	const scrollToFigure = () => {
+// 		const figureDiv = figureId
+// 			? document.getElementById(figureId)
+// 			: null;
 
-		if (figureDiv) {
-			figureDiv.scrollIntoView({
-				behavior: 'smooth',
-				block: 'start',
-			});
-		}
-	};
+// 		if (figureDiv) {
+// 			figureDiv.scrollIntoView({
+// 				behavior: 'smooth',
+// 				block: 'start',
+// 			});
+// 		}
+// 	};
 
-	// Wait until Bootstrap has displayed the tab pane.
-	tabButton.addEventListener(
-		'shown.bs.tab',
-		scrollToFigure,
-		{ once: true }
-	);
+// 	// Wait until Bootstrap has displayed the tab pane.
+// 	tabButton.addEventListener(
+// 		'shown.bs.tab',
+// 		scrollToFigure,
+// 		{ once: true }
+// 	);
 
-	const tabTrigger = bootstrap.Tab.getOrCreateInstance(tabButton);
-	tabTrigger.show();
+// 	const tabTrigger = bootstrap.Tab.getOrCreateInstance(tabButton);
+// 	tabTrigger.show();
 
-	// Handle cases where the requested tab is already active.
-	if (tabButton.classList.contains('active')) {
-		scrollToFigure();
-	}
-}
+// 	// Handle cases where the requested tab is already active.
+// 	if (tabButton.classList.contains('active')) {
+// 		scrollToFigure();
+// 	}
+// }
 
-// document.addEventListener('DOMContentLoaded', handleShareLinkRedirect);
-window.addEventListener('hashchange', handleShareLinkRedirect);
+// // document.addEventListener('DOMContentLoaded', handleShareLinkRedirect);
+// window.addEventListener('hashchange', handleShareLinkRedirect);
 
 /**
  * Dump computed CSS for every element under a root selector.

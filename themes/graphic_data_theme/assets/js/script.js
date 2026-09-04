@@ -2,10 +2,20 @@ import { make_title, loadSVG, init } from '@graphic-data/scene-render';
 import {
     child_obj, setChildObj, sorted_child_objs, setSortedChildObjs, sectionObj,
     is_mobile, is_touchscreen, slugify, debounce, hexToRgba, deviceDetector,
-    get_mobile_layer, remove_outer_div, createAccordionItem, getSceneData,
+    get_mobile_layer, remove_outer_div, createAccordionItem, getSceneData, handleHashNavigation
 } from '@graphic-data/scene-shared';
 
 let url;
+
+
+console.log('url', url);
+
+if (document.body.classList.contains('error404')) {
+	alert(
+		'The requested scene cannot be found or has not been specified.'
+	);
+}
+
 
 const graphicDataSceneData = getSceneData();
 
@@ -164,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	if (!isAdminEditor) {
 		init();
 	}
+	console.log("TEST SCENE LOAD");
 	handleHashNavigation();
 });
 
@@ -196,117 +207,120 @@ function process_child_obj() {
 	// If you need it back as an object:
 }
 
-/**
- * Waits for a DOM element matching the provided selector to become available.
- *
- * This function returns a Promise that resolves when the DOM element matching the given `selector` is found.
- * If the element is already present, it resolves immediately. If not, it uses a `MutationObserver` to detect when
- * the element is added to the DOM and then resolves the Promise.
- *
- * @param {string} selector - The CSS selector of the DOM element to wait for.
- * @return {Promise<Element>} - A Promise that resolves with the found DOM element.
- *
- * Usage:
- * called within handleHashNavigation, used to wait for the rendering of the modal button.
- */
-async function waitForElement(selector) {
-	return new Promise((resolve) => {
-		const element = document.querySelector(selector);
-		if (element) {
-			resolve(element);
-		} else {
-			const observer = new MutationObserver(() => {
-				const element = document.querySelector(selector);
-				if (element) {
-					observer.disconnect();
-					resolve(element);
-				}
-			});
-			observer.observe(document.body, { childList: true, subtree: true });
-		}
-	});
-}
+// /**
+//  * Waits for a DOM element matching the provided selector to become available.
+//  *
+//  * This function returns a Promise that resolves when the DOM element matching the given `selector` is found.
+//  * If the element is already present, it resolves immediately. If not, it uses a `MutationObserver` to detect when
+//  * the element is added to the DOM and then resolves the Promise.
+//  *
+//  * @param {string} selector - The CSS selector of the DOM element to wait for.
+//  * @return {Promise<Element>} - A Promise that resolves with the found DOM element.
+//  *
+//  * Usage:
+//  * called within handleHashNavigation, used to wait for the rendering of the modal button.
+//  */
+// async function waitForElement(selector) {
+// 	return new Promise((resolve) => {
+// 		const element = document.querySelector(selector);
+// 		if (element) {
+// 			resolve(element);
+// 		} else {
+// 			const observer = new MutationObserver(() => {
+// 				const element = document.querySelector(selector);
+// 				if (element) {
+// 					observer.disconnect();
+// 					resolve(element);
+// 				}
+// 			});
+// 			observer.observe(document.body, { childList: true, subtree: true });
+// 		}
+// 	});
+// }
 
-/**
- * Handles hash-based URL navigation. This is for when someone goes to the link for a certain figure (.../#CASheephead/1)
- *
- * 1. First checks if the URL has a hash, making it a figure link
- * 2. Does some string parsing stuff to clean up the URL, from which we can extract information about the scene, icon, and tab
- * 3. Updates new URL, gets necessary DOM elements through waitForElement and fires event handlers to open up figure
- *
- * @return {Promise<void>} - A Promise that resolves when navigation handling is complete.
- *
- * Usage:
- * Called after init when DOMcontent loaded.
- */
-async function handleHashNavigation() {
-	//maybe in here check that the scene is/is not an overview
-	if (window.location.hash) {
-		// let tabId2 = window.location.hash.substring(1);
-		// let modalName2 = tabId.split('/')[0];
-		// tabId2 = tabId.replace(/\//g, '-');
-		// console.log('tabId2', tabId2);
+// /**
+//  * Handles hash-based URL navigation. This is for when someone goes to the link for a certain figure (.../#CASheephead/1)
+//  *
+//  * 1. First checks if the URL has a hash, making it a figure link
+//  * 2. Does some string parsing stuff to clean up the URL, from which we can extract information about the scene, icon, and tab
+//  * 3. Updates new URL, gets necessary DOM elements through waitForElement and fires event handlers to open up figure
+//  *
+//  * @return {Promise<void>} - A Promise that resolves when navigation handling is complete.
+//  *
+//  * Usage:
+//  * Called after init when DOMcontent loaded.
+//  */
+// async function handleHashNavigation() {
+// 	//maybe in here check that the scene is/is not an overview
+// 	if (window.location.hash) {
+// 		// let tabId2 = window.location.hash.substring(1);
+// 		// let modalName2 = tabId.split('/')[0];
+// 		// tabId2 = tabId.replace(/\//g, '-');
+// 		// console.log('tabId2', tabId2);
 
-		function getTargetIdFromHash(rawHash) {
-			let decoded = rawHash;
-			try {
-				decoded = decodeURIComponent(rawHash);
-			} catch (_) {}
+// 		function getTargetIdFromHash(rawHash) {
+// 			let decoded = rawHash;
+// 			try {
+// 				decoded = decodeURIComponent(rawHash);
+// 			} catch (_) {}
 		
-			return decoded.split("/")[0] || "";
-		}
+// 			return decoded.split("/")[0] || "";
+// 		}
 		
-		function getTabFromHash(rawHash) {
-			let decoded = rawHash;
-			try {
-			  decoded = decodeURIComponent(rawHash);
-			} catch (_) {}
+// 		function getTabFromHash(rawHash) {
+// 			let decoded = rawHash;
+// 			try {
+// 			  decoded = decodeURIComponent(rawHash);
+// 			} catch (_) {}
 	
-			if (decoded.includes('?')) {
-				const hashWithoutQuery = decoded.split('?')[0];
-				return hashWithoutQuery.split('/')[1] || hashWithoutQuery || '';
-			} else {
-				return decoded.split("/")[1] || "";
-			}
-		}
+// 			if (decoded.includes('?')) {
+// 				const hashWithoutQuery = decoded.split('?')[0];
+// 				return hashWithoutQuery.split('/')[1] || hashWithoutQuery || '';
+// 			} else {
+// 				return decoded.split("/")[1] || "";
+// 			}
+// 		}
 
-		const raw = window.location.hash.slice(1);
-		let modalName = getTargetIdFromHash(raw);
-		let tabId = getTabFromHash(raw);
+// 		const raw = window.location.hash.slice(1);
+// 		let modalName = getTargetIdFromHash(raw);
+// 		let tabId = getTabFromHash(raw);
 
-		history.pushState(
-			'',
-			document.title,
-			window.location.pathname + window.location.search
-		);
-		let modName;
-		if (is_mobile()) {
-			let modModal = modalName.replace(/_/g, ' ');
-			const modModalCapitalized = modModal.replace(
-				/\b\w/g,
-				char => char.toUpperCase()
-			);
-			modName = modModalCapitalized + '-container';
-		} else {
-			modName = modalName;
-		}
+// 		history.pushState(
+// 			'',
+// 			document.title,
+// 			window.location.pathname + window.location.search
+// 		);
+// 		let modName;
+// 		if (is_mobile()) {
+// 			let modModal = modalName.replace(/_/g, ' ');
+// 			const modModalCapitalized = modModal.replace(
+// 				/\b\w/g,
+// 				char => char.toUpperCase()
+// 			);
+// 			modName = modModalCapitalized + '-container';
+// 			console.log('modModal', modModal);
+// 			console.log('modName', modName);
+// 		} else {
+// 			modName = modalName;
+// 		}
 
-		let modalButton = await waitForElement(`#${modName}`);
+// 		console.log('modName', modName);
+// 		let modalButton = await waitForElement(`#${modName}`);
 
 
-		// Sometimes a <g tag is sent insteast of an <a tag. This break the way the modal loads. This is a good work around
-		// if <g then change method of waiting for click, if not then proceed as normal
-		if (modalButton.tagName.toLowerCase() === 'g') {
-			modalButton.dispatchEvent(
-				new MouseEvent('click', { bubbles: true, cancelable: true })
-			);
-		} else {
-			modalButton.click();
-		}
+// 		// Sometimes a <g tag is sent insteast of an <a tag. This break the way the modal loads. This is a good work around
+// 		// if <g then change method of waiting for click, if not then proceed as normal
+// 		if (modalButton.tagName.toLowerCase() === 'g') {
+// 			modalButton.dispatchEvent(
+// 				new MouseEvent('click', { bubbles: true, cancelable: true })
+// 			);
+// 		} else {
+// 			modalButton.click();
+// 		}
 
-		let tabButton = await waitForElement(`#${modName}-${tabId}`);
-		tabButton.click();
-	} else {
-	}
-}
+// 		let tabButton = await waitForElement(`#${modName}-${tabId}`);
+// 		tabButton.click();
+// 	} else {
+// 	}
+// }
 
