@@ -148,6 +148,11 @@ foreach ( $graphic_data_term_data as $graphic_data_term_element ) {
 	}
 }
 
+// Global Pages that opted in to the site-wide navigation bar, ordered by scene_order.
+foreach ( graphic_data_get_navbar_pages( 'global' ) as $graphic_data_global_page ) {
+	echo "<li class='nav-item'><a class='nav-link' href='" . esc_url( get_permalink( $graphic_data_global_page[2] ) ) . "'>" . esc_html( $graphic_data_global_page[0] ) . '</a></li>';
+}
+
 if ( is_user_logged_in() == true ) {
 	 $graphic_data_args = array(
 		 'post_type' => 'about', // custom post type.

@@ -611,8 +611,8 @@ class Graphic_Data_Utility {
 			}
 			// If author has no assigned instances, $instances remains empty, so only "All Instances" shows.
 
-		} else {
-			// Administrators or other roles see all instances.
+		} elseif ( in_array( $user_role, array( 'editor', 'administrator' ), true ) || is_super_admin( $current_user->ID ) ) {
+			// Editors, administrators, and super administrators see all instances.
 			$instances = $wpdb->get_results(
 				"
 				SELECT ID, post_title
@@ -621,6 +621,9 @@ class Graphic_Data_Utility {
 				AND post_status = 'publish'
 				ORDER BY post_title ASC"
 			);
+		} else {
+			// Any other role gets no instance list.
+			$instances = null;
 		}
 
 		// Get selected instance from URL or from stored value.
@@ -720,7 +723,7 @@ class Graphic_Data_Utility {
 
 		$scene_titles = array();
 		$args = array(
-			'post_type' => 'scene',  // Your custom post type.
+			'post_type' => array( 'scene', 'page' ),  // Custom "scene" post type or a regular WordPress page.
 			'posts_per_page' => -1,  // Retrieve all matching posts (-1 means no limit).
 			'meta_query' => array(
 				array(
@@ -975,6 +978,43 @@ class Graphic_Data_Utility {
 				if ( $target_id != $scene_id ) {
 					$potential_scenes[ $target_id ] = get_the_title( $target_id );
 				}
+			}
+			asort( $potential_scenes );
+			$potential_scenes = array( '' => '' ) + $potential_scenes;
+		}
+		return $potential_scenes;
+	}
+
+	/**
+	 * Return an array of pages for a given location.
+	 *
+	 * @param int $scene_id The current scene ID to exclude from results.
+	 * @return array Associative array of scene IDs to titles with an empty option first, sorted alphabetically.
+	 */
+	public function return_pages( $scene_id ) {
+		$potential_scenes = array();
+		$scene_location = get_post_meta( $scene_id, 'scene_location', true );
+		if ( true == $scene_location ) {
+			$args = array(
+				'post_type' => 'page',  // Your custom post type.
+				'posts_per_page' => -1,       // Retrieve all matching posts (-1 means no limit).
+				'meta_query' => array(
+					array(
+						'key' => 'scene_location',      // The custom field key.
+						'value' => $scene_location, // The value you are searching for.
+						'compare' => '=',         // Comparison operator.
+					),
+				),
+				'fields' => 'ids',            // Only return post IDs.
+			);
+
+			// Execute the query.
+			$query = new WP_Query( $args );
+
+			// Get the array of post IDs.
+			$scene_post_ids = $query->posts;
+			foreach ( $scene_post_ids as $target_id ) {
+				$potential_scenes[ $target_id ] = get_the_title( $target_id );
 			}
 			asort( $potential_scenes );
 			$potential_scenes = array( '' => '' ) + $potential_scenes;

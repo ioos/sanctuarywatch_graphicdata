@@ -159,9 +159,9 @@ class Graphic_Data_Instance {
 			array(
 				'id'          => 'instance_overview_scene',
 				'type'        => 'select',
-				'title'       => 'Overview scene',
+				'title'       => 'Overview page or scene',
 				'options'     => $scene_titles,
-				'description' => 'What is the overview scene for the Instance?',
+				'description' => 'What is the overview page or scene for the Instance?',
 				'sanitize'    => 'absint',
 			),
 			array(

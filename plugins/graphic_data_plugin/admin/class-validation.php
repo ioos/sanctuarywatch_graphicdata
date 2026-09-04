@@ -640,6 +640,16 @@ class Graphic_Data_Validation {
 						array_push( $modal_errors, 'The Icon Scene Out field is blank.' );
 					}
 					break;
+				case 'Page':
+					$icon_page_out = isset( $_POST['icon_page_out'] )
+						? sanitize_text_field( wp_unslash( $_POST['icon_page_out'] ) )
+						: '';
+
+					if ( '' == $icon_page_out ) {
+						$save_modal_fields = false;
+						array_push( $modal_errors, 'The Icon Page Out field is blank.' );
+					}
+					break;
 			}
 		}
 

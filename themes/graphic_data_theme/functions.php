@@ -84,6 +84,167 @@ function graphic_data_single_instance_front_page_redirect() {
 add_action( 'template_redirect', 'graphic_data_single_instance_front_page_redirect' );
 
 /**
+ * Retrieve the raw scene_location meta value for a page or scene.
+ *
+ * For a Page the scene_location meta is set from the "Instance" control in the
+ * Page options panel and is one of 'none' (the default), 'global', or the post
+ * ID of an Instance. Two of those values change front-end behaviour: 'none'
+ * (the page is not browsable and is redirected to the front page) and 'global'
+ * (the page is site-wide and shares the front page navigation).
+ *
+ * @since 1.6.3
+ *
+ * @param int $post_id Optional. Post ID. Defaults to the current post in the loop.
+ * @return string The scene_location meta value, or an empty string when it is not set.
+ */
+function graphic_data_get_scene_location( $post_id = 0 ) {
+	$post_id = $post_id ? (int) $post_id : (int) get_the_ID();
+
+	if ( ! $post_id ) {
+		return '';
+	}
+
+	$scene_location = get_post_meta( $post_id, 'scene_location', true );
+
+	return is_string( $scene_location ) ? $scene_location : '';
+}
+
+/**
+ * Determine whether a page or scene is configured as site-wide ("global").
+ *
+ * Global posts are not attached to a specific Instance and therefore display
+ * the same navigation bar as the site's front page.
+ *
+ * @since 1.6.3
+ *
+ * @param int $post_id Optional. Post ID. Defaults to the current post in the loop.
+ * @return bool True when the scene_location meta value is 'global', false otherwise.
+ */
+function graphic_data_scene_location_is_global( $post_id = 0 ) {
+	return 'global' === graphic_data_get_scene_location( $post_id );
+}
+
+/**
+ * Redirect Pages with no usable Instance to the front page.
+ *
+ * A Page whose scene_location meta is empty or explicitly set to 'none' is not
+ * attached to a browsable Instance, so any front-end request for it is sent to
+ * the site's front page. The front page itself and preview requests are left
+ * alone so pages can still be configured before an Instance is assigned.
+ *
+ * @since 1.6.3
+ *
+ * @uses is_page()               To limit the redirect to single Page views.
+ * @uses is_front_page()         To avoid redirecting a static front page to itself.
+ * @uses get_queried_object_id() To identify the Page being requested.
+ * @uses graphic_data_get_scene_location() To read the scene_location meta value.
+ * @uses wp_safe_redirect()      To send the visitor to the front page.
+ *
+ * @return void
+ */
+function graphic_data_page_instance_redirect() {
+	if ( is_admin() || is_preview() || is_front_page() || ! is_page() ) {
+		return;
+	}
+
+	$scene_location = graphic_data_get_scene_location( get_queried_object_id() );
+
+	if ( '' === $scene_location || 'none' === $scene_location ) {
+		wp_safe_redirect( home_url( '/' ) );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'graphic_data_page_instance_redirect' );
+
+/**
+ * Sort callback for navigation-bar item tuples.
+ *
+ * Orders [ title, order, ID ] tuples by their numeric order (index 1), falling
+ * back to a case-sensitive title comparison (index 0) when the order matches.
+ *
+ * @since 1.6.3
+ *
+ * @param array{0: string, 1: int, 2: int} $a First navigation item tuple.
+ * @param array{0: string, 1: int, 2: int} $b Second navigation item tuple.
+ * @return int Negative, zero, or positive per the usort() contract.
+ */
+function graphic_data_compare_navbar_items( $a, $b ) {
+	$graphic_data_order_diff = $a[1] - $b[1];
+
+	return ( 0 !== $graphic_data_order_diff ) ? $graphic_data_order_diff : strcmp( $a[0], $b[0] );
+}
+
+/**
+ * Retrieve the Pages that have opted in to an Instance's navigation bar.
+ *
+ * Returns published Pages whose scene_location meta matches the given value and
+ * whose graphic_data_page_instance_in_navbar meta is enabled. Each entry is a
+ * [ title, order, ID ] tuple, matching the shape template-parts/navbar.php uses
+ * for scenes so the Pages can be sorted in alongside them by scene_order. The
+ * returned list is pre-sorted by scene_order and then by title.
+ *
+ * @since 1.6.3
+ *
+ * @param string $scene_location The Instance ID, or 'global', to match against the Page's scene_location meta.
+ * @return array<int, array{0: string, 1: int, 2: int}> List of [ title, order, Page ID ] tuples.
+ */
+function graphic_data_get_navbar_pages( $scene_location ) {
+	$scene_location = (string) $scene_location;
+
+	// 'none' pages are redirected away from the front end, so they never belong in the navbar.
+	if ( '' === $scene_location || 'none' === $scene_location ) {
+		return array();
+	}
+
+	$graphic_data_pages_query = new WP_Query(
+		array(
+			'post_type'      => 'page',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'no_found_rows'  => true,
+			'meta_query'     => array(
+				'relation' => 'AND',
+				array(
+					'key'     => 'scene_location',
+					'value'   => $scene_location,
+					'compare' => '=',
+				),
+				array(
+					'key'     => 'graphic_data_page_instance_in_navbar',
+					'value'   => '1',
+					'compare' => '=',
+				),
+			),
+		)
+	);
+
+	$graphic_data_navbar_pages = array();
+
+	while ( $graphic_data_pages_query->have_posts() ) {
+		$graphic_data_pages_query->the_post();
+
+		$graphic_data_page_id = get_the_ID();
+		if ( ! $graphic_data_page_id ) {
+			continue;
+		}
+
+		$graphic_data_page_order = get_post_meta( $graphic_data_page_id, 'scene_order', true );
+
+		$graphic_data_navbar_pages[] = array(
+			get_the_title(),
+			is_numeric( $graphic_data_page_order ) ? (int) $graphic_data_page_order : 0,
+			$graphic_data_page_id,
+		);
+	}
+
+	wp_reset_postdata();
+
+	usort( $graphic_data_navbar_pages, 'graphic_data_compare_navbar_items' );
+
+	return $graphic_data_navbar_pages;
+}
+
+/**
  * Enqueues Google Fonts for the theme.
  *
  * Loads the Roboto and Open Sans font families from Google Fonts
@@ -457,6 +618,9 @@ function graphic_data_modal_helper( $child_post_id, $child_ids, $child_id, $idx 
 		} elseif ( 'Scene' === $icon_type ) {
 			$external_scene_id = get_post_meta( $child_post_id, 'icon_scene_out', true ) ?? '';
 			$external_url = $external_scene_id ? ( get_permalink( $external_scene_id ) ?: '' ) : '';
+		} elseif ( 'Page' === $icon_type ) {
+			$external_page_id = get_post_meta( $child_post_id, 'icon_page_out', true ) ?? '';
+			$external_url = $external_page_id ? ( get_permalink( $external_page_id ) ?: '' ) : '';
 		}
 
 		$scene_id = get_post_meta( $child_post_id, 'modal_scene', true ) ?? '';

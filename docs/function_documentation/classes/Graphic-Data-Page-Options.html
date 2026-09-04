@@ -1,0 +1,1655 @@
+---
+layout: page
+title: "Documentation"
+permalink: /function_documentation/classes/Graphic-Data-Page-Options.html
+---
+
+
+<header class="phpdocumentor-header phpdocumentor-section">
+    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">Documentation</a></h1>
+    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button">
+        <i class="fas fa-bars"></i>
+    </label>
+    <section data-search-form class="phpdocumentor-search">
+    <label>
+        <span class="visually-hidden">Search for</span>
+        <svg class="phpdocumentor-search__icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="2"/>
+            <line x1="12.4892" y1="12.2727" x2="19.1559" y2="18.9393" stroke="currentColor" stroke-width="3"/>
+        </svg>
+        <input type="search" class="phpdocumentor-field phpdocumentor-search__field" placeholder="Loading .." disabled />
+    </label>
+</section>
+
+    <nav class="phpdocumentor-topnav">
+    <ul class="phpdocumentor-topnav__menu">
+        </ul>
+</nav>
+</header>
+
+    <main class="phpdocumentor">
+        <div class="phpdocumentor-section">
+            <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
+<label class="phpdocumentor-sidebar__menu-icon" for="sidebar-button">
+    Menu
+</label>
+<aside class="phpdocumentor-column -three phpdocumentor-sidebar">
+                    <section class="phpdocumentor-sidebar__category -packages">
+            <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Graphic.html" class="">Graphic</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="packages/Graphic-Data.html" class="">Data</a>
+                
+            </li>
+            </ul>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="packages/Application.html" class="">Application</a>
+</h4>
+
+                        </section>
+            
+    <section class="phpdocumentor-sidebar__category -reports">
+        <h2 class="phpdocumentor-sidebar__category-header">Reports</h2>
+                <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/deprecated.html">Deprecated</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/errors.html">Errors</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/markers.html">Markers</a></h3>
+    </section>
+
+    <section class="phpdocumentor-sidebar__category -indices">
+        <h2 class="phpdocumentor-sidebar__category-header">Indices</h2>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="indices/files.html">Files</a></h3>
+    </section>
+</aside>
+
+            <div class="phpdocumentor-column -nine phpdocumentor-content">
+                                <section>
+                                        <ul class="phpdocumentor-breadcrumbs">
+            <li class="phpdocumentor-breadcrumb"><a href="packages/Application.html">Application</a></li>
+    </ul>
+
+    <article class="phpdocumentor-element -class">
+        <h2 class="phpdocumentor-content__title">
+    Graphic_Data_Page_Options
+
+    
+            <div class="phpdocumentor-element__package">
+            in package
+            <ul class="phpdocumentor-breadcrumbs">
+                                    <li class="phpdocumentor-breadcrumb"><a href="packages/Application.html">Application</a></li>
+                            </ul>
+        </div>
+    
+    
+    </h2>
+
+<div class="phpdocumentor-label-line">
+
+
+</div>
+
+        <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">14</span>
+
+    </aside>
+
+            <p class="phpdocumentor-summary">Adds a required &quot;Instance&quot; section to the Page options of the Gutenberg page editor.</p>
+
+
+    <section class="phpdocumentor-description"><p>Registers a meta box on the <code class="prettyprint">page</code> post type that exposes three controls:
+an Instance select (None, Global, or any Instance returned by
+Graphic_Data_Utility::return_all_instances()), an &quot;Include in navigation
+bar?&quot; checkbox, and a navigation-bar order select (1 through 10). The
+selected values are persisted as the <code class="prettyprint">scene_location</code>,
+<code class="prettyprint">graphic_data_page_instance_in_navbar</code>, and <code class="prettyprint">scene_order</code> post meta and
+registered with the REST API so the block editor can read them.</p>
+</section>
+
+
+
+    
+    
+<h3 id="toc">
+    Table of Contents
+    <a href="classes/Graphic-Data-Page-Options.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h3>
+
+
+
+
+
+
+
+<h4 id="toc-constants">
+    Constants
+    <a href="classes/Graphic-Data-Page-Options.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_INSTANCE_META_KEY">INSTANCE_META_KEY</a>
+    <span>
+        &nbsp;: string&nbsp;= &#039;scene_location&#039;                            </span>
+</dt>
+<dd>The meta key that stores the selected Instance for a page.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_NAVBAR_META_KEY">NAVBAR_META_KEY</a>
+    <span>
+        &nbsp;: string&nbsp;= &#039;graphic_data_page_instance_in_navbar&#039;                            </span>
+</dt>
+<dd>The meta key that stores whether the page is included in the navigation bar.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_NONCE_ACTION">NONCE_ACTION</a>
+    <span>
+        &nbsp;: string&nbsp;= &#039;graphic_data_save_page_instance&#039;                            </span>
+</dt>
+<dd>The nonce action used when saving the Instance section.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_NONCE_NAME">NONCE_NAME</a>
+    <span>
+        &nbsp;: string&nbsp;= &#039;graphic_data_page_instance_nonce&#039;                            </span>
+</dt>
+<dd>The nonce field name used when saving the Instance section.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MAX">ORDER_MAX</a>
+    <span>
+        &nbsp;: int&nbsp;= 10                            </span>
+</dt>
+<dd>The highest value offered by the navigation-bar order select.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_ORDER_META_KEY">ORDER_META_KEY</a>
+    <span>
+        &nbsp;: string&nbsp;= &#039;scene_order&#039;                            </span>
+</dt>
+<dd>The meta key that stores the page&#039;s order within the navigation bar.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MIN">ORDER_MIN</a>
+    <span>
+        &nbsp;: int&nbsp;= 1                            </span>
+</dt>
+<dd>The lowest value offered by the navigation-bar order select.</dd>
+
+    </dl>
+
+
+
+<h4 id="toc-methods">
+    Methods
+    <a href="classes/Graphic-Data-Page-Options.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_add_instance_meta_box">add_instance_meta_box()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Register the Instance meta box on the page editor.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_change_page_columns">change_page_columns()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Replace the columns shown on the Pages admin list table.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_custom_page_column">custom_page_column()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Populate custom fields for page content type in the admin screen.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_enqueue_overview_scene_notice">enqueue_overview_scene_notice()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Push a dismissible block-editor notice when the page is its Instance&#039;s overview scene.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_filter_instance_page_link">filter_instance_page_link()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Rewrite a page permalink to include its assigned Instance slug.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_overview_scene_editor_notice">overview_scene_editor_notice()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Print a dismissible notice on the classic page editor when the page is its Instance&#039;s overview scene.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_register_page_instance_meta">register_page_instance_meta()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Register the page meta so the block editor and REST API are aware of it.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_render_instance_meta_box">render_instance_meta_box()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Render the Instance section controls.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_resolve_instance_page_request">resolve_instance_page_request()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Route an `{instance_slug}/{page_slug}` request to the matching page.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_save_instance_meta_box">save_instance_meta_box()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Persist the Instance section values when a page is saved.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_get_instance_options">get_instance_options()</a>
+    <span>
+                                &nbsp;: array&lt;string, string&gt;    </span>
+</dt>
+<dd>Build the list of options for the Instance select.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_get_page_instance_web_slug">get_page_instance_web_slug()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Resolve the public URL slug of the Instance assigned to a page.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_is_instance_overview_scene">is_instance_overview_scene()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Determine whether a page is the overview scene of the Instance it belongs to.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_overview_scene_notice_message">overview_scene_notice_message()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Build the notice text shown when a page is its Instance&#039;s overview scene.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Page-Options.html#method_scene_belongs_to_instance">scene_belongs_to_instance()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Determine whether a published Scene with the given slug belongs to an Instance.</dd>
+
+    </dl>
+
+
+
+        
+    <section class="phpdocumentor-constants">
+        <h3 class="phpdocumentor-elements__header" id="constants">
+            Constants
+            <a href="classes/Graphic-Data-Page-Options.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_INSTANCE_META_KEY">
+        INSTANCE_META_KEY
+        <a href="classes/Graphic-Data-Page-Options.html#constant_INSTANCE_META_KEY" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">21</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The meta key that stores the selected Instance for a page.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">INSTANCE_META_KEY</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;scene_location&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_NAVBAR_META_KEY">
+        NAVBAR_META_KEY
+        <a href="classes/Graphic-Data-Page-Options.html#constant_NAVBAR_META_KEY" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">28</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The meta key that stores whether the page is included in the navigation bar.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">NAVBAR_META_KEY</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_page_instance_in_navbar&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_NONCE_ACTION">
+        NONCE_ACTION
+        <a href="classes/Graphic-Data-Page-Options.html#constant_NONCE_ACTION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">56</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The nonce action used when saving the Instance section.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">NONCE_ACTION</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_save_page_instance&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_NONCE_NAME">
+        NONCE_NAME
+        <a href="classes/Graphic-Data-Page-Options.html#constant_NONCE_NAME" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">63</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The nonce field name used when saving the Instance section.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">NONCE_NAME</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_page_instance_nonce&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_ORDER_MAX">
+        ORDER_MAX
+        <a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MAX" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">49</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The highest value offered by the navigation-bar order select.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">ORDER_MAX</span>
+    = <span class="phpdocumentor-signature__default-value">10</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_ORDER_META_KEY">
+        ORDER_META_KEY
+        <a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_META_KEY" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">35</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The meta key that stores the page&#039;s order within the navigation bar.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">ORDER_META_KEY</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;scene_order&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_ORDER_MIN">
+        ORDER_MIN
+        <a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MIN" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">42</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">The lowest value offered by the navigation-bar order select.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">int</span>
+    <span class="phpdocumentor-signature__name">ORDER_MIN</span>
+    = <span class="phpdocumentor-signature__default-value">1</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+            </section>
+
+        
+
+            <section class="phpdocumentor-methods">
+        <h3 class="phpdocumentor-elements__header" id="methods">
+            Methods
+            <a href="classes/Graphic-Data-Page-Options.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_add_instance_meta_box">
+        add_instance_meta_box()
+        <a href="classes/Graphic-Data-Page-Options.html#method_add_instance_meta_box" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">311</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Register the Instance meta box on the page editor.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">add_instance_meta_box</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to <code class="prettyprint">add_meta_boxes</code>. The box is placed in the <code class="prettyprint">side</code> context with a
+<code class="prettyprint">high</code> priority so it appears alongside the other Page options panels in
+the block editor.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_add_instance_meta_box_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_add_instance_meta_box_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_change_page_columns">
+        change_page_columns()
+        <a href="classes/Graphic-Data-Page-Options.html#method_change_page_columns" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">145</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Replace the columns shown on the Pages admin list table.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">change_page_columns</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$columns</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Filter callback for <code class="prettyprint">manage_page_posts_columns</code>. Rebuilds the column set so
+the Pages list surfaces the Instance a page is attached to and whether the
+page acts as that Instance's overview scene, while keeping the checkbox,
+author, comments and date columns provided by WordPress core.</p>
+<p>The <code class="prettyprint">scene_location</code> and <code class="prettyprint">scene_overview</code> cells are populated by
+change_page_columns()'s companion method custom_page_column().</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$columns</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Column ID =&gt; label map supplied by WordPress for the
+<code class="prettyprint">page</code> list table.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_change_page_columns_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_change_page_columns_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                                <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">link</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                        <a class="phpdocumentor-tag-link" href="https://www.smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/"> https://www.smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/ </a>
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The reordered column map:</p>
+<ul>
+<li>'cb': Row selection checkbox, carried over from core.</li>
+<li>'title': Page title.</li>
+<li>'scene_location': Labelled &quot;Instance&quot;; the Instance the page belongs to.</li>
+<li>'scene_overview': Labelled &quot;Overview&quot;; marks the page as its Instance's overview scene.</li>
+<li>'author': Page author, carried over from core.</li>
+<li>'comments': Comment count, shown as the core comments-bubble icon.</li>
+<li>'date': Published/modified date, carried over from core.</li>
+</ul>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_custom_page_column">
+        custom_page_column()
+        <a href="classes/Graphic-Data-Page-Options.html#method_custom_page_column" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">166</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Populate custom fields for page content type in the admin screen.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">custom_page_column</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$column</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$column</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The name of the column.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The database id of the post.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_custom_page_column_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_custom_page_column_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_enqueue_overview_scene_notice">
+        enqueue_overview_scene_notice()
+        <a href="classes/Graphic-Data-Page-Options.html#method_enqueue_overview_scene_notice" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">270</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Push a dismissible block-editor notice when the page is its Instance&#039;s overview scene.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">enqueue_overview_scene_notice</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to <code class="prettyprint">enqueue_block_editor_assets</code>. Adds an inline script that inserts
+an informational notice into the editor's <code class="prettyprint">core/notices</code> store, since raw
+<code class="prettyprint">admin_notices</code> output is not reliably shown on the block editor screen.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_enqueue_overview_scene_notice_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_enqueue_overview_scene_notice_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_filter_instance_page_link">
+        filter_instance_page_link()
+        <a href="classes/Graphic-Data-Page-Options.html#method_filter_instance_page_link" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">542</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Rewrite a page permalink to include its assigned Instance slug.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">filter_instance_page_link</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$link</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$sample</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">false</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Filter callback for <code class="prettyprint">page_link</code>. When a published page has a real
+Instance selected in its <code class="prettyprint">scene_location</code> meta, its permalink becomes
+<code class="prettyprint">{home_url}/{instance_slug}/{page_slug}/</code>. Pages with no Instance (or a
+<code class="prettyprint">none</code>/<code class="prettyprint">global</code> selection), unpublished pages, and pages whose Instance
+has no slug keep the default permalink.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$link</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The page's default permalink.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The page ID.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$sample</span>
+                : <span class="phpdocumentor-argument-list__argument__type">bool</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">false</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Whether this is a sample (draft) permalink. Unused.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_filter_instance_page_link_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_filter_instance_page_link_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The Instance-scoped permalink, or the original link.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_overview_scene_editor_notice">
+        overview_scene_editor_notice()
+        <a href="classes/Graphic-Data-Page-Options.html#method_overview_scene_editor_notice" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">241</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Print a dismissible notice on the classic page editor when the page is its Instance&#039;s overview scene.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">overview_scene_editor_notice</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to <code class="prettyprint">admin_notices</code>. The block editor relocates raw <code class="prettyprint">admin_notices</code>
+markup into a hidden container, so this path is limited to the classic
+editor; enqueue_overview_scene_notice() covers the block editor.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_overview_scene_editor_notice_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_overview_scene_editor_notice_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_register_page_instance_meta">
+        register_page_instance_meta()
+        <a href="classes/Graphic-Data-Page-Options.html#method_register_page_instance_meta" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">73</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Register the page meta so the block editor and REST API are aware of it.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">register_page_instance_meta</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to <code class="prettyprint">init</code>.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_register_page_instance_meta_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_register_page_instance_meta_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_render_instance_meta_box">
+        render_instance_meta_box()
+        <a href="classes/Graphic-Data-Page-Options.html#method_render_instance_meta_box" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">336</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Render the Instance section controls.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">render_instance_meta_box</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><abbr title="\WP_Post">WP_Post</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Outputs the required Instance select, the &quot;Include in navigation bar?&quot;
+checkbox, and the navigation-bar order select, pre-filled with any
+previously saved values. The order select is only shown while the
+checkbox is checked (handled with a CSS <code class="prettyprint">:has()</code> rule so it toggles
+live without JavaScript).</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\WP_Post">WP_Post</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The page being edited.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_render_instance_meta_box_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_render_instance_meta_box_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_resolve_instance_page_request">
+        resolve_instance_page_request()
+        <a href="classes/Graphic-Data-Page-Options.html#method_resolve_instance_page_request" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">577</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Route an `{instance_slug}/{page_slug}` request to the matching page.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">resolve_instance_page_request</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$query_vars</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Filter callback for <code class="prettyprint">request</code>. The Scene custom post type registers a
+catch-all rewrite rule that maps every two-segment URL to
+<code class="prettyprint">post_type=scene&amp;name={segment2}&amp;instance_slug={segment1}</code>. This callback
+inspects that resolved query: if no published Scene in the named Instance
+owns the slug, but a published page does carry that slug and is assigned
+to the Instance whose <code class="prettyprint">instance_slug</code> matches the first segment, the
+query is redirected to that page. All other requests pass through
+untouched so Scene routing is unaffected.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$query_vars</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The query vars produced by rewrite matching.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_resolve_instance_page_request_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_resolve_instance_page_request_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The original query vars, or <code class="prettyprint">array( 'page_id' =&gt; ... )</code>.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_save_instance_meta_box">
+        save_instance_meta_box()
+        <a href="classes/Graphic-Data-Page-Options.html#method_save_instance_meta_box" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">412</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Persist the Instance section values when a page is saved.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">save_instance_meta_box</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to <code class="prettyprint">save_post_page</code>. Validates the nonce, capability, and request
+context before writing the <code class="prettyprint">scene_location</code>,
+<code class="prettyprint">graphic_data_page_instance_in_navbar</code>, and <code class="prettyprint">scene_order</code> post meta.
+Unrecognised Instance values fall back to <code class="prettyprint">none</code>, and an out-of-range
+order falls back to the lowest allowed value.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The ID of the page being saved.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_save_instance_meta_box_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_save_instance_meta_box_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_instance_options">
+        get_instance_options()
+        <a href="classes/Graphic-Data-Page-Options.html#method_get_instance_options" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">472</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Build the list of options for the Instance select.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">get_instance_options</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string, string&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>The list always starts with <code class="prettyprint">None</code> (the default) and <code class="prettyprint">Global</code>, followed by
+every Instance returned by Graphic_Data_Utility::return_all_instances(),
+keyed by Instance ID. The blank placeholder entry that
+return_all_instances() seeds its result with is skipped.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_get_instance_options_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_get_instance_options_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string, string&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Associative array of option value =&gt; option label.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_page_instance_web_slug">
+        get_page_instance_web_slug()
+        <a href="classes/Graphic-Data-Page-Options.html#method_get_page_instance_web_slug" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">510</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Resolve the public URL slug of the Instance assigned to a page.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">get_page_instance_web_slug</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Reads the page's <code class="prettyprint">scene_location</code> meta and, when it holds a real Instance
+ID (not <code class="prettyprint">none</code> or <code class="prettyprint">global</code>), returns that Instance's <code class="prettyprint">instance_slug</code> meta
+with any surrounding slashes trimmed. Returns an empty string when no
+Instance is assigned, the referenced post is not an Instance, or the
+Instance has no slug.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The page ID.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_get_page_instance_web_slug_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_get_page_instance_web_slug_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The Instance URL slug, or '' when the page has no Instance.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_is_instance_overview_scene">
+        is_instance_overview_scene()
+        <a href="classes/Graphic-Data-Page-Options.html#method_is_instance_overview_scene" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">191</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Determine whether a page is the overview scene of the Instance it belongs to.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">is_instance_overview_scene</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>A page points at an Instance through its <code class="prettyprint">scene_location</code> meta, and that
+Instance names a single overview scene through its <code class="prettyprint">instance_overview_scene</code>
+meta. When the two match, the page doubles as the Instance's landing page.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The page ID to test.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_is_instance_overview_scene_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_is_instance_overview_scene_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>True when the page is its Instance's overview scene, false otherwise.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_overview_scene_notice_message">
+        overview_scene_notice_message()
+        <a href="classes/Graphic-Data-Page-Options.html#method_overview_scene_notice_message" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">217</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Build the notice text shown when a page is its Instance&#039;s overview scene.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">overview_scene_notice_message</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The page the notice is about.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_overview_scene_notice_message_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_overview_scene_notice_message_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Translated, human-readable message naming the Instance where possible.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_scene_belongs_to_instance">
+        scene_belongs_to_instance()
+        <a href="classes/Graphic-Data-Page-Options.html#method_scene_belongs_to_instance" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-page-options.php"><a href="files/plugins-graphic-data-plugin-admin-class-page-options.html"><abbr title="plugins/graphic_data_plugin/admin/class-page-options.php">class-page-options.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">623</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Determine whether a published Scene with the given slug belongs to an Instance.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">scene_belongs_to_instance</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$scene_slug</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$instance_slug</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Used to decide whether an <code class="prettyprint">{instance_slug}/{slug}</code> request should stay on
+the Scene routing path or fall through to page routing.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$scene_slug</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The Scene post slug (second URL segment).</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$instance_slug</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The Instance URL slug (first URL segment).</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_scene_belongs_to_instance_tags">
+        Tags
+        <a href="classes/Graphic-Data-Page-Options.html#method_scene_belongs_to_instance_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>True when a published Scene with that slug is assigned to the
+Instance whose <code class="prettyprint">instance_slug</code> matches $instance_slug.</p>
+</section>
+
+            </section>
+
+</article>
+            </section>
+
+        
+    </article>
+                                </section>
+                <section class="phpdocumentor-on-this-page__sidebar">
+                                
+    <section class="phpdocumentor-on-this-page__content">
+        <strong class="phpdocumentor-on-this-page__title">On this page</strong>
+
+        <ul class="phpdocumentor-list -clean">
+            <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
+            <li>
+                <ul class="phpdocumentor-list -clean">
+                                        <li><a href="classes/Graphic-Data-Page-Options.html#toc-constants">Constants</a></li>
+                                                                                <li><a href="classes/Graphic-Data-Page-Options.html#toc-methods">Methods</a></li>
+                                    </ul>
+            </li>
+                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_INSTANCE_META_KEY">INSTANCE_META_KEY</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_NAVBAR_META_KEY">NAVBAR_META_KEY</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_NONCE_ACTION">NONCE_ACTION</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_NONCE_NAME">NONCE_NAME</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MAX">ORDER_MAX</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_META_KEY">ORDER_META_KEY</a></li>
+                                                    <li class=""><a href="classes/Graphic-Data-Page-Options.html#constant_ORDER_MIN">ORDER_MIN</a></li>
+                                            </ul>
+                </li>
+            
+            
+                        <li class="phpdocumentor-on-this-page-section__title">Methods</li>
+            <li>
+                <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_add_instance_meta_box">add_instance_meta_box()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_change_page_columns">change_page_columns()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_custom_page_column">custom_page_column()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_enqueue_overview_scene_notice">enqueue_overview_scene_notice()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_filter_instance_page_link">filter_instance_page_link()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_overview_scene_editor_notice">overview_scene_editor_notice()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_register_page_instance_meta">register_page_instance_meta()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_render_instance_meta_box">render_instance_meta_box()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_resolve_instance_page_request">resolve_instance_page_request()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_save_instance_meta_box">save_instance_meta_box()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_get_instance_options">get_instance_options()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_get_page_instance_web_slug">get_page_instance_web_slug()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_is_instance_overview_scene">is_instance_overview_scene()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_overview_scene_notice_message">overview_scene_notice_message()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Page-Options.html#method_scene_belongs_to_instance">scene_belongs_to_instance()</a></li>
+                                    </ul>
+            </li>
+                    </ul>
+    </section>
+
+                </section>
+                            </div>
+            <section data-search-results class="phpdocumentor-search-results phpdocumentor-search-results--hidden">
+    <section class="phpdocumentor-search-results__dialog">
+        <header class="phpdocumentor-search-results__header">
+            <h2 class="phpdocumentor-search-results__title">Search results</h2>
+            <button class="phpdocumentor-search-results__close"><i class="fas fa-times"></i></button>
+        </header>
+        <section class="phpdocumentor-search-results__body">
+            <ul class="phpdocumentor-search-results__entries"></ul>
+        </section>
+    </section>
+</section>
+        </div>
+        <a href="classes/Graphic-Data-Page-Options.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+
+    </main>
+
+    <script>
+        cssVars({});
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-highlight/prism-line-highlight.min.js"></script>

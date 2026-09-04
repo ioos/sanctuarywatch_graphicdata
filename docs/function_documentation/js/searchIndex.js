@@ -631,6 +631,121 @@ Search.appendIndex(
             "summary": "Grants\u0020administrator\u0020and\u0020editor\u0020roles\u0020full\u0020access\u0020to\u0020the\u0020scene,\u0020modal,\u0020and\u0020figure\u0020post\u0020types.",
             "url": "classes/Graphic-Data-Custom-Capabilities.html#method_add_admin_editor_custom_post_type_caps"
         },                {
+            "fqsen": "\\Graphic_Data_Page_Options",
+            "name": "Graphic_Data_Page_Options",
+            "summary": "Adds\u0020a\u0020required\u0020\u0022Instance\u0022\u0020section\u0020to\u0020the\u0020Page\u0020options\u0020of\u0020the\u0020Gutenberg\u0020page\u0020editor.",
+            "url": "classes/Graphic-Data-Page-Options.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aregister_page_instance_meta\u0028\u0029",
+            "name": "register_page_instance_meta",
+            "summary": "Register\u0020the\u0020page\u0020meta\u0020so\u0020the\u0020block\u0020editor\u0020and\u0020REST\u0020API\u0020are\u0020aware\u0020of\u0020it.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_register_page_instance_meta"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Achange_page_columns\u0028\u0029",
+            "name": "change_page_columns",
+            "summary": "Replace\u0020the\u0020columns\u0020shown\u0020on\u0020the\u0020Pages\u0020admin\u0020list\u0020table.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_change_page_columns"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Acustom_page_column\u0028\u0029",
+            "name": "custom_page_column",
+            "summary": "Populate\u0020custom\u0020fields\u0020for\u0020page\u0020content\u0020type\u0020in\u0020the\u0020admin\u0020screen.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_custom_page_column"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Ais_instance_overview_scene\u0028\u0029",
+            "name": "is_instance_overview_scene",
+            "summary": "Determine\u0020whether\u0020a\u0020page\u0020is\u0020the\u0020overview\u0020scene\u0020of\u0020the\u0020Instance\u0020it\u0020belongs\u0020to.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_is_instance_overview_scene"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aoverview_scene_notice_message\u0028\u0029",
+            "name": "overview_scene_notice_message",
+            "summary": "Build\u0020the\u0020notice\u0020text\u0020shown\u0020when\u0020a\u0020page\u0020is\u0020its\u0020Instance\u0027s\u0020overview\u0020scene.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_overview_scene_notice_message"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aoverview_scene_editor_notice\u0028\u0029",
+            "name": "overview_scene_editor_notice",
+            "summary": "Print\u0020a\u0020dismissible\u0020notice\u0020on\u0020the\u0020classic\u0020page\u0020editor\u0020when\u0020the\u0020page\u0020is\u0020its\u0020Instance\u0027s\u0020overview\u0020scene.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_overview_scene_editor_notice"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aenqueue_overview_scene_notice\u0028\u0029",
+            "name": "enqueue_overview_scene_notice",
+            "summary": "Push\u0020a\u0020dismissible\u0020block\u002Deditor\u0020notice\u0020when\u0020the\u0020page\u0020is\u0020its\u0020Instance\u0027s\u0020overview\u0020scene.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_enqueue_overview_scene_notice"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aadd_instance_meta_box\u0028\u0029",
+            "name": "add_instance_meta_box",
+            "summary": "Register\u0020the\u0020Instance\u0020meta\u0020box\u0020on\u0020the\u0020page\u0020editor.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_add_instance_meta_box"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Arender_instance_meta_box\u0028\u0029",
+            "name": "render_instance_meta_box",
+            "summary": "Render\u0020the\u0020Instance\u0020section\u0020controls.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_render_instance_meta_box"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Asave_instance_meta_box\u0028\u0029",
+            "name": "save_instance_meta_box",
+            "summary": "Persist\u0020the\u0020Instance\u0020section\u0020values\u0020when\u0020a\u0020page\u0020is\u0020saved.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_save_instance_meta_box"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aget_instance_options\u0028\u0029",
+            "name": "get_instance_options",
+            "summary": "Build\u0020the\u0020list\u0020of\u0020options\u0020for\u0020the\u0020Instance\u0020select.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_get_instance_options"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aget_page_instance_web_slug\u0028\u0029",
+            "name": "get_page_instance_web_slug",
+            "summary": "Resolve\u0020the\u0020public\u0020URL\u0020slug\u0020of\u0020the\u0020Instance\u0020assigned\u0020to\u0020a\u0020page.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_get_page_instance_web_slug"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Afilter_instance_page_link\u0028\u0029",
+            "name": "filter_instance_page_link",
+            "summary": "Rewrite\u0020a\u0020page\u0020permalink\u0020to\u0020include\u0020its\u0020assigned\u0020Instance\u0020slug.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_filter_instance_page_link"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Aresolve_instance_page_request\u0028\u0029",
+            "name": "resolve_instance_page_request",
+            "summary": "Route\u0020an\u0020\u0060\u007Binstance_slug\u007D\/\u007Bpage_slug\u007D\u0060\u0020request\u0020to\u0020the\u0020matching\u0020page.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_resolve_instance_page_request"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003Ascene_belongs_to_instance\u0028\u0029",
+            "name": "scene_belongs_to_instance",
+            "summary": "Determine\u0020whether\u0020a\u0020published\u0020Scene\u0020with\u0020the\u0020given\u0020slug\u0020belongs\u0020to\u0020an\u0020Instance.",
+            "url": "classes/Graphic-Data-Page-Options.html#method_scene_belongs_to_instance"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003AINSTANCE_META_KEY",
+            "name": "INSTANCE_META_KEY",
+            "summary": "The\u0020meta\u0020key\u0020that\u0020stores\u0020the\u0020selected\u0020Instance\u0020for\u0020a\u0020page.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_INSTANCE_META_KEY"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003ANAVBAR_META_KEY",
+            "name": "NAVBAR_META_KEY",
+            "summary": "The\u0020meta\u0020key\u0020that\u0020stores\u0020whether\u0020the\u0020page\u0020is\u0020included\u0020in\u0020the\u0020navigation\u0020bar.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_NAVBAR_META_KEY"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003AORDER_META_KEY",
+            "name": "ORDER_META_KEY",
+            "summary": "The\u0020meta\u0020key\u0020that\u0020stores\u0020the\u0020page\u0027s\u0020order\u0020within\u0020the\u0020navigation\u0020bar.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_ORDER_META_KEY"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003AORDER_MIN",
+            "name": "ORDER_MIN",
+            "summary": "The\u0020lowest\u0020value\u0020offered\u0020by\u0020the\u0020navigation\u002Dbar\u0020order\u0020select.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_ORDER_MIN"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003AORDER_MAX",
+            "name": "ORDER_MAX",
+            "summary": "The\u0020highest\u0020value\u0020offered\u0020by\u0020the\u0020navigation\u002Dbar\u0020order\u0020select.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_ORDER_MAX"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003ANONCE_ACTION",
+            "name": "NONCE_ACTION",
+            "summary": "The\u0020nonce\u0020action\u0020used\u0020when\u0020saving\u0020the\u0020Instance\u0020section.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_NONCE_ACTION"
+        },                {
+            "fqsen": "\\Graphic_Data_Page_Options\u003A\u003ANONCE_NAME",
+            "name": "NONCE_NAME",
+            "summary": "The\u0020nonce\u0020field\u0020name\u0020used\u0020when\u0020saving\u0020the\u0020Instance\u0020section.",
+            "url": "classes/Graphic-Data-Page-Options.html#constant_NONCE_NAME"
+        },                {
             "fqsen": "\\Graphic_Data_Search",
             "name": "Graphic_Data_Search",
             "summary": "Class\u0020Graphic_Data_Search",
@@ -810,6 +925,11 @@ Search.appendIndex(
             "name": "return_scenes_except_current",
             "summary": "Return\u0020an\u0020array\u0020of\u0020scenes,\u0020other\u0020than\u0020the\u0020current\u0020scene,\u0020for\u0020a\u0020given\u0020location.",
             "url": "classes/Graphic-Data-Utility.html#method_return_scenes_except_current"
+        },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_pages\u0028\u0029",
+            "name": "return_pages",
+            "summary": "Return\u0020an\u0020array\u0020of\u0020pages\u0020for\u0020a\u0020given\u0020location.",
+            "url": "classes/Graphic-Data-Utility.html#method_return_pages"
         },                {
             "fqsen": "\\Graphic_Data_Utility\u003A\u003Areturn_modal_sections\u0028\u0029",
             "name": "return_modal_sections",
