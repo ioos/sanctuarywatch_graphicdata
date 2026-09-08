@@ -530,6 +530,14 @@ export async function waitForEitherElementHash(
 }
 
 
+
+export function decodeHtmlEntities(value) {
+	const textarea = document.createElement('textarea');
+	textarea.innerHTML = value;
+	return textarea.value;
+}
+
+
 /**
  * Handles hash-based URL navigation. This is for when someone goes to the link for a certain figure (.../#CASheephead/1)
  *
@@ -888,12 +896,6 @@ export async function handleHashNavigation() {
                 .filter(Boolean);
             }
         }
-
-		function decodeHtmlEntities(value) {
-			const textarea = document.createElement('textarea');
-			textarea.innerHTML = value;
-			return textarea.value;
-		}
 
 		//____________________________
 		//URL validations and parsing

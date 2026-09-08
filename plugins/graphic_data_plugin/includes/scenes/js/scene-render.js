@@ -355,6 +355,8 @@ export function mobile_helper(svgElement, iconsArr, mobile_icons) {
         const outer_cont = document.querySelector("body > div.container-fluid");
         outer_cont.innerHTML = '';
 
+        console.log('groupedIcons', groupedIcons);
+
         Object.entries(groupedIcons).forEach(([sectionTitle, sectionData], groupIndex) => {
             const { sectionNum, sectionColor, textColor, iconIds } = sectionData;
 
@@ -417,7 +419,10 @@ export function mobile_helper(svgElement, iconsArr, mobile_icons) {
 
                         // Identify the current icon ID
                         let currIcon = iconIds[idx];
+                        let currIconSlugified = slugify(currIcon);
+                        console.log("currIconSlugified", currIconSlugified);
                         let key;
+
 
                         if (child_obj[currIcon] && child_obj[currIcon].section_name == sectionNum) {
 
@@ -442,15 +447,21 @@ export function mobile_helper(svgElement, iconsArr, mobile_icons) {
                                 continue; // Skip rendering if the icon couldn't be found
                             }
                             // Set a unique ID for the container
-                            cont.setAttribute("id", `${currIcon}-container`);
+                            cont.setAttribute("id", `${currIconSlugified}-container`);
                             
                             // Create a blank SVG container
                             // Add shared <defs> and icon content to the new SVG
+                            //The original child object are the original icon names, but the slugified version is used for the container ID and the <svg> ID. This ensures that the IDs are valid and consistent.
                             let svgClone = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                             svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
                             svgClone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
                             svgClone.append(defs.cloneNode(true));
                             svgClone.append(key);
+                            svgClone.setAttribute('id', currIconSlugified);
+                            const firstG = svgClone.querySelector('g');
+                            if (firstG) {
+                                firstG.setAttribute('id', currIconSlugified);
+                            }
                             cont.appendChild(svgClone);
 
                             // Add a caption below the icon using child_obj data
@@ -569,6 +580,7 @@ export function mobile_helper(svgElement, iconsArr, mobile_icons) {
 
                         // Identify the current icon ID
                         let currIcon = orderedIcons[idx];
+                        let currIconSlugified = slugify(currIcon);
                         let key;
 
                         // If there is no mobile layer, use the default icon layer
@@ -592,11 +604,16 @@ export function mobile_helper(svgElement, iconsArr, mobile_icons) {
                             continue; // Skip rendering if the icon couldn't be found
                         }
                         // Set a unique ID for the container
-                        cont.setAttribute("id", `${currIcon}-container`);
+                        cont.setAttribute("id", `${currIconSlugified}-container`);
 
                         // Add shared <defs> and icon content to the new SVG
                         svgClone.append(defs.cloneNode(true));
                         svgClone.append(key);
+                        svgClone.setAttribute('id', currIconSlugified);
+                        const firstG = svgClone.querySelector('g');
+                        if (firstG) {
+                            firstG.setAttribute('id', currIconSlugified);
+                        }
 
                         // Mobile admin preview functionality
                         if (window.location.href.includes('post.php')) {
@@ -2213,13 +2230,16 @@ function list_toc(){
  */
 function add_modal(){
     for (let key in child_obj){
-        let elem = document.querySelector('g[id="' + key + '"]');
+        let keySlugified = slugify(key);
+
+        console.log('keySlugified', keySlugified);
+        let elem = document.querySelector('g[id="' + keySlugified + '"]');
         if (child_obj[key]['modal']){
             let modal = document.getElementById("myModal");
             let closeButton = document.getElementById("close");
             
             if (is_mobile()){
-                let itemContainer = document.querySelector(`#${key}-container`);
+                let itemContainer = document.querySelector(`#${keySlugified}-container`);
                 itemContainer.addEventListener('click', function() {
                     modal.style.display = "block";
 
@@ -2266,7 +2286,7 @@ function add_modal(){
                 }
             });
             if (is_mobile()){
-                let itemContainer = document.querySelector(`#${key}-container`);
+                let itemContainer = document.querySelector(`#${keySlugified}-container`);
                 itemContainer.addEventListener('click', function() {
                     if (!window.location.href.includes('post.php')) {
                         let link =  child_obj[key]['external_url'];
