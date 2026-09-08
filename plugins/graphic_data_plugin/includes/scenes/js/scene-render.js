@@ -2231,9 +2231,8 @@ function list_toc(){
 function add_modal(){
     for (let key in child_obj){
         let keySlugified = slugify(key);
-
-        console.log('keySlugified', keySlugified);
-        let elem = document.querySelector('g[id="' + keySlugified + '"]');
+        //console.log('keySlugified', keySlugified);
+        let elem = document.querySelector('g[id="' + key + '"]');
         if (child_obj[key]['modal']){
             let modal = document.getElementById("myModal");
             let closeButton = document.getElementById("close");
