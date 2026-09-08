@@ -490,7 +490,46 @@ if (previewFigureOrModalElements.length > 0) {
 
 				// we're going to pause the save if we're saving a figure to allow for it to load.
 				const figureType = document.getElementsByName('figure_path')[0]?.value;
-				if (el.id === 'publish' && figureType === "Interactive" && !window.location.href.includes('post-new.php')) {
+
+				const existingFileName = document.getElementById('existing-file-name')?.value.trim() || '';
+				console.log('existingFileName', existingFileName);
+
+				const status = document.querySelector('[name="figure_published"]')?.value;
+				
+
+				if (el.id === 'publish') {
+
+					/*
+					* File deletion successfully completed and
+					* deleteUploadedFile() is triggering the Update.
+					* Allow the normal WordPress save to continue.
+					*/
+					if (window.fileDeleteSaveInProgress === true) {
+						return;
+					}
+
+					if (figureType === "Interactive" && window.location.href.includes('post-new.php')) {
+						return;
+					}
+
+					if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '') {
+						return;
+					}
+
+					if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName !== '') {
+						
+						const graphType = document.getElementById('graphType')?.value;
+
+						if (graphType === 'None') {
+							return;
+						}
+					}
+
+					if (status === 'draft') {
+						return;
+					}
+
+					console.log('event.preventDefault() triggered');
 					event.preventDefault();
 				}
 
@@ -715,7 +754,30 @@ if (previewFigureOrModalElements.length > 0) {
 					await render_interactive_plots(tabContentContainer, info_obj, null, tabInfoResult);
 
 
-					if (el.id === 'publish' && (figureType !== "Interactive" && !window.location.href.includes('post-new.php'))) {
+					if (el.id === 'publish') {
+
+						if (figureType === "Interactive" && window.location.href.includes('post-new.php')) {
+						return;
+						}
+
+						if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '') {
+						return;
+						}
+
+						if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName !== '') {
+							
+							const graphType = document.getElementById('graphType')?.value;
+
+							if (graphType === 'None') {
+								return;
+							}
+						}
+
+						if (status === 'draft') {
+							return;
+						}
+
+						// console.log('generateAndSaveFigureFromPreview triggered');
 						generateAndSaveFigureFromPreview(el, info_obj, info_obj_figure_only);
 					}
 							
@@ -1545,8 +1607,12 @@ async function generateAndSaveFigureFromPreview(
 
 		if (!window.location.href.includes('post-new.php')) {
 			alert(
-				'The figure could not be prepared for saving.'
+				'The figure could not be prepared for saving. Please be sure valid selections have been made to display your data.'
 			);
+			postForm.requestSubmit(
+				publishButton
+			);
+
 		}
 	}
 }

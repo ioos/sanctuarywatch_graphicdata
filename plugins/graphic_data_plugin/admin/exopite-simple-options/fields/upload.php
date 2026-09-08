@@ -391,6 +391,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 
 					if (data.success) {
 						alert(data.data?.message || "File deleted successfully.");
+						window.fileDeleteSaveInProgress = true;
 						clickUpdateButton();
 					} else {
 						alert(data.data?.message || "Delete failed. Please save or refresh the page.");
