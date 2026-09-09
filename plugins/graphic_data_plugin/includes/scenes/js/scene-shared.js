@@ -1006,206 +1006,6 @@ export async function handleHashNavigation() {
 			}
 		}
 
-
-		// history.pushState(
-		// 	'',
-		// 	document.title,
-		// 	window.location.pathname + window.location.search
-		// );
-
-		// //____________________________
-		// //MODAL OPEN CONTROL SELECTION 
-		// //____________________________
-
-		// let modName;
-		// let modModal;
-		// let modNameCapitalized;
-
-		// if (is_mobile()) {
-
-		// 	/*
-		// 	* Convert hash-safe modal name back into
-		// 	* the readable modal name.
-		// 	*
-		// 	* Example:
-		// 	* contaminants -> contaminants
-		// 	* code_block   -> code block
-		// 	*/
-		// 	modModal = modalName.replace(/_/g, ' ');
-
-		// 	/*
-		// 	* PRIMARY MOBILE ID
-		// 	*
-		// 	* Actual mobile containers are generally:
-		// 	*
-		// 	* contaminants-container
-		// 	* phytoplankton-container
-		// 	* code-block-container
-		// 	*/
-		// 	modName =
-		// 		`${modModal
-		// 			.toLowerCase()
-		// 			.replace(/\s+/g, '-')}-container`;
-
-		// 	/*
-		// 	* FALLBACK:
-		// 	*
-		// 	* Keep support for any existing mobile
-		// 	* containers that may have been created
-		// 	* with capitalized words.
-		// 	*/
-		// 	const modModalCapitalized =
-		// 		modModal.replace(
-		// 			/\b\w/g,
-		// 			char => char.toUpperCase()
-		// 		);
-
-		// 	modNameCapitalized =
-		// 		`${modModalCapitalized
-		// 			.replace(/\s+/g, '-')}-container`;
-
-		// } else {
-
-		// 	/*
-		// 	* Desktop IDs already use the modal
-		// 	* slug directly.
-		// 	*/
-		// 	modName = modalName;
-		// }
-
-
-		// //____________________________
-		// // FIND MODAL OPEN CONTROL
-		// //____________________________
-
-		// let modalButton;
-
-		// if (is_mobile()) {
-
-		// 	console.log(
-		// 		'MOBILE modalName',
-		// 		modalName
-		// 	);
-
-		// 	console.log(
-		// 		'MOBILE modModal',
-		// 		modModal
-		// 	);
-
-		// 	console.log(
-		// 		'MOBILE modName',
-		// 		modName
-		// 	);
-
-		// 	console.log(
-		// 		'MOBILE modNameCapitalized',
-		// 		modNameCapitalized
-		// 	);
-
-
-		// 	/*
-		// 	* Use getElementById() here instead of
-		// 	* querySelector().
-		// 	*
-		// 	* This is safer for dynamically-generated
-		// 	* IDs and avoids CSS-selector issues.
-		// 	*/
-		// 	const modNameElement =
-		// 		document.getElementById(
-		// 			modName
-		// 		);
-
-		// 	const modNameCapitalizedElement =
-		// 		document.getElementById(
-		// 			modNameCapitalized
-		// 		);
-
-		// 	const modModalElement =
-		// 		document.getElementById(
-		// 			modModal
-		// 		);
-
-
-		// 	/*
-		// 	* 1. Preferred mobile container:
-		// 	*
-		// 	* contaminants-container
-		// 	*/
-		// 	if (modNameElement) {
-
-		// 		modalButton =
-		// 			modNameElement;
-
-		// 		console.log(
-		// 			'MOBILE modalButton found using modName',
-		// 			modalButton
-		// 		);
-
-		// 	/*
-		// 	* 2. Fallback for older/mixed-case IDs:
-		// 	*
-		// 	* Contaminants-container
-		// 	*/
-		// 	} else if (
-		// 		modNameCapitalizedElement
-		// 	) {
-
-		// 		modalButton =
-		// 			modNameCapitalizedElement;
-
-		// 		console.log(
-		// 			'MOBILE modalButton found using modNameCapitalized',
-		// 			modalButton
-		// 		);
-
-		// 	/*
-		// 	* 3. Final direct-ID fallback.
-		// 	*/
-		// 	} else if (
-		// 		modModalElement
-		// 	) {
-
-		// 		modalButton =
-		// 			modModalElement;
-
-		// 		console.log(
-		// 			'MOBILE modalButton found using modModal',
-		// 			modalButton
-		// 		);
-
-		// 	} else {
-
-		// 		/*
-		// 		* The mobile DOM is generated dynamically,
-		// 		* so none of the controls may exist yet.
-		// 		*
-		// 		* Wait for the normal lowercase container
-		// 		* first, with the capitalized version as
-		// 		* the alternate.
-		// 		*/
-		// 		modalButton =
-		// 			await waitForEitherElementHash(
-		// 				`#${modName}`,
-		// 				`#${modNameCapitalized}`
-		// 			);
-		// 	}
-
-		// 	console.log(
-		// 		'MOBILE modalButton',
-		// 		modalButton
-		// 	);
-		// }
-
-		// if (!is_mobile()) {
-
-		// 	console.log('DESKTOP modName', modName);
-		// 	console.log('DESKTOP modModal', modModal);
-
-
-		// 	modalButton = await waitForElementHash(`#${modName}`);
-		// 	console.log('DESKTOP modalButton', modalButton);
-		// }
-
 		//____________________________
 		//MODAL OPEN CONTROL SELECTION 
 		//____________________________
@@ -1611,7 +1411,7 @@ export async function handleHashNavigation() {
 
 			if (submittedURL === constructedRestFigureURL) {
 
-				// try {
+				try {
 					const tabPane = await waitForElementById(targetTabPaneId);
 					console.log('targetTabPaneId', targetTabPaneId);
 					console.log('tabPane', tabPane);
@@ -1693,14 +1493,14 @@ export async function handleHashNavigation() {
 					);
 
 
-				// } catch (error) {
+				} catch (error) {
 
-				// 	alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
-				// 	console.error(
-				// 		'Could not scroll to shared figure:',
-				// 		error
-				// 	);
-				// }
+					alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+					console.error(
+						'Could not scroll to shared figure:',
+						error
+					);
+				}
 			}
 		}
 	} 

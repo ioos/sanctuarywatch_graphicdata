@@ -526,6 +526,7 @@ if (previewFigureOrModalElements.length > 0) {
 					}
 
 					if (status === 'draft') {
+						await deleteFigureHtmlFiles();
 						return;
 					}
 
@@ -3341,6 +3342,128 @@ export async function createFigureHtml(
 		figIframeHtmlPath,
 		figIframeCode
 	};
+}
+
+
+/**
+ * Deletes both generated HTML files associated with a Figure post:
+ *
+ * figure-{POSTID}_figure_only.html
+ * figure-{POSTID}.html
+ *
+ * Uses the existing WordPress AJAX action:
+ * custom_file_delete
+ */
+export async function deleteFigureHtmlFiles() {
+	const postIdInput = document.querySelector(
+		'[name="post_id"], [name="post_ID"]'
+	);
+
+	if (!postIdInput || !postIdInput.value) {
+		alert("Error: Post ID is missing in the form!");
+		return;
+	}
+
+	const figureNonceInput = document.querySelector('[name="figure_nonce"]');
+
+	if (!figureNonceInput || !figureNonceInput.value) {
+		alert("Error: figure_nonce is missing in the form!");
+		return;
+	}
+
+	const postId = postIdInput.value;
+
+	const fileNames = [
+		`figure-${postId}_figure_only.html`,
+		`figure-${postId}.html`
+	];
+
+	const ajaxUrl =
+		window.location.origin + "/wp-admin/admin-ajax.php";
+
+	try {
+		const results = await Promise.all(
+			fileNames.map(async (fileName) => {
+				const formData = new FormData();
+
+				formData.append("action", "custom_file_delete");
+				formData.append("post_id", postId);
+				formData.append("file_name", fileName);
+				formData.append(
+					"figure_nonce",
+					figureNonceInput.value
+				);
+
+				console.log(`Deleting: ${fileName}`);
+
+				const response = await fetch(ajaxUrl, {
+					method: "POST",
+					body: formData,
+					credentials: "same-origin"
+				});
+
+				const text = await response.text();
+
+				let data;
+
+				try {
+					data = JSON.parse(text);
+				} catch (error) {
+					throw new Error(
+						`Server did not return valid JSON while deleting ${fileName}. ` +
+						`Raw response: ${text}`
+					);
+				}
+
+				if (!response.ok) {
+					throw new Error(
+						data?.data?.message ||
+						data?.message ||
+						`Delete request failed for ${fileName}.`
+					);
+				}
+
+				if (!data.success) {
+					throw new Error(
+						data?.data?.message ||
+						`Could not delete ${fileName}.`
+					);
+				}
+
+				console.log(
+					`Successfully deleted: ${fileName}`,
+					data.data
+				);
+
+				return {
+					fileName,
+					data
+				};
+			})
+		);
+
+		console.log("Both HTML files deleted:", results);
+
+		alert("Figure HTML files deleted successfully.");
+
+		window.fileDeleteSaveInProgress = true;
+
+		clickUpdateButton();
+
+		return results;
+
+	} catch (error) {
+		console.error(
+			"Error deleting figure HTML files:",
+			error
+		);
+
+		alert(
+			"Delete failed. " + error.message
+		);
+
+		throw error;
+	}
 }
 
 
