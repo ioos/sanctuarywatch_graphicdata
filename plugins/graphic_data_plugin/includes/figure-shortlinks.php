@@ -116,11 +116,33 @@ function graphic_data_redirect_figure_shortlink() {
 	);
 
 	if ( ! $figure_id ) {
+			error_log(
+				'FIGURE SHORTLINK STOPPED: No valid figure ID found.'
+			);
+			return;
+		}
+
+		$figure_post = get_post(
+		$figure_id
+	);
+
+	if ( ! $figure_post ) {
+
 		error_log(
-			'FIGURE SHORTLINK STOPPED: No valid figure ID found.'
+			'FIGURE SHORTLINK STOPPED: Requested figure does not exist.'
 		);
-		return;
+
+		$root_url = home_url( '/' );
+
+		echo '<script>';
+		echo 'alert("The requested figure does not exist.");';
+		echo 'window.location.replace(' . wp_json_encode( $root_url ) . ');';
+		echo '</script>';
+
+		exit;
 	}
+
+
 
 	$figure_post_type = get_post_type(
 		$figure_id

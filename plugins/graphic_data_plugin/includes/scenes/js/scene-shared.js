@@ -648,7 +648,7 @@ export async function handleHashNavigation() {
 
 		function waitForSingleMeasurableElement(
 			figureElement,
-			timeoutMs = 30000
+			timeoutMs = 8000
 		) {
 			const selector = [
 				'.main-svg',
@@ -657,7 +657,7 @@ export async function handleHashNavigation() {
 				'.code_display_window'
 			].join(', ');
 
-			return new Promise((resolve, reject) => {
+			return new Promise((resolve) => {
 				let observer;
 				let imageLoadHandler;
 
@@ -784,19 +784,180 @@ export async function handleHashNavigation() {
 					attributes: true
 				});
 
+				/*
+				* If nothing measurable renders within
+				* the timeout, the figure container itself
+				* is still considered valid.
+				*
+				* This allows legitimately empty figures
+				* and preceding figures to complete without
+				* stopping shared figure navigation.
+				*/
 				const timeoutId = setTimeout(() => {
 					if (observer) {
 						observer.disconnect();
 					}
 
-					reject(
-						new Error(
-							`Timed out waiting for measurable content inside #${figureElement.id}`
-						)
+					console.warn(
+						`No measurable content rendered inside #${figureElement.id}. Continuing with figure container.`
 					);
+
+					resolve(figureElement);
 				}, timeoutMs);
 			});
 		}
+
+		// function waitForSingleMeasurableElement(
+		// 	figureElement,
+		// 	timeoutMs = 8000
+		// ) {
+		// 	const selector = [
+		// 		'.main-svg',
+		// 		'iframe',
+		// 		'img',
+		// 		'.code_display_window'
+		// 	].join(', ');
+
+		// 	return new Promise((resolve, reject) => {
+		// 		let observer;
+		// 		let imageLoadHandler;
+
+		// 		const cleanup = () => {
+		// 			clearTimeout(timeoutId);
+
+		// 			if (observer) {
+		// 				observer.disconnect();
+		// 			}
+
+		// 			const image =
+		// 				figureElement.querySelector('img');
+
+		// 			if (
+		// 				image &&
+		// 				imageLoadHandler
+		// 			) {
+		// 				image.removeEventListener(
+		// 					'load',
+		// 					imageLoadHandler
+		// 				);
+		// 			}
+		// 		};
+
+		// 		const checkElement = () => {
+		// 			const measurableElement =
+		// 				figureElement.querySelector(selector);
+
+		// 			if (!measurableElement) {
+		// 				return false;
+		// 			}
+
+		// 			/*
+		// 			* Image must actually be loaded.
+		// 			*/
+		// 			if (measurableElement.matches('img')) {
+		// 				if (
+		// 					!measurableElement.complete ||
+		// 					measurableElement.naturalWidth === 0
+		// 				) {
+		// 					return false;
+		// 				}
+		// 			}
+
+		// 			/*
+		// 			* Plotly SVG must have dimensions.
+		// 			*/
+		// 			if (measurableElement.matches('.main-svg')) {
+		// 				const rect =
+		// 					measurableElement.getBoundingClientRect();
+
+		// 				if (
+		// 					rect.width <= 0 ||
+		// 					rect.height <= 0
+		// 				) {
+		// 					return false;
+		// 				}
+		// 			}
+
+		// 			/*
+		// 			* Code window must contain something.
+		// 			*/
+		// 			if (
+		// 				measurableElement.matches(
+		// 					'.code_display_window'
+		// 				)
+		// 			) {
+		// 				if (
+		// 					measurableElement.children.length === 0 &&
+		// 					measurableElement.textContent.trim() === ''
+		// 				) {
+		// 					return false;
+		// 				}
+		// 			}
+
+		// 			return measurableElement;
+		// 		};
+
+		// 		const existingElement =
+		// 			checkElement();
+
+		// 		if (existingElement) {
+		// 			resolve(existingElement);
+		// 			return;
+		// 		}
+
+		// 		/*
+		// 		* Images finishing loading do not trigger
+		// 		* MutationObserver, so listen for load too.
+		// 		*/
+		// 		const image =
+		// 			figureElement.querySelector('img');
+
+		// 		if (image) {
+		// 			imageLoadHandler = () => {
+		// 				const measurableElement =
+		// 					checkElement();
+
+		// 				if (measurableElement) {
+		// 					cleanup();
+		// 					resolve(measurableElement);
+		// 				}
+		// 			};
+
+		// 			image.addEventListener(
+		// 				'load',
+		// 				imageLoadHandler
+		// 			);
+		// 		}
+
+		// 		observer = new MutationObserver(() => {
+		// 			const measurableElement =
+		// 				checkElement();
+
+		// 			if (measurableElement) {
+		// 				cleanup();
+		// 				resolve(measurableElement);
+		// 			}
+		// 		});
+
+		// 		observer.observe(figureElement, {
+		// 			childList: true,
+		// 			subtree: true,
+		// 			attributes: true
+		// 		});
+
+		// 		const timeoutId = setTimeout(() => {
+		// 			if (observer) {
+		// 				observer.disconnect();
+		// 			}
+
+		// 			reject(
+		// 				new Error(
+		// 					`Timed out waiting for measurable content inside #${figureElement.id}`
+		// 				)
+		// 			);
+		// 		}, timeoutMs);
+		// 	});
+		// }
 
 		async function waitForMeasurableElement(
             figureElement,
@@ -1485,10 +1646,9 @@ export async function handleHashNavigation() {
 					const activeModal = figureElement.closest('.modal');
 
 					if (activeModal) {
-						document.body.style.overflow = 'hidden';
-
+						// document.body.style.overflow = 'hidden';
 						activeModal.style.overflowY = 'auto';
-						activeModal.style.overscrollBehavior = 'contain';
+						// activeModal.style.overscrollBehavior = 'contain';
 						activeModal.style.touchAction = 'pan-y';
 
 						/*

@@ -1990,6 +1990,17 @@ function table_of_contents() {
 					tagline_container.innerHTML = '';
 				}
 
+                document.body.style.overflow = '';
+
+                const activeModal =
+                    document.querySelector('.modal');
+
+                if (activeModal) {
+                    activeModal.style.overflowY = '';
+                    activeModal.style.overscrollBehavior = '';
+                    activeModal.style.touchAction = '';
+                }
+
 				document.getElementById('myTabContent').innerHTML = '';
 
 				history.pushState(
