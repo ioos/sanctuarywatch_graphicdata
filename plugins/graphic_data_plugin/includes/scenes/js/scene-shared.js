@@ -1478,6 +1478,30 @@ export async function handleHashNavigation() {
 					});
 
 
+					/*
+					* Keep mobile scrolling inside the modal
+					* instead of scrolling the page underneath.
+					*/
+					const activeModal = figureElement.closest('.modal');
+
+					if (activeModal) {
+						document.body.style.overflow = 'hidden';
+
+						activeModal.style.overflowY = 'auto';
+						activeModal.style.overscrollBehavior = 'contain';
+						activeModal.style.touchAction = 'pan-y';
+
+						/*
+						* Give the figure/modal active focus.
+						*/
+						figureElement.setAttribute('tabindex', '-1');
+
+						figureElement.focus({
+							preventScroll: true
+						});
+					}
+
+
 					const figureSuffix =
 					figureId
 						? `?figure=${encodeURIComponent(figureId)}`
