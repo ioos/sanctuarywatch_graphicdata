@@ -1174,10 +1174,97 @@ class Graphic_Data_Figure {
 	 *
 	 * @return void Outputs a JSON response indicating success or failure.
 	 */
+	// public static function custom_file_delete_handler() {
+	// 	ob_clean(); // Ensure no unwanted output.
+
+	// 	// First, verify nonce.
+	// 	if (
+	// 		! isset( $_POST['figure_nonce'] ) ||
+	// 		! wp_verify_nonce(
+	// 			sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ),
+	// 			'save_figure_fields'
+	// 		)
+	// 	) {
+	// 		wp_send_json_error(
+	// 			[ 'message' => 'Security check failed for post of Figure custom post type.' ],
+	// 			403
+	// 		);
+	// 	}
+
+	// 	// Get the post's ID.
+	// 	if ( ! isset( $_POST['post_id'] ) || empty( $_POST['post_id'] ) ) {
+	// 		wp_send_json_error( [ 'message' => 'Missing post ID.' ], 400 );
+	// 	}
+
+	// 	// Get the file to be deleted's name.
+	// 	if ( ! isset( $_POST['file_name'] ) || empty( $_POST['file_name'] ) ) {
+	// 		wp_send_json_error( [ 'message' => 'Missing file name.' ], 400 );
+	// 	}
+
+	// 	// Variable-ize the post's ID & the file's name..
+	// 	$post_id = intval( $_POST['post_id'] );
+	// 	// $file_name = isset( $_POST['file_name'] ) ? sanitize_file_name( wp_unslash( $_POST['file_name'] ) ) : '';
+	// 	// $file_name_json = strtolower( $file_name );
+
+	// 	$file_name = isset( $_POST['file_name'] ) ? basename( wp_unslash( $_POST['file_name'] ) ) : '';
+	// 	$file_name_json = strtolower( preg_replace( '/\.csv$/i', '.json', $file_name ) );
+
+	// 	if ( empty( $file_name ) ) {
+	// 		wp_send_json_error( [ 'message' => 'No saved uploaded file found for this Figure.' ], 404 );
+	// 	}
+
+	// 	// Define the directory where the file is to be deleted.
+	// 	$delete_dir = ABSPATH . 'wp-content/data/figure_' . $post_id . '/';
+	// 	$file_path = $delete_dir . $file_name;
+	// 	$file_path_json = $delete_dir . basename( preg_replace( '/\.csv$/', '.json', $file_name_json ) );
+
+	// 	// Check if file exists.
+	// 	if ( ! file_exists( $file_path ) ) {
+	// 		update_post_meta( $post_id, 'uploaded_path_geojson', '' );
+	// 		update_post_meta( $post_id, 'uploaded_path_json', '' );
+	// 		update_post_meta( $post_id, 'uploaded_file', '' );
+	// 		wp_send_json_error( [ 'message' => 'File does not exist.' ], 404 );
+	// 	}
+
+	// 	// Delete the converted json file if it was originally a csv. file.
+	// 	if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'csv' ) {
+	// 		unlink( $file_path_json );
+	// 		update_post_meta( $post_id, 'uploaded_path_csv', '' );
+	// 		update_post_meta( $post_id, 'uploaded_path_json', '' );
+	// 		update_post_meta( $post_id, 'uploaded_file', '' );
+	// 	}
+
+	// 	// Delete the converted json file if it was originally a csv. file.
+	// 	if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'geojson' ) {
+	// 		unlink( $file_path_json );
+	// 		update_post_meta( $post_id, 'uploaded_path_geojson', '' );
+	// 		update_post_meta( $post_id, 'uploaded_path_json', '' );
+	// 		update_post_meta( $post_id, 'uploaded_file', '' );
+	// 	}
+
+	// 	// Delete the uploaded file.
+	// 	if ( unlink( $file_path ) ) {
+	// 		// Update the metadata instead of deleting it.
+	// 		update_post_meta( $post_id, 'uploaded_path_csv', '' );
+	// 		update_post_meta( $post_id, 'uploaded_path_json', '' );
+	// 		update_post_meta( $post_id, 'uploaded_file', '' );
+	// 		update_post_meta( $post_id, 'plotFields', '' );
+
+	// 		wp_send_json_success(
+	// 			[
+	// 				'message' => 'File deleted successfully.',
+	// 				'path' => $file_path,
+	// 			]
+	// 		);
+	// 	} else {
+	// 		wp_send_json_error( [ 'message' => 'Failed to delete the file.' ], 500 );
+	// 	}
+	// }
+
 	public static function custom_file_delete_handler() {
 		ob_clean(); // Ensure no unwanted output.
 
-		// First, verify nonce.
+		// Verify nonce.
 		if (
 			! isset( $_POST['figure_nonce'] ) ||
 			! wp_verify_nonce(
@@ -1186,79 +1273,268 @@ class Graphic_Data_Figure {
 			)
 		) {
 			wp_send_json_error(
-				[ 'message' => 'Security check failed for post of Figure custom post type.' ],
+				[
+					'message' => 'Security check failed for post of Figure custom post type.',
+				],
 				403
 			);
 		}
 
-		// Get the post's ID.
+		// Get the post ID.
 		if ( ! isset( $_POST['post_id'] ) || empty( $_POST['post_id'] ) ) {
-			wp_send_json_error( [ 'message' => 'Missing post ID.' ], 400 );
+			wp_send_json_error(
+				[
+					'message' => 'Missing post ID.',
+				],
+				400
+			);
 		}
 
-		// Get the file to be deleted's name.
+		// Get the file name.
 		if ( ! isset( $_POST['file_name'] ) || empty( $_POST['file_name'] ) ) {
-			wp_send_json_error( [ 'message' => 'Missing file name.' ], 400 );
+			wp_send_json_error(
+				[
+					'message' => 'Missing file name.',
+				],
+				400
+			);
 		}
 
-		// Variable-ize the post's ID & the file's name..
-		$post_id = intval( $_POST['post_id'] );
-		// $file_name = isset( $_POST['file_name'] ) ? sanitize_file_name( wp_unslash( $_POST['file_name'] ) ) : '';
-		// $file_name_json = strtolower( $file_name );
-
-		$file_name = isset( $_POST['file_name'] ) ? basename( wp_unslash( $_POST['file_name'] ) ) : '';
-		$file_name_json = strtolower( preg_replace( '/\.csv$/i', '.json', $file_name ) );
+		$post_id  = intval( $_POST['post_id'] );
+		$file_name = basename( wp_unslash( $_POST['file_name'] ) );
 
 		if ( empty( $file_name ) ) {
-			wp_send_json_error( [ 'message' => 'No saved uploaded file found for this Figure.' ], 404 );
+			wp_send_json_error(
+				[
+					'message' => 'No saved uploaded file found for this Figure.',
+				],
+				404
+			);
 		}
 
-		// Define the directory where the file is to be deleted.
+		$file_extension = strtolower(
+			pathinfo( $file_name, PATHINFO_EXTENSION )
+		);
+
+		// Directory containing this Figure's generated/uploaded files.
 		$delete_dir = ABSPATH . 'wp-content/data/figure_' . $post_id . '/';
-		$file_path = $delete_dir . $file_name;
-		$file_path_json = $delete_dir . basename( preg_replace( '/\.csv$/', '.json', $file_name_json ) );
+		$file_path  = $delete_dir . $file_name;
 
-		// Check if file exists.
+		/*
+		* ---------------------------------------------------------
+		* HTML FILES
+		* ---------------------------------------------------------
+		*
+		* Generated Figure HTML files include:
+		*
+		* figure-{POSTID}.html
+		* figure-{POSTID}_figure_only.html
+		*
+		* These files are generated output files and should NOT
+		* clear CSV, JSON, GeoJSON, uploaded-file, or Plotly metadata.
+		* ---------------------------------------------------------
+		*/
+		if ( 'html' === $file_extension ) {
+
+			$allowed_html_files = [
+				'figure-' . $post_id . '.html',
+				'figure-' . $post_id . '_figure_only.html',
+			];
+
+			// Only allow deletion of the expected generated HTML files.
+			if ( ! in_array( $file_name, $allowed_html_files, true ) ) {
+				wp_send_json_error(
+					[
+						'message' => 'This HTML file is not an allowed generated Figure file.',
+					],
+					400
+				);
+			}
+
+			// Check whether the requested HTML file exists.
+			if ( ! file_exists( $file_path ) ) {
+				wp_send_json_error(
+					[
+						'message' => 'HTML file does not exist.',
+						'file'    => $file_name,
+					],
+					404
+				);
+			}
+
+			// Delete only the requested generated HTML file.
+			if ( unlink( $file_path ) ) {
+
+				/*
+				* Clear only HTML-specific metadata when appropriate.
+				*
+				* Do not touch:
+				* uploaded_path_csv
+				* uploaded_path_json
+				* uploaded_path_geojson
+				* uploaded_file
+				* plotFields
+				*/
+
+				if ( 'figure-' . $post_id . '.html' === $file_name ) {
+					update_post_meta(
+						$post_id,
+						'uploaded_path_html',
+						''
+					);
+
+					update_post_meta(
+						$post_id,
+						'uploaded_html_file',
+						''
+					);
+				}
+
+				wp_send_json_success(
+					[
+						'message' => 'HTML file deleted successfully.',
+						'file'    => $file_name,
+						'path'    => $file_path,
+					]
+				);
+			}
+
+			wp_send_json_error(
+				[
+					'message' => 'Failed to delete the HTML file.',
+					'file'    => $file_name,
+				],
+				500
+			);
+		}
+
+		/*
+		* ---------------------------------------------------------
+		* NON-HTML UPLOADED DATA FILES
+		* ---------------------------------------------------------
+		*/
+
+		$file_name_json = strtolower(
+			preg_replace(
+				'/\.csv$/i',
+				'.json',
+				$file_name
+			)
+		);
+
+		$file_path_json = $delete_dir . basename(
+			preg_replace(
+				'/\.csv$/i',
+				'.json',
+				$file_name_json
+			)
+		);
+
+		// Check if the uploaded data file exists.
 		if ( ! file_exists( $file_path ) ) {
-			update_post_meta( $post_id, 'uploaded_path_geojson', '' );
-			update_post_meta( $post_id, 'uploaded_path_json', '' );
-			update_post_meta( $post_id, 'uploaded_file', '' );
-			wp_send_json_error( [ 'message' => 'File does not exist.' ], 404 );
+			wp_send_json_error(
+				[
+					'message' => 'File does not exist.',
+				],
+				404
+			);
 		}
 
-		// Delete the converted json file if it was originally a csv. file.
-		if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'csv' ) {
-			unlink( $file_path_json );
-			update_post_meta( $post_id, 'uploaded_path_csv', '' );
-			update_post_meta( $post_id, 'uploaded_path_json', '' );
-			update_post_meta( $post_id, 'uploaded_file', '' );
+		/*
+		* CSV
+		*
+		* Delete the JSON file generated from the CSV.
+		*/
+		if ( 'csv' === $file_extension ) {
+
+			if ( file_exists( $file_path_json ) ) {
+				unlink( $file_path_json );
+			}
+
+			update_post_meta(
+				$post_id,
+				'uploaded_path_csv',
+				''
+			);
+
+			update_post_meta(
+				$post_id,
+				'uploaded_path_json',
+				''
+			);
+
+			update_post_meta(
+				$post_id,
+				'uploaded_file',
+				''
+			);
 		}
 
-		// Delete the converted json file if it was originally a csv. file.
-		if ( pathinfo( $file_name, PATHINFO_EXTENSION ) === 'geojson' ) {
-			unlink( $file_path_json );
-			update_post_meta( $post_id, 'uploaded_path_geojson', '' );
-			update_post_meta( $post_id, 'uploaded_path_json', '' );
-			update_post_meta( $post_id, 'uploaded_file', '' );
+		/*
+		* GeoJSON
+		*/
+		if ( 'geojson' === $file_extension ) {
+
+			update_post_meta(
+				$post_id,
+				'uploaded_path_geojson',
+				''
+			);
+
+			update_post_meta(
+				$post_id,
+				'uploaded_path_json',
+				''
+			);
+
+			update_post_meta(
+				$post_id,
+				'uploaded_file',
+				''
+			);
 		}
 
-		// Delete the uploaded file.
+		// Delete the requested uploaded data file.
 		if ( unlink( $file_path ) ) {
-			// Update the metadata instead of deleting it.
-			update_post_meta( $post_id, 'uploaded_path_csv', '' );
-			update_post_meta( $post_id, 'uploaded_path_json', '' );
-			update_post_meta( $post_id, 'uploaded_file', '' );
-			update_post_meta( $post_id, 'plotFields', '' );
+
+			update_post_meta(
+				$post_id,
+				'uploaded_path_csv',
+				''
+			);
+
+			update_post_meta(
+				$post_id,
+				'uploaded_path_json',
+				''
+			);
+
+			update_post_meta(
+				$post_id,
+				'uploaded_file',
+				''
+			);
+
+			update_post_meta(
+				$post_id,
+				'plotFields',
+				''
+			);
 
 			wp_send_json_success(
 				[
 					'message' => 'File deleted successfully.',
-					'path' => $file_path,
+					'path'    => $file_path,
 				]
 			);
-		} else {
-			wp_send_json_error( [ 'message' => 'Failed to delete the file.' ], 500 );
 		}
+
+		wp_send_json_error(
+			[
+				'message' => 'Failed to delete the file.',
+			],
+			500
+		);
 	}
 
 	/**

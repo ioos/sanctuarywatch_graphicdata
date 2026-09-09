@@ -157,6 +157,9 @@ class Graphic_Data_Plugin {
 		// Include the GitHub Updater class.
 		require_once plugin_dir_path( __DIR__ ) . 'admin/class-github-updater.php';
 
+		// For deleting all files and folder associated with a figure custom post type from wp-content/data when a figure is deleted
+		require_once plugin_dir_path( __DIR__ ) . 'includes/figures/figure-delete-handler.php';
+
 		// Initialize the GitHub Updater.
 		new Graphic_Data_GitHub_Updater(
 			plugin_dir_path( __DIR__ ) . 'graphic_data_plugin.php',
