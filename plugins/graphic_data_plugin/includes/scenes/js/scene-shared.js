@@ -1030,16 +1030,71 @@ export async function handleHashNavigation() {
 		
 
 		function expandAccordionForLink(targetLink) {
-			if (!targetLink) return;
-		
-			const bodyEl = targetLink.closest(".accordion-body");
-			const item = bodyEl ? bodyEl.closest(".accordion-item") : null;
-			const button = item
-			? item.querySelector(".accordion-button, .accordion-toggle, button")
-			: null;
-		
-			if (button && button.getAttribute("aria-expanded") !== "true") {
-			button.click();
+			if (!targetLink) {
+				return;
+			}
+
+			console.log(
+				'expandAccordionForLink TEST1',
+				targetLink
+			);
+
+			/*
+			* Find the accordion body containing
+			* the requested modal control.
+			*/
+			const bodyEl =
+				targetLink.closest('[id^="accordion-body-"]');
+
+			if (!bodyEl) {
+				console.log(
+					'expandAccordionForLink: No accordion body found.'
+				);
+
+				return;
+			}
+
+			/*
+			* Find the header whose data-target
+			* points to this accordion body.
+			*/
+			const header =
+				document.querySelector(
+					`.accordion-header[data-target="${bodyEl.id}"]`
+				);
+
+			if (!header) {
+				console.log(
+					'expandAccordionForLink: No accordion header found.',
+					bodyEl.id
+				);
+
+				return;
+			}
+
+			console.log(
+				'expandAccordionForLink bodyEl',
+				bodyEl
+			);
+
+			console.log(
+				'expandAccordionForLink header',
+				header
+			);
+
+			/*
+			* Only click if the accordion body
+			* is currently closed.
+			*/
+			if (
+				bodyEl.style.display === 'none' ||
+				window.getComputedStyle(bodyEl).display === 'none'
+			) {
+				header.click();
+
+				console.log(
+					'expandAccordionForLink: Accordion expanded.'
+				);
 			}
 		}
 
@@ -1166,6 +1221,7 @@ export async function handleHashNavigation() {
 				// return;
 			}
 		}
+
 
 		//____________________________
 		//MODAL OPEN CONTROL SELECTION 
@@ -1428,6 +1484,7 @@ export async function handleHashNavigation() {
 		}
 
 
+
 		//____________________________
 		// FIND ACTUAL CLICK TARGET
 		//____________________________
@@ -1475,6 +1532,11 @@ export async function handleHashNavigation() {
 			}
 		);
 
+		//Expand the accordion if needed.
+		// if (is_mobile()) {
+		// 	expandAccordionForLink(modalButton);
+		// }
+
 
 		//____________________________
 		// CLICK MODAL
@@ -1514,10 +1576,6 @@ export async function handleHashNavigation() {
 				modalButton.id
 			);
 		}
-
-		try {
-		    expandAccordionForLink(modalName);
-		} catch {}
 
 		// let modalIds = collectModalIds();
 		// const excludedModalIds = [

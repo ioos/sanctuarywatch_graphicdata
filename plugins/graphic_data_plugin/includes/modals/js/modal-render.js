@@ -30,6 +30,7 @@ export function render_modal(key, obj, modal_obj){
     // Use the passed-in obj for admin preview; fall back to the shared child_obj on the front end.
     const resolvedChildObj = obj !== undefined ? obj : sharedChildObj;
     let id = resolvedChildObj[key]['modal_id'];
+    console.log("MODAL ID", id);
 
     //function for rendering the modal content after fetching data
     function populateModalContent(modal_data, child_obj, key) {
