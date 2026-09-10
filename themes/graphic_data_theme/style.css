@@ -1071,6 +1071,15 @@ button:focus,
 #svg-elem{
   z-index: 999;
 }
+
+.graphic-data-page-content > .wp-block-paragraph,
+  .graphic-data-page-content > .wp-block-heading  {
+  padding-left: 4%;
+  padding-right: 4%;
+  margin-left: 0%;
+  margin-right: 0%
+}
+
 @media (min-width: 769px) {  /* a bunch of new stuff here for updated formatting */
  
   #title-container > h1 {
@@ -1094,6 +1103,13 @@ button:focus,
 
   #title-container{
      padding-left: 4%;
+  }
+
+  .graphic-data-page-header{
+    padding-left: 4%;
+    padding-right: 4%;
+    margin-left: 0%;
+    margin-right: 0%
   }
 
   #title-container > div > div.col-md-10{
@@ -1205,7 +1221,7 @@ body > nav{
    .graphic-data-page {
     padding: 2rem 0 3rem;
   }
-  
+  /* 
   .graphic-data-page-header,
   .graphic-data-page-content > :where(:not(.alignwide):not(.alignfull)) {
     max-width: 1100px;
@@ -1214,7 +1230,7 @@ body > nav{
     padding-left: 1rem;
     padding-right: 1rem;
   }
-
+ */
   .graphic-data-page-title {
     /* Color is set from Theme Customizer "Color 3" in customizer.php. */
     margin-bottom: 1.5rem;
