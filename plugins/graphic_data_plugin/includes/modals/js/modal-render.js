@@ -30,7 +30,7 @@ export function render_modal(key, obj, modal_obj){
     // Use the passed-in obj for admin preview; fall back to the shared child_obj on the front end.
     const resolvedChildObj = obj !== undefined ? obj : sharedChildObj;
     let id = resolvedChildObj[key]['modal_id'];
-    console.log("MODAL ID", id);
+    //console.log("MODAL ID", id);
 
     //function for rendering the modal content after fetching data
     function populateModalContent(modal_data, child_obj, key) {
@@ -41,7 +41,7 @@ export function render_modal(key, obj, modal_obj){
         // PREVIEW MODE: if title is empty, set to "No Modal Title Set"
         if (window.location.href.includes('post.php')) {
             let title_test = document.getElementById("title").value;
-            console.log('title_test', title_test);
+            //console.log('title_test', title_test);
             if (title_test === '' || title_test === null || title_test === undefined) {
                 modal_title.innerHTML = "No Modal Title Set";
                 modal_title.style.fontWeight = "bold";
@@ -171,20 +171,78 @@ export function render_modal(key, obj, modal_obj){
 
         // --- Tabs ---
         let num_tabs = Number(modal_data["modal_tab_number"]);
+        let first_tab_with_figures_found = false;
         for (let i = 1; i <= num_tabs; i++) {
             let tab_key = `modal_tab_title${i}`;
             let tab_title = modal_data[tab_key];
+            //console.log('tab_title', tab_title);
 
             if ((window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) && (tab_title === '' || tab_title === null || tab_title === undefined)) {
                 tab_title = "No Tab Title Set";
-            }   
-
-            create_tabs(i, tab_key, tab_title, title, modal_id);
-
-            if (i === num_tabs) {
-                let mdialog = document.querySelector("#myModal > div");
-                trapFocus(mdialog);
             }
+
+            //Before we create tabs we are going to see which ones have figures and only create those by querying the restAPI.
+            //This step gets repeated in fetch_tab_info but with more parameters 
+            const protocol = window.location.protocol;
+            const host = window.location.host;
+            const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + i;
+            fetch(fetchURL)
+                .then(response => response.json())
+                .then(data => {
+
+                    let all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(i));
+                    all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id) && String(figure.figure_published).toLowerCase() === 'published');
+                    //console.log('all_figure_data1', all_figure_data);
+
+                    //filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
+                    let total_published_figures = 0;
+                    for (let idx = 0; idx < all_figure_data.length; idx++) {
+                        const figure_data = all_figure_data[idx];
+                        const figure_published = figure_data['figure_published'];
+                        if (figure_published == "published") {
+                            total_published_figures += 1;
+                        }
+                    }
+                    //console.log('total_published_figures', total_published_figures);
+
+                    //Do not create the tab if the tab has no published figures
+                    if (total_published_figures === 0) {
+                        return;
+                    }
+
+                    /*
+                    * Only the first tab encountered with published
+                    * figures receives true.
+                    */
+                    const is_first_tab_with_figures =
+                        !first_tab_with_figures_found;
+
+                    if (is_first_tab_with_figures) {
+                        first_tab_with_figures_found = true;
+                    }
+
+                    //console.log('is_first_tab_with_figures', is_first_tab_with_figures);
+
+                    create_tabs(
+                        i,
+                        tab_key,
+                        tab_title,
+                        title,
+                        modal_id,
+                        is_first_tab_with_figures
+                    );
+
+                    if (i === num_tabs) {
+                        let mdialog =
+                            document.querySelector(
+                                "#myModal > div"
+                            );
+
+                        trapFocus(mdialog);
+                    }
+                })
+            .catch(error => console.error('Error fetching data:', error));
+                //new stuff here
         }
 
         // Google Tags
@@ -258,7 +316,8 @@ export function render_modal(key, obj, modal_obj){
 export function initTabButtons() {
 	// Select all buttons inside nav-item elements
 	const navButtons = document.querySelectorAll('button.nav-link.tab-title');//document.querySelectorAll('.nav-item button');
-	const activeButtons = [];
+	
+    const activeButtons = [];
 	const inactiveButtons = [];
 
 
@@ -272,10 +331,7 @@ export function initTabButtons() {
         if (!navItem || !nav) return;
         nav.appendChild(navItem);
     }
-
-
-
-      
+    
 
 	// Check if any button is active (e.g., class 'active')
 	const anyActiveButton = Array.from(navButtons).some((button) => {
@@ -307,7 +363,7 @@ export function initTabButtons() {
     // const top = items[0].getBoundingClientRect().top;
     // const isWrapped = items.some(it => Math.abs(it.getBoundingClientRect().top - top) > 1);
 
-    // console.log('isWrapped', isWrapped);
+    // //console.log('isWrapped', isWrapped);
 
     
     // if (isWrapped) {
@@ -426,26 +482,18 @@ function trapFocus(modalElement) {
     const host = window.location.host;
     const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + tab_id;
     
-    
     fetch(fetchURL)
         .then(response => response.json())
         .then(data => {
 
             let all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(tab_id));
             all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id) && String(figure.figure_published).toLowerCase() === 'published');
-            // console.log('all_figure_data1', all_figure_data);
+            // //console.log('all_figure_data1', all_figure_data);
 
-
-            // Third filter: If user is not logged in, only show published figures
-           // const isUserLoggedIn = document.body.classList.contains('logged-in');
-           // if (!isUserLoggedIn) {
-           //     all_figure_data = all_figure_data.filter(figure => figure.figure_published === "published");
-           // }
-
-            // Sort with the following priority:
-            // 1. figure_order (ascending; missing/invalid orders go last)
-            // 2. figure_title (alphabetically by first letter, for figures with the same order)
-            // 3. Maintain original order for figures with same order and title
+            // // Sort with the following priority:
+            // // 1. figure_order (ascending; missing/invalid orders go last)
+            // // 2. figure_title (alphabetically by first letter, for figures with the same order)
+            // // 3. Maintain original order for figures with same order and title
 
             all_figure_data.sort((a, b) => {
                 // Convert order values to numbers (NaN-safe)
@@ -469,7 +517,6 @@ function trapFocus(modalElement) {
                 // Step 2: within the same order → sort alphabetically by first letter of title
                 return titleA.localeCompare(titleB);
             });
-
             //console.log('all_figure_data2', all_figure_data);
 
             //filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
@@ -513,7 +560,7 @@ function trapFocus(modalElement) {
                 const element = document.getElementById(buttonID);
                 //const element2 = document.getElementById(copyTabLinkButtonID);
                 if (element.style.display == "none") {
-                    // console.log('buttonID', buttonID);
+                    // //console.log('buttonID', buttonID);
                     element.remove();
                     //element2.remove();
                 }
@@ -603,9 +650,9 @@ function trapFocus(modalElement) {
  *
  * @param          modal_id
  */
-function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
+function create_tabs(iter, tab_id, tab_label, title = "", modal_id, is_first_tab_with_figures) {
 
-    tab_id = tab_label.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_'); //instead of tab id, it should just be the index (figure_data)
+    //tab_id = tab_label.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_'); //instead of tab id, it should just be the index (figure_data)
     //title = title.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_');
     title  = slugify(title);
     tab_id = iter;
@@ -621,14 +668,23 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     const button = document.createElement('button');
     button.classList.add('nav-link');
     button.classList.add('tab-title');
-    if (iter === 1) {
+
+    // if (iter === 1) {
+    //     button.classList.add('active');
+    //     button.setAttribute('aria-selected', 'true');
+    // } else {
+    //     button.setAttribute('aria-selected', 'false');
+    // }
+
+    if (is_first_tab_with_figures) {
         button.classList.add('active');
         button.setAttribute('aria-selected', 'true');
     } else {
         button.setAttribute('aria-selected', 'false');
     }
+
     button.id = `${title}-${tab_id}`;
-    console.log(button.id);
+    //console.log(button.id);
     button.setAttribute('data-bs-toggle', 'tab');
     button.setAttribute('data-bs-target', tab_target);
     button.setAttribute('type', 'button');
@@ -650,7 +706,10 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     tabContentElement.classList.add('tab-pane', 'fade');
 
 
-    if (iter === 1) {
+    // if (iter === 1) {
+    //     tabContentElement.classList.add('show', 'active');
+    // }
+    if (is_first_tab_with_figures) {
         tabContentElement.classList.add('show', 'active');
     }
     
@@ -673,7 +732,16 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id) {
     // tabContentElement.prepend(linkbutton);
 
 
-    if (iter === 1) {
+    // if (iter === 1) {
+    //     window.location.hash = `${title}/${tab_id}`; 
+    
+    //     linkbutton.addEventListener("click", (e) => {
+    //         e.preventDefault(); // Prevent the link from opening
+    //         writeClipboardText(`${window.location.origin}${window.location.pathname}#${title}/${tab_id}`);
+    //     });
+    // }
+
+    if (is_first_tab_with_figures) {
         window.location.hash = `${title}/${tab_id}`; 
     
         linkbutton.addEventListener("click", (e) => {

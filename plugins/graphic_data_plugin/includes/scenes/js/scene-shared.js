@@ -351,7 +351,7 @@ export async function waitForElementHash(selector, timeoutMs = 20000) {
 			observer.disconnect();
 
 			alert(
-				'The requested modal cannot be found.'
+				'The requested modal or tab cannot be found.'
 			);
 
 			resolve(null);
@@ -521,7 +521,7 @@ export async function waitForEitherElementHash(
 			observer.disconnect();
 
 			alert(
-				'The requested modal cannot be found.'
+				'The requested modal or tab cannot be found.'
 			);
 
 			resolve(null);
@@ -535,6 +535,20 @@ export function decodeHtmlEntities(value) {
 	const textarea = document.createElement('textarea');
 	textarea.innerHTML = value;
 	return textarea.value;
+}
+
+export function getTabFromHash(rawHash) {
+	let decoded = rawHash;
+	try {
+		decoded = decodeURIComponent(rawHash);
+	} catch (_) {}
+
+	if (decoded.includes('?')) {
+		const hashWithoutQuery = decoded.split('?')[0];
+		return hashWithoutQuery.split('/')[1] || hashWithoutQuery || '';
+	} else {
+		return decoded.split("/")[1] || "";
+	}
 }
 
 
@@ -565,20 +579,6 @@ export async function handleHashNavigation() {
 			} catch (_) {}
 		
 			return decoded.split("/")[0] || "";
-		}
-		
-		function getTabFromHash(rawHash) {
-			let decoded = rawHash;
-			try {
-			  decoded = decodeURIComponent(rawHash);
-			} catch (_) {}
-	
-			if (decoded.includes('?')) {
-				const hashWithoutQuery = decoded.split('?')[0];
-				return hashWithoutQuery.split('/')[1] || hashWithoutQuery || '';
-			} else {
-				return decoded.split("/")[1] || "";
-			}
 		}
 
 		function waitForElement(parentElement, selector, timeoutMs = 30000) {
@@ -624,8 +624,8 @@ export async function handleHashNavigation() {
 		function activateCaseLink(wrongLink, correctLink, tab) {
 			if (wrongLink === correctLink) return;
 
-			console.log('wrongLink', wrongLink);
-			console.log('correctLink', correctLink);
+			// console.log('wrongLink', wrongLink);
+			// console.log('correctLink', correctLink);
 		
 			const newHash = `#${correctLink}/${tab}`;
 		
@@ -637,7 +637,7 @@ export async function handleHashNavigation() {
 
 
 			const targetLink = document.getElementById(correctLink);
-			console.log('targetLink', targetLink);
+			// console.log('targetLink', targetLink);
 			targetLink.click();
 
 			if (is_mobile()) {
@@ -1034,10 +1034,10 @@ export async function handleHashNavigation() {
 				return;
 			}
 
-			console.log(
-				'expandAccordionForLink TEST1',
-				targetLink
-			);
+			// console.log(
+			// 	'expandAccordionForLink TEST1',
+			// 	targetLink
+			// );
 
 			const bodyEl =
 				targetLink.closest('[id^="accordion-body-"]');
@@ -1045,9 +1045,9 @@ export async function handleHashNavigation() {
 			bodyEl.style.display = 'block';
 
 			if (!bodyEl) {
-				console.log(
-					'expandAccordionForLink: No accordion body found.'
-				);
+				// console.log(
+				// 	'expandAccordionForLink: No accordion body found.'
+				// );
 
 				return;
 			}
@@ -1096,10 +1096,10 @@ export async function handleHashNavigation() {
 		let figureId =
 			rawFragmentParams.get('figure');
 
-		console.log(
-			'ORIGINAL figureId',
-			figureId
-		);
+		// console.log(
+		// 	'ORIGINAL figureId',
+		// 	figureId
+		// );
 
 		if (figureId) {
 			// Build the REST API URL to fetch the figure data based on the figureId from the URL hash.
@@ -1142,17 +1142,17 @@ export async function handleHashNavigation() {
 
 			constructedRestFigureURL =  protocol + "//" + host  + "/" + instanceSlug + "/" + sceneSlug + "/#" + modalSlug + "/" + figureTab + "?figure=" + figureId;
 			
-			console.log('constructedRestFigureURL', constructedRestFigureURL);
-			console.log('submittedURL', submittedURL);
+			// console.log('constructedRestFigureURL', constructedRestFigureURL);
+			// console.log('submittedURL', submittedURL);
 
-			console.log('submittedScene', submittedScene);
-			console.log('sceneSlug', sceneSlug);
+			// console.log('submittedScene', submittedScene);
+			// console.log('sceneSlug', sceneSlug);
 
-			console.log('submittedModal', submittedModal);
-			console.log('modalSlug', modalSlug);
+			// console.log('submittedModal', submittedModal);
+			// console.log('modalSlug', modalSlug);
 
-			console.log('submittedInstance', submittedInstance);
-			console.log('instanceSlug', instanceSlug);
+			// console.log('submittedInstance', submittedInstance);
+			// console.log('instanceSlug', instanceSlug);
 
 			// Check if the submitted URL, scene, modal, or instance does not match the constructed REST figure URL or the expected slugs.
 			if (submittedURL !== constructedRestFigureURL || submittedInstance !== instanceSlug) {
@@ -1264,30 +1264,30 @@ export async function handleHashNavigation() {
 
 		if (is_mobile()) {
 
-			console.log(
-				'MOBILE modalName',
-				modalName
-			);
+			// console.log(
+			// 	'MOBILE modalName',
+			// 	modalName
+			// );
 
-			console.log(
-				'MOBILE modModal',
-				modModal
-			);
+			// console.log(
+			// 	'MOBILE modModal',
+			// 	modModal
+			// );
 
-			console.log(
-				'MOBILE modName',
-				modName
-			);
+			// console.log(
+			// 	'MOBILE modName',
+			// 	modName
+			// );
 
-			console.log(
-				'MOBILE modNameCapitalized',
-				modNameCapitalized
-			);
+			// console.log(
+			// 	'MOBILE modNameCapitalized',
+			// 	modNameCapitalized
+			// );
 
-			console.log(
-				'MOBILE modNameFirstCapitalized',
-				modNameFirstCapitalized
-			);
+			// console.log(
+			// 	'MOBILE modNameFirstCapitalized',
+			// 	modNameFirstCapitalized
+			// );
 
 
 			const modNameElement =
@@ -1310,22 +1310,22 @@ export async function handleHashNavigation() {
 					modNameFirstCapitalized
 				);
 
-			console.log(
-				'MOBILE modNameElement',
-				modNameElement
-			);
-			console.log(
-				'MOBILE modNameCapitalizedElement',
-				modNameCapitalizedElement
-			);
-			console.log(
-				'MOBILE modModalElement',
-				modModalElement
-			);
-			console.log(
-				'MOBILE modNameFirstCapitalizedElement',
-				modNameFirstCapitalizedElement
-			);
+			// console.log(
+			// 	'MOBILE modNameElement',
+			// 	modNameElement
+			// );
+			// console.log(
+			// 	'MOBILE modNameCapitalizedElement',
+			// 	modNameCapitalizedElement
+			// );
+			// console.log(
+			// 	'MOBILE modModalElement',
+			// 	modModalElement
+			// );
+			// console.log(
+			// 	'MOBILE modNameFirstCapitalizedElement',
+			// 	modNameFirstCapitalizedElement
+			// );
 
 			/*
 			* 1. Preferred mobile container
@@ -1335,10 +1335,10 @@ export async function handleHashNavigation() {
 				modalButton =
 					modNameElement;
 
-				console.log(
-					'MOBILE modalButton found using modName',
-					modalButton
-				);
+				// console.log(
+				// 	'MOBILE modalButton found using modName',
+				// 	modalButton
+				// );
 
 			/*
 			* 2. Every word capitalized
@@ -1350,10 +1350,10 @@ export async function handleHashNavigation() {
 				modalButton =
 					modNameCapitalizedElement;
 
-				console.log(
-					'MOBILE modalButton found using modNameCapitalized',
-					modalButton
-				);
+				// console.log(
+				// 	'MOBILE modalButton found using modNameCapitalized',
+				// 	modalButton
+				// );
 
 			/*
 			* 3. Direct-ID fallback
@@ -1365,10 +1365,10 @@ export async function handleHashNavigation() {
 				modalButton =
 					modModalElement;
 
-				console.log(
-					'MOBILE modalButton found using modModal',
-					modalButton
-				);
+				// console.log(
+				// 	'MOBILE modalButton found using modModal',
+				// 	modalButton
+				// );
 
 			/*
 			* 4. Only first letter capitalized
@@ -1382,10 +1382,10 @@ export async function handleHashNavigation() {
 				modalButton =
 					modNameFirstCapitalizedElement;
 
-				console.log(
-					'MOBILE modalButton found using modNameFirstCapitalized',
-					modalButton
-				);
+				// console.log(
+				// 	'MOBILE modalButton found using modNameFirstCapitalized',
+				// 	modalButton
+				// );
 
 			} else {
 
@@ -1397,38 +1397,38 @@ export async function handleHashNavigation() {
 					);
 			}
 
-			console.log(
-				'MOBILE modalButton',
-				modalButton
-			);
+			// console.log(
+			// 	'MOBILE modalButton',
+			// 	modalButton
+			// );
 		}
 
 		if (!is_mobile()) {
 
-			console.log('DESKTOP modName', modName);
-			console.log('DESKTOP modModal', modModal);
+			// console.log('DESKTOP modName', modName);
+			// console.log('DESKTOP modModal', modModal);
 
 			modalButton = await waitForElementHash(`#${modName}`);
 
-			console.log(
-				'DESKTOP modalButton',
-				modalButton
-			);
+			// console.log(
+			// 	'DESKTOP modalButton',
+			// 	modalButton
+			// );
 		}
 
 
 		// DESKTOP
 		if (!is_mobile()) {
-			console.log('DESKTOP modName', modName);
+			// console.log('DESKTOP modName', modName);
 
 			modalButton = await waitForElementHash(
 				`#${modName}`
 			);
 
-			console.log(
-				'DESKTOP modalButton',
-				modalButton
-			);
+			// console.log(
+			// 	'DESKTOP modalButton',
+			// 	modalButton
+			// );
 		}
 
 
@@ -1475,18 +1475,18 @@ export async function handleHashNavigation() {
 			}
 		}
 
-		console.log(
-			'ABOUT TO CLICK MODAL:',
-			{
-				modalName,
-				modName,
-				modModal,
-				modalButton,
-				modalClickTarget,
-				id: modalClickTarget.id,
-				tagName: modalClickTarget.tagName
-			}
-		);
+		// console.log(
+		// 	'ABOUT TO CLICK MODAL:',
+		// 	{
+		// 		modalName,
+		// 		modName,
+		// 		modModal,
+		// 		modalButton,
+		// 		modalClickTarget,
+		// 		id: modalClickTarget.id,
+		// 		tagName: modalClickTarget.tagName
+		// 	}
+		// );
 
 		//Expand the accordion if needed.
 		if (is_mobile()) {
@@ -1514,17 +1514,17 @@ export async function handleHashNavigation() {
 					})
 				);
 
-				console.log(
-					'MODAL CLICK SVG <g>',
-					modalClickTarget
-				);
+				// console.log(
+				// 	'MODAL CLICK SVG <g>',
+				// 	modalClickTarget
+				// );
 			} else {
 				modalClickTarget.click();
 
-				console.log(
-					'MODAL CLICK REGULAR',
-					modalClickTarget
-				);
+				// console.log(
+				// 	'MODAL CLICK REGULAR',
+				// 	modalClickTarget
+				// );
 			}
 		} else {
 			console.log(
@@ -1560,18 +1560,18 @@ export async function handleHashNavigation() {
 		let tabButtonId;
 		if (is_mobile()) {
 			tabButtonId = `${modalName}-${tabId}`;
-			console.log('tabButtonId 3', tabButtonId);
+			// console.log('tabButtonId 3', tabButtonId);
 			tabButton = await waitForElementById(tabButtonId);
-			console.log('tabButton 3', tabButton);
+			// console.log('tabButton 3', tabButton);
 			tabButton.click();
-			console.log('TEST 3: MOBILE tabButton clicked');
+			// console.log('TEST 3: MOBILE tabButton clicked');
 		}
 		if (!is_mobile()) {
 			tabButton = await waitForElementHash(`#${modName}-${tabId}`);
 			tabButtonId = `${modName}-${tabId}`;
-			console.log('tabButton', tabButton);
+			// console.log('tabButton', tabButton);
 			tabButton.click();
-			console.log('TEST 4: DESKTOP tabButton clicked');
+			// console.log('TEST 4: DESKTOP tabButton clicked');
 		}
 
 		//____________________________
@@ -1579,7 +1579,7 @@ export async function handleHashNavigation() {
 		//____________________________
 
 		let targetTabPaneId = `${modalName}-${tabId}-pane`;
-		console.log('targetTabPaneId', targetTabPaneId);
+		// console.log('targetTabPaneId', targetTabPaneId);
 
 
 		if (figureId) {
@@ -1588,8 +1588,8 @@ export async function handleHashNavigation() {
 
 				try {
 					const tabPane = await waitForElementById(targetTabPaneId);
-					console.log('targetTabPaneId', targetTabPaneId);
-					console.log('tabPane', tabPane);
+					// console.log('targetTabPaneId', targetTabPaneId);
+					// console.log('tabPane', tabPane);
 
 					if (is_mobile()) {
 						await new Promise((resolve) => {
@@ -1704,3 +1704,117 @@ export async function handleHashNavigation() {
 	} 
 }
 
+
+//Function was intended to fix tab selection on modal load when the logic used to reflect that the 1st iteration was the only selected one. 
+//This function is probably no longer needed, the issue described in the line above has been fixed.
+// export function activateFirstAvailableTab() {
+// 	const rawHash = window.location.hash.slice(1);
+// 	const tabId = getTabFromHash(rawHash);
+
+// 	// console.log('tabId', tabId);
+
+// 	if (tabId !== '1') {
+// 		return;
+// 	}
+
+// 	const activeTab =
+// 		document.querySelector(
+// 			'#myTab .nav-link.tab-title.active'
+// 		);
+
+// 	// console.log('activeTab', activeTab);
+
+// 	if (activeTab) {
+// 		// console.log('test2');
+// 		return;
+// 	}
+
+// 	const firstAvailableTab =
+// 		document.querySelector(
+// 			'#myTab .nav-link.tab-title'
+// 		);
+
+// 	// console.log(
+// 	// 	'firstAvailableTab',
+// 	// 	firstAvailableTab
+// 	// );
+
+// 	if (firstAvailableTab) {
+// 		// console.log(
+// 		// 	'No active tab found. Setting first available tab active:',
+// 		// 	firstAvailableTab.id
+// 		// );
+
+// 		firstAvailableTab.classList.add('active');
+// 		firstAvailableTab.setAttribute(
+// 			'aria-selected',
+// 			'true'
+// 		);
+// 		firstAvailableTab.removeAttribute(
+// 			'tabindex'
+// 		);
+
+// 		let TabPane =
+// 			document.getElementById(
+// 				`${firstAvailableTab.id}-pane`
+// 			);
+
+// 		// console.log(
+// 		// 	'TabPane',
+// 		// 	TabPane
+// 		// );
+
+// 		TabPane.classList.add(
+// 			'tab-pane',
+// 			'fade'
+// 		);
+
+// 		TabPane.classList.add(
+// 			'show',
+// 			'active'
+// 		);
+
+
+// 		/*
+// 		 * Get the actual tab number from
+// 		 * the available tab ID.
+// 		 *
+// 		 * image-2 -> 2
+// 		 */
+// 		const availableTabId =
+// 			firstAvailableTab.id
+// 				.split('-')
+// 				.pop();
+
+// 		/*
+// 		 * Preserve the modal name and
+// 		 * any existing query parameters.
+// 		 */
+// 		const [hashPath, hashQuery = ''] =
+// 			rawHash.split('?');
+
+// 		const modalName =
+// 			hashPath.split('/')[0];
+
+// 		const figureSuffix =
+// 			hashQuery
+// 				? `?${hashQuery}`
+// 				: '';
+
+// 		const newHash =
+// 			`#${modalName}/${availableTabId}${figureSuffix}`;
+
+// 		window.history.replaceState(
+// 			null,
+// 			'',
+// 			`${window.location.pathname}` +
+// 			`${window.location.search}` +
+// 			newHash
+// 		);
+
+// 		// console.log(
+// 		// 	'Updated URL to available tab:',
+// 		// 	newHash
+// 		// );
+// 	}
+// }

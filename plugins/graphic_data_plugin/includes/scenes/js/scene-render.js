@@ -6,11 +6,12 @@ import {
     scene_data, setSceneData,
     getSceneData, deviceDetector,
     is_mobile, is_touchscreen, slugify, debounce, hexToRgba,
-    get_mobile_layer, remove_outer_div, createAccordionItem,
+    get_mobile_layer, remove_outer_div, createAccordionItem, activateFirstAvailableTab
 } from '@graphic-data/scene-shared';
 import { render_modal } from '@graphic-data/modal-render';
 
 let graphicDataSceneData = getSceneData();
+
 
 const isAdminEditor =
 window.location.href.includes('post.php') ||
@@ -2316,5 +2317,7 @@ function add_modal(){
                 });
             }
         }
+                
     }
 }
+

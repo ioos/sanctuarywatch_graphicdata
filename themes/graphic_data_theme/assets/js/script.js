@@ -8,7 +8,7 @@ import {
 let url;
 
 
-console.log('url', url);
+// console.log('url', url);
 
 if (document.body.classList.contains('error404')) {
 	alert(
