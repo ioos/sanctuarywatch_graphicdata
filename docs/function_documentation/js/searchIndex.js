@@ -1996,6 +1996,11 @@ Search.appendIndex(
             "summary": "Redirect\u0020a\u0020figure\u0020shortlink\u0020to\u0020its\u0020actual\u0020location.",
             "url": "namespaces/default.html#function_graphic_data_redirect_figure_shortlink"
         },                {
+            "fqsen": "\\graphic_data_delete_figure_folder\u0028\u0029",
+            "name": "graphic_data_delete_figure_folder",
+            "summary": "",
+            "url": "namespaces/default.html#function_graphic_data_delete_figure_folder"
+        },                {
             "fqsen": "\\",
             "name": "\\",
             "summary": "",
