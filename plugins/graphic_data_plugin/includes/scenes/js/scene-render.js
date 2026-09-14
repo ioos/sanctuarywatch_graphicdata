@@ -6,7 +6,7 @@ import {
     scene_data, setSceneData,
     getSceneData, deviceDetector,
     is_mobile, is_touchscreen, slugify, debounce, hexToRgba,
-    get_mobile_layer, remove_outer_div, createAccordionItem, activateFirstAvailableTab
+    get_mobile_layer, remove_outer_div, createAccordionItem
 } from '@graphic-data/scene-shared';
 import { render_modal } from '@graphic-data/modal-render';
 
