@@ -1240,13 +1240,14 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     let tempShortCaption = info_obj['shortCaption'];
     tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     caption.innerHTML = tempShortCaption;
-    caption.style.marginTop = '20px';
+    caption.style.margin = '2%';
     figureDiv.appendChild(caption);
     tabContentElement.appendChild(figureDiv);
 
 
     // Create the details element
     const details = document.createElement('details');
+    details.style.margin = '2%';
     const summary = document.createElement('summary');
     summary.style.fontWeight = '500';
     if (is_mobile()) {

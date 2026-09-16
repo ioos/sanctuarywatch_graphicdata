@@ -29,7 +29,7 @@ Adjust padding of page headers
   margin-top: -20px;
   text-align: justify;      /* makes left & right edges align */
   text-justify: inter-word; 
-  hyphens: auto;            /* helps reduce weird gaps */
+  /* hyphens: auto;            helps reduce weird gaps */
 }
 
 

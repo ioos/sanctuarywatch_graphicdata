@@ -246,8 +246,6 @@ export function render_modal(key, obj, modal_obj){
                 .catch(error => console.error('Error fetching data:', error));
                     //new stuff here
             } else {
-
-
                 /*
                 * Only the first tab encountered with published
                 * figures receives true.
