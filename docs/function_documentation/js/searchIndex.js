@@ -1776,6 +1776,11 @@ Search.appendIndex(
             "summary": "Build\u0020a\u0020blank\u0020key\u002Dvalue\u0020array\u0020for\u0020a\u0020single\u0020accordion\u0020link\u0020slot.",
             "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_blank_array"
         },                {
+            "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_standard_pages\u0028\u0029",
+            "name": "create_tutorial_standard_pages",
+            "summary": "Create\u0020example\u0020pages\u0020for\u0020the\u0020tutorial.",
+            "url": "classes/Graphic-Data-Tutorial-Content.html#method_create_tutorial_standard_pages"
+        },                {
             "fqsen": "\\Graphic_Data_Tutorial_Content\u003A\u003Acreate_tutorial_scenes\u0028\u0029",
             "name": "create_tutorial_scenes",
             "summary": "Create\u0020example\u0020scenes\u0020for\u0020the\u0020tutorial.",
