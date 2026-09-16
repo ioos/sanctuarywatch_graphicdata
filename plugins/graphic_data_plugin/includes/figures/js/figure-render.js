@@ -1249,13 +1249,13 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     const details = document.createElement('details');
     details.style.margin = '2%';
     const summary = document.createElement('summary');
-    summary.style.fontWeight = '500';
+    summary.style.fontWeight = '700';
     if (is_mobile()) {
         summary.style.marginBottom = '5%';
     } else {
         summary.style.marginBottom = '2%';
     }
-    summary.textContent = 'More Details';
+    summary.textContent = 'More Details...';
 
     let longCaption = document.createElement("p");
     let tempLongCaption = info_obj['longCaption'];
