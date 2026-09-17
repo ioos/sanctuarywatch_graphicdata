@@ -33,7 +33,7 @@ export function render_modal(key, obj, modal_obj){
     //console.log("MODAL ID", id);
 
     //function for rendering the modal content after fetching data
-    function populateModalContent(modal_data, child_obj, key) {
+    async function populateModalContent(modal_data, child_obj, key) {
         // --- Title ---
         let title = child_obj[key]['title'];  // or could be modal_data.title
         let modal_title = document.getElementById("modal-title");
@@ -188,63 +188,154 @@ export function render_modal(key, obj, modal_obj){
                 const protocol = window.location.protocol;
                 const host = window.location.host;
                 const fetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure?&per_page=24&order=asc&figure_modal=" + modal_id + "&figure_tab=" + i;
-                fetch(fetchURL)
-                    .then(response => response.json())
-                    .then(data => {
+                
+                try {
+                    const response = await fetch(fetchURL);
+                    const data = await response.json();
 
-                        let all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(i));
-                        all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id) && String(figure.figure_published).toLowerCase() === 'published');
-                        //console.log('all_figure_data1', all_figure_data);
-
-                        //filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
-                        let total_published_figures = 0;
-                        for (let idx = 0; idx < all_figure_data.length; idx++) {
-                            const figure_data = all_figure_data[idx];
-                            const figure_published = figure_data['figure_published'];
-                            if (figure_published == "published") {
-                                total_published_figures += 1;
-                            }
-                        }
-                        //console.log('total_published_figures', total_published_figures);
-
-                        //Do not create the tab if the tab has no published figures
-                        if (total_published_figures === 0 && (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php"))) {
-                            return;
-                        }
-
-                        /*
-                        * Only the first tab encountered with published
-                        * figures receives true.
-                        */
-                        const is_first_tab_with_figures =
-                            !first_tab_with_figures_found;
-
-                        if (is_first_tab_with_figures) {
-                            first_tab_with_figures_found = true;
-                        }
-
-                        // console.log('is_first_tab_with_figures', is_first_tab_with_figures);
-
-                        create_tabs(
-                            i,
-                            tab_key,
-                            tab_title,
-                            title,
-                            modal_id,
-                            is_first_tab_with_figures
+                    let all_figure_data =
+                        data.filter(
+                            figure =>
+                                Number(figure.figure_tab) === Number(i)
                         );
 
-                        if (i === num_tabs) {
-                            let mdialog =
-                                document.querySelector(
-                                    "#myModal > div"
-                                );
+                    all_figure_data =
+                        all_figure_data.filter(
+                            figure =>
+                                Number(figure.figure_modal) === Number(modal_id) &&
+                                String(figure.figure_published).toLowerCase() === 'published'
+                        );
 
-                            trapFocus(mdialog);
+                    console.log(
+                        'all_figure_data1',
+                        all_figure_data
+                    );
+
+                    let total_published_figures = 0;
+
+                    for (
+                        let idx = 0;
+                        idx < all_figure_data.length;
+                        idx++
+                    ) {
+                        const figure_data =
+                            all_figure_data[idx];
+
+                        const figure_published =
+                            figure_data['figure_published'];
+
+                        if (figure_published == "published") {
+                            total_published_figures += 1;
                         }
-                    })
-                .catch(error => console.error('Error fetching data:', error));
-                    //new stuff here
+                    }
+
+                    console.log(
+                        'total_published_figures',
+                        total_published_figures
+                    );
+
+                    //Do not create the tab if the tab has no published figures
+                    if (total_published_figures === 0) {
+                        continue;
+                    }
+
+                    /*
+                    * Only the first tab encountered with published
+                    * figures receives true.
+                    */
+                    const is_first_tab_with_figures =
+                        !first_tab_with_figures_found;
+
+                    if (is_first_tab_with_figures) {
+                        first_tab_with_figures_found = true;
+                    }
+
+                    console.log(
+                        'is_first_tab_with_figures',
+                        is_first_tab_with_figures
+                    );
+
+                    create_tabs(
+                        i,
+                        tab_key,
+                        tab_title,
+                        title,
+                        modal_id,
+                        is_first_tab_with_figures
+                    );
+
+                    if (i === num_tabs) {
+                        let mdialog =
+                            document.querySelector(
+                                "#myModal > div"
+                            );
+
+                        trapFocus(mdialog);
+                    }
+
+                } catch (error) {
+                    console.error(
+                        'Error fetching data:',
+                        error
+                    );
+                }
+                // fetch(fetchURL)
+                //     .then(response => response.json())
+                //     .then(data => {
+
+                //         let all_figure_data = data.filter(figure => Number(figure.figure_tab) === Number(i));
+                //         all_figure_data = all_figure_data.filter(figure => Number(figure.figure_modal) === Number(modal_id) && String(figure.figure_published).toLowerCase() === 'published');
+                //         //console.log('all_figure_data1', all_figure_data);
+
+                //         //filter: If # of figures contained in the buttonID is > 0 generally & the number of figures = published is > 0 in the buttonID, show the tab.
+                //         let total_published_figures = 0;
+                //         for (let idx = 0; idx < all_figure_data.length; idx++) {
+                //             const figure_data = all_figure_data[idx];
+                //             const figure_published = figure_data['figure_published'];
+                //             if (figure_published == "published") {
+                //                 total_published_figures += 1;
+                //             }
+                //         }
+                //         //console.log('total_published_figures', total_published_figures);
+
+                //         //Do not create the tab if the tab has no published figures
+                //         if (total_published_figures === 0 && (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php"))) {
+                //             return;
+                //         }
+
+                //         /*
+                //         * Only the first tab encountered with published
+                //         * figures receives true.
+                //         */
+                //         const is_first_tab_with_figures =
+                //             !first_tab_with_figures_found;
+
+                //         if (is_first_tab_with_figures) {
+                //             first_tab_with_figures_found = true;
+                //         }
+
+                //         // console.log('is_first_tab_with_figures', is_first_tab_with_figures);
+
+                //         create_tabs(
+                //             i,
+                //             tab_key,
+                //             tab_title,
+                //             title,
+                //             modal_id,
+                //             is_first_tab_with_figures
+                //         );
+
+                //         if (i === num_tabs) {
+                //             let mdialog =
+                //                 document.querySelector(
+                //                     "#myModal > div"
+                //                 );
+
+                //             trapFocus(mdialog);
+                //         }
+                //     })
+                // .catch(error => console.error('Error fetching data:', error));
+                //     //new stuff here
             } else {
                 /*
                 * Only the first tab encountered with published
