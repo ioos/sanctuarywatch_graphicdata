@@ -2034,10 +2034,68 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @graphic-data/plotly-bar */ "./includes/figures/js/interactive/plotly-bar.js");
 /* harmony import */ var _graphic_data_plotly_map__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @graphic-data/plotly-map */ "./includes/figures/js/interactive/plotly-map.js");
 /* harmony import */ var _graphic_data_tabulator_table__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @graphic-data/tabulator-table */ "./includes/figures/js/interactive/tabulator-table.js");
+/* harmony import */ var _graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @graphic-data/plotly-utility */ "./includes/figures/js/interactive/plotly-utility.js");
+/* harmony import */ var _graphic_data_scene_shared__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @graphic-data/scene-shared */ "./includes/scenes/js/scene-shared.js");
 
 
 
 
+
+
+function waitForPlotly() {
+  return new Promise((resolve, reject) => {
+    if (window.Plotly) {
+      resolve(window.Plotly);
+      return;
+    }
+    const timeout = Date.now() + 10000;
+    const interval = setInterval(() => {
+      if (window.Plotly) {
+        clearInterval(interval);
+        resolve(window.Plotly);
+        return;
+      }
+      if (Date.now() > timeout) {
+        clearInterval(interval);
+        reject(new Error('Plotly failed to load.'));
+      }
+    }, 50);
+  });
+}
+async function renderSavedFigure(targetElement, savedFigure, plotlyDivID, postID) {
+  if (!targetElement) {
+    throw new Error('Target element was not found.');
+  }
+  if (!savedFigure || !savedFigure.data || !savedFigure.layout) {
+    throw new Error('Saved figure must contain data and layout.');
+  }
+  let newDiv = document.createElement('div');
+  newDiv.id = plotlyDivID;
+  newDiv.classList.add("container", `figure_interactive${postID}`);
+  let target = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_4__.waitForElementById)(targetElement);
+  target.appendChild(newDiv);
+  let plotDiv = document.getElementById(plotlyDivID);
+  plotDiv.style.setProperty("width", "100%", "important");
+  plotDiv.style.setProperty("max-width", "none", "important");
+  await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_4__.loadPlotlyScript)();
+  const PlotlyLibrary = await waitForPlotly();
+  try {
+    await PlotlyLibrary.newPlot(plotlyDivID, savedFigure.data, savedFigure.layout, savedFigure.config);
+
+    /*
+    * Move the Plotly modebar upward so it does not overlap
+    * the legend items.
+    */
+    const plotlyElement = typeof plotlyDivID === 'string' ? document.getElementById(plotlyDivID) : plotlyDivID;
+    const modebar = plotlyElement?.querySelector('.modebar');
+    if (modebar) {
+      modebar.style.top = '-28px';
+    }
+    return targetElement;
+  } catch {
+    return;
+  }
+}
 
 /**
  * Renders interactive plots (e.g., Plotly graphs) within a specified tab content element.
@@ -2071,12 +2129,12 @@ __webpack_require__.r(__webpack_exports__);
  * };
  * await render_interactive_plots(tabContentElement, info_obj);
  */
-async function render_interactive_plots(tabContentElement, info_obj, targetDocument) {
+async function render_interactive_plots(tabContentElement, info_obj, targetDocument, targetId) {
   //console.log('tabContentElement render_interactive_plots', tabContentElement);
   //Lets control if the figure is published or not
   let figure_published = info_obj.figure_published;
   if (figure_published != 'published') {
-    if (window.location.href.includes('post.php')) {
+    if (window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) {
       figure_published = 'published';
     } else {
       return; // do not render if the figure is not published
@@ -2085,12 +2143,17 @@ async function render_interactive_plots(tabContentElement, info_obj, targetDocum
   const postID = info_obj.postID;
   const figureType = info_obj.figureType;
   const title = info_obj.figureTitle;
-  const targetId = `javascript_figure_target_${postID}`;
-  const plotlyDivID = `plotlyFigure${postID}`;
+  const uniqueHash_plotlyDivID = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  const plotlyDivID = `plotlyFigure_${postID}_${uniqueHash_plotlyDivID}`;
   const interactive_arguments = info_obj.figure_interactive_arguments;
+  const figure_interactive_args_rendered = info_obj.figure_interactive_args_rendered;
+  let savedFigure;
+  try {
+    savedFigure = JSON.parse(figure_interactive_args_rendered);
+  } catch {}
 
   //Preview error message in admin
-  if (window.location.href.includes('post.php') && figureType === 'Interactive') {
+  if ((window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) && figureType === 'Interactive') {
     document.dispatchEvent(new CustomEvent('graphic-data:figurePreviewError', {
       detail: {
         tabContentElement,
@@ -2115,12 +2178,11 @@ async function render_interactive_plots(tabContentElement, info_obj, targetDocum
   }
 
   // Additional mobile-specific adjustments
-  function adjustPlotlyLayoutForMobile(postID) {
-    const isMobilePreview = window.location.href.includes('post.php') && !!window.mobileBool;
+  function adjustPlotlyLayoutForMobile(postID, targetID) {
+    const isMobilePreview = (window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) && !!window.mobileBool;
     if (window.innerWidth <= 768 || isMobilePreview) {
       // basic mobile width check
-      const plotlyDivID = `plotlyFigure${postID}`;
-      const plotDiv = document.getElementById(plotlyDivID);
+      const plotDiv = document.getElementById(targetID);
       if (plotDiv) {
         plotDiv.style.maxWidth = '100%';
         plotDiv.style.height = '400px'; // Force a good height for mobile
@@ -2129,158 +2191,210 @@ async function render_interactive_plots(tabContentElement, info_obj, targetDocum
       }
     }
   }
-  switch (figureType) {
-    case 'Interactive':
-      const figure_arguments = Object.fromEntries(JSON.parse(interactive_arguments));
-      const graphType = figure_arguments.graphType;
-      if (graphType === 'Plotly line graph (time series)') {
-        async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
-          for (let i = 0; i < retries; i++) {
-            const el = document.getElementById(plotlyDivID);
-            if (el) {
-              return el;
-            }
-            await new Promise(resolve => setTimeout(resolve, interval));
-            // producePlotly* call removed — this function only WAITS for the div,
-            // it does not re-render. Re-rendering here caused duplicate fetch calls
-            // and empty charts in admin preview context.
-          }
-          throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+  if ((!window.location.href.includes("post.php") || window.location.href.includes("post-new.php")) && savedFigure != null) {
+    async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+      for (let i = 0; i < retries; i++) {
+        const el = document.getElementById(plotlyDivID);
+        if (el) {
+          return el;
         }
-        try {
-          await waitForElementByIdPolling(targetId, 15000);
-          await (0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__.producePlotlyLineFigure)(targetId, interactive_arguments, postID, targetDocument);
+        await new Promise(resolve => setTimeout(resolve, interval));
+        // producePlotly* call removed — this function only WAITS for the div,
+        // it does not re-render. Re-rendering here caused duplicate fetch calls
+        // and empty charts in admin preview context.
+      }
+      throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+    }
+    try {
+      await waitForElementByIdPolling(targetId, 15000);
+      await renderSavedFigure(targetId, savedFigure, plotlyDivID, postID);
+      await waitForPlotlyDiv(plotlyDivID);
+      adjustPlotlyLayoutForMobile(postID, plotlyDivID);
+      console.log('RIP - PLOT1', postID);
+
+      // Manually trigger for initially active tab
+      const activeTab = document.querySelector('.tab-pane.active');
+      if (activeTab && activeTab.id === tabContentElement.id) {
+        if (!document.getElementById(plotlyDivID)) {
+          await renderSavedFigure(targetId, savedFigure, plotlyDivID, postID);
           await waitForPlotlyDiv(plotlyDivID);
-          adjustPlotlyLayoutForMobile(postID);
-          console.log('RIP - PLOT1', postID);
-
-          // Manually trigger for initially active tab
-          const activeTab = document.querySelector('.tab-pane.active');
-          if (activeTab && activeTab.id === tabContentElement.id) {
-            if (!document.getElementById(plotlyDivID)) {
-              await (0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__.producePlotlyLineFigure)(targetId, interactive_arguments, postID, targetDocument);
-              await waitForPlotlyDiv(plotlyDivID);
-              adjustPlotlyLayoutForMobile(postID);
-              console.log('RIP - PLOT2', postID);
-            }
+          adjustPlotlyLayoutForMobile(postID, plotlyDivID);
+          console.log('RIP - PLOT2', postID);
+        }
+      }
+      document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', () => {
+          const plotDiv = document.getElementById(plotlyDivID);
+          if (plotDiv) {
+            setTimeout(() => {
+              Plotly.Plots.resize(plotDiv);
+            }, 150);
           }
-          document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
-            tab.addEventListener('shown.bs.tab', () => {
-              const plotDiv = document.getElementById(plotlyDivID);
-              if (plotDiv) {
-                setTimeout(() => {
-                  Plotly.Plots.resize(plotDiv);
-                }, 150);
+        });
+      });
+    } catch (err) {
+      console.error('Plotly interactive plot error:', err);
+    }
+  }
+  if (window.location.href.includes("post.php") || window.location.href.includes("post-new.php")) {
+    switch (figureType) {
+      case 'Interactive':
+        const figure_arguments = Object.fromEntries(JSON.parse(interactive_arguments));
+        const graphType = figure_arguments.graphType;
+        if (graphType === 'Plotly line graph (time series)') {
+          async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+            for (let i = 0; i < retries; i++) {
+              const el = document.getElementById(plotlyDivID);
+              if (el) {
+                return el;
               }
-            });
-          });
-        } catch (err) {
-          console.error('Plotly interactive plot error:', err);
-        }
-      }
-      if (graphType === 'Plotly bar graph') {
-        async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
-          for (let i = 0; i < retries; i++) {
-            const el = document.getElementById(plotlyDivID);
-            if (el) {
-              return el;
+              await new Promise(resolve => setTimeout(resolve, interval));
+              // producePlotly* call removed — this function only WAITS for the div,
+              // it does not re-render. Re-rendering here caused duplicate fetch calls
+              // and empty charts in admin preview context.
             }
-            await new Promise(resolve => setTimeout(resolve, interval));
-            // producePlotly* call removed — this function only WAITS for the div,
-            // it does not re-render. Re-rendering here caused duplicate fetch calls
-            // and empty charts in admin preview context.
+            throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
           }
-          throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
-        }
-        try {
-          await waitForElementByIdPolling(targetId, 15000);
-          await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument);
-          await waitForPlotlyDiv(plotlyDivID);
-          adjustPlotlyLayoutForMobile(postID);
+          try {
+            await waitForElementByIdPolling(targetId, 15000);
+            await (0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__.producePlotlyLineFigure)(targetId, interactive_arguments, postID, targetDocument, plotlyDivID);
+            await waitForPlotlyDiv(plotlyDivID);
+            adjustPlotlyLayoutForMobile(postID, plotlyDivID);
+            console.log('RIP - PLOT1', postID);
 
-          // Manually trigger for initially active tab
-          const activeTab = document.querySelector('.tab-pane.active');
-          if (activeTab && activeTab.id === tabContentElement.id) {
-            if (!document.getElementById(plotlyDivID)) {
-              await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument);
-              await waitForPlotlyDiv(plotlyDivID);
-              adjustPlotlyLayoutForMobile(postID);
-              console.log('RIP - PLOT2', postID);
-            }
-          }
-          document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
-            tab.addEventListener('shown.bs.tab', () => {
-              const plotDiv = document.getElementById(plotlyDivID);
-              if (plotDiv) {
-                setTimeout(() => {
-                  Plotly.Plots.resize(plotDiv);
-                }, 150);
+            // Manually trigger for initially active tab
+            const activeTab = document.querySelector('.tab-pane.active');
+            if (activeTab && activeTab.id === tabContentElement.id) {
+              if (!document.getElementById(plotlyDivID)) {
+                await (0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__.producePlotlyLineFigure)(targetId, interactive_arguments, postID, targetDocument, plotlyDivID);
+                await waitForPlotlyDiv(plotlyDivID);
+                adjustPlotlyLayoutForMobile(postID, plotlyDivID);
+                console.log('RIP - PLOT2', postID);
               }
+            }
+            document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+              tab.addEventListener('shown.bs.tab', () => {
+                const plotDiv = document.getElementById(plotlyDivID);
+                if (plotDiv) {
+                  setTimeout(() => {
+                    Plotly.Plots.resize(plotDiv);
+                  }, 150);
+                }
+              });
             });
-          });
-        } catch (err) {
-          console.error('Plotly interactive plot error:', err);
-        }
-      }
-      if (graphType === 'Plotly map') {
-        async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
-          for (let i = 0; i < retries; i++) {
-            const el = document.getElementById(plotlyDivID);
-            if (el) {
-              return el;
-            }
-            await new Promise(resolve => setTimeout(resolve, interval));
-            // producePlotly* call removed — this function only WAITS for the div,
-            // it does not re-render. Re-rendering here caused duplicate fetch calls
-            // and empty charts in admin preview context.
+          } catch (err) {
+            console.error('Plotly interactive plot error:', err);
           }
-          throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
         }
-        try {
-          await waitForElementByIdPolling(targetId, 15000);
-          await (0,_graphic_data_plotly_map__WEBPACK_IMPORTED_MODULE_2__.producePlotlyMap)(targetId, interactive_arguments, postID, targetDocument);
-          await waitForPlotlyDiv(plotlyDivID);
-          adjustPlotlyLayoutForMobile(postID);
-
-          // Manually trigger for initially active tab
-          const activeTab = document.querySelector('.tab-pane.active');
-          if (activeTab && activeTab.id === tabContentElement.id) {
-            if (!document.getElementById(plotlyDivID)) {
-              await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument);
-              await waitForPlotlyDiv(plotlyDivID);
-              adjustPlotlyLayoutForMobile(postID);
-              console.log('RIP - PLOT2', postID);
-            }
-          }
-          document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
-            tab.addEventListener('shown.bs.tab', () => {
-              const plotDiv = document.getElementById(plotlyDivID);
-              if (plotDiv) {
-                setTimeout(() => {
-                  Plotly.Plots.resize(plotDiv);
-                }, 150);
+        if (graphType === 'Plotly bar graph') {
+          async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+            for (let i = 0; i < retries; i++) {
+              const el = document.getElementById(plotlyDivID);
+              if (el) {
+                return el;
               }
-            });
-          });
-        } catch (err) {
-          console.error('Plotly interactive plot error:', err);
-        }
-      }
-
-      //Google Tags
-      // document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (event) => {  
-      //     console.log('Received graphic-data:figureTimeseriesGraphLoaded', event.detail);
-      // });
-
-      if (!window.location.href.includes('post.php')) {
-        document.dispatchEvent(new CustomEvent('graphic-data:figureTimeseriesGraphLoaded', {
-          detail: {
-            title,
-            postID
+              await new Promise(resolve => setTimeout(resolve, interval));
+              // producePlotly* call removed — this function only WAITS for the div,
+              // it does not re-render. Re-rendering here caused duplicate fetch calls
+              // and empty charts in admin preview context.
+            }
+            throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
           }
-        }));
-      }
-      break;
+          try {
+            await waitForElementByIdPolling(targetId, 15000);
+            await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument, plotlyDivID);
+            await waitForPlotlyDiv(plotlyDivID);
+            adjustPlotlyLayoutForMobile(postID, plotlyDivID);
+
+            // Manually trigger for initially active tab
+            const activeTab = document.querySelector('.tab-pane.active');
+            if (activeTab && activeTab.id === tabContentElement.id) {
+              if (!document.getElementById(plotlyDivID)) {
+                await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument, plotlyDivID);
+                await waitForPlotlyDiv(plotlyDivID);
+                adjustPlotlyLayoutForMobile(postID, plotlyDivID);
+                console.log('RIP - PLOT2', postID);
+              }
+            }
+            document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+              tab.addEventListener('shown.bs.tab', () => {
+                const plotDiv = document.getElementById(plotlyDivID);
+                if (plotDiv) {
+                  setTimeout(() => {
+                    Plotly.Plots.resize(plotDiv);
+                  }, 150);
+                }
+              });
+            });
+          } catch (err) {
+            console.error('Plotly interactive plot error:', err);
+          }
+        }
+        if (graphType === 'Plotly map') {
+          async function waitForPlotlyDiv(plotlyDivID, retries = 150, interval = 300) {
+            for (let i = 0; i < retries; i++) {
+              const el = document.getElementById(plotlyDivID);
+              if (el) {
+                return el;
+              }
+              await new Promise(resolve => setTimeout(resolve, interval));
+              // producePlotly* call removed — this function only WAITS for the div,
+              // it does not re-render. Re-rendering here caused duplicate fetch calls
+              // and empty charts in admin preview context.
+            }
+            throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
+          }
+          try {
+            await waitForElementByIdPolling(targetId, 15000);
+            await (0,_graphic_data_plotly_map__WEBPACK_IMPORTED_MODULE_2__.producePlotlyMap)(targetId, interactive_arguments, postID, targetDocument, plotlyDivID);
+            await waitForPlotlyDiv(plotlyDivID);
+            adjustPlotlyLayoutForMobile(postID, plotlyDivID);
+
+            // Manually trigger for initially active tab
+            const activeTab = document.querySelector('.tab-pane.active');
+            if (activeTab && activeTab.id === tabContentElement.id) {
+              if (!document.getElementById(plotlyDivID)) {
+                await (0,_graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_1__.producePlotlyBarFigure)(targetId, interactive_arguments, postID, targetDocument, plotlyDivID);
+                await waitForPlotlyDiv(plotlyDivID);
+                adjustPlotlyLayoutForMobile(postID, plotlyDivID);
+                console.log('RIP - PLOT2', postID);
+              }
+            }
+            document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+              tab.addEventListener('shown.bs.tab', () => {
+                const plotDiv = document.getElementById(plotlyDivID);
+                if (plotDiv) {
+                  setTimeout(() => {
+                    Plotly.Plots.resize(plotDiv);
+                  }, 150);
+                }
+              });
+            });
+          } catch (err) {
+            console.error('Plotly interactive plot error:', err);
+          }
+        }
+        const plotlyElement = document.getElementById(plotlyDivID);
+        const modebar = plotlyElement?.querySelector('.modebar');
+        if (modebar) {
+          modebar.style.top = '-28px';
+        }
+
+        //Google Tags
+        // document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (event) => {  
+        //     console.log('Received graphic-data:figureTimeseriesGraphLoaded', event.detail);
+        // });
+
+        if (!window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) {
+          document.dispatchEvent(new CustomEvent('graphic-data:figureTimeseriesGraphLoaded', {
+            detail: {
+              title,
+              postID
+            }
+          }));
+        }
+        break;
+    }
   }
 }
 
@@ -2320,7 +2434,7 @@ async function render_interactive_plots(tabContentElement, info_obj, targetDocum
  * Usage:
  * This function is called for each tab, populating one or more figures (and other corresponding info)
  */
-async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, isBlock) {
+async function render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, isBlock, tab_id, tab_title, total_published_figures) {
   // console.log('info_obj', info_obj);
   // console.log('tabContentElement', tabContentElement);
   // console.log('tabContentContainer', tabContentContainer);
@@ -2328,7 +2442,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
   //Lets control if the figure is published or not
   let figure_published = info_obj["figure_published"];
   if (figure_published != "published") {
-    if (window.location.href.includes('post.php')) {
+    if (window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) {
       figure_published = "published";
     } else {
       return; // do not render if the figure is not published
@@ -2342,10 +2456,19 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
   tableRowDiv.style.display = 'table-row';
 
   //Create a separator to make this figure distinct from others
-  if (!isBlock || isBlock === null) {
+  // if (!isBlock || isBlock === null) {
+  //     const separator = document.createElement('div');
+  //     separator.classList.add("separator");
+  //     separator.style.color = 'none';
+  //     separator.innerHTML = '<hr style="border: 1px solid #a2a2a2" >';
+  //     tableRowDiv.appendChild(separator);
+  // }
+
+  if ((!isBlock || isBlock === null) && idx != 0) {
     const separator = document.createElement('div');
     separator.classList.add("separator");
-    separator.innerHTML = '<hr style="border-bottom: 1px rgb(252, 252, 252);">';
+    separator.style.color = 'none';
+    separator.innerHTML = '<hr style="border: 1px solid #a2a2a2" >';
     tableRowDiv.appendChild(separator);
   }
 
@@ -2353,17 +2476,346 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
   //const figureDiv = document.createElement('div');
   const figureDiv = tableRowDiv;
   figureDiv.classList.add('figure');
+  // figureDiv.id = `figure-${idx+1}`;
+  figureDiv.id = `figure-${postID}`;
+
+  //CREATE THE EMBED, COPY LINK, & RETURN BUTTONS
+  if (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php")) {
+    // Container for links
+    const figureLinkContainer = document.createElement('div');
+    figureLinkContainer.style.display = 'flex';
+    figureLinkContainer.style.justifyContent = 'space-between';
+    figureLinkContainer.style.alignItems = 'center';
+    figureLinkContainer.style.width = '100%';
+    figureLinkContainer.style.gap = '12px';
+    figureLinkContainer.style.marginBottom = '1rem';
+
+    //Add "figure" index
+    const targetId = `figure-${idx + 1}`;
+    const figureIndex = document.createElement('div');
+    figureIndex.textContent = `Figure ${idx + 1} of ${total_published_figures}`;
+    figureIndex.style.color = 'rgba(68, 68, 68, 0.55)';
+    figureIndex.style.textDecoration = 'none';
+    figureIndex.style.fontSize = '0.8em';
+    figureIndex.style.marginRight = '2em';
+    figureIndex.style.marginLeft = '.2em';
+    figureIndex.style.cursor = 'pointer';
+
+    /*
+    * Make the div usable with a keyboard.
+    */
+    figureIndex.setAttribute('role', 'button');
+    figureIndex.setAttribute('tabindex', '0');
+    figureIndex.addEventListener('click', () => {
+      navigateToFigureHash(targetId);
+    });
+    figureIndex.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+      event.preventDefault();
+      navigateToFigureHash(targetId);
+    });
+
+    // Add "Return" link
+    const goToTopLink = document.createElement("a");
+    goToTopLink.href = "#";
+    goToTopLink.textContent = "↑ Return";
+    goToTopLink.style.color = "rgba(68, 68, 68, 0.55)";
+    goToTopLink.style.textDecoration = "none";
+    goToTopLink.style.fontSize = "0.8em";
+    goToTopLink.style.marginRight = "0.8em";
+    goToTopLink.style.marginleft = "0.8em";
+    goToTopLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      document.getElementById("modal-title").scrollIntoView({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+
+    // Add "Close" link
+    const closeLink = document.createElement('a');
+    closeLink.href = '#';
+    closeLink.textContent = '× Close';
+    closeLink.style.color = 'rgba(68, 68, 68, 0.55)';
+    closeLink.style.textDecoration = 'none';
+    closeLink.style.fontSize = '0.8em';
+    closeLink.style.marginRight = '0.8em';
+    // closeLink.style.marginLeft = '0.8em';
+
+    closeLink.addEventListener('click', function (event) {
+      event.preventDefault();
+      const closeButton = document.getElementById('close');
+      if (!closeButton) {
+        console.error('The close button with id="close" was not found.');
+        return;
+      }
+      closeButton.click();
+    });
+
+    // Add "Embed" link
+    const embedLink = document.createElement('a');
+    embedLink.href = '#';
+    embedLink.textContent = '</> Embed Figure & Context';
+    embedLink.style.color = 'rgba(68, 68, 68, 0.55)';
+    embedLink.style.textDecoration = 'none';
+    embedLink.style.fontSize = '0.8em';
+    embedLink.style.marginRight = '0.8em';
+    embedLink.style.marginLeft = '0.8em';
+    embedLink.addEventListener('click', async function (event) {
+      event.preventDefault();
+      const iframePath = info_obj['iframeCode'];
+      console.log('typeof iframePath', typeof iframePath);
+      if (!iframePath || typeof iframePath !== 'string') {
+        console.error('No iframe path was found in info_obj["iframe_path"].');
+        alert('The iframe embed code is unavailable.');
+        return;
+      }
+      const iframeCode = `<iframe
+            src="${iframePath}"
+            title="${info_obj['figureTitle'] || `Figure ${postID}`}"
+            width="100%"
+            height="100%"
+            loading="lazy"
+            scrolling="no"
+            style="display: block; width: 100%; height: 100%; min-height: 1000px; border: 0;"
+        ></iframe>`;
+      try {
+        await navigator.clipboard.writeText(iframeCode);
+        alert('The iframe embed code has been copied to the clipboard.');
+      } catch (error) {
+        console.error('Unable to copy the iframe embed code:', error);
+        alert('The iframe embed code could not be copied to the clipboard.');
+      }
+    });
+
+    // Add "Embed" link for figure only
+    const embedLinkFigureOnly = document.createElement('a');
+    embedLinkFigureOnly.href = '#';
+    embedLinkFigureOnly.textContent = '</> Embed Figure Only';
+    embedLinkFigureOnly.style.color = 'rgba(68, 68, 68, 0.55)';
+    embedLinkFigureOnly.style.textDecoration = 'none';
+    embedLinkFigureOnly.style.fontSize = '0.8em';
+    embedLinkFigureOnly.style.marginRight = '0.8em';
+    embedLinkFigureOnly.style.marginLeft = '0.8em';
+    embedLinkFigureOnly.addEventListener('click', async function (event) {
+      event.preventDefault();
+      const iframePath = info_obj['iframeCode'].replace(/\.html$/, '_figure_only.html');
+      if (!iframePath || typeof iframePath !== 'string') {
+        console.error('No iframe path was found in info_obj["iframe_path"].');
+        alert('The iframe embed code is unavailable.');
+        return;
+      }
+      const iframeCode = `<iframe
+                src="${iframePath}"
+                title="${info_obj['figureTitle'] || `Figure ${postID}`}"
+                width="100%"
+                height="100%"
+                loading="lazy"
+                scrolling="no"
+                style="display: block; width: 100%; height: 100%; min-height: 1000px; border: 0;"
+            ></iframe>`;
+      try {
+        await navigator.clipboard.writeText(iframeCode);
+        alert('The iframe embed code has been copied to the clipboard.');
+      } catch (error) {
+        console.error('Unable to copy the iframe embed code:', error);
+        alert('The iframe embed code could not be copied to the clipboard.');
+      }
+    });
+
+    // Add "Share" link
+    const shareLink = document.createElement("a");
+    shareLink.href = "#";
+    shareLink.style.color = "rgba(68, 68, 68, 0.55)";
+    shareLink.style.textDecoration = "none";
+    shareLink.style.fontSize = "0.8em";
+    shareLink.style.display = "inline-flex";
+    shareLink.style.alignItems = "center";
+    shareLink.style.gap = "6px";
+
+    // Swoop/share-style SVG icon (inline, no external assets)
+    shareLink.innerHTML = `
+            <span>
+                <i class="fa-solid fa-copy"></i>
+                Copy Figure Link
+            </span>
+        `;
+    shareLink.addEventListener("click", async function (e) {
+      e.preventDefault();
+
+      /*
+      * ---------------------------------------------------------
+      * FULL SHARE URL
+      * ---------------------------------------------------------
+      *
+      * This is what we want reflected in the browser address bar.
+      *
+      * Example:
+      *+
+      * /example-instance-2/space-base/#video/1?figure=127
+      */
+      const url = new URL(window.location.href);
+      url.hash = `${encodeURIComponent(tab_title)}/` + `${encodeURIComponent(tab_id)}` + `?figure=${encodeURIComponent(postID)}`;
+      const shareUrl = url.toString();
+
+      /*
+      * ---------------------------------------------------------
+      * SHORT FIGURE URL
+      * ---------------------------------------------------------
+      *
+      * This is what actually gets copied to the clipboard.
+      *
+      * Example:
+      *
+      * https://graphicdata.local/f/127/
+      */
+      const shortShareUrl = `${window.location.origin}/f/${encodeURIComponent(postID)}/`;
+
+      /*
+      * Update the address bar to reflect the actual current
+      * figure location without causing a page reload.
+      */
+      window.history.replaceState(null, "", shareUrl);
+      try {
+        /*
+        * Copy the permanent short figure URL.
+        */
+        await navigator.clipboard.writeText(shortShareUrl);
+        console.log("Copied short figure link:", shortShareUrl);
+        console.log("Address bar updated to:", shareUrl);
+        alert("Figure link copied successfully.");
+      } catch (err) {
+        console.error("Failed to copy figure link:", err);
+      }
+    });
+
+    /*
+    * Create the Share dropdown.
+    */
+    const shareDropdown = document.createElement('details');
+    shareDropdown.className = 'figure-share-dropdown';
+    shareDropdown.style.position = 'relative';
+    shareDropdown.style.fontSize = '0.8em';
+
+    /*
+    * Create the visible Share control.
+    */
+    const shareDropdownButton = document.createElement('summary');
+    shareDropdownButton.textContent = 'Share';
+    shareDropdownButton.style.color = 'rgba(68, 68, 68, 0.55)';
+    shareDropdownButton.style.cursor = 'pointer';
+    shareDropdownButton.style.userSelect = 'none';
+    shareDropdownButton.style.whiteSpace = 'nowrap';
+    shareDropdownButton.style.marginRight = ".5rem";
+
+    /*
+    * Create the dropdown menu that opens below Share.
+    */
+    const shareDropdownMenu = document.createElement('div');
+    shareDropdownMenu.className = 'figure-share-dropdown-menu';
+    shareDropdownMenu.style.position = 'absolute';
+    shareDropdownMenu.style.top = 'calc(100% + 6px)';
+    shareDropdownMenu.style.right = '0';
+    shareDropdownMenu.style.left = 'auto';
+    shareDropdownMenu.style.zIndex = '1000';
+    shareDropdownMenu.style.display = 'flex';
+    shareDropdownMenu.style.flexDirection = 'column';
+    shareDropdownMenu.style.alignItems = 'stretch';
+    shareDropdownMenu.style.gap = '8px';
+    shareDropdownMenu.style.width = '185px';
+    shareDropdownMenu.style.maxWidth = 'calc(100vw - 30px)';
+    shareDropdownMenu.style.boxSizing = 'border-box';
+    shareDropdownMenu.style.padding = '10px';
+    shareDropdownMenu.style.backgroundColor = '#ffffff';
+    shareDropdownMenu.style.border = '1px solid rgba(68, 68, 68, 0.18)';
+    shareDropdownMenu.style.borderRadius = '6px';
+    shareDropdownMenu.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)';
+
+    /*
+    * Reset the individual link margins because the dropdown controls
+    * their spacing.
+    */
+    [embedLink, embedLinkFigureOnly, shareLink].forEach(function (link) {
+      link.style.display = 'block';
+      link.style.width = '100%';
+      link.style.margin = '0';
+      link.style.padding = '4px 6px';
+      link.style.whiteSpace = 'nowrap';
+    });
+
+    /*
+    * Close the dropdown after one of its options is selected.
+    *
+    * The existing click listeners on these links will still run.
+    */
+    [embedLink, embedLinkFigureOnly, shareLink].forEach(function (link) {
+      link.addEventListener('click', function () {
+        shareDropdown.removeAttribute('open');
+      });
+    });
+
+    /*
+    * Put the three existing options inside the dropdown.
+    */
+    shareDropdownMenu.appendChild(embedLink);
+    shareDropdownMenu.appendChild(embedLinkFigureOnly);
+    shareDropdownMenu.appendChild(shareLink);
+    shareDropdown.appendChild(shareDropdownButton);
+    shareDropdown.appendChild(shareDropdownMenu);
+
+    /*
+     * Keep the figure index on the left and all other controls on the right.
+     */
+    const figureLinkControls = document.createElement('div');
+    figureLinkControls.style.display = 'flex';
+    figureLinkControls.style.justifyContent = 'flex-end';
+    figureLinkControls.style.alignItems = 'center';
+    figureLinkControls.style.gap = '12px';
+    figureLinkControls.style.marginLeft = 'auto';
+
+    // figureLinkControls.appendChild(goToTopLink);
+    figureLinkControls.appendChild(closeLink);
+    figureLinkControls.appendChild(shareDropdown);
+    figureLinkContainer.appendChild(figureIndex);
+    figureLinkContainer.appendChild(figureLinkControls);
+    figureDiv.appendChild(figureLinkContainer);
+    document.addEventListener('click', function (event) {
+      if (!shareDropdown.contains(event.target)) {
+        shareDropdown.removeAttribute('open');
+      }
+    });
+  }
 
   //Container for more science and data links
   const containerDiv = document.createElement(`div`);
   containerDiv.style.background = '#e3e3e354';
   containerDiv.style.width = '100%';
   containerDiv.style.display = 'table';
-  containerDiv.style.fontSize = '120%';
+  if ((0,_graphic_data_scene_shared__WEBPACK_IMPORTED_MODULE_5__.is_mobile)()) {
+    containerDiv.style.fontSize = '.8rem';
+
+    // Prevent the container itself from overflowing.
+    containerDiv.style.width = '100%';
+    containerDiv.style.maxWidth = '100%';
+    containerDiv.style.overflow = 'hidden';
+
+    // Allow both the left and right sides to shrink and wrap.
+    Array.from(containerDiv.children).forEach(child => {
+      child.style.minWidth = '0';
+      child.style.maxWidth = '100%';
+      child.style.whiteSpace = 'normal';
+      child.style.overflowWrap = 'anywhere';
+      child.style.wordBreak = 'break-word';
+    });
+  } else {
+    containerDiv.style.fontSize = '1rem';
+  }
   containerDiv.style.padding = '10px';
-  containerDiv.style.marginBottom = '15px';
   containerDiv.style.marginTop = '15px';
-  containerDiv.style.margin = '0 auto';
+  containerDiv.style.marginBottom = '40px';
+  // containerDiv.style.margin = '0 auto'; 
   containerDiv.style.borderRadius = '6px 6px 6px 6px';
   containerDiv.style.borderWidth = '1px';
   containerDiv.style.borderColor = 'lightgrey';
@@ -2415,6 +2867,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
   figureTitle.innerHTML = info_obj['figureTitle'];
   figureTitle.style.marginBottom = '2px';
   figureTitle.style.marginTop = '15px';
+  figureTitle.style.marginBottom = '28px';
   figureTitle.style.textAlign = 'center';
   figureDiv.appendChild(figureTitle);
 
@@ -2447,8 +2900,8 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
         await figureDiv.appendChild(img);
 
         //Error in admin preview for handling for missing image
-        if (window.location.href.includes('post.php')) {
-          if (img.src.includes('post.php')) {
+        if (window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) {
+          if (img.src.includes('post.php') || img.src.includes('post-new.php')) {
             document.dispatchEvent(new CustomEvent('graphic-data:figurePreviewError', {
               detail: {
                 tabContentElement,
@@ -2464,7 +2917,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       //     console.log('Received graphic-data:figureInternalImageLoaded', event.detail);
       // });
 
-      if (!window.location.href.includes('post.php')) {
+      if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
         document.dispatchEvent(new CustomEvent('graphic-data:figureInternalImageLoaded', {
           detail: {
             title,
@@ -2486,8 +2939,8 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
         await figureDiv.appendChild(img);
 
         //Error in admin preview for handling for missing image
-        if (window.location.href.includes('post.php')) {
-          if (img.src.includes('post.php')) {
+        if (window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) {
+          if (img.src.includes('post.php') || img.src.includes('post-new.php')) {
             document.dispatchEvent(new CustomEvent('graphic-data:figurePreviewError', {
               detail: {
                 tabContentElement,
@@ -2503,7 +2956,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       //     console.log('Received graphic-data:figureExternalImageLoaded', event.detail);
       // });
 
-      if (!window.location.href.includes('post.php')) {
+      if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
         document.dispatchEvent(new CustomEvent('graphic-data:figureExternalImageLoaded', {
           detail: {
             title,
@@ -2516,8 +2969,8 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       // Create a div for the interactive figure, the rest will be handled by the render_interactive_plots function
       img = document.createElement('div');
       const uniqueHash = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-      //img.id = `javascript_figure_target_${postID}_${uniqueHash}`;
-      img.id = `javascript_figure_target_${postID}`;
+      img.id = `javascript_figure_target_${postID}_${uniqueHash}`;
+      //img.id = `javascript_figure_target_${postID}`;
       await figureDiv.appendChild(img);
       break;
     case "Code":
@@ -2541,7 +2994,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
       //Error in admin preview for handling for missing image
       if (!embedCode || embedCode === '') {
-        if (window.location.href.includes('post.php')) {
+        if (window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) {
           document.dispatchEvent(new CustomEvent('graphic-data:figurePreviewError', {
             detail: {
               tabContentElement,
@@ -2576,7 +3029,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       //     console.log('Received graphic-data:figureCodeDisplayLoaded', event.detail);
       // });
 
-      if (!window.location.href.includes('post.php')) {
+      if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
         document.dispatchEvent(new CustomEvent('graphic-data:figureCodeDisplayLoaded', {
           detail: {
             title,
@@ -2598,38 +3051,21 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
   let tempShortCaption = info_obj['shortCaption'];
   tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
   caption.innerHTML = tempShortCaption;
-  caption.style.marginTop = '10px';
+  caption.style.margin = '2%';
   figureDiv.appendChild(caption);
   tabContentElement.appendChild(figureDiv);
-  if (!isBlock || isBlock === null) {
-    // Add "Go to Top" link
-    const goToTopLink = document.createElement('a');
-    goToTopLink.href = "#";
-    goToTopLink.textContent = "↑ Back to Top";
-    goToTopLink.style.display = "block";
-    goToTopLink.style.textAlign = "right";
-    goToTopLink.style.marginTop = "5px";
-    goToTopLink.style.color = "#0056b3";
-    goToTopLink.style.textDecoration = "none";
-    goToTopLink.style.fontSize = "0.8em";
-    figureDiv.appendChild(goToTopLink); // append link to figureDiv
-
-    goToTopLink.addEventListener('click', function (e) {
-      e.preventDefault();
-      document.getElementById('modal-title').scrollIntoView({
-        top: 0,
-        behavior: 'smooth'
-      });
-      //const modalContent = document.querySelector('.modal-title');
-      //modalContent.scrollTop = 0; // or:
-      //modalContent.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
 
   // Create the details element
   const details = document.createElement('details');
+  details.style.margin = '2%';
   const summary = document.createElement('summary');
-  summary.textContent = 'Click for Details';
+  summary.style.fontWeight = '700';
+  if ((0,_graphic_data_scene_shared__WEBPACK_IMPORTED_MODULE_5__.is_mobile)()) {
+    summary.style.marginBottom = '5%';
+  } else {
+    summary.style.marginBottom = '2%';
+  }
+  summary.textContent = 'More Details...';
   let longCaption = document.createElement("p");
   let tempLongCaption = info_obj['longCaption'];
   tempLongCaption = tempLongCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
@@ -2645,7 +3081,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
   //Google Tags registration for figure science and data links
   if (info_obj['scienceText'] != '') {
-    if (!window.location.href.includes('post.php')) {
+    if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
       document.dispatchEvent(new CustomEvent('graphic-data:setupFigureScienceLinkTracking', {
         detail: {
           postID
@@ -2670,12 +3106,15 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       break;
     case "Interactive":
       img.setAttribute("style", "width: 100% !important; height: auto; display: flex; margin: 0; margin-top: 2%");
-      let plotDiv = document.querySelector(`#plotlyFigure${postID}`);
-      try {
-        plotDiv.style.width = "100%";
-      } catch {}
-      ;
+
+      // let plotDiv = document.querySelector(`#plotlyFigure${postID}`);
+      // try {
+      //     plotDiv.style.width = "100%";
+      // } catch {};
       break;
+  }
+  if (figureType === 'Interactive') {
+    return img.id;
   }
 }
 
@@ -2981,7 +3420,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * @param {boolean}       config.displayModeBar                      - Whether to display the mode bar.
  * @param {Array<string>} config.modeBarButtonsToRemove              - List of mode bar buttons to remove.
  */
-async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document) {
+async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document, plotlyDivID) {
   try {
     const renderDocument = targetDocument || document;
     await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.loadPlotlyScript)(); // ensures Plotly is ready
@@ -3026,18 +3465,6 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
     if (targetDocument) {
       newDiv = renderDocument.createElement('div');
     }
-
-    // considerations for unique hashing for multiple uses vs onetime use.
-    let plotlyDivID = `plotlyFigure${figureID}`;
-    // let plotlyDivID;
-    // const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    // if (!targetDocument) {
-    // 	plotlyDivID = `plotlyFigure${figureID}`;
-    // }
-    // if (targetDocument) {
-    // 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
-    // }
-
     newDiv.id = plotlyDivID;
     newDiv.classList.add("container", `figure_interactive${figureID}`);
     let targetElement = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.waitForElementById)(targetFigureElement);
@@ -3081,288 +3508,292 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
       var graphTickPositionBool = 'outside';
     }
     for (let i = 1; i <= figureArguments['NumberOfBars']; i++) {
-      const targetBarColumn = 'Bar' + i;
-      const columnXHeader = figureArguments['XAxis'];
-      const columnYHeader = figureArguments[targetBarColumn];
-      const isStacked = figureArguments[targetBarColumn + 'Stacked'];
-      const StackedSeparatorColor = figureArguments[targetBarColumn + 'StackedSeparatorLineColor'];
-      const showLegend = figureArguments[targetBarColumn + 'Legend'];
-      const showLegendBool = showLegend === 'on';
-      const fillType = figureArguments[targetBarColumn + 'FillType'];
-      const dateFormat = figureArguments['XAxisFormat'];
-      let xHoverFormat = '';
-      switch (dateFormat) {
-        case 'YYYY':
-          xHoverFormat = '%Y';
-          break;
-        case 'YYYY-MM':
-          xHoverFormat = '%Y-%m';
-          break;
-        case 'YYYY-MM-DD':
-          xHoverFormat = '%Y-%m-%d';
-          break;
-        default:
-          xHoverFormat = '';
-        // fallback to raw
-      }
-      const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
+      try {
+        const targetBarColumn = 'Bar' + i;
+        const columnXHeader = figureArguments['XAxis'];
+        const columnYHeader = figureArguments[targetBarColumn];
+        const isStacked = figureArguments[targetBarColumn + 'Stacked'];
+        const StackedSeparatorColor = figureArguments[targetBarColumn + 'StackedSeparatorLineColor'];
+        const showLegend = figureArguments[targetBarColumn + 'Legend'];
+        const showLegendBool = showLegend === 'on';
+        const fillType = figureArguments[targetBarColumn + 'FillType'];
+        const dateFormat = figureArguments['XAxisFormat'];
+        let xHoverFormat = '';
+        switch (dateFormat) {
+          case 'YYYY':
+            xHoverFormat = '%Y';
+            break;
+          case 'YYYY-MM':
+            xHoverFormat = '%Y-%m';
+            break;
+          case 'YYYY-MM-DD':
+            xHoverFormat = '%Y-%m-%d';
+            break;
+          default:
+            xHoverFormat = '';
+          // fallback to raw
+        }
+        const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
 
-      //console.log('fillType', fillType);
+        //console.log('fillType', fillType);
 
-      function lightenColor(hex, factor = 0.2) {
-        const rgb = parseInt(hex.slice(1), 16);
-        const r = Math.min(255, Math.floor((rgb >> 16 & 0xff) + 255 * factor));
-        const g = Math.min(255, Math.floor((rgb >> 8 & 0xff) + 255 * factor));
-        const b = Math.min(255, Math.floor((rgb & 0xff) + 255 * factor));
-        return `rgb(${r},${g},${b})`;
-      }
+        function lightenColor(hex, factor = 0.2) {
+          const rgb = parseInt(hex.slice(1), 16);
+          const r = Math.min(255, Math.floor((rgb >> 16 & 0xff) + 255 * factor));
+          const g = Math.min(255, Math.floor((rgb >> 8 & 0xff) + 255 * factor));
+          const b = Math.min(255, Math.floor((rgb & 0xff) + 255 * factor));
+          return `rgb(${r},${g},${b})`;
+        }
 
-      // === CASE: Individual Bar Column Stacking ===
-      if (isStacked === 'on' && columnXHeader !== 'None') {
-        console.log('// === CASE: Individual Bar Column Stacking ===');
-        const categories = dataToBePlotted[columnXHeader];
-        const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
-        const groupMap = {};
-        categories.forEach((cat, idx) => {
-          if (!groupMap[cat]) groupMap[cat] = 0;
-          groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
-        });
-        const xValue = figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`;
-        Object.entries(groupMap).forEach(([stackCategory, val], j) => {
-          allBarsPlotly.push({
-            x: [xValue],
-            y: [val],
+        // === CASE: Individual Bar Column Stacking ===
+        if (isStacked === 'on' && columnXHeader !== 'None') {
+          console.log('// === CASE: Individual Bar Column Stacking ===');
+          const categories = dataToBePlotted[columnXHeader];
+          const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
+          const groupMap = {};
+          categories.forEach((cat, idx) => {
+            if (!groupMap[cat]) groupMap[cat] = 0;
+            groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
+          });
+          const xValue = figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`;
+          Object.entries(groupMap).forEach(([stackCategory, val], j) => {
+            allBarsPlotly.push({
+              x: [xValue],
+              y: [val],
+              type: 'bar',
+              name: `${stackCategory} ${xValue}`,
+              showlegend: showLegendBool,
+              marker: {
+                color: lightenColor(figureArguments[targetBarColumn + 'Color'], j * 0.05),
+                line: {
+                  width: 1,
+                  color: StackedSeparatorColor
+                },
+                pattern: {
+                  shape: fillType,
+                  size: 4,
+                  solidity: 0.5
+                }
+              },
+              //hovertemplate: `${columnXHeader}: ${stackCategory}`
+              hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`
+            });
+          });
+        }
+
+        // === CASE: Single Bar (no X axis) ===
+        else if (columnXHeader === 'None') {
+          console.log(' // === CASE: Single Bar (no X axis) ===');
+          plotlyX = [figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`];
+          let sumY = dataToBePlotted[columnYHeader].map(val => parseFloat(val)).filter(val => !isNaN(val)).reduce((a, b) => a + b, 0);
+          plotlyY = [sumY];
+          console.log('plotlyX:', plotlyX);
+          console.log('plotlyY:', plotlyY);
+
+          // allBarsPlotly.push({
+          //     x: plotlyX,
+          //     y: plotlyY,
+          //     type: 'bar',
+          //     name: `${figureArguments[targetBarColumn + 'Title']}`,
+          //     showlegend: showLegendBool,
+          //     marker: {
+          //         color: figureArguments[targetBarColumn + 'Color'],
+          //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
+          //     },
+          //     hovertemplate: `${figureArguments['YAxisTitle']}: %{y}`
+          // });
+        }
+
+        // === CASE: Stacked across columns by X axis ===
+        else if (barStackedByX && columnXHeader !== 'None') {
+          console.log(' // === CASE: Stacked across columns by X axis ===');
+          const categories = dataToBePlotted[columnXHeader];
+          const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
+          const groupMap = {};
+          categories.forEach((cat, idx) => {
+            if (!groupMap[cat]) groupMap[cat] = 0;
+            groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
+          });
+          plotlyX = Object.keys(groupMap);
+          plotlyY = Object.values(groupMap);
+
+          // allBarsPlotly.push({
+          //     x: plotlyX,
+          //     y: plotlyY,
+          //     type: 'bar',
+          //     name: `${figureArguments[targetBarColumn + 'Title']}`,
+          //     showlegend: showLegendBool,
+          //     marker: {
+          //         color: figureArguments[targetBarColumn + 'Color'],
+          //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
+          //     },
+          //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
+          // });
+        }
+
+        // === CASE: Separate columns side-by-side per bar ===
+        else {
+          console.log('// === CASE: Separate columns side-by-side per bar ===');
+          const categories = dataToBePlotted[columnXHeader];
+          const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
+          const groupMap = {};
+          categories.forEach((cat, idx) => {
+            if (!groupMap[cat]) groupMap[cat] = 0;
+            groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
+          });
+          plotlyX = Object.keys(groupMap);
+          ////console.log(plotlyX);
+          plotlyY = Object.values(groupMap);
+          ////console.log(plotlyY);
+
+          // allBarsPlotly.push({
+          //     x: plotlyX,
+          //     y: plotlyY,
+          //     type: 'bar',
+          //     name: `${figureArguments[targetBarColumn + 'Title']}`,
+          //     showlegend: showLegendBool,
+          //     // marker: {
+          //     //     color: figureArguments[targetBarColumn + 'Color']
+          //     // },
+          //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
+          // });
+        }
+
+        //Percentiles and Mean lines
+        const showPercentiles = figureArguments[targetBarColumn + 'Percentiles'];
+        const showMean = figureArguments[targetBarColumn + 'Mean'];
+        const showMean_ValuesOpt = figureArguments[targetBarColumn + 'MeanField'];
+        if (showPercentiles === 'on' || showMean === 'on') {
+          //Calculate Percentiles (Auto Calculated) based on dataset Y-axis values
+          //Do we want to be able to set high and low bounds per point here? (That wouldn't make sense to me)
+          const p10 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 10);
+          const p90 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 90);
+          const filteredX = plotlyX.filter(item => item !== "");
+          const xMinPercentile = Math.min(...filteredX);
+          const xMaxPercentile = Math.max(...filteredX);
+          if (showPercentiles === 'on') {
+            allBarsPlotly.push({
+              x: [xMinPercentile, xMaxPercentile],
+              y: [p10, p10],
+              mode: 'lines',
+              line: {
+                dash: 'dot',
+                color: figureArguments[targetBarColumn + 'Color'] + '60'
+              },
+              name: `${figureArguments[targetBarColumn + 'Title']} 10th Percentile (Bottom)`,
+              type: 'scatter',
+              visible: true,
+              showlegend: false
+            });
+            allBarsPlotly.push({
+              x: [xMinPercentile, xMaxPercentile],
+              y: [p90, p90],
+              mode: 'lines',
+              line: {
+                dash: 'dot',
+                color: figureArguments[targetBarColumn + 'Color'] + '60'
+              },
+              name: `${figureArguments[targetBarColumn + 'Title']} 10th & 90th Percentile`,
+              type: 'scatter',
+              visible: true,
+              showlegend: showLegendBool
+            });
+          }
+
+          // Calculate mean
+
+          //Calculate mean (Auto Calculated) based on dataset Y-axis values
+          if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
+            // const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
+            let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
+            let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+            const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
+            const filteredX = plotlyX.filter(item => item !== "");
+            let xMin;
+            let xMax;
+            xMin = Math.min(...filteredX);
+            xMax = Math.max(...filteredX);
+            if (isNaN(xMin) || isNaN(xMax)) {
+              xMin = new Date(filteredX[0]);
+              xMax = new Date(filteredX[filteredX.length - 1]);
+            }
+            allBarsPlotly.push({
+              x: [xMin, xMax],
+              y: [mean, mean],
+              mode: 'lines',
+              line: {
+                dash: 'solid',
+                color: figureArguments[targetBarColumn + 'Color'] + '60'
+              },
+              name: `${figureArguments[targetBarColumn + 'Title']} Mean`,
+              type: 'scatter',
+              visible: true,
+              showlegend: showLegendBool
+            });
+          }
+          //Get mean from the spreadsheet (values imported from spreadsheet per point in dataset)
+          if (showMean_ValuesOpt != 'auto' && showMean === 'on') {
+            const ExistingMeanValue = dataToBePlotted[showMean_ValuesOpt].filter(item => item !== "");
+            const mean = ExistingMeanValue.reduce((a, b) => a + b, 0) / ExistingMeanValue.length;
+            const filteredX = plotlyX.filter(item => item !== "");
+            let xMin;
+            let xMax;
+            xMin = Math.min(...filteredX);
+            xMax = Math.max(...filteredX);
+            if (isNaN(xMin) || isNaN(xMax)) {
+              xMin = new Date(filteredX[0]);
+              xMax = new Date(filteredX[filteredX.length - 1]);
+            }
+            allBarsPlotly.push({
+              x: [xMin, xMax],
+              y: [mean, mean],
+              mode: 'lines',
+              line: {
+                dash: 'solid',
+                color: figureArguments[targetBarColumn + 'Color'] + '60'
+              },
+              name: `${figureArguments[targetBarColumn + 'Title']} Mean`,
+              type: 'scatter',
+              visible: true,
+              showlegend: showLegendBool
+            });
+          }
+        }
+        // === Optional Overlays and Error Bars ===
+        const errorArrayRaw = figureArguments[targetBarColumn + 'ErrorBars'] === 'on' ? figureArguments[targetBarColumn + 'ErrorBarsInputValues'] === 'auto' ? new Array(plotlyY.length).fill((0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computeStandardDeviation)(plotlyY)) : (dataToBePlotted[figureArguments[targetBarColumn + 'ErrorBarsInputValues']] || []).map(val => parseFloat(val)).filter(val => !isNaN(val)) : null;
+        const error_y = errorArrayRaw ? {
+          type: 'data',
+          array: errorArrayRaw,
+          visible: true,
+          color: figureArguments[targetBarColumn + 'ErrorBarsColor'] || '#000',
+          thickness: 1,
+          width: 5
+        } : undefined;
+        if (!(isStacked === 'on' && columnXHeader !== 'None')) {
+          const trace = {
+            x: plotlyX,
+            y: plotlyY,
             type: 'bar',
-            name: `${stackCategory} ${xValue}`,
+            name: `${figureArguments[targetBarColumn + 'Title']}`,
             showlegend: showLegendBool,
             marker: {
-              color: lightenColor(figureArguments[targetBarColumn + 'Color'], j * 0.05),
-              line: {
-                width: 1,
-                color: StackedSeparatorColor
-              },
+              color: figureArguments[targetBarColumn + 'Color'],
               pattern: {
                 shape: fillType,
                 size: 4,
                 solidity: 0.5
               }
             },
-            //hovertemplate: `${columnXHeader}: ${stackCategory}`
-            hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`
-          });
-        });
-      }
-
-      // === CASE: Single Bar (no X axis) ===
-      else if (columnXHeader === 'None') {
-        console.log(' // === CASE: Single Bar (no X axis) ===');
-        plotlyX = [figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`];
-        let sumY = dataToBePlotted[columnYHeader].map(val => parseFloat(val)).filter(val => !isNaN(val)).reduce((a, b) => a + b, 0);
-        plotlyY = [sumY];
-        console.log('plotlyX:', plotlyX);
-        console.log('plotlyY:', plotlyY);
-
-        // allBarsPlotly.push({
-        //     x: plotlyX,
-        //     y: plotlyY,
-        //     type: 'bar',
-        //     name: `${figureArguments[targetBarColumn + 'Title']}`,
-        //     showlegend: showLegendBool,
-        //     marker: {
-        //         color: figureArguments[targetBarColumn + 'Color'],
-        //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
-        //     },
-        //     hovertemplate: `${figureArguments['YAxisTitle']}: %{y}`
-        // });
-      }
-
-      // === CASE: Stacked across columns by X axis ===
-      else if (barStackedByX && columnXHeader !== 'None') {
-        console.log(' // === CASE: Stacked across columns by X axis ===');
-        const categories = dataToBePlotted[columnXHeader];
-        const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
-        const groupMap = {};
-        categories.forEach((cat, idx) => {
-          if (!groupMap[cat]) groupMap[cat] = 0;
-          groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
-        });
-        plotlyX = Object.keys(groupMap);
-        plotlyY = Object.values(groupMap);
-
-        // allBarsPlotly.push({
-        //     x: plotlyX,
-        //     y: plotlyY,
-        //     type: 'bar',
-        //     name: `${figureArguments[targetBarColumn + 'Title']}`,
-        //     showlegend: showLegendBool,
-        //     marker: {
-        //         color: figureArguments[targetBarColumn + 'Color'],
-        //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
-        //     },
-        //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
-        // });
-      }
-
-      // === CASE: Separate columns side-by-side per bar ===
-      else {
-        console.log('// === CASE: Separate columns side-by-side per bar ===');
-        const categories = dataToBePlotted[columnXHeader];
-        const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
-        const groupMap = {};
-        categories.forEach((cat, idx) => {
-          if (!groupMap[cat]) groupMap[cat] = 0;
-          groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
-        });
-        plotlyX = Object.keys(groupMap);
-        ////console.log(plotlyX);
-        plotlyY = Object.values(groupMap);
-        ////console.log(plotlyY);
-
-        // allBarsPlotly.push({
-        //     x: plotlyX,
-        //     y: plotlyY,
-        //     type: 'bar',
-        //     name: `${figureArguments[targetBarColumn + 'Title']}`,
-        //     showlegend: showLegendBool,
-        //     // marker: {
-        //     //     color: figureArguments[targetBarColumn + 'Color']
-        //     // },
-        //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
-        // });
-      }
-
-      //Percentiles and Mean lines
-      const showPercentiles = figureArguments[targetBarColumn + 'Percentiles'];
-      const showMean = figureArguments[targetBarColumn + 'Mean'];
-      const showMean_ValuesOpt = figureArguments[targetBarColumn + 'MeanField'];
-      if (showPercentiles === 'on' || showMean === 'on') {
-        //Calculate Percentiles (Auto Calculated) based on dataset Y-axis values
-        //Do we want to be able to set high and low bounds per point here? (That wouldn't make sense to me)
-        const p10 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 10);
-        const p90 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 90);
-        const filteredX = plotlyX.filter(item => item !== "");
-        const xMinPercentile = Math.min(...filteredX);
-        const xMaxPercentile = Math.max(...filteredX);
-        if (showPercentiles === 'on') {
-          allBarsPlotly.push({
-            x: [xMinPercentile, xMaxPercentile],
-            y: [p10, p10],
-            mode: 'lines',
-            line: {
-              dash: 'dot',
-              color: figureArguments[targetBarColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetBarColumn + 'Title']} 10th Percentile (Bottom)`,
-            type: 'scatter',
-            visible: true,
-            showlegend: false
-          });
-          allBarsPlotly.push({
-            x: [xMinPercentile, xMaxPercentile],
-            y: [p90, p90],
-            mode: 'lines',
-            line: {
-              dash: 'dot',
-              color: figureArguments[targetBarColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetBarColumn + 'Title']} 10th & 90th Percentile`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
+            //hovertemplate: `${figureArguments['XAxisTitle'] || ''}: %{x}<br>${figureArguments['YAxisTitle'] || ''}: %{y}`,
+            hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`,
+            ...(error_y ? {
+              error_y
+            } : {})
+          };
+          allBarsPlotly.push(trace);
         }
-
-        // Calculate mean
-
-        //Calculate mean (Auto Calculated) based on dataset Y-axis values
-        if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
-          // const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
-          let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
-          let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
-          const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
-          const filteredX = plotlyX.filter(item => item !== "");
-          let xMin;
-          let xMax;
-          xMin = Math.min(...filteredX);
-          xMax = Math.max(...filteredX);
-          if (isNaN(xMin) || isNaN(xMax)) {
-            xMin = new Date(filteredX[0]);
-            xMax = new Date(filteredX[filteredX.length - 1]);
-          }
-          allBarsPlotly.push({
-            x: [xMin, xMax],
-            y: [mean, mean],
-            mode: 'lines',
-            line: {
-              dash: 'solid',
-              color: figureArguments[targetBarColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetBarColumn + 'Title']} Mean`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
-        }
-        //Get mean from the spreadsheet (values imported from spreadsheet per point in dataset)
-        if (showMean_ValuesOpt != 'auto' && showMean === 'on') {
-          const ExistingMeanValue = dataToBePlotted[showMean_ValuesOpt].filter(item => item !== "");
-          const mean = ExistingMeanValue.reduce((a, b) => a + b, 0) / ExistingMeanValue.length;
-          const filteredX = plotlyX.filter(item => item !== "");
-          let xMin;
-          let xMax;
-          xMin = Math.min(...filteredX);
-          xMax = Math.max(...filteredX);
-          if (isNaN(xMin) || isNaN(xMax)) {
-            xMin = new Date(filteredX[0]);
-            xMax = new Date(filteredX[filteredX.length - 1]);
-          }
-          allBarsPlotly.push({
-            x: [xMin, xMax],
-            y: [mean, mean],
-            mode: 'lines',
-            line: {
-              dash: 'solid',
-              color: figureArguments[targetBarColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetBarColumn + 'Title']} Mean`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
-        }
-      }
-      // === Optional Overlays and Error Bars ===
-      const errorArrayRaw = figureArguments[targetBarColumn + 'ErrorBars'] === 'on' ? figureArguments[targetBarColumn + 'ErrorBarsInputValues'] === 'auto' ? new Array(plotlyY.length).fill((0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computeStandardDeviation)(plotlyY)) : (dataToBePlotted[figureArguments[targetBarColumn + 'ErrorBarsInputValues']] || []).map(val => parseFloat(val)).filter(val => !isNaN(val)) : null;
-      const error_y = errorArrayRaw ? {
-        type: 'data',
-        array: errorArrayRaw,
-        visible: true,
-        color: figureArguments[targetBarColumn + 'ErrorBarsColor'] || '#000',
-        thickness: 1,
-        width: 5
-      } : undefined;
-      if (!(isStacked === 'on' && columnXHeader !== 'None')) {
-        const trace = {
-          x: plotlyX,
-          y: plotlyY,
-          type: 'bar',
-          name: `${figureArguments[targetBarColumn + 'Title']}`,
-          showlegend: showLegendBool,
-          marker: {
-            color: figureArguments[targetBarColumn + 'Color'],
-            pattern: {
-              shape: fillType,
-              size: 4,
-              solidity: 0.5
-            }
-          },
-          //hovertemplate: `${figureArguments['XAxisTitle'] || ''}: %{x}<br>${figureArguments['YAxisTitle'] || ''}: %{y}`,
-          hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`,
-          ...(error_y ? {
-            error_y
-          } : {})
-        };
-        allBarsPlotly.push(trace);
+      } catch {
+        return;
       }
     }
 
@@ -3436,13 +3867,30 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
     // Create the plot with all lines
     //Plotly.newPlot(plotlyDivID, allBarsPlotly, layout, config);  
 
-    // Create the plot with all lines
-    await Plotly.newPlot(plotDiv, allBarsPlotly, layout, config).then(() => {
-      // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
-      // You need the specific values for the entire yaxis
-      injectOverlays(plotDiv, layout, allBarsPlotly, figureArguments, dataToBePlotted);
-    });
-    Plotly.Plots.resize(plotDiv);
+    try {
+      // Create the plot with all lines
+      await Plotly.newPlot(plotDiv, allBarsPlotly, layout, config).then(() => {
+        // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
+        // You need the specific values for the entire yaxis
+        injectOverlays(plotDiv, layout, allBarsPlotly, figureArguments, dataToBePlotted);
+      });
+      Plotly.Plots.resize(plotDiv);
+
+      //When the graph is rendered in preview save the full arguments into the field.
+      if (window.location.href.includes('post.php')) {
+        //Save the plotly figure as an html file.
+
+        const savedFigure = {
+          data: plotDiv.data,
+          layout: plotDiv.layout,
+          config: config
+        };
+        const figure_interactive_args_rendered = document.querySelector('textarea[data-depend-id="figure_interactive_args_rendered"]');
+        figure_interactive_args_rendered.value = JSON.stringify(savedFigure, null, 2);
+      }
+    } catch {
+      return;
+    }
   } catch (error) {
     console.error('Error loading scripts:', error);
   }
@@ -3744,7 +4192,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments) {
       inputAxisTitle.value = fieldValueSaved;
     }
     inputAxisTitle.addEventListener('change', function () {
-      (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+      ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
     });
     newColumn1.appendChild(labelInputAxis);
     newColumn2.appendChild(labelInputAxisTitle);
@@ -3776,7 +4224,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments) {
         inputBound.value = fieldValueSaved;
       }
       inputBound.addEventListener('change', function () {
-        (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+        ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
       });
       boundColumn.append(labelBound, document.createElement('br'), inputBound);
       boundsWrapper.appendChild(boundColumn);
@@ -3799,7 +4247,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments) {
   selectNumberBars.addEventListener('change', function () {
     (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
   });
-  for (let i = 1; i < 15; i++) {
+  for (let i = 1; i < 41; i++) {
     let selectNumberBarsOption = document.createElement("option");
     selectNumberBarsOption.value = i;
     selectNumberBarsOption.innerHTML = i;
@@ -4347,7 +4795,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
           inputColor.value = fieldValueSaved;
         }
         inputColor.addEventListener('change', function () {
-          (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+          ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
         });
         newColumn1.appendChild(labelInputColor);
         newColumn2.appendChild(inputColor);
@@ -5298,7 +5746,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - layout: Plotly layout object for axis, legend, and display settings.
  * - config: Plotly configuration object for rendering options.
  */
-async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document) {
+async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document, plotlyDivID) {
   try {
     const renderDocument = targetDocument || document;
     await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.loadPlotlyScript)(); // ensures Plotly is ready
@@ -5346,17 +5794,6 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
     // }
     // if (targetDocument) {
     // 	newDiv = renderDocument.createElement('div');
-    // }
-
-    // considerations for unique hashing for multiple uses vs onetime use.
-    let plotlyDivID = `plotlyFigure${figureID}`;
-    // let plotlyDivID;
-    // const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    // // if (targetDocument != renderDocument) {
-    // 	plotlyDivID = `plotlyFigure${figureID}`;
-    // }
-    // if (targetDocument === renderDocument) {
-    // 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
     // }
 
     newDiv.id = plotlyDivID;
@@ -5831,30 +6268,17 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
     });
     Plotly.Plots.resize(plotDiv);
 
-    // if (window.location.href.includes('post.php')) {
-    // 	//Save the plotly figure as an html file. 
-    // 	const savedFigure = {
-    // 		data: plotDiv.data,
-    // 		layout: plotDiv.layout,
-    // 		config: { responsive: true }
-    // 	};
-
-    // 	const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
-    // }
-
-    // if () {
-    // 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
-    // 		saveHtmlFileToServer(figureiframeGenerator.figIframeHtml, figureiframeGenerator.figIframeHtmlFileName, figureiframeGenerator.figIframeHtmlPath, postId);
-    // 	});
-    // }	
-
-    //STANDALONE CODE TO INJECT INTO CODE BLOCK> WORKS INTERMITTENTLY
-    // const snippet = buildPlotlySnippetEmbedCode(
-    // 	savedFigure,
-    // 	`plotly-snippet-${figureID}`
-    // );
-
-    // console.log("snippet", snippet);
+    //When the graph is rendered in preview save the full arguments into the field.
+    if (window.location.href.includes('post.php')) {
+      //Save the plotly figure as an html file. 
+      const savedFigure = {
+        data: plotDiv.data,
+        layout: plotDiv.layout,
+        config: config
+      };
+      const figure_interactive_args_rendered = document.querySelector('textarea[data-depend-id="figure_interactive_args_rendered"]');
+      figure_interactive_args_rendered.value = JSON.stringify(savedFigure, null, 2);
+    }
   } catch (error) {
     console.error('Error loading scripts:', error);
   }
@@ -6164,7 +6588,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments) {
       inputAxisTitle.value = fieldValueSaved;
     }
     inputAxisTitle.addEventListener('change', function () {
-      (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+      ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
     });
     newColumn1.appendChild(labelInputAxis);
     newColumn2.appendChild(labelInputAxisTitle);
@@ -6196,7 +6620,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments) {
         inputBound.value = fieldValueSaved;
       }
       inputBound.addEventListener('change', function () {
-        (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+        ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
       });
       boundColumn.append(labelBound, document.createElement('br'), inputBound);
       boundsWrapper.appendChild(boundColumn);
@@ -6752,7 +7176,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
           inputColor.value = fieldValueSaved;
         }
         inputColor.addEventListener('change', function () {
-          (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+          ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
         });
         newColumn1.appendChild(labelInputColor);
         newColumn2.appendChild(inputColor);
@@ -7023,16 +7447,13 @@ window.plotlyLineParameterFields = plotlyLineParameterFields;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   buildPlotlySnippetEmbedCode: () => (/* binding */ buildPlotlySnippetEmbedCode),
 /* harmony export */   computePercentile: () => (/* binding */ computePercentile),
 /* harmony export */   computeStandardDeviation: () => (/* binding */ computeStandardDeviation),
-/* harmony export */   createFigureIframeHtml: () => (/* binding */ createFigureIframeHtml),
 /* harmony export */   fillFormFieldValues: () => (/* binding */ fillFormFieldValues),
 /* harmony export */   loadExternalScript: () => (/* binding */ loadExternalScript),
 /* harmony export */   loadPlotlyScript: () => (/* binding */ loadPlotlyScript),
 /* harmony export */   logFormFieldValues: () => (/* binding */ logFormFieldValues),
 /* harmony export */   plotlyScriptPromise: () => (/* binding */ plotlyScriptPromise),
-/* harmony export */   saveHtmlToServer: () => (/* binding */ saveHtmlToServer),
 /* harmony export */   waitForElementById: () => (/* binding */ waitForElementById)
 /* harmony export */ });
 // Needed to ensure Plotly is only loaded once
@@ -7306,120 +7727,6 @@ function fillFormFieldValues(elementID) {
 }
 
 /**
- * Generates the HTML document and embed metadata needed to display a Plotly figure in an iframe.
- *
- * Builds a self-contained HTML page that loads Plotly from CDN (if not already present) and
- * renders the figure responsively. Width/height are stripped from the layout so the chart fills
- * its container automatically.
- *
- * @param {Object} savedFigure - Plotly figure object with `data`, `layout`, and `config` properties.
- * @param {string|number} figureID - Unique identifier for the figure, used in element IDs and the output filename.
- * @param {string} rootURL - WordPress site root URL (no trailing slash), used to construct the iframe `src` path.
- * @returns {{
- *   figIframeHtml: string,
- *   figIframeHtmlFileName: string,
- *   figIframeHtmlPath: string,
- *   figIframeCode: string
- * }} Object containing the full HTML document string, the filename (without extension), the
- *    expected server path, and a ready-to-insert `<iframe>` tag.
- */
-function createFigureIframeHtml(savedFigure, figureID, rootURL) {
-  function buildStandalonePlotlyEmbedCode(savedFigure, figureID) {
-    const cleanFigure = {
-      data: savedFigure.data || [],
-      layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
-      config: savedFigure.config || {}
-    };
-    delete cleanFigure.layout.width;
-    delete cleanFigure.layout.height;
-    cleanFigure.layout.autosize = true;
-    const jsonString = JSON.stringify(cleanFigure).replace(/<\/script/gi, "<\\/script");
-    return `
-	<script>
-	(function () {
-		const currentScript = document.currentScript;
-	
-		const chart = document.createElement("div");
-		chart.id = "${figureID}";
-		chart.style.position = "absolute";
-		chart.style.width = "100%";
-		chart.style.height = "100%";
-		chart.style.minHeight = "400px";
-
-		currentScript.parentNode.insertBefore(chart, currentScript);
-	
-		const fig = ${jsonString};
-	
-		function renderPlot() {
-		Plotly.react(
-			chart,
-			fig.data || [],
-			fig.layout || {},
-			fig.config || {}
-		).then(function () {
-			Plotly.Plots.resize(chart);
-		});
-	
-		window.addEventListener("resize", function () {
-			Plotly.Plots.resize(chart);
-		});
-		}
-	
-		if (typeof Plotly !== "undefined") {
-		renderPlot();
-		return;
-		}
-	
-		const script = document.createElement("script");
-		script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
-		script.onload = renderPlot;
-		document.head.appendChild(script);
-	})();
-	</script>
-	`;
-  }
-  const figIframeHtml = `
-				<!doctype html>
-				<html>
-				<head>
-				<meta charset="utf-8">
-				<title>Plotly Embed</title>
-				<style>
-					html, body {
-					width: 100%;
-					min-height: 400px;
-					margin: 0;
-					padding: 0;
-					}
-
-					body {
-					overflow: hidden;
-					}
-
-					#plotly-embed-${figureID} {
-					width: 100%;
-					height: 100%;
-					min-height: 400px;
-					}
-				</style>
-				</head>
-				<body>
-				${buildStandalonePlotlyEmbedCode(savedFigure, `plotly-embed-${figureID}`)}
-				</body>
-				</html>
-	`;
-  const figIframeHtmlFileName = `plotly-${figureID}`;
-  const figIframeHtmlPath = `${rootURL}/wp-content/data/figure_${figureID}/${figIframeHtmlFileName}.html`;
-  const figIframeCode = `<iframe src="${figIframeHtmlPath}" width="100%" height="400px !important" min-height="400px !important"></iframe>`;
-  return {
-    figIframeHtml,
-    figIframeHtmlFileName,
-    figIframeHtmlPath,
-    figIframeCode
-  };
-}
-
-/**
  * Builds an inline HTML snippet that renders a Plotly figure directly in a page (not inside an iframe).
  *
  * Produces a `<div>` wrapper and an immediately-invoked `<script>` block. The script inlines the
@@ -7433,134 +7740,82 @@ function createFigureIframeHtml(savedFigure, figureID, rootURL) {
  * @returns {string} An HTML string containing the wrapper div and self-executing script tag, ready
  *   to be injected into a page.
  */
-function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
-  const cleanFigure = {
-    data: savedFigure.data || [],
-    layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
-    config: savedFigure.config || {}
-  };
-  delete cleanFigure.layout.width;
-  delete cleanFigure.layout.height;
-  cleanFigure.layout.autosize = true;
-  cleanFigure.config.responsive = true;
-  const jsonString = JSON.stringify(cleanFigure).replace(/<\/script/gi, "<\\/script");
-  return `
-	<div id="${embedID}-wrap" style="width:100%; min-height:400px; height:500px; position:relative;">
-		<div id="${embedID}" style="width:100%; height:100%; min-height:400px;"></div>
-	</div>
-	
-	<script>
-	(function () {
-		const fig = ${jsonString};
-		const target = document.getElementById("${embedID}");
-	
-		function renderPlot() {
-		const target2 = document.getElementById("${embedID}");
+// export function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
+// 	const cleanFigure = {
+// 	  data: savedFigure.data || [],
+// 	  layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
+// 	  config: savedFigure.config || {}
+// 	};
 
-		if (!target || typeof Plotly === "undefined") return;
+// 	delete cleanFigure.layout.width;
+// 	delete cleanFigure.layout.height;
 
-		Plotly.react(
-		  target,
-		  fig.data || [],
-		  fig.layout || {},
-		  fig.config || {}
-		).then(function () {
-		  Plotly.Plots.resize(target2);
-		});
+// 	cleanFigure.layout.autosize = true;
+// 	cleanFigure.config.responsive = true;
 
-		window.addEventListener("resize", function () {
-		  Plotly.Plots.resize(target);
-		});
-	  }
+// 	const jsonString = JSON
+// 	  .stringify(cleanFigure)
+// 	  .replace(/<\/script/gi, "<\\/script");
 
-	  if (typeof Plotly !== "undefined") {
-		renderPlot();
-		return;
-	  }
+// 	return `
+// 	<div id="${embedID}-wrap" style="width:100%; min-height:400px; height:500px; position:relative;">
+// 		<div id="${embedID}" style="width:100%; height:100%; min-height:400px;"></div>
+// 	</div>
 
-	  const existing = document.querySelector('script[src*="cdn.plot.ly"]');
+// 	<script>
+// 	(function () {
+// 		const fig = ${jsonString};
+// 		const target = document.getElementById("${embedID}");
 
-	  if (existing) {
-		const waitForPlotly = setInterval(function () {
-		  if (typeof Plotly !== "undefined") {
-			clearInterval(waitForPlotly);
-			renderPlot();
-		  }
-		}, 50);
+// 		function renderPlot() {
+// 		const target2 = document.getElementById("${embedID}");
 
-		setTimeout(function () {
-		  clearInterval(waitForPlotly);
-		}, 10000);
+// 		if (!target || typeof Plotly === "undefined") return;
 
-		return;
-	  }
+// 		Plotly.react(
+// 		  target,
+// 		  fig.data || [],
+// 		  fig.layout || {},
+// 		  fig.config || {}
+// 		).then(function () {
+// 		  Plotly.Plots.resize(target2);
+// 		});
 
-	  const script = document.createElement("script");
-	  script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
-	  script.onload = renderPlot;
-	  document.head.appendChild(script);
-	})();
-	</script>
-	`;
-}
+// 		window.addEventListener("resize", function () {
+// 		  Plotly.Plots.resize(target);
+// 		});
+// 	  }
 
-/**
- * Uploads an HTML string to the server as a file via the WordPress AJAX API.
- *
- * Wraps `htmlContent` in a `File` object and POSTs it to `wp-admin/admin-ajax.php` using
- * the `custom_file_upload` action. Requires a `[name="figure_nonce"]` input to be present
- * in the DOM; alerts and returns early if it is missing.
- *
- * @param {string} htmlContent - The raw HTML string to save.
- * @param {string} fileName - The filename (including extension) to use when creating the uploaded file.
- * @param {string|number} postId - The WordPress post ID to associate the uploaded file with.
- * @returns {Promise<Object>|undefined} Resolves with the parsed JSON response from the server on
- *   success or failure (`result.success` indicates outcome), or `undefined` if the nonce is missing.
- * @throws {Error} Rejects if the `fetch` call itself fails (network error, etc.).
- */
-function saveHtmlToServer(htmlContent, fileName, postId) {
-  // Send the HTML content and filename to the server via AJAX
+// 	  if (typeof Plotly !== "undefined") {
+// 		renderPlot();
+// 		return;
+// 	  }
 
-  const htmlBlob = new Blob([htmlContent], {
-    type: "text/html"
-  });
-  const htmlFile = new File([htmlBlob], fileName, {
-    type: "text/html"
-  });
-  const figureNonceInput = document.querySelector('[name="figure_nonce"]');
-  if (!figureNonceInput || !figureNonceInput.value) {
-    alert("Error: figure_nonce is missing in the form!");
-    return;
-  }
-  const formData = new FormData();
+// 	  const existing = document.querySelector('script[src*="cdn.plot.ly"]');
 
-  // Must match your WP AJAX action hook
-  formData.append("action", "custom_file_upload");
+// 	  if (existing) {
+// 		const waitForPlotly = setInterval(function () {
+// 		  if (typeof Plotly !== "undefined") {
+// 			clearInterval(waitForPlotly);
+// 			renderPlot();
+// 		  }
+// 		}, 50);
 
-  // Must match your PHP expected fields
-  formData.append("post_id", postId);
-  formData.append("figure_nonce", figureNonce);
-  formData.append("uploaded_file", htmlFile);
-  const ajaxUrl = window.location.origin + "/wp-admin/admin-ajax.php";
-  return fetch(ajaxUrl, {
-    method: "POST",
-    body: formData,
-    credentials: "same-origin"
-  }).then(response => response.json()).then(result => {
-    if (!result.success) {
-      console.error("HTML upload failed:", result.data);
-      return result;
-    }
-    console.log("HTML uploaded successfully:", result.data);
-    return result;
-  }).catch(error => {
-    console.error("AJAX error uploading HTML:", error);
-    throw error;
-  });
-}
+// 		setTimeout(function () {
+// 		  clearInterval(waitForPlotly);
+// 		}, 10000);
 
-// Bridge for classic scripts (admin-preview-buttons.js) until they are modularized.
-window.fillFormFieldValues = fillFormFieldValues;
+// 		return;
+// 	  }
+
+// 	  const script = document.createElement("script");
+// 	  script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
+// 	  script.onload = renderPlot;
+// 	  document.head.appendChild(script);
+// 	})();
+// 	</script>
+// 	`;
+// }
 
 /***/ },
 
@@ -8489,7 +8744,7 @@ function plotlyScatterParameterFields(jsonColumns, interactive_arguments) {
       inputAxisTitle.value = fieldValueSaved;
     }
     inputAxisTitle.addEventListener('change', function () {
-      (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+      ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
     });
     newColumn1.appendChild(labelInputAxisTitle);
     newColumn2.appendChild(inputAxisTitle);
@@ -8515,7 +8770,7 @@ function plotlyScatterParameterFields(jsonColumns, interactive_arguments) {
         inputBound.value = fieldValueSaved;
       }
       inputBound.addEventListener('change', function () {
-        (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+        ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
       });
       newColumn1.appendChild(labelBound);
       newColumn2.appendChild(inputBound);
@@ -9071,7 +9326,7 @@ function displayScatterFields(numScatters, jsonColumns, interactive_arguments) {
           inputColor.value = fieldValueSaved;
         }
         inputColor.addEventListener('change', function () {
-          (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+          ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
         });
         newColumn1.appendChild(labelInputColor);
         newColumn2.appendChild(inputColor);
@@ -9334,6 +9589,1474 @@ window.plotlyScatterParameterFields = plotlyScatterParameterFields;
 
 /***/ },
 
+/***/ "./includes/scenes/js/scene-shared.js"
+/*!********************************************!*\
+  !*** ./includes/scenes/js/scene-shared.js ***!
+  \********************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   child_obj: () => (/* binding */ child_obj),
+/* harmony export */   createAccordionItem: () => (/* binding */ createAccordionItem),
+/* harmony export */   debounce: () => (/* binding */ debounce),
+/* harmony export */   decodeHtmlEntities: () => (/* binding */ decodeHtmlEntities),
+/* harmony export */   deviceDetector: () => (/* binding */ deviceDetector),
+/* harmony export */   getSceneData: () => (/* binding */ getSceneData),
+/* harmony export */   getTabFromHash: () => (/* binding */ getTabFromHash),
+/* harmony export */   get_mobile_layer: () => (/* binding */ get_mobile_layer),
+/* harmony export */   handleHashNavigation: () => (/* binding */ handleHashNavigation),
+/* harmony export */   hexToRgba: () => (/* binding */ hexToRgba),
+/* harmony export */   is_mobile: () => (/* binding */ is_mobile),
+/* harmony export */   is_touchscreen: () => (/* binding */ is_touchscreen),
+/* harmony export */   remove_outer_div: () => (/* binding */ remove_outer_div),
+/* harmony export */   scene_data: () => (/* binding */ scene_data),
+/* harmony export */   sectionObj: () => (/* binding */ sectionObj),
+/* harmony export */   setChildObj: () => (/* binding */ setChildObj),
+/* harmony export */   setSceneData: () => (/* binding */ setSceneData),
+/* harmony export */   setSectionObj: () => (/* binding */ setSectionObj),
+/* harmony export */   setSortedChildObjs: () => (/* binding */ setSortedChildObjs),
+/* harmony export */   setVisibleModals: () => (/* binding */ setVisibleModals),
+/* harmony export */   slugify: () => (/* binding */ slugify),
+/* harmony export */   sorted_child_objs: () => (/* binding */ sorted_child_objs),
+/* harmony export */   visible_modals: () => (/* binding */ visible_modals),
+/* harmony export */   waitForEitherElementHash: () => (/* binding */ waitForEitherElementHash),
+/* harmony export */   waitForElementHash: () => (/* binding */ waitForElementHash)
+/* harmony export */ });
+let child_obj = {};
+let sorted_child_objs = null;
+let sectionObj = {};
+let visible_modals = [];
+let scene_data = {};
+
+/**
+ * Sets the shared child object.
+ *
+ * @param {Object} v The child object to store.
+ * @return {void}
+ */
+function setChildObj(v) {
+  child_obj = v;
+}
+
+/**
+ * Sets the sorted child object.
+ *
+ * @param {Object} v The sorted child object to store.
+ * @return {void}
+ */
+function setSortedChildObjs(v) {
+  sorted_child_objs = v;
+}
+
+/**
+ * Sets the section object.
+ *
+ * @param {Object} v The section object to store.
+ * @return {void}
+ */
+function setSectionObj(k, v) {
+  sectionObj[k] = v;
+}
+
+/**
+ * Sets the visible modals object.
+ *
+ * @param {Object} v The visible modals to store.
+ * @return {void}
+ */
+function setVisibleModals(v) {
+  visible_modals = v;
+}
+
+/**
+ * Sets the scene data object.
+ *
+ * @param {Object} v The scene data object to store.
+ * @return {void}
+ */
+function setSceneData(v) {
+  scene_data = v;
+}
+
+/**
+ * Reads and parses scene data from the `#graphic-data-scene-data` DOM element.
+ *
+ * Expects a JSON-encoded data island rendered server-side as the text content
+ * of an element with id `graphic-data-scene-data`. Returns an empty object if the
+ * element is missing, empty, or contains invalid JSON.
+ *
+ * @return {Object} Parsed scene data, or `{}` on failure.
+ */
+function getSceneData() {
+  const el = document.getElementById('graphic-data-scene-data');
+  if (!el || !el.textContent) return {};
+  try {
+    return JSON.parse(el.textContent);
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Debounces a function, delaying its execution until after a specified wait time
+ * has elapsed since the last time it was invoked.
+ * @param {Function} func  The function to debounce.
+ * @param {number}   delay The number of milliseconds to delay.
+ * @return {Function} The new debounced function.
+ */
+function debounce(func, delay) {
+  let timeoutId;
+  return function (...args) {
+    const context = this;
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
+/**
+ * Converts a hex color code to an RGBA color string.
+ *
+ * @function
+ * @param {string} hex     - The hex color code (e.g., "#ff0000" or "ff0000").
+ * @param {number} opacity - The opacity value for the RGBA color (between 0 and 1).
+ * @return {string} The RGBA color string (e.g., "rgba(255, 0, 0, 0.5)").
+ *
+ * @example
+ * hexToRgba('#3498db', 0.7); // returns "rgba(52, 152, 219, 0.7)"
+ */
+function hexToRgba(hex, opacity) {
+  // Remove the hash if it's present
+  hex = hex.replace(/^#/, '');
+
+  // Parse the r, g, b values from the hex string
+  const bigint = parseInt(hex, 16);
+  const r = bigint >> 16 & 255;
+  const g = bigint >> 8 & 255;
+  const b = bigint & 255;
+
+  // Return the rgba color string
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+//returns DOM elements for mobile layer
+/**
+ * Retrieves the DOM element corresponding to a specific layer in a mobile SVG structure based on its label.
+ *
+ * @param {HTMLElement} mob_icons - The parent DOM element that contains all child elements (icons) to search through.
+ * @param {string}      elemname  - The name of the layer or icon to search for. It matches the 'inkscape:label' attribute of the child element.
+ *
+ * @return {HTMLElement|null} - Returns the DOM element that matches the given `elemname` in the 'inkscape:label' attribute.
+ *                                If no match is found, it returns `null`.
+ */
+function get_mobile_layer(mob_icons, elemname) {
+  for (let i = 0; i < mob_icons.children.length; i++) {
+    const child = mob_icons.children[i];
+    const label = child.getAttribute('id');
+    if (label === elemname) {
+      return child;
+    }
+  }
+  return null;
+}
+
+/**
+ * Removes the outer container with the ID 'entire_thing' and promotes its child elements to the body.
+ * This is because we want to get rid of entire_thing if we are on pc/tablet view, and keep it otherwise (ie mobile)
+ *
+ * This function locates the container element with the ID 'entire_thing', moves all its child elements
+ * directly to the `document.body`, and then removes the container itself from the DOM.
+ *
+ * @return {void}
+ */
+function remove_outer_div() {
+  const container = document.querySelector('#entire_thing');
+  while (container.firstChild) {
+    document.body.insertBefore(container.firstChild, container);
+  }
+  container.remove();
+}
+
+/**
+ * Checks if the device being used is touchscreen or not.
+ * @return {boolean} `True` if touchscreen else `False`.
+ */
+function is_touchscreen() {
+  if (window.mobileBool) {
+    // admin mobile-preview button is active
+    return true;
+  }
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+}
+
+//creates an accordion item w/custom IDs based on input
+/**
+ * Creates and returns a fully structured Bootstrap accordion item with a header, button, and collapsible content.
+ * Called in scenarios where accordion needs to be created - within `render_modal` (for modal info and modal images), `make_scene_elements` (for scene info and scene photo accordions), and `make_title' (for mobile tagline)
+ *
+ * @param {string} accordionId     - The unique ID for the accordion item.
+ * @param {string} headerId        - The unique ID for the accordion header.
+ * @param {string} collapseId      - The unique ID for the collapsible section.
+ * @param {string} buttonText      - The text to display on the accordion button.
+ * @param {string} collapseContent - The content to display within the collapsible section.
+ *
+ * @return {HTMLElement} `accordionItem` The complete accordion item containing the header, button, and collapsible content.
+ */
+function createAccordionItem(accordionId, headerId, collapseId, buttonText, collapseContent) {
+  // Create Accordion Item
+  const accordionItem = document.createElement('div');
+  accordionItem.classList.add('accordion-item');
+  accordionItem.setAttribute('id', accordionId);
+
+  // Create Accordion Header
+  const accordionHeader = document.createElement('h2');
+  accordionHeader.classList.add('accordion-header');
+  accordionHeader.setAttribute('id', headerId);
+
+  // Create Accordion Button
+  const accordionButton = document.createElement('button');
+  accordionButton.classList.add('accordion-button', 'collapsed'); // Add 'collapsed' class
+  accordionButton.setAttribute('type', 'button');
+  accordionButton.setAttribute('data-bs-toggle', 'collapse');
+  accordionButton.setAttribute('data-bs-target', `#${collapseId}`);
+  accordionButton.setAttribute('aria-expanded', 'false');
+  accordionButton.setAttribute('aria-controls', collapseId);
+  accordionButton.innerHTML = buttonText;
+
+  // Append Button to Header
+  accordionHeader.appendChild(accordionButton);
+
+  // Create Accordion Collapse
+  const accordionCollapse = document.createElement('div');
+  accordionCollapse.classList.add('accordion-collapse', 'collapse');
+  accordionCollapse.setAttribute('id', collapseId);
+  accordionCollapse.setAttribute('aria-labelledby', headerId);
+
+  // Create Accordion Collapse Body
+  const accordionCollapseBody = document.createElement('div');
+  accordionCollapseBody.classList.add('accordion-body');
+  accordionCollapseBody.innerHTML = collapseContent;
+
+  // Append Collapse Body to Collapse
+  accordionCollapse.appendChild(accordionCollapseBody);
+
+  // Append Header and Collapse to Accordion Item
+  accordionItem.appendChild(accordionHeader);
+  accordionItem.appendChild(accordionCollapse);
+  return accordionItem;
+}
+
+/**
+ * A utility object from the internet for detecting the user's device type based on the user agent string.
+ * Helper function from the internet; using it to check type of device.
+ * Properties:
+ * - `device` {string}: The detected device type ('tablet', 'phone', or 'desktop').
+ * - `isMobile` (boolean): Indicates if the device is mobile (true for 'tablet' or 'phone', false for 'desktop').
+ * - `userAgent` (string): The user agent string in lowercase.
+ *
+ * Methods:
+ * - `detect(s)`: Detects the device type from the user agent string `s` (or the current user agent if not provided).
+ *     - @returns {string} - The detected device type ('tablet', 'phone', or 'desktop').
+ */
+var deviceDetector = function () {
+  const isAdminEditor = window.location.href.includes('post.php') || window.location.href.includes('post-new.php') || window.location.href.includes('edit.php');
+  var ua = navigator.userAgent.toLowerCase();
+  var detect = function (s) {
+    if (isAdminEditor && is_mobile()) {
+      return 'phone';
+    }
+    if (s === undefined) s = ua;else ua = s.toLowerCase();
+    if (/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(ua)) return 'tablet';else if (/(mobi|ipod|phone|blackberry|opera mini|fennec|minimo|symbian|psp|nintendo ds|archos|skyfire|puffin|blazer|bolt|gobrowser|iris|maemo|semc|teashark|uzard)/.test(ua)) return 'phone';else return 'desktop';
+  };
+  return {
+    device: detect(),
+    detect: detect,
+    isMobile: detect() != 'desktop' ? true : false,
+    userAgent: ua
+  };
+}();
+
+/**
+ * Convert an arbitrary string into a URL/DOM-friendly “slug”.
+ *
+ * What it does:
+ * - Converts the input to a string.
+ * - Normalizes Unicode characters (splits accented characters into base + accent marks).
+ * - Removes diacritic marks (accents).
+ * - Lowercases the result.
+ * - Trims leading/trailing whitespace.
+ * - Replaces any run of non-alphanumeric characters with a single hyphen.
+ * - Trims leading/trailing hyphens.
+ *
+ * Common uses:
+ * - Generating safe IDs: `id="my-title-1"`
+ * - Building URL paths: `/posts/my-title-1`
+ * - Creating stable keys for maps/objects
+ *
+ * Notes:
+ * - Output is limited to ASCII `a-z`, `0-9`, and `-`.
+ * - If you need underscores instead of hyphens, change the replacement to `"_"`
+ *   and adjust the trim regex accordingly.
+ *
+ * @param {string} str - Input text to slugify.
+ * @returns {string} A slugified, lowercased, hyphen-separated string.
+ *
+ * @example
+ * slugify("R&D 50% Off — #1!") // "r-d-50-off-1"
+ * slugify("  Crème brûlée  ")  // "creme-brulee"
+ * slugify("Hello   world")     // "hello-world"
+ */
+function slugify(str) {
+  return String(str).normalize('NFKD') // split accents
+  .replace(/[\u0300-\u036f]/g, '') // remove accents
+  .toLowerCase().trim().replace(/[^a-z0-9]+/g, '-') // non-alnum -> -
+  .replace(/^-+|-+$/g, ''); // trim dashes
+}
+
+/**
+ * Checks if the device being used is a mobile device or not.
+ * Checks operating system and screen dimensions
+ * @return {boolean} `True` if mobile else `False`.
+ */
+function is_mobile() {
+  if (window.mobileBool) {
+    return true;
+  }
+  return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) && (window.innerWidth < 512 || window.innerHeight < 512);
+}
+async function waitForElementHash(selector, timeoutMs = 20000) {
+  return new Promise(resolve => {
+    const element = document.querySelector(selector);
+    if (element) {
+      resolve(element);
+      return;
+    }
+    const observer = new MutationObserver(() => {
+      const element = document.querySelector(selector);
+      if (element) {
+        clearTimeout(timeoutId);
+        observer.disconnect();
+        resolve(element);
+      }
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    const timeoutId = setTimeout(() => {
+      observer.disconnect();
+      alert('The requested modal or tab cannot be found.');
+      resolve(null);
+    }, timeoutMs);
+  });
+}
+function waitForElementById(id, timeoutMs = 30000) {
+  return new Promise((resolve, reject) => {
+    const existingElement = document.getElementById(id);
+    if (existingElement) {
+      resolve(existingElement);
+      return;
+    }
+    const observer = new MutationObserver(() => {
+      const element = document.getElementById(id);
+      if (element) {
+        clearTimeout(timeoutId);
+        observer.disconnect();
+        resolve(element);
+      }
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    const timeoutId = setTimeout(() => {
+      observer.disconnect();
+      reject(new Error(`Timed out waiting for element #${id}`));
+    }, timeoutMs);
+  });
+}
+
+// async function waitForEitherElementHash(
+// 	selector1,
+// 	selector2
+// ) {
+// 	return new Promise((resolve) => {
+
+// 		function findElement() {
+// 			return (
+// 				document.querySelector(selector1) ||
+// 				document.querySelector(selector2)
+// 			);
+// 		}
+
+// 		const existingElement =
+// 			findElement();
+
+// 		if (existingElement) {
+// 			resolve(existingElement);
+// 			return;
+// 		}
+
+// 		const observer =
+// 			new MutationObserver(() => {
+
+// 				const element =
+// 					findElement();
+
+// 				if (element) {
+// 					observer.disconnect();
+// 					resolve(element);
+// 				}
+// 			});
+
+// 		observer.observe(
+// 			document.body,
+// 			{
+// 				childList: true,
+// 				subtree: true
+// 			}
+// 		);
+// 	});
+// }
+
+async function waitForEitherElementHash(selector1, selector2, selector3 = null, timeoutMs = 20000) {
+  return new Promise(resolve => {
+    const findElement = () => {
+      return document.querySelector(selector1) || document.querySelector(selector2) || (selector3 ? document.querySelector(selector3) : null);
+    };
+    const element = findElement();
+    if (element) {
+      resolve(element);
+      return;
+    }
+    const observer = new MutationObserver(() => {
+      const element = findElement();
+      if (element) {
+        clearTimeout(timeoutId);
+        observer.disconnect();
+        resolve(element);
+      }
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    const timeoutId = setTimeout(() => {
+      observer.disconnect();
+      alert('The requested modal or tab cannot be found.');
+      resolve(null);
+    }, timeoutMs);
+  });
+}
+function decodeHtmlEntities(value) {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = value;
+  return textarea.value;
+}
+function getTabFromHash(rawHash) {
+  let decoded = rawHash;
+  try {
+    decoded = decodeURIComponent(rawHash);
+  } catch (_) {}
+  if (decoded.includes('?')) {
+    const hashWithoutQuery = decoded.split('?')[0];
+    return hashWithoutQuery.split('/')[1] || hashWithoutQuery || '';
+  } else {
+    return decoded.split("/")[1] || "";
+  }
+}
+
+/**
+ * Handles hash-based URL navigation. This is for when someone goes to the link for a certain figure (.../#CASheephead/1)
+ *
+ * 1. First checks if the URL has a hash, making it a figure link
+ * 2. Does some string parsing stuff to clean up the URL, from which we can extract information about the scene, icon, and tab
+ * 3. Updates new URL, gets necessary DOM elements through waitForElement and fires event handlers to open up figure
+ *
+ * @return {Promise<void>} - A Promise that resolves when navigation handling is complete.
+ *
+ * Usage:
+ * Called after init when DOMcontent loaded.
+ */
+async function handleHashNavigation() {
+  //maybe in here check that the scene is/is not an overview
+  if (window.location.hash && !window.location.href.includes('post.php') && !window.location.href.includes('post-new.php')) {
+    //____________________________
+    //FUNCTIONS
+    //____________________________
+    function getTargetIdFromHash(rawHash) {
+      let decoded = rawHash;
+      try {
+        decoded = decodeURIComponent(rawHash);
+      } catch (_) {}
+      return decoded.split("/")[0] || "";
+    }
+    function waitForElement(parentElement, selector, timeoutMs = 30000) {
+      return new Promise((resolve, reject) => {
+        // Check immediately.
+        const existingElement = parentElement.querySelector(selector);
+        if (existingElement) {
+          resolve(existingElement);
+          return;
+        }
+        const observer = new MutationObserver(() => {
+          const element = parentElement.querySelector(selector);
+          if (element) {
+            clearTimeout(timeoutId);
+            observer.disconnect();
+            resolve(element);
+          }
+        });
+        observer.observe(parentElement, {
+          childList: true,
+          subtree: true
+        });
+        const timeoutId = setTimeout(() => {
+          observer.disconnect();
+          reject(new Error(`Timed out waiting for ${selector}`));
+        }, timeoutMs);
+      });
+    }
+    function activateCaseLink(wrongLink, correctLink, tab) {
+      if (wrongLink === correctLink) return;
+
+      // console.log('wrongLink', wrongLink);
+      // console.log('correctLink', correctLink);
+
+      const newHash = `#${correctLink}/${tab}`;
+      if (window.location.hash !== newHash) {
+        window.location.hash = newHash;
+      } else {
+        window.dispatchEvent(new Event("hashchange"));
+      }
+      const targetLink = document.getElementById(correctLink);
+      // console.log('targetLink', targetLink);
+      targetLink.click();
+      if (is_mobile()) {
+        let modalButton = waitForElement(`#${correctLink}-container`);
+        modalButton.dispatchEvent(new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true
+        }));
+      }
+    }
+    function waitForSingleMeasurableElement(figureElement, timeoutMs = 8000) {
+      const selector = ['.main-svg', 'iframe', 'img', '.code_display_window'].join(', ');
+      return new Promise(resolve => {
+        let observer;
+        let imageLoadHandler;
+        const cleanup = () => {
+          clearTimeout(timeoutId);
+          if (observer) {
+            observer.disconnect();
+          }
+          const image = figureElement.querySelector('img');
+          if (image && imageLoadHandler) {
+            image.removeEventListener('load', imageLoadHandler);
+          }
+        };
+        const checkElement = () => {
+          const measurableElement = figureElement.querySelector(selector);
+          if (!measurableElement) {
+            return false;
+          }
+
+          /*
+          * Image must actually be loaded.
+          */
+          if (measurableElement.matches('img')) {
+            if (!measurableElement.complete || measurableElement.naturalWidth === 0) {
+              return false;
+            }
+          }
+
+          /*
+          * Plotly SVG must have dimensions.
+          */
+          if (measurableElement.matches('.main-svg')) {
+            const rect = measurableElement.getBoundingClientRect();
+            if (rect.width <= 0 || rect.height <= 0) {
+              return false;
+            }
+          }
+
+          /*
+          * Code window must contain something.
+          */
+          if (measurableElement.matches('.code_display_window')) {
+            if (measurableElement.children.length === 0 && measurableElement.textContent.trim() === '') {
+              return false;
+            }
+          }
+          return measurableElement;
+        };
+        const existingElement = checkElement();
+        if (existingElement) {
+          resolve(existingElement);
+          return;
+        }
+
+        /*
+        * Images finishing loading do not trigger
+        * MutationObserver, so listen for load too.
+        */
+        const image = figureElement.querySelector('img');
+        if (image) {
+          imageLoadHandler = () => {
+            const measurableElement = checkElement();
+            if (measurableElement) {
+              cleanup();
+              resolve(measurableElement);
+            }
+          };
+          image.addEventListener('load', imageLoadHandler);
+        }
+        observer = new MutationObserver(() => {
+          const measurableElement = checkElement();
+          if (measurableElement) {
+            cleanup();
+            resolve(measurableElement);
+          }
+        });
+        observer.observe(figureElement, {
+          childList: true,
+          subtree: true,
+          attributes: true
+        });
+
+        /*
+        * If nothing measurable renders within
+        * the timeout, the figure container itself
+        * is still considered valid.
+        *
+        * This allows legitimately empty figures
+        * and preceding figures to complete without
+        * stopping shared figure navigation.
+        */
+        const timeoutId = setTimeout(() => {
+          if (observer) {
+            observer.disconnect();
+          }
+          console.warn(`No measurable content rendered inside #${figureElement.id}. Continuing with figure container.`);
+          resolve(figureElement);
+        }, timeoutMs);
+      });
+    }
+
+    // function waitForSingleMeasurableElement(
+    // 	figureElement,
+    // 	timeoutMs = 8000
+    // ) {
+    // 	const selector = [
+    // 		'.main-svg',
+    // 		'iframe',
+    // 		'img',
+    // 		'.code_display_window'
+    // 	].join(', ');
+
+    // 	return new Promise((resolve, reject) => {
+    // 		let observer;
+    // 		let imageLoadHandler;
+
+    // 		const cleanup = () => {
+    // 			clearTimeout(timeoutId);
+
+    // 			if (observer) {
+    // 				observer.disconnect();
+    // 			}
+
+    // 			const image =
+    // 				figureElement.querySelector('img');
+
+    // 			if (
+    // 				image &&
+    // 				imageLoadHandler
+    // 			) {
+    // 				image.removeEventListener(
+    // 					'load',
+    // 					imageLoadHandler
+    // 				);
+    // 			}
+    // 		};
+
+    // 		const checkElement = () => {
+    // 			const measurableElement =
+    // 				figureElement.querySelector(selector);
+
+    // 			if (!measurableElement) {
+    // 				return false;
+    // 			}
+
+    // 			/*
+    // 			* Image must actually be loaded.
+    // 			*/
+    // 			if (measurableElement.matches('img')) {
+    // 				if (
+    // 					!measurableElement.complete ||
+    // 					measurableElement.naturalWidth === 0
+    // 				) {
+    // 					return false;
+    // 				}
+    // 			}
+
+    // 			/*
+    // 			* Plotly SVG must have dimensions.
+    // 			*/
+    // 			if (measurableElement.matches('.main-svg')) {
+    // 				const rect =
+    // 					measurableElement.getBoundingClientRect();
+
+    // 				if (
+    // 					rect.width <= 0 ||
+    // 					rect.height <= 0
+    // 				) {
+    // 					return false;
+    // 				}
+    // 			}
+
+    // 			/*
+    // 			* Code window must contain something.
+    // 			*/
+    // 			if (
+    // 				measurableElement.matches(
+    // 					'.code_display_window'
+    // 				)
+    // 			) {
+    // 				if (
+    // 					measurableElement.children.length === 0 &&
+    // 					measurableElement.textContent.trim() === ''
+    // 				) {
+    // 					return false;
+    // 				}
+    // 			}
+
+    // 			return measurableElement;
+    // 		};
+
+    // 		const existingElement =
+    // 			checkElement();
+
+    // 		if (existingElement) {
+    // 			resolve(existingElement);
+    // 			return;
+    // 		}
+
+    // 		/*
+    // 		* Images finishing loading do not trigger
+    // 		* MutationObserver, so listen for load too.
+    // 		*/
+    // 		const image =
+    // 			figureElement.querySelector('img');
+
+    // 		if (image) {
+    // 			imageLoadHandler = () => {
+    // 				const measurableElement =
+    // 					checkElement();
+
+    // 				if (measurableElement) {
+    // 					cleanup();
+    // 					resolve(measurableElement);
+    // 				}
+    // 			};
+
+    // 			image.addEventListener(
+    // 				'load',
+    // 				imageLoadHandler
+    // 			);
+    // 		}
+
+    // 		observer = new MutationObserver(() => {
+    // 			const measurableElement =
+    // 				checkElement();
+
+    // 			if (measurableElement) {
+    // 				cleanup();
+    // 				resolve(measurableElement);
+    // 			}
+    // 		});
+
+    // 		observer.observe(figureElement, {
+    // 			childList: true,
+    // 			subtree: true,
+    // 			attributes: true
+    // 		});
+
+    // 		const timeoutId = setTimeout(() => {
+    // 			if (observer) {
+    // 				observer.disconnect();
+    // 			}
+
+    // 			reject(
+    // 				new Error(
+    // 					`Timed out waiting for measurable content inside #${figureElement.id}`
+    // 				)
+    // 			);
+    // 		}, timeoutMs);
+    // 	});
+    // }
+
+    async function waitForMeasurableElement(figureElement, timeoutMs = 30000) {
+      /*
+      * Find the tab pane containing this figure.
+      */
+      const tabPane = figureElement.closest('.tab-pane');
+      if (!tabPane) {
+        throw new Error(`Could not find tab pane for #${figureElement.id}`);
+      }
+
+      /*
+      * Get all figures in DOM order.
+      */
+      const figures = Array.from(tabPane.querySelectorAll('.figure'));
+
+      /*
+      * Find our target's position.
+      */
+      const targetIndex = figures.indexOf(figureElement);
+      if (targetIndex === -1) {
+        throw new Error(`Could not find #${figureElement.id} in its tab pane`);
+      }
+      const figuresToWaitFor = figures.slice(0, targetIndex + 1);
+      let targetMeasurableElement = null;
+
+      /*
+      * Wait for every preceding figure in order.
+      */
+      for (const currentFigure of figuresToWaitFor) {
+        const measurableElement = await waitForSingleMeasurableElement(currentFigure, timeoutMs);
+        if (currentFigure === figureElement) {
+          targetMeasurableElement = measurableElement;
+        }
+      }
+      return targetMeasurableElement;
+    }
+    function expandAccordionForLink(targetLink) {
+      if (!targetLink) {
+        return;
+      }
+
+      // console.log(
+      // 	'expandAccordionForLink TEST1',
+      // 	targetLink
+      // );
+
+      const bodyEl = targetLink.closest('[id^="accordion-body-"]');
+      bodyEl.style.display = 'block';
+      if (!bodyEl) {
+        // console.log(
+        // 	'expandAccordionForLink: No accordion body found.'
+        // );
+
+        return;
+      }
+    }
+    function collectModalIds() {
+      if (!is_mobile()) {
+        return [...document.querySelectorAll(".modal-link")].map(el => el.id).filter(Boolean);
+      }
+      if (is_mobile()) {
+        return [...document.querySelectorAll('div[id$="-container"]')].map(el => el.id).filter(Boolean);
+      }
+    }
+
+    //____________________________
+    //URL validations and parsing
+    //____________________________
+    const raw = window.location.hash.slice(1);
+    let modalName = getTargetIdFromHash(raw);
+    let tabId = getTabFromHash(raw);
+    const submittedURL = window.location.href;
+    const submittedURLParts = submittedURL.split('/');
+    const submittedInstance = submittedURLParts[3];
+    const submittedScene = submittedURLParts[4];
+    const submittedModal = submittedURLParts[5].replace('#', '');
+    let constructedRestFigureURL;
+
+    /*
+    * Capture figure ID BEFORE any modal/tab
+    * click handlers can modify the URL hash.
+    */
+    const [rawTabPath, rawFragmentQuery = ''] = raw.split('?');
+    const rawFragmentParams = new URLSearchParams(rawFragmentQuery);
+    let figureId = rawFragmentParams.get('figure');
+
+    // console.log(
+    // 	'ORIGINAL figureId',
+    // 	figureId
+    // );
+
+    if (figureId) {
+      // Build the REST API URL to fetch the figure data based on the figureId from the URL hash.
+      const protocol = window.location.protocol;
+      const host = window.location.host;
+      const figureFetchURL = protocol + "//" + host + "/wp-json/wp/v2/figure/" + figureId;
+      const figureResponse = await fetch(figureFetchURL);
+      if (!figureResponse.ok) {
+        alert('The requested figure cannot be found.');
+        return;
+      }
+      const figureData = await figureResponse.json();
+      const figureModalNumber = figureData.figure_modal;
+      let figureTab = figureData.figure_tab;
+      figureTab = Number(figureTab);
+      const modalFetchURL = protocol + "//" + host + "/wp-json/wp/v2/modal/" + figureModalNumber;
+      const modalResponse = await fetch(modalFetchURL);
+      const modalData = await modalResponse.json();
+      let modalTitle = modalData.title.rendered;
+      modalTitle = decodeHtmlEntities(modalTitle);
+      // console.log('modalTitle', modalTitle);
+      let modalSlug = slugify(modalTitle);
+      // console.log('modalSlug', modalSlug);
+      const modalSceneNumber = modalData.modal_scene;
+      const sceneFetchURL = protocol + "//" + host + "/wp-json/wp/v2/scene/" + modalSceneNumber;
+      const sceneResponse = await fetch(sceneFetchURL);
+      const sceneData = await sceneResponse.json();
+      const sceneSlug = sceneData.slug;
+      const sceneInstanceNumber = sceneData.scene_location;
+      const instanceFetchURL = protocol + "//" + host + "/wp-json/wp/v2/instance/" + sceneInstanceNumber;
+      const instanceResponse = await fetch(instanceFetchURL);
+      const instanceData = await instanceResponse.json();
+      const instanceSlug = instanceData.instance_slug;
+      constructedRestFigureURL = protocol + "//" + host + "/" + instanceSlug + "/" + sceneSlug + "/#" + modalSlug + "/" + figureTab + "?figure=" + figureId;
+
+      // console.log('constructedRestFigureURL', constructedRestFigureURL);
+      // console.log('submittedURL', submittedURL);
+
+      // console.log('submittedScene', submittedScene);
+      // console.log('sceneSlug', sceneSlug);
+
+      // console.log('submittedModal', submittedModal);
+      // console.log('modalSlug', modalSlug);
+
+      // console.log('submittedInstance', submittedInstance);
+      // console.log('instanceSlug', instanceSlug);
+
+      // Check if the submitted URL, scene, modal, or instance does not match the constructed REST figure URL or the expected slugs.
+      if (submittedURL !== constructedRestFigureURL || submittedInstance !== instanceSlug) {
+        if (submittedScene != sceneSlug) {
+          window.location.href = constructedRestFigureURL;
+          // window.location.reload();
+        }
+        if (tabId != figureTab) {
+          window.location.href = constructedRestFigureURL;
+          // window.location.reload();
+        }
+        if (submittedInstance === instanceSlug && submittedScene === sceneSlug && submittedModal != modalSlug || submittedInstance === instanceSlug && submittedScene === sceneSlug && submittedModal === modalSlug && figureTab !== tabId) {
+          // Redirect to the correct figure location.
+          window.location.href = constructedRestFigureURL;
+          window.location.reload();
+        }
+
+        // return;
+      }
+    }
+
+    //____________________________
+    //MODAL OPEN CONTROL SELECTION 
+    //____________________________
+
+    let modName;
+    let modModal;
+    let modNameCapitalized;
+    let modNameFirstCapitalized;
+    if (is_mobile()) {
+      /*
+      * Convert hash-safe modal name back into
+      * the readable modal name.
+      *
+      * Example:
+      * contaminants -> contaminants
+      * code_block   -> code block
+      */
+      modModal = modalName.replace(/_/g, ' ');
+
+      /*
+      * PRIMARY MOBILE ID
+      *
+      * Actual mobile containers are generally:
+      *
+      * contaminants-container
+      * phytoplankton-container
+      * code-block-container
+      */
+      modName = `${modModal.toLowerCase().replace(/\s+/g, '-')}-container`;
+
+      /*
+      * FALLBACK:
+      *
+      * Keep support for any existing mobile
+      * containers that may have been created
+      * with capitalized words.
+      */
+      const modModalCapitalized = modModal.replace(/\b\w/g, char => char.toUpperCase());
+      modNameCapitalized = `${modModalCapitalized.replace(/\s+/g, '-')}-container`;
+
+      /*
+      * FALLBACK:
+      *
+      * Only the first letter is capitalized.
+      *
+      * Maritime-heritage-resources-container
+      */
+      const modModalFirstCapitalized = modModal.charAt(0).toUpperCase() + modModal.slice(1).toLowerCase();
+      modNameFirstCapitalized = `${modModalFirstCapitalized.replace(/\s+/g, '-')}-container`;
+    } else {
+      /*
+      * Desktop IDs already use the modal
+      * slug directly.
+      */
+      modName = modalName;
+    }
+
+    //____________________________
+    // FIND MODAL OPEN CONTROL
+    //____________________________
+
+    let modalButton;
+    if (is_mobile()) {
+      // console.log(
+      // 	'MOBILE modalName',
+      // 	modalName
+      // );
+
+      // console.log(
+      // 	'MOBILE modModal',
+      // 	modModal
+      // );
+
+      // console.log(
+      // 	'MOBILE modName',
+      // 	modName
+      // );
+
+      // console.log(
+      // 	'MOBILE modNameCapitalized',
+      // 	modNameCapitalized
+      // );
+
+      // console.log(
+      // 	'MOBILE modNameFirstCapitalized',
+      // 	modNameFirstCapitalized
+      // );
+
+      const modNameElement = document.getElementById(modName);
+      const modNameCapitalizedElement = document.getElementById(modNameCapitalized);
+      const modModalElement = document.getElementById(modModal);
+      const modNameFirstCapitalizedElement = document.getElementById(modNameFirstCapitalized);
+
+      // console.log(
+      // 	'MOBILE modNameElement',
+      // 	modNameElement
+      // );
+      // console.log(
+      // 	'MOBILE modNameCapitalizedElement',
+      // 	modNameCapitalizedElement
+      // );
+      // console.log(
+      // 	'MOBILE modModalElement',
+      // 	modModalElement
+      // );
+      // console.log(
+      // 	'MOBILE modNameFirstCapitalizedElement',
+      // 	modNameFirstCapitalizedElement
+      // );
+
+      /*
+      * 1. Preferred mobile container
+      */
+      if (modNameElement) {
+        modalButton = modNameElement;
+
+        // console.log(
+        // 	'MOBILE modalButton found using modName',
+        // 	modalButton
+        // );
+
+        /*
+        * 2. Every word capitalized
+        */
+      } else if (modNameCapitalizedElement) {
+        modalButton = modNameCapitalizedElement;
+
+        // console.log(
+        // 	'MOBILE modalButton found using modNameCapitalized',
+        // 	modalButton
+        // );
+
+        /*
+        * 3. Direct-ID fallback
+        */
+      } else if (modModalElement) {
+        modalButton = modModalElement;
+
+        // console.log(
+        // 	'MOBILE modalButton found using modModal',
+        // 	modalButton
+        // );
+
+        /*
+        * 4. Only first letter capitalized
+        *
+        * Maritime-heritage-resources-container
+        */
+      } else if (modNameFirstCapitalizedElement) {
+        modalButton = modNameFirstCapitalizedElement;
+
+        // console.log(
+        // 	'MOBILE modalButton found using modNameFirstCapitalized',
+        // 	modalButton
+        // );
+      } else {
+        modalButton = await waitForEitherElementHash(`#${modName}`, `#${modNameCapitalized}`, `#${modNameFirstCapitalized}`);
+      }
+
+      // console.log(
+      // 	'MOBILE modalButton',
+      // 	modalButton
+      // );
+    }
+    if (!is_mobile()) {
+      // console.log('DESKTOP modName', modName);
+      // console.log('DESKTOP modModal', modModal);
+
+      modalButton = await waitForElementHash(`#${modName}`);
+
+      // console.log(
+      // 	'DESKTOP modalButton',
+      // 	modalButton
+      // );
+    }
+
+    // DESKTOP
+    if (!is_mobile()) {
+      // console.log('DESKTOP modName', modName);
+
+      modalButton = await waitForElementHash(`#${modName}`);
+
+      // console.log(
+      // 	'DESKTOP modalButton',
+      // 	modalButton
+      // );
+    }
+
+    // Final safety check
+    if (!modalButton) {
+      throw new Error(`Could not find modal control. Tried "${modName}" and "${modModal}".`);
+    }
+
+    //____________________________
+    // FIND ACTUAL CLICK TARGET
+    //____________________________
+
+    let modalClickTarget = modalButton;
+
+    /*
+    * Some SVG modal controls contain nested <g> elements
+    * with the same ID:
+    *
+    * <g id="contaminants">
+    *     <g id="contaminants">
+    *         ...
+    *     </g>
+    * </g>
+    *
+    * Click the deepest matching element so the event can
+    * bubble upward through all parent SVG elements.
+    */
+    if (modalButton.tagName.toLowerCase() === 'g') {
+      const nestedMatchingElements = Array.from(modalButton.querySelectorAll('[id]')).filter(element => element.id === modalButton.id);
+      if (nestedMatchingElements.length > 0) {
+        modalClickTarget = nestedMatchingElements[nestedMatchingElements.length - 1];
+      }
+    }
+
+    // console.log(
+    // 	'ABOUT TO CLICK MODAL:',
+    // 	{
+    // 		modalName,
+    // 		modName,
+    // 		modModal,
+    // 		modalButton,
+    // 		modalClickTarget,
+    // 		id: modalClickTarget.id,
+    // 		tagName: modalClickTarget.tagName
+    // 	}
+    // );
+
+    //Expand the accordion if needed.
+    if (is_mobile()) {
+      expandAccordionForLink(modalButton);
+    }
+
+    //____________________________
+    // CLICK MODAL
+    //____________________________
+
+    if (modalButton.dataset.sharedNavigationClicked !== 'true') {
+      modalButton.dataset.sharedNavigationClicked = 'true';
+      if (modalClickTarget.tagName.toLowerCase() === 'g') {
+        modalClickTarget.dispatchEvent(new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true
+        }));
+
+        // console.log(
+        // 	'MODAL CLICK SVG <g>',
+        // 	modalClickTarget
+        // );
+      } else {
+        modalClickTarget.click();
+
+        // console.log(
+        // 	'MODAL CLICK REGULAR',
+        // 	modalClickTarget
+        // );
+      }
+    } else {
+      console.log('MODAL CLICK SKIPPED — already clicked:', modalButton.id);
+    }
+
+    // let modalIds = collectModalIds();
+    // const excludedModalIds = [
+    //     'title-container',
+    //     'tagline-container',
+    //     'accordion-container',
+    //     'toc-container'
+    // ];
+
+    // modalIds = modalIds.filter((modalName) => !excludedModalIds.includes(modalName));
+    // console.log('modalIds', modalIds);
+
+    // if (!is_mobile() && !modalIds.includes(modalName)) {
+    // 	alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+    // }
+
+    // if (is_mobile() && !modalIds.some(modalId => modalId.toLowerCase().replace(/-container$/, '') === modalName)) {
+    // 	alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+    // }
+
+    //____________________________
+    //TAB CONTROL SELECTION
+    //____________________________
+    let tabButton;
+    let tabButtonId;
+    if (is_mobile()) {
+      tabButtonId = `${modalName}-${tabId}`;
+      // console.log('tabButtonId 3', tabButtonId);
+      tabButton = await waitForElementById(tabButtonId);
+      // console.log('tabButton 3', tabButton);
+      tabButton.click();
+      // console.log('TEST 3: MOBILE tabButton clicked');
+    }
+    if (!is_mobile()) {
+      tabButton = await waitForElementHash(`#${modName}-${tabId}`);
+      tabButtonId = `${modName}-${tabId}`;
+      // console.log('tabButton', tabButton);
+      tabButton.click();
+      // console.log('TEST 4: DESKTOP tabButton clicked');
+    }
+
+    //____________________________
+    //SET PANE ID AND FIGURE CONTROL SELECTION
+    //____________________________
+
+    let targetTabPaneId = `${modalName}-${tabId}-pane`;
+    // console.log('targetTabPaneId', targetTabPaneId);
+
+    if (figureId) {
+      if (submittedURL === constructedRestFigureURL) {
+        try {
+          const tabPane = await waitForElementById(targetTabPaneId);
+          // console.log('targetTabPaneId', targetTabPaneId);
+          // console.log('tabPane', tabPane);
+
+          if (is_mobile()) {
+            await new Promise(resolve => {
+              function checkTabState() {
+                const isActive = tabPane.classList.contains('active');
+                const isShown = tabPane.classList.contains('show');
+                if (isActive && isShown) {
+                  resolve();
+                  return;
+                }
+                requestAnimationFrame(checkTabState);
+              }
+              checkTabState();
+            });
+          }
+          const figureElement = await waitForElement(tabPane, `#figure-${figureId}`);
+
+          // console.log('figureElement', figureElement);
+
+          /*s
+          * Wait until the figure actually contains its rendered content.
+          */
+          const measurableElement = await waitForMeasurableElement(figureElement);
+
+          /*
+          * Give the browser two final layout frames after
+          * the figure has been confirmed stable.
+          */
+          await new Promise(resolve => {
+            window.requestAnimationFrame(() => {
+              window.requestAnimationFrame(resolve);
+            });
+          });
+          figureElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest'
+          });
+
+          /*
+          * Keep mobile scrolling inside the modal
+          * instead of scrolling the page underneath.
+          */
+          const activeModal = figureElement.closest('.modal');
+          if (activeModal) {
+            // document.body.style.overflow = 'hidden';
+            activeModal.style.overflowY = 'auto';
+            // activeModal.style.overscrollBehavior = 'contain';
+            activeModal.style.touchAction = 'pan-y';
+
+            /*
+            * Give the figure/modal active focus.
+            */
+            figureElement.setAttribute('tabindex', '-1');
+            figureElement.focus({
+              preventScroll: true
+            });
+          }
+          const figureSuffix = figureId ? `?figure=${encodeURIComponent(figureId)}` : '';
+          const newHash = `#${modalName}/${tabId}${figureSuffix}`;
+          window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${newHash}`);
+        } catch (error) {
+          alert("We couldn't find that content. It may have been moved, renamed, or deleted.");
+          console.error('Could not scroll to shared figure:', error);
+        }
+      }
+    }
+  }
+}
+
+//Function was intended to fix tab selection on modal load when the logic used to reflect that the 1st iteration was the only selected one. 
+//This function is probably no longer needed, the issue described in the line above has been fixed.
+// export function activateFirstAvailableTab() {
+// 	const rawHash = window.location.hash.slice(1);
+// 	const tabId = getTabFromHash(rawHash);
+
+// 	// console.log('tabId', tabId);
+
+// 	if (tabId !== '1') {
+// 		return;
+// 	}
+
+// 	const activeTab =
+// 		document.querySelector(
+// 			'#myTab .nav-link.tab-title.active'
+// 		);
+
+// 	// console.log('activeTab', activeTab);
+
+// 	if (activeTab) {
+// 		// console.log('test2');
+// 		return;
+// 	}
+
+// 	const firstAvailableTab =
+// 		document.querySelector(
+// 			'#myTab .nav-link.tab-title'
+// 		);
+
+// 	// console.log(
+// 	// 	'firstAvailableTab',
+// 	// 	firstAvailableTab
+// 	// );
+
+// 	if (firstAvailableTab) {
+// 		// console.log(
+// 		// 	'No active tab found. Setting first available tab active:',
+// 		// 	firstAvailableTab.id
+// 		// );
+
+// 		firstAvailableTab.classList.add('active');
+// 		firstAvailableTab.setAttribute(
+// 			'aria-selected',
+// 			'true'
+// 		);
+// 		firstAvailableTab.removeAttribute(
+// 			'tabindex'
+// 		);
+
+// 		let TabPane =
+// 			document.getElementById(
+// 				`${firstAvailableTab.id}-pane`
+// 			);
+
+// 		// console.log(
+// 		// 	'TabPane',
+// 		// 	TabPane
+// 		// );
+
+// 		TabPane.classList.add(
+// 			'tab-pane',
+// 			'fade'
+// 		);
+
+// 		TabPane.classList.add(
+// 			'show',
+// 			'active'
+// 		);
+
+// 		/*
+// 		 * Get the actual tab number from
+// 		 * the available tab ID.
+// 		 *
+// 		 * image-2 -> 2
+// 		 */
+// 		const availableTabId =
+// 			firstAvailableTab.id
+// 				.split('-')
+// 				.pop();
+
+// 		/*
+// 		 * Preserve the modal name and
+// 		 * any existing query parameters.
+// 		 */
+// 		const [hashPath, hashQuery = ''] =
+// 			rawHash.split('?');
+
+// 		const modalName =
+// 			hashPath.split('/')[0];
+
+// 		const figureSuffix =
+// 			hashQuery
+// 				? `?${hashQuery}`
+// 				: '';
+
+// 		const newHash =
+// 			`#${modalName}/${availableTabId}${figureSuffix}`;
+
+// 		window.history.replaceState(
+// 			null,
+// 			'',
+// 			`${window.location.pathname}` +
+// 			`${window.location.search}` +
+// 			newHash
+// 		);
+
+// 		// console.log(
+// 		// 	'Updated URL to available tab:',
+// 		// 	newHash
+// 		// );
+// 	}
+// }
+
+/***/ },
+
 /***/ "react/jsx-runtime"
 /*!**********************************!*\
   !*** external "ReactJSXRuntime" ***!
@@ -9427,17 +11150,17 @@ module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/tru
 /******/ 	});
 /************************************************************************/
 /******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
+/******/ 	const __webpack_module_cache__ = {};
 /******/ 	
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
 /******/ 		if (cachedModule !== undefined) {
 /******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
 /******/ 			// no module.id needed
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
@@ -9446,7 +11169,7 @@ module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/tru
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
-/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
 /******/ 			e.code = 'MODULE_NOT_FOUND';
 /******/ 			throw e;
 /******/ 		}
@@ -9458,47 +11181,37 @@ module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/tru
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = (module) => {
+/******/ 		const getter = module && module.__esModule ?
+/******/ 			() => (module['default']) :
+/******/ 			() => (module);
+/******/ 		__webpack_require__.d(getter, { a: getter });
+/******/ 		return getter;
+/******/ 	};
 /******/ 	
 /******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
+/******/ 	// define getter/value functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 			}
-/******/ 		};
-/******/ 	})();
+/******/ 		}
+/******/ 	};
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.hasOwn(obj, prop));
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 /*!*******************************************!*\

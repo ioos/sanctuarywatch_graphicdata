@@ -44,6 +44,11 @@ module.exports = {
 				__dirname,
 				'includes/figures/js/interactive/plotly-utility.js'
 			),
+
+			'@graphic-data/scene-shared': path.resolve(
+				__dirname,
+				'includes/scenes/js/scene-shared.js'
+			),
 		},
 	},
 };

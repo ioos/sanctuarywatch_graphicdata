@@ -4,6 +4,6 @@
 		"build:insert-figure": "wp-scripts build --source-path=blocks/insert-figure/src --output-path=blocks/insert-figure/build --webpack-copy-php"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^32.2.0"
+		"@wordpress/scripts": "^35.0.0"
 	}
 }

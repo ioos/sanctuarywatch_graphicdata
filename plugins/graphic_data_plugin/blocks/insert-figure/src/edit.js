@@ -6,6 +6,7 @@ import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { render_tab_info } from '@graphic-data/figure-render';
 import { render_interactive_plots } from '@graphic-data/figure-render';
+import { is_mobile } from '@graphic-data/scene-shared';
 
 import {
 	SelectControl,

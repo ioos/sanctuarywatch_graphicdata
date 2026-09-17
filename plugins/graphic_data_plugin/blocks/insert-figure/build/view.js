@@ -302,7 +302,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * @param {boolean}       config.displayModeBar                      - Whether to display the mode bar.
  * @param {Array<string>} config.modeBarButtonsToRemove              - List of mode bar buttons to remove.
  */
-async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document) {
+async function producePlotlyBarFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document, plotlyDivID) {
   try {
     const renderDocument = targetDocument || document;
     await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.loadPlotlyScript)(); // ensures Plotly is ready
@@ -347,18 +347,6 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
     if (targetDocument) {
       newDiv = renderDocument.createElement('div');
     }
-
-    // considerations for unique hashing for multiple uses vs onetime use.
-    let plotlyDivID = `plotlyFigure${figureID}`;
-    // let plotlyDivID;
-    // const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    // if (!targetDocument) {
-    // 	plotlyDivID = `plotlyFigure${figureID}`;
-    // }
-    // if (targetDocument) {
-    // 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
-    // }
-
     newDiv.id = plotlyDivID;
     newDiv.classList.add("container", `figure_interactive${figureID}`);
     let targetElement = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.waitForElementById)(targetFigureElement);
@@ -402,288 +390,292 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
       var graphTickPositionBool = 'outside';
     }
     for (let i = 1; i <= figureArguments['NumberOfBars']; i++) {
-      const targetBarColumn = 'Bar' + i;
-      const columnXHeader = figureArguments['XAxis'];
-      const columnYHeader = figureArguments[targetBarColumn];
-      const isStacked = figureArguments[targetBarColumn + 'Stacked'];
-      const StackedSeparatorColor = figureArguments[targetBarColumn + 'StackedSeparatorLineColor'];
-      const showLegend = figureArguments[targetBarColumn + 'Legend'];
-      const showLegendBool = showLegend === 'on';
-      const fillType = figureArguments[targetBarColumn + 'FillType'];
-      const dateFormat = figureArguments['XAxisFormat'];
-      let xHoverFormat = '';
-      switch (dateFormat) {
-        case 'YYYY':
-          xHoverFormat = '%Y';
-          break;
-        case 'YYYY-MM':
-          xHoverFormat = '%Y-%m';
-          break;
-        case 'YYYY-MM-DD':
-          xHoverFormat = '%Y-%m-%d';
-          break;
-        default:
-          xHoverFormat = '';
-        // fallback to raw
-      }
-      const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
+      try {
+        const targetBarColumn = 'Bar' + i;
+        const columnXHeader = figureArguments['XAxis'];
+        const columnYHeader = figureArguments[targetBarColumn];
+        const isStacked = figureArguments[targetBarColumn + 'Stacked'];
+        const StackedSeparatorColor = figureArguments[targetBarColumn + 'StackedSeparatorLineColor'];
+        const showLegend = figureArguments[targetBarColumn + 'Legend'];
+        const showLegendBool = showLegend === 'on';
+        const fillType = figureArguments[targetBarColumn + 'FillType'];
+        const dateFormat = figureArguments['XAxisFormat'];
+        let xHoverFormat = '';
+        switch (dateFormat) {
+          case 'YYYY':
+            xHoverFormat = '%Y';
+            break;
+          case 'YYYY-MM':
+            xHoverFormat = '%Y-%m';
+            break;
+          case 'YYYY-MM-DD':
+            xHoverFormat = '%Y-%m-%d';
+            break;
+          default:
+            xHoverFormat = '';
+          // fallback to raw
+        }
+        const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
 
-      //console.log('fillType', fillType);
+        //console.log('fillType', fillType);
 
-      function lightenColor(hex, factor = 0.2) {
-        const rgb = parseInt(hex.slice(1), 16);
-        const r = Math.min(255, Math.floor((rgb >> 16 & 0xff) + 255 * factor));
-        const g = Math.min(255, Math.floor((rgb >> 8 & 0xff) + 255 * factor));
-        const b = Math.min(255, Math.floor((rgb & 0xff) + 255 * factor));
-        return `rgb(${r},${g},${b})`;
-      }
+        function lightenColor(hex, factor = 0.2) {
+          const rgb = parseInt(hex.slice(1), 16);
+          const r = Math.min(255, Math.floor((rgb >> 16 & 0xff) + 255 * factor));
+          const g = Math.min(255, Math.floor((rgb >> 8 & 0xff) + 255 * factor));
+          const b = Math.min(255, Math.floor((rgb & 0xff) + 255 * factor));
+          return `rgb(${r},${g},${b})`;
+        }
 
-      // === CASE: Individual Bar Column Stacking ===
-      if (isStacked === 'on' && columnXHeader !== 'None') {
-        console.log('// === CASE: Individual Bar Column Stacking ===');
-        const categories = dataToBePlotted[columnXHeader];
-        const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
-        const groupMap = {};
-        categories.forEach((cat, idx) => {
-          if (!groupMap[cat]) groupMap[cat] = 0;
-          groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
-        });
-        const xValue = figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`;
-        Object.entries(groupMap).forEach(([stackCategory, val], j) => {
-          allBarsPlotly.push({
-            x: [xValue],
-            y: [val],
+        // === CASE: Individual Bar Column Stacking ===
+        if (isStacked === 'on' && columnXHeader !== 'None') {
+          console.log('// === CASE: Individual Bar Column Stacking ===');
+          const categories = dataToBePlotted[columnXHeader];
+          const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
+          const groupMap = {};
+          categories.forEach((cat, idx) => {
+            if (!groupMap[cat]) groupMap[cat] = 0;
+            groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
+          });
+          const xValue = figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`;
+          Object.entries(groupMap).forEach(([stackCategory, val], j) => {
+            allBarsPlotly.push({
+              x: [xValue],
+              y: [val],
+              type: 'bar',
+              name: `${stackCategory} ${xValue}`,
+              showlegend: showLegendBool,
+              marker: {
+                color: lightenColor(figureArguments[targetBarColumn + 'Color'], j * 0.05),
+                line: {
+                  width: 1,
+                  color: StackedSeparatorColor
+                },
+                pattern: {
+                  shape: fillType,
+                  size: 4,
+                  solidity: 0.5
+                }
+              },
+              //hovertemplate: `${columnXHeader}: ${stackCategory}`
+              hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`
+            });
+          });
+        }
+
+        // === CASE: Single Bar (no X axis) ===
+        else if (columnXHeader === 'None') {
+          console.log(' // === CASE: Single Bar (no X axis) ===');
+          plotlyX = [figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`];
+          let sumY = dataToBePlotted[columnYHeader].map(val => parseFloat(val)).filter(val => !isNaN(val)).reduce((a, b) => a + b, 0);
+          plotlyY = [sumY];
+          console.log('plotlyX:', plotlyX);
+          console.log('plotlyY:', plotlyY);
+
+          // allBarsPlotly.push({
+          //     x: plotlyX,
+          //     y: plotlyY,
+          //     type: 'bar',
+          //     name: `${figureArguments[targetBarColumn + 'Title']}`,
+          //     showlegend: showLegendBool,
+          //     marker: {
+          //         color: figureArguments[targetBarColumn + 'Color'],
+          //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
+          //     },
+          //     hovertemplate: `${figureArguments['YAxisTitle']}: %{y}`
+          // });
+        }
+
+        // === CASE: Stacked across columns by X axis ===
+        else if (barStackedByX && columnXHeader !== 'None') {
+          console.log(' // === CASE: Stacked across columns by X axis ===');
+          const categories = dataToBePlotted[columnXHeader];
+          const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
+          const groupMap = {};
+          categories.forEach((cat, idx) => {
+            if (!groupMap[cat]) groupMap[cat] = 0;
+            groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
+          });
+          plotlyX = Object.keys(groupMap);
+          plotlyY = Object.values(groupMap);
+
+          // allBarsPlotly.push({
+          //     x: plotlyX,
+          //     y: plotlyY,
+          //     type: 'bar',
+          //     name: `${figureArguments[targetBarColumn + 'Title']}`,
+          //     showlegend: showLegendBool,
+          //     marker: {
+          //         color: figureArguments[targetBarColumn + 'Color'],
+          //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
+          //     },
+          //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
+          // });
+        }
+
+        // === CASE: Separate columns side-by-side per bar ===
+        else {
+          console.log('// === CASE: Separate columns side-by-side per bar ===');
+          const categories = dataToBePlotted[columnXHeader];
+          const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
+          const groupMap = {};
+          categories.forEach((cat, idx) => {
+            if (!groupMap[cat]) groupMap[cat] = 0;
+            groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
+          });
+          plotlyX = Object.keys(groupMap);
+          ////console.log(plotlyX);
+          plotlyY = Object.values(groupMap);
+          ////console.log(plotlyY);
+
+          // allBarsPlotly.push({
+          //     x: plotlyX,
+          //     y: plotlyY,
+          //     type: 'bar',
+          //     name: `${figureArguments[targetBarColumn + 'Title']}`,
+          //     showlegend: showLegendBool,
+          //     // marker: {
+          //     //     color: figureArguments[targetBarColumn + 'Color']
+          //     // },
+          //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
+          // });
+        }
+
+        //Percentiles and Mean lines
+        const showPercentiles = figureArguments[targetBarColumn + 'Percentiles'];
+        const showMean = figureArguments[targetBarColumn + 'Mean'];
+        const showMean_ValuesOpt = figureArguments[targetBarColumn + 'MeanField'];
+        if (showPercentiles === 'on' || showMean === 'on') {
+          //Calculate Percentiles (Auto Calculated) based on dataset Y-axis values
+          //Do we want to be able to set high and low bounds per point here? (That wouldn't make sense to me)
+          const p10 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 10);
+          const p90 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 90);
+          const filteredX = plotlyX.filter(item => item !== "");
+          const xMinPercentile = Math.min(...filteredX);
+          const xMaxPercentile = Math.max(...filteredX);
+          if (showPercentiles === 'on') {
+            allBarsPlotly.push({
+              x: [xMinPercentile, xMaxPercentile],
+              y: [p10, p10],
+              mode: 'lines',
+              line: {
+                dash: 'dot',
+                color: figureArguments[targetBarColumn + 'Color'] + '60'
+              },
+              name: `${figureArguments[targetBarColumn + 'Title']} 10th Percentile (Bottom)`,
+              type: 'scatter',
+              visible: true,
+              showlegend: false
+            });
+            allBarsPlotly.push({
+              x: [xMinPercentile, xMaxPercentile],
+              y: [p90, p90],
+              mode: 'lines',
+              line: {
+                dash: 'dot',
+                color: figureArguments[targetBarColumn + 'Color'] + '60'
+              },
+              name: `${figureArguments[targetBarColumn + 'Title']} 10th & 90th Percentile`,
+              type: 'scatter',
+              visible: true,
+              showlegend: showLegendBool
+            });
+          }
+
+          // Calculate mean
+
+          //Calculate mean (Auto Calculated) based on dataset Y-axis values
+          if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
+            // const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
+            let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
+            let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
+            const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
+            const filteredX = plotlyX.filter(item => item !== "");
+            let xMin;
+            let xMax;
+            xMin = Math.min(...filteredX);
+            xMax = Math.max(...filteredX);
+            if (isNaN(xMin) || isNaN(xMax)) {
+              xMin = new Date(filteredX[0]);
+              xMax = new Date(filteredX[filteredX.length - 1]);
+            }
+            allBarsPlotly.push({
+              x: [xMin, xMax],
+              y: [mean, mean],
+              mode: 'lines',
+              line: {
+                dash: 'solid',
+                color: figureArguments[targetBarColumn + 'Color'] + '60'
+              },
+              name: `${figureArguments[targetBarColumn + 'Title']} Mean`,
+              type: 'scatter',
+              visible: true,
+              showlegend: showLegendBool
+            });
+          }
+          //Get mean from the spreadsheet (values imported from spreadsheet per point in dataset)
+          if (showMean_ValuesOpt != 'auto' && showMean === 'on') {
+            const ExistingMeanValue = dataToBePlotted[showMean_ValuesOpt].filter(item => item !== "");
+            const mean = ExistingMeanValue.reduce((a, b) => a + b, 0) / ExistingMeanValue.length;
+            const filteredX = plotlyX.filter(item => item !== "");
+            let xMin;
+            let xMax;
+            xMin = Math.min(...filteredX);
+            xMax = Math.max(...filteredX);
+            if (isNaN(xMin) || isNaN(xMax)) {
+              xMin = new Date(filteredX[0]);
+              xMax = new Date(filteredX[filteredX.length - 1]);
+            }
+            allBarsPlotly.push({
+              x: [xMin, xMax],
+              y: [mean, mean],
+              mode: 'lines',
+              line: {
+                dash: 'solid',
+                color: figureArguments[targetBarColumn + 'Color'] + '60'
+              },
+              name: `${figureArguments[targetBarColumn + 'Title']} Mean`,
+              type: 'scatter',
+              visible: true,
+              showlegend: showLegendBool
+            });
+          }
+        }
+        // === Optional Overlays and Error Bars ===
+        const errorArrayRaw = figureArguments[targetBarColumn + 'ErrorBars'] === 'on' ? figureArguments[targetBarColumn + 'ErrorBarsInputValues'] === 'auto' ? new Array(plotlyY.length).fill((0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computeStandardDeviation)(plotlyY)) : (dataToBePlotted[figureArguments[targetBarColumn + 'ErrorBarsInputValues']] || []).map(val => parseFloat(val)).filter(val => !isNaN(val)) : null;
+        const error_y = errorArrayRaw ? {
+          type: 'data',
+          array: errorArrayRaw,
+          visible: true,
+          color: figureArguments[targetBarColumn + 'ErrorBarsColor'] || '#000',
+          thickness: 1,
+          width: 5
+        } : undefined;
+        if (!(isStacked === 'on' && columnXHeader !== 'None')) {
+          const trace = {
+            x: plotlyX,
+            y: plotlyY,
             type: 'bar',
-            name: `${stackCategory} ${xValue}`,
+            name: `${figureArguments[targetBarColumn + 'Title']}`,
             showlegend: showLegendBool,
             marker: {
-              color: lightenColor(figureArguments[targetBarColumn + 'Color'], j * 0.05),
-              line: {
-                width: 1,
-                color: StackedSeparatorColor
-              },
+              color: figureArguments[targetBarColumn + 'Color'],
               pattern: {
                 shape: fillType,
                 size: 4,
                 solidity: 0.5
               }
             },
-            //hovertemplate: `${columnXHeader}: ${stackCategory}`
-            hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`
-          });
-        });
-      }
-
-      // === CASE: Single Bar (no X axis) ===
-      else if (columnXHeader === 'None') {
-        console.log(' // === CASE: Single Bar (no X axis) ===');
-        plotlyX = [figureArguments[targetBarColumn + 'Title'] || `Bar ${i}`];
-        let sumY = dataToBePlotted[columnYHeader].map(val => parseFloat(val)).filter(val => !isNaN(val)).reduce((a, b) => a + b, 0);
-        plotlyY = [sumY];
-        console.log('plotlyX:', plotlyX);
-        console.log('plotlyY:', plotlyY);
-
-        // allBarsPlotly.push({
-        //     x: plotlyX,
-        //     y: plotlyY,
-        //     type: 'bar',
-        //     name: `${figureArguments[targetBarColumn + 'Title']}`,
-        //     showlegend: showLegendBool,
-        //     marker: {
-        //         color: figureArguments[targetBarColumn + 'Color'],
-        //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
-        //     },
-        //     hovertemplate: `${figureArguments['YAxisTitle']}: %{y}`
-        // });
-      }
-
-      // === CASE: Stacked across columns by X axis ===
-      else if (barStackedByX && columnXHeader !== 'None') {
-        console.log(' // === CASE: Stacked across columns by X axis ===');
-        const categories = dataToBePlotted[columnXHeader];
-        const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
-        const groupMap = {};
-        categories.forEach((cat, idx) => {
-          if (!groupMap[cat]) groupMap[cat] = 0;
-          groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
-        });
-        plotlyX = Object.keys(groupMap);
-        plotlyY = Object.values(groupMap);
-
-        // allBarsPlotly.push({
-        //     x: plotlyX,
-        //     y: plotlyY,
-        //     type: 'bar',
-        //     name: `${figureArguments[targetBarColumn + 'Title']}`,
-        //     showlegend: showLegendBool,
-        //     marker: {
-        //         color: figureArguments[targetBarColumn + 'Color'],
-        //         pattern: { shape: fillType, size: 4, solidity: 0.5 }
-        //     },
-        //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
-        // });
-      }
-
-      // === CASE: Separate columns side-by-side per bar ===
-      else {
-        console.log('// === CASE: Separate columns side-by-side per bar ===');
-        const categories = dataToBePlotted[columnXHeader];
-        const values = dataToBePlotted[columnYHeader].map(val => parseFloat(val));
-        const groupMap = {};
-        categories.forEach((cat, idx) => {
-          if (!groupMap[cat]) groupMap[cat] = 0;
-          groupMap[cat] += !isNaN(values[idx]) ? values[idx] : 0;
-        });
-        plotlyX = Object.keys(groupMap);
-        ////console.log(plotlyX);
-        plotlyY = Object.values(groupMap);
-        ////console.log(plotlyY);
-
-        // allBarsPlotly.push({
-        //     x: plotlyX,
-        //     y: plotlyY,
-        //     type: 'bar',
-        //     name: `${figureArguments[targetBarColumn + 'Title']}`,
-        //     showlegend: showLegendBool,
-        //     // marker: {
-        //     //     color: figureArguments[targetBarColumn + 'Color']
-        //     // },
-        //     hovertemplate: `${figureArguments['XAxisTitle']}: %{x}<br>${figureArguments['YAxisTitle']}: %{y}`
-        // });
-      }
-
-      //Percentiles and Mean lines
-      const showPercentiles = figureArguments[targetBarColumn + 'Percentiles'];
-      const showMean = figureArguments[targetBarColumn + 'Mean'];
-      const showMean_ValuesOpt = figureArguments[targetBarColumn + 'MeanField'];
-      if (showPercentiles === 'on' || showMean === 'on') {
-        //Calculate Percentiles (Auto Calculated) based on dataset Y-axis values
-        //Do we want to be able to set high and low bounds per point here? (That wouldn't make sense to me)
-        const p10 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 10);
-        const p90 = (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computePercentile)(plotlyY, 90);
-        const filteredX = plotlyX.filter(item => item !== "");
-        const xMinPercentile = Math.min(...filteredX);
-        const xMaxPercentile = Math.max(...filteredX);
-        if (showPercentiles === 'on') {
-          allBarsPlotly.push({
-            x: [xMinPercentile, xMaxPercentile],
-            y: [p10, p10],
-            mode: 'lines',
-            line: {
-              dash: 'dot',
-              color: figureArguments[targetBarColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetBarColumn + 'Title']} 10th Percentile (Bottom)`,
-            type: 'scatter',
-            visible: true,
-            showlegend: false
-          });
-          allBarsPlotly.push({
-            x: [xMinPercentile, xMaxPercentile],
-            y: [p90, p90],
-            mode: 'lines',
-            line: {
-              dash: 'dot',
-              color: figureArguments[targetBarColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetBarColumn + 'Title']} 10th & 90th Percentile`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
+            //hovertemplate: `${figureArguments['XAxisTitle'] || ''}: %{x}<br>${figureArguments['YAxisTitle'] || ''}: %{y}`,
+            hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`,
+            ...(error_y ? {
+              error_y
+            } : {})
+          };
+          allBarsPlotly.push(trace);
         }
-
-        // Calculate mean
-
-        //Calculate mean (Auto Calculated) based on dataset Y-axis values
-        if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
-          // const mean = plotlyY.reduce((a, b) => a + b, 0) / plotlyY.length;
-          let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
-          let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
-          const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
-          const filteredX = plotlyX.filter(item => item !== "");
-          let xMin;
-          let xMax;
-          xMin = Math.min(...filteredX);
-          xMax = Math.max(...filteredX);
-          if (isNaN(xMin) || isNaN(xMax)) {
-            xMin = new Date(filteredX[0]);
-            xMax = new Date(filteredX[filteredX.length - 1]);
-          }
-          allBarsPlotly.push({
-            x: [xMin, xMax],
-            y: [mean, mean],
-            mode: 'lines',
-            line: {
-              dash: 'solid',
-              color: figureArguments[targetBarColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetBarColumn + 'Title']} Mean`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
-        }
-        //Get mean from the spreadsheet (values imported from spreadsheet per point in dataset)
-        if (showMean_ValuesOpt != 'auto' && showMean === 'on') {
-          const ExistingMeanValue = dataToBePlotted[showMean_ValuesOpt].filter(item => item !== "");
-          const mean = ExistingMeanValue.reduce((a, b) => a + b, 0) / ExistingMeanValue.length;
-          const filteredX = plotlyX.filter(item => item !== "");
-          let xMin;
-          let xMax;
-          xMin = Math.min(...filteredX);
-          xMax = Math.max(...filteredX);
-          if (isNaN(xMin) || isNaN(xMax)) {
-            xMin = new Date(filteredX[0]);
-            xMax = new Date(filteredX[filteredX.length - 1]);
-          }
-          allBarsPlotly.push({
-            x: [xMin, xMax],
-            y: [mean, mean],
-            mode: 'lines',
-            line: {
-              dash: 'solid',
-              color: figureArguments[targetBarColumn + 'Color'] + '60'
-            },
-            name: `${figureArguments[targetBarColumn + 'Title']} Mean`,
-            type: 'scatter',
-            visible: true,
-            showlegend: showLegendBool
-          });
-        }
-      }
-      // === Optional Overlays and Error Bars ===
-      const errorArrayRaw = figureArguments[targetBarColumn + 'ErrorBars'] === 'on' ? figureArguments[targetBarColumn + 'ErrorBarsInputValues'] === 'auto' ? new Array(plotlyY.length).fill((0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.computeStandardDeviation)(plotlyY)) : (dataToBePlotted[figureArguments[targetBarColumn + 'ErrorBarsInputValues']] || []).map(val => parseFloat(val)).filter(val => !isNaN(val)) : null;
-      const error_y = errorArrayRaw ? {
-        type: 'data',
-        array: errorArrayRaw,
-        visible: true,
-        color: figureArguments[targetBarColumn + 'ErrorBarsColor'] || '#000',
-        thickness: 1,
-        width: 5
-      } : undefined;
-      if (!(isStacked === 'on' && columnXHeader !== 'None')) {
-        const trace = {
-          x: plotlyX,
-          y: plotlyY,
-          type: 'bar',
-          name: `${figureArguments[targetBarColumn + 'Title']}`,
-          showlegend: showLegendBool,
-          marker: {
-            color: figureArguments[targetBarColumn + 'Color'],
-            pattern: {
-              shape: fillType,
-              size: 4,
-              solidity: 0.5
-            }
-          },
-          //hovertemplate: `${figureArguments['XAxisTitle'] || ''}: %{x}<br>${figureArguments['YAxisTitle'] || ''}: %{y}`,
-          hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`,
-          ...(error_y ? {
-            error_y
-          } : {})
-        };
-        allBarsPlotly.push(trace);
+      } catch {
+        return;
       }
     }
 
@@ -757,13 +749,30 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
     // Create the plot with all lines
     //Plotly.newPlot(plotlyDivID, allBarsPlotly, layout, config);  
 
-    // Create the plot with all lines
-    await Plotly.newPlot(plotDiv, allBarsPlotly, layout, config).then(() => {
-      // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
-      // You need the specific values for the entire yaxis
-      injectOverlays(plotDiv, layout, allBarsPlotly, figureArguments, dataToBePlotted);
-    });
-    Plotly.Plots.resize(plotDiv);
+    try {
+      // Create the plot with all lines
+      await Plotly.newPlot(plotDiv, allBarsPlotly, layout, config).then(() => {
+        // After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
+        // You need the specific values for the entire yaxis
+        injectOverlays(plotDiv, layout, allBarsPlotly, figureArguments, dataToBePlotted);
+      });
+      Plotly.Plots.resize(plotDiv);
+
+      //When the graph is rendered in preview save the full arguments into the field.
+      if (window.location.href.includes('post.php')) {
+        //Save the plotly figure as an html file.
+
+        const savedFigure = {
+          data: plotDiv.data,
+          layout: plotDiv.layout,
+          config: config
+        };
+        const figure_interactive_args_rendered = document.querySelector('textarea[data-depend-id="figure_interactive_args_rendered"]');
+        figure_interactive_args_rendered.value = JSON.stringify(savedFigure, null, 2);
+      }
+    } catch {
+      return;
+    }
   } catch (error) {
     console.error('Error loading scripts:', error);
   }
@@ -1065,7 +1074,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments) {
       inputAxisTitle.value = fieldValueSaved;
     }
     inputAxisTitle.addEventListener('change', function () {
-      (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+      ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
     });
     newColumn1.appendChild(labelInputAxis);
     newColumn2.appendChild(labelInputAxisTitle);
@@ -1097,7 +1106,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments) {
         inputBound.value = fieldValueSaved;
       }
       inputBound.addEventListener('change', function () {
-        (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+        ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
       });
       boundColumn.append(labelBound, document.createElement('br'), inputBound);
       boundsWrapper.appendChild(boundColumn);
@@ -1120,7 +1129,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments) {
   selectNumberBars.addEventListener('change', function () {
     (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
   });
-  for (let i = 1; i < 15; i++) {
+  for (let i = 1; i < 41; i++) {
     let selectNumberBarsOption = document.createElement("option");
     selectNumberBarsOption.value = i;
     selectNumberBarsOption.innerHTML = i;
@@ -1668,7 +1677,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
           inputColor.value = fieldValueSaved;
         }
         inputColor.addEventListener('change', function () {
-          (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+          ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
         });
         newColumn1.appendChild(labelInputColor);
         newColumn2.appendChild(inputColor);
@@ -2203,7 +2212,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * - layout: Plotly layout object for axis, legend, and display settings.
  * - config: Plotly configuration object for rendering options.
  */
-async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document) {
+async function producePlotlyLineFigure(targetFigureElement, interactive_arguments, postID, targetDocument = document, plotlyDivID) {
   try {
     const renderDocument = targetDocument || document;
     await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.loadPlotlyScript)(); // ensures Plotly is ready
@@ -2251,17 +2260,6 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
     // }
     // if (targetDocument) {
     // 	newDiv = renderDocument.createElement('div');
-    // }
-
-    // considerations for unique hashing for multiple uses vs onetime use.
-    let plotlyDivID = `plotlyFigure${figureID}`;
-    // let plotlyDivID;
-    // const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    // // if (targetDocument != renderDocument) {
-    // 	plotlyDivID = `plotlyFigure${figureID}`;
-    // }
-    // if (targetDocument === renderDocument) {
-    // 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
     // }
 
     newDiv.id = plotlyDivID;
@@ -2736,30 +2734,17 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
     });
     Plotly.Plots.resize(plotDiv);
 
-    // if (window.location.href.includes('post.php')) {
-    // 	//Save the plotly figure as an html file. 
-    // 	const savedFigure = {
-    // 		data: plotDiv.data,
-    // 		layout: plotDiv.layout,
-    // 		config: { responsive: true }
-    // 	};
-
-    // 	const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
-    // }
-
-    // if () {
-    // 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
-    // 		saveHtmlFileToServer(figureiframeGenerator.figIframeHtml, figureiframeGenerator.figIframeHtmlFileName, figureiframeGenerator.figIframeHtmlPath, postId);
-    // 	});
-    // }	
-
-    //STANDALONE CODE TO INJECT INTO CODE BLOCK> WORKS INTERMITTENTLY
-    // const snippet = buildPlotlySnippetEmbedCode(
-    // 	savedFigure,
-    // 	`plotly-snippet-${figureID}`
-    // );
-
-    // console.log("snippet", snippet);
+    //When the graph is rendered in preview save the full arguments into the field.
+    if (window.location.href.includes('post.php')) {
+      //Save the plotly figure as an html file. 
+      const savedFigure = {
+        data: plotDiv.data,
+        layout: plotDiv.layout,
+        config: config
+      };
+      const figure_interactive_args_rendered = document.querySelector('textarea[data-depend-id="figure_interactive_args_rendered"]');
+      figure_interactive_args_rendered.value = JSON.stringify(savedFigure, null, 2);
+    }
   } catch (error) {
     console.error('Error loading scripts:', error);
   }
@@ -3069,7 +3054,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments) {
       inputAxisTitle.value = fieldValueSaved;
     }
     inputAxisTitle.addEventListener('change', function () {
-      (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+      ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
     });
     newColumn1.appendChild(labelInputAxis);
     newColumn2.appendChild(labelInputAxisTitle);
@@ -3101,7 +3086,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments) {
         inputBound.value = fieldValueSaved;
       }
       inputBound.addEventListener('change', function () {
-        (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+        ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
       });
       boundColumn.append(labelBound, document.createElement('br'), inputBound);
       boundsWrapper.appendChild(boundColumn);
@@ -3657,7 +3642,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
           inputColor.value = fieldValueSaved;
         }
         inputColor.addEventListener('change', function () {
-          (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
+          ;(0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.logFormFieldValues)();
         });
         newColumn1.appendChild(labelInputColor);
         newColumn2.appendChild(inputColor);
@@ -3928,16 +3913,13 @@ window.plotlyLineParameterFields = plotlyLineParameterFields;
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   buildPlotlySnippetEmbedCode: () => (/* binding */ buildPlotlySnippetEmbedCode),
 /* harmony export */   computePercentile: () => (/* binding */ computePercentile),
 /* harmony export */   computeStandardDeviation: () => (/* binding */ computeStandardDeviation),
-/* harmony export */   createFigureIframeHtml: () => (/* binding */ createFigureIframeHtml),
 /* harmony export */   fillFormFieldValues: () => (/* binding */ fillFormFieldValues),
 /* harmony export */   loadExternalScript: () => (/* binding */ loadExternalScript),
 /* harmony export */   loadPlotlyScript: () => (/* binding */ loadPlotlyScript),
 /* harmony export */   logFormFieldValues: () => (/* binding */ logFormFieldValues),
 /* harmony export */   plotlyScriptPromise: () => (/* binding */ plotlyScriptPromise),
-/* harmony export */   saveHtmlToServer: () => (/* binding */ saveHtmlToServer),
 /* harmony export */   waitForElementById: () => (/* binding */ waitForElementById)
 /* harmony export */ });
 // Needed to ensure Plotly is only loaded once
@@ -4211,120 +4193,6 @@ function fillFormFieldValues(elementID) {
 }
 
 /**
- * Generates the HTML document and embed metadata needed to display a Plotly figure in an iframe.
- *
- * Builds a self-contained HTML page that loads Plotly from CDN (if not already present) and
- * renders the figure responsively. Width/height are stripped from the layout so the chart fills
- * its container automatically.
- *
- * @param {Object} savedFigure - Plotly figure object with `data`, `layout`, and `config` properties.
- * @param {string|number} figureID - Unique identifier for the figure, used in element IDs and the output filename.
- * @param {string} rootURL - WordPress site root URL (no trailing slash), used to construct the iframe `src` path.
- * @returns {{
- *   figIframeHtml: string,
- *   figIframeHtmlFileName: string,
- *   figIframeHtmlPath: string,
- *   figIframeCode: string
- * }} Object containing the full HTML document string, the filename (without extension), the
- *    expected server path, and a ready-to-insert `<iframe>` tag.
- */
-function createFigureIframeHtml(savedFigure, figureID, rootURL) {
-  function buildStandalonePlotlyEmbedCode(savedFigure, figureID) {
-    const cleanFigure = {
-      data: savedFigure.data || [],
-      layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
-      config: savedFigure.config || {}
-    };
-    delete cleanFigure.layout.width;
-    delete cleanFigure.layout.height;
-    cleanFigure.layout.autosize = true;
-    const jsonString = JSON.stringify(cleanFigure).replace(/<\/script/gi, "<\\/script");
-    return `
-	<script>
-	(function () {
-		const currentScript = document.currentScript;
-	
-		const chart = document.createElement("div");
-		chart.id = "${figureID}";
-		chart.style.position = "absolute";
-		chart.style.width = "100%";
-		chart.style.height = "100%";
-		chart.style.minHeight = "400px";
-
-		currentScript.parentNode.insertBefore(chart, currentScript);
-	
-		const fig = ${jsonString};
-	
-		function renderPlot() {
-		Plotly.react(
-			chart,
-			fig.data || [],
-			fig.layout || {},
-			fig.config || {}
-		).then(function () {
-			Plotly.Plots.resize(chart);
-		});
-	
-		window.addEventListener("resize", function () {
-			Plotly.Plots.resize(chart);
-		});
-		}
-	
-		if (typeof Plotly !== "undefined") {
-		renderPlot();
-		return;
-		}
-	
-		const script = document.createElement("script");
-		script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
-		script.onload = renderPlot;
-		document.head.appendChild(script);
-	})();
-	</script>
-	`;
-  }
-  const figIframeHtml = `
-				<!doctype html>
-				<html>
-				<head>
-				<meta charset="utf-8">
-				<title>Plotly Embed</title>
-				<style>
-					html, body {
-					width: 100%;
-					min-height: 400px;
-					margin: 0;
-					padding: 0;
-					}
-
-					body {
-					overflow: hidden;
-					}
-
-					#plotly-embed-${figureID} {
-					width: 100%;
-					height: 100%;
-					min-height: 400px;
-					}
-				</style>
-				</head>
-				<body>
-				${buildStandalonePlotlyEmbedCode(savedFigure, `plotly-embed-${figureID}`)}
-				</body>
-				</html>
-	`;
-  const figIframeHtmlFileName = `plotly-${figureID}`;
-  const figIframeHtmlPath = `${rootURL}/wp-content/data/figure_${figureID}/${figIframeHtmlFileName}.html`;
-  const figIframeCode = `<iframe src="${figIframeHtmlPath}" width="100%" height="400px !important" min-height="400px !important"></iframe>`;
-  return {
-    figIframeHtml,
-    figIframeHtmlFileName,
-    figIframeHtmlPath,
-    figIframeCode
-  };
-}
-
-/**
  * Builds an inline HTML snippet that renders a Plotly figure directly in a page (not inside an iframe).
  *
  * Produces a `<div>` wrapper and an immediately-invoked `<script>` block. The script inlines the
@@ -4338,151 +4206,99 @@ function createFigureIframeHtml(savedFigure, figureID, rootURL) {
  * @returns {string} An HTML string containing the wrapper div and self-executing script tag, ready
  *   to be injected into a page.
  */
-function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
-  const cleanFigure = {
-    data: savedFigure.data || [],
-    layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
-    config: savedFigure.config || {}
-  };
-  delete cleanFigure.layout.width;
-  delete cleanFigure.layout.height;
-  cleanFigure.layout.autosize = true;
-  cleanFigure.config.responsive = true;
-  const jsonString = JSON.stringify(cleanFigure).replace(/<\/script/gi, "<\\/script");
-  return `
-	<div id="${embedID}-wrap" style="width:100%; min-height:400px; height:500px; position:relative;">
-		<div id="${embedID}" style="width:100%; height:100%; min-height:400px;"></div>
-	</div>
-	
-	<script>
-	(function () {
-		const fig = ${jsonString};
-		const target = document.getElementById("${embedID}");
-	
-		function renderPlot() {
-		const target2 = document.getElementById("${embedID}");
+// export function buildPlotlySnippetEmbedCode(savedFigure, embedID) {
+// 	const cleanFigure = {
+// 	  data: savedFigure.data || [],
+// 	  layout: JSON.parse(JSON.stringify(savedFigure.layout || {})),
+// 	  config: savedFigure.config || {}
+// 	};
 
-		if (!target || typeof Plotly === "undefined") return;
+// 	delete cleanFigure.layout.width;
+// 	delete cleanFigure.layout.height;
 
-		Plotly.react(
-		  target,
-		  fig.data || [],
-		  fig.layout || {},
-		  fig.config || {}
-		).then(function () {
-		  Plotly.Plots.resize(target2);
-		});
+// 	cleanFigure.layout.autosize = true;
+// 	cleanFigure.config.responsive = true;
 
-		window.addEventListener("resize", function () {
-		  Plotly.Plots.resize(target);
-		});
-	  }
+// 	const jsonString = JSON
+// 	  .stringify(cleanFigure)
+// 	  .replace(/<\/script/gi, "<\\/script");
 
-	  if (typeof Plotly !== "undefined") {
-		renderPlot();
-		return;
-	  }
+// 	return `
+// 	<div id="${embedID}-wrap" style="width:100%; min-height:400px; height:500px; position:relative;">
+// 		<div id="${embedID}" style="width:100%; height:100%; min-height:400px;"></div>
+// 	</div>
 
-	  const existing = document.querySelector('script[src*="cdn.plot.ly"]');
+// 	<script>
+// 	(function () {
+// 		const fig = ${jsonString};
+// 		const target = document.getElementById("${embedID}");
 
-	  if (existing) {
-		const waitForPlotly = setInterval(function () {
-		  if (typeof Plotly !== "undefined") {
-			clearInterval(waitForPlotly);
-			renderPlot();
-		  }
-		}, 50);
+// 		function renderPlot() {
+// 		const target2 = document.getElementById("${embedID}");
 
-		setTimeout(function () {
-		  clearInterval(waitForPlotly);
-		}, 10000);
+// 		if (!target || typeof Plotly === "undefined") return;
 
-		return;
-	  }
+// 		Plotly.react(
+// 		  target,
+// 		  fig.data || [],
+// 		  fig.layout || {},
+// 		  fig.config || {}
+// 		).then(function () {
+// 		  Plotly.Plots.resize(target2);
+// 		});
 
-	  const script = document.createElement("script");
-	  script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
-	  script.onload = renderPlot;
-	  document.head.appendChild(script);
-	})();
-	</script>
-	`;
-}
+// 		window.addEventListener("resize", function () {
+// 		  Plotly.Plots.resize(target);
+// 		});
+// 	  }
 
-/**
- * Uploads an HTML string to the server as a file via the WordPress AJAX API.
- *
- * Wraps `htmlContent` in a `File` object and POSTs it to `wp-admin/admin-ajax.php` using
- * the `custom_file_upload` action. Requires a `[name="figure_nonce"]` input to be present
- * in the DOM; alerts and returns early if it is missing.
- *
- * @param {string} htmlContent - The raw HTML string to save.
- * @param {string} fileName - The filename (including extension) to use when creating the uploaded file.
- * @param {string|number} postId - The WordPress post ID to associate the uploaded file with.
- * @returns {Promise<Object>|undefined} Resolves with the parsed JSON response from the server on
- *   success or failure (`result.success` indicates outcome), or `undefined` if the nonce is missing.
- * @throws {Error} Rejects if the `fetch` call itself fails (network error, etc.).
- */
-function saveHtmlToServer(htmlContent, fileName, postId) {
-  // Send the HTML content and filename to the server via AJAX
+// 	  if (typeof Plotly !== "undefined") {
+// 		renderPlot();
+// 		return;
+// 	  }
 
-  const htmlBlob = new Blob([htmlContent], {
-    type: "text/html"
-  });
-  const htmlFile = new File([htmlBlob], fileName, {
-    type: "text/html"
-  });
-  const figureNonceInput = document.querySelector('[name="figure_nonce"]');
-  if (!figureNonceInput || !figureNonceInput.value) {
-    alert("Error: figure_nonce is missing in the form!");
-    return;
-  }
-  const formData = new FormData();
+// 	  const existing = document.querySelector('script[src*="cdn.plot.ly"]');
 
-  // Must match your WP AJAX action hook
-  formData.append("action", "custom_file_upload");
+// 	  if (existing) {
+// 		const waitForPlotly = setInterval(function () {
+// 		  if (typeof Plotly !== "undefined") {
+// 			clearInterval(waitForPlotly);
+// 			renderPlot();
+// 		  }
+// 		}, 50);
 
-  // Must match your PHP expected fields
-  formData.append("post_id", postId);
-  formData.append("figure_nonce", figureNonce);
-  formData.append("uploaded_file", htmlFile);
-  const ajaxUrl = window.location.origin + "/wp-admin/admin-ajax.php";
-  return fetch(ajaxUrl, {
-    method: "POST",
-    body: formData,
-    credentials: "same-origin"
-  }).then(response => response.json()).then(result => {
-    if (!result.success) {
-      console.error("HTML upload failed:", result.data);
-      return result;
-    }
-    console.log("HTML uploaded successfully:", result.data);
-    return result;
-  }).catch(error => {
-    console.error("AJAX error uploading HTML:", error);
-    throw error;
-  });
-}
+// 		setTimeout(function () {
+// 		  clearInterval(waitForPlotly);
+// 		}, 10000);
 
-// Bridge for classic scripts (admin-preview-buttons.js) until they are modularized.
-window.fillFormFieldValues = fillFormFieldValues;
+// 		return;
+// 	  }
+
+// 	  const script = document.createElement("script");
+// 	  script.src = "https://cdn.plot.ly/plotly-2.35.2.min.js";
+// 	  script.onload = renderPlot;
+// 	  document.head.appendChild(script);
+// 	})();
+// 	</script>
+// 	`;
+// }
 
 /***/ }
 
 /******/ 	});
 /************************************************************************/
 /******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
+/******/ 	const __webpack_module_cache__ = {};
 /******/ 	
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
 /******/ 		if (cachedModule !== undefined) {
 /******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
 /******/ 			// no module.id needed
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
@@ -4491,7 +4307,7 @@ window.fillFormFieldValues = fillFormFieldValues;
 /******/ 		// Execute the module function
 /******/ 		if (!(moduleId in __webpack_modules__)) {
 /******/ 			delete __webpack_module_cache__[moduleId];
-/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			const e = new Error("Cannot find module '" + moduleId + "'");
 /******/ 			e.code = 'MODULE_NOT_FOUND';
 /******/ 			throw e;
 /******/ 		}
@@ -4503,35 +4319,27 @@ window.fillFormFieldValues = fillFormFieldValues;
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
+/******/ 	// define getter/value functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 			}
-/******/ 		};
-/******/ 	})();
+/******/ 		}
+/******/ 	};
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.hasOwn(obj, prop));
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 (() => {
 /*!******************************************!*\
