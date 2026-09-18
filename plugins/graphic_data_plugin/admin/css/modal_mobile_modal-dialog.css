@@ -265,3 +265,23 @@ iframe{
   background-color: #03386c;
   margin-left: 4%;
 }
+
+/* GRAPHIC_DATA_BLOCK_STYLES_START */
+/* Mobile additions for the scoped Gutenberg figure preview. */
+.graphic-data-figure-display .caption {
+  margin-left: 4% !important;
+}
+
+.graphic-data-figure-display summary {
+  margin-left: 4%;
+  margin-bottom: 4%;
+}
+
+.graphic-data-figure-display details > p {
+  padding-left: 4%;
+}
+
+.graphic-data-figure-display .btn-primary {
+  margin-left: 4%;
+}
+/* GRAPHIC_DATA_BLOCK_STYLES_END */

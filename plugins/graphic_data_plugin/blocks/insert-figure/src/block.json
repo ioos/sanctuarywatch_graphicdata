@@ -19,6 +19,26 @@
 		"instanceId": {
 			"type": "string",
 			"default": ""
+		},
+		"figureWidth": {
+			"type": "number",
+			"default": 100
+		},
+		"figureWidthUnit": {
+			"type": "string",
+			"default": "%"
+		},
+		"figureMaxWidth": {
+			"type": "number",
+			"default": 0
+		},
+		"figureHeight": {
+			"type": "number",
+			"default": 0
+		},
+		"figureAlignment": {
+			"type": "string",
+			"default": "center"
 		}
 	},
 	"supports": {

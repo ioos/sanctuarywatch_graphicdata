@@ -276,3 +276,192 @@ iframe{
 details > p > p {
   font-size: 1.1rem !important;
 }
+
+/* GRAPHIC_DATA_BLOCK_STYLES_START */
+/*
+ * Shared figure-content styles used by the Gutenberg block preview.
+ * edit.js extracts only this marked section, so the modal shell rules above
+ * are never loaded into the shared block-editor iframe.
+ */
+.graphic-data-figure-display,
+.graphic-data-figure-display * {
+  box-sizing: border-box;
+}
+
+.graphic-data-figure-display {
+  --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-body-font-family: var(--bs-font-sans-serif);
+  --bs-body-font-size: 1rem;
+  --bs-body-font-weight: 400;
+  --bs-body-line-height: 1.5;
+  --bs-body-color: #495057;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--bs-body-font-family) !important;
+  font-size: var(--bs-body-font-size) !important;
+  font-weight: var(--bs-body-font-weight) !important;
+  line-height: var(--bs-body-line-height) !important;
+  color: var(--bs-body-color) !important;
+}
+
+/*
+ * Gutenberg assigns typography directly to these elements. Reassert the
+ * frontend font at the component boundary without resetting Plotly's SVG DOM.
+ */
+.editor-styles-wrapper .graphic-data-figure-display .figure,
+.editor-styles-wrapper .graphic-data-figure-display .figureTitle,
+.editor-styles-wrapper .graphic-data-figure-display .caption,
+.editor-styles-wrapper .graphic-data-figure-display .caption p,
+.editor-styles-wrapper .graphic-data-figure-display details,
+.editor-styles-wrapper .graphic-data-figure-display details p,
+.editor-styles-wrapper .graphic-data-figure-display summary,
+.editor-styles-wrapper .graphic-data-figure-display a,
+.editor-styles-wrapper .graphic-data-figure-display .gray-bar-links,
+.editor-styles-wrapper .graphic-data-figure-display button {
+  font-family: var(--bs-body-font-family) !important;
+  font-weight: var(--bs-body-font-weight) !important;
+  line-height: var(--bs-body-line-height) !important;
+}
+
+.graphic-data-figure-display a {
+  color: #03386c;
+  text-decoration: underline;
+}
+
+.graphic-data-figure-display ul {
+  list-style: disc;
+  color: rgb(82, 82, 82);
+  fill: rgb(82, 82, 82);
+}
+
+.graphic-data-figure-display li {
+  margin-bottom: 0.5px;
+}
+
+.graphic-data-figure-display img,
+.graphic-data-figure-display video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.graphic-data-figure-display .figure > img,
+.graphic-data-figure-display .figure > video {
+  width: 100%;
+  height: var(--graphic-data-figure-height, auto) !important;
+  object-fit: contain;
+}
+
+.graphic-data-figure-display [id^="javascript_figure_target_"] {
+  width: 100%;
+  height: var(--graphic-data-figure-height, auto) !important;
+}
+
+.graphic-data-figure-display iframe {
+  max-width: 100%;
+}
+
+.graphic-data-figure-display .caption > p,
+.graphic-data-figure-display details > p > p {
+  font-size: 1.1rem !important;
+}
+
+.graphic-data-figure-display .btn-primary {
+  background-color: #03386c;
+}
+
+.graphic-data-figure-display .graphic-data-block-plotly-target,
+.graphic-data-figure-display .js-plotly-plot,
+.graphic-data-figure-display .plot-container,
+.graphic-data-figure-display .plot-container.plotly,
+.graphic-data-figure-display .svg-container {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.graphic-data-figure-display .svg-container {
+  overflow: hidden !important;
+}
+
+.graphic-data-figure-display .svg-container > .main-svg {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+}
+
+.graphic-data-figure-display .modebar-container {
+  position: absolute !important;
+  inset: 0 0 auto auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1001 !important;
+  pointer-events: none !important;
+}
+
+.graphic-data-figure-display .modebar {
+  position: absolute !important;
+  top: 2px !important;
+  right: 2px !important;
+  left: auto !important;
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  width: auto !important;
+  height: auto !important;
+  white-space: nowrap !important;
+  pointer-events: all !important;
+}
+
+.graphic-data-figure-display .modebar-group {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  align-items: center !important;
+  float: none !important;
+  clear: none !important;
+  width: auto !important;
+  height: 22px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 0 0 8px !important;
+  padding: 0 !important;
+  white-space: nowrap !important;
+}
+
+.graphic-data-figure-display .modebar-group:first-child {
+  margin-left: 0 !important;
+}
+
+.graphic-data-figure-display .modebar-btn {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  float: none !important;
+  clear: none !important;
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  margin: 0 !important;
+  padding: 3px 4px !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  pointer-events: all !important;
+}
+
+.graphic-data-figure-display .modebar-btn svg {
+  position: static !important;
+  display: block !important;
+  width: 1em !important;
+  height: 1em !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  flex: 0 0 auto !important;
+}
+/* GRAPHIC_DATA_BLOCK_STYLES_END */

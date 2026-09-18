@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
-import { useBlockProps } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import apiFetch from '@wordpress/api-fetch';
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
@@ -12,6 +12,9 @@ import {
 	SelectControl,
 	Spinner,
 	Notice,
+	PanelBody,
+	TextControl,
+	Button,
 } from '@wordpress/components';
 
 import { __ } from '@wordpress/i18n';
@@ -50,139 +53,73 @@ function normalizeInteractiveArguments(value) {
 }
 
 
-function ensurePlotlyEditorLayerStyles(rootDocument) {
-	if (!rootDocument) return;
+const figurePreviewStylePromises = new WeakMap();
 
-	const styleId = 'graphic-data-plotly-editor-layer-fix';
+function extractBlockStyles(cssText) {
+	const startMarker = '/* GRAPHIC_DATA_BLOCK_STYLES_START */';
+	const endMarker = '/* GRAPHIC_DATA_BLOCK_STYLES_END */';
+	const start = cssText.indexOf(startMarker);
+	const end = cssText.indexOf(endMarker);
 
-	if (rootDocument.getElementById(styleId)) {
-		return;
+	if (start === -1 || end === -1 || end <= start) {
+		return '';
 	}
 
-	const style = rootDocument.createElement('style');
-	style.id = styleId;
-	style.textContent = `
-		.graphic-data-block-plotly-target,
-		.graphic-data-block-plotly-target .js-plotly-plot,
-		.graphic-data-block-plotly-target .plot-container,
-		.graphic-data-block-plotly-target .plot-container.plotly,
-		.graphic-data-block-plotly-target .svg-container {
-			position: relative !important;
-		}
+	return cssText.slice(start + startMarker.length, end).trim();
+}
 
-		.graphic-data-block-plotly-target .svg-container {
-			overflow: hidden !important;
-		}
+function ensureFigureEditorStyles(rootDocument) {
+	if (!rootDocument) return Promise.resolve();
 
-		.graphic-data-block-plotly-target .svg-container > .main-svg {
-			position: absolute !important;
-			top: 0 !important;
-			left: 0 !important;
-		}
+	const styleId = 'graphic-data-figure-editor-styles';
 
-		.graphic-data-block-plotly-target .svg-container > .main-svg {
-			width: 100% !important;
-		}
+	if (rootDocument.getElementById(styleId)) {
+		return Promise.resolve();
+	}
 
-		.graphic-data-block-plotly-target .modebar-container {
-			position: absolute !important;
-			top: 0 !important;
-			right: 0 !important;
-			left: auto !important;
-			width: 100% !important;
-			height: 100% !important;
-			z-index: 1001 !important;
-			pointer-events: none !important;
-		}
+	if (figurePreviewStylePromises.has(rootDocument)) {
+		return figurePreviewStylePromises.get(rootDocument);
+	}
 
-		.graphic-data-block-plotly-target .modebar {
-			position: absolute !important;
-			top: 2px !important;
-			right: 2px !important;
-			left: auto !important;
+	const pluginCssRoot =
+		`${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css`;
+	const sources = [
+		{
+			url: `${pluginCssRoot}/modal_desktop_modal-dialog.css`,
+			wrap: (css) => css,
+		},
+		{
+			url: `${pluginCssRoot}/modal_mobile_modal-dialog.css`,
+			wrap: (css) => `@media (max-width: 768px) {\n${css}\n}`,
+		},
+	];
 
-			display: flex !important;
-			flex-direction: row !important;
-			flex-wrap: nowrap !important;
-			align-items: center !important;
-			justify-content: flex-end !important;
+	const stylePromise = Promise.allSettled(
+		sources.map(async ({ url, wrap }) => {
+			const response = await fetch(url, { credentials: 'same-origin' });
+			if (!response.ok) {
+				throw new Error(`Unable to load figure styles from ${url}.`);
+			}
 
-			width: auto !important;
-			height: auto !important;
-			white-space: nowrap !important;
-			pointer-events: all !important;
-		}
+			return wrap(extractBlockStyles(await response.text()));
+		})
+	).then((results) => {
+		const css = results
+			.filter((result) => result.status === 'fulfilled')
+			.map((result) => result.value)
+			.filter(Boolean)
+			.join('\n\n');
 
-		.graphic-data-block-plotly-target .modebar-group {
-			position: relative !important;
+		if (!css || rootDocument.getElementById(styleId)) return;
 
-			display: flex !important;
-			flex-direction: row !important;
-			flex-wrap: nowrap !important;
-			align-items: center !important;
+		const style = rootDocument.createElement('style');
+		style.id = styleId;
+		style.textContent = css;
+		rootDocument.head.appendChild(style);
+	});
 
-			float: none !important;
-			clear: none !important;
-
-			width: auto !important;
-			height: 22px !important;
-			min-width: 0 !important;
-			min-height: 0 !important;
-
-			margin: 0 0 0 8px !important;
-			padding: 0 !important;
-
-			white-space: nowrap !important;
-			vertical-align: middle !important;
-			box-sizing: border-box !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-group:first-child {
-			margin-left: 0 !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-btn {
-			position: relative !important;
-
-			display: inline-flex !important;
-			flex: 0 0 auto !important;
-			align-items: center !important;
-			justify-content: center !important;
-
-			float: none !important;
-			clear: none !important;
-
-			width: 22px !important;
-			height: 22px !important;
-			min-width: 22px !important;
-			min-height: 22px !important;
-
-			margin: 0 !important;
-			padding: 3px 4px !important;
-
-			line-height: 1 !important;
-			box-sizing: border-box !important;
-			vertical-align: middle !important;
-			text-decoration: none !important;
-			pointer-events: all !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-btn svg {
-			position: static !important;
-			display: block !important;
-			width: 1em !important;
-			height: 1em !important;
-			margin: 0 !important;
-			padding: 0 !important;
-			flex: 0 0 auto !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-btn svg path {
-			pointer-events: none !important;
-		}
-	`;
-
-	rootDocument.head.appendChild(style);
+	figurePreviewStylePromises.set(rootDocument, stylePromise);
+	return stylePromise;
 }
 
 /**
@@ -205,7 +142,24 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	 * The saved page should use this same figureId later to render the frontend
 	 * Plotly figure.
 	 */
-	const { figureId = 0, instanceId = '' } = attributes;
+	const {
+		figureId = 0,
+		instanceId = '',
+		figureWidth = 100,
+		figureWidthUnit = '%',
+		figureMaxWidth = 0,
+		figureHeight = 0,
+		figureAlignment = 'center',
+	} = attributes;
+
+	const normalizedWidth = Math.max(Number(figureWidth) || 0, 0);
+	const normalizedMaxWidth = Math.max(Number(figureMaxWidth) || 0, 0);
+	const normalizedHeight = Math.max(Number(figureHeight) || 0, 0);
+	const horizontalMargins = {
+		left: { marginLeft: '0', marginRight: 'auto' },
+		center: { marginLeft: 'auto', marginRight: 'auto' },
+		right: { marginLeft: 'auto', marginRight: '0' },
+	}[figureAlignment] || { marginLeft: 'auto', marginRight: 'auto' };
 
 	/**
 	 * useBlockProps adds the standard WordPress block classes and editor props.
@@ -421,6 +375,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	 */
 	useEffect(() => {
 		let isCurrentRender = true;
+		let blockResizeObserver = null;
 
 		const previewElement = previewRef.current;
 
@@ -475,34 +430,53 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		 *
 		 * So we keep that same pattern.
 		 */
-		const safeInstanceId = String(instanceId || clientId || '').replace(/[^a-zA-Z0-9_-]/g, '');
-		const targetFigureElement = `targetFigureElement_${figureId}_${safeInstanceId}`;
-
-
-		/**
-		 * Important:
-		 * Do not assume global document is the same document as the block editor canvas.
-		 * In the block editor, previewElement may live inside an editor iframe.
-		 */
-
+		const safeInstanceId = String(instanceId || clientId || '')
+			.replace(/[^a-zA-Z0-9_-]/g, '');
+		const targetFigureElement =
+			`targetFigureElement_${safeInstanceId || 'block'}_${figureId}`;
 
 		const targetDocument = previewElement.ownerDocument;
-		ensurePlotlyEditorLayerStyles(targetDocument);
+		const editorStylesPromise = ensureFigureEditorStyles(targetDocument);
 
-		const containerDiv = targetDocument.createElement('div');
+		/**
+		 * The shared figure renderer still searches the global document for its
+		 * target IDs. Gutenberg can place this block inside an iframe, so render
+		 * in the global document first and move the completed figure into the
+		 * editor document afterward.
+		 */
+		const isIframeEditor = targetDocument !== document;
+		const renderDocument = isIframeEditor ? document : targetDocument;
+		let stagingHost = null;
+
+		const containerDiv = renderDocument.createElement('div');
 		containerDiv.id = 'containerDiv';
-		containerDiv.className = 'containerDiv graphic-data-block-container';
+		containerDiv.className =
+			'containerDiv graphic-data-block-container graphic-data-figure-display';
 		containerDiv.dataset.figureId = String(figureId);
 		containerDiv.style.width = '100%';
+		containerDiv.style.setProperty(
+			'--graphic-data-figure-height',
+			normalizedHeight > 0 ? `${normalizedHeight}px` : 'auto'
+		);
 
-		previewElement.appendChild(containerDiv);
+		if (isIframeEditor) {
+			stagingHost = renderDocument.createElement('div');
+			stagingHost.style.position = 'absolute';
+			stagingHost.style.left = '-100000px';
+			stagingHost.style.top = '0';
+			stagingHost.style.width = `${Math.max(previewElement.clientWidth, 320)}px`;
+			stagingHost.style.visibility = 'hidden';
+			renderDocument.body.appendChild(stagingHost);
+			stagingHost.appendChild(containerDiv);
+		} else {
+			previewElement.appendChild(containerDiv);
+		}
 
-		const targetDiv = targetDocument.createElement('div');
+		const targetDiv = renderDocument.createElement('div');
 		targetDiv.id = targetFigureElement;
 		targetDiv.className = 'targetFigureElement graphic-data-block-plotly-target';
 		targetDiv.dataset.figureId = String(figureId);
 		targetDiv.style.width = '100%';
-
 		containerDiv.appendChild(targetDiv);
 
 
@@ -511,10 +485,12 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			setErrorMessage('');
 
 			try {
+				await editorStylesPromise;
 
-				function formatFigureMeta(meta = {}, figureId = 0) {
+				function formatFigureMeta(meta = {}, figureId) {
 					return {
 						code: meta.figure_code || '',
+						figure_iframe_code: meta.figure_iframe_code || '',
 						dataLink: meta.figure_data_link_url || '',
 						dataText: meta.figure_data_link_text || '',
 						externalAlt: meta.figure_external_alt || '',
@@ -524,8 +500,12 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							typeof meta.figure_interactive_arguments === 'string'
 								? meta.figure_interactive_arguments
 								: JSON.stringify(meta.figure_interactive_arguments || []),
+						figure_interactive_args_rendered: meta.figure_interactive_args_rendered || '',
 						figure_published: meta.figure_published || '',
-						imageLink: meta.figure_image || '',
+						imageLink:
+							meta.figure_path === 'External'
+								? meta.figure_external_url || ''
+								: meta.figure_image || '',
 						longCaption: meta.figure_caption_long || '',
 						postID: Number(figureId || meta.id || meta.postID || 0),
 						scienceLink: meta.figure_science_link_url || '',
@@ -534,59 +514,42 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					};
 				}
 
-				// const rawArgs = meta?.figure_interactive_arguments;
+				const info_obj = formatFigureMeta(meta, figureId);
 
-				// const parsedArgs =
-				// 	typeof rawArgs === 'string'
-				// 		? JSON.parse(rawArgs)
-				// 		: rawArgs;
+				const interactiveTargetId = await Promise.resolve(
 
-				// const graphType = Array.isArray(parsedArgs)
-				// 	? Object.fromEntries(parsedArgs).graphType
-				// 	: parsedArgs?.graphType;
-
-
-				// if (graphType === 'Plotly line graph (time series)') {
-				// 	await Promise.resolve(
-				// 		producePlotlyLineFigure(
-				// 			targetFigureElement,
-				// 			interactiveArguments,
-				// 			Number(figureId),
-				// 			targetDocument
-				// 		)
-				// 	);
-				// }
-				// if (graphType === 'Plotly bar graph') {
-				// 	await Promise.resolve(
-				// 		producePlotlyBarFigure(
-				// 			targetFigureElement,
-				// 			interactiveArguments,
-				// 			Number(figureId),
-				// 			targetDocument
-				// 		)
-				// 	);
-				// }
-
-				const info_obj = formatFigureMeta(meta, 0);
-				const tabContentContainer = document.getElementById(targetFigureElement);
-
-				await Promise.resolve(
+					// render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, isBlock, tab_id, tab_title, total_published_figures);
 					render_tab_info(
 						targetDiv,
 						containerDiv,
 						info_obj,
-						0,
-						true
+						1,
+						true,
+						null,
+						null,
+						1
 					),
 				);
 
-				await Promise.resolve(
-					render_interactive_plots(
-						targetDiv,
-						info_obj,
-						targetDocument
-					)
-				);
+				if (info_obj.figureType === 'Interactive') {
+					const figureContainer =
+						renderDocument.getElementById(`figure-${figureId}`);
+
+					await Promise.resolve(
+						render_interactive_plots(
+							figureContainer,
+							info_obj,
+							renderDocument,
+							interactiveTargetId
+						)
+					);
+				}
+
+				if (isIframeEditor && stagingHost) {
+					previewElement.appendChild(containerDiv);
+					stagingHost.remove();
+					stagingHost = null;
+				}
 
 				/**
 				 * Gutenberg may finish sizing the block after Plotly initially renders.
@@ -600,20 +563,58 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				
 				const targetElement = targetDocument.getElementById(targetFigureElement);
 				
-				const plotDiv =
-					targetElement?.querySelector('.js-plotly-plot') ||
-					targetElement?.querySelector('.plotly') ||
-					targetElement;
+				const plotDiv = targetElement?.querySelector('.js-plotly-plot');
 				
 				if (plotDiv && window.Plotly?.Plots?.resize) {
 					window.Plotly.Plots.resize(plotDiv);
 				}
 				
-				if (plotDiv && window.Plotly?.relayout) {
-					await window.Plotly.relayout(plotDiv, {
+				if (plotDiv && targetElement && window.Plotly?.relayout) {
+					const plotlyLayout = {
 						autosize: true,
 						width: targetElement.clientWidth,
+						paper_bgcolor: 'rgba(0, 0, 0, 0)',
+						plot_bgcolor: 'rgba(0, 0, 0, 0)',
+					};
+
+					if (normalizedHeight > 0) {
+						plotlyLayout.autosize = false;
+						plotlyLayout.height = normalizedHeight;
+					}
+
+					await window.Plotly.relayout(plotDiv, plotlyLayout);
+				}
+
+				plotDiv?.querySelectorAll('.modebar-group').forEach((group) => {
+					group.style.setProperty('background-color', 'transparent', 'important');
+				});
+				plotDiv?.querySelectorAll('.modebar-btn .icon path').forEach((path) => {
+					path.style.setProperty('fill', 'rgba(68, 68, 68, 0.7)', 'important');
+				});
+
+				if (
+					plotDiv &&
+					targetElement &&
+					typeof ResizeObserver !== 'undefined'
+				) {
+					let previousWidth = previewElement.clientWidth;
+					blockResizeObserver = new ResizeObserver(() => {
+						const nextWidth = previewElement.clientWidth;
+						if (!nextWidth || nextWidth === previousWidth) return;
+						previousWidth = nextWidth;
+
+						window.Plotly?.Plots?.resize?.(plotDiv);
+						window.Plotly?.relayout?.(plotDiv, {
+							autosize: normalizedHeight === 0,
+							width: targetElement.clientWidth,
+							paper_bgcolor: 'rgba(0, 0, 0, 0)',
+							plot_bgcolor: 'rgba(0, 0, 0, 0)',
+							...(normalizedHeight > 0
+								? { height: normalizedHeight }
+								: {}),
+						});
 					});
+					blockResizeObserver.observe(previewElement);
 				}
 
 			} catch (error) {
@@ -636,23 +637,110 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 		return () => {
 			isCurrentRender = false;
+			blockResizeObserver?.disconnect();
+			stagingHost?.remove();
 
 		// 	/**
 		// 	 * Optional cleanup if Plotly is available on window.
 		// 	 * This helps avoid stale Plotly instances inside the editor.
 		// 	 */
-			if (window.Plotly?.purge && document.getElementById(targetFigureElement)) {
-				window.Plotly.purge(targetFigureElement);
+			const renderedPlot = targetDocument
+				.getElementById(targetFigureElement)
+				?.querySelector('.js-plotly-plot');
+			if (window.Plotly?.purge && renderedPlot) {
+				window.Plotly.purge(renderedPlot);
 			}
 		};
 	}, [
 		figureId,
+		instanceId,
+		normalizedWidth,
+		figureWidthUnit,
+		normalizedMaxWidth,
+		normalizedHeight,
+		figureAlignment,
 		meta?.figure_path,
 		meta?.figure_interactive_arguments,
 	]);
 
 	return (
 		<div {...blockProps}>
+			<InspectorControls>
+				<PanelBody
+					title={__('Figure dimensions', 'graphic-data-plugin')}
+					initialOpen={true}
+				>
+					<TextControl
+						label={__('Width', 'graphic-data-plugin')}
+						type="number"
+						min="0"
+						value={normalizedWidth}
+						onChange={(value) =>
+							setAttributes({ figureWidth: Math.max(Number(value) || 0, 0) })
+						}
+					/>
+
+					<SelectControl
+						label={__('Width unit', 'graphic-data-plugin')}
+						value={figureWidthUnit}
+						options={[
+							{ label: '%', value: '%' },
+							{ label: 'px', value: 'px' },
+							{ label: 'rem', value: 'rem' },
+							{ label: 'vw', value: 'vw' },
+						]}
+						onChange={(value) => setAttributes({ figureWidthUnit: value })}
+					/>
+
+					<TextControl
+						label={__('Maximum width (px)', 'graphic-data-plugin')}
+						help={__('Use 0 for no maximum.', 'graphic-data-plugin')}
+						type="number"
+						min="0"
+						value={normalizedMaxWidth}
+						onChange={(value) =>
+							setAttributes({ figureMaxWidth: Math.max(Number(value) || 0, 0) })
+						}
+					/>
+
+					<TextControl
+						label={__('Height (px)', 'graphic-data-plugin')}
+						help={__('Use 0 for automatic height.', 'graphic-data-plugin')}
+						type="number"
+						min="0"
+						value={normalizedHeight}
+						onChange={(value) =>
+							setAttributes({ figureHeight: Math.max(Number(value) || 0, 0) })
+						}
+					/>
+
+					<SelectControl
+						label={__('Horizontal alignment', 'graphic-data-plugin')}
+						value={figureAlignment}
+						options={[
+							{ label: __('Left', 'graphic-data-plugin'), value: 'left' },
+							{ label: __('Center', 'graphic-data-plugin'), value: 'center' },
+							{ label: __('Right', 'graphic-data-plugin'), value: 'right' },
+						]}
+						onChange={(value) => setAttributes({ figureAlignment: value })}
+					/>
+
+					<Button
+						variant="secondary"
+						onClick={() =>
+							setAttributes({
+								figureWidth: 100,
+								figureWidthUnit: '%',
+								figureMaxWidth: 0,
+								figureHeight: 0,
+								figureAlignment: 'center',
+							})
+						}
+					>
+						{__('Reset dimensions', 'graphic-data-plugin')}
+					</Button>
+				</PanelBody>
+			</InspectorControls>
 			<div
 				className="graphic-data-figure-path-selector"
 				style={{
@@ -786,9 +874,15 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				</Notice>
 			)}
 
-			<div
-				ref={previewRef}
-				className="graphic-data-figure-preview"
+				<div
+					ref={previewRef}
+					className="graphic-data-figure-preview"
+					style={{
+						width: `${normalizedWidth}${figureWidthUnit}`,
+						maxWidth:
+							normalizedMaxWidth > 0 ? `${normalizedMaxWidth}px` : 'none',
+						...horizontalMargins,
+					}}
 				// style={{
 				// 	width: '100%',
 				// 	maxWidth: 'none',
@@ -2088,5 +2182,3 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 // 		</div>
 // 	);
 // }
-
-

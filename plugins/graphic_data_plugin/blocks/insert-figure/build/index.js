@@ -23,12 +23,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @graphic-data/plotly-timeseries-line */ "./includes/figures/js/interactive/plotly-timeseries-line.js");
 /* harmony import */ var _graphic_data_plotly_bar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @graphic-data/plotly-bar */ "./includes/figures/js/interactive/plotly-bar.js");
 /* harmony import */ var _graphic_data_figure_render__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @graphic-data/figure-render */ "./includes/figures/js/figure-render.js");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _graphic_data_scene_shared__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @graphic-data/scene-shared */ "./includes/scenes/js/scene-shared.js");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__);
+
 
 
 
@@ -71,135 +73,55 @@ function normalizeInteractiveArguments(value) {
   }
   return JSON.stringify(value);
 }
-function ensurePlotlyEditorLayerStyles(rootDocument) {
-  if (!rootDocument) return;
-  const styleId = 'graphic-data-plotly-editor-layer-fix';
-  if (rootDocument.getElementById(styleId)) {
-    return;
+const figurePreviewStylePromises = new WeakMap();
+function extractBlockStyles(cssText) {
+  const startMarker = '/* GRAPHIC_DATA_BLOCK_STYLES_START */';
+  const endMarker = '/* GRAPHIC_DATA_BLOCK_STYLES_END */';
+  const start = cssText.indexOf(startMarker);
+  const end = cssText.indexOf(endMarker);
+  if (start === -1 || end === -1 || end <= start) {
+    return '';
   }
-  const style = rootDocument.createElement('style');
-  style.id = styleId;
-  style.textContent = `
-		.graphic-data-block-plotly-target,
-		.graphic-data-block-plotly-target .js-plotly-plot,
-		.graphic-data-block-plotly-target .plot-container,
-		.graphic-data-block-plotly-target .plot-container.plotly,
-		.graphic-data-block-plotly-target .svg-container {
-			position: relative !important;
-		}
-
-		.graphic-data-block-plotly-target .svg-container {
-			overflow: hidden !important;
-		}
-
-		.graphic-data-block-plotly-target .svg-container > .main-svg {
-			position: absolute !important;
-			top: 0 !important;
-			left: 0 !important;
-		}
-
-		.graphic-data-block-plotly-target .svg-container > .main-svg {
-			width: 100% !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-container {
-			position: absolute !important;
-			top: 0 !important;
-			right: 0 !important;
-			left: auto !important;
-			width: 100% !important;
-			height: 100% !important;
-			z-index: 1001 !important;
-			pointer-events: none !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar {
-			position: absolute !important;
-			top: 2px !important;
-			right: 2px !important;
-			left: auto !important;
-
-			display: flex !important;
-			flex-direction: row !important;
-			flex-wrap: nowrap !important;
-			align-items: center !important;
-			justify-content: flex-end !important;
-
-			width: auto !important;
-			height: auto !important;
-			white-space: nowrap !important;
-			pointer-events: all !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-group {
-			position: relative !important;
-
-			display: flex !important;
-			flex-direction: row !important;
-			flex-wrap: nowrap !important;
-			align-items: center !important;
-
-			float: none !important;
-			clear: none !important;
-
-			width: auto !important;
-			height: 22px !important;
-			min-width: 0 !important;
-			min-height: 0 !important;
-
-			margin: 0 0 0 8px !important;
-			padding: 0 !important;
-
-			white-space: nowrap !important;
-			vertical-align: middle !important;
-			box-sizing: border-box !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-group:first-child {
-			margin-left: 0 !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-btn {
-			position: relative !important;
-
-			display: inline-flex !important;
-			flex: 0 0 auto !important;
-			align-items: center !important;
-			justify-content: center !important;
-
-			float: none !important;
-			clear: none !important;
-
-			width: 22px !important;
-			height: 22px !important;
-			min-width: 22px !important;
-			min-height: 22px !important;
-
-			margin: 0 !important;
-			padding: 3px 4px !important;
-
-			line-height: 1 !important;
-			box-sizing: border-box !important;
-			vertical-align: middle !important;
-			text-decoration: none !important;
-			pointer-events: all !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-btn svg {
-			position: static !important;
-			display: block !important;
-			width: 1em !important;
-			height: 1em !important;
-			margin: 0 !important;
-			padding: 0 !important;
-			flex: 0 0 auto !important;
-		}
-
-		.graphic-data-block-plotly-target .modebar-btn svg path {
-			pointer-events: none !important;
-		}
-	`;
-  rootDocument.head.appendChild(style);
+  return cssText.slice(start + startMarker.length, end).trim();
+}
+function ensureFigureEditorStyles(rootDocument) {
+  if (!rootDocument) return Promise.resolve();
+  const styleId = 'graphic-data-figure-editor-styles';
+  if (rootDocument.getElementById(styleId)) {
+    return Promise.resolve();
+  }
+  if (figurePreviewStylePromises.has(rootDocument)) {
+    return figurePreviewStylePromises.get(rootDocument);
+  }
+  const pluginCssRoot = `${window.location.origin}/wp-content/plugins/graphic_data_plugin/admin/css`;
+  const sources = [{
+    url: `${pluginCssRoot}/modal_desktop_modal-dialog.css`,
+    wrap: css => css
+  }, {
+    url: `${pluginCssRoot}/modal_mobile_modal-dialog.css`,
+    wrap: css => `@media (max-width: 768px) {\n${css}\n}`
+  }];
+  const stylePromise = Promise.allSettled(sources.map(async ({
+    url,
+    wrap
+  }) => {
+    const response = await fetch(url, {
+      credentials: 'same-origin'
+    });
+    if (!response.ok) {
+      throw new Error(`Unable to load figure styles from ${url}.`);
+    }
+    return wrap(extractBlockStyles(await response.text()));
+  })).then(results => {
+    const css = results.filter(result => result.status === 'fulfilled').map(result => result.value).filter(Boolean).join('\n\n');
+    if (!css || rootDocument.getElementById(styleId)) return;
+    const style = rootDocument.createElement('style');
+    style.id = styleId;
+    style.textContent = css;
+    rootDocument.head.appendChild(style);
+  });
+  figurePreviewStylePromises.set(rootDocument, stylePromise);
+  return stylePromise;
 }
 
 /**
@@ -228,8 +150,33 @@ function Edit({
    */
   const {
     figureId = 0,
-    instanceId = ''
+    instanceId = '',
+    figureWidth = 100,
+    figureWidthUnit = '%',
+    figureMaxWidth = 0,
+    figureHeight = 0,
+    figureAlignment = 'center'
   } = attributes;
+  const normalizedWidth = Math.max(Number(figureWidth) || 0, 0);
+  const normalizedMaxWidth = Math.max(Number(figureMaxWidth) || 0, 0);
+  const normalizedHeight = Math.max(Number(figureHeight) || 0, 0);
+  const horizontalMargins = {
+    left: {
+      marginLeft: '0',
+      marginRight: 'auto'
+    },
+    center: {
+      marginLeft: 'auto',
+      marginRight: 'auto'
+    },
+    right: {
+      marginLeft: 'auto',
+      marginRight: '0'
+    }
+  }[figureAlignment] || {
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  };
 
   /**
    * useBlockProps adds the standard WordPress block classes and editor props.
@@ -287,23 +234,23 @@ function Edit({
    */
 
   const figurePathOptions = [{
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Filter by Figure Type...', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Filter by Figure Type...', 'graphic-data-plugin'),
     value: 0
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Interactive', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Interactive', 'graphic-data-plugin'),
     value: 'Interactive'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('External Image', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('External Image', 'graphic-data-plugin'),
     value: 'External'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Code', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Code', 'graphic-data-plugin'),
     value: 'Code'
   }, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Internal Image', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Internal Image', 'graphic-data-plugin'),
     value: 'Internal'
   }];
   const figureOptions = [{
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Select a Figure...', 'graphic-data-plugin'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Select a Figure...', 'graphic-data-plugin'),
     value: 0
   }, ...(Array.isArray(figures) ? figures.filter(figure => {
     if (figurePathFilter === 0 || figurePathFilter === '0') {
@@ -393,6 +340,7 @@ function Edit({
    */
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     let isCurrentRender = true;
+    let blockResizeObserver = null;
     const previewElement = previewRef.current;
     if (!previewElement) {
       return () => {
@@ -445,23 +393,38 @@ function Edit({
      * So we keep that same pattern.
      */
     const safeInstanceId = String(instanceId || clientId || '').replace(/[^a-zA-Z0-9_-]/g, '');
-    const targetFigureElement = `targetFigureElement_${figureId}_${safeInstanceId}`;
+    const targetFigureElement = `targetFigureElement_${safeInstanceId || 'block'}_${figureId}`;
+    const targetDocument = previewElement.ownerDocument;
+    const editorStylesPromise = ensureFigureEditorStyles(targetDocument);
 
     /**
-     * Important:
-     * Do not assume global document is the same document as the block editor canvas.
-     * In the block editor, previewElement may live inside an editor iframe.
+     * The shared figure renderer still searches the global document for its
+     * target IDs. Gutenberg can place this block inside an iframe, so render
+     * in the global document first and move the completed figure into the
+     * editor document afterward.
      */
-
-    const targetDocument = previewElement.ownerDocument;
-    ensurePlotlyEditorLayerStyles(targetDocument);
-    const containerDiv = targetDocument.createElement('div');
+    const isIframeEditor = targetDocument !== document;
+    const renderDocument = isIframeEditor ? document : targetDocument;
+    let stagingHost = null;
+    const containerDiv = renderDocument.createElement('div');
     containerDiv.id = 'containerDiv';
-    containerDiv.className = 'containerDiv graphic-data-block-container';
+    containerDiv.className = 'containerDiv graphic-data-block-container graphic-data-figure-display';
     containerDiv.dataset.figureId = String(figureId);
     containerDiv.style.width = '100%';
-    previewElement.appendChild(containerDiv);
-    const targetDiv = targetDocument.createElement('div');
+    containerDiv.style.setProperty('--graphic-data-figure-height', normalizedHeight > 0 ? `${normalizedHeight}px` : 'auto');
+    if (isIframeEditor) {
+      stagingHost = renderDocument.createElement('div');
+      stagingHost.style.position = 'absolute';
+      stagingHost.style.left = '-100000px';
+      stagingHost.style.top = '0';
+      stagingHost.style.width = `${Math.max(previewElement.clientWidth, 320)}px`;
+      stagingHost.style.visibility = 'hidden';
+      renderDocument.body.appendChild(stagingHost);
+      stagingHost.appendChild(containerDiv);
+    } else {
+      previewElement.appendChild(containerDiv);
+    }
+    const targetDiv = renderDocument.createElement('div');
     targetDiv.id = targetFigureElement;
     targetDiv.className = 'targetFigureElement graphic-data-block-plotly-target';
     targetDiv.dataset.figureId = String(figureId);
@@ -471,17 +434,20 @@ function Edit({
       setIsRenderingPlot(true);
       setErrorMessage('');
       try {
-        function formatFigureMeta(meta = {}, figureId = 0) {
+        await editorStylesPromise;
+        function formatFigureMeta(meta = {}, figureId) {
           return {
             code: meta.figure_code || '',
+            figure_iframe_code: meta.figure_iframe_code || '',
             dataLink: meta.figure_data_link_url || '',
             dataText: meta.figure_data_link_text || '',
             externalAlt: meta.figure_external_alt || '',
             figureTitle: meta.figure_title || '',
             figureType: meta.figure_path || '',
             figure_interactive_arguments: typeof meta.figure_interactive_arguments === 'string' ? meta.figure_interactive_arguments : JSON.stringify(meta.figure_interactive_arguments || []),
+            figure_interactive_args_rendered: meta.figure_interactive_args_rendered || '',
             figure_published: meta.figure_published || '',
-            imageLink: meta.figure_image || '',
+            imageLink: meta.figure_path === 'External' ? meta.figure_external_url || '' : meta.figure_image || '',
             longCaption: meta.figure_caption_long || '',
             postID: Number(figureId || meta.id || meta.postID || 0),
             scienceLink: meta.figure_science_link_url || '',
@@ -489,43 +455,19 @@ function Edit({
             shortCaption: meta.figure_caption_short || ''
           };
         }
-
-        // const rawArgs = meta?.figure_interactive_arguments;
-
-        // const parsedArgs =
-        // 	typeof rawArgs === 'string'
-        // 		? JSON.parse(rawArgs)
-        // 		: rawArgs;
-
-        // const graphType = Array.isArray(parsedArgs)
-        // 	? Object.fromEntries(parsedArgs).graphType
-        // 	: parsedArgs?.graphType;
-
-        // if (graphType === 'Plotly line graph (time series)') {
-        // 	await Promise.resolve(
-        // 		producePlotlyLineFigure(
-        // 			targetFigureElement,
-        // 			interactiveArguments,
-        // 			Number(figureId),
-        // 			targetDocument
-        // 		)
-        // 	);
-        // }
-        // if (graphType === 'Plotly bar graph') {
-        // 	await Promise.resolve(
-        // 		producePlotlyBarFigure(
-        // 			targetFigureElement,
-        // 			interactiveArguments,
-        // 			Number(figureId),
-        // 			targetDocument
-        // 		)
-        // 	);
-        // }
-
-        const info_obj = formatFigureMeta(meta, 0);
-        const tabContentContainer = document.getElementById(targetFigureElement);
-        await Promise.resolve((0,_graphic_data_figure_render__WEBPACK_IMPORTED_MODULE_6__.render_tab_info)(targetDiv, containerDiv, info_obj, 0, true));
-        await Promise.resolve((0,_graphic_data_figure_render__WEBPACK_IMPORTED_MODULE_6__.render_interactive_plots)(targetDiv, info_obj, targetDocument));
+        const info_obj = formatFigureMeta(meta, figureId);
+        const interactiveTargetId = await Promise.resolve(
+        // render_tab_info(tabContentElement, tabContentContainer, info_obj, idx, isBlock, tab_id, tab_title, total_published_figures);
+        (0,_graphic_data_figure_render__WEBPACK_IMPORTED_MODULE_6__.render_tab_info)(targetDiv, containerDiv, info_obj, 1, true, null, null, 1));
+        if (info_obj.figureType === 'Interactive') {
+          const figureContainer = renderDocument.getElementById(`figure-${figureId}`);
+          await Promise.resolve((0,_graphic_data_figure_render__WEBPACK_IMPORTED_MODULE_6__.render_interactive_plots)(figureContainer, info_obj, renderDocument, interactiveTargetId));
+        }
+        if (isIframeEditor && stagingHost) {
+          previewElement.appendChild(containerDiv);
+          stagingHost.remove();
+          stagingHost = null;
+        }
 
         /**
          * Gutenberg may finish sizing the block after Plotly initially renders.
@@ -537,15 +479,47 @@ function Edit({
           });
         });
         const targetElement = targetDocument.getElementById(targetFigureElement);
-        const plotDiv = targetElement?.querySelector('.js-plotly-plot') || targetElement?.querySelector('.plotly') || targetElement;
+        const plotDiv = targetElement?.querySelector('.js-plotly-plot');
         if (plotDiv && window.Plotly?.Plots?.resize) {
           window.Plotly.Plots.resize(plotDiv);
         }
-        if (plotDiv && window.Plotly?.relayout) {
-          await window.Plotly.relayout(plotDiv, {
+        if (plotDiv && targetElement && window.Plotly?.relayout) {
+          const plotlyLayout = {
             autosize: true,
-            width: targetElement.clientWidth
+            width: targetElement.clientWidth,
+            paper_bgcolor: 'rgba(0, 0, 0, 0)',
+            plot_bgcolor: 'rgba(0, 0, 0, 0)'
+          };
+          if (normalizedHeight > 0) {
+            plotlyLayout.autosize = false;
+            plotlyLayout.height = normalizedHeight;
+          }
+          await window.Plotly.relayout(plotDiv, plotlyLayout);
+        }
+        plotDiv?.querySelectorAll('.modebar-group').forEach(group => {
+          group.style.setProperty('background-color', 'transparent', 'important');
+        });
+        plotDiv?.querySelectorAll('.modebar-btn .icon path').forEach(path => {
+          path.style.setProperty('fill', 'rgba(68, 68, 68, 0.7)', 'important');
+        });
+        if (plotDiv && targetElement && typeof ResizeObserver !== 'undefined') {
+          let previousWidth = previewElement.clientWidth;
+          blockResizeObserver = new ResizeObserver(() => {
+            const nextWidth = previewElement.clientWidth;
+            if (!nextWidth || nextWidth === previousWidth) return;
+            previousWidth = nextWidth;
+            window.Plotly?.Plots?.resize?.(plotDiv);
+            window.Plotly?.relayout?.(plotDiv, {
+              autosize: normalizedHeight === 0,
+              width: targetElement.clientWidth,
+              paper_bgcolor: 'rgba(0, 0, 0, 0)',
+              plot_bgcolor: 'rgba(0, 0, 0, 0)',
+              ...(normalizedHeight > 0 ? {
+                height: normalizedHeight
+              } : {})
+            });
           });
+          blockResizeObserver.observe(previewElement);
         }
       } catch (error) {
         if (!isCurrentRender) return;
@@ -559,24 +533,104 @@ function Edit({
     renderFigureInsideBlock();
     return () => {
       isCurrentRender = false;
+      blockResizeObserver?.disconnect();
+      stagingHost?.remove();
 
       // 	/**
       // 	 * Optional cleanup if Plotly is available on window.
       // 	 * This helps avoid stale Plotly instances inside the editor.
       // 	 */
-      if (window.Plotly?.purge && document.getElementById(targetFigureElement)) {
-        window.Plotly.purge(targetFigureElement);
+      const renderedPlot = targetDocument.getElementById(targetFigureElement)?.querySelector('.js-plotly-plot');
+      if (window.Plotly?.purge && renderedPlot) {
+        window.Plotly.purge(renderedPlot);
       }
     };
-  }, [figureId, meta?.figure_path, meta?.figure_interactive_arguments]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+  }, [figureId, instanceId, normalizedWidth, figureWidthUnit, normalizedMaxWidth, normalizedHeight, figureAlignment, meta?.figure_path, meta?.figure_interactive_arguments]);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
     ...blockProps,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.PanelBody, {
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Figure dimensions', 'graphic-data-plugin'),
+        initialOpen: true,
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Width', 'graphic-data-plugin'),
+          type: "number",
+          min: "0",
+          value: normalizedWidth,
+          onChange: value => setAttributes({
+            figureWidth: Math.max(Number(value) || 0, 0)
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.SelectControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Width unit', 'graphic-data-plugin'),
+          value: figureWidthUnit,
+          options: [{
+            label: '%',
+            value: '%'
+          }, {
+            label: 'px',
+            value: 'px'
+          }, {
+            label: 'rem',
+            value: 'rem'
+          }, {
+            label: 'vw',
+            value: 'vw'
+          }],
+          onChange: value => setAttributes({
+            figureWidthUnit: value
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Maximum width (px)', 'graphic-data-plugin'),
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Use 0 for no maximum.', 'graphic-data-plugin'),
+          type: "number",
+          min: "0",
+          value: normalizedMaxWidth,
+          onChange: value => setAttributes({
+            figureMaxWidth: Math.max(Number(value) || 0, 0)
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Height (px)', 'graphic-data-plugin'),
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Use 0 for automatic height.', 'graphic-data-plugin'),
+          type: "number",
+          min: "0",
+          value: normalizedHeight,
+          onChange: value => setAttributes({
+            figureHeight: Math.max(Number(value) || 0, 0)
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.SelectControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Horizontal alignment', 'graphic-data-plugin'),
+          value: figureAlignment,
+          options: [{
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Left', 'graphic-data-plugin'),
+            value: 'left'
+          }, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Center', 'graphic-data-plugin'),
+            value: 'center'
+          }, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Right', 'graphic-data-plugin'),
+            value: 'right'
+          }],
+          onChange: value => setAttributes({
+            figureAlignment: value
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Button, {
+          variant: "secondary",
+          onClick: () => setAttributes({
+            figureWidth: 100,
+            figureWidthUnit: '%',
+            figureMaxWidth: 0,
+            figureHeight: 0,
+            figureAlignment: 'center'
+          }),
+          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Reset dimensions', 'graphic-data-plugin')
+        })]
+      })
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
       className: "graphic-data-figure-path-selector",
       style: {
         marginBottom: '16px'
       },
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("label", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("label", {
         className: "graphic-data-figure-path-selector",
         style: {
           display: 'block',
@@ -588,14 +642,14 @@ function Edit({
           lineHeight: '1.4',
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif'
         },
-        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_8__.__)('Graphic Data - Figure', 'graphic-data-plugin')
+        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_9__.__)('Graphic Data - Figure', 'graphic-data-plugin')
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
       className: "graphic-data-figure-path-selector",
       style: {
         marginBottom: '16px'
       },
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.SelectControl
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.SelectControl
       // label={__('Select Figure Type:', 'graphic-data-plugin')}
       , {
         value: figurePathFilter,
@@ -618,16 +672,16 @@ function Edit({
           }
         }
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
       className: "graphic-data-figure-selector",
       style: {
         marginBottom: '16px'
       },
-      children: [figuresAreLoading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Spinner, {}), Array.isArray(figures) && figures.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Notice, {
+      children: [figuresAreLoading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Spinner, {}), Array.isArray(figures) && figures.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Notice, {
         status: "warning",
         isDismissible: false,
         children: "No published figures found."
-      }), Array.isArray(figures) && figures.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.SelectControl
+      }), Array.isArray(figures) && figures.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.SelectControl
       // label={__('Select Existing Figure:', 'graphic-data-plugin')}
       , {
         value: Number(figureId),
@@ -649,32 +703,37 @@ function Edit({
           }
         }
       })]
-    }), isLoadingMeta && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+    }), isLoadingMeta && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
       className: "graphic-data-figure-loading",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
         children: "Loading figure metadata..."
       })]
-    }), isRenderingPlot && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)("div", {
+    }), isRenderingPlot && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
       className: "graphic-data-figure-rendering",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
         children: "Rendering Plotly figure..."
       })]
-    }), errorMessage && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Notice, {
+    }), errorMessage && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Notice, {
       status: "error",
       isDismissible: false,
       children: errorMessage
-    }), !figureId && !figuresAreLoading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_7__.Notice, {
+    }), !figureId && !figuresAreLoading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Notice, {
       status: "info",
       isDismissible: false,
-      children: ["Select a Graphic Data \"Figure\" to render it in this block. If you filter by figure type and do not see any figures listed in the drop down menu above, you will need to", ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("a", {
+      children: ["Select a Graphic Data \"Figure\" to render it in this block. If you filter by figure type and do not see any figures listed in the drop down menu above, you will need to", ' ', /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("a", {
         href: "/wp-admin/post-new.php?post_type=figure",
         target: "_blank",
         rel: "noreferrer",
         children: "Create a New Figure"
       }), ' ', "of that type."]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
       ref: previewRef,
-      className: "graphic-data-figure-preview"
+      className: "graphic-data-figure-preview",
+      style: {
+        width: `${normalizedWidth}${figureWidthUnit}`,
+        maxWidth: normalizedMaxWidth > 0 ? `${normalizedMaxWidth}px` : 'none',
+        ...horizontalMargins
+      }
       // style={{
       // 	width: '100%',
       // 	maxWidth: 'none',
@@ -2062,7 +2121,7 @@ function waitForPlotly() {
     }, 50);
   });
 }
-async function renderSavedFigure(targetElement, savedFigure, plotlyDivID, postID) {
+async function renderSavedFigure(targetElement, savedFigure, plotlyDivID, targetDocument, postID) {
   if (!targetElement) {
     throw new Error('Target element was not found.');
   }
@@ -2130,6 +2189,8 @@ async function renderSavedFigure(targetElement, savedFigure, plotlyDivID, postID
  * await render_interactive_plots(tabContentElement, info_obj);
  */
 async function render_interactive_plots(tabContentElement, info_obj, targetDocument, targetId) {
+  // const renderDocument = targetDocument || document;
+
   //console.log('tabContentElement render_interactive_plots', tabContentElement);
   //Lets control if the figure is published or not
   let figure_published = info_obj.figure_published;
@@ -2207,7 +2268,7 @@ async function render_interactive_plots(tabContentElement, info_obj, targetDocum
     }
     try {
       await waitForElementByIdPolling(targetId, 15000);
-      await renderSavedFigure(targetId, savedFigure, plotlyDivID, postID);
+      await renderSavedFigure(targetId, savedFigure, plotlyDivID, targetDocument, postID);
       await waitForPlotlyDiv(plotlyDivID);
       adjustPlotlyLayoutForMobile(postID, plotlyDivID);
       console.log('RIP - PLOT1', postID);
@@ -2216,7 +2277,7 @@ async function render_interactive_plots(tabContentElement, info_obj, targetDocum
       const activeTab = document.querySelector('.tab-pane.active');
       if (activeTab && activeTab.id === tabContentElement.id) {
         if (!document.getElementById(plotlyDivID)) {
-          await renderSavedFigure(targetId, savedFigure, plotlyDivID, postID);
+          await renderSavedFigure(targetId, savedFigure, plotlyDivID, targetDocument, postID);
           await waitForPlotlyDiv(plotlyDivID);
           adjustPlotlyLayoutForMobile(postID, plotlyDivID);
           console.log('RIP - PLOT2', postID);
@@ -2255,6 +2316,7 @@ async function render_interactive_plots(tabContentElement, info_obj, targetDocum
             }
             throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
           }
+          console.log('targetId', targetId);
           try {
             await waitForElementByIdPolling(targetId, 15000);
             await (0,_graphic_data_plotly_timeseries_line__WEBPACK_IMPORTED_MODULE_0__.producePlotlyLineFigure)(targetId, interactive_arguments, postID, targetDocument, plotlyDivID);
@@ -2476,7 +2538,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
   //const figureDiv = document.createElement('div');
   const figureDiv = tableRowDiv;
   figureDiv.classList.add('figure');
-  // figureDiv.id = `figure-${idx+1}`;
+  const uniqueHash_figureDiv = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   figureDiv.id = `figure-${postID}`;
 
   //CREATE THE EMBED, COPY LINK, & RETURN BUTTONS
@@ -2493,13 +2555,15 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     //Add "figure" index
     const targetId = `figure-${idx + 1}`;
     const figureIndex = document.createElement('div');
-    figureIndex.textContent = `Figure ${idx + 1} of ${total_published_figures}`;
-    figureIndex.style.color = 'rgba(68, 68, 68, 0.55)';
-    figureIndex.style.textDecoration = 'none';
-    figureIndex.style.fontSize = '0.8em';
-    figureIndex.style.marginRight = '2em';
-    figureIndex.style.marginLeft = '.2em';
-    figureIndex.style.cursor = 'pointer';
+    if (!isBlock) {
+      figureIndex.textContent = `Figure ${idx + 1} of ${total_published_figures}`;
+      figureIndex.style.color = 'rgba(68, 68, 68, 0.55)';
+      figureIndex.style.textDecoration = 'none';
+      figureIndex.style.fontSize = '0.8em';
+      figureIndex.style.marginRight = '2em';
+      figureIndex.style.marginLeft = '.2em';
+      figureIndex.style.cursor = 'pointer';
+    }
 
     /*
     * Make the div usable with a keyboard.
@@ -2537,13 +2601,14 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
     // Add "Close" link
     const closeLink = document.createElement('a');
     closeLink.href = '#';
-    closeLink.textContent = '× Close';
-    closeLink.style.color = 'rgba(68, 68, 68, 0.55)';
-    closeLink.style.textDecoration = 'none';
-    closeLink.style.fontSize = '0.8em';
-    closeLink.style.marginRight = '0.8em';
-    // closeLink.style.marginLeft = '0.8em';
-
+    if (!isBlock) {
+      closeLink.textContent = '× Close';
+      closeLink.style.color = 'rgba(68, 68, 68, 0.55)';
+      closeLink.style.textDecoration = 'none';
+      closeLink.style.fontSize = '0.8em';
+      closeLink.style.marginRight = '0.8em';
+      // closeLink.style.marginLeft = '0.8em';
+    }
     closeLink.addEventListener('click', function (event) {
       event.preventDefault();
       const closeButton = document.getElementById('close');
@@ -2672,19 +2737,35 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       * https://graphicdata.local/f/127/
       */
       const shortShareUrl = `${window.location.origin}/f/${encodeURIComponent(postID)}/`;
-
-      /*
-      * Update the address bar to reflect the actual current
-      * figure location without causing a page reload.
-      */
-      window.history.replaceState(null, "", shareUrl);
+      const pageShareUrl = new URL(window.location.href);
+      pageShareUrl.hash = `figure-${encodeURIComponent(postID)}`;
       try {
-        /*
-        * Copy the permanent short figure URL.
-        */
-        await navigator.clipboard.writeText(shortShareUrl);
-        console.log("Copied short figure link:", shortShareUrl);
-        console.log("Address bar updated to:", shareUrl);
+        if (!isBlock) {
+          /*
+          * Update the address bar to reflect the actual current
+          * figure location without causing a page reload.
+          */
+          window.history.replaceState(null, "", shareUrl);
+
+          /*
+          * Copy the permanent short figure URL.
+          */
+          await navigator.clipboard.writeText(shortShareUrl);
+        }
+        if (isBlock) {
+          await navigator.clipboard.writeText(pageShareUrl.href);
+        }
+
+        // console.log(
+        //     "Copied short figure link:",
+        //     shortShareUrl
+        // );
+
+        // console.log(
+        //     "Address bar updated to:",
+        //     shareUrl
+        // );
+
         alert("Figure link copied successfully.");
       } catch (err) {
         console.error("Failed to copy figure link:", err);
@@ -11143,7 +11224,7 @@ module.exports = window["wp"]["i18n"];
   \*********************************************/
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/graphic-data-insert-figure","version":"0.1.0","title":"Graphic Data - Figure","category":"media","description":"Insert a figure into a post","example":{},"attributes":{"figureId":{"type":"number","default":0},"figureMode":{"type":"string","default":"existing"},"instanceId":{"type":"string","default":""}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"graphic-data-insert-interactive-figure","editorScript":"file:./index.js","viewScript":"file:./view.js","render":"file:./render.php"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/graphic-data-insert-figure","version":"0.1.0","title":"Graphic Data - Figure","category":"media","description":"Insert a figure into a post","example":{},"attributes":{"figureId":{"type":"number","default":0},"figureMode":{"type":"string","default":"existing"},"instanceId":{"type":"string","default":""},"figureWidth":{"type":"number","default":100},"figureWidthUnit":{"type":"string","default":"%"},"figureMaxWidth":{"type":"number","default":0},"figureHeight":{"type":"number","default":0},"figureAlignment":{"type":"string","default":"center"}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"graphic-data-insert-interactive-figure","editorScript":"file:./index.js","viewScript":"file:./view.js","render":"file:./render.php"}');
 
 /***/ }
 

@@ -37,6 +37,7 @@ async function renderSavedFigure(
         targetElement,
         savedFigure,
         plotlyDivID,
+        targetDocument,
         postID
     ) {
         if (!targetElement) {
@@ -131,6 +132,9 @@ async function renderSavedFigure(
  */
 export async function render_interactive_plots(tabContentElement, info_obj, targetDocument, targetId) {
 
+
+    // const renderDocument = targetDocument || document;
+
     //console.log('tabContentElement render_interactive_plots', tabContentElement);
 	//Lets control if the figure is published or not
 	let figure_published = info_obj.figure_published;
@@ -223,8 +227,9 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
         }
 
         try {
+
             await waitForElementByIdPolling(targetId, 15000);
-            await renderSavedFigure(targetId, savedFigure, plotlyDivID, postID);
+            await renderSavedFigure(targetId, savedFigure, plotlyDivID, targetDocument, postID);
             await waitForPlotlyDiv(plotlyDivID);
             adjustPlotlyLayoutForMobile(postID, plotlyDivID);
             console.log('RIP - PLOT1', postID);
@@ -233,7 +238,7 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
             const activeTab = document.querySelector('.tab-pane.active');
             if (activeTab && activeTab.id === tabContentElement.id) {
                 if (!document.getElementById(plotlyDivID)) {
-                    await renderSavedFigure(targetId, savedFigure, plotlyDivID, postID);
+                    await renderSavedFigure(targetId, savedFigure, plotlyDivID, targetDocument, postID);
                     await waitForPlotlyDiv(plotlyDivID);
                     adjustPlotlyLayoutForMobile(postID, plotlyDivID);
                     console.log('RIP - PLOT2', postID);
@@ -281,6 +286,9 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
                         }
                         throw new Error(`Plotly div ${plotlyDivID} not found after ${retries * interval}ms`);
                     }
+
+
+                    console.log('targetId', targetId);
 
         			try {
         				await waitForElementByIdPolling(targetId, 15000);
@@ -561,7 +569,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     //const figureDiv = document.createElement('div');
     const figureDiv = tableRowDiv;
     figureDiv.classList.add('figure');
-    // figureDiv.id = `figure-${idx+1}`;
+    const uniqueHash_figureDiv = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     figureDiv.id = `figure-${postID}`;
 
 
@@ -582,13 +590,16 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         const targetId = `figure-${idx + 1}`;
 
         const figureIndex = document.createElement('div');
-        figureIndex.textContent = `Figure ${idx + 1} of ${total_published_figures}`;
-        figureIndex.style.color = 'rgba(68, 68, 68, 0.55)';
-        figureIndex.style.textDecoration = 'none';
-        figureIndex.style.fontSize = '0.8em';
-        figureIndex.style.marginRight = '2em';
-        figureIndex.style.marginLeft = '.2em';
-        figureIndex.style.cursor = 'pointer';
+
+        if (!isBlock) {
+            figureIndex.textContent = `Figure ${idx + 1} of ${total_published_figures}`;
+            figureIndex.style.color = 'rgba(68, 68, 68, 0.55)';
+            figureIndex.style.textDecoration = 'none';
+            figureIndex.style.fontSize = '0.8em';
+            figureIndex.style.marginRight = '2em';
+            figureIndex.style.marginLeft = '.2em';
+            figureIndex.style.cursor = 'pointer';
+        }
 
         /*
         * Make the div usable with a keyboard.
@@ -634,12 +645,14 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         const closeLink = document.createElement('a');
 
         closeLink.href = '#';
-        closeLink.textContent = '× Close';
-        closeLink.style.color = 'rgba(68, 68, 68, 0.55)';
-        closeLink.style.textDecoration = 'none';
-        closeLink.style.fontSize = '0.8em';
-        closeLink.style.marginRight = '0.8em';
-        // closeLink.style.marginLeft = '0.8em';
+        if (!isBlock) {
+            closeLink.textContent = '× Close';
+            closeLink.style.color = 'rgba(68, 68, 68, 0.55)';
+            closeLink.style.textDecoration = 'none';
+            closeLink.style.fontSize = '0.8em';
+            closeLink.style.marginRight = '0.8em';
+            // closeLink.style.marginLeft = '0.8em';
+        }
 
         closeLink.addEventListener('click', function (event) {
             event.preventDefault();
@@ -823,33 +836,46 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
             const shortShareUrl =
                 `${window.location.origin}/f/${encodeURIComponent(postID)}/`;
 
-            /*
-            * Update the address bar to reflect the actual current
-            * figure location without causing a page reload.
-            */
-            window.history.replaceState(
-                null,
-                "",
-                shareUrl
-            );
+
+            const pageShareUrl = new URL(window.location.href);
+            pageShareUrl.hash = `figure-${encodeURIComponent(postID)}`;
 
             try {
-                /*
-                * Copy the permanent short figure URL.
-                */
-                await navigator.clipboard.writeText(
-                    shortShareUrl
-                );
 
-                console.log(
-                    "Copied short figure link:",
-                    shortShareUrl
-                );
+                if (!isBlock) {
 
-                console.log(
-                    "Address bar updated to:",
-                    shareUrl
-                );
+                    /*
+                    * Update the address bar to reflect the actual current
+                    * figure location without causing a page reload.
+                    */
+                    window.history.replaceState(
+                        null,
+                        "",
+                        shareUrl
+                    );
+
+                    /*
+                    * Copy the permanent short figure URL.
+                    */
+                    await navigator.clipboard.writeText(
+                        shortShareUrl
+                    );
+                }
+                if (isBlock) {
+                    await navigator.clipboard.writeText(
+                        pageShareUrl.href
+                    );
+                }
+
+                // console.log(
+                //     "Copied short figure link:",
+                //     shortShareUrl
+                // );
+
+                // console.log(
+                //     "Address bar updated to:",
+                //     shareUrl
+                // );
 
                 alert(
                     "Figure link copied successfully."

@@ -9,17 +9,28 @@ if ( ! $figure_id ) {
 	return '';
 }
 
-$figure_path = get_post_meta( $figure_id, 'figure_path', true );
+$allowed_width_units = array( '%', 'px', 'rem', 'vw' );
+$figure_width       = isset( $attributes['figureWidth'] ) ? max( 0, (float) $attributes['figureWidth'] ) : 100;
+$figure_width_unit  = isset( $attributes['figureWidthUnit'] ) && in_array( $attributes['figureWidthUnit'], $allowed_width_units, true )
+	? $attributes['figureWidthUnit']
+	: '%';
+$figure_max_width   = isset( $attributes['figureMaxWidth'] ) ? max( 0, (float) $attributes['figureMaxWidth'] ) : 0;
+$figure_height      = isset( $attributes['figureHeight'] ) ? max( 0, (float) $attributes['figureHeight'] ) : 0;
+$figure_alignment   = isset( $attributes['figureAlignment'] ) && in_array( $attributes['figureAlignment'], array( 'left', 'center', 'right' ), true )
+	? $attributes['figureAlignment']
+	: 'center';
 
-if ( $figure_path && 'Interactive' !== $figure_path ) {
-	return '';
-}
+$alignment_margins = array(
+	'left'   => 'margin-left:0;margin-right:auto;',
+	'center' => 'margin-left:auto;margin-right:auto;',
+	'right'  => 'margin-left:auto;margin-right:0;',
+);
 
-$interactive_arguments = get_post_meta( $figure_id, 'figure_interactive_arguments', true );
-
-if ( empty( $interactive_arguments ) ) {
-	return '';
-}
+$wrapper_style  = 'width:' . $figure_width . $figure_width_unit . ';';
+$wrapper_style .= $figure_max_width > 0 ? 'max-width:' . $figure_max_width . 'px;' : 'max-width:none;';
+$wrapper_style .= $alignment_margins[ $figure_alignment ];
+$wrapper_style .= '--graphic-data-figure-height:' . ( $figure_height > 0 ? $figure_height . 'px' : 'auto' ) . ';';
+$wrapper_style .= 'scroll-margin-top:2rem;';
 
 /**
  * Each block instance needs its own frontend target ID.
@@ -37,7 +48,8 @@ $target_id = 'targetFigureElement_' . $figure_id . '_' . $instance_id;
 
 $wrapper_attributes = get_block_wrapper_attributes(
 	array(
-		'class' => 'graphic-data-frontend-figure',
+		'class' => 'graphic-data-frontend-figure graphic-data-figure-display',
+		'id'    => 'figure-' . $figure_id,
 	)
 );
 ?>
@@ -47,16 +59,9 @@ $wrapper_attributes = get_block_wrapper_attributes(
 	data-figure-id="<?php echo esc_attr( $figure_id ); ?>"
 	data-instance-id="<?php echo esc_attr( $instance_id ); ?>"
 	data-target-id="<?php echo esc_attr( $target_id ); ?>"
+	data-figure-height="<?php echo esc_attr( $figure_height ); ?>"
+	style="<?php echo esc_attr( $wrapper_style ); ?>"
 >
-	<script type="application/json" class="graphic-data-interactive-arguments">
-		<?php
-		echo wp_json_encode(
-			$interactive_arguments,
-			JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
-		);
-		?>
-	</script>
-
 	<div
 		id="<?php echo esc_attr( $target_id ); ?>"
 		class="targetFigureElement graphic-data-block-plotly-target"

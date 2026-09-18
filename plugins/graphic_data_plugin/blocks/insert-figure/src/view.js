@@ -1,128 +1,165 @@
-import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
-import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
+import apiFetch from '@wordpress/api-fetch';
+import {
+	render_interactive_plots,
+	render_tab_info,
+} from '@graphic-data/figure-render';
 
-function normalizeInteractiveArguments(value) {
-	if (!value) {
-		return '';
-	}
-
-	if (typeof value === 'string') {
-		return value;
-	}
-
-	return JSON.stringify(value);
+function formatFigureMeta(meta = {}, figureId) {
+	return {
+		code: meta.figure_code || '',
+		figure_iframe_code: meta.figure_iframe_code || '',
+		dataLink: meta.figure_data_link_url || '',
+		dataText: meta.figure_data_link_text || '',
+		externalAlt: meta.figure_external_alt || '',
+		figureTitle: meta.figure_title || '',
+		figureType: meta.figure_path || '',
+		figure_interactive_arguments:
+			typeof meta.figure_interactive_arguments === 'string'
+				? meta.figure_interactive_arguments
+				: JSON.stringify(meta.figure_interactive_arguments || []),
+		figure_interactive_args_rendered:
+			meta.figure_interactive_args_rendered || '',
+		figure_published: meta.figure_published || '',
+		imageLink:
+			meta.figure_path === 'External'
+				? meta.figure_external_url || ''
+				: meta.figure_image || '',
+		longCaption: meta.figure_caption_long || '',
+		postID: Number(figureId || meta.id || meta.postID || 0),
+		scienceLink: meta.figure_science_link_url || '',
+		scienceText: meta.figure_science_link_text || '',
+		shortCaption: meta.figure_caption_short || '',
+	};
 }
 
-function readInteractiveArguments(block) {
-	const dataElement = block.querySelector(
-		'.graphic-data-interactive-arguments'
-	);
-
-	if (!dataElement) {
-		return '';
+function scrollToFigureHash(block, figureId) {
+	if (window.location.hash !== `#figure-${figureId}`) {
+		return;
 	}
 
-	const rawValue = dataElement.textContent.trim();
-
-	if (!rawValue) {
-		return '';
-	}
-
-	try {
-		return normalizeInteractiveArguments(JSON.parse(rawValue));
-	} catch (error) {
-		// If the script tag already contains the raw argument string, use it.
-		return rawValue;
-	}
-}
-
-function findTargetInBlock(block, targetFigureElement) {
-	return Array.from(
-		block.querySelectorAll('.graphic-data-block-plotly-target')
-	).find((element) => element.id === targetFigureElement);
+	window.requestAnimationFrame(() => {
+		block.scrollIntoView({ block: 'start' });
+	});
 }
 
 async function renderFigureBlock(block) {
+	if (block.dataset.rendering === 'true' || block.dataset.rendered === 'true') {
+		return;
+	}
+
 	const figureId = Number(block.dataset.figureId || 0);
+	const figureHeight = Math.max(Number(block.dataset.figureHeight || 0), 0);
 
 	if (!figureId) {
 		return;
 	}
 
-	const targetFigureElement =
-		block.dataset.targetId || `targetFigureElement_${figureId}`;
+	block.dataset.rendering = 'true';
 
-	const interactiveArguments = readInteractiveArguments(block);
-	
-	const rawArgs = interactiveArguments;
+	try {
+		const meta = await apiFetch({
+			path: `/graphic-data/v1/figure/${figureId}`,
+			method: 'GET',
+		});
+		const infoObj = formatFigureMeta(meta, figureId);
+		const targetId = block.dataset.targetId;
+		const targetDiv = targetId
+			? block.querySelector(`#${CSS.escape(targetId)}`)
+			: block.querySelector('.graphic-data-block-plotly-target');
 
-	const parsedArgs =
-		typeof rawArgs === 'string'
-			? JSON.parse(rawArgs)
-			: rawArgs;
-
-	const graphType = Array.isArray(parsedArgs)
-		? Object.fromEntries(parsedArgs).graphType
-		: parsedArgs?.graphType;
-
-	console.log('graphType', graphType);
-
-	if (!interactiveArguments) {
-		throw new Error(
-			`Missing figure_interactive_arguments for figure ${figureId}.`
-		);
-	}
-
-	let targetDiv = findTargetInBlock(block, targetFigureElement);
-
-	if (!targetDiv) {
-		targetDiv = document.createElement('div');
-		targetDiv.id = targetFigureElement;
-		targetDiv.className =
-			'targetFigureElement graphic-data-block-plotly-target';
-		targetDiv.dataset.figureId = String(figureId);
-		targetDiv.style.width = '100%';
-		targetDiv.style.maxWidth = '100%';
-		block.appendChild(targetDiv);
-	}
-
-	if (window.Plotly?.purge) {
-		try {
-			window.Plotly.purge(targetDiv);
-		} catch (error) {
-			// Ignore purge errors. The target may not have an existing Plotly plot yet.
+		if (!targetDiv) {
+			throw new Error(`Missing frontend target for figure ${figureId}.`);
 		}
-	}
 
-	targetDiv.innerHTML = '';
+		targetDiv.innerHTML = '';
 
-	if (graphType === 'Plotly line graph (time series)') {
-		await Promise.resolve(
-			producePlotlyLineFigure(
-				targetFigureElement,
-				interactiveArguments,
-				figureId,
-				document
-			)
+		const interactiveTargetId = await render_tab_info(
+			targetDiv,
+			block,
+			infoObj,
+			0,
+			true,
+			null,
+			null,
+			1
 		);
-	}
-	if (graphType === 'Plotly bar graph') {
-		await Promise.resolve(
-			producePlotlyBarFigure(
-				targetFigureElement,
-				interactiveArguments,
-				figureId,
-				document
-			)
+
+		const figureContainer = targetDiv.querySelector('.figure');
+
+		await render_interactive_plots(
+			figureContainer,
+			infoObj,
+			document,
+			interactiveTargetId
 		);
-	}
 
-	const plotDiv = document.getElementById(`plotlyFigure${figureId}`);
+		await new Promise((resolve) => {
+			window.requestAnimationFrame(() => {
+				window.requestAnimationFrame(resolve);
+			});
+		});
 
-	if (plotDiv && window.Plotly?.Plots?.resize) {
-		plotDiv.style.width = '100%';
-		plotDiv.style.maxWidth = '100%';
-		window.Plotly.Plots.resize(plotDiv);
+		const plotDiv = targetDiv.querySelector('.js-plotly-plot');
+		const figureMedia = targetDiv.querySelector('.figure > img, .figure > video');
+
+		if (figureMedia && figureHeight > 0) {
+			figureMedia.style.height = `${figureHeight}px`;
+			figureMedia.style.objectFit = 'contain';
+		}
+
+		if (plotDiv && window.Plotly?.Plots?.resize) {
+			window.Plotly.Plots.resize(plotDiv);
+		}
+
+		if (plotDiv && window.Plotly?.relayout) {
+			const layout = {
+				autosize: figureHeight === 0,
+				width: targetDiv.clientWidth,
+				paper_bgcolor: 'rgba(0, 0, 0, 0)',
+				plot_bgcolor: 'rgba(0, 0, 0, 0)',
+			};
+
+			if (figureHeight > 0) {
+				layout.height = figureHeight;
+			}
+
+			await window.Plotly.relayout(plotDiv, layout);
+		}
+
+		plotDiv?.querySelectorAll('.modebar-group').forEach((group) => {
+			group.style.setProperty('background-color', 'transparent', 'important');
+		});
+		plotDiv?.querySelectorAll('.modebar-btn .icon path').forEach((path) => {
+			path.style.setProperty('fill', 'rgba(68, 68, 68, 0.7)', 'important');
+		});
+
+		if (typeof ResizeObserver !== 'undefined') {
+			let previousWidth = block.clientWidth;
+			const resizeObserver = new ResizeObserver(() => {
+				const nextWidth = block.clientWidth;
+				if (!nextWidth || nextWidth === previousWidth) return;
+				previousWidth = nextWidth;
+
+				const currentPlot = targetDiv.querySelector('.js-plotly-plot');
+				if (!currentPlot || !window.Plotly) return;
+
+				window.Plotly.Plots?.resize?.(currentPlot);
+				window.Plotly.relayout?.(currentPlot, {
+					autosize: figureHeight === 0,
+					width: targetDiv.clientWidth,
+					paper_bgcolor: 'rgba(0, 0, 0, 0)',
+					plot_bgcolor: 'rgba(0, 0, 0, 0)',
+					...(figureHeight > 0 ? { height: figureHeight } : {}),
+				});
+			});
+
+			resizeObserver.observe(block);
+		}
+
+		block.dataset.rendered = 'true';
+		scrollToFigureHash(block, figureId);
+	} finally {
+		delete block.dataset.rendering;
 	}
 }
 
@@ -135,7 +172,7 @@ function renderGraphicDataInsertFigures() {
 		renderFigureBlock(block).catch((error) => {
 			const figureId = block.dataset.figureId || '';
 
-			console.error('Frontend Plotly render failed:', error);
+			console.error('Frontend figure render failed:', error);
 
 			block.innerHTML = `
 				<div class="graphic-data-figure-error">
@@ -149,7 +186,8 @@ function renderGraphicDataInsertFigures() {
 if (document.readyState === 'loading') {
 	document.addEventListener(
 		'DOMContentLoaded',
-		renderGraphicDataInsertFigures
+		renderGraphicDataInsertFigures,
+		{ once: true }
 	);
 } else {
 	renderGraphicDataInsertFigures();
