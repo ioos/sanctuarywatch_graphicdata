@@ -39,6 +39,30 @@
 		"figureAlignment": {
 			"type": "string",
 			"default": "center"
+		},
+		"figureBackgroundColor": {
+			"type": "string",
+			"default": "transparent"
+		},
+		"figureBorderEnabled": {
+			"type": "boolean",
+			"default": false
+		},
+		"figureBorderColor": {
+			"type": "string",
+			"default": "#000000"
+		},
+		"figureBorderWidth": {
+			"type": "number",
+			"default": 1
+		},
+		"figureBorderRadius": {
+			"type": "number",
+			"default": 0
+		},
+		"figurePadding": {
+			"type": "number",
+			"default": 0
 		}
 	},
 	"supports": {

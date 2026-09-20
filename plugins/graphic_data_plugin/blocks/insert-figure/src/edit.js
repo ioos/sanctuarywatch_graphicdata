@@ -15,6 +15,9 @@ import {
 	PanelBody,
 	TextControl,
 	Button,
+	ColorPalette,
+	ToggleControl,
+	RangeControl,
 } from '@wordpress/components';
 
 import { __ } from '@wordpress/i18n';
@@ -150,11 +153,20 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		figureMaxWidth = 0,
 		figureHeight = 0,
 		figureAlignment = 'center',
+		figureBackgroundColor = 'transparent',
+		figureBorderEnabled = false,
+		figureBorderColor = '#000000',
+		figureBorderWidth = 1,
+		figureBorderRadius = 0,
+		figurePadding = 0,
 	} = attributes;
 
 	const normalizedWidth = Math.max(Number(figureWidth) || 0, 0);
 	const normalizedMaxWidth = Math.max(Number(figureMaxWidth) || 0, 0);
 	const normalizedHeight = Math.max(Number(figureHeight) || 0, 0);
+	const normalizedBorderWidth = Math.max(Number(figureBorderWidth) || 0, 0);
+	const normalizedBorderRadius = Math.max(Number(figureBorderRadius) || 0, 0);
+	const normalizedPadding = Math.max(Number(figurePadding) || 0, 0);
 	const horizontalMargins = {
 		left: { marginLeft: '0', marginRight: 'auto' },
 		center: { marginLeft: 'auto', marginRight: 'auto' },
@@ -740,6 +752,84 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						{__('Reset dimensions', 'graphic-data-plugin')}
 					</Button>
 				</PanelBody>
+
+				<PanelBody
+					title={__('Figure appearance', 'graphic-data-plugin')}
+					initialOpen={false}
+				>
+					<p>{__('Background color', 'graphic-data-plugin')}</p>
+					<ColorPalette
+						value={figureBackgroundColor}
+						onChange={(value) =>
+							setAttributes({ figureBackgroundColor: value || 'transparent' })
+						}
+						clearable
+					/>
+
+					<ToggleControl
+						label={__('Show border', 'graphic-data-plugin')}
+						checked={figureBorderEnabled}
+						onChange={(value) => setAttributes({ figureBorderEnabled: value })}
+					/>
+
+					{figureBorderEnabled && (
+						<>
+							<p>{__('Border color', 'graphic-data-plugin')}</p>
+							<ColorPalette
+								value={figureBorderColor}
+								onChange={(value) =>
+									setAttributes({ figureBorderColor: value || '#000000' })
+								}
+							/>
+
+							<RangeControl
+								label={__('Border thickness (px)', 'graphic-data-plugin')}
+								value={normalizedBorderWidth}
+								onChange={(value) =>
+									setAttributes({ figureBorderWidth: Math.max(Number(value) || 0, 0) })
+								}
+								min={0}
+								max={20}
+							/>
+						</>
+					)}
+
+					<RangeControl
+						label={__('Corner radius (px)', 'graphic-data-plugin')}
+						value={normalizedBorderRadius}
+						onChange={(value) =>
+							setAttributes({ figureBorderRadius: Math.max(Number(value) || 0, 0) })
+						}
+						min={0}
+						max={100}
+					/>
+
+					<RangeControl
+						label={__('Inner padding (px)', 'graphic-data-plugin')}
+						value={normalizedPadding}
+						onChange={(value) =>
+							setAttributes({ figurePadding: Math.max(Number(value) || 0, 0) })
+						}
+						min={0}
+						max={100}
+					/>
+
+					<Button
+						variant="secondary"
+						onClick={() =>
+							setAttributes({
+								figureBackgroundColor: 'transparent',
+								figureBorderEnabled: false,
+								figureBorderColor: '#000000',
+								figureBorderWidth: 1,
+								figureBorderRadius: 0,
+								figurePadding: 0,
+							})
+						}
+					>
+						{__('Reset appearance', 'graphic-data-plugin')}
+					</Button>
+				</PanelBody>
 			</InspectorControls>
 			<div
 				className="graphic-data-figure-path-selector"
@@ -881,6 +971,14 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						width: `${normalizedWidth}${figureWidthUnit}`,
 						maxWidth:
 							normalizedMaxWidth > 0 ? `${normalizedMaxWidth}px` : 'none',
+						backgroundColor: figureBackgroundColor || 'transparent',
+						border: figureBorderEnabled
+							? `${normalizedBorderWidth}px solid ${figureBorderColor || '#000000'}`
+							: 'none',
+						borderRadius: `${normalizedBorderRadius}px`,
+						padding: `${normalizedPadding}px`,
+						boxSizing: 'border-box',
+						overflow: normalizedBorderRadius > 0 ? 'hidden' : 'visible',
 						...horizontalMargins,
 					}}
 				// style={{

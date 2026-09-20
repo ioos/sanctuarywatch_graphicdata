@@ -19,6 +19,15 @@ $figure_height      = isset( $attributes['figureHeight'] ) ? max( 0, (float) $at
 $figure_alignment   = isset( $attributes['figureAlignment'] ) && in_array( $attributes['figureAlignment'], array( 'left', 'center', 'right' ), true )
 	? $attributes['figureAlignment']
 	: 'center';
+$background_color   = isset( $attributes['figureBackgroundColor'] ) ? sanitize_hex_color( $attributes['figureBackgroundColor'] ) : '';
+$border_enabled     = ! empty( $attributes['figureBorderEnabled'] );
+$border_color       = isset( $attributes['figureBorderColor'] ) ? sanitize_hex_color( $attributes['figureBorderColor'] ) : '#000000';
+$border_width       = isset( $attributes['figureBorderWidth'] ) ? max( 0, (float) $attributes['figureBorderWidth'] ) : 1;
+$border_radius      = isset( $attributes['figureBorderRadius'] ) ? max( 0, (float) $attributes['figureBorderRadius'] ) : 0;
+$figure_padding     = isset( $attributes['figurePadding'] ) ? max( 0, (float) $attributes['figurePadding'] ) : 0;
+
+$background_color = $background_color ? $background_color : 'transparent';
+$border_color     = $border_color ? $border_color : '#000000';
 
 $alignment_margins = array(
 	'left'   => 'margin-left:0;margin-right:auto;',
@@ -30,6 +39,12 @@ $wrapper_style  = 'width:' . $figure_width . $figure_width_unit . ';';
 $wrapper_style .= $figure_max_width > 0 ? 'max-width:' . $figure_max_width . 'px;' : 'max-width:none;';
 $wrapper_style .= $alignment_margins[ $figure_alignment ];
 $wrapper_style .= '--graphic-data-figure-height:' . ( $figure_height > 0 ? $figure_height . 'px' : 'auto' ) . ';';
+$wrapper_style .= 'background-color:' . $background_color . ';';
+$wrapper_style .= $border_enabled ? 'border:' . $border_width . 'px solid ' . $border_color . ';' : 'border:none;';
+$wrapper_style .= 'border-radius:' . $border_radius . 'px;';
+$wrapper_style .= 'padding:' . $figure_padding . 'px;';
+$wrapper_style .= 'box-sizing:border-box;';
+$wrapper_style .= $border_radius > 0 ? 'overflow:hidden;' : 'overflow:visible;';
 $wrapper_style .= 'scroll-margin-top:2rem;';
 
 /**
