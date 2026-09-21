@@ -9,18 +9,21 @@ on:
       - 'phpdoc.dist.xml'
   workflow_dispatch:
 
-permissions:
-  contents: write
+# Deny all permissions by default
+permissions: {}
 
 jobs:
   generate-docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Ensure output directory
         run: |
