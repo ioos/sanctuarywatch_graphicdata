@@ -67,6 +67,7 @@ export async function make_title() {
 	const host = window.location.host;
 	try {
 		setSceneData(graphicDataSceneData.titleArr);
+        console.log('scene_data.scene_tagline', scene_data.scene_tagline );
         scene_data.scene_tagline = scene_data.scene_tagline.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
 		const scene_location = scene_data.scene_location;
 		const title = scene_data.post_title;
@@ -1126,8 +1127,15 @@ export async function loadSVG(url, containerId) {
         // checking if user device is touchscreen
         const wantsMobileLayout = is_mobile() && deviceDetector.device != 'tablet';
         const isPreview = window.location.href.includes('post.php');
+
+        // console.log('is_mobile()' , is_mobile());
+        // console.log('deviceDetector.device' , deviceDetector.device);
+        // console.log('wantsMobileLayout' , wantsMobileLayout);
+        // console.log('isPreview' , isPreview);
+
         if ( is_touchscreen() && ( ! isPreview || wantsMobileLayout ) ) {
             if ( wantsMobileLayout ) {
+
                 //smaller image preview here for mobile
                 let fullImgCont = document.querySelector("#mobile-view-image");
                 
@@ -1158,7 +1166,7 @@ export async function loadSVG(url, containerId) {
                     modal.appendChild(svgElementMobileDisplay);
                 } else {
                     modal = document.getElementById("mobileModal");
-                    let modalBody = document.querySelector("#mobileModal > div > div > div.modal-body")
+                    let modalBody = document.querySelector("#mobileModal > div > div > div.modal-body");
                     modalBody.appendChild(svgElementMobileDisplay);
                 }
 
@@ -1234,6 +1242,7 @@ export async function loadSVG(url, containerId) {
             }
         }
         else{ //device is a PC
+
             //hide mobile icons
             window.addEventListener('load', function() {
                 let mob_icons = document.querySelector("#mobile");
@@ -1314,7 +1323,6 @@ export async function loadSVG(url, containerId) {
             }
             
             container.appendChild(svgElement);
-
             highlight_icons();
             toggle_text();
             full_screen_button('svg1');
