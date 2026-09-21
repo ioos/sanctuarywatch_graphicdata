@@ -160,6 +160,7 @@ class Graphic_Data_Tutorial_Content {
 		$this->create_tutorial_instance_types();
 		$this->create_tutorial_instances( $current_user_id );
 		$this->create_tutorial_scenes( $current_user_id );
+		$this->create_tutorial_standard_pages( $current_user_id );
 		$this->create_tutorial_modals( $current_user_id );
 		$this->create_tutorial_figures( $current_user_id );
 		$this->create_tutorial_about_page( $current_user_id );
@@ -395,7 +396,7 @@ class Graphic_Data_Tutorial_Content {
 		// Get all posts with the tutorial_id meta key.
 		$posts_to_be_deleted = get_posts(
 			array(
-				'post_type'      => array( 'instance', 'scene', 'modal', 'figure', 'about' ),
+				'post_type'      => array( 'instance', 'scene', 'modal', 'figure', 'about', 'page' ),
 				'post_status'    => 'any',
 				'posts_per_page' => -1,
 				'meta_query'     => array(
@@ -647,6 +648,66 @@ class Graphic_Data_Tutorial_Content {
 				$fourth_key  => '',
 			);
 		}
+	}
+
+
+	/**
+	 * Create example pages for the tutorial.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_tutorial_standard_pages( $current_user_id ) {
+		global $wpdb;
+		$tutorial_id = [ 100, 101, 102 ];
+		$page_title = [ 'Example Page 1', 'Example Page 2', 'Example Page 3' ];
+		$page_location = [ 3, 4, 5 ];
+		$file_prefix = 'example_files/tutorial/';
+
+		$page_tagline = [
+			'<!-- wp:paragraph --><p>Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways. To see how this Scene is put together, just hit the Edit Scene button at the top of the screen.</p><!-- /wp:paragraph -->',
+			'<!-- wp:paragraph --><p>Here we are, Orbital Lieutenant, in the Default Scene! The central mechanic of Graphic Data is the clickable image. The thing is that the clickable image needs to be created in a very particular way. We have <a href="https://ioos.github.io/sanctuarywatch_graphicdata/creating_svg_files/">extensive documentation</a> on how to create the image so that it is ready for Graphic Data. But maybe you don\'t like to read (Who does? Reading is the worst). Not to worry Jack (Space Jack), we\'ve got your back on this one. We have built a tool, within the Graphic Data plugin itself to help you build a clickable image that is formatted in just the right way. You can find this tool - "Create SVG" - under, well, Tools in the admin dashboard.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>The tool will build an image that will look remarkably like what you see below - a scalable vector graphic (or SVG) that will work great with Graphic Data. This image looks admittedly a little plain, but stop with the complaining. All you will need to do from here is to bring the SVG into your vector graphic editing software and swap out the artwork elements (while holding onto the image formatting) so that your clickable image sings. To see examples of what you can do, check out the two scintillating other scene examples in this instance.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>In the scene below, you\'ll see six options. These are the major categories of things you can do with a clickable image within Graphic Data. Click around and be prepared to be floored in wonderment and awe. And, dear space traveler, you might just be wondering how this scene is put together. Well, put your mind at ease: just hit the Edit Scene button at the top of the screen.</p><!-- /wp:paragraph -->',
+			'<!-- wp:paragraph --><p>We have arrived at the Table Scene and what a galactic journey it has been. The content within the clickable image below is exactly the same as in the two other example scenes in this instance. The only difference is that the content is arranged in a report card form. And, just as with the other example scenes, the options below show all of the magical things you can do in a scene. Want to know how this scene was created? Hit Edit Scene above!<p><!-- /wp:paragraph -->',
+		];
+
+		$page_order = 5;
+
+		// create the three tutorial pages.
+		for ( $i = 0; $i < 3; $i++ ) {
+			$post_data = array(
+				'post_title'   => $page_title[ $i ],
+				'post_type'    => 'page',
+				'post_status'  => 'publish',
+				'post_author'  => $current_user_id,
+			);
+
+			// Insert the post and get its ID.
+			$post_id = wp_insert_post( $post_data );
+
+			// Check if post was created successfully.
+			if ( ! is_wp_error( $post_id ) ) {
+				wp_update_post(
+					[
+						'ID'           => $post_id,
+						'post_content' => $page_tagline[ $i ],
+					]
+				);
+				$tutorial_instance_id = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+						'tutorial_id',
+						$page_location [ $i ],
+					)
+				);
+
+				update_post_meta( $post_id, 'scene_location', $tutorial_instance_id );
+				update_post_meta( $post_id, 'graphic_data_page_instance_in_navbar', 1 );
+				update_post_meta( $post_id, 'scene_order', 8 );
+			//	$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic [ $i ], $tutorial_id [ $i ], $tutorial_instance_id );
+
+				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
+			}
+		};
 	}
 
 	/**
