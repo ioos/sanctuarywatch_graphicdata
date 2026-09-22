@@ -371,7 +371,7 @@ async function render_interactive_plots(tabContentElement, info_obj, targetDocum
         //     console.log('Received graphic-data:figureTimeseriesGraphLoaded', event.detail);
         // });
 
-        if (!window.location.href.includes('post.php') || window.location.href.includes("post-new.php")) {
+        if (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php")) {
           document.dispatchEvent(new CustomEvent('graphic-data:figureTimeseriesGraphLoaded', {
             detail: {
               title,
@@ -922,7 +922,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       //     console.log('Received graphic-data:figureInternalImageLoaded', event.detail);
       // });
 
-      if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
+      if (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php")) {
         document.dispatchEvent(new CustomEvent('graphic-data:figureInternalImageLoaded', {
           detail: {
             title,
@@ -961,7 +961,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       //     console.log('Received graphic-data:figureExternalImageLoaded', event.detail);
       // });
 
-      if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
+      if (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php")) {
         document.dispatchEvent(new CustomEvent('graphic-data:figureExternalImageLoaded', {
           detail: {
             title,
@@ -1034,7 +1034,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
       //     console.log('Received graphic-data:figureCodeDisplayLoaded', event.detail);
       // });
 
-      if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
+      if (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php")) {
         document.dispatchEvent(new CustomEvent('graphic-data:figureCodeDisplayLoaded', {
           detail: {
             title,
@@ -1086,7 +1086,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
 
   //Google Tags registration for figure science and data links
   if (info_obj['scienceText'] != '') {
-    if (!window.location.href.includes('post.php') || !window.location.href.includes("post-new.php")) {
+    if (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php")) {
       document.dispatchEvent(new CustomEvent('graphic-data:setupFigureScienceLinkTracking', {
         detail: {
           postID
