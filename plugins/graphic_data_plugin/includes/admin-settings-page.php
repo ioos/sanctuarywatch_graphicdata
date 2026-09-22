@@ -341,11 +341,11 @@ class Graphic_Data_Settings_Page {
 
 					$plugin_admin_tutorial->create_tutorial_instance_types();
 					$plugin_admin_tutorial->create_tutorial_instances( $current_user_id );
+					$plugin_admin_tutorial->create_tutorial_standard_pages( $current_user_id );
 					$plugin_admin_tutorial->create_tutorial_scenes( $current_user_id );
 					$plugin_admin_tutorial->create_tutorial_modals( $current_user_id );
 					$plugin_admin_tutorial->create_tutorial_figures( $current_user_id );
 					$plugin_admin_tutorial->create_tutorial_about_page( $current_user_id );
-					$plugin_admin_tutorial->create_tutorial_standard_pages( $current_user_id );
 					$sanitized = $plugin_admin_tutorial->create_graphic_data_settings_content( $sanitized );
 				}
 				break;
