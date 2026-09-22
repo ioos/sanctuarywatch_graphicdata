@@ -1,3 +1,4 @@
+
 window.dataLayer = window.dataLayer || [];
 const _settingsEl = document.getElementById('graphic-data-settings');
 const _settings = _settingsEl ? JSON.parse(_settingsEl.textContent) : {};
@@ -104,6 +105,7 @@ document.addEventListener('graphic-data:setupFigureDataLinkTracking', (e) => {
 });
 
 document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (e) => {
+	console.log('googletags.js',  e.detail);
 	const { title, figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
@@ -116,6 +118,7 @@ document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (e) => {
 });
 
 document.addEventListener('graphic-data:figureInternalImageLoaded', (e) => {
+	console.log('googletags.js',  e.detail);
 	const { title, figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
