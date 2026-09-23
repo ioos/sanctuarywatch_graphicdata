@@ -999,10 +999,16 @@ class Graphic_Data_Utility {
 				'post_type' => 'page',  // Your custom post type.
 				'posts_per_page' => -1,       // Retrieve all matching posts (-1 means no limit).
 				'meta_query' => array(
+					'relation' => 'OR',
 					array(
 						'key' => 'scene_location',      // The custom field key.
 						'value' => $scene_location, // The value you are searching for.
 						'compare' => '=',         // Comparison operator.
+					),
+					array(
+						'key' => 'scene_location',      // Also include pages available globally.
+						'value' => 'Global',
+						'compare' => '=',
 					),
 				),
 				'fields' => 'ids',            // Only return post IDs.
