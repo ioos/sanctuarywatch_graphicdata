@@ -15,10 +15,15 @@ import { useBlockProps } from '@wordpress/block-editor';
  *
  * @return {Element} Element to render.
  */
+// export default function save() {
+// 	return (
+// 		<p { ...useBlockProps.save() }>
+// 			{ 'Figures – hello from the saved content!' }
+// 		</p>
+// 	);
+// }
+
+//Dynamic block means frontend HTML comes from PHP, not saved static HTML.
 export default function save() {
-	return (
-		<p { ...useBlockProps.save() }>
-			{ 'Figures – hello from the saved content!' }
-		</p>
-	);
+	return null;
 }

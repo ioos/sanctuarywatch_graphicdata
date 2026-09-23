@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "create-block/graphic-data-insert-modal",
+  "version": "0.1.0",
+  "title": "Graphic Data - Modal",
+  "category": "media",
+  "description": "Insert a modal into a post",
+  "example": {},
+  "attributes": {
+    "modalId": {
+      "type": "number",
+      "default": 0
+    },
+    "modalMode": {
+      "type": "string",
+      "default": "existing"
+    },
+    "instanceId": {
+      "type": "string",
+      "default": ""
+    },
+    "modalWidth": {
+      "type": "number",
+      "default": 100
+    },
+    "modalWidthUnit": {
+      "type": "string",
+      "default": "%"
+    },
+    "modalMaxWidth": {
+      "type": "number",
+      "default": 0
+    },
+    "modalHeight": {
+      "type": "number",
+      "default": 0
+    },
+    "modalAlignment": {
+      "type": "string",
+      "default": "center"
+    },
+    "modalBackgroundColor": {
+      "type": "string",
+      "default": "transparent"
+    },
+    "modalBorderEnabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "modalBorderColor": {
+      "type": "string",
+      "default": "#000000"
+    },
+    "modalBorderWidth": {
+      "type": "number",
+      "default": 1
+    },
+    "modalBorderRadius": {
+      "type": "number",
+      "default": 0
+    },
+    "modalPadding": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "supports": {
+    "color": {
+      "background": false,
+      "text": true
+    },
+    "html": false,
+    "typography": {
+      "fontSize": true
+    }
+  },
+  "textdomain": "graphic-data-insert-interactive-modal",
+  "editorScript": "file:./index.js",
+  "viewScript": "file:./view.js",
+  "render": "file:./render.php"
+}
