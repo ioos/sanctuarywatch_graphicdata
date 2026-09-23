@@ -6,6 +6,9 @@
  */
 
 require_once __DIR__ . '/admin-tutorial-figure-preview.php';
+require_once ABSPATH . 'wp-admin/includes/file.php';
+require_once ABSPATH . 'wp-admin/includes/media.php';
+require_once ABSPATH . 'wp-admin/includes/image.php';
 
 /**
  * Class Graphic_Data_Tutorial_Content
@@ -160,6 +163,7 @@ class Graphic_Data_Tutorial_Content {
 		$this->create_tutorial_instance_types();
 		$this->create_tutorial_instances( $current_user_id );
 		$this->create_tutorial_scenes( $current_user_id );
+		$this->create_tutorial_standard_pages( $current_user_id );
 		$this->create_tutorial_modals( $current_user_id );
 		$this->create_tutorial_figures( $current_user_id );
 		$this->create_tutorial_about_page( $current_user_id );
@@ -395,7 +399,7 @@ class Graphic_Data_Tutorial_Content {
 		// Get all posts with the tutorial_id meta key.
 		$posts_to_be_deleted = get_posts(
 			array(
-				'post_type'      => array( 'instance', 'scene', 'modal', 'figure', 'about' ),
+				'post_type'      => array( 'instance', 'scene', 'modal', 'figure', 'about', 'page' ),
 				'post_status'    => 'any',
 				'posts_per_page' => -1,
 				'meta_query'     => array(
@@ -647,6 +651,77 @@ class Graphic_Data_Tutorial_Content {
 				$fourth_key  => '',
 			);
 		}
+	}
+
+
+	/**
+	 * Create example pages for the tutorial.
+	 *
+	 * @param int $current_user_id The ID of the user to set as post author.
+	 * @return void
+	 */
+	public function create_tutorial_standard_pages( $current_user_id ) {
+		global $wpdb;
+		$tutorial_id = [ 100, 101, 102 ];
+		$page_title = [ 'Example Page 1', 'Example Page 2', 'Example Page 3' ];
+		$page_location = [ 3, 4, 5 ];
+		$file_prefix = 'example_files/tutorial/';
+		$image_path = GRAPHIC_DATA_PLUGIN_DIR . 'example_files/tutorial/torus_space_station.png';
+		// media_handle_sideload() deletes whatever file 'tmp_name' points to, so hand it a
+		// throwaway copy rather than the plugin's permanent asset.
+		$tmp_image_path = wp_tempnam( basename( $image_path ) );
+		copy( $image_path, $tmp_image_path );
+		$file_array = [
+			'name'     => basename( $image_path ),
+			'tmp_name' => $tmp_image_path,
+		];
+
+		$attachment_id = media_handle_sideload( $file_array );
+		update_post_meta( $attachment_id, 'image_tutorial_id', $tutorial_id );
+
+		$page_tagline = '<!-- wp:paragraph --><p>Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways. To see how this Scene is put together, just hit the Edit Scene button at the top of the screen.</p><!-- /wp:paragraph -->'
+		. '<!-- wp:image {"id":' . $attachment_id . ',"sizeSlug":"large"} -->'
+		. '<figure class="wp-block-image size-large"><img src="' . esc_url( wp_get_attachment_image_url( $attachment_id, 'large' ) ) . '" class="wp-image-' . $attachment_id . '"/></figure>'
+		. '<!-- /wp:image -->';
+
+		$page_order = 5;
+
+		// create the three tutorial pages.
+		for ( $i = 0; $i < 3; $i++ ) {
+			$post_data = array(
+				'post_title'   => $page_title[ $i ],
+				'post_type'    => 'page',
+				'post_status'  => 'publish',
+				'post_author'  => $current_user_id,
+			);
+
+			// Insert the post and get its ID.
+			$post_id = wp_insert_post( $post_data );
+
+			// Check if post was created successfully.
+			if ( ! is_wp_error( $post_id ) ) {
+				wp_update_post(
+					[
+						'ID'           => $post_id,
+						'post_content' => $page_tagline,
+					]
+				);
+				$tutorial_instance_id = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+						'tutorial_id',
+						$page_location [ $i ],
+					)
+				);
+
+				update_post_meta( $post_id, 'scene_location', $tutorial_instance_id );
+				update_post_meta( $post_id, 'graphic_data_page_instance_in_navbar', 1 );
+				update_post_meta( $post_id, 'scene_order', 8 );
+			//	$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic [ $i ], $tutorial_id [ $i ], $tutorial_instance_id );
+
+				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
+			}
+		};
 	}
 
 	/**
@@ -1268,10 +1343,6 @@ class Graphic_Data_Tutorial_Content {
 		if ( ! file_exists( $plugin_image_path ) ) {
 			return false;
 		}
-
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/media.php';
-		require_once ABSPATH . 'wp-admin/includes/image.php';
 
 		$filename = basename( $plugin_image_path );
 		$upload_file = wp_upload_bits( $filename, null, file_get_contents( $plugin_image_path ) );
