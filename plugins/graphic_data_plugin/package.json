@@ -1,7 +1,11 @@
 {
 	"scripts": {
 		"start:insert-figure": "wp-scripts start --source-path=blocks/insert-figure/src --output-path=blocks/insert-figure/build --webpack-copy-php",
-		"build:insert-figure": "wp-scripts build --source-path=blocks/insert-figure/src --output-path=blocks/insert-figure/build --webpack-copy-php"
+		"build:insert-figure": "wp-scripts build --source-path=blocks/insert-figure/src --output-path=blocks/insert-figure/build --webpack-copy-php",
+		"start:insert-modal": "wp-scripts start --source-path=blocks/insert-modal/src --output-path=blocks/insert-modal/build --webpack-copy-php",
+		"build:insert-modal": "wp-scripts build --source-path=blocks/insert-modal/src --output-path=blocks/insert-modal/build --webpack-copy-php",
+		"start:insert-scene": "wp-scripts start --source-path=blocks/insert-scene/src --output-path=blocks/insert-scene/build --webpack-copy-php",
+		"build:insert-scene": "wp-scripts build --source-path=blocks/insert-scene/src --output-path=blocks/insert-scene/build --webpack-copy-php"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^35.0.0"

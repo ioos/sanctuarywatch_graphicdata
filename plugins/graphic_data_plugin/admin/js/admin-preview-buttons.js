@@ -513,6 +513,9 @@ if (previewFigureOrModalElements.length > 0) {
 					}
 
 					if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '') {
+						if (status === 'draft') {
+							await deleteFigureHtmlFiles();
+						}
 						return;
 					}
 
@@ -525,13 +528,21 @@ if (previewFigureOrModalElements.length > 0) {
 						}
 					}
 
-					if (status === 'draft') {
+					if (status === 'draft' && !window.location.href.includes('post-new.php')) {
+
 						await deleteFigureHtmlFiles();
+
 						return;
 					}
 
+					if (status === 'draft' && window.location.href.includes('post-new.php')) {
+						return;
+					}
+
+
 					console.log('event.preventDefault() triggered');
 					event.preventDefault();
+
 				}
 
 				//MODAL PREVIEW LOGIC
