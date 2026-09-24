@@ -142,7 +142,8 @@ $graphic_data_instance = get_post_meta( $graphic_data_post_id, 'scene_location',
 		  $graphic_data_scene_full_screen_button = get_post_meta( $graphic_data_post_id, 'scene_full_screen_button', true );
 		  $graphic_data_scene_same_hover_color_sections  = get_post_meta( $graphic_data_post_id, 'scene_same_hover_color_sections', true );
 
-		  $graphic_data_child_ids = graphic_data_get_modal_array( $graphic_data_svg_url );
+		  $graphic_data_utility = new Graphic_Data_Utility();
+		  $graphic_data_child_ids = $graphic_data_utility->get_modal_array( $graphic_data_svg_url );
 
 		?>
 	  </div>

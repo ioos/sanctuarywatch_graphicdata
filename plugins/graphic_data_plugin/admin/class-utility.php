@@ -1264,5 +1264,192 @@ class Graphic_Data_Utility {
 			}
 		}
 	}
+
+	/**
+	 * Constructs a query argument array for retrieving posts with a specific meta key value.
+	 *
+	 * This function generates an array of arguments tailored for a WordPress query. It targets
+	 * any post type and filters posts based on a meta key `modal_icons` matching the provided
+	 * icon name.
+	 *
+	 * @param string $icon_name The value to be matched against the `modal_icons` meta key.
+	 * @return array The argument array to be used with a WordPress query.
+	 * @since 1.0.0
+	 */
+	private function post_query( $icon_name ) {
+		$args = array(
+			'post_type' => 'any',
+			'meta_query' => array(
+				'relation' => 'AND', // Ensures both conditions must be met.
+				array(
+					'key'     => 'modal_icons',
+					'value'   => $icon_name,
+					'compare' => '=',
+				),
+				array(
+					'key'     => 'modal_published',
+					'value'   => 'published',
+					'compare' => '=',
+				),
+			),
+			'fields' => 'ids',
+		);
+		return $args;
+	}
+
+	/**
+	 * Processes a modal post and adds its data to the child IDs array.
+	 *
+	 * Helper function that retrieves metadata for a modal post (icon type, title,
+	 * external URL, scene link, etc.) and adds the processed data to the child_ids
+	 * array. Handles duplicate child IDs by appending an index suffix.
+	 *
+	 * @param int    $child_post_id The post ID of the modal to process.
+	 * @param array  $child_ids     The existing array of processed child data.
+	 * @param string $child_id      The SVG element ID associated with this modal.
+	 * @param int    $idx           Optional. Index suffix for duplicate IDs. Default 0.
+	 * @return array The updated child_ids array with the new modal data added.
+	 * @since 1.0.0
+	 */
+	private function modal_helper( $child_post_id, $child_ids, $child_id, $idx = 0 ) {
+		// Get icon_type to check if modal.
+		$icon_type = get_post_meta( $child_post_id, 'icon_function', true ) ?? '';
+		$icon_title = get_post_meta( $child_post_id, 'post_title', true ) ?? '';
+		$modal = false;
+		$external_url = '';
+		$is_modal = get_post_meta( $child_post_id, 'post_type', true ) ?? '';
+		$icon_order = get_post_meta( $child_post_id, 'modal_icon_order', true ) ?? '';
+		// Create array/map from child id to different attributes (ie hyperlinks).
+		if ( $is_modal ) {
+			if ( 'Modal' === $icon_type ) {
+				$modal = true;
+			} elseif ( 'External URL' === $icon_type ) {
+				$external_url = get_post_meta( $child_post_id, 'icon_external_url', true ) ?? '';
+			} elseif ( 'Scene' === $icon_type ) {
+				$external_scene_id = get_post_meta( $child_post_id, 'icon_scene_out', true ) ?? '';
+				$external_scene_link = $external_scene_id ? get_permalink( $external_scene_id ) : '';
+				$external_url = $external_scene_link ? $external_scene_link : '';
+			} elseif ( 'Page' === $icon_type ) {
+				$external_page_id = get_post_meta( $child_post_id, 'icon_page_out', true ) ?? '';
+				$external_page_link = $external_page_id ? get_permalink( $external_page_id ) : '';
+				$external_url = $external_page_link ? $external_page_link : '';
+			}
+
+			$scene_id = get_post_meta( $child_post_id, 'modal_scene', true ) ?? '';
+			$scene_post_obj = $scene_id ? get_post( $scene_id ) : null;
+			$scene_post = $scene_post_obj ? $scene_post_obj->ID : 0;
+
+			$section_name = get_post_meta( $child_post_id, 'icon_toc_section', true ) ?? '';
+			$child = $child_id;
+
+			if ( array_key_exists( $child_id, $child_ids ) ) {
+				$child = ( $child_id . $idx );
+			}
+
+			$modal_icon_order = is_numeric( $icon_order ) ? (int) $icon_order : 1;
+
+			$child_ids[ $child ] = array(
+				'title' => $icon_title,
+				'modal_id' => $child_post_id,
+				'external_url' => $external_url,
+				'modal' => $modal,
+				'scene' => $scene_post,
+				'section_name' => $section_name,
+				'original_name' => $child_id,
+				'modal_icon_order' => $modal_icon_order,
+			);
+		}
+		return $child_ids;
+	}
+
+	/**
+	 * Builds an array of modal data from SVG icon elements.
+	 *
+	 * Parses an SVG file to find elements within the "icons" group, then queries
+	 * WordPress for associated modal posts. Returns an associative array mapping
+	 * each icon ID to its modal metadata (title, URLs, scene links, etc.).
+	 *
+	 * @param string $svg_url The URL of the SVG file to be processed.
+	 * @return array|null Associative array of modal data keyed by icon ID,
+	 *                    or null if the SVG URL is empty or file cannot be processed.
+	 * @since 1.0.0
+	 */
+	public function get_modal_array( $svg_url ) {
+		// From original function - just preprocessing of the svg url, etc.
+		if ( $svg_url ) {
+
+			// Translate URL to filesystem path using WP's own upload dir info.
+			$upload_dir  = wp_upload_dir();
+			$upload_url  = trailingslashit( $upload_dir['baseurl'] );
+			$upload_path = trailingslashit( $upload_dir['basedir'] );
+
+			if ( str_starts_with( $svg_url, $upload_url ) ) {
+				// File is in the uploads directory — use WP's known path.
+				$full_path = $upload_path . substr( $svg_url, strlen( $upload_url ) );
+			} else {
+				// Fall back to the ABSPATH method for plugin/theme assets.
+				$relative_path = ltrim( parse_url( $svg_url )['path'], '/' );
+				$full_path = ABSPATH . $relative_path;
+			}
+
+	        $svg_content = file_get_contents( $full_path ); // phpcs:ignore
+
+			// If the SVG content could not be loaded, log it and let the caller render without icons.
+			if ( ! $svg_content ) {
+				error_log( "get_modal_array: failed to load SVG file at {$full_path}" ); // phpcs:ignore
+				return null;
+			}
+			// Load the SVG content into a DOMDocument.
+			$dom  = new DOMDocument();
+			libxml_use_internal_errors( true );
+			$dom->loadXML( $svg_content );
+			libxml_clear_errors();
+
+			// Create a DOMXPath object for querying the DOMDocument.
+			$xpath = new DOMXPath( $dom );
+
+			// Find the element with ID "icons".
+			$icons_element = $xpath->query( '//*[@id="icons"]' )->item( 0 );
+
+			// If the element with ID "icons" is not found, log it and let the caller render without icons.
+			if ( null === $icons_element ) {
+				error_log( "get_modal_array: element with ID \"icons\" not found in SVG at {$full_path}" ); // phpcs:ignore
+				return null;
+			}
+
+			// Get the child nodes of the "icons" element. The phpcs ignore command on the next line is needed to suppress a php code sniffer error.
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+			$child_elements = $icons_element->childNodes;
+			$child_ids = array();
+
+			foreach ( $child_elements as $child ) {
+				if ( $child instanceof DOMElement && $child->hasAttribute( 'id' ) ) {
+					// Add the "id" attribute to the array. The phpcs ignore command on the next line is needed to suppress a php code sniffer error.
+					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+					$child_id = $child->getAttribute( 'id' );
+					// This is a WP_query object for the current child ID.
+					$query = new WP_Query( $this->post_query( $child_id ) ); // Here, the query produces all the modals with that ID.
+
+					$child_post_id_list = $query->posts;
+					if ( count( $child_post_id_list ) > 1 ) {
+						$idx = 1;
+						foreach ( $child_post_id_list as $cid ) {
+							$child_ids = $this->modal_helper( $cid, $child_ids, $child_id, $idx );
+							$idx++;
+						}
+						continue;
+					}
+					if ( ! empty( $query->posts ) ) {
+						$child_post_id = $query->posts[0]; // Should not always be 0th index; want to loop through all the posts and select the one that is found on this scene.
+						$child_ids = $this->modal_helper( $child_post_id, $child_ids, $child_id );
+					}
+				}
+			}
+			// Reset global $Post object.
+			wp_reset_postdata();
+			return $child_ids;
+		}
+		return null;
+	}
 }
 
