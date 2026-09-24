@@ -971,6 +971,21 @@ Search.appendIndex(
             "summary": "Display\u0020warning\u0020message\u0020if\u0020add\u0020new\u0020post\u0020is\u0020not\u0020possible\u0020for\u0020custom\u0020content\u0020post\u0020type.",
             "url": "classes/Graphic-Data-Utility.html#method_display_warning_message_if_new_post_impossible"
         },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Apost_query\u0028\u0029",
+            "name": "post_query",
+            "summary": "Constructs\u0020a\u0020query\u0020argument\u0020array\u0020for\u0020retrieving\u0020posts\u0020with\u0020a\u0020specific\u0020meta\u0020key\u0020value.",
+            "url": "classes/Graphic-Data-Utility.html#method_post_query"
+        },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Amodal_helper\u0028\u0029",
+            "name": "modal_helper",
+            "summary": "Processes\u0020a\u0020modal\u0020post\u0020and\u0020adds\u0020its\u0020data\u0020to\u0020the\u0020child\u0020IDs\u0020array.",
+            "url": "classes/Graphic-Data-Utility.html#method_modal_helper"
+        },                {
+            "fqsen": "\\Graphic_Data_Utility\u003A\u003Aget_modal_array\u0028\u0029",
+            "name": "get_modal_array",
+            "summary": "Builds\u0020an\u0020array\u0020of\u0020modal\u0020data\u0020from\u0020SVG\u0020icon\u0020elements.",
+            "url": "classes/Graphic-Data-Utility.html#method_get_modal_array"
+        },                {
             "fqsen": "\\Graphic_Data_Validation",
             "name": "Graphic_Data_Validation",
             "summary": "Handles\u0020validation\u0020of\u0020custom\u0020post\u0020type\u0020fields\u0020before\u0020saving.",

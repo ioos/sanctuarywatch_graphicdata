@@ -205,6 +205,13 @@ permalink: /function_documentation/classes/Graphic-Data-Utility.html
 <dd>Check if stored filter values are still valid and retrieve them if they are.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_get_modal_array">get_modal_array()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;|null    </span>
+</dt>
+<dd>Builds an array of modal data from SVG icon elements.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Utility.html#method_get_user_transient_key">get_user_transient_key()</a>
     <span>
                                 &nbsp;: string    </span>
@@ -359,6 +366,20 @@ resolve to a file inside this installation.</dd>
                                 &nbsp;: string    </span>
 </dt>
 <dd>Shorten string without cutting words midword.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_modal_helper">modal_helper()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Processes a modal post and adds its data to the child IDs array.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Utility.html#method_post_query">post_query()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+<dd>Constructs a query argument array for retrieving posts with a specific meta key value.</dd>
 
     </dl>
 
@@ -993,6 +1014,80 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
         <span class="phpdocumentor-signature__response_type">bool|string|int</span>
                     &mdash;
                 <section class="phpdocumentor-description"><p>False if expired or not found, the value if still valid.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_modal_array">
+        get_modal_array()
+        <a href="classes/Graphic-Data-Utility.html#method_get_modal_array" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1377</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Builds an array of modal data from SVG icon elements.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">get_modal_array</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$svg_url</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;|null</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Parses an SVG file to find elements within the &quot;icons&quot; group, then queries
+WordPress for associated modal posts. Returns an associative array mapping
+each icon ID to its modal metadata (title, URLs, scene links, etc.).</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$svg_url</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The URL of the SVG file to be processed.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_get_modal_array_tags">
+        Tags
+        <a href="classes/Graphic-Data-Utility.html#method_get_modal_array_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;|null</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Associative array of modal data keyed by icon ID,
+or null if the SVG URL is empty or file cannot be processed.</p>
 </section>
 
             </section>
@@ -2355,6 +2450,179 @@ file within this install, null otherwise.</p>
             </section>
 
 </article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_modal_helper">
+        modal_helper()
+        <a href="classes/Graphic-Data-Utility.html#method_modal_helper" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1314</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Processes a modal post and adds its data to the child IDs array.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">modal_helper</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$child_post_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$child_ids</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$child_id</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$idx</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">0</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Helper function that retrieves metadata for a modal post (icon type, title,
+external URL, scene link, etc.) and adds the processed data to the child_ids
+array. Handles duplicate child IDs by appending an index suffix.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$child_post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The post ID of the modal to process.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$child_ids</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The existing array of processed child data.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$child_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The SVG element ID associated with this modal.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$idx</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">0</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Optional. Index suffix for duplicate IDs. Default 0.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_modal_helper_tags">
+        Tags
+        <a href="classes/Graphic-Data-Utility.html#method_modal_helper_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The updated child_ids array with the new modal data added.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_post_query">
+        post_query()
+        <a href="classes/Graphic-Data-Utility.html#method_post_query" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-utility.php"><a href="files/plugins-graphic-data-plugin-admin-class-utility.html"><abbr title="plugins/graphic_data_plugin/admin/class-utility.php">class-utility.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1279</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Constructs a query argument array for retrieving posts with a specific meta key value.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">post_query</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$icon_name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>This function generates an array of arguments tailored for a WordPress query. It targets
+any post type and filters posts based on a meta key <code class="prettyprint">modal_icons</code> matching the provided
+icon name.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$icon_name</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The value to be matched against the <code class="prettyprint">modal_icons</code> meta key.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_post_query_tags">
+        Tags
+        <a href="classes/Graphic-Data-Utility.html#method_post_query_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">since</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                            <span class="phpdocumentor-tag-link">1.0.0</span>
+                                                                                                        
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>The argument array to be used with a WordPress query.</p>
+</section>
+
+            </section>
+
+</article>
             </section>
 
         
@@ -2385,6 +2653,7 @@ file within this install, null otherwise.</p>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_fields_to_transient">fields_to_transient()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_get_fields_from_transient">get_fields_from_transient()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_get_filter_value">get_filter_value()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_get_modal_array">get_modal_array()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_get_user_transient_key">get_user_transient_key()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_inject_tinymce_changes">inject_tinymce_changes()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_meta_get_callback">meta_get_callback()</a></li>
@@ -2407,6 +2676,8 @@ file within this install, null otherwise.</p>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_sanitize_number_or_quotes_field">sanitize_number_or_quotes_field()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_site_url_to_filesystem_path">site_url_to_filesystem_path()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Utility.html#method_string_truncate">string_truncate()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_modal_helper">modal_helper()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Utility.html#method_post_query">post_query()</a></li>
                                     </ul>
             </li>
                     </ul>
