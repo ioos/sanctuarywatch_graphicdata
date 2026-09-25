@@ -681,7 +681,7 @@ function graphic_data_enqueue_scripts() {
 
 	// If this variable doesn't exist then the Graphic Data plugin is not installed.
 	// Fail gracefully, by just not loading files from the plugin.
-	if ( defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) && GRAPHIC_DATA_PLUGIN_VERSION ){
+	if ( defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) && GRAPHIC_DATA_PLUGIN_VERSION ) {
 		// Enqueue the scene render script.
 		wp_register_script_module(
 			'@graphic-data/scene-render',
@@ -809,16 +809,16 @@ function graphic_data_extend_search_to_postmeta( $search, $wp_query ) {
 	$graphic_data_and        = '';
 	foreach ( $graphic_data_terms as $graphic_data_term ) {
 		$graphic_data_like       = '%' . $wpdb->esc_like( $graphic_data_term ) . '%';
-		$graphic_data_new_search .= $wpdb->prepare(
-			"{$graphic_data_and}(({$wpdb->posts}.post_title LIKE %s)"
+		$graphic_data_new_search .= $graphic_data_and . $wpdb->prepare(
+			"(({$wpdb->posts}.post_title LIKE %s)"
 			. " OR ({$wpdb->posts}.post_content LIKE %s)"
 			. " OR ({$wpdb->posts}.post_excerpt LIKE %s)"
-			. " OR EXISTS ("
+			. ' OR EXISTS ('
 			. "   SELECT 1 FROM {$wpdb->postmeta} pm"
 			. "   WHERE pm.post_id = {$wpdb->posts}.ID"
 			. "     AND LEFT(pm.meta_key, 1) != '_'"
-			. "     AND pm.meta_value LIKE %s"
-			. " ))",
+			. '     AND pm.meta_value LIKE %s'
+			. ' ))',
 			$graphic_data_like,
 			$graphic_data_like,
 			$graphic_data_like,

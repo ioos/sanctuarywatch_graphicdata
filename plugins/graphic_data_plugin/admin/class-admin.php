@@ -389,9 +389,6 @@ class Graphic_Data_Admin {
 			remove_menu_page( 'edit-comments.php' );
 			// Remove posts from the admin menu.
 			remove_menu_page( 'edit.php' );
-			// V2 - We are not removing page post types anymore.
-
-			//remove_menu_page( 'edit.php?post_type=page' );
 		} else {
 			remove_menu_page( 'edit.php?post_type=instance' );
 			remove_menu_page( 'edit.php?post_type=about' );
@@ -613,18 +610,18 @@ class Graphic_Data_Admin {
 	 * @since    1.0.0
 	 */
 	public function remove_view_link_from_post_type( $actions, $post ) {
-		if ( ( 'instance' === $post->post_type || 'modal' === $post->post_type) && isset( $actions['view'] ) ) {
+		if ( ( 'instance' === $post->post_type || 'modal' === $post->post_type ) && isset( $actions['view'] ) ) {
 			unset( $actions['view'] ); // Remove the "View" link.
 		}
 
-		// Replace Figure "View" with the shortlink: rootURL/f/{post_id}
+		// Replace Figure "View" with the shortlink: rootURL/f/{post_id}.
 		if ( 'figure' === $post->post_type ) {
 			$actions['view'] = sprintf(
 				'<a href="%s" target="_blank" rel="noopener noreferrer">View</a>',
 				esc_url( home_url( '/f/' . $post->ID . '/' ) )
 			);
 		}
-		
+
 		return $actions;
 	}
 
