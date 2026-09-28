@@ -44,6 +44,14 @@
       "type": "string",
       "default": "transparent"
     },
+    "modalSelectedTabBackgroundColor": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "modalUnselectedTabBackgroundColor": {
+      "type": "string",
+      "default": "transparent"
+    },
     "modalBorderEnabled": {
       "type": "boolean",
       "default": false

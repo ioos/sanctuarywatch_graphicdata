@@ -209,6 +209,7 @@ function graphic_data_ensure_public_data_dir() {
 function graphic_data_register_blocks() {
 	register_block_type( __DIR__ . '/blocks/insert-figure/build' );
 	register_block_type( __DIR__ . '/blocks/insert-modal/build' );
+	register_block_type( __DIR__ . '/blocks/insert-scene/build' );
 }
 
 add_action( 'init', 'graphic_data_register_blocks' );

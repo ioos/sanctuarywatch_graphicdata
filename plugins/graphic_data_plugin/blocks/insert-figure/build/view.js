@@ -7930,7 +7930,6 @@ function is_mobile() {
     return true;
   }
   return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  // && (window.innerWidth < 512 || window.innerHeight < 512);
 }
 async function waitForElementHash(selector, timeoutMs = 20000) {
   return new Promise(resolve => {
