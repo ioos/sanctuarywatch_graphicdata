@@ -679,7 +679,8 @@ class Graphic_Data_Tutorial_Content {
 		$attachment_id = media_handle_sideload( $file_array );
 		update_post_meta( $attachment_id, 'image_tutorial_id', $tutorial_id );
 
-		$page_tagline = '<!-- wp:paragraph --><p>Welcome to Instance One, Space Commander! There are three instances in the tutorial content, each of which are there to highlight a different way to organize content. Here in Instance One, we are illustrating an Instance that contains multiple Scenes. When we have multiple Scenes in an Instance, the recommended practice is for the first Scene (the Overview Scene) to link to the other Scenes of the Instance. And so we demonstrate here! The three robots below, link to the same information displayed in three different ways. To see how this Scene is put together, just hit the Edit Scene button at the top of the screen.</p><!-- /wp:paragraph -->'
+		$page_tagline = '<!-- wp:paragraph --><p>Welcome to an example page, Space Commander! Thanks to the busy beavers at Graphic Data, you have lots of options on how you can present things within our framework. But, sometimes, even our voluminous list of choices might not cover every possible way that you might want to present your stuff. Enter the WordPress Page!</p><!-- /wp:paragraph -->'
+		. '<!-- wp:paragraph --><p>With a WordPress page, you have all of the freeform options that you have come to expect with the Gutenberg editor. So create away with your imagination unconstrained!</p><!-- /wp:paragraph -->'
 		. '<!-- wp:image {"id":' . $attachment_id . ',"sizeSlug":"large"} -->'
 		. '<figure class="wp-block-image size-large"><img src="' . esc_url( wp_get_attachment_image_url( $attachment_id, 'large' ) ) . '" class="wp-image-' . $attachment_id . '"/></figure>'
 		. '<!-- /wp:image -->';
@@ -717,8 +718,6 @@ class Graphic_Data_Tutorial_Content {
 				update_post_meta( $post_id, 'scene_location', $tutorial_instance_id );
 				update_post_meta( $post_id, 'graphic_data_page_instance_in_navbar', 1 );
 				update_post_meta( $post_id, 'scene_order', 8 );
-			//	$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic [ $i ], $tutorial_id [ $i ], $tutorial_instance_id );
-
 				update_post_meta( $post_id, 'tutorial_id', $tutorial_id [ $i ] );
 			}
 		};
@@ -1114,7 +1113,7 @@ class Graphic_Data_Tutorial_Content {
 
 		$modal_location = [ 3, 3, 3, 4, 5 ];
 		$modal_scene = [ 7, 8, 9, 10, 11 ];
-
+		$icon_page_out = [ 100, 100, 100, 101, 102 ];
 		// default scene: 12.
 		for ( $q = 0; $q < 5; $q++ ) {
 			$repeat_array = array();
@@ -1128,15 +1127,16 @@ class Graphic_Data_Tutorial_Content {
 				)
 			);
 			$scene_title = get_the_title( $tutorial_scene_id );
-			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block', 'External Link' ];
+			$repeat_array['post_title'] = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block', 'External Link', 'Page' ];
 			$repeat_array['modal_location'] = $modal_location[ $q ];
 			$repeat_array['modal_scene'] = $modal_scene[ $q ];
-			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Bar-Chart', 'Interactive-Line-Chart', 'Code-Block', 'External-Link' ];
+			$repeat_array['icon_page_out'] = [ '', '', '', '', '', '', $icon_page_out[ $q ] ];
+			$repeat_array['modal_icons'] = [ 'Image', 'Video', 'Interactive-Bar-Chart', 'Interactive-Line-Chart', 'Code-Block', 'External-Link', 'Page' ];
 			if ( $q > 2 ) {
-				$repeat_array['icon_toc_section'] = [ 1, 2, 1, 2, 1, 2 ];
+				$repeat_array['icon_toc_section'] = [ 1, 2, 1, 2, 1, 2, 1 ];
 			}
-			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1 ];
-			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'Modal', 'External URL' ];
+			$repeat_array['modal_icon_order'] = [ 1, 1, 1, 1, 1, 1, 1 ];
+			$repeat_array['icon_function'] = [ 'Modal', 'Modal', 'Modal', 'Modal', 'Modal', 'External URL', 'Page' ];
 			$repeat_array['modal_tagline'] = [
 				'Within the iron fist of the Graphic Data organizational structure, Scenes contain multiple Modals. A modal defines what happens when you click on an icon in the scene. One option is for a modal window, which is this pop out box that has opened on the screen. This particular box is the Image Modal, which is here to show you - with humbleness and grace - various ways you can display images. You\'ll also notice that this particular window contains mutiple tabs. To see out how all of this is put together, check out this modal in Modals within the WordPress admin dashboard (it is an option in the left panel).',
 				'If you remember one thing about the mind-bending vastness of Graphic Data (and also space), remember this: Scenes contain multiple Modals. Modals define what happens with clickable icons. In this case, we\'re highlighting Graphic Data\'s ability to show videos. This particular implementation of the video is just a special case of the Code Block, another modal option in this scene.  To see out how this modal is put together, check out Modals in the WordPress admin dashboard (it is an option in the left panel).',
@@ -1147,11 +1147,11 @@ class Graphic_Data_Tutorial_Content {
 			];
 			$repeat_array['modal_info_entries'] = 2;
 			$repeat_array['modal_photo_entries'] = 3;
-			$repeat_array['modal_tab_number'] = [ 2, 1, 1, 1, 1, 1 ];
-			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Bar Chart', 'Line Chart', 'Code Block', 'External Link' ];
-			$repeat_array['modal_tab_title2'] = [ 'External link', '', '', '', '', '' ];
-			$min_id = ( $q + 1 ) * 6 + 9;
-			$max_id = ( $q + 1 ) * 6 + 14;
+			$repeat_array['modal_tab_number'] = [ 2, 1, 1, 1, 1, 1, 1 ];
+			$repeat_array['modal_tab_title1'] = [ 'Internal link', 'Video', 'Bar Chart', 'Line Chart', 'Code Block', 'External Link', 'Page' ];
+			$repeat_array['modal_tab_title2'] = [ 'External link', '', '', '', '', '', '' ];
+			$min_id = ( $q + 1 ) * 7 + 9;
+			$max_id = ( $q + 1 ) * 7 + 15;
 			$repeat_array['tutorial_id'] = range( $min_id, $max_id );
 			$this->write_modals_to_database( $repeat_array, $current_user_id );
 		}
@@ -1264,6 +1264,15 @@ class Graphic_Data_Tutorial_Content {
 									)
 								);
 								update_post_meta( $post_id, 'icon_scene_out', $tutorial_scene_out_id );
+							} elseif ( 'Page' == $modal_array['icon_function'][ $i ] ) {
+								$tutorial_page_out_id = $wpdb->get_var(
+									$wpdb->prepare(
+										"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+										'tutorial_id',
+										$modal_array['icon_page_out'][ $i ],
+									)
+								);
+								update_post_meta( $post_id, 'icon_page_out', $tutorial_page_out_id );
 							} elseif ( 'External URL' == $modal_array['icon_function'][ $i ] ) {
 								update_post_meta( $post_id, 'icon_external_url', 'https://ioos.github.io/sanctuarywatch_graphicdata/' );
 							}
