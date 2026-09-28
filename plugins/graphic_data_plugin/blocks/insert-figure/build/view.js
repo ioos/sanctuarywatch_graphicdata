@@ -7931,6 +7931,18 @@ function is_mobile() {
   }
   return /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
+
+/**
+ * Waits for an element matching a CSS selector to appear in the DOM.
+ *
+ * Resolves immediately if the element already exists. Otherwise watches the
+ * document body for added nodes until a match appears or the timeout elapses,
+ * in which case an alert is shown and the promise resolves with `null`.
+ *
+ * @param {string} selector           The CSS selector to look for.
+ * @param {number} [timeoutMs=20000]  How long to wait before giving up, in milliseconds.
+ * @return {Promise<Element|null>} The matched element, or `null` on timeout.
+ */
 async function waitForElementHash(selector, timeoutMs = 20000) {
   return new Promise(resolve => {
     const element = document.querySelector(selector);
@@ -7957,6 +7969,19 @@ async function waitForElementHash(selector, timeoutMs = 20000) {
     }, timeoutMs);
   });
 }
+
+/**
+ * Waits for an element with a given id to appear in the DOM.
+ *
+ * Resolves immediately if the element already exists. Otherwise watches the
+ * document body for added nodes until a match appears or the timeout elapses,
+ * in which case the returned promise rejects.
+ *
+ * @param {string} id                 The element id to look for.
+ * @param {number} [timeoutMs=30000]  How long to wait before giving up, in milliseconds.
+ * @return {Promise<Element>} The matched element.
+ * @throws {Error} If no element with the given id appears before the timeout.
+ */
 function waitForElementById(id, timeoutMs = 30000) {
   return new Promise((resolve, reject) => {
     const existingElement = document.getElementById(id);
@@ -7983,49 +8008,20 @@ function waitForElementById(id, timeoutMs = 30000) {
   });
 }
 
-// async function waitForEitherElementHash(
-// 	selector1,
-// 	selector2
-// ) {
-// 	return new Promise((resolve) => {
-
-// 		function findElement() {
-// 			return (
-// 				document.querySelector(selector1) ||
-// 				document.querySelector(selector2)
-// 			);
-// 		}
-
-// 		const existingElement =
-// 			findElement();
-
-// 		if (existingElement) {
-// 			resolve(existingElement);
-// 			return;
-// 		}
-
-// 		const observer =
-// 			new MutationObserver(() => {
-
-// 				const element =
-// 					findElement();
-
-// 				if (element) {
-// 					observer.disconnect();
-// 					resolve(element);
-// 				}
-// 			});
-
-// 		observer.observe(
-// 			document.body,
-// 			{
-// 				childList: true,
-// 				subtree: true
-// 			}
-// 		);
-// 	});
-// }
-
+/**
+ * Waits for an element matching any of up to three CSS selectors to appear in the DOM.
+ *
+ * Resolves immediately if a matching element already exists, checking `selector1`,
+ * then `selector2`, then `selector3` (if provided) in order. Otherwise watches the
+ * document body for added nodes until a match appears or the timeout elapses, in
+ * which case an alert is shown and the promise resolves with `null`.
+ *
+ * @param {string}      selector1          The first CSS selector to look for.
+ * @param {string}      selector2          The second CSS selector to look for.
+ * @param {string|null} [selector3=null]   An optional third CSS selector to look for.
+ * @param {number}      [timeoutMs=20000]  How long to wait before giving up, in milliseconds.
+ * @return {Promise<Element|null>} The first matched element, or `null` on timeout.
+ */
 async function waitForEitherElementHash(selector1, selector2, selector3 = null, timeoutMs = 20000) {
   return new Promise(resolve => {
     const findElement = () => {
@@ -8055,11 +8051,32 @@ async function waitForEitherElementHash(selector1, selector2, selector3 = null, 
     }, timeoutMs);
   });
 }
+
+/**
+ * Decodes HTML entities in a string (e.g. `&amp;` to `&`).
+ *
+ * Works by assigning the value to a detached `<textarea>` element's `innerHTML`
+ * and reading back its plain-text `value`.
+ *
+ * @param {string} value The string potentially containing HTML entities.
+ * @return {string} The decoded string.
+ */
 function decodeHtmlEntities(value) {
   const textarea = document.createElement('textarea');
   textarea.innerHTML = value;
   return textarea.value;
 }
+
+/**
+ * Extracts the tab segment from a URL hash of the form `#section/tab` or `#section/tab?query`.
+ *
+ * Attempts to URI-decode the hash first, falling back to the raw value if decoding
+ * fails. Any trailing query string (after `?`) is stripped before the tab segment
+ * is read.
+ *
+ * @param {string} rawHash The raw URL hash to parse (with or without a leading `#`).
+ * @return {string} The tab segment, or an empty string if none is present.
+ */
 function getTabFromHash(rawHash) {
   let decoded = rawHash;
   try {
