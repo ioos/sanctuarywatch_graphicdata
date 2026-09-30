@@ -103,7 +103,7 @@ a {
 /* Accordion column: override inline styles and center as a "mobile card stack" */
 #title-container .row > .col-md-2 {
   width: 100% !important;
-  max-width: min(320px, 92vw) !important;
+  /* max-width: min(320px, 92vw) !important; */
   padding: 0 !important;
   margin: 0 auto !important;
 
@@ -193,7 +193,7 @@ a {
 /* ---------- View Full Scene button ---------- */
 #title-container .ViewSceneButton {
   width: 100% !important;
-  max-width: min(320px, 92vw) !important;
+  max-width: 100% !important;
 
   display: block !important;
   margin: 6px auto 0 !important;
@@ -213,8 +213,8 @@ a {
 /* Constrain the whole scene tile block to “mobile” width */
 #scene-fluid,
 #svg1 {
-  width: min(360px, 92vw) !important;
-  max-width: 92vw !important;
+  /* width: min(360px, 92vw) !important;
+  max-width: 92vw !important; */
   margin-left: auto !important;
   margin-right: auto !important;
   padding: 0 !important;
@@ -265,8 +265,8 @@ a {
   border: 0.25px solid #000 !important;
   overflow: hidden; /* important: prevent any icon bleed */
   width: 110px;
-  height: 170px;
-  height: clamp(110px, 38vw, 170px) !important;
+  height: 170px !important;
+  /* height: clamp(110px, 38vw, 170px) !important; */
   padding-bottom: 10px;
 }
 

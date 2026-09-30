@@ -1,7 +1,61 @@
+import { configureSceneFigureControls } from './figure-controls';
 import apiFetch from '@wordpress/api-fetch';
 
 export function stripHTML(value = '') {
 	return String(value).replace(/(<([^>]+)>)/gi, '');
+}
+
+/** Route external scene links out of the iframe, preserving modal handlers. */
+function installExternalSceneLinks(doc, children, slugify, openLink, signal) {
+	const destinations = new Map();
+	for (const [key, child] of Object.entries(children)) {
+		if (child.modal || !child.external_url) continue;
+		destinations.set(key, child.external_url);
+		destinations.set(slugify(key), child.external_url);
+		destinations.set(key + '-mobile', child.external_url);
+		destinations.set(key + '-container', child.external_url);
+		destinations.set(slugify(key) + '-container', child.external_url);
+	}
+	const handleClick = (event) => {
+		if (event.button != null && event.button !== 0) return;
+		const target = event.target;
+		// mobile_helper removes #entire_thing and moves these containers into body.
+		if (!target?.closest?.('#svg1, #scene-fluid, #toc-container, #mobileModal')) return;
+		const link = target.closest('#toc-container a[href], #mobileModal a[href]');
+		if (link?.classList.contains('modal-link')) return;
+		const href = link?.getAttribute('href');
+		let destination = href && !href.startsWith('#') ? href : undefined;
+		if (!destination) {
+			for (let node = target; node && node.id !== 'entire_thing'; node = node.parentElement) {
+				if (destinations.has(node.id)) {
+					destination = destinations.get(node.id);
+					break;
+				}
+			}
+		}
+		if (!destination) return;
+		event.preventDefault();
+		event.stopImmediatePropagation(); // Bypass the renderer's iframe location assignment.
+		const url = new URL(destination, doc.baseURI);
+		if (['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol)) openLink(url.href);
+	};
+	doc.addEventListener('click', handleClick, true);
+	signal.addEventListener('abort', () => doc.removeEventListener('click', handleClick, true), { once: true });
+}
+
+/** Content-driven iframe height must not become a simulated phone rotation. */
+function keepMobilePreviewPortrait(win) {
+	Object.defineProperty(win, 'innerHeight', {
+		configurable: true,
+		get: () => Math.max(800, win.innerWidth + 1),
+	});
+	const matchMedia = win.matchMedia.bind(win);
+	win.matchMedia = (query) => {
+		// Keep the renderer's orientation checks consistent with innerHeight.
+		if (/^\(orientation:\s*landscape\)$/.test(query)) return matchMedia('not all');
+		if (/^\(orientation:\s*portrait\)$/.test(query)) return matchMedia('all');
+		return matchMedia(query);
+	};
 }
 
 /** Each scene gets isolated globals/IDs, including its modal and figure renderers. */
@@ -19,6 +73,8 @@ async function renderScene(frame, config, mode, signal, reportError, onOpenModal
 			configurable: true, value: mode === 'mobile' ? 'iPhone' : 'Graphic Data desktop preview',
 		});
 	}
+
+	if (mode === 'mobile') keepMobilePreviewPortrait(win);
 
 	const nativeFetch = win.fetch.bind(win);
 	win.fetch = async (input, options = {}) => {
@@ -146,15 +202,40 @@ async function renderScene(frame, config, mode, signal, reportError, onOpenModal
 				<div class="col-md-10"><div id="svg1"></div></div><div id="toc-container" class="col-md-2"></div>
 			</div></div>
 		</div>`;
+	// The editor uses the original iframe renderer, which adds figures asynchronously.
+	const modalHost = doc.getElementById('myModal');
+	const controlsObserver = new win.MutationObserver(() => {
+		configureSceneFigureControls(modalHost, () => doc.getElementById('close')?.click());
+	});
+	controlsObserver.observe(modalHost, { childList: true, subtree: true });
+	signal.addEventListener('abort', () => controlsObserver.disconnect(), { once: true });
+	// The renderer's TOC links use href="#" and handle clicks on their parent li.
+	// Cancel only navigation: the iframe base otherwise opens the site root in a
+	// new tab. Keep bubbling so loadSVG's existing child_obj handlers still run.
+	const preventModalLinkNavigation = (event) => {
+		if (event.target?.closest?.('#toc-container a.modal-link[href="#"]')) {
+			event.preventDefault();
+		}
+	};
+	doc.addEventListener('click', preventModalLinkNavigation, true);
+	signal.addEventListener('abort', () => {
+		doc.removeEventListener('click', preventModalLinkNavigation, true);
+	}, { once: true });
 	await new Promise((resolve, reject) => {
 		win.sceneBlockReady = (message) => message ? reject(new Error(message)) : resolve();
+		win.sceneBlockExternalLinks = (children, slugify) => {
+			if (signal.aborted) return;
+			installExternalSceneLinks(doc, children, slugify,
+				(url) => window.open(url, '_blank', 'noopener,noreferrer'), signal);
+		};
 		const script = doc.createElement('script');
 		script.type = 'module';
 		script.textContent = `
 			import { make_title, loadSVG } from '@graphic-data/scene-render';
-			import { getSceneData, setChildObj, setSortedChildObjs } from '@graphic-data/scene-shared';
+			import { getSceneData, setChildObj, setSortedChildObjs, slugify } from '@graphic-data/scene-shared';
 			const data = getSceneData();
 			setChildObj(data.childIds);
+			window.sceneBlockExternalLinks(data.childIds, slugify);
 			const children = Object.values(data.childIds);
 			const allOne = children.every(child => Number(child.modal_icon_order) === 1);
 			children.sort((a,b) => allOne ? a.title.localeCompare(b.title) : Number(a.modal_icon_order) - Number(b.modal_icon_order));
@@ -197,7 +278,9 @@ export function mountInlineScene(host, config, { height = 0, previewMode = 'resp
 		win.addEventListener('error', (event) => fail(event.error || new Error(event.message)));
 		win.addEventListener('unhandledrejection', (event) => fail(event.reason));
 		observer = new ResizeObserver(() => {
-			if (!controller.signal.aborted && !height) frame.style.height = `${Math.max(1, Math.ceil(frame.contentDocument.body.getBoundingClientRect().height))}px`;
+			if (controller.signal.aborted || height) return;
+			const contentHeight = `${Math.max(1, Math.ceil(frame.contentDocument.body.getBoundingClientRect().height))}px`;
+			if (frame.style.height !== contentHeight) frame.style.height = contentHeight;
 		});
 		observer.observe(frame.contentDocument.body);
 		timeout = setTimeout(() => { fail(new Error('The scene took too long to load. Please try again.')); controller.abort(); }, 60000);

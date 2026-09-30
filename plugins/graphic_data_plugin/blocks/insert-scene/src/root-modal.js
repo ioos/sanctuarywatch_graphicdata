@@ -1,41 +1,28 @@
+import { configureSceneFigureControls } from './figure-controls';
 import apiFetch from '@wordpress/api-fetch';
 import { render_tab_info, render_interactive_plots } from '@graphic-data/figure-render';
 
 let closeActiveModal;
 let nextInstance = 0;
 
-function installStyles(doc) {
-	if (doc.getElementById('graphic-data-scene-root-modal-styles')) return;
-	const style = doc.createElement('style');
-	style.id = 'graphic-data-scene-root-modal-styles';
-	style.textContent = `
-		.graphic-data-scene-root-modal { width:min(1100px,95vw); max-width:95vw;
-			max-height:90dvh; padding:0; border:0; border-radius:6px; color:#333;
-			background:white; overflow:auto; box-shadow:0 12px 28px #0005; }
-		.graphic-data-scene-root-modal::backdrop { background:rgba(0,0,0,.65); }
-		.graphic-data-scene-root-modal .scene-modal-header { display:flex; align-items:center;
-			justify-content:space-between; gap:1rem; padding:14px 16px; border-bottom:1px solid #ddd; }
-		.graphic-data-scene-root-modal .scene-modal-header h2 { margin:0; color:#024880; font-size:1.5rem; }
-		.graphic-data-scene-root-modal .scene-modal-close { background:transparent; border:0;
-			font-size:1.7rem; color:inherit; cursor:pointer; }
-		.graphic-data-scene-root-modal .scene-modal-body { padding:16px; }
-		.graphic-data-scene-root-modal .scene-modal-intro { display:flex; gap:16px; align-items:flex-start; }
-		.graphic-data-scene-root-modal .scene-modal-tagline { flex:1; min-width:0; }
-		.graphic-data-scene-root-modal .scene-modal-links { flex:0 0 25%; }
-		.graphic-data-scene-root-modal .scene-modal-links summary { cursor:pointer; padding:10px; background:#003b71; color:white; }
-		.graphic-data-scene-root-modal .scene-modal-links ul { padding:12px 12px 12px 30px; }
-		.graphic-data-scene-root-modal .scene-modal-tabs { display:flex; flex-wrap:wrap; gap:4px;
-			margin:16px 0; border-bottom:1px solid #ccc; }
-		.graphic-data-scene-root-modal .scene-modal-tabs button { padding:10px 14px; border:1px solid #ddd;
-			border-radius:4px 4px 0 0; color:#003b71; background:#eee; cursor:pointer; }
-		.graphic-data-scene-root-modal .scene-modal-tabs button.active { background:white; font-weight:600; }
-		.graphic-data-scene-root-modal .scene-modal-tabs button.active::after { content:'▼'; font-size:.9em; margin-left:.3rem; }
-		.graphic-data-scene-root-modal [hidden] { display:none !important; }
-		.graphic-data-scene-root-modal img,.graphic-data-scene-root-modal video { max-width:100%; }
-		@media(max-width:768px) { .graphic-data-scene-root-modal .scene-modal-intro { flex-direction:column; }
-			.graphic-data-scene-root-modal .scene-modal-links { width:100%; } }
-	`;
-	doc.head.appendChild(style);
+let stylesReady;
+
+function installStyles(doc, config) {
+	if (stylesReady) return stylesReady;
+	stylesReady = new Promise((resolve, reject) => {
+		const link = doc.createElement('link');
+		link.rel = 'stylesheet';
+		link.id = 'graphic-data-scene-root-modal-styles';
+		link.href = new URL('admin/css/modal_desktop_modal-dialog.css', new URL(config.pluginUrl, window.location.origin)).href;
+		link.onload = resolve;
+		link.onerror = () => {
+			link.remove();
+			stylesReady = undefined;
+			reject(new Error('Unable to load the shared modal stylesheet. Please close and try again.'));
+		};
+		doc.head.appendChild(link);
+	});
+	return stylesReady;
 }
 
 function appendLinks(doc, container, title, modal, prefix, newTab) {
@@ -55,9 +42,22 @@ function appendLinks(doc, container, title, modal, prefix, newTab) {
 		const item = doc.createElement('li'); item.appendChild(link); list.appendChild(item);
 	}
 	if (!list.children.length) return;
-	const details = doc.createElement('details');
-	const summary = doc.createElement('summary'); summary.textContent = title;
-	details.append(summary, list); container.appendChild(details);
+	const item = doc.createElement('div'); item.className = 'accordion-item';
+	const heading = doc.createElement('h2'); heading.className = 'accordion-header';
+	const button = doc.createElement('button');
+	button.type = 'button'; button.className = 'accordion-button collapsed'; button.textContent = title;
+	button.id = container.id + '-' + prefix + '-button';
+	const panel = doc.createElement('div'); panel.className = 'accordion-collapse collapse';
+	panel.id = container.id + '-' + prefix;
+	panel.setAttribute('role', 'region'); panel.setAttribute('aria-labelledby', button.id);
+	button.setAttribute('aria-controls', panel.id); button.setAttribute('aria-expanded', 'false');
+	const body = doc.createElement('div'); body.className = 'accordion-body'; body.appendChild(list);
+	button.addEventListener('click', () => {
+		const expanded = button.getAttribute('aria-expanded') !== 'true';
+		button.setAttribute('aria-expanded', String(expanded));
+		button.classList.toggle('collapsed', !expanded); panel.classList.toggle('show', expanded);
+	});
+	heading.appendChild(button); panel.appendChild(body); item.append(heading, panel); container.appendChild(item);
 }
 
 async function fetchFigures(modalId, signal) {
@@ -81,18 +81,21 @@ export function openSceneModal(child, config) {
 	if (!child?.modal || !Number(child.modal_id)) return;
 	closeActiveModal?.();
 	const doc = document;
-	installStyles(doc);
 	const controller = new AbortController();
 	const id = `scene-root-modal-${++nextInstance}`;
 	const previousFocus = doc.activeElement;
 	const dialog = doc.createElement('dialog');
 	dialog.className = 'graphic-data-scene-root-modal';
 	dialog.setAttribute('aria-labelledby', `${id}-title`);
-	dialog.innerHTML = `<header class="scene-modal-header"><h2 id="${id}-title"></h2>
-		<button type="button" class="scene-modal-close" aria-label="Close modal">×</button></header>
-		<div class="scene-modal-body"><p class="scene-modal-status" role="status">Loading modal content…</p>
-		<div class="scene-modal-intro"><div class="scene-modal-tagline"></div><aside class="scene-modal-links"></aside></div>
-		<div class="scene-modal-tabs" role="tablist" aria-label="Modal tabs"></div><div class="scene-modal-panes"></div></div>`;
+	dialog.innerHTML = `<div class="modal-dialog modal-lg"><div class="modal-content">
+		<header class="modal-header"><h2 id="${id}-title" class="modal-title"></h2>
+		<button type="button" class="btn-close scene-modal-close" aria-label="Close modal"></button></header>
+		<div class="modal-body"><p class="scene-modal-status" role="status">Loading modal content…</p>
+		<div class="row"><div class="graphic-data-modal-tagline"></div>
+		<aside id="${id}-accordion" class="graphic-data-modal-accordion accordion"></aside></div>
+		<ul class="graphic-data-modal-tabs nav nav-tabs" role="tablist" aria-label="Modal tabs"></ul>
+		<div class="graphic-data-modal-panes tab-content"></div></div></div></div>`;
+
 	dialog.querySelector('h2').textContent = child.title || 'Scene details';
 	doc.body.appendChild(dialog);
 	let closed = false;
@@ -116,26 +119,27 @@ export function openSceneModal(child, config) {
 	dialog.addEventListener('cancel', event => { event.preventDefault(); close(); });
 	dialog.addEventListener('close', close);
 	dialog.addEventListener('click', event => {
-		if (event.target !== dialog) return;
-		const box = dialog.getBoundingClientRect();
-		if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) close();
+		// The dialog is the full-screen scroll surface; only its empty area closes it.
+		if (event.target === dialog) close();
 	});
-	dialog.showModal();
 
 	(async () => {
+		await installStyles(doc, config);
+		if (controller.signal.aborted) return;
+		dialog.showModal();
 		const modalId = Number(child.modal_id);
 		const [modal, figures] = await Promise.all([
 			apiFetch({ path: `/wp/v2/modal/${modalId}`, signal: controller.signal }),
 			fetchFigures(modalId, controller.signal),
 		]);
 		if (controller.signal.aborted) return;
-		dialog.querySelector('.scene-modal-tagline').innerHTML = modal.modal_tagline || '';
-		const links = dialog.querySelector('.scene-modal-links');
+		dialog.querySelector('.graphic-data-modal-tagline').innerHTML = modal.modal_tagline || '';
+		const links = dialog.querySelector('.graphic-data-modal-accordion');
 		appendLinks(doc, links, 'More Info', modal, 'modal_info', config.newTabByDefault);
 		appendLinks(doc, links, 'Media', modal, 'modal_photo', true);
 		links.hidden = !links.children.length;
-		const tabs = dialog.querySelector('.scene-modal-tabs');
-		const panes = dialog.querySelector('.scene-modal-panes');
+		const tabs = dialog.querySelector('.graphic-data-modal-tabs');
+		const panes = dialog.querySelector('.graphic-data-modal-panes');
 		function activate(button, focus = false) {
 			tabs.querySelectorAll('button').forEach(tab => {
 				const active = tab === button;
@@ -157,7 +161,8 @@ export function openSceneModal(child, config) {
 			button.textContent = modal[`modal_tab_title${tab}`] || `Tab ${tab}`;
 			const pane = doc.createElement('div'); pane.id = `${id}-pane-${tab}`; pane.className = 'tab-pane';
 			pane.setAttribute('role','tabpanel'); pane.setAttribute('aria-labelledby',button.id); pane.tabIndex = 0;
-			panes.appendChild(pane); tabs.appendChild(button);
+			const item = doc.createElement('li'); item.className = 'nav-item'; item.setAttribute('role', 'presentation');
+			item.appendChild(button); panes.appendChild(pane); tabs.appendChild(item);
 			button.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); activate(button); });
 			tabFigures.push({ pane, group, tab });
 		}
@@ -172,7 +177,7 @@ export function openSceneModal(child, config) {
 			else return;
 			event.preventDefault(); activate(buttons[next], true);
 		});
-		if (tabs.firstElementChild) activate(tabs.firstElementChild);
+		if (tabs.querySelector('button')) activate(tabs.querySelector('button'));
 		for (const {pane, group, tab} of tabFigures) {
 			for (const [index, figure] of group.entries()) {
 				if (controller.signal.aborted) return;
@@ -188,7 +193,15 @@ export function openSceneModal(child, config) {
 					figure_interactive_arguments: figure.figure_interactive_arguments,
 					figure_interactive_args_rendered: figure.figure_interactive_args_rendered,
 				};
+				// Restore the separator omitted by the figure renderer's inline-block mode.
+				if (index > 0) {
+					const separator = doc.createElement('div');
+					separator.className = 'separator';
+					separator.innerHTML = '<hr style="border: 1px solid #a2a2a2">';
+					pane.appendChild(separator);
+				}
 				const target = await render_tab_info(pane, panes, info, index, true, tab, child.title, group.length);
+				configureSceneFigureControls(pane, close);
 				if (controller.signal.aborted) return;
 				await render_interactive_plots(pane, info, doc, target);
 			}
@@ -199,6 +212,9 @@ export function openSceneModal(child, config) {
 		status.hidden = Boolean(tabFigures.length);
 		resizeVisiblePlots();
 	})().catch(error => {
-		if (!controller.signal.aborted) dialog.querySelector('.scene-modal-status').textContent = error.message || 'Unable to load this modal.';
+		if (!controller.signal.aborted) {
+			if (!dialog.open) dialog.showModal();
+			dialog.querySelector('.scene-modal-status').textContent = error.message || 'Unable to load this modal.';
+		}
 	});
 }
