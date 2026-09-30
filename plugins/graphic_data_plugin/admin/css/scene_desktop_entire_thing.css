@@ -156,6 +156,7 @@ ul {
   background-color: #03386c;
   color:#fff;
   border: 1px solid #dee2e6;
+  border-radius: 1px;
 }
 
 /* When the container is actually narrow, stack title buttons under tagline */
