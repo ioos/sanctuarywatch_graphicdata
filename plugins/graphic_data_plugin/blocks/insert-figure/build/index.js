@@ -3602,9 +3602,7 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
 
     // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyBarFigure a chance to finish running before the next one kicked off
     // producePlotlyBarFigure used to fail here because the script was running before the previous iteration finished. 
-    const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-    const response = await fetch(figureRestCall);
-    const data = await response.json();
+    const data = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.fetchFigureUploadMetadata)(figureID);
     const uploaded_path_json = data.uploaded_path_json;
     const restOfURL = "/wp-content" + uploaded_path_json.split("wp-content")[1];
     const finalURL = rootURL + restOfURL;
@@ -5384,8 +5382,7 @@ async function plotlyMapParameterFields(jsonColumns, interactive_arguments) {
   const rootURL = window.location.origin;
   const postID = interactive_arguments ? JSON.parse(interactive_arguments).postID : null;
   const figureID = postID || document.getElementsByName('post_ID')[0]?.value;
-  const res = await fetch(`${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`);
-  const data = await res.json();
+  const data = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.fetchFigureUploadMetadata)(figureID);
   const geojsonURL = `${rootURL}/wp-content${data.uploaded_path_json.split('wp-content')[1]}`;
   const geoData = await fetch(geojsonURL).then(r => r.json());
   const geometrySet = new Set(geoData.features.map(f => f.geometry.type));
@@ -5541,8 +5538,7 @@ async function producePlotlyMap(targetFigureElement, interactive_arguments, post
   const args = Object.fromEntries(JSON.parse(interactive_arguments));
   const rootURL = window.location.origin;
   const figureID = postID || document.getElementsByName('post_ID')[0]?.value;
-  const res = await fetch(`${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`);
-  const data = await res.json();
+  const data = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.fetchFigureUploadMetadata)(figureID);
   const geojsonURL = `${rootURL}/wp-content${data.uploaded_path_json.split('wp-content')[1]}`;
   const geoData = await fetch(geojsonURL).then(r => r.json());
   const geometryType = args.GeometryType || geoData.features[0].geometry.type;
@@ -5928,9 +5924,7 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
 
     // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyLineFigure a chance to finish running before the next one kicked off
     // producePlotlyLineFigure used to fail here because the script was running before the previous iteration finished. 
-    const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-    const response = await fetch(figureRestCall);
-    const data = await response.json();
+    const data = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.fetchFigureUploadMetadata)(figureID);
     const uploaded_path_json = data.uploaded_path_json;
     const restOfURL = "/wp-content" + uploaded_path_json.split("wp-content")[1];
     const finalURL = rootURL + restOfURL;
@@ -7607,6 +7601,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   computePercentile: () => (/* binding */ computePercentile),
 /* harmony export */   computeStandardDeviation: () => (/* binding */ computeStandardDeviation),
+/* harmony export */   fetchFigureUploadMetadata: () => (/* binding */ fetchFigureUploadMetadata),
 /* harmony export */   fillFormFieldValues: () => (/* binding */ fillFormFieldValues),
 /* harmony export */   loadExternalScript: () => (/* binding */ loadExternalScript),
 /* harmony export */   loadPlotlyScript: () => (/* binding */ loadPlotlyScript),
@@ -7614,6 +7609,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   plotlyScriptPromise: () => (/* binding */ plotlyScriptPromise),
 /* harmony export */   waitForElementById: () => (/* binding */ waitForElementById)
 /* harmony export */ });
+/** Fetch figure metadata with the editor's REST nonce when available. */
+async function fetchFigureUploadMetadata(figureID) {
+  const moduleData = JSON.parse(document.getElementById('wp-script-module-data-@graphic-data/file-upload')?.textContent ?? '{}');
+  const response = await fetch(`${window.location.origin}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`, {
+    headers: moduleData.nonce ? {
+      'X-WP-Nonce': moduleData.nonce
+    } : {}
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || `Unable to load Figure ${figureID} (${response.status}).`);
+  }
+  if (typeof data.uploaded_path_json !== 'string' || !data.uploaded_path_json.trim()) {
+    throw new Error(`Figure ${figureID} has no uploaded JSON file path.`);
+  }
+  return data;
+}
+
 // Needed to ensure Plotly is only loaded once
 let plotlyScriptPromise = null;
 
@@ -8076,9 +8089,7 @@ async function produceTabulatorTable(targetFigureElement, interactive_arguments,
 
     // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyScatterFigure a chance to finish running before the next one kicked off
     // producePlotlyScatterFigure used to fail here because the script was running before the previous iteration finished. 
-    const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-    const response = await fetch(figureRestCall);
-    const data = await response.json();
+    const data = await (0,_graphic_data_plotly_utility__WEBPACK_IMPORTED_MODULE_0__.fetchFigureUploadMetadata)(figureID);
     const uploaded_path_json = data.uploaded_path_json;
     const restOfURL = "/wp-content" + uploaded_path_json.split("wp-content")[1];
     const finalURL = rootURL + restOfURL;
