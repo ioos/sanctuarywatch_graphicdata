@@ -1102,6 +1102,570 @@ class Graphic_Data_Figure {
 		}
 	}
 
+	/*
+	* ============================================================
+	* FIGURE DUPLICATION
+	* ============================================================
+	*/
+	/**
+	 * Duplicate an existing Figure custom post.
+	 *
+	 * This copies:
+	 * - The Figure post itself
+	 * - Figure post meta
+	 * - Figure taxonomies
+	 *
+	 * For Interactive Figures only:
+	 * - Creates a new /wp-content/data/figure_{NEW_ID}/ directory
+	 * - Copies CSV and JSON files from the original Figure directory
+	 * - Updates copied metadata paths so they reference the new Figure directory
+	 *
+	 * Generated iframe HTML is intentionally not copied.
+	 */
+	public function graphic_data_duplicate_figure() {
+
+		/*
+		* Make sure a Figure ID was supplied.
+		*/
+		if ( ! isset( $_GET['post'] ) ) {
+			wp_die( 'No Figure ID supplied.' );
+		}
+
+		$post_id = absint( $_GET['post'] );
+
+		if ( ! $post_id ) {
+			wp_die( 'Invalid Figure ID.' );
+		}
+
+
+		/*
+		* Verify nonce.
+		*/
+		check_admin_referer(
+			'duplicate_figure_' . $post_id
+		);
+
+
+		/*
+		* Get the original Figure.
+		*/
+		$post = get_post( $post_id );
+
+		if ( ! $post ) {
+			wp_die( 'Figure not found.' );
+		}
+
+
+		/*
+		* Make sure this is actually a Figure CPT.
+		*/
+		if ( 'figure' !== $post->post_type ) {
+			wp_die( 'This post is not a Figure.' );
+		}
+
+
+		/*
+		* Make sure the current user can edit this Figure.
+		*/
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			wp_die( 'You do not have permission to duplicate this Figure.' );
+		}
+
+
+		/*
+		* Create the new Figure as a draft.
+		*/
+		$new_post_id = wp_insert_post(
+			array(
+				'post_type'      => 'figure',
+				'post_status'    => 'draft',
+				'post_title'     => $post->post_title . ' - Copy',
+				'post_content'   => $post->post_content,
+				'post_excerpt'   => $post->post_excerpt,
+				'post_author'    => get_current_user_id(),
+				'comment_status' => $post->comment_status,
+				'ping_status'    => $post->ping_status,
+				'menu_order'     => $post->menu_order,
+			)
+		);
+
+
+		/*
+		* Stop if WordPress could not create the duplicate.
+		*/
+		if ( is_wp_error( $new_post_id ) || ! $new_post_id ) {
+			wp_die( 'Could not duplicate Figure.' );
+		}
+
+		/*
+		* Store the original Figure ID that this duplicate came from.
+		*/
+		update_post_meta(
+			$new_post_id,
+			'parent_duplicate',
+			$post_id
+		);
+		update_post_meta(
+			$new_post_id,
+			'duplicate_parent',
+			$post_id
+		);
+
+
+		/*
+		* Copy all Figure post meta.
+		*/
+		$post_meta = get_post_meta( $post_id );
+
+		/*
+		* Do not copy WordPress editing metadata or generated iframe code.
+		*
+		* The iframe code should be regenerated for the new Figure because
+		* it contains Figure-specific paths and IDs.
+		*/
+		$skip_meta = array(
+			'_edit_lock',
+			'_edit_last',
+			'_wp_old_slug',
+			'figure_iframe_code',
+			'parent_duplicate',
+			'duplicate_parent',
+		);
+
+		foreach ( $post_meta as $meta_key => $meta_values ) {
+
+			if ( in_array( $meta_key, $skip_meta, true ) ) {
+				continue;
+			}
+
+			foreach ( $meta_values as $meta_value ) {
+
+				add_post_meta(
+					$new_post_id,
+					$meta_key,
+					maybe_unserialize( $meta_value )
+				);
+			}
+		}
+
+
+		/*
+		* Determine what type of Figure this is.
+		*/
+		$figure_path = get_post_meta(
+			$post_id,
+			'figure_path',
+			true
+		);
+
+
+		/*
+		* Interactive Figures may have associated CSV / JSON files.
+		*
+		* Only perform the filesystem duplication for Interactive Figures.
+		*/
+		if ( 'interactive' === strtolower( trim( (string) $figure_path ) ) ) {
+
+			/*
+			* Copy CSV / JSON files from the old Figure's data folder
+			* into the new Figure's data folder.
+			*/
+			$this->graphic_data_copy_figure_data_files(
+				$post_id,
+				$new_post_id
+			);
+
+
+			/*
+			* Update copied post meta so file paths reference
+			* figure_{NEW_ID} instead of figure_{OLD_ID}.
+			*/
+			$this->graphic_data_update_duplicated_file_paths(
+				$post_id,
+				$new_post_id
+			);
+		}
+
+
+		/*
+		* Copy any taxonomies associated with the Figure CPT.
+		*/
+		$taxonomies = get_object_taxonomies(
+			'figure',
+			'names'
+		);
+
+		foreach ( $taxonomies as $taxonomy ) {
+
+			$terms = wp_get_object_terms(
+				$post_id,
+				$taxonomy,
+				array(
+					'fields' => 'ids',
+				)
+			);
+
+			if ( is_wp_error( $terms ) ) {
+				continue;
+			}
+
+			wp_set_object_terms(
+				$new_post_id,
+				$terms,
+				$taxonomy
+			);
+		}
+
+
+		/*
+		* Redirect directly to the duplicated Figure's edit screen.
+		*/
+		wp_safe_redirect(
+			admin_url(
+				'post.php?post=' .
+				$new_post_id .
+				'&action=edit'
+			)
+		);
+
+		exit;
+	}
+
+
+	/**
+	 * Copy CSV and JSON files associated with an Interactive Figure.
+	 *
+	 * Example:
+	 *
+	 * Original:
+	 * /wp-content/data/figure_129/data.csv
+	 *
+	 * Duplicate:
+	 * /wp-content/data/figure_201/data.csv
+	 *
+	 * Only .csv and .json files are copied.
+	 *
+	 * Generated .html files are NOT copied.
+	 */
+	public function graphic_data_copy_figure_data_files( $old_post_id, $new_post_id ) {
+
+		$old_post_id = absint( $old_post_id );
+		$new_post_id = absint( $new_post_id );
+
+		if ( ! $old_post_id || ! $new_post_id ) {
+			return;
+		}
+
+
+		/*
+		* Figure data folders.
+		*/
+		$old_directory = trailingslashit(
+			WP_CONTENT_DIR . '/data/figure_' . $old_post_id
+		);
+
+		$new_directory = trailingslashit(
+			WP_CONTENT_DIR . '/data/figure_' . $new_post_id
+		);
+
+
+		/*
+		* If the original Figure has no data directory,
+		* there is nothing to copy.
+		*/
+		if ( ! is_dir( $old_directory ) ) {
+			return;
+		}
+
+
+		/*
+		* Get everything in the old Figure directory.
+		*/
+		$files = scandir( $old_directory );
+
+		if ( false === $files ) {
+			return;
+		}
+
+
+		/*
+		* Determine whether there are actually any CSV / JSON
+		* files before creating the new directory.
+		*/
+		$data_files = array();
+
+		foreach ( $files as $file_name ) {
+
+			if ( '.' === $file_name || '..' === $file_name ) {
+				continue;
+			}
+
+			$source_file = $old_directory . $file_name;
+
+			if ( ! is_file( $source_file ) ) {
+				continue;
+			}
+
+
+			/*
+			* Only allow CSV and JSON.
+			*/
+			$extension = strtolower(
+				pathinfo(
+					$file_name,
+					PATHINFO_EXTENSION
+				)
+			);
+
+			if ( ! in_array( $extension, array( 'csv', 'json' ), true ) ) {
+				continue;
+			}
+
+			$data_files[] = $file_name;
+		}
+
+
+		/*
+		* No CSV / JSON files exist.
+		*/
+		if ( empty( $data_files ) ) {
+			return;
+		}
+
+
+		/*
+		* Create the new Figure data directory.
+		*/
+		if ( ! is_dir( $new_directory ) ) {
+
+			if ( ! wp_mkdir_p( $new_directory ) ) {
+
+				error_log(
+					sprintf(
+						'GraphicData: Could not create duplicate Figure directory: %s',
+						$new_directory
+					)
+				);
+
+				return;
+			}
+		}
+
+
+		/*
+		* Copy each CSV / JSON file.
+		*/
+		foreach ( $data_files as $file_name ) {
+
+			$source_file = $old_directory . $file_name;
+			$destination_file = $new_directory . $file_name;
+
+			if ( ! copy( $source_file, $destination_file ) ) {
+
+				error_log(
+					sprintf(
+						'GraphicData: Could not copy Figure data file from %s to %s',
+						$source_file,
+						$destination_file
+					)
+				);
+			}
+		}
+	}
+
+
+	/**
+	 * Update duplicated Figure metadata so references to the original
+	 * Figure's data directory point to the duplicated Figure's directory.
+	 *
+	 * Example:
+	 *
+	 * /wp-content/data/figure_129/data.csv
+	 *
+	 * becomes:
+	 *
+	 * /wp-content/data/figure_201/data.csv
+	 *
+	 * This handles both normal strings and serialized arrays stored
+	 * in Figure post meta.
+	 */
+	public function graphic_data_update_duplicated_file_paths( $old_post_id, $new_post_id ) {
+
+		$old_post_id = absint( $old_post_id );
+		$new_post_id = absint( $new_post_id );
+
+		if ( ! $old_post_id || ! $new_post_id ) {
+			return;
+		}
+
+
+		/*
+		* These are the Figure fields that may contain paths
+		* to uploaded CSV / JSON data.
+		*/
+		$file_meta_keys = array(
+			'uploaded_path_csv',
+			'uploaded_path_json',
+			'uploaded_file',
+			'figure_json',
+		);
+
+
+		/*
+		* Old and new Figure directory identifiers.
+		*
+		* Using just figure_{ID} allows this to work whether
+		* the stored value is:
+		*
+		* - an absolute filesystem path
+		* - a relative path
+		* - a URL
+		*/
+		$old_directory_name = 'figure_' . $old_post_id;
+		$new_directory_name = 'figure_' . $new_post_id;
+
+
+		foreach ( $file_meta_keys as $meta_key ) {
+
+			$meta_value = get_post_meta(
+				$new_post_id,
+				$meta_key,
+				true
+			);
+
+			if ( empty( $meta_value ) ) {
+				continue;
+			}
+
+
+			/*
+			* Handle simple string values.
+			*/
+			if ( is_string( $meta_value ) ) {
+
+				// Use the copied JSON file even if the saved path contains a stale Figure ID.
+				if ( 'uploaded_path_json' === $meta_key ) {
+					$copied_path = WP_CONTENT_DIR . '/data/figure_' . $new_post_id . '/' . basename( $meta_value );
+
+					if ( is_file( $copied_path ) ) {
+						update_post_meta( $new_post_id, $meta_key, $copied_path );
+						continue;
+					}
+				}
+
+				$updated_value = str_replace(
+					$old_directory_name,
+					$new_directory_name,
+					$meta_value
+				);
+
+				if ( $updated_value !== $meta_value ) {
+
+					update_post_meta(
+						$new_post_id,
+						$meta_key,
+						$updated_value
+					);
+				}
+
+				continue;
+			}
+
+
+			/*
+			* Handle arrays in case uploaded file information
+			* is stored as structured metadata.
+			*/
+			if ( is_array( $meta_value ) ) {
+
+				$updated_value = $meta_value;
+
+				array_walk_recursive(
+					$updated_value,
+					function ( &$value ) use ( $old_directory_name, $new_directory_name ) {
+
+						if ( is_string( $value ) ) {
+
+							$value = str_replace(
+								$old_directory_name,
+								$new_directory_name,
+								$value
+							);
+						}
+					}
+				);
+
+				if ( $updated_value !== $meta_value ) {
+
+					update_post_meta(
+						$new_post_id,
+						$meta_key,
+						$updated_value
+					);
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Add a Duplicate link to each Figure in:
+	 *
+	 * WordPress Admin -> Figures -> All Figures
+	 */
+	public function graphic_data_figure_duplicate_row_action( $actions, $post ) {
+
+		/*
+		* Only modify the Figure CPT.
+		*/
+		if ( 'figure' !== $post->post_type ) {
+			return $actions;
+		}
+
+
+		/*
+		* Only show Duplicate if the current user can edit
+		* this specific Figure.
+		*/
+		if ( ! current_user_can( 'edit_post', $post->ID ) ) {
+			return $actions;
+		}
+
+
+		/*
+		* Build the secure duplication URL.
+		*
+		* Clicking this triggers:
+		*
+		* admin_action_duplicate_figure
+		*/
+		$duplicate_url = wp_nonce_url(
+			admin_url(
+				'admin.php?action=duplicate_figure&post=' .
+				absint( $post->ID )
+			),
+			'duplicate_figure_' . absint( $post->ID )
+		);
+
+
+		/*
+		* Add Duplicate to the normal WordPress row actions.
+		*/
+		$actions['duplicate_figure'] = sprintf(
+			'<a href="%1$s" aria-label="%2$s">%3$s</a>',
+			esc_url( $duplicate_url ),
+			esc_attr(
+				sprintf(
+					'Duplicate "%s"',
+					$post->post_title
+				)
+			),
+			esc_html__( 'Duplicate', 'graphic-data-plugin' )
+		);
+
+		return $actions;
+	}
+
 	/**
 	 * AJAX handler that fetches an "External" figure's image URL server-side and
 	 * returns its bytes as base64.
@@ -1614,4 +2178,5 @@ class Graphic_Data_Figure {
 			200
 		);
 	}
+	
 }

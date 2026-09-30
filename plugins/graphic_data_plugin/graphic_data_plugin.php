@@ -46,6 +46,7 @@ if ( ! defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) ) {
  */
 require plugin_dir_path( __FILE__ ) . 'includes/admin.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/figure-shortlinks.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/page-title-appearance.php';
 
 
 /**
@@ -273,6 +274,9 @@ function graphic_data_register_figure_block_meta() {
 add_action( 'init', 'graphic_data_register_figure_block_meta' );
 
 add_action( 'rest_api_init', 'graphic_data_register_figure_block_routes' );
+
+
+
 
 /**
  * Registers REST API routes for the figure block.

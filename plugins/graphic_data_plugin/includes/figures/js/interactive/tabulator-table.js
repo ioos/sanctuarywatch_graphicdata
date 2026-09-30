@@ -1,4 +1,5 @@
 import {
+    fetchFigureUploadMetadata,
     loadPlotlyScript,
     waitForElementById,
     computeStandardDeviation,
@@ -97,10 +98,7 @@ export async function produceTabulatorTable(targetFigureElement, interactive_arg
 
         // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyScatterFigure a chance to finish running before the next one kicked off
         // producePlotlyScatterFigure used to fail here because the script was running before the previous iteration finished. 
-        const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-        const response = await fetch(figureRestCall);
-
-        const data = await response.json();
+        const data = await fetchFigureUploadMetadata(figureID);
         const uploaded_path_json = data.uploaded_path_json;
 
         const restOfURL = "/wp-content" + uploaded_path_json.split("wp-content")[1];

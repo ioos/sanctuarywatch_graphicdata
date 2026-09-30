@@ -358,6 +358,9 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'wp_ajax_proxy_external_image', $plugin_admin_figure, 'proxy_external_image_handler' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin_figure, 'enqueue_admin_interactive_graph_script', 20 );
 		$this->loader->add_filter( 'exopite_sof_save_meta_options', $plugin_admin_figure, 'restrict_figure_code_save', 10, 3 );
+		$this->loader->add_action( 'admin_action_duplicate_figure', $plugin_admin_figure, 'graphic_data_duplicate_figure');
+		$this->loader->add_filter( 'post_row_actions', $plugin_admin_figure, 'graphic_data_figure_duplicate_row_action', 10, 2 );
+		
 
 		// Load class and functions connected to login screen customization.
 		$plugin_admin_logo = new Graphic_Data_Login();

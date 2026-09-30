@@ -1,4 +1,4 @@
-import { loadPlotlyScript } from '@graphic-data/plotly-utility';
+import { loadPlotlyScript, fetchFigureUploadMetadata } from '@graphic-data/plotly-utility';
 
 // === 1. Wait for Target Element ===
 /**
@@ -178,10 +178,7 @@ async function plotlyMapParameterFields(jsonColumns, interactive_arguments) {
 		? JSON.parse(interactive_arguments).postID
 		: null;
 	const figureID = postID || document.getElementsByName('post_ID')[0]?.value;
-	const res = await fetch(
-		`${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`
-	);
-	const data = await res.json();
+	const data = await fetchFigureUploadMetadata(figureID);
 	const geojsonURL = `${rootURL}/wp-content${data.uploaded_path_json.split('wp-content')[1]}`;
 	const geoData = await fetch(geojsonURL).then((r) => r.json());
 	const geometrySet = new Set(geoData.features.map((f) => f.geometry.type));
@@ -346,10 +343,7 @@ export async function producePlotlyMap(
 	const rootURL = window.location.origin;
 	const figureID = postID || document.getElementsByName('post_ID')[0]?.value;
 
-	const res = await fetch(
-		`${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`
-	);
-	const data = await res.json();
+	const data = await fetchFigureUploadMetadata(figureID);
 	const geojsonURL = `${rootURL}/wp-content${data.uploaded_path_json.split('wp-content')[1]}`;
 
 	const geoData = await fetch(geojsonURL).then((r) => r.json());

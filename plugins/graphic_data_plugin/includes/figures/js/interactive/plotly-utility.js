@@ -1,3 +1,22 @@
+/** Fetch figure metadata with the editor's REST nonce when available. */
+export async function fetchFigureUploadMetadata(figureID) {
+    const moduleData = JSON.parse(
+        document.getElementById('wp-script-module-data-@graphic-data/file-upload')?.textContent ?? '{}'
+    );
+    const response = await fetch(
+        `${window.location.origin}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`,
+        { headers: moduleData.nonce ? { 'X-WP-Nonce': moduleData.nonce } : {} }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || `Unable to load Figure ${figureID} (${response.status}).`);
+    }
+    if (typeof data.uploaded_path_json !== 'string' || !data.uploaded_path_json.trim()) {
+        throw new Error(`Figure ${figureID} has no uploaded JSON file path.`);
+    }
+    return data;
+}
+
 // Needed to ensure Plotly is only loaded once
 export let plotlyScriptPromise = null;
 
