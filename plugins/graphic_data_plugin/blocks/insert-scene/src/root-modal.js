@@ -90,7 +90,7 @@ export function openSceneModal(child, config) {
 	dialog.innerHTML = `<div class="modal-dialog modal-lg"><div class="modal-content">
 		<header class="modal-header"><h2 id="${id}-title" class="modal-title"></h2>
 		<button type="button" class="btn-close scene-modal-close" aria-label="Close modal"></button></header>
-		<div class="modal-body"><p class="scene-modal-status" role="status">Loading modal content…</p>
+		<div class="modal-body"><p class="scene-modal-status graphic-data-loading-circle" role="status" aria-label="Loading modal"></p>
 		<div class="row"><div class="graphic-data-modal-tagline"></div>
 		<aside id="${id}-accordion" class="graphic-data-modal-accordion accordion"></aside></div>
 		<ul class="graphic-data-modal-tabs nav nav-tabs" role="tablist" aria-label="Modal tabs"></ul>
@@ -208,12 +208,16 @@ export function openSceneModal(child, config) {
 		}
 		if (controller.signal.aborted) return;
 		const status = dialog.querySelector('.scene-modal-status');
+		status.classList.remove('graphic-data-loading-circle');
+		status.removeAttribute('aria-label');
 		status.textContent = tabFigures.length ? '' : 'This modal has no published figures.';
 		status.hidden = Boolean(tabFigures.length);
 		resizeVisiblePlots();
 	})().catch(error => {
 		if (!controller.signal.aborted) {
 			if (!dialog.open) dialog.showModal();
+			dialog.querySelector('.scene-modal-status').classList.remove('graphic-data-loading-circle');
+			dialog.querySelector('.scene-modal-status').removeAttribute('aria-label');
 			dialog.querySelector('.scene-modal-status').textContent = error.message || 'Unable to load this modal.';
 		}
 	});

@@ -1,3 +1,4 @@
+import '../../shared/loading.css';
 /**
  * Registers the Graphic Data Modal block in the editor.
  *

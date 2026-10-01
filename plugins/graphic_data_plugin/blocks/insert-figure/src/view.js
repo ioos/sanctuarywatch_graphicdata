@@ -1,4 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
+import { __ } from '@wordpress/i18n';
 import {
 	render_interactive_plots,
 	render_tab_info,
@@ -55,6 +56,12 @@ async function renderFigureBlock(block) {
 	}
 
 	block.dataset.rendering = 'true';
+	block.setAttribute('aria-busy', 'true');
+	const loading = document.createElement('span');
+	loading.className = 'graphic-data-loading-circle';
+	loading.setAttribute('role', 'status');
+	loading.setAttribute('aria-label', __('Loading figure', 'graphic-data-plugin'));
+	block.prepend(loading);
 
 	try {
 		const meta = await apiFetch({
@@ -159,6 +166,8 @@ async function renderFigureBlock(block) {
 		block.dataset.rendered = 'true';
 		scrollToFigureHash(block, figureId);
 	} finally {
+		loading.remove();
+		block.setAttribute('aria-busy', 'false');
 		delete block.dataset.rendering;
 	}
 }

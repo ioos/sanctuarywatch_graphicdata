@@ -156,8 +156,8 @@
   /* background: #fff; */
   font-weight: 650;
   content: "▼";
-  border: 2px solid;
-  border-color: rgba(0,0,0,0.12) rgba(0,0,0,0.12) transparent; 
+  border: 2px solid rgba(0,0,0,0.12) transparent;
+  /* border-color: rgba(0,0,0,0.12) rgba(0,0,0,0.12) transparent;  */
   color: #003b71;
   font-size: 1.15rem;
   vertical-align: middle;

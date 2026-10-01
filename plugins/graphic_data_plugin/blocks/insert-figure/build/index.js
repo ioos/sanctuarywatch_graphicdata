@@ -774,16 +774,20 @@ function Edit({
           }
         }
       })]
-    }), isLoadingMeta && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
+    }), isLoadingMeta && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
       className: "graphic-data-figure-loading",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
-        children: "Loading figure metadata..."
-      })]
-    }), isRenderingPlot && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsxs)("div", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
+        className: "graphic-data-loading-circle",
+        role: "status",
+        "aria-label": "Loading figure"
+      })
+    }), isRenderingPlot && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("div", {
       className: "graphic-data-figure-rendering",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Spinner, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
-        children: "Rendering Plotly figure..."
-      })]
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)("span", {
+        className: "graphic-data-loading-circle",
+        role: "status",
+        "aria-label": "Loading figure"
+      })
     }), errorMessage && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__.Notice, {
       status: "error",
       isDismissible: false,
@@ -2178,6 +2182,172 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+function enableFigureImageViewer(img) {
+  if (!img || img.dataset.imageViewerEnabled === 'true') return;
+  img.dataset.imageViewerEnabled = 'true';
+
+  // Wrap the image so the expand icon stays in its bottom-right corner.
+  const wrapper = img.ownerDocument.createElement('span');
+  wrapper.style.cssText = `
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+        vertical-align: top;
+    `;
+  img.replaceWith(wrapper);
+  wrapper.appendChild(img);
+  img.style.display = 'block';
+  const expandIcon = img.ownerDocument.createElement('span');
+  expandIcon.setAttribute('aria-hidden', 'true');
+  expandIcon.style.cssText = `
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.3);
+        color: rgba(255, 255, 255, 0.85);
+        pointer-events: none;
+    `;
+  expandIcon.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round"
+            aria-hidden="true" focusable="false">
+            <path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/>
+        </svg>
+    `;
+  wrapper.appendChild(expandIcon);
+  img.style.cursor = 'zoom-in';
+  img.tabIndex = 0;
+  img.setAttribute('role', 'button');
+  img.setAttribute('aria-haspopup', 'dialog');
+  img.setAttribute('aria-label', 'View image full screen');
+  let activeDialog = null;
+  function openViewer() {
+    const source = img.currentSrc || img.src;
+    if (!source || activeDialog) return;
+
+    // Fill the outer page when rendered inside a same-origin iframe.
+    let viewerWindow = img.ownerDocument.defaultView;
+    try {
+      while (viewerWindow.parent !== viewerWindow && viewerWindow.parent.document) {
+        viewerWindow = viewerWindow.parent;
+      }
+    } catch {
+      // Cross-origin frames use their own accessible document.
+    }
+    const doc = viewerWindow.document;
+    const dialog = doc.createElement('dialog');
+    dialog.setAttribute('aria-label', 'Full-screen image viewer');
+    dialog.style.cssText = `
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            margin: 0;
+            padding: 60px 20px 20px;
+            border: 0;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.95);
+            overflow: hidden;
+        `;
+    const fullImage = doc.createElement('img');
+    fullImage.src = source;
+    fullImage.alt = img.alt || '';
+    fullImage.draggable = false;
+    fullImage.style.cssText = `
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+            margin: auto;
+            object-fit: contain;
+        `;
+    const closeButton = doc.createElement('button');
+    closeButton.type = 'button';
+    closeButton.textContent = '×';
+    closeButton.setAttribute('aria-label', 'Close image viewer');
+    closeButton.style.cssText = `
+            position: absolute;
+            top: 10px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            border: 1px solid white;
+            border-radius: 50%;
+            background: #222;
+            color: white;
+            font: 32px/1 sans-serif;
+            cursor: pointer;
+        `;
+    const imageArea = doc.createElement('div');
+    imageArea.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        `;
+    imageArea.appendChild(fullImage);
+    dialog.append(closeButton, imageArea);
+    doc.body.appendChild(dialog);
+    const previousOverflow = doc.documentElement.style.overflow;
+    dialog.addEventListener('close', () => {
+      doc.documentElement.style.overflow = previousOverflow;
+      dialog.remove();
+      activeDialog = null;
+      if (img.isConnected) {
+        img.focus({
+          preventScroll: true
+        });
+      }
+    }, {
+      once: true
+    });
+    closeButton.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', event => {
+      if (event.target === dialog || event.target === imageArea) {
+        dialog.close();
+      }
+    });
+
+    // Keep Escape from also closing a containing modal.
+    dialog.addEventListener('keydown', event => {
+      event.stopPropagation();
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        dialog.close();
+      }
+    });
+    dialog.showModal();
+    activeDialog = dialog;
+    doc.documentElement.style.overflow = 'hidden';
+    closeButton.focus({
+      preventScroll: true
+    });
+  }
+  img.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    openViewer();
+  });
+  img.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.stopPropagation();
+      openViewer();
+    }
+  });
+}
 function waitForPlotly() {
   return new Promise((resolve, reject) => {
     if (window.Plotly) {
@@ -3068,8 +3238,8 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
             }));
           }
         }
-      } else window.dataLayer = window.dataLayer || [];
-
+      } else enableFigureImageViewer(img);
+      window.dataLayer = window.dataLayer || [];
       //Google Tags
       // document.addEventListener('graphic-data:figureInternalImageLoaded', (event) => {  
       //     console.log('Received graphic-data:figureInternalImageLoaded', event.detail);
@@ -3108,6 +3278,7 @@ async function render_tab_info(tabContentElement, tabContentContainer, info_obj,
           }
         }
       } else {}
+      enableFigureImageViewer(img);
 
       //Google Tags
       // document.addEventListener('graphic-data:figureExternalImageLoaded', (event) => {  
@@ -11243,6 +11414,18 @@ async function handleHashNavigation() {
 
 /***/ },
 
+/***/ "./blocks/shared/loading.css"
+/*!***********************************!*\
+  !*** ./blocks/shared/loading.css ***!
+  \***********************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ },
+
 /***/ "react/jsx-runtime"
 /*!**********************************!*\
   !*** external "ReactJSXRuntime" ***!
@@ -11329,7 +11512,7 @@ module.exports = window["wp"]["i18n"];
   \*********************************************/
 (module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/graphic-data-insert-figure","version":"0.1.0","title":"Graphic Data - Figure","category":"media","description":"Insert a figure into a post","example":{},"attributes":{"figureId":{"type":"number","default":0},"figureMode":{"type":"string","default":"existing"},"instanceId":{"type":"string","default":""},"figureWidth":{"type":"number","default":100},"figureWidthUnit":{"type":"string","default":"%"},"figureMaxWidth":{"type":"number","default":0},"figureHeight":{"type":"number","default":0},"figureAlignment":{"type":"string","default":"center"},"figureBackgroundColor":{"type":"string","default":"transparent"},"figureBorderEnabled":{"type":"boolean","default":false},"figureBorderColor":{"type":"string","default":"#000000"},"figureBorderWidth":{"type":"number","default":1},"figureBorderRadius":{"type":"number","default":0},"figurePadding":{"type":"number","default":0}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"graphic-data-insert-interactive-figure","editorScript":"file:./index.js","viewScript":"file:./view.js","render":"file:./render.php"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"create-block/graphic-data-insert-figure","version":"0.1.0","title":"Graphic Data - Figure","category":"media","description":"Insert a figure into a post","example":{},"attributes":{"figureId":{"type":"number","default":0},"figureMode":{"type":"string","default":"existing"},"instanceId":{"type":"string","default":""},"figureWidth":{"type":"number","default":100},"figureWidthUnit":{"type":"string","default":"%"},"figureMaxWidth":{"type":"number","default":0},"figureHeight":{"type":"number","default":0},"figureAlignment":{"type":"string","default":"center"},"figureBackgroundColor":{"type":"string","default":"transparent"},"figureBorderEnabled":{"type":"boolean","default":false},"figureBorderColor":{"type":"string","default":"#000000"},"figureBorderWidth":{"type":"number","default":1},"figureBorderRadius":{"type":"number","default":0},"figurePadding":{"type":"number","default":0}},"supports":{"color":{"background":false,"text":true},"html":false,"typography":{"fontSize":true}},"textdomain":"graphic-data-insert-interactive-figure","editorScript":"file:./index.js","viewScript":"file:./view.js","render":"file:./render.php","style":"file:./index.css"}');
 
 /***/ }
 
@@ -11404,13 +11587,15 @@ let __webpack_exports__ = {};
   !*** ./blocks/insert-figure/src/index.js ***!
   \*******************************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./edit */ "./blocks/insert-figure/src/edit.js");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./save */ "./blocks/insert-figure/src/save.js");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./block.json */ "./blocks/insert-figure/src/block.json");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _shared_loading_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../shared/loading.css */ "./blocks/shared/loading.css");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./blocks/insert-figure/src/edit.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./save */ "./blocks/insert-figure/src/save.js");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./block.json */ "./blocks/insert-figure/src/block.json");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__);
+
 /**
  * Registers the Graphic Data Figure block in the editor.
  *
@@ -11432,20 +11617,20 @@ __webpack_require__.r(__webpack_exports__);
  * Define a custom SVG icon for the block.
  */
 
-const figureIcon = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("svg", {
+const figureIcon = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("svg", {
   viewBox: "0 0 24 24",
   xmlns: "http://www.w3.org/2000/svg",
   "aria-hidden": "true",
   focusable: "false",
-  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
+  children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
     d: "M4 19.5h16v1.5H3V3h1.5v16.5z"
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
     d: "M7 17h2.5v-6H7v6z"
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
     d: "M11 17h2.5V7H11v10z"
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
     d: "M15 17h2.5v-4H15v4z"
-  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
+  }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
     d: "M6.5 9.5l4-3 3.5 3 4-5 .9.8-4.8 6-3.6-3.1-3.3 2.5-.7-1.2z"
   })]
 });
@@ -11456,11 +11641,11 @@ const figureIcon = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4_
  * Spread metadata so the editor receives attributes/supports from block.json.
  * Frontend rendering still comes from render.php + view.js, not from this file.
  */
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_3__.name, {
-  ..._block_json__WEBPACK_IMPORTED_MODULE_3__,
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_4__.name, {
+  ..._block_json__WEBPACK_IMPORTED_MODULE_4__,
   icon: figureIcon,
-  edit: _edit__WEBPACK_IMPORTED_MODULE_1__["default"],
-  save: _save__WEBPACK_IMPORTED_MODULE_2__["default"]
+  edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"],
+  save: _save__WEBPACK_IMPORTED_MODULE_3__["default"]
 });
 })();
 

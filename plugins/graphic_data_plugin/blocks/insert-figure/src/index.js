@@ -1,3 +1,4 @@
+import '../../shared/loading.css';
 /**
  * Registers the Graphic Data Figure block in the editor.
  *

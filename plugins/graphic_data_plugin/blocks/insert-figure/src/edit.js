@@ -930,15 +930,13 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 			{isLoadingMeta && (
 				<div className="graphic-data-figure-loading">
-					<Spinner />
-					<span>Loading figure metadata...</span>
+					<span className="graphic-data-loading-circle" role="status" aria-label="Loading figure" />
 				</div>
 			)}
 
 			{isRenderingPlot && (
 				<div className="graphic-data-figure-rendering">
-					<Spinner />
-					<span>Rendering Plotly figure...</span>
+					<span className="graphic-data-loading-circle" role="status" aria-label="Loading figure" />
 				</div>
 			)}
 

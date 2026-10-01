@@ -78,5 +78,6 @@
   "textdomain": "graphic-data-insert-interactive-scene",
   "editorScript": "file:./index.js",
   "viewScript": "file:./view.js",
-  "render": "file:./render.php"
+  "render": "file:./render.php",
+  "style": "file:./index.css"
 }

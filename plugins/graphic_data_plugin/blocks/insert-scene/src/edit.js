@@ -276,7 +276,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					{__('No published scenes found.', 'graphic-data-plugin')}
 				</Notice>
 			)}
-			{isLoading && <p><Spinner /> {__('Loading scene content and icons...', 'graphic-data-plugin')}</p>}
+			{isLoading && <span className="graphic-data-loading-circle" role="status" aria-label={__('Loading', 'graphic-data-plugin')} />}
 			{errorMessage && <Notice status="error" isDismissible={false}>{errorMessage}</Notice>}
 			{!sceneId && !scenesAreLoading && (
 				<Notice status="info" isDismissible={false}>

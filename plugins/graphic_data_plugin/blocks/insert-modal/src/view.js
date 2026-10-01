@@ -30,12 +30,16 @@ function renderModalBlock(block) {
 			onLoading(loading) {
 				block.setAttribute('aria-busy', String(loading));
 				if (!failed) {
-					notice.textContent = loading ? __('Loading modal content and figures...', 'graphic-data-plugin') : '';
+					notice.textContent = '';
+					notice.classList.toggle('graphic-data-loading-circle', loading);
+					notice.setAttribute('aria-label', __('Loading', 'graphic-data-plugin'));
 					notice.hidden = !loading;
 				}
 			},
 			onError(message) {
 				failed = Boolean(message);
+				notice.classList.remove('graphic-data-loading-circle');
+				notice.removeAttribute('aria-label');
 				notice.textContent = message;
 				notice.hidden = !message;
 				retry.hidden = !message;
