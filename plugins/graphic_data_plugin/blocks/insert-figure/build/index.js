@@ -4177,6 +4177,9 @@ async function producePlotlyBarFigure(targetFigureElement, interactive_arguments
       displaylogo: false,
       modeBarButtonsToRemove: ['zoom2d', 'lasso2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian' //'toImage', 'resetScale2d', 'select2d'
       ]
+      // modeBarButtonsToAdd: [
+      // 	createFullscreenButton(Plotly),
+      // ],
     };
 
     // Set up the plotlyDiv (The div the the plot will be rendered in)
@@ -6565,6 +6568,9 @@ async function producePlotlyLineFigure(targetFigureElement, interactive_argument
       displaylogo: false,
       modeBarButtonsToRemove: ['zoom2d', 'lasso2d', 'autoScale2d', 'hoverClosestCartesian', 'hoverCompareCartesian' //'toImage', 'resetScale2d', 'select2d'
       ]
+      // modeBarButtonsToAdd: [
+      // 	createFullscreenButton(Plotly),
+      // ]
     };
 
     // Set up the plotlyDiv (The div the the plot will be rendered in)
@@ -7772,6 +7778,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   computePercentile: () => (/* binding */ computePercentile),
 /* harmony export */   computeStandardDeviation: () => (/* binding */ computeStandardDeviation),
+/* harmony export */   createFullscreenButton: () => (/* binding */ createFullscreenButton),
 /* harmony export */   fetchFigureUploadMetadata: () => (/* binding */ fetchFigureUploadMetadata),
 /* harmony export */   fillFormFieldValues: () => (/* binding */ fillFormFieldValues),
 /* harmony export */   loadExternalScript: () => (/* binding */ loadExternalScript),
@@ -8066,6 +8073,102 @@ function fillFormFieldValues(elementID) {
       return resultJSON[elementID];
     }
   }
+}
+
+/**
+ * Create a Plotly toolbar button that toggles full-screen viewing.
+ *
+ * Pass the Plotly instance used to render the chart.
+ */
+function createFullscreenButton(Plotly) {
+  let active = false;
+  return {
+    name: 'Toggle full screen',
+    icon: {
+      width: 24,
+      height: 24,
+      path: ['M3 3H10V5H5V10H3Z', 'M14 3H21V10H19V5H14Z', 'M21 14V21H14V19H19V14Z', 'M10 21H3V14H5V19H10Z'].join(' ')
+    },
+    click: async function (gd) {
+      const doc = gd.ownerDocument;
+      const win = doc.defaultView;
+
+      // Clicking the button again exits full screen.
+      if (doc.fullscreenElement === gd) {
+        await doc.exitFullscreen();
+        return;
+      }
+      if (active) return;
+      if (!doc.fullscreenEnabled || !gd.requestFullscreen) {
+        console.warn('Full-screen viewing is unavailable here.');
+        return;
+      }
+      active = true;
+      const originalStyle = gd.getAttribute('style');
+      const originalLayout = {
+        width: gd.layout.width ?? null,
+        height: gd.layout.height ?? null,
+        autosize: gd.layout.autosize ?? true
+      };
+      let entered = false;
+      let restored = false;
+      let resizeFrame;
+      function resizeChart() {
+        win.cancelAnimationFrame(resizeFrame);
+        resizeFrame = win.requestAnimationFrame(() => {
+          if (doc.fullscreenElement !== gd) return;
+          Plotly.relayout(gd, {
+            width: gd.clientWidth,
+            height: gd.clientHeight
+          }).catch(console.error);
+        });
+      }
+      async function restoreChart() {
+        if (restored) return;
+        restored = true;
+        win.cancelAnimationFrame(resizeFrame);
+        win.removeEventListener('resize', resizeChart);
+        doc.removeEventListener('fullscreenchange', onFullscreenChange);
+        if (originalStyle === null) {
+          gd.removeAttribute('style');
+        } else {
+          gd.setAttribute('style', originalStyle);
+        }
+        try {
+          await Plotly.relayout(gd, originalLayout);
+          if (originalLayout.autosize) {
+            await Plotly.Plots.resize(gd);
+          }
+        } catch (error) {
+          console.error('Could not restore chart size:', error);
+        } finally {
+          active = false;
+        }
+      }
+      function onFullscreenChange() {
+        if (doc.fullscreenElement === gd) {
+          entered = true;
+          gd.style.setProperty('width', '100vw', 'important');
+          gd.style.setProperty('height', '100vh', 'important');
+          gd.style.setProperty('max-width', 'none', 'important');
+          gd.style.setProperty('max-height', 'none', 'important');
+          gd.style.setProperty('margin', '0', 'important');
+          gd.style.setProperty('background-color', '#fff');
+          resizeChart();
+        } else if (entered) {
+          void restoreChart();
+        }
+      }
+      doc.addEventListener('fullscreenchange', onFullscreenChange);
+      win.addEventListener('resize', resizeChart);
+      try {
+        await gd.requestFullscreen();
+      } catch (error) {
+        await restoreChart();
+        console.error('Could not open full-screen chart:', error);
+      }
+    }
+  };
 }
 
 /**

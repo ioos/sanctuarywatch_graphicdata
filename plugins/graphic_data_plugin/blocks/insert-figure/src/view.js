@@ -34,7 +34,7 @@ function formatFigureMeta(meta = {}, figureId) {
 }
 
 function scrollToFigureHash(block, figureId) {
-	if (window.location.hash !== `#figure-${figureId}`) {
+	if (window.location.hash !== `#figure-${figureId}` || window.location.hash !== '#') {
 		return;
 	}
 

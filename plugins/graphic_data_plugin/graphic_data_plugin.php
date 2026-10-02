@@ -285,8 +285,8 @@ add_action( 'rest_api_init', 'graphic_data_register_figure_block_routes' );
  * - GET: retrieves figure block meta via {@see graphic_data_get_figure_block_meta()}
  * - POST/PUT/PATCH: saves figure block meta via {@see graphic_data_save_figure_block_meta()}
  *
- * Both endpoints require the current user to have `edit_post` capability for the
- * requested post ID.
+ * GET allows public access to publicly viewable figures marked as published.
+ * Editors may also read drafts. Saving requires `edit_post` capability.
  *
  * Hooked to `rest_api_init`.
  *
@@ -302,7 +302,19 @@ function graphic_data_register_figure_block_routes() {
 				'callback'            => 'graphic_data_get_figure_block_meta',
 				'permission_callback' => function ( $request ) {
 					$post_id = absint( $request['id'] );
-					return current_user_can( 'edit_post', $post_id );
+					$post = get_post( $post_id );
+
+					if ( ! $post || 'figure' !== $post->post_type ) {
+						return false;
+					}
+
+					if ( current_user_can( 'edit_post', $post_id ) ) {
+						return true;
+					}
+
+					return is_post_publicly_viewable( $post )
+						&& '' === $post->post_password
+						&& 'published' === get_post_meta( $post_id, 'figure_published', true );
 				},
 			),
 			array(

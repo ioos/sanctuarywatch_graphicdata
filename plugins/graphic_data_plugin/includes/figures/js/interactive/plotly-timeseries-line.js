@@ -6,6 +6,7 @@ import {
     computePercentile,
     logFormFieldValues,
     fillFormFieldValues,
+	createFullscreenButton,
 } from '@graphic-data/plotly-utility';
 
 const _lineDataEl = document.getElementById(
@@ -772,7 +773,10 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 		modeBarButtonsToRemove: [
 			'zoom2d', 'lasso2d', 'autoScale2d',
 			'hoverClosestCartesian', 'hoverCompareCartesian' //'toImage', 'resetScale2d', 'select2d'
-		]
+		],
+		// modeBarButtonsToAdd: [
+		// 	createFullscreenButton(Plotly),
+		// ]
 		};
 
 		// Set up the plotlyDiv (The div the the plot will be rendered in)
