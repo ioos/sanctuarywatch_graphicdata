@@ -28,6 +28,18 @@
       "type": "string",
       "default": "%"
     },
+    "figureMobileWidthEnabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "figureMobileWidth": {
+      "type": "number",
+      "default": 100
+    },
+    "figureMobileWidthUnit": {
+      "type": "string",
+      "default": "%"
+    },
     "figureMaxWidth": {
       "type": "number",
       "default": 0

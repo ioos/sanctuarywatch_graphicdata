@@ -150,6 +150,9 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		instanceId = '',
 		figureWidth = 100,
 		figureWidthUnit = '%',
+		figureMobileWidthEnabled = false,
+		figureMobileWidth = 100,
+		figureMobileWidthUnit = '%',
 		figureMaxWidth = 0,
 		figureHeight = 0,
 		figureAlignment = 'center',
@@ -162,6 +165,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	} = attributes;
 
 	const normalizedWidth = Math.max(Number(figureWidth) || 0, 0);
+	const normalizedMobileWidth = Math.max(Number(figureMobileWidth) || 0, 0);
 	const normalizedMaxWidth = Math.max(Number(figureMaxWidth) || 0, 0);
 	const normalizedHeight = Math.max(Number(figureHeight) || 0, 0);
 	const normalizedBorderWidth = Math.max(Number(figureBorderWidth) || 0, 0);
@@ -683,7 +687,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					initialOpen={true}
 				>
 					<TextControl
-						label={__('Width', 'graphic-data-plugin')}
+						label={__('Desktop width', 'graphic-data-plugin')}
 						type="number"
 						min="0"
 						value={normalizedWidth}
@@ -693,7 +697,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					/>
 
 					<SelectControl
-						label={__('Width unit', 'graphic-data-plugin')}
+						label={__('Desktop width unit', 'graphic-data-plugin')}
 						value={figureWidthUnit}
 						options={[
 							{ label: '%', value: '%' },
@@ -703,6 +707,36 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						]}
 						onChange={(value) => setAttributes({ figureWidthUnit: value })}
 					/>
+
+					<ToggleControl
+						label={__('Use desktop width on mobile', 'graphic-data-plugin')}
+						help={__('Mobile width applies at screen widths of 768px or less.', 'graphic-data-plugin')}
+						checked={!figureMobileWidthEnabled}
+						onChange={(value) => setAttributes({ figureMobileWidthEnabled: !value })}
+					/>
+
+					{figureMobileWidthEnabled && (
+						<>
+							<TextControl
+								label={__('Mobile width', 'graphic-data-plugin')}
+								type="number"
+								min="0"
+								value={normalizedMobileWidth}
+								onChange={(value) => setAttributes({ figureMobileWidth: Math.max(Number(value) || 0, 0) })}
+							/>
+							<SelectControl
+								label={__('Mobile width unit', 'graphic-data-plugin')}
+								value={figureMobileWidthUnit}
+								options={[
+									{ label: '%', value: '%' },
+									{ label: 'px', value: 'px' },
+									{ label: 'rem', value: 'rem' },
+									{ label: 'vw', value: 'vw' },
+								]}
+								onChange={(value) => setAttributes({ figureMobileWidthUnit: value })}
+							/>
+						</>
+					)}
 
 					<TextControl
 						label={__('Maximum width (px)', 'graphic-data-plugin')}
@@ -743,6 +777,9 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							setAttributes({
 								figureWidth: 100,
 								figureWidthUnit: '%',
+								figureMobileWidthEnabled: false,
+								figureMobileWidth: 100,
+								figureMobileWidthUnit: '%',
 								figureMaxWidth: 0,
 								figureHeight: 0,
 								figureAlignment: 'center',
@@ -966,7 +1003,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					ref={previewRef}
 					className="graphic-data-figure-preview"
 					style={{
-						width: `${normalizedWidth}${figureWidthUnit}`,
+						'--graphic-data-figure-width': `${normalizedWidth}${figureWidthUnit}`,
+						'--graphic-data-figure-mobile-width': figureMobileWidthEnabled
+							? `${normalizedMobileWidth}${figureMobileWidthUnit}`
+							: `${normalizedWidth}${figureWidthUnit}`,
 						maxWidth:
 							normalizedMaxWidth > 0 ? `${normalizedMaxWidth}px` : 'none',
 						backgroundColor: figureBackgroundColor || 'transparent',

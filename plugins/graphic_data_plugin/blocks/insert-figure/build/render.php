@@ -14,6 +14,11 @@ $figure_width       = isset( $attributes['figureWidth'] ) ? max( 0, (float) $att
 $figure_width_unit  = isset( $attributes['figureWidthUnit'] ) && in_array( $attributes['figureWidthUnit'], $allowed_width_units, true )
 	? $attributes['figureWidthUnit']
 	: '%';
+$figure_mobile_width_enabled = ! empty( $attributes['figureMobileWidthEnabled'] );
+$figure_mobile_width = isset( $attributes['figureMobileWidth'] ) ? max( 0, (float) $attributes['figureMobileWidth'] ) : 100;
+$figure_mobile_width_unit = isset( $attributes['figureMobileWidthUnit'] ) && in_array( $attributes['figureMobileWidthUnit'], $allowed_width_units, true )
+	? $attributes['figureMobileWidthUnit']
+	: '%';
 $figure_max_width   = isset( $attributes['figureMaxWidth'] ) ? max( 0, (float) $attributes['figureMaxWidth'] ) : 0;
 $figure_height      = isset( $attributes['figureHeight'] ) ? max( 0, (float) $attributes['figureHeight'] ) : 0;
 $figure_alignment   = isset( $attributes['figureAlignment'] ) && in_array( $attributes['figureAlignment'], array( 'left', 'center', 'right' ), true )
@@ -35,7 +40,10 @@ $alignment_margins = array(
 	'right'  => 'margin-left:auto;margin-right:0;',
 );
 
-$wrapper_style  = 'width:' . $figure_width . $figure_width_unit . ';';
+$wrapper_style  = '--graphic-data-figure-width:' . $figure_width . $figure_width_unit . ';';
+$wrapper_style .= '--graphic-data-figure-mobile-width:' . ( $figure_mobile_width_enabled
+	? $figure_mobile_width . $figure_mobile_width_unit
+	: $figure_width . $figure_width_unit ) . ';';
 $wrapper_style .= $figure_max_width > 0 ? 'max-width:' . $figure_max_width . 'px;' : 'max-width:none;';
 $wrapper_style .= $alignment_margins[ $figure_alignment ];
 $wrapper_style .= '--graphic-data-figure-height:' . ( $figure_height > 0 ? $figure_height . 'px' : 'auto' ) . ';';

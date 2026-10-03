@@ -1316,7 +1316,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
                         } ) );
                     } 
                 }
-            } else
+            }
 
             enableFigureImageViewer(img);
 
