@@ -24,9 +24,9 @@ class Graphic_Data_Custom_Capabilities {
 	/**
 	 * Removes admin menu pages that authors should not access.
 	 *
-	 * Hides Posts, Pages, and Manage Instance Types menu items from users with the
-	 * 'author' role. The Instances and About menus are additionally hidden from
-	 * every role other than editor, administrator, and super administrator.
+	 * Hides Posts and Manage Instance Types menu items from users with the
+	 * 'author' role. The Pages, Instances, and About menus are additionally hidden
+	 * from every role other than editor, administrator, and super administrator.
 	 *
 	 * @since 1.0.0
 	 *
@@ -38,12 +38,12 @@ class Graphic_Data_Custom_Capabilities {
 
 		if ( 'author' == $user_role ) {
 			remove_menu_page( 'edit.php' );                   // Posts.
-			remove_menu_page( 'edit.php?post_type=page' );    // Pages.
 			remove_menu_page( 'manage-instance-types' ); // Manage Instance Types.
 		}
 
-		// The Instances and About menus are only for editors, administrators, and super administrators.
+		// The Pages, Instances, and About menus are only for editors, administrators, and super administrators.
 		if ( ! in_array( $user_role, array( 'editor', 'administrator' ), true ) && ! is_super_admin( $user->ID ) ) {
+			remove_menu_page( 'edit.php?post_type=page' );
 			remove_menu_page( 'edit.php?post_type=instance' );
 			remove_menu_page( 'edit.php?post_type=about' );
 		}
