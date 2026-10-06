@@ -199,31 +199,42 @@ class Graphic_Data_Customizer_Settings {
 			)
 		);
 
-		// Add setting for single instance enable/disable.
+		// Select the instance presented by the homepage and site navigation.
+		$instance_choices = array( 0 => 'Show all instances' );
+		$instances = get_posts( array(
+			'post_type'      => 'instance',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		) );
+		foreach ( $instances as $instance ) {
+			if ( graphic_data_get_instance_overview( $instance->ID ) ) {
+				$instance_choices[ $instance->ID ] = $instance->post_title;
+			}
+		}
 		$wp_customize->add_setting(
-			'single_instance_enable',
+			'single_instance_id',
 			array(
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
+				'default'           => 0,
+				'sanitize_callback' => 'absint',
+				'validate_callback' => array( $this, 'validate_single_instance' ),
 				'transport'         => 'refresh',
 			)
 		);
-
-		// Add control for single instance enable/disable.
 		$wp_customize->add_control(
-			'single_instance_enable',
+			'single_instance_id',
 			array(
-				'label'       => 'Enable Single Instance View',
-				'description' =>
-					'If Single Instance View is enabled, then the front page of the site will redirect 
-                to the overview scene of the single instance. If no overview scene has been set, then the redirect will be to the first-created 
-                scene in the instance. Enabling this checkbox will have no effect on the site if either of the following are true: 1) there is more 
-                than one instance or 2) the single instance contains no scenes.',
+				'label'       => 'Single Instance View',
+				'description' => 'Choose an instance to use its overview as the homepage and its navigation and footer throughout the site. Only published instances with a published overview scene or page are listed. Choose Show all instances to restore the instance listing.',
 				'section'     => 'other_settings',
-				'type'        => 'checkbox',
+				'type'        => 'select',
+				'choices'     => $instance_choices,
 				'priority'    => 5,
 			)
 		);
+
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_single_instance_scripts' ) );
 
 		// Add a new section for Theme Color settings.
 		$wp_customize->add_section(
@@ -966,54 +977,34 @@ class Graphic_Data_Customizer_Settings {
 	}
 
 	/**
-	 * Enqueue customizer control scripts
+	 * Return the preview to the homepage when changing the selected instance.
 	 */
 	public function enqueue_single_instance_scripts() {
 		wp_add_inline_script(
 			'customize-controls',
-			'
-            wp.customize.bind("ready", function() {
-                
-                // Function to handle the conditional logic
-                function toggleBreadcrumbControl() {
-                    var singleInstanceValue = wp.customize("single_instance_enable").get();
-                    var breadcrumbControl = wp.customize.control("breadcrumb_row_enable");
-                    var breadcrumbInput = breadcrumbControl.container.find("input[type=checkbox]");
-                    
-                    if (singleInstanceValue) {
-                        // If single instance is enabled, disable and uncheck breadcrumb
-                        wp.customize("breadcrumb_row_enable").set("");
-                        breadcrumbInput.prop("disabled", true);
-                        breadcrumbControl.container.addClass("disabled-control");
-                        breadcrumbControl.container.find("label").css("opacity", "0.5");
-                        
-                        // Add explanatory text if not already added
-                        if (!breadcrumbControl.container.find(".conditional-notice").length) {
-                            breadcrumbControl.container.append(
-                                "<p class=\"conditional-notice\" style=\"font-style: italic; color: #ff0000; font-size: 12px; margin-left: 20px;\">" +
-                                "The Breadcrumb Row is disabled when Single Instance View is enabled." +
-                                "</p>"
-                            );
-                        }
-                    } else {
-                        // If single instance is disabled, enable breadcrumb control
-                        breadcrumbInput.prop("disabled", false);
-                        breadcrumbControl.container.removeClass("disabled-control");
-                        breadcrumbControl.container.find("label").css("opacity", "1");
-                        breadcrumbControl.container.find(".conditional-notice").remove();
-                    }
-                }
-                
-                // Run on initial load
-                toggleBreadcrumbControl();
-                
-                // Run when single_instance_enable changes
-                wp.customize("single_instance_enable", function(value) {
-                    value.bind(toggleBreadcrumbControl);
-                });
-            });
-        '
+			'wp.customize.bind("ready", function () {
+				wp.customize("single_instance_id", function (setting) {
+					setting.bind(function () {
+						wp.customize.previewer.previewUrl.set(' . wp_json_encode( home_url( '/' ) ) . ');
+						wp.customize.previewer.refresh();
+					});
+				});
+			});'
 		);
+	}
+
+	/**
+	 * Reject an instance whose overview is no longer available when saving.
+	 *
+	 * @param WP_Error $validity Setting validation errors.
+	 * @param mixed    $value Selected instance ID.
+	 * @return WP_Error Validation errors.
+	 */
+	public function validate_single_instance( $validity, $value ) {
+		if ( 0 !== absint( $value ) && ! graphic_data_get_instance_overview( $value ) ) {
+			$validity->add( 'invalid_instance', 'Choose a published instance with a published overview scene or page.' );
+		}
+		return $validity;
 	}
 
 
