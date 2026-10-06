@@ -925,7 +925,7 @@ class Graphic_Data_Figure {
 	 * @since    1.0.0
 	 */
 	public function register_figure_rest_fields() {
-		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_iframe_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'figure_interactive_args_rendered', 'uploaded_path_json', 'figure_title' ); // figure_temp_filepath.
+		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_iframe_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'figure_interactive_args_rendered', 'uploaded_path_json', 'figure_title', 'uploaded_html_file', 'uploaded_path_html'); // figure_temp_filepath.
 		$function_utilities = new Graphic_Data_Utility();
 		$function_utilities->register_custom_rest_fields( 'figure', $figure_rest_fields );
 	}
@@ -1205,11 +1205,6 @@ class Graphic_Data_Figure {
 			'parent_duplicate',
 			$post_id
 		);
-		update_post_meta(
-			$new_post_id,
-			'duplicate_parent',
-			$post_id
-		);
 
 
 		/*
@@ -1229,7 +1224,8 @@ class Graphic_Data_Figure {
 			'_wp_old_slug',
 			'figure_iframe_code',
 			'parent_duplicate',
-			'duplicate_parent',
+			'uploaded_path_html',
+			'uploaded_html_file',
 		);
 
 		foreach ( $post_meta as $meta_key => $meta_values ) {
@@ -1952,6 +1948,7 @@ class Graphic_Data_Figure {
 						'uploaded_html_file',
 						''
 					);
+
 				}
 
 				wp_send_json_success(

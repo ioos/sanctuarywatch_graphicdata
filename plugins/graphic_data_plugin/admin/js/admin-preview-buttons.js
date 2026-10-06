@@ -492,7 +492,7 @@ if (previewFigureOrModalElements.length > 0) {
 				const figureType = document.getElementsByName('figure_path')[0]?.value;
 
 				const existingFileName = document.getElementById('existing-file-name')?.value.trim() || '';
-				console.log('existingFileName', existingFileName);
+				//console.log('existingFileName', existingFileName);
 
 				const status = document.querySelector('[name="figure_published"]')?.value;
 				
@@ -514,7 +514,10 @@ if (previewFigureOrModalElements.length > 0) {
 
 					if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '') {
 						if (status === 'draft') {
-							await deleteFigureHtmlFiles();
+							event.preventDefault();
+							try {
+								await deleteFigureHtmlFiles();
+							} catch {}
 						}
 						return;
 					}
@@ -530,9 +533,26 @@ if (previewFigureOrModalElements.length > 0) {
 
 					if (status === 'draft' && !window.location.href.includes('post-new.php')) {
 
-						await deleteFigureHtmlFiles();
+						event.preventDefault();
 
-						return;
+						const protocol = window.location.protocol;
+						const host = window.location.host;
+						const figureFetchURL  =  protocol + "//" + host  + "/wp-json/wp/v2/figure/" + postID + "?_fields=uploaded_html_file";
+						const figureResponse = await fetch(figureFetchURL);
+						const figureData = await figureResponse.json();
+						const uploaded_html_file = figureData.uploaded_html_file;
+						// console.log('uploaded_html_file', uploaded_html_file);
+						if ( typeof uploaded_html_file === 'string' && uploaded_html_file.trim() !== '') {
+							await deleteFigureHtmlFiles();
+							return;
+						} else {
+							// No file to delete, so proceed with the normal save.
+							window.fileDeleteSaveInProgress = true;
+							clickUpdateButton();
+							return;
+						}
+
+
 					}
 
 					if (status === 'draft' && window.location.href.includes('post-new.php')) {
@@ -540,7 +560,7 @@ if (previewFigureOrModalElements.length > 0) {
 					}
 
 
-					console.log('event.preventDefault() triggered');
+					//console.log('event.preventDefault() triggered');
 					event.preventDefault();
 
 				}
@@ -1259,6 +1279,8 @@ async function generateAndSaveFigureFromPreview(
 	const figureType = info_obj['figureType'];
 	const postForm = document.getElementById('post');
 
+	const status = info_obj['figure_published'];
+
 	// const newPostPage = isNewFigurePostPage();
 	// const postID = getFigurePostIDFromURL();
 
@@ -1504,8 +1526,8 @@ async function generateAndSaveFigureFromPreview(
 			);
 		}
 
-		iframeCodeBox.value =
-			figureIframeGenerator.figIframeHtmlPath;
+
+		iframeCodeBox.value = figureIframeGenerator.figIframeHtmlPath;
 
 		/*
 		 * Notify any input/change listeners that the field changed.
@@ -3366,6 +3388,7 @@ export async function createFigureHtml(
  * custom_file_delete
  */
 export async function deleteFigureHtmlFiles() {
+
 	const postIdInput = document.querySelector(
 		'[name="post_id"], [name="post_ID"]'
 	);
@@ -3389,8 +3412,7 @@ export async function deleteFigureHtmlFiles() {
 		`figure-${postId}.html`
 	];
 
-	const ajaxUrl =
-		window.location.origin + "/wp-admin/admin-ajax.php";
+	const ajaxUrl = window.location.origin + "/wp-admin/admin-ajax.php";
 
 	try {
 		const results = await Promise.all(
@@ -3405,7 +3427,7 @@ export async function deleteFigureHtmlFiles() {
 					figureNonceInput.value
 				);
 
-				console.log(`Deleting: ${fileName}`);
+				//console.log(`Deleting: ${fileName}`);
 
 				const response = await fetch(ajaxUrl, {
 					method: "POST",
@@ -3441,10 +3463,10 @@ export async function deleteFigureHtmlFiles() {
 					);
 				}
 
-				console.log(
-					`Successfully deleted: ${fileName}`,
-					data.data
-				);
+				// console.log(
+				// 	`Successfully deleted: ${fileName}`,
+				// 	data.data
+				// );
 
 				return {
 					fileName,
@@ -3453,9 +3475,9 @@ export async function deleteFigureHtmlFiles() {
 			})
 		);
 
-		console.log("Both HTML files deleted:", results);
+		//console.log("Both HTML files deleted:", results);
 
-		alert("Figure HTML files deleted successfully.");
+		// alert("Figure HTML files deleted successfully.");
 
 		window.fileDeleteSaveInProgress = true;
 
