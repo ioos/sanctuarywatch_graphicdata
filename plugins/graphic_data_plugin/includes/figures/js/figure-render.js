@@ -14,7 +14,7 @@ function enableFigureImageViewer(img) {
     const wrapper = img.ownerDocument.createElement('span');
     wrapper.style.cssText = `
         position: relative;
-        display: inline-block;
+        display: block;
         max-width: 100%;
         vertical-align: top;
     `;
