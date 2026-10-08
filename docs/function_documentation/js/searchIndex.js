@@ -1226,6 +1226,26 @@ Search.appendIndex(
             "summary": "Handles\u0020the\u0020custom\u0020file\u0020upload\u0020process\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
             "url": "classes/Graphic-Data-Figure.html#method_custom_file_upload_handler"
         },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Agraphic_data_duplicate_figure\u0028\u0029",
+            "name": "graphic_data_duplicate_figure",
+            "summary": "Duplicate\u0020an\u0020existing\u0020Figure\u0020custom\u0020post.",
+            "url": "classes/Graphic-Data-Figure.html#method_graphic_data_duplicate_figure"
+        },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Agraphic_data_copy_figure_data_files\u0028\u0029",
+            "name": "graphic_data_copy_figure_data_files",
+            "summary": "Copy\u0020CSV\u0020and\u0020JSON\u0020files\u0020associated\u0020with\u0020an\u0020Interactive\u0020Figure.",
+            "url": "classes/Graphic-Data-Figure.html#method_graphic_data_copy_figure_data_files"
+        },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Agraphic_data_update_duplicated_file_paths\u0028\u0029",
+            "name": "graphic_data_update_duplicated_file_paths",
+            "summary": "Update\u0020duplicated\u0020Figure\u0020metadata\u0020so\u0020references\u0020to\u0020the\u0020original\nFigure\u0027s\u0020data\u0020directory\u0020point\u0020to\u0020the\u0020duplicated\u0020Figure\u0027s\u0020directory.",
+            "url": "classes/Graphic-Data-Figure.html#method_graphic_data_update_duplicated_file_paths"
+        },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Agraphic_data_figure_duplicate_row_action\u0028\u0029",
+            "name": "graphic_data_figure_duplicate_row_action",
+            "summary": "Add\u0020a\u0020Duplicate\u0020link\u0020to\u0020each\u0020Figure\u0020in\u003A",
+            "url": "classes/Graphic-Data-Figure.html#method_graphic_data_figure_duplicate_row_action"
+        },                {
             "fqsen": "\\Graphic_Data_Figure\u003A\u003Aproxy_external_image_handler\u0028\u0029",
             "name": "proxy_external_image_handler",
             "summary": "AJAX\u0020handler\u0020that\u0020fetches\u0020an\u0020\u0022External\u0022\u0020figure\u0027s\u0020image\u0020URL\u0020server\u002Dside\u0020and\nreturns\u0020its\u0020bytes\u0020as\u0020base64.",
@@ -2020,6 +2040,36 @@ Search.appendIndex(
             "name": "graphic_data_delete_figure_folder",
             "summary": "",
             "url": "namespaces/default.html#function_graphic_data_delete_figure_folder"
+        },                {
+            "fqsen": "\\graphic_data_sanitize_page_title_align\u0028\u0029",
+            "name": "graphic_data_sanitize_page_title_align",
+            "summary": "Validate\u0020alignment\u0020without\u0020allowing\u0020arbitrary\u0020CSS.",
+            "url": "namespaces/default.html#function_graphic_data_sanitize_page_title_align"
+        },                {
+            "fqsen": "\\graphic_data_sanitize_page_title_padding\u0028\u0029",
+            "name": "graphic_data_sanitize_page_title_padding",
+            "summary": "Empty\u0020means\u0020theme\u0020default\u003B\u0020otherwise\u0020accept\u0020whole\u0020pixels\u0020from\u00200\u0020to\u0020200.",
+            "url": "namespaces/default.html#function_graphic_data_sanitize_page_title_padding"
+        },                {
+            "fqsen": "\\graphic_data_register_page_title_meta\u0028\u0029",
+            "name": "graphic_data_register_page_title_meta",
+            "summary": "Register\u0020REST\u0020metadata\u0020so\u0020settings\u0020participate\u0020in\u0020the\u0020normal\u0020editor\u0020save.",
+            "url": "namespaces/default.html#function_graphic_data_register_page_title_meta"
+        },                {
+            "fqsen": "\\graphic_data_enqueue_page_title_editor\u0028\u0029",
+            "name": "graphic_data_enqueue_page_title_editor",
+            "summary": "Native\u0020WordPress\u0020components\u003B\u0020this\u0020script\u0020does\u0020not\u0020need\u0020a\u0020build\u0020step.",
+            "url": "namespaces/default.html#function_graphic_data_enqueue_page_title_editor"
+        },                {
+            "fqsen": "\\graphic_data_page_title_declarations\u0028\u0029",
+            "name": "graphic_data_page_title_declarations",
+            "summary": "Build\u0020only\u0020explicitly\u0020selected\u0020overrides\u003B\u0020empty\u0020values\u0020preserve\u0020theme\u0020CSS.",
+            "url": "namespaces/default.html#function_graphic_data_page_title_declarations"
+        },                {
+            "fqsen": "\\graphic_data_enqueue_page_title_style\u0028\u0029",
+            "name": "graphic_data_enqueue_page_title_style",
+            "summary": "Target\u0020only\u0020the\u0020main\u0020Page\u0020title,\u0020never\u0020navigation,\u0020scenes,\u0020or\u0020modal\u0020titles.",
+            "url": "namespaces/default.html#function_graphic_data_enqueue_page_title_style"
         },                {
             "fqsen": "\\",
             "name": "\\",
