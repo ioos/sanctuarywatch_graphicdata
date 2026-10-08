@@ -26,6 +26,12 @@ $border_width       = isset( $attributes['modalBorderWidth'] ) ? max( 0, (float)
 $border_radius      = isset( $attributes['modalBorderRadius'] ) ? max( 0, (float) $attributes['modalBorderRadius'] ) : 0;
 $modal_padding     = isset( $attributes['modalPadding'] ) ? max( 0, (float) $attributes['modalPadding'] ) : 0;
 
+// ColorPalette stores hex colors; clearing a palette explicitly saves transparent.
+$selected_tab_background = $attributes['modalSelectedTabBackgroundColor'] ?? '#ffffff';
+$selected_tab_background = 'transparent' === $selected_tab_background ? 'transparent' : ( sanitize_hex_color( $selected_tab_background ) ?: '#ffffff' );
+$unselected_tab_background = $attributes['modalUnselectedTabBackgroundColor'] ?? 'transparent';
+$unselected_tab_background = sanitize_hex_color( $unselected_tab_background ) ?: 'transparent';
+
 $background_color = $background_color ? $background_color : 'transparent';
 $border_color     = $border_color ? $border_color : '#000000';
 
@@ -71,6 +77,8 @@ $wrapper_attributes = get_block_wrapper_attributes(
 	data-plugin-url="<?php echo esc_url( plugin_dir_url( GRAPHIC_DATA_PLUGIN_DIR . 'graphic_data_plugin.php' ) ); ?>"
 	data-instance-id="<?php echo esc_attr( $instance_id ); ?>"
 	data-target-id="<?php echo esc_attr( $target_id ); ?>"
+	data-selected-tab-background-color="<?php echo esc_attr( $selected_tab_background ); ?>"
+	data-unselected-tab-background-color="<?php echo esc_attr( $unselected_tab_background ); ?>"
 	data-modal-height="<?php echo esc_attr( $modal_height ); ?>"
 	style="<?php echo esc_attr( $wrapper_style ); ?>"
 >

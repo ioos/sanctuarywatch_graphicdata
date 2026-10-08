@@ -28,6 +28,18 @@
 			"type": "string",
 			"default": "%"
 		},
+		"figureMobileWidthEnabled": {
+			"type": "boolean",
+			"default": false
+		},
+		"figureMobileWidth": {
+			"type": "number",
+			"default": 100
+		},
+		"figureMobileWidthUnit": {
+			"type": "string",
+			"default": "%"
+		},
 		"figureMaxWidth": {
 			"type": "number",
 			"default": 0
@@ -78,5 +90,6 @@
 	"textdomain": "graphic-data-insert-interactive-figure",
 	"editorScript": "file:./index.js",
 	"viewScript": "file:./view.js",
-	"render": "file:./render.php"
+	"render": "file:./render.php",
+	"style": "file:./index.css"
 }

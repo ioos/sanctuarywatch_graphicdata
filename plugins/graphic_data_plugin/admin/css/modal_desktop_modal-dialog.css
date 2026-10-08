@@ -10,13 +10,13 @@
   margin: 5% auto !important;
 }
 
-a {
+:where(.modal-content) a {
   color: rgba(var(--bs-link-color-rgb),var(--bs-link-opacity,1));
   text-decoration: underline;
   color: #03386c;
 }
 
-ul {
+:where(.modal-content) ul {
   list-style: disc;
   color: rgb(82, 82, 82);
   fill: rgb(82, 82, 82);
@@ -31,7 +31,7 @@ ul {
   background: #fff;
 }
 
-.modal-header{
+:where(.modal-content) .modal-header{
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -39,27 +39,27 @@ ul {
   border-bottom: 1px solid rgba(0,0,0,0.12);
 }
 
-.modal-title{
-  font-weight: 700;
+:where(.modal-content) .modal-title{
+  font-weight: 500;
   font-size: 1.5rem;
   margin: 0;
   color: #024880;
 }
 
 /* Close button square */
-.btn-close{
+:where(.modal-content) .btn-close{
   border-radius: 0 !important;
 }
 
 /* Modal body scroll area */
-.modal-body{
+:where(.modal-content) .modal-body{
   flex: 1 1 auto;
   overflow: auto;
   padding: 14px 16px 18px;
 }
 
 /* Two-column layout that stays stable */
-.modal-body > .row{
+:where(.modal-content) .modal-body > .row{
   display: flex !important;
   flex-wrap: nowrap !important;
   align-items: flex-start !important;
@@ -68,7 +68,7 @@ ul {
 }
 
 /* Left content area */
-#tagline-container{
+:where(.modal-content) :is(#tagline-container, .graphic-data-modal-tagline){
   min-width: 0;
   padding: 0;
   flex: 1 1 75%;
@@ -76,7 +76,7 @@ ul {
 }
 
 /* Right “sections menu” (accordion): DO NOT shrink */
-#accordion-container{
+:where(.modal-content) :is(#accordion-container, .graphic-data-modal-accordion){
   min-width: 0;
   padding: 0;
   flex: 0 0 25%;
@@ -87,7 +87,7 @@ ul {
 
 /* Keep the sections menu visible inside scrolling body */
 @media (min-width: 901px){
-  #accordion-container{
+  :where(.modal-content) :is(#accordion-container, .graphic-data-modal-accordion){
     position: sticky;
     top: 0;
     max-height: calc(88vh - 110px); /* header + padding allowance */
@@ -106,12 +106,12 @@ ul {
     margin: 3% auto !important;
   }
 
-  .modal-body > .row{
+  :where(.modal-content) .modal-body > .row{
     flex-wrap: wrap !important;
   }
 
-  #tagline-container,
-  #accordion-container{
+  :where(.modal-content) :is(#tagline-container, .graphic-data-modal-tagline),
+  :where(.modal-content) :is(#accordion-container, .graphic-data-modal-accordion){
     flex: 0 0 100%;
     width: 100%;
     position: static;
@@ -121,51 +121,47 @@ ul {
 }
 
 /* Tabs */
-#myTab.nav-tabs{
+:where(.modal-content) :is(#myTab, .graphic-data-modal-tabs).nav-tabs{
   display: flex;
   flex-wrap: wrap;
   /* gap: 8px; */
   margin-top: 12px;
-  margin-left: 1% !important;
+  /* margin-left: 1% !important; */
   border-bottom: 2px solid rgba(0,0,0,0.12);
   padding-left: 0;
   height: 100%;
 }
 
 /* Tabs as square buttons */
-#myTab.nav-tabs .nav-link{
-  /* border: 1px solid rgba(0,0,0,0.12);
-  border-radius: 0 !important;  */
-  /* padding: 8px 12px;
-  font-weight: 600;
-  color: #0b2e4f;
-  background: rgba(0,0,0,0.03); */
+:where(.modal-content) :is(#myTab, .graphic-data-modal-tabs).nav-tabs .nav-link{
+  height: 67px;
 }
 
-#myTab.nav-tabs .nav-link:hover{
+:where(.modal-content) :is(#myTab, .graphic-data-modal-tabs).nav-tabs .nav-link:hover{
   background: rgba(0,0,0,0.06);
 }
 
-li {
-  margin-bottom: .5px;
+:where(.modal-content) li {
+  margin-bottom: 1.5px;
 }
 
-.accordion-item {
+:where(.modal-content) .accordion-item {
   /* color: var(--bs-accordion-color); */
   /* background-color: var(--bs-accordion-bg); */
   border: none;
 }
 
 
-#myTab.nav-tabs .nav-link.active{
+:where(.modal-content) :is(#myTab, .graphic-data-modal-tabs).nav-tabs .nav-link.active{
   /* background: #fff; */
+  font-weight: 650;
   content: "▼";
-  border: 2px solid;
-  border-color: rgba(0,0,0,0.12) rgba(0,0,0,0.12) transparent; 
+  border: 2px solid rgba(0,0,0,0.12) transparent;
+  /* border-color: rgba(0,0,0,0.12) rgba(0,0,0,0.12) transparent;  */
   color: #003b71;
-  font-size: 1em;
+  font-size: 1.15rem;
   vertical-align: middle;
-  height: 57px;
+  height: 67px;
   border-radius: 4 !important; 
   --bs-nav-tabs-border-width: var(--bs-border-width);
   --bs-nav-tabs-border-color: var(--bs-border-color);
@@ -178,8 +174,8 @@ li {
 }
 
 
-#myTab .nav-link {
-  font-size: 1rem;
+:where(.modal-content) :is(#myTab, .graphic-data-modal-tabs) .nav-link {
+  font-size: 1.15rem;
   opacity: 0.85;
   border: 2px solid;
   border-color: rgba(0,0,0,0.12) rgba(0,0,0,0.12) transparent; 
@@ -188,13 +184,13 @@ li {
   border-radius: 4 !important; 
 }
 
-.nav {
+:where(.modal-content) .nav {
   --bs-nav-link-padding-y: 1rem !important;
 }
 
 
 /* Content panel */
-#myTabContent.tab-content{
+:where(.modal-content) :is(#myTabContent, .graphic-data-modal-panes).tab-content{
   margin-top: 2% !important;
   margin-left: 1% !important;
   margin-right: 1% !important;
@@ -208,14 +204,14 @@ li {
 }
 
 /* Accordion menu styling */
-#accordion-container .accordion-item{
+:where(.modal-content) :is(#accordion-container, .graphic-data-modal-accordion) .accordion-item{
   border-radius: 0 !important;
   overflow: hidden;
-  /* border: 1px solid rgba(0,0,0,0.12); */
+  border-bottom: 1px solid rgba(0,0,0,0.12);
   /* border-radius: 4 !important;  */
 }
 
-#accordion-container .accordion-button{
+:where(.modal-content) :is(#accordion-container, .graphic-data-modal-accordion) .accordion-button{
   background: #003b71;
   color: #fff;
   font-weight: 400;
@@ -223,15 +219,15 @@ li {
   border-radius: 4 !important;
 }
 
-#accordion-container .accordion-button::after{
+:where(.modal-content) :is(#accordion-container, .graphic-data-modal-accordion) .accordion-button::after{
   filter: brightness(0) invert(1);
 }
 
-.accordian {
+:where(.modal-content) .accordian {
   --bs-accordion-border-width: 0px;
 }
 
-#accordion-container .accordion-body{
+:where(.modal-content) :is(#accordion-container, .graphic-data-modal-accordion) .accordion-body{
   background: #fff;
   color: #111;
   padding: 12px 14px;
@@ -241,40 +237,88 @@ li {
 }
 
 /* Collapse safety */
-.accordion-collapse.collapse{ display: none; }
-.accordion-collapse.collapse.show{ display: block; }
-.accordion-collapse.collapsing{ height: 0; overflow: hidden; transition: height .35s ease; }
+:where(.modal-content) .accordion-collapse.collapse{ display: none; }
+:where(.modal-content) .accordion-collapse.collapse.show{ display: block; }
+:where(.modal-content) .accordion-collapse.collapsing{ height: 0; overflow: hidden; transition: height .35s ease; }
 
 /* Copy link button square */
-.copy-tab-link,
-.CopyTabLinkButton,
-button[data-copy-tab-link],
-button.copyTabLink{
+:where(.modal-content) .copy-tab-link,
+:where(.modal-content) .CopyTabLinkButton,
+:where(.modal-content) button[data-copy-tab-link],
+:where(.modal-content) button.copyTabLink{
   border-radius: 0 !important;
 }
 
-.btn-primary {
+:where(.modal-content) .btn-primary {
   background-color: #03386c;  
 }
 
 /* Media safety */
-img,
-video,
-svg{
+:where(.modal-content) img,
+:where(.modal-content) video,
+:where(.modal-content) svg{
   max-width: 100%;
   height: auto;
 }
 
-iframe{
+:where(.modal-content) iframe{
   max-width: 100%;
 }
 
-.caption > p {
+:where(.modal-content) .caption > p {
 	font-size: 1.1rem !important;
 }
 
-details > p > p {
+:where(.modal-content) details > p > p {
   font-size: 1.1rem !important;
+}
+
+
+/* Shared modal details, including root-document scene popups. */
+:where(.modal-content) :is(#myTab, .graphic-data-modal-tabs).nav-tabs .nav-link.active::after,
+:where(.modal-content) :is(#myTab, .graphic-data-modal-tabs).nav-tabs .nav-item.show .nav-link::after {
+  content: '▼';
+  font-size: .9em;
+  margin-left: .3rem;
+}
+:where(.modal-content) [hidden] { display: none !important; }
+
+dialog.graphic-data-scene-root-modal .modal-content {
+  border-radius: 12px;
+}
+
+/* The viewport overlay scrolls; modal content grows to its full height. */
+dialog.graphic-data-scene-root-modal {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  border-radius: 10px;
+}
+dialog.graphic-data-scene-root-modal::backdrop { background: rgba(0,0,0,.65); }
+dialog.graphic-data-scene-root-modal > .modal-dialog {
+  width: min(1100px, 95%);
+  max-width: none;
+  margin: 5vh auto !important;
+  pointer-events: auto;
+}
+dialog.graphic-data-scene-root-modal .modal-content,
+dialog.graphic-data-scene-root-modal .modal-body {
+  max-height: none;
+  overflow: visible;
+}
+dialog.graphic-data-scene-root-modal .modal-body { min-height: 0; }
+dialog.graphic-data-scene-root-modal .graphic-data-modal-accordion {
+  max-height: none;
+  overflow: visible;
 }
 
 /* GRAPHIC_DATA_BLOCK_STYLES_START */

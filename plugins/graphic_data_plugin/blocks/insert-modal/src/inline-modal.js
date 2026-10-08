@@ -1,5 +1,68 @@
 import apiFetch from '@wordpress/api-fetch';
 
+/** Keep asynchronously rendered charts transparent, including subsequent redraws. */
+function maintainTransparentPlots(frame, signal, reportError) {
+	const frameWindow = frame.contentWindow;
+	const frameDocument = frame.contentDocument;
+	const transparent = 'rgba(0, 0, 0, 0)';
+	const plots = new Map();
+	const updating = new WeakSet();
+	let scheduledFrame = null;
+
+	function scheduleUpdate() {
+		if (signal.aborted || scheduledFrame !== null) return;
+		scheduledFrame = frameWindow.requestAnimationFrame(updatePlots);
+	}
+
+	function updatePlots() {
+		scheduledFrame = null;
+		if (signal.aborted) return;
+		for (const [plot, handler] of plots) {
+			if (!plot.isConnected) {
+				plot.removeListener?.('plotly_afterplot', handler);
+				plots.delete(plot);
+			}
+		}
+		frameDocument.querySelectorAll('.js-plotly-plot').forEach((plot) => {
+			if (!plots.has(plot) && typeof plot.on === 'function') {
+				plot.on('plotly_afterplot', scheduleUpdate);
+				plots.set(plot, scheduleUpdate);
+			}
+			const layout = plot.layout;
+			if (!layout || !frameWindow.Plotly?.relayout || updating.has(plot)) return;
+			if (layout.paper_bgcolor === transparent && layout.plot_bgcolor === transparent) return;
+
+			// Do not resize or change chart heights here: each figure owns its layout.
+			// Only update changed colors, preventing an afterplot/relayout loop.
+			updating.add(plot);
+			Promise.resolve().then(() => {
+				if (signal.aborted || !plot.isConnected) return;
+				return frameWindow.Plotly.relayout(plot, {
+					paper_bgcolor: transparent,
+					plot_bgcolor: transparent,
+				});
+			}).catch((error) => {
+				if (!signal.aborted) reportError(error);
+			}).finally(() => updating.delete(plot));
+		});
+	}
+
+	// Tabs and figures finish after render_modal returns; watch for their charts.
+	const observer = new frameWindow.MutationObserver(scheduleUpdate);
+	observer.observe(frameDocument.body, { childList: true, subtree: true });
+	frameDocument.addEventListener('shown.bs.tab', scheduleUpdate);
+	frameWindow.addEventListener('resize', scheduleUpdate);
+	signal.addEventListener('abort', () => {
+		observer.disconnect();
+		if (scheduledFrame !== null) frameWindow.cancelAnimationFrame(scheduledFrame);
+		frameDocument.removeEventListener('shown.bs.tab', scheduleUpdate);
+		frameWindow.removeEventListener('resize', scheduleUpdate);
+		plots.forEach((handler, plot) => plot.removeListener?.('plotly_afterplot', handler));
+		plots.clear();
+	}, { once: true });
+	scheduleUpdate();
+}
+
 export function stripHTML(value = '') {
 	return String(value).replace(/(<([^>]+)>)/gi, '');
 }
@@ -9,9 +72,27 @@ export function stripHTML(value = '') {
  * its own document so asynchronous tab/figure work cannot affect another block.
  * The content itself is an inline div, with no Bootstrap Modal or backdrop.
  */
-async function populatePreview(frame, modal, reportError, signal, pluginUrl) {
+async function populatePreview(frame, modal, reportError, signal, pluginUrl, selectedTabBackgroundColor, unselectedTabBackgroundColor, previewMode) {
 	const previewWindow = frame.contentWindow;
 	const previewDocument = frame.contentDocument;
+	// These overrides belong only to this disposable editor iframe. The shared
+	// renderer also checks device type and innerWidth when formatting figures.
+	if (previewMode !== 'responsive') {
+		previewWindow.mobileBool = previewMode === 'mobile';
+		if (previewMode === 'desktop') {
+			Object.defineProperty(previewWindow.navigator, 'userAgent', {
+				configurable: true, value: 'Graphic Data desktop preview',
+			});
+		}
+		const nativeWidth = Object.getOwnPropertyDescriptor(previewWindow, 'innerWidth');
+		Object.defineProperty(previewWindow, 'innerWidth', {
+			configurable: true,
+			get: () => {
+				const width = nativeWidth?.get?.call(previewWindow) ?? frame.clientWidth;
+				return previewMode === 'desktop' ? Math.max(1024, width) : Math.min(768, width);
+			},
+		});
+	}
 	const pluginRoot = new URL(pluginUrl || '/wp-content/plugins/graphic_data_plugin/', window.location.origin);
 	const base = previewDocument.createElement('base');
 	base.href = window.location.origin + '/';
@@ -91,25 +172,65 @@ async function populatePreview(frame, modal, reportError, signal, pluginUrl) {
 		} else {
 			element.src = url;
 		}
-		element.onload = resolve;
+		element.onload = () => resolve(element);
 		element.onerror = () => reject(new Error(`Unable to load modal preview asset: ${url}`));
 		previewDocument.head.appendChild(element);
 	});
-	await Promise.all([
+	const [, , desktopStyles] = await Promise.all([
 		loadAsset('link', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'),
 		loadAsset('script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'),
 		loadAsset('link', new URL('admin/css/modal_desktop_modal-dialog.css', pluginRoot).href),
-		loadAsset('link', new URL('admin/css/modal_mobile_modal-dialog.css', pluginRoot).href, '(max-width: 768px)'),
+		...(previewMode === 'desktop' ? [] : [
+			loadAsset('link', new URL('admin/css/modal_mobile_modal-dialog.css', pluginRoot).href,
+				previewMode === 'mobile' ? 'all' : '(max-width: 768px)'),
+		]),
 	]);
 	if (signal.aborted) return;
 
+	if (previewMode === 'desktop') {
+		// The desktop stylesheet itself stacks columns below 900px. Evaluate its
+		// width-only media rules at a desktop breakpoint without widening the block.
+		for (const rule of desktopStyles.sheet.cssRules) {
+			if (!rule.media) continue;
+			const match = rule.media.mediaText.match(/^\((min|max)-width:\s*([\d.]+)px\)$/);
+			if (!match) continue;
+			const matches = match[1] === 'min' ? 1024 >= Number(match[2]) : 1024 <= Number(match[2]);
+			rule.media.mediaText = matches ? 'all' : 'not all';
+		}
+	}
+
+	previewDocument.documentElement.style.setProperty('--modal-selected-tab-background', selectedTabBackgroundColor);
+	previewDocument.documentElement.style.setProperty('--modal-unselected-tab-background', unselectedTabBackgroundColor);
 	const style = previewDocument.createElement('style');
 	style.textContent = `
 		html, body { margin: 0; background: transparent; overflow-x: hidden; }
 		#inline-modal { display: flow-root; width: 100%; }
+		#inline-modal #myTab.nav-tabs .nav-link {
+			background-color: var(--modal-unselected-tab-background) !important;
+		}
+		#inline-modal #myTab.nav-tabs .nav-link.active,
+		#inline-modal #myTab.nav-tabs .nav-item.show .nav-link {
+			background-color: var(--modal-selected-tab-background) !important;
+		}
+		#inline-modal #myTab.nav-tabs .nav-link.active::after,
+		#inline-modal #myTab.nav-tabs .nav-item.show .nav-link::after {
+			content: '▼';
+			font-size: .9em;
+			margin-left: 0.3rem;
+		}
 		#inline-modal .modal-content { border: 0; box-shadow: none; background: transparent; }
 		#inline-modal .modal-body { overflow: visible; }
+		#inline-modal #myTabContent.tab-content { background: transparent !important; }
 		#accordion-container { position: static !important; max-height: none !important; }
+		#inline-modal .js-plotly-plot,
+		#inline-modal .js-plotly-plot .plot-container,
+		#inline-modal .js-plotly-plot .svg-container,
+		#inline-modal .js-plotly-plot .modebar-group {
+			background-color: transparent !important;
+		}
+		#inline-modal .js-plotly-plot .modebar-btn .icon path {
+			fill: rgba(68, 68, 68, 0.7) !important;
+		}
 		/* A close/share/embed action applies to an overlay or public page, not this inline block. */
 		.figure > div > div:has(> details) { display: none !important; }
 	`;
@@ -144,6 +265,8 @@ async function populatePreview(frame, modal, reportError, signal, pluginUrl) {
 	});
 	if (signal.aborted) return;
 
+	maintainTransparentPlots(frame, signal, reportError);
+
 	await new Promise((resolve) => {
 		previewDocument.addEventListener('graphic-data:modalWindowLoaded', resolve, { once: true });
 		previewWindow.graphicDataRenderModal('block', {
@@ -155,6 +278,8 @@ async function populatePreview(frame, modal, reportError, signal, pluginUrl) {
 
 /** Mount an inline modal and return a cleanup function for the owning block. */
 export function mountInlineModal(host, modalId, {
+	selectedTabBackgroundColor = '#ffffff', unselectedTabBackgroundColor = 'transparent',
+	previewMode = 'responsive',
 	height = 0, pluginUrl, onLoading = () => {}, onError = () => {},
 } = {}) {
 	const controller = new AbortController();
@@ -195,7 +320,7 @@ export function mountInlineModal(host, modalId, {
 				await populatePreview(frame, {
 					modal_tagline: '', modal_info_entries: 0, modal_photo_entries: 0,
 					modal_tab_number: 0, ...modal,
-				}, reportError, controller.signal, pluginUrl);
+				}, reportError, controller.signal, pluginUrl, selectedTabBackgroundColor, unselectedTabBackgroundColor, previewMode);
 				if (!controller.signal.aborted) onLoading(false);
 			} catch (error) {
 				reportError(error);

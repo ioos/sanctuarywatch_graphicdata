@@ -28,6 +28,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		modalHeight = 0,
 		modalAlignment = 'center',
 		modalBackgroundColor = 'transparent',
+		modalSelectedTabBackgroundColor = '#ffffff',
+		modalUnselectedTabBackgroundColor = 'transparent',
 		modalBorderEnabled = false,
 		modalBorderColor = '#000000',
 		modalBorderWidth = 1,
@@ -51,6 +53,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const blockProps = useBlockProps({ className: 'graphic-data-insert-modal-block' });
 	const previewRef = useRef(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [mobilePreview, setMobilePreview] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
 	const modals = useSelect((select) => select('core').getEntityRecords('postType', 'modal', {
 		per_page: -1, status: 'publish', orderby: 'title', order: 'asc',
@@ -68,15 +71,29 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		if (!instanceId) setAttributes({ instanceId: clientId });
 	}, [instanceId, clientId, setAttributes]);
 
+	// Shared with view.js, including transparent Plotly plots and modebar groups.
 	useEffect(() => mountInlineModal(previewRef.current, modalId, {
 		height: normalizedHeight,
+		previewMode: mobilePreview ? 'mobile' : 'desktop',
+		selectedTabBackgroundColor: modalSelectedTabBackgroundColor,
+		unselectedTabBackgroundColor: modalUnselectedTabBackgroundColor,
 		onLoading: setIsLoading,
 		onError: setErrorMessage,
-	}), [modalId, normalizedHeight]);
+	}), [modalId, normalizedHeight, modalSelectedTabBackgroundColor, modalUnselectedTabBackgroundColor, mobilePreview]);
 
 	return (
 		<div {...blockProps}>
 			<InspectorControls>
+				<PanelBody title={__('Modal preview', 'graphic-data-plugin')} initialOpen={true}>
+					<ToggleControl
+						label={__('Mobile preview', 'graphic-data-plugin')}
+						checked={mobilePreview}
+						onChange={setMobilePreview}
+						help={mobilePreview
+							? __('Shows mobile styling at the current block width. Preview only.', 'graphic-data-plugin')
+							: __('Keeps desktop styling even in a narrow editor. The published page stays responsive.', 'graphic-data-plugin')}
+					/>
+				</PanelBody>
 				<PanelBody
 					title={__('Modal dimensions', 'graphic-data-plugin')}
 					initialOpen={true}
@@ -165,6 +182,20 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						clearable
 					/>
 
+					<p>{__('Selected tab background color', 'graphic-data-plugin')}</p>
+					<ColorPalette
+						value={modalSelectedTabBackgroundColor}
+						onChange={(value) => setAttributes({ modalSelectedTabBackgroundColor: value || 'transparent' })}
+						clearable
+					/>
+
+					<p>{__('Unselected tab background color', 'graphic-data-plugin')}</p>
+					<ColorPalette
+						value={modalUnselectedTabBackgroundColor}
+						onChange={(value) => setAttributes({ modalUnselectedTabBackgroundColor: value || 'transparent' })}
+						clearable
+					/>
+
 					<ToggleControl
 						label={__('Show border', 'graphic-data-plugin')}
 						checked={modalBorderEnabled}
@@ -218,6 +249,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						onClick={() =>
 							setAttributes({
 								modalBackgroundColor: 'transparent',
+								modalSelectedTabBackgroundColor: '#ffffff',
+								modalUnselectedTabBackgroundColor: 'transparent',
 								modalBorderEnabled: false,
 								modalBorderColor: '#000000',
 								modalBorderWidth: 1,
@@ -242,7 +275,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					{__('No published modals found.', 'graphic-data-plugin')}
 				</Notice>
 			)}
-			{isLoading && <p><Spinner /> {__('Loading modal content and figures...', 'graphic-data-plugin')}</p>}
+			{isLoading && <span className="graphic-data-loading-circle" role="status" aria-label={__('Loading', 'graphic-data-plugin')} />}
 			{errorMessage && <Notice status="error" isDismissible={false}>{errorMessage}</Notice>}
 			{!modalId && !modalsAreLoading && (
 				<Notice status="info" isDismissible={false}>

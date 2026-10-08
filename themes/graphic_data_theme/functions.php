@@ -124,6 +124,7 @@ function graphic_data_scene_location_is_global( $post_id = 0 ) {
 	return 'global' === graphic_data_get_scene_location( $post_id );
 }
 
+
 /**
  * Redirect Pages with no usable Instance to the front page.
  *
