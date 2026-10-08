@@ -15,6 +15,9 @@ replaceFieldValuesWithTransientValues();
 // In case of data entry error with scene post, let's set the scene fields values to the values in the cookie
 writeCookieValuesToSceneFields();
 
+// Move the post title into the Scene Fields form so it looks like the other fields.
+moveTitleIntoSceneFields();
+
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
 
@@ -43,6 +46,55 @@ document
 	.querySelector('[data-depend-id="scene_orphan_icon_action"]')
 	.addEventListener('change', orphanColorFieldVisibility);
 
+/**
+ * Moves the WordPress post title input into the Scene Fields metabox as an Exopite-style field.
+ *
+ * The title input keeps its id and name ("post_title"), so it is still submitted with the post form
+ * and WordPress autosave scripts continue to find it. The rest of #titlediv (including the permalink
+ * box) is hidden; scene URLs can still be edited from Quick Edit on the Scenes list.
+ *
+ * @return {void}
+ */
+function moveTitleIntoSceneFields() {
+	const titleInput = document.getElementById('title');
+	const firstField = document.querySelector(
+		'.exopite-sof-section .exopite-sof-field'
+	);
+	if (!titleInput || !firstField) {
+		return;
+	}
+
+	const field = document.createElement('div');
+	field.className = 'exopite-sof-field exopite-sof-field-text';
+
+	const heading = document.createElement('h4');
+	heading.className = 'exopite-sof-title';
+	heading.appendChild(document.createTextNode('Scene Title*'));
+	const description = document.createElement('p');
+	description.className = 'exopite-sof-description';
+	description.textContent = 'What is the title of the scene?';
+	heading.appendChild(description);
+
+	const fieldset = document.createElement('div');
+	fieldset.className = 'exopite-sof-fieldset';
+	// Once outside #titlediv, WordPress's oversized "#titlediv #title" styling no longer applies,
+	// so the input picks up the same Exopite text-field styling as the other fields.
+	fieldset.appendChild(titleInput);
+
+	field.appendChild(heading);
+	field.appendChild(fieldset);
+	firstField.parentNode.insertBefore(field, firstField);
+
+	// Hide the old title area and remove the space it reserved above the form.
+	const titleDiv = document.getElementById('titlediv');
+	if (titleDiv) {
+		titleDiv.style.display = 'none';
+	}
+	const postBodyContent = document.getElementById('post-body-content');
+	if (postBodyContent) {
+		postBodyContent.style.marginBottom = '0';
+	}
+}
 
 /**
  * Hides the scene_location dropdown when the active theme is not the Graphic Data theme.
