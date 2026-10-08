@@ -1347,9 +1347,14 @@ export async function handleHashNavigation() {
 		// 	}
 		// );
 
-		//Expand the accordion if needed.
+
+		// Expand the accordion if needed; continue if it fails.
 		if (is_mobile()) {
-			expandAccordionForLink(modalButton);
+			try {
+				expandAccordionForLink(modalButton);
+			} catch {
+				// Ignore the error and continue.
+			}
 		}
 
 

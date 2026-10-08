@@ -586,6 +586,16 @@ class Graphic_Data_Figure {
 					'description' => 'Should the figure be live? If set to Published, the figure will be visible.',
 					'sanitize'      => 'sanitize_text_field',
 				),
+				// array(
+				// 	'id'          => 'standalone_figure',
+				// 	'type'        => 'checkbox',
+				// 	'title'       => 'Standalone Figure',
+				// 	'description' => 'If checked, this figure can be used without assigning it to an instance, scene, modal, or tab. You can choose them independently of each other. Useful for adding figures directly to pages via figure blocks or for using figures to modal blocks.',
+				// 	// optional
+				// 	'attributes'    => array(
+				// 		'placeholder' => 'do stuff',
+				// 	),
+				// ),
 				array(
 					'id'             => 'location',
 					'type'           => 'select',
