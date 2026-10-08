@@ -137,8 +137,12 @@ async function populatePreview(frame, modal, reportError, signal, pluginUrl, sel
 				requests.set(path, (async () => {
 					if (path.split('?')[0] === `/wp/v2/modal/${modal.id}`) return modal;
 					const restURL = new URL(path, window.location.origin);
+					// Only the modal already fetched above and the figure endpoint are
+					// needed to render this preview. Refuse to proxy any other REST
+					// path with the current user's credentials to avoid turning this
+					// iframe into an open, unauthorized relay for arbitrary endpoints.
 					if (restURL.pathname !== '/wp/v2/figure') {
-						return apiFetch({ path, signal });
+						throw new Error(`Unexpected REST request from modal preview: ${path}`);
 					}
 					restURL.searchParams.set('per_page', '100');
 					const figures = [];
