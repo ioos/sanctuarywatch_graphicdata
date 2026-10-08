@@ -49,7 +49,7 @@ add_action(
  * This function is hooked to the 'template_redirect' action. It checks if the current
  * page is the front page and if the "Single Instance View" setting is enabled in the
  * Customizer. If both conditions are met, it calls graphic_data_single_instance_check() to determine
- * the target scene. If a valid scene post ID is returned, it performs a 301 permanent
+ * the target scene. If a valid scene post ID is returned, it performs a temporary
  * redirect to that scene's permalink.
  *
  * @since 1.0.0
@@ -58,7 +58,7 @@ add_action(
  * @uses is_admin() To prevent execution in the admin area.
  * @uses graphic_data_single_instance_check() To determine if a redirect is needed and get the target post ID.
  * @uses get_permalink() To get the URL of the target scene.
- * @uses wp_redirect() To perform the browser redirect.
+ * @uses wp_safe_redirect() To perform the browser redirect.
  */
 function graphic_data_single_instance_front_page_redirect() {
 	// Only run on the front page.
@@ -74,7 +74,8 @@ function graphic_data_single_instance_front_page_redirect() {
 		// Make sure the page exists and we have a valid URL.
 		if ( $redirect_url && get_permalink() !== $redirect_url ) {
 			// Perform the redirect.
-			wp_redirect( $redirect_url, 301 ); // 301 = permanent redirect.
+			nocache_headers();
+			wp_safe_redirect( $redirect_url, 302 );
 			exit;
 		}
 	}
@@ -266,92 +267,40 @@ function graphic_data_enqueue_fonts() {
 add_action( 'wp_enqueue_scripts', 'graphic_data_enqueue_fonts' );
 
 /**
- * Determines whether Single Instance settings should be applied to the theme and returns the target post ID.
+ * Resolve a selectable instance to its published overview scene or page.
  *
- * This function checks if the single instance mode is enabled in the customizer, verifies that exactly
- * one instance exists in the database, and returns the instance post ID and the appropriate scene post ID to display. It prioritizes
- * the overview scene if available, otherwise returns the first scene in the instance.
+ * @param int $instance_id Instance post ID.
+ * @return array|false Instance and overview IDs, or false when unavailable.
+ */
+function graphic_data_get_instance_overview( $instance_id ) {
+	$instance_id = absint( $instance_id );
+	if ( ! $instance_id || 'instance' !== get_post_type( $instance_id )
+		|| 'publish' !== get_post_status( $instance_id )
+		|| metadata_exists( 'post', $instance_id, 'graphic_data_placeholder_id' )
+		|| 'Published' !== get_post_meta( $instance_id, 'instance_status', true ) ) {
+		return false;
+	}
+
+	$overview_id = absint( get_post_meta( $instance_id, 'instance_overview_scene', true ) );
+	$overview_type = get_post_type( $overview_id );
+	if ( ! $overview_id || ! in_array( $overview_type, array( 'scene', 'page' ), true )
+		|| 'publish' !== get_post_status( $overview_id )
+		|| metadata_exists( 'post', $overview_id, 'graphic_data_placeholder_id' )
+		|| (string) $instance_id !== (string) get_post_meta( $overview_id, 'scene_location', true )
+		|| ( 'scene' === $overview_type && 'published' !== get_post_meta( $overview_id, 'scene_published', true ) ) ) {
+		return false;
+	}
+
+	return array( 'instanceID' => $instance_id, 'sceneID' => $overview_id );
+}
+
+/**
+ * Get the explicitly selected instance, regardless of other instances on the site.
  *
- * @since 1.0.0
- *
- * @global wpdb $wpdb WordPress database abstraction object.
- *
- * @return array|false Returns, as an associative array, the post ID of the instance and the post ID of the target scene
- *                   if single instance mode should be applied,
- *                   false if single instance mode is disabled, multiple instances exist, or no scenes
- *                   are found in the instance.
- *
- * @example
- * ```php
- * $target_scene = graphic_data_single_instance_check();
- * if ($target_scene !== false) {
- *     // Single instance mode is active, redirect to scene
- *     wp_redirect(get_permalink($target_scene));
- * }
- * ```
+ * @return array|false Selected instance and overview IDs, or false for all-instance view.
  */
 function graphic_data_single_instance_check() {
-	$single_instance_info = false;
-	// Get the customizer setting value.
-	$single_instance_enable = get_theme_mod( 'single_instance_enable', '' );
-
-	// Check if the setting is enabled (checkbox returns '1' when checked).
-	if ( $single_instance_enable ) {
-
-		global $wpdb;
-
-		// Get the number of instances.
-		$row_count = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}postmeta WHERE meta_key = %s",
-				'instance_short_title'
-			)
-		);
-
-		if ( 1 == $row_count ) { // We know that there is only instance.
-			// Get the post id of the instance.
-			$instance_id = $wpdb->get_var(
-				$wpdb->prepare(
-					'SELECT `post_id` FROM `wp_postmeta` WHERE `meta_key` = %s',
-					'instance_short_title'
-				)
-			);
-
-			// Get the number of scenes in the instance.
-			$num_scenes_in_instance = $wpdb->get_var(
-				$wpdb->prepare(
-					'SELECT COUNT(*) FROM `wp_postmeta` WHERE `meta_key` = %s AND `meta_value` = %s',
-					'scene_location',
-					$instance_id
-				)
-			);
-
-			if ( $num_scenes_in_instance > 0 ) {
-				$overview_scene = get_post_meta( $instance_id, 'instance_overview_scene', true );
-				// Return the value if found, otherwise return false.
-				if ( '' == $overview_scene ) {
-
-					$target_scene = $wpdb->get_var(
-						$wpdb->prepare(
-							'SELECT post_id FROM `wp_postmeta` WHERE `meta_key` = %s AND `meta_value` = %s ORDER BY post_id ASC LIMIT 1',
-							'scene_location',
-							$instance_id
-						)
-					);
-					$single_instance_info = array(
-						'instanceID' => $instance_id,
-						'sceneID' => $target_scene,
-					);
-				} else {
-					$single_instance_info = array(
-						'instanceID' => $instance_id,
-						'sceneID' => $overview_scene,
-					);
-				}
-			}
-		}
-	}
-	return $single_instance_info;
+	return graphic_data_get_instance_overview( get_theme_mod( 'single_instance_id', 0 ) );
 }
 
 /**
