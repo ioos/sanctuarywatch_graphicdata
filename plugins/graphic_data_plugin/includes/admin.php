@@ -336,6 +336,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'bulk_actions-edit-modal', $plugin_admin_instance, 'remove_bulk_actions' );
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_modal, 'register_modal_rest_fields' );
 		$this->loader->add_filter( 'rest_modal_query', $plugin_admin_modal, 'filter_modal_by_modal_scene', 10, 2 );
+		$this->loader->add_filter( 'rest_prepare_modal', $plugin_admin_modal, 'restrict_unpublished_modal_rest', 10, 2 );
 		$this->loader->add_filter( 'manage_edit-modal_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column' );
 		$this->loader->add_action( 'admin_notices', $plugin_admin_modal, 'modal_warning_notice_tabs' );
 
@@ -351,6 +352,7 @@ class Graphic_Data_Plugin {
 		$this->loader->add_filter( 'bulk_actions-edit-figure', $plugin_admin_instance, 'remove_bulk_actions' );
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_figure, 'register_figure_rest_fields' );
 		$this->loader->add_filter( 'rest_figure_query', $plugin_admin_figure, 'filter_figure_by_figure_modal', 10, 2 );
+		$this->loader->add_filter( 'rest_prepare_figure', $plugin_admin_figure, 'restrict_unpublished_figure_rest', 10, 2 );
 		$this->loader->add_filter( 'manage_edit-figure_sortable_columns', $plugin_admin_scene, 'register_status_as_sortable_column' );
 		$this->loader->add_action( 'rest_api_init', $plugin_admin_figure, 'register_get_alt_text_by_url_route' );
 		$this->loader->add_action( 'wp_ajax_custom_file_upload', $plugin_admin_figure, 'custom_file_upload_handler' );

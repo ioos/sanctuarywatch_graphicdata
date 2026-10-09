@@ -964,7 +964,16 @@ class Graphic_Data_Figure {
 			];
 		}
 
-		if ( isset( $request['figure_published'] ) ) {
+		if ( ! current_user_can( 'edit_figures' ) ) {
+			// Anonymous and non-editing users may only list figures flagged as published.
+			$args['meta_query'][] = [
+				[
+					'key'   => 'figure_published',
+					'value' => 'published',
+					'compare' => '=',
+				],
+			];
+		} elseif ( isset( $request['figure_published'] ) ) {
 			$args['meta_query'][] = [
 				[
 					'key'   => 'figure_published',
@@ -975,6 +984,22 @@ class Graphic_Data_Figure {
 		}
 
 		return $args;
+	}
+
+	/**
+	 * Hide unpublished figures from single-item REST reads by users who cannot edit figures.
+	 *
+	 * Intended as a callback for the 'rest_prepare_figure' filter.
+	 *
+	 * @param WP_REST_Response $response The response object.
+	 * @param WP_Post          $post     The figure post.
+	 * @return WP_REST_Response|WP_Error The response, or a 404 error if the figure is unpublished.
+	 */
+	public function restrict_unpublished_figure_rest( $response, $post ) {
+		if ( ! current_user_can( 'edit_figures' ) && 'published' !== get_post_meta( $post->ID, 'figure_published', true ) ) {
+			return new WP_Error( 'rest_post_invalid_id', __( 'Invalid post ID.' ), array( 'status' => 404 ) );
+		}
+		return $response;
 	}
 
 	/**
