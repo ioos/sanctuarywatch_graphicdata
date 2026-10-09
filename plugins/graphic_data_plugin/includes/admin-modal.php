@@ -535,9 +535,33 @@ class Graphic_Data_Modal {
 				'compare' => '=',
 			);
 		}
+		// Anonymous and non-editing users may only list modals flagged as published.
+		if ( ! current_user_can( 'edit_modals' ) ) {
+			$args['meta_query'][] = array(
+				'key'     => 'modal_published',
+				'value'   => 'published',
+				'compare' => '=',
+			);
+		}
 		$args['orderby'] = 'title';
 		$args['order'] = 'ASC';
 		return $args;
+	}
+
+	/**
+	 * Hide unpublished modals from single-item REST reads by users who cannot edit modals.
+	 *
+	 * Intended as a callback for the 'rest_prepare_modal' filter.
+	 *
+	 * @param WP_REST_Response $response The response object.
+	 * @param WP_Post          $post     The modal post.
+	 * @return WP_REST_Response|WP_Error The response, or a 404 error if the modal is unpublished.
+	 */
+	public function restrict_unpublished_modal_rest( $response, $post ) {
+		if ( ! current_user_can( 'edit_modals' ) && 'published' !== get_post_meta( $post->ID, 'modal_published', true ) ) {
+			return new WP_Error( 'rest_post_invalid_id', __( 'Invalid post ID.' ), array( 'status' => 404 ) );
+		}
+		return $response;
 	}
 
 	/**
