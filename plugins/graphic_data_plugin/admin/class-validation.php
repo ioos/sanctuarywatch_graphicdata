@@ -186,6 +186,15 @@ class Graphic_Data_Validation {
 			wp_die( 'Security check failed for post of Instance custom post type.' );
 		}
 
+		// Check instance title.
+		$instance_title = isset( $_POST['post_title'] )
+			? sanitize_text_field( wp_unslash( $_POST['post_title'] ) )
+			: '';
+		if ( '' === $instance_title ) {
+			array_push( $instance_errors, 'There is no instance title.' );
+			$save_instance_fields = false;
+		}
+
 		$instance_short_title = isset( $_POST['instance_short_title'] ) ? sanitize_text_field( wp_unslash( $_POST['instance_short_title'] ) ) : '';
 		if ( '' === $instance_short_title ) {
 			array_push( $instance_errors, 'The short title field cannot be left blank.' );
@@ -337,6 +346,15 @@ class Graphic_Data_Validation {
 		// First, verify nonce.
 		if ( ! isset( $_POST['figure_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['figure_nonce'] ) ), 'save_figure_fields' ) ) {
 			wp_die( 'Security check failed for post of Figure custom post type.' );
+		}
+
+		// Check figure title.
+		$figure_title = isset( $_POST['post_title'] )
+			? sanitize_text_field( wp_unslash( $_POST['post_title'] ) )
+			: '';
+		if ( '' === $figure_title ) {
+			array_push( $figure_errors, 'There is no figure title.' );
+			$save_figure_fields = false;
 		}
 
 		if ( isset( $_POST['location'] ) && ' ' == $_POST['location'] ) {
@@ -770,6 +788,15 @@ class Graphic_Data_Validation {
 		// Verify nonce first.
 		if ( ! isset( $_POST['scene_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['scene_nonce'] ) ), 'save_scene_fields' ) ) {
 			wp_die( 'Security check failed for post of Scene custom post type.' );
+		}
+
+		// Check scene title.
+		$scene_title = isset( $_POST['post_title'] )
+			? sanitize_text_field( wp_unslash( $_POST['post_title'] ) )
+			: '';
+		if ( '' === $scene_title ) {
+			array_push( $scene_errors, 'There is no scene title.' );
+			$save_scene_fields = false;
 		}
 
 		if ( ! isset( $_POST['scene_location'] ) || ( isset( $_POST['scene_location'] ) && ' ' == $_POST['scene_location'] ) ) {
