@@ -375,6 +375,8 @@ class Graphic_Data_Plugin {
 		// Load class and functions associated with Plugin only class.
 		$plugin_admin_plugin_only = new Graphic_Data_Plugin_Only_Content();
 		$this->loader->add_action( 'init', $plugin_admin_plugin_only, 'placeholder_content_director' );
+		$this->loader->add_action( 'before_delete_post', $plugin_admin_plugin_only, 'reset_placeholders_on_post_delete' );
+		$this->loader->add_action( 'pre_delete_term', $plugin_admin_plugin_only, 'reset_placeholders_on_term_delete' );
 
 		// Load class and functions associated with the optional data wipe on uninstall.
 		$plugin_deactivation_cleanup = new Graphic_Data_Deactivation_Cleanup();

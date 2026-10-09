@@ -7,6 +7,7 @@ import {
 	cookieExists,
 	onCorrectEditPage,
 	applyPlainTextPaste,
+	moveTitleIntoFormFields,
 } from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
@@ -14,6 +15,9 @@ replaceFieldValuesWithTransientValues();
 
 // In case of data entry error with scene post, let's set the scene fields values to the values in the cookie
 writeCookieValuesToSceneFields();
+
+// Move the post title into the Scene Fields form so it looks like the other fields.
+moveTitleIntoFormFields('Scene Title*', 'What is the title of the scene?');
 
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);
@@ -42,7 +46,6 @@ orphanColorFieldVisibility();
 document
 	.querySelector('[data-depend-id="scene_orphan_icon_action"]')
 	.addEventListener('change', orphanColorFieldVisibility);
-
 
 /**
  * Hides the scene_location dropdown when the active theme is not the Graphic Data theme.
