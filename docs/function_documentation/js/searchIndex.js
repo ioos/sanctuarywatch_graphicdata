@@ -1483,8 +1483,33 @@ Search.appendIndex(
         },                {
             "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Aplaceholder_content_director\u0028\u0029",
             "name": "placeholder_content_director",
-            "summary": "Ensures\u0020a\u0020placeholder\u0020instance\u0020type\u0020exists\u0020when\u0020the\u0020Graphic\u0020Data\u0020theme\u0020is\u0020not\u0020active.",
+            "summary": "Ensures\u0020the\u0020placeholder\u0020instance\u0020type,\u0020instance,\u0020scene\u0020and\u0020modal\u0020all\u0020exist.",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Areset_placeholders_on_post_delete\u0028\u0029",
+            "name": "reset_placeholders_on_post_delete",
+            "summary": "Clears\u0020the\u0020placeholders\u002Dready\u0020flag\u0020when\u0020a\u0020placeholder\u0020post\u0020is\u0020permanently\u0020deleted.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_reset_placeholders_on_post_delete"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Areset_placeholders_on_term_delete\u0028\u0029",
+            "name": "reset_placeholders_on_term_delete",
+            "summary": "Clears\u0020the\u0020placeholders\u002Dready\u0020flag\u0020when\u0020the\u0020placeholder\u0020instance\u0020type\u0020is\u0020deleted.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_reset_placeholders_on_term_delete"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Afind_placeholder_term_id\u0028\u0029",
+            "name": "find_placeholder_term_id",
+            "summary": "Finds\u0020the\u0020term\u0020ID\u0020of\u0020a\u0020placeholder\u0020term\u0020by\u0020its\u0020\u0060graphic_data_placeholder_id\u0060\u0020value.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_term_id"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Afind_placeholder_post_id\u0028\u0029",
+            "name": "find_placeholder_post_id",
+            "summary": "Finds\u0020the\u0020post\u0020ID\u0020of\u0020a\u0020placeholder\u0020post\u0020by\u0020its\u0020\u0060graphic_data_placeholder_id\u0060\u0020value.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_post_id"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Alink_placeholders\u0028\u0029",
+            "name": "link_placeholders",
+            "summary": "Points\u0020every\u0020placeholder\u0020at\u0020the\u0020current\u0020IDs\u0020of\u0020the\u0020others.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_link_placeholders"
         },                {
             "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003Acreate_placeholder_modal\u0028\u0029",
             "name": "create_placeholder_modal",
@@ -1495,6 +1520,11 @@ Search.appendIndex(
             "name": "copy_image_to_media_library",
             "summary": "Copies\u0020an\u0020image\u0020file\u0020from\u0020the\u0020plugin\u0020directory\u0020to\u0020the\u0020WordPress\u0020media\u0020library.",
             "url": "classes/Graphic-Data-Plugin-Only-Content.html#method_copy_image_to_media_library"
+        },                {
+            "fqsen": "\\Graphic_Data_Plugin_Only_Content\u003A\u003APLACEHOLDERS_READY_OPTION",
+            "name": "PLACEHOLDERS_READY_OPTION",
+            "summary": "Autoloaded\u0020option\u0020set\u0020once\u0020all\u0020placeholders\u0020exist,\u0020so\u0020the\u0020existence\u0020checks\u0020can\u0020be\u0020skipped.",
+            "url": "classes/Graphic-Data-Plugin-Only-Content.html#constant_PLACEHOLDERS_READY_OPTION"
         },                {
             "fqsen": "\\Graphic_Data_Scene",
             "name": "Graphic_Data_Scene",
