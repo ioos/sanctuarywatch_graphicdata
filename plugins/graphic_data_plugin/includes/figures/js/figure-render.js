@@ -1264,17 +1264,20 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         figureDiv.appendChild(containerDiv);
     }
 
-
-
     //CREATE THE FIGURE TITLE
-    const figureTitle = document.createElement("div");
-    figureTitle.classList.add('figureTitle');
-    figureTitle.innerHTML = info_obj['figureTitle'];
-    figureTitle.style.marginBottom = '2px';
-    figureTitle.style.marginTop = '15px';
-    figureTitle.style.marginBottom = '28px';
-    figureTitle.style.textAlign = 'center';
-    figureDiv.appendChild(figureTitle);
+    const FigureTitleInfo = info_obj['figureTitle'];
+    console.log('FigureTitleInfo', FigureTitleInfo);
+
+    if (FigureTitleInfo != '') {
+        const figureTitle = document.createElement("div");
+        figureTitle.classList.add('figureTitle');
+        figureTitle.innerHTML = FigureTitleInfo;
+        figureTitle.style.marginBottom = '2px';
+        figureTitle.style.marginTop = '15px';
+        figureTitle.style.marginBottom = '28px';
+        figureTitle.style.textAlign = 'center';
+        figureDiv.appendChild(figureTitle);
+    } 
 
 
     //CREATE THE FIGURE
@@ -1382,13 +1385,19 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         break;
 
         case "Code":
+
+            let embedCode = info_obj['code'];
+            console.log('embedCode', embedCode);
+
             img = '';
             // Create a new div to display the embed code
             const codeDiv = document.createElement("div");
             codeDiv.id = "code_display_window";
             codeDiv.style.width = "100%";
-            codeDiv.style.minHeight = "300px";
-            codeDiv.style.padding = "10px";
+            if (embedCode !== '' ) {
+                codeDiv.style.minHeight = "300px";
+                codeDiv.style.padding = "10px";
+            }
             codeDiv.style.backgroundColor = "#ffffff";
             codeDiv.style.overflow = "auto";
             // Center the content using Flexbox
@@ -1398,8 +1407,8 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
 
             
             //Append the codeDiv to the figureDiv
+            
             await figureDiv.appendChild(codeDiv);
-            let embedCode = info_obj['code'];
 
             //Error in admin preview for handling for missing image
             if (!embedCode || embedCode === ''){
@@ -1447,8 +1456,10 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     //ATTRIBUTES FOR THE FIGURE DIV
     figureDiv.style.justifyContent = "center"; // Center horizontally
     figureDiv.style.alignItems = "center";
+
+    let embedCode = info_obj['code'];
     figureDiv.setAttribute("style", "width: 100% !important; height: auto; display: block; margin: 0; margin-top: 2%");
-    
+
   
     //CREATE PARAGRAPH ELEMENT UNDER "myTabContent" > div class="figure"
     const caption = document.createElement('p');
@@ -1456,7 +1467,15 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
     let tempShortCaption = info_obj['shortCaption'];
     tempShortCaption = tempShortCaption.replace(/\r\n\r\n/g, '<p style="margin-top: 15px;">');
     caption.innerHTML = tempShortCaption;
-    caption.style.margin = '2%';
+
+    if (FigureTitleInfo === '' && embedCode === '') {
+        caption.style.marginLeft = '2%';
+        caption.style.marginRight = '2%';
+        caption.style.marginBottom = '2%';
+    } else {
+        caption.style.margin = '2%';
+    }
+
     figureDiv.appendChild(caption);
     tabContentElement.appendChild(figureDiv);
 

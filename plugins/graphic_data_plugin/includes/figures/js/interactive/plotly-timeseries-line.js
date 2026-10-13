@@ -435,37 +435,35 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 			//Connects gaps in line where there is missing data
 			const connectGapsOpt = figureArguments[targetLineColumn + 'ConnectGaps'] === 'on';     
 
-			//Show Standard error bars
+			// Error values are distances above and below each data point.
 			const showError = figureArguments[targetLineColumn + 'ErrorBars'];
-			const showError_InputValuesOpt = figureArguments[targetLineColumn + 'ErrorBarsInputValues'];
+			const asymmetricError = figureArguments[targetLineColumn + 'ErrorBarsType'] === 'asymmetric';
+			let errorBarY = {};
 			if (showError === 'on') {
-				//Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
-				if (showError_InputValuesOpt === 'auto') {
-					var errorBarY = {
-						type: 'data',
-						array: new Array(plotlyY.length).fill(stdDev),
-						visible: true,
-						color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
-						thickness: 1.5,
-						width: 8
-					};   
+				const readErrorValues = (field) => {
+					const column = figureArguments[targetLineColumn + field] || 'auto';
+					if (column === 'auto') {
+						return new Array(plotlyY.length).fill(stdDev);
+					}
+					return (dataToBePlotted[column] || []).map(val => parseFloat(val));
+				};
+				errorBarY = {
+					type: 'data',
+					visible: true,
+					color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
+					thickness: 1.5,
+					width: 8
+				};
+				if (asymmetricError) {
+					// Separate error distances above and below the line.
+					errorBarY.symmetric = false;
+					errorBarY.array = readErrorValues('ErrorBarsUpperInputValues');
+					errorBarY.arrayminus = readErrorValues('ErrorBarsLowerInputValues');
+				} else {
+					// Use the same error distance in both directions (also for older saved figures).
+					errorBarY.symmetric = true;
+					errorBarY.array = readErrorValues('ErrorBarsInputValues');
 				}
-				//Error bars (values imported from spreadsheet per point in dataset)
-				//Do we want high and low bounds here?
-				if (showError_InputValuesOpt != 'auto') {
-					const showError_InputValue = dataToBePlotted[showError_InputValuesOpt].filter(item => item !== "");
-					var errorBarY = {
-						type: 'data',
-						array: showError_InputValue.map(val => parseFloat(val)), // Convert to number if needed
-						visible: true,
-						color: figureArguments[targetLineColumn + 'ErrorBarsColor'],
-						thickness: 1.5,
-						width: 8
-					}; 
-				}          
-			}
-			if (showError != 'on') {
-				var errorBarY = {};
 			}
 
 			// Main line with or w/o error bars
@@ -2086,7 +2084,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 					'Connect Missing Data Gaps',
 					'Mean Line',
 					'+-1 Std Dev Lines ',
-					'Symmetric Error Bars',
+					'Error Bars',
 					'90th & 10th Percentile Lines',
 				];
 				for (let i = 0; i < features.length; i++) {
@@ -2145,6 +2143,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 						function createDropdown(labelText, selectId) {
 							const label = document.createElement('label');
 							label.innerHTML = labelText;
+							label.htmlFor = selectId;
 							const select = document.createElement('select');
 							select.id = selectId;
 							select.name = 'plotFields';
@@ -2231,8 +2230,51 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 							controls.push(label, select);
 						}
 
+						// Choose symmetric or separate upper/lower error columns.
+						if (feature === 'ErrorBars') {
+							const typeLabel = document.createElement('label');
+							const typeSelect = document.createElement('select');
+							typeSelect.id = fieldLabel[0] + 'ErrorBarsType';
+							typeSelect.name = 'plotFields';
+							typeLabel.htmlFor = typeSelect.id;
+							typeLabel.textContent = 'Error Bar Type';
+							for (const type of ['symmetric', 'asymmetric']) {
+								const option = document.createElement('option');
+								option.value = type;
+								option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+								typeSelect.appendChild(option);
+							}
+							typeSelect.value = fillFormFieldValues(typeSelect.id, interactive_arguments) === 'asymmetric'
+								? 'asymmetric' : 'symmetric';
+							controls.push(typeLabel, document.createElement('br'), typeSelect);
+
+							const columnFields = [
+								['Error Bars Input Column Values', 'InputValues', false],
+								['Upper Error Bars Input Column Values', 'UpperInputValues', true],
+								['Lower Error Bars Input Column Values', 'LowerInputValues', true],
+							].map(([text, suffix, asymmetric]) => {
+								const container = document.createElement('div');
+								const { label, select } = createDropdown(text, fieldLabel[0] + feature + suffix);
+								container.append(label, document.createElement('br'), select);
+								controls.push(container);
+								return { container, asymmetric };
+							});
+							const updateErrorFields = () => {
+								columnFields.forEach(({ container, asymmetric }) => {
+									container.style.display = asymmetric === (typeSelect.value === 'asymmetric') ? 'block' : 'none';
+								});
+							};
+							updateErrorFields();
+							typeSelect.addEventListener('change', () => {
+								updateErrorFields();
+								logFormFieldValues();
+							});
+							const { label, input } = createColorfield('Color', fieldLabel[0] + feature + 'Color');
+							controls.push(label, document.createElement('br'), input);
+						}
+
 						// Add features for ErrorBars
-						if (feature === 'ErrorBars' || feature === 'StdDev') {
+						if (feature === 'StdDev') {
 							const { label: labelValues, select: selectValues } =
 								createDropdown(
 									`${featureName} Input Column Values`,

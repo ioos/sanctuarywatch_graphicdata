@@ -278,6 +278,9 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
  * @param {string}        figureArguments.Bar{n}MeanField            - The column name for the mean values of the nth bar.
  * @param {string}        figureArguments.Bar{n}ErrorBars            - Whether to show error bars for the nth bar ("on" or "off").
  * @param {string}        figureArguments.Bar{n}ErrorBarsInputValues - The column name for error bar values or "auto".
+ * @param {string}        figureArguments.Bar{n}ErrorBarsType        - "symmetric" (default) or "asymmetric".
+ * @param {string}        figureArguments.Bar{n}ErrorBarsUpperInputValues - Upper error distances column or "auto".
+ * @param {string}        figureArguments.Bar{n}ErrorBarsLowerInputValues - Lower error distances column or "auto".
  * @param {string}        figureArguments.Bar{n}ErrorBarsColor       - The color of the error bars for the nth bar.
  *
  * @param {Object}        layout                                     - The layout configuration for the Plotly chart.
@@ -639,21 +642,37 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
 						});
 					}
 				}
-				// === Optional Overlays and Error Bars ===
-				const errorArrayRaw = figureArguments[targetBarColumn + 'ErrorBars'] === 'on'
-					? figureArguments[targetBarColumn + 'ErrorBarsInputValues'] === 'auto'
-						? new Array(plotlyY.length).fill(computeStandardDeviation(plotlyY))
-						: (dataToBePlotted[figureArguments[targetBarColumn + 'ErrorBarsInputValues']] || []).map(val => parseFloat(val)).filter(val => !isNaN(val))
-					: null;
+				// Error values are distances above and below each data point.
+				const showError = figureArguments[targetBarColumn + 'ErrorBars'];
+				const asymmetricError = figureArguments[targetBarColumn + 'ErrorBarsType'] === 'asymmetric';
+				let error_y;
+				if (showError === 'on') {
+					const readErrorValues = (field) => {
+						const column = figureArguments[targetBarColumn + field] || 'auto';
+						if (column === 'auto') {
+							return new Array(plotlyY.length).fill(computeStandardDeviation(plotlyY));
+						}
+						return (dataToBePlotted[column] || []).map(val => parseFloat(val));
+					};
+					error_y = {
+						type: 'data',
+						visible: true,
+						color: figureArguments[targetBarColumn + 'ErrorBarsColor'] || '#000',
+						thickness: 1,
+						width: 5
+					};
+					if (asymmetricError) {
+						// Separate error distances above and below the line.
+						error_y.symmetric = false;
+						error_y.array = readErrorValues('ErrorBarsUpperInputValues');
+						error_y.arrayminus = readErrorValues('ErrorBarsLowerInputValues');
+					} else {
+						// Use the same error distance in both directions (also for older saved figures).
+						error_y.symmetric = true;
+						error_y.array = readErrorValues('ErrorBarsInputValues');
+					}
+				}
 
-				const error_y = errorArrayRaw ? {
-					type: 'data',
-					array: errorArrayRaw,
-					visible: true,
-					color: figureArguments[targetBarColumn + 'ErrorBarsColor'] || '#000',
-					thickness: 1,
-					width: 5
-				} : undefined;
 
 				if (!(isStacked === 'on' && columnXHeader !== 'None')) {
 					const trace = {
@@ -1978,7 +1997,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 				const featureNames = [
 					'Add Bar to Legend',
 					'Mean Line',
-					'Symmetric Error Bars',
+					'Error Bars',
 					'90th & 10th Percentile Lines',
 					'Group Bar X Axis By Category',
 				];
@@ -2036,6 +2055,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 						function createDropdown(labelText, selectId) {
 							const label = document.createElement('label');
 							label.innerHTML = labelText;
+							label.htmlFor = selectId;
 							const select = document.createElement('select');
 							select.id = selectId;
 							select.name = 'plotFields';
@@ -2181,27 +2201,49 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 							);
 						}
 
-						if (feature === 'ErrorBars' || feature === 'StdDev') {
-							const { label: labelValues, select: selectValues } =
-								createDropdown(
-									`${featureName} Input Column Values`,
-									fieldLabel[0] + feature + 'InputValues'
-								);
-							const { label: labelColor, input: ColorValue } =
-								createColorfield(
-									`Color`,
-									fieldLabel[0] + feature + 'Color'
-								);
-							controls.push(
-								labelValues,
-								document.createElement('br'),
-								selectValues,
-								document.createElement('br'),
-								labelColor,
-								document.createElement('br'),
-								ColorValue
-							);
+						// Choose symmetric or separate upper/lower error columns.
+						if (feature === 'ErrorBars') {
+							const typeLabel = document.createElement('label');
+							const typeSelect = document.createElement('select');
+							typeSelect.id = fieldLabel[0] + 'ErrorBarsType';
+							typeSelect.name = 'plotFields';
+							typeLabel.htmlFor = typeSelect.id;
+							typeLabel.textContent = 'Error Bar Type';
+							for (const type of ['symmetric', 'asymmetric']) {
+								const option = document.createElement('option');
+								option.value = type;
+								option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+								typeSelect.appendChild(option);
+							}
+							typeSelect.value = fillFormFieldValues(typeSelect.id, interactive_arguments) === 'asymmetric'
+								? 'asymmetric' : 'symmetric';
+							controls.push(typeLabel, document.createElement('br'), typeSelect);
+
+							const columnFields = [
+								['Error Bars Input Column Values', 'InputValues', false],
+								['Upper Error Bars Input Column Values', 'UpperInputValues', true],
+								['Lower Error Bars Input Column Values', 'LowerInputValues', true],
+							].map(([text, suffix, asymmetric]) => {
+								const container = document.createElement('div');
+								const { label, select } = createDropdown(text, fieldLabel[0] + feature + suffix);
+								container.append(label, document.createElement('br'), select);
+								controls.push(container);
+								return { container, asymmetric };
+							});
+							const updateErrorFields = () => {
+								columnFields.forEach(({ container, asymmetric }) => {
+									container.style.display = asymmetric === (typeSelect.value === 'asymmetric') ? 'block' : 'none';
+								});
+							};
+							updateErrorFields();
+							typeSelect.addEventListener('change', () => {
+								updateErrorFields();
+								logFormFieldValues();
+							});
+							const { label, input } = createColorfield('Color', fieldLabel[0] + feature + 'Color');
+							controls.push(label, document.createElement('br'), input);
 						}
+
 
 						// Initially hide the dropdown container
 						dropdownContainer.style.display = checkbox.checked
