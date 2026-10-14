@@ -7,11 +7,16 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Deny all permissions by default
+permissions: {}
+
 jobs:
   playwright:
     name: Playwright E2E (PHP ${{ matrix.php }} / WP ${{ matrix.wp }})
     timeout-minutes: 20
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     strategy:
       # fail-fast off: we want to see failures across the whole matrix, not
@@ -25,10 +30,13 @@ jobs:
             wp: 'latest'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
         with:
           node-version: '20'
           cache: 'npm'
@@ -39,7 +47,7 @@ jobs:
         run: npm ci
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         id: pw-cache
         with:
           path: ~/.cache/ms-playwright
@@ -68,7 +76,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: playwright-report-php${{ matrix.php }}-wp${{ matrix.wp }}
           path: tests/e2e/playwright-report/
@@ -76,7 +84,7 @@ jobs:
 
       - name: Upload test results (traces, screenshots)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: test-results-php${{ matrix.php }}-wp${{ matrix.wp }}
           path: tests/e2e/test-results/
