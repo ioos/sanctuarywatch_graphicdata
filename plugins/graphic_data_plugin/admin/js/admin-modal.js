@@ -3,10 +3,14 @@ import {
 	redText,
 	displayEntries,
 	applyPlainTextPaste,
+	moveTitleIntoFormFields,
 } from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
+
+// Move the post title into the form so it looks like the other fields.
+moveTitleIntoFormFields('Modal Title*', 'What is the title of the modal?');
 
 let hoverColor = 'red'; // hacky solution to solving problem of hoverColor in promise. FIX
 

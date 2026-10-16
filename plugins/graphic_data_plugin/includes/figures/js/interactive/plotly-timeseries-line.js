@@ -1,10 +1,12 @@
 import {
+    fetchFigureUploadMetadata,
     loadPlotlyScript,
     waitForElementById,
     computeStandardDeviation,
     computePercentile,
     logFormFieldValues,
     fillFormFieldValues,
+	createFullscreenButton,
 } from '@graphic-data/plotly-utility';
 
 const _lineDataEl = document.getElementById(
@@ -293,10 +295,7 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 
         // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyLineFigure a chance to finish running before the next one kicked off
         // producePlotlyLineFigure used to fail here because the script was running before the previous iteration finished. 
-        const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-        const response = await fetch(figureRestCall);
-
-        const data = await response.json();
+        const data = await fetchFigureUploadMetadata(figureID);
         const uploaded_path_json = data.uploaded_path_json;
 
         const restOfURL = "/wp-content" + uploaded_path_json.split("wp-content")[1];
@@ -774,7 +773,10 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 		modeBarButtonsToRemove: [
 			'zoom2d', 'lasso2d', 'autoScale2d',
 			'hoverClosestCartesian', 'hoverCompareCartesian' //'toImage', 'resetScale2d', 'select2d'
-		]
+		],
+		// modeBarButtonsToAdd: [
+		// 	createFullscreenButton(Plotly),
+		// ]
 		};
 
 		// Set up the plotlyDiv (The div the the plot will be rendered in)

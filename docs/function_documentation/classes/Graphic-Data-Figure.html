@@ -238,6 +238,35 @@ and file upload/delete handlers for interactive figure data.</p>
 <dd>Check if stored filter values are still valid and retrieve them if they are.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_graphic_data_copy_figure_data_files">graphic_data_copy_figure_data_files()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Copy CSV and JSON files associated with an Interactive Figure.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_graphic_data_duplicate_figure">graphic_data_duplicate_figure()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Duplicate an existing Figure custom post.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_graphic_data_figure_duplicate_row_action">graphic_data_figure_duplicate_row_action()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Add a Duplicate link to each Figure in:</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_graphic_data_update_duplicated_file_paths">graphic_data_update_duplicated_file_paths()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+<dd>Update duplicated Figure metadata so references to the original
+Figure&#039;s data directory point to the duplicated Figure&#039;s directory.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Figure.html#method_proxy_external_image_handler">proxy_external_image_handler()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -625,7 +654,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1264</span>
+    <span class="phpdocumentor-element-found-in__line">1834</span>
 
     </aside>
 
@@ -670,7 +699,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">977</span>
+    <span class="phpdocumentor-element-found-in__line">987</span>
 
     </aside>
 
@@ -924,7 +953,7 @@ over instance.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">946</span>
+    <span class="phpdocumentor-element-found-in__line">956</span>
 
     </aside>
 
@@ -1006,7 +1035,7 @@ to be hooked into the 'rest_figure_query' filter.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1576</span>
+    <span class="phpdocumentor-element-found-in__line">2147</span>
 
     </aside>
 
@@ -1148,6 +1177,229 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
         class="phpdocumentor-element
             -method
             -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_graphic_data_copy_figure_data_files">
+        graphic_data_copy_figure_data_files()
+        <a href="classes/Graphic-Data-Figure.html#method_graphic_data_copy_figure_data_files" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1356</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Copy CSV and JSON files associated with an Interactive Figure.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">graphic_data_copy_figure_data_files</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$old_post_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$new_post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Example:</p>
+<p>Original:
+/wp-content/data/figure_129/data.csv</p>
+<p>Duplicate:
+/wp-content/data/figure_201/data.csv</p>
+<p>Only .csv and .json files are copied.</p>
+<p>Generated .html files are NOT copied.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$old_post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$new_post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_graphic_data_duplicate_figure">
+        graphic_data_duplicate_figure()
+        <a href="classes/Graphic-Data-Figure.html#method_graphic_data_duplicate_figure" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1135</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Duplicate an existing Figure custom post.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">graphic_data_duplicate_figure</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>This copies:</p>
+<ul>
+<li>The Figure post itself</li>
+<li>Figure post meta</li>
+<li>Figure taxonomies</li>
+</ul>
+<p>For Interactive Figures only:</p>
+<ul>
+<li>Creates a new /wp-content/data/figure_{NEW_ID}/ directory</li>
+<li>Copies CSV and JSON files from the original Figure directory</li>
+<li>Updates copied metadata paths so they reference the new Figure directory</li>
+</ul>
+<p>Generated iframe HTML is intentionally not copied.</p>
+</section>
+
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_graphic_data_figure_duplicate_row_action">
+        graphic_data_figure_duplicate_row_action()
+        <a href="classes/Graphic-Data-Figure.html#method_graphic_data_figure_duplicate_row_action" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1622</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Add a Duplicate link to each Figure in:</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">graphic_data_figure_duplicate_row_action</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$actions</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>WordPress Admin -&gt; Figures -&gt; All Figures</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$actions</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_graphic_data_update_duplicated_file_paths">
+        graphic_data_update_duplicated_file_paths()
+        <a href="classes/Graphic-Data-Figure.html#method_graphic_data_update_duplicated_file_paths" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1498</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Update duplicated Figure metadata so references to the original
+Figure&#039;s data directory point to the duplicated Figure&#039;s directory.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">graphic_data_update_duplicated_file_paths</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$old_post_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$new_post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Example:</p>
+<p>/wp-content/data/figure_129/data.csv</p>
+<p>becomes:</p>
+<p>/wp-content/data/figure_201/data.csv</p>
+<p>This handles both normal strings and serialized arrays stored
+in Figure post meta.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$old_post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$new_post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
                                     -static                    "
 >
     <h4 class="phpdocumentor-element__name" id="method_proxy_external_image_handler">
@@ -1158,7 +1410,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1118</span>
+    <span class="phpdocumentor-element-found-in__line">1688</span>
 
     </aside>
 
@@ -1209,7 +1461,7 @@ proxies the request through WordPress instead.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">927</span>
+    <span class="phpdocumentor-element-found-in__line">937</span>
 
     </aside>
 
@@ -1258,7 +1510,7 @@ proxies the request through WordPress instead.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1545</span>
+    <span class="phpdocumentor-element-found-in__line">2116</span>
 
     </aside>
 
@@ -1307,7 +1559,7 @@ proxies the request through WordPress instead.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">915</span>
+    <span class="phpdocumentor-element-found-in__line">925</span>
 
     </aside>
 
@@ -1490,6 +1742,10 @@ It handles all three filter types: instance, scene, and icon.</p>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_filter_figure_by_figure_modal">filter_figure_by_figure_modal()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_get_alt_text_by_url_callback">get_alt_text_by_url_callback()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_get_figure_filter_value">get_figure_filter_value()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_graphic_data_copy_figure_data_files">graphic_data_copy_figure_data_files()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_graphic_data_duplicate_figure">graphic_data_duplicate_figure()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_graphic_data_figure_duplicate_row_action">graphic_data_figure_duplicate_row_action()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_graphic_data_update_duplicated_file_paths">graphic_data_update_duplicated_file_paths()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_proxy_external_image_handler">proxy_external_image_handler()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_register_figure_rest_fields">register_figure_rest_fields()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_register_get_alt_text_by_url_route">register_get_alt_text_by_url_route()</a></li>

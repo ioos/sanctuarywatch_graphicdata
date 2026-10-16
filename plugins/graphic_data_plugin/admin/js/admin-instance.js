@@ -7,6 +7,7 @@ import {
 	onCorrectEditPage,
 	cookieExists,
 	getCookie,
+	moveTitleIntoFormFields,
 } from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
@@ -14,6 +15,9 @@ replaceFieldValuesWithTransientValues();
 
 // In case of data entry error with instance post, let's set the instance field values to the values in the cookie
 writeCookieValuesToInstanceFields();
+
+// Move the post title into the form so it looks like the other fields.
+moveTitleIntoFormFields('Instance Title*', 'What is the title of the instance?');
 
 // Makes title text red if it ends with an asterisk in "exopite-sof-title" elements. Also adds a line giving the meaning of red text at top of form.
 document.addEventListener('DOMContentLoaded', redText);

@@ -139,6 +139,20 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
 
 
 
+<h4 id="toc-constants">
+    Constants
+    <a href="classes/Graphic-Data-Plugin-Only-Content.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#constant_PLACEHOLDERS_READY_OPTION">PLACEHOLDERS_READY_OPTION</a>
+    <span>
+        &nbsp;: string&nbsp;= &#039;graphic_data_placeholders_ready&#039;                            </span>
+</dt>
+<dd>Autoloaded option set once all placeholders exist, so the existence checks can be skipped.</dd>
+
+    </dl>
 
 
 
@@ -188,13 +202,86 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
     <span>
                                 &nbsp;: void    </span>
 </dt>
-<dd>Ensures a placeholder instance type exists when the Graphic Data theme is not active.</dd>
+<dd>Ensures the placeholder instance type, instance, scene and modal all exist.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_reset_placeholders_on_post_delete">reset_placeholders_on_post_delete()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Clears the placeholders-ready flag when a placeholder post is permanently deleted.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_reset_placeholders_on_term_delete">reset_placeholders_on_term_delete()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Clears the placeholders-ready flag when the placeholder instance type is deleted.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_post_id">find_placeholder_post_id()</a>
+    <span>
+                                &nbsp;: int    </span>
+</dt>
+<dd>Finds the post ID of a placeholder post by its `graphic_data_placeholder_id` value.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_term_id">find_placeholder_term_id()</a>
+    <span>
+                                &nbsp;: int    </span>
+</dt>
+<dd>Finds the term ID of a placeholder term by its `graphic_data_placeholder_id` value.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Plugin-Only-Content.html#method_link_placeholders">link_placeholders()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Points every placeholder at the current IDs of the others.</dd>
 
     </dl>
 
 
 
         
+    <section class="phpdocumentor-constants">
+        <h3 class="phpdocumentor-elements__header" id="constants">
+            Constants
+            <a href="classes/Graphic-Data-Plugin-Only-Content.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_PLACEHOLDERS_READY_OPTION">
+        PLACEHOLDERS_READY_OPTION
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#constant_PLACEHOLDERS_READY_OPTION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">22</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Autoloaded option set once all placeholders exist, so the existence checks can be skipped.</p>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">PLACEHOLDERS_READY_OPTION</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;graphic_data_placeholders_ready&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+            </section>
 
         
 
@@ -218,7 +305,7 @@ permalink: /function_documentation/classes/Graphic-Data-Plugin-Only-Content.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">328</span>
+    <span class="phpdocumentor-element-found-in__line">414</span>
 
     </aside>
 
@@ -267,6 +354,9 @@ Example: 'example_files/tutorial/image.jpg'</p>
                     <section class="phpdocumentor-description"><p>Instance ID stored in attachment post meta under
 <code class="prettyprint">graphic_data_instance_id</code> to associate the media with a
 specific plugin instance.</p>
+<p>If an attachment with the same placeholder ID and title already exists and its file is
+still on disk, that attachment is reused (and re-tagged with $instance_id) instead of
+uploading another copy.</p>
 </section>
 
             </dd>
@@ -315,7 +405,7 @@ file does not exist or the upload process fails.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">71</span>
 
     </aside>
 
@@ -328,7 +418,9 @@ file does not exist or the upload process fails.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-    
+        <section class="phpdocumentor-description"><p>Links to the other placeholders are set afterwards by link_placeholders().</p>
+</section>
+
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
@@ -362,7 +454,7 @@ file does not exist or the upload process fails.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">28</span>
+    <span class="phpdocumentor-element-found-in__line">35</span>
 
     </aside>
 
@@ -417,7 +509,7 @@ assigns a navbar name of &quot;Placeholder&quot;, and marks it with the
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">255</span>
+    <span class="phpdocumentor-element-found-in__line">359</span>
 
     </aside>
 
@@ -432,7 +524,8 @@ assigns a navbar name of &quot;Placeholder&quot;, and marks it with the
     
         <section class="phpdocumentor-description"><p>Iterates over a structured array of modal data and inserts each entry as a
 WordPress post of type 'modal'. For each successfully created post, sets
-post meta fields based on the keys present in $modal_array.</p>
+post meta fields based on the keys present in $modal_array. Links to the other
+placeholders are set afterwards by link_placeholders().</p>
 </section>
 
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
@@ -481,7 +574,9 @@ post meta fields based on the keys present in $modal_array.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-    
+        <section class="phpdocumentor-description"><p>Links to the other placeholders are set afterwards by link_placeholders().</p>
+</section>
+
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
@@ -515,11 +610,11 @@ post meta fields based on the keys present in $modal_array.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">181</span>
+    <span class="phpdocumentor-element-found-in__line">175</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Ensures a placeholder instance type exists when the Graphic Data theme is not active.</p>
+        <p class="phpdocumentor-summary">Ensures the placeholder instance type, instance, scene and modal all exist.</p>
 
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
@@ -528,17 +623,310 @@ post meta fields based on the keys present in $modal_array.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>Queries postmeta for the <code class="prettyprint">graphic_data_instance_type_placeholder_id</code> key. If no
-record is found, delegates to <abbr title="\create_placeholder_instance_type()">create_placeholder_instance_type()</abbr> to insert
-the placeholder term. Does nothing when the Graphic Data theme is active, since the
-theme provides its own instance type management.</p>
+        <section class="phpdocumentor-description"><p>Each placeholder is identified by its <code class="prettyprint">graphic_data_placeholder_id</code> meta value:
+1 = instance type (termmeta), 2 = instance, 3 = scene, 4 = modal (postmeta).
+Any placeholder that is missing is created by its create_placeholder_*() method.
+Runs regardless of whether the Graphic Data theme is active.</p>
+<p>When a run finds everything already exists, the PLACEHOLDERS_READY_OPTION flag is set and later calls
+return immediately. The flag is autoloaded, so checking it costs no extra query. It is
+cleared when a placeholder is deleted, so the next request recreates what is missing.</p>
 </section>
 
     
     
-    <h5 class="phpdocumentor-tag-list__heading" id="method_placeholder_content_director_tags">
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_reset_placeholders_on_post_delete">
+        reset_placeholders_on_post_delete()
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_reset_placeholders_on_post_delete" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">242</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Clears the placeholders-ready flag when a placeholder post is permanently deleted.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">reset_placeholders_on_post_delete</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to <code class="prettyprint">before_delete_post</code>, because post meta is already gone by <code class="prettyprint">deleted_post</code>.
+Trashing a placeholder does not trigger this, since the post still exists.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>ID of the post being deleted.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_reset_placeholders_on_term_delete">
+        reset_placeholders_on_term_delete()
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_reset_placeholders_on_term_delete" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">256</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Clears the placeholders-ready flag when the placeholder instance type is deleted.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">reset_placeholders_on_term_delete</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$term_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Hooked to <code class="prettyprint">pre_delete_term</code>, because term meta is already gone by <code class="prettyprint">delete_term</code>.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$term_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>ID of the term being deleted.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_find_placeholder_post_id">
+        find_placeholder_post_id()
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_post_id" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">291</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Finds the post ID of a placeholder post by its `graphic_data_placeholder_id` value.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">find_placeholder_post_id</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$placeholder_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_type</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>The post type is required because placeholder media attachments share marker values
+with placeholder posts (the scene image is tagged 2, the same as the instance).</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$placeholder_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Placeholder marker value (2 = instance, 3 = scene, 4 = modal).</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_type</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Post type the placeholder must have.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_find_placeholder_post_id_tags">
         Tags
-        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director_tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_post_id_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">global</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>wpdb $wpdb WordPress database abstraction object.</p>
+</section>
+
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">int</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Post ID, or 0 if not found.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_find_placeholder_term_id">
+        find_placeholder_term_id()
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_term_id" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">269</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Finds the term ID of a placeholder term by its `graphic_data_placeholder_id` value.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">find_placeholder_term_id</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$placeholder_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$placeholder_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Placeholder marker value (1 = instance type).</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_find_placeholder_term_id_tags">
+        Tags
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_term_id_tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                    <dt class="phpdocumentor-tag-list__entry">
+                <span class="phpdocumentor-tag__name">global</span>
+            </dt>
+                            <dd class="phpdocumentor-tag-list__definition">
+                                                                                                            <section class="phpdocumentor-description"><p>wpdb $wpdb WordPress database abstraction object.</p>
+</section>
+
+                                    </dd>
+                        </dl>
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">int</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Term ID, or 0 if not found.</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_link_placeholders">
+        link_placeholders()
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_link_placeholders" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-plugin-only.php"><a href="files/plugins-graphic-data-plugin-includes-admin-plugin-only.html"><abbr title="plugins/graphic_data_plugin/includes/admin-plugin-only.php">admin-plugin-only.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">313</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Points every placeholder at the current IDs of the others.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">link_placeholders</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>Safe to run repeatedly: it looks up each placeholder fresh and overwrites the link
+fields, so a placeholder that survived when another was deleted and recreated is
+reconnected to the new one.</p>
+</section>
+
+    
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="method_link_placeholders_tags">
+        Tags
+        <a href="classes/Graphic-Data-Plugin-Only-Content.html#method_link_placeholders_tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -570,9 +958,16 @@ theme provides its own instance type management.</p>
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                        <li><a href="classes/Graphic-Data-Plugin-Only-Content.html#toc-constants">Constants</a></li>
                                                                                 <li><a href="classes/Graphic-Data-Plugin-Only-Content.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
+                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#constant_PLACEHOLDERS_READY_OPTION">PLACEHOLDERS_READY_OPTION</a></li>
+                                            </ul>
+                </li>
             
             
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
@@ -584,6 +979,11 @@ theme provides its own instance type management.</p>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_modal">create_placeholder_modal()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_create_placeholder_scene">create_placeholder_scene()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_placeholder_content_director">placeholder_content_director()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_reset_placeholders_on_post_delete">reset_placeholders_on_post_delete()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_reset_placeholders_on_term_delete">reset_placeholders_on_term_delete()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_post_id">find_placeholder_post_id()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_find_placeholder_term_id">find_placeholder_term_id()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Plugin-Only-Content.html#method_link_placeholders">link_placeholders()</a></li>
                                     </ul>
             </li>
                     </ul>

@@ -1,18 +1,18 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "create-block/graphic-data-insert-figure",
+  "name": "create-block/graphic-data-insert-scene",
   "version": "0.1.0",
-  "title": "Graphic Data - Figure",
+  "title": "Graphic Data - Scene",
   "category": "media",
-  "description": "Insert a figure into a post",
+  "description": "Insert a scene into a post",
   "example": {},
   "attributes": {
-    "figureId": {
+    "sceneId": {
       "type": "number",
       "default": 0
     },
-    "figureMode": {
+    "sceneMode": {
       "type": "string",
       "default": "existing"
     },
@@ -20,47 +20,47 @@
       "type": "string",
       "default": ""
     },
-    "figureWidth": {
+    "sceneWidth": {
       "type": "number",
       "default": 100
     },
-    "figureWidthUnit": {
+    "sceneWidthUnit": {
       "type": "string",
       "default": "%"
     },
-    "figureMaxWidth": {
+    "sceneMaxWidth": {
       "type": "number",
       "default": 0
     },
-    "figureHeight": {
+    "sceneHeight": {
       "type": "number",
       "default": 0
     },
-    "figureAlignment": {
+    "sceneAlignment": {
       "type": "string",
       "default": "center"
     },
-    "figureBackgroundColor": {
+    "sceneBackgroundColor": {
       "type": "string",
       "default": "transparent"
     },
-    "figureBorderEnabled": {
+    "sceneBorderEnabled": {
       "type": "boolean",
       "default": false
     },
-    "figureBorderColor": {
+    "sceneBorderColor": {
       "type": "string",
       "default": "#000000"
     },
-    "figureBorderWidth": {
+    "sceneBorderWidth": {
       "type": "number",
       "default": 1
     },
-    "figureBorderRadius": {
+    "sceneBorderRadius": {
       "type": "number",
       "default": 0
     },
-    "figurePadding": {
+    "scenePadding": {
       "type": "number",
       "default": 0
     }
@@ -75,8 +75,9 @@
       "fontSize": true
     }
   },
-  "textdomain": "graphic-data-insert-interactive-figure",
+  "textdomain": "graphic-data-insert-interactive-scene",
   "editorScript": "file:./index.js",
   "viewScript": "file:./view.js",
-  "render": "file:./render.php"
+  "render": "file:./render.php",
+  "style": "file:./index.css"
 }

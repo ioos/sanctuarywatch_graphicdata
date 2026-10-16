@@ -141,6 +141,58 @@ export function onCorrectEditPage(customPostType) {
 }
 
 /**
+ * Moves the WordPress post title input into the Exopite metabox form as the first field, styled like the other fields.
+ *
+ * The title input keeps its id and name ("post_title"), so it is still submitted with the post form
+ * and WordPress autosave scripts continue to find it. The rest of #titlediv (including the permalink
+ * box) is hidden; post URLs can still be edited from Quick Edit on the post type's list screen.
+ *
+ * @param {string} label       - Field title. End it with "*" to have redText() mark it as required.
+ * @param {string} description - Help text shown under the field title.
+ * @return {void}
+ */
+export function moveTitleIntoFormFields(label, description) {
+	const titleInput = document.getElementById('title');
+	const firstField = document.querySelector(
+		'.exopite-sof-section .exopite-sof-field'
+	);
+	if (!titleInput || !firstField) {
+		return;
+	}
+
+	const field = document.createElement('div');
+	field.className = 'exopite-sof-field exopite-sof-field-text';
+
+	const heading = document.createElement('h4');
+	heading.className = 'exopite-sof-title';
+	heading.appendChild(document.createTextNode(label));
+	const descriptionEl = document.createElement('p');
+	descriptionEl.className = 'exopite-sof-description';
+	descriptionEl.textContent = description;
+	heading.appendChild(descriptionEl);
+
+	const fieldset = document.createElement('div');
+	fieldset.className = 'exopite-sof-fieldset';
+	// Once outside #titlediv, WordPress's oversized "#titlediv #title" styling no longer applies,
+	// so the input picks up the same Exopite text-field styling as the other fields.
+	fieldset.appendChild(titleInput);
+
+	field.appendChild(heading);
+	field.appendChild(fieldset);
+	firstField.parentNode.insertBefore(field, firstField);
+
+	// Hide the old title area and remove the space it reserved above the form.
+	const titleDiv = document.getElementById('titlediv');
+	if (titleDiv) {
+		titleDiv.style.display = 'none';
+	}
+	const postBodyContent = document.getElementById('post-body-content');
+	if (postBodyContent) {
+		postBodyContent.style.marginBottom = '0';
+	}
+}
+
+/**
  * WordPress Admin Field Formatter
  *
  * This function enhances the WordPress admin interface by:

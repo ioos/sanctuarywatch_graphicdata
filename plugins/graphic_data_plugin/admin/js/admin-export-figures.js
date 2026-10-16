@@ -1,4 +1,12 @@
-// These functions are used within the context of the Export Figures Tool
+/**
+ * Export Figures Tool.
+ *
+ * Lets an admin pick an Instance, browse its Scenes > Modals > Figures as a
+ * checkbox tree, and export the selected figures (title, captions and image)
+ * as either an RTF document or a PPTX slide deck, generated client-side.
+ *
+ * @file
+ */
 
 const instanceButton = document.getElementById('chooseInstance');
 instanceButton.addEventListener('click', generateFigureOptions);
@@ -26,7 +34,7 @@ const EXPORT_COLOR_BODY = '3C434A';
  *
  * @param {string|number} figureID         The figure's post ID.
  * @param {string}        figureIframeCode The figure's full_figure standalone HTML path (the figure_iframe_code post meta field).
- * @return {Promise<string|null>} The server-side path to the saved PNG, or null if the figure had no iframe path, no Plotly figure, or the snapshot/upload failed.
+ * @return {Promise<string|null>} The public URL of the saved PNG, or null if the figure had no iframe path, no Plotly figure, or the snapshot/upload failed.
  */
 async function getInteractiveFigureImageURL(figureID, figureIframeCode) {
 	if (!figureIframeCode || typeof figureIframeCode !== 'string') {
@@ -233,6 +241,17 @@ async function fetchFigureImage(imageUrl, isExternal) {
 	};
 }
 
+/**
+ * Click handler for the "Export Figures" button.
+ *
+ * Collects the checked figure checkboxes, builds an intro sentence from the
+ * selected Instance's name and today's date, and hands off to downloadRTF() or
+ * downloadPPTX() depending on the chosen export format. The submit button is
+ * disabled and the spinner shown until the export finishes. Alerts the user if
+ * no Instance or no figures are selected.
+ *
+ * @return {Promise<void>}
+ */
 async function downloadFile() {
 	const instanceSelect = document.getElementById('location');
 	const instanceValue = instanceSelect.value;
@@ -292,6 +311,14 @@ async function downloadFile() {
 	}
 }
 
+/**
+ * Strips the HTML tags that commonly appear in figure captions (<span>, <em>
+ * and <a>) so the caption can be placed as plain text on a PPTX slide. Link
+ * text is kept; the href is dropped.
+ *
+ * @param {string|null} transformText The caption HTML.
+ * @return {string} The plain-text caption, or 'None' if the input was empty or null.
+ */
 function removeHtmlTagsForPPTX(transformText) {
 	if (transformText === '' || transformText === null) {
 		transformText = 'None';
@@ -306,7 +333,14 @@ function removeHtmlTagsForPPTX(transformText) {
 	return transformText;
 }
 
-// Thin accent-colored rule, used as a divider under slide/section titles.
+/**
+ * Draws a thin accent-colored horizontal rule across a slide, used as a
+ * divider under slide/section titles.
+ *
+ * @param {Object} slide A PptxGenJS slide.
+ * @param {number} y     Vertical position of the rule, in inches.
+ * @return {void}
+ */
 function addDividerLine(slide, y) {
 	slide.addShape('line', {
 		x: 0.5,
@@ -317,6 +351,20 @@ function addDividerLine(slide, y) {
 	});
 }
 
+/**
+ * Builds a PPTX deck of the selected figures and triggers its download as
+ * export-figures.pptx.
+ *
+ * The first slide holds the intro text. Each figure then gets its own slide
+ * with a title row (figure, Scene and Modal names), its short and long
+ * captions, its image (for Internal, External and Interactive figures, or a
+ * placeholder note for Code figures), and a slide number.
+ *
+ * @param {string}   introText          The title text for the first slide.
+ * @param {string[]} selectedCheckBoxes Values of the checked figure checkboxes, each
+ *                                      formatted "figureID;figureTitle;sceneTitle;modalTitle".
+ * @return {Promise<void>}
+ */
 async function downloadPPTX(introText, selectedCheckBoxes) {
 	// Create a new presentation
 	const pptx = new PptxGenJS();
@@ -452,7 +500,16 @@ async function downloadPPTX(introText, selectedCheckBoxes) {
 	pptx.writeFile({ fileName: 'export-figures.pptx' });
 }
 
-// Function to add image to slide if valid
+/**
+ * Fetches a figure image and places it on a slide, 6 inches wide with its
+ * height scaled to preserve the image's aspect ratio. Errors are logged and
+ * the slide is left without an image.
+ *
+ * @param {Object}  slide      A PptxGenJS slide.
+ * @param {string}  imageUrl   The image URL to fetch.
+ * @param {boolean} isExternal Whether imageUrl points to a third-party host (see fetchFigureImage()).
+ * @return {Promise<void>}
+ */
 async function addImageToSlide(slide, imageUrl, isExternal) {
 	try {
 		const { blob } = await fetchFigureImage(imageUrl, isExternal);
@@ -486,7 +543,13 @@ async function addImageToSlide(slide, imageUrl, isExternal) {
 	}
 }
 
-// Convert a blob to a base64 data URL for use in PptxGenJS
+/**
+ * Converts a blob to a base64 data URL, the format PptxGenJS expects for
+ * embedded image data.
+ *
+ * @param {Blob} blob The data to convert.
+ * @return {Promise<string>} The data URL (eg "data:image/png;base64,...").
+ */
 function convertBlobToBase64(blob) {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
@@ -496,6 +559,13 @@ function convertBlobToBase64(blob) {
 	});
 }
 
+/**
+ * Click handler for the "Select all figures" checkbox. Checks every figure
+ * checkbox and disables them while the master box is checked; unchecking the
+ * master box unchecks and re-enables them.
+ *
+ * @return {void}
+ */
 function selectAll() {
 	const checkBoxStatus = document.getElementById('masterCheckBox').checked;
 
@@ -508,6 +578,11 @@ function selectAll() {
 	});
 }
 
+/**
+ * Formats today's date for the export's intro sentence.
+ *
+ * @return {string} The date as "Month D, YYYY" (eg "October 6, 2026").
+ */
 function getFormattedDate() {
 	const date = new Date();
 
@@ -536,6 +611,16 @@ function getFormattedDate() {
 	return `${month} ${day}, ${year}`;
 }
 
+/**
+ * Fetches a figure image and encodes it as an RTF \pict group (hex-encoded
+ * bytes), displayed at up to 6 inches wide with its aspect ratio preserved,
+ * followed by two paragraph breaks. Only PNG and JPEG images are supported.
+ *
+ * @param {string}  imageUrl   The image URL to fetch.
+ * @param {boolean} isExternal Whether imageUrl points to a third-party host (see fetchFigureImage()).
+ * @return {Promise<string|undefined>} The RTF picture markup, or undefined if the image
+ *                                     isn't PNG/JPEG or couldn't be fetched.
+ */
 async function imageToRtf(imageUrl, isExternal) {
 	// Fetch the image and convert to base64
 	try {
@@ -593,15 +678,37 @@ async function imageToRtf(imageUrl, isExternal) {
 	}
 }
 
-// RTF color table matching EXPORT_COLOR_ACCENT/LABEL/BODY above (RTF wants RGB
-// triples, not hex): index 0 is left blank for "auto", so \cf1/\cf2/\cf3 below
-// map to accent/label/body respectively.
+/**
+ * RTF color table matching EXPORT_COLOR_ACCENT/LABEL/BODY above (RTF wants RGB
+ * triples, not hex): index 0 is left blank for "auto", so \cf1/\cf2/\cf3 below
+ * map to accent/label/body respectively.
+ *
+ * @type {string}
+ */
 const RTF_COLOR_TABLE =
 	'{\\colortbl;\\red34\\green113\\blue177;\\red80\\green87\\blue94;\\red60\\green67\\blue74;}';
-// Empty paragraph with only a bottom border - renders as a horizontal rule.
+
+/**
+ * Empty paragraph with only a bottom border - renders as a horizontal rule.
+ *
+ * @type {string}
+ */
 const RTF_DIVIDER = '{\\pard\\brdrb\\brdrs\\brdrw10\\brsp60\\par}';
 
-// first pass at downloading a RTF-formatted file
+/**
+ * Builds an RTF document of the selected figures and triggers its download as
+ * figure-export.rtf.
+ *
+ * The document opens with the centered intro text, then for each figure adds
+ * a title row (figure, Scene and Modal names), its image (for Internal,
+ * External and Interactive figures, or a placeholder note for Code figures),
+ * and its short and long captions.
+ *
+ * @param {string}   introText          The heading text for the top of the document.
+ * @param {string[]} selectedCheckBoxes Values of the checked figure checkboxes, each
+ *                                      formatted "figureID;figureTitle;sceneTitle;modalTitle".
+ * @return {Promise<void>}
+ */
 async function downloadRTF(introText, selectedCheckBoxes) {
 	// Create RTF content
 	let rtfContent =
@@ -698,14 +805,27 @@ async function downloadRTF(introText, selectedCheckBoxes) {
 	link.click();
 }
 
-// Escape RTF's structural control characters so literal backslashes or curly
-// braces in source text can't unbalance the document's group nesting -
-// unbalanced groups cause RTF readers to silently drop everything rendered
-// after the mismatch, which looks like only the first figure exported.
+/**
+ * Escapes RTF's structural control characters so literal backslashes or curly
+ * braces in source text can't unbalance the document's group nesting -
+ * unbalanced groups cause RTF readers to silently drop everything rendered
+ * after the mismatch, which looks like only the first figure exported.
+ *
+ * @param {string} text The raw text.
+ * @return {string} The text with \, { and } backslash-escaped.
+ */
 function escapeRtfSpecialChars(text) {
 	return text.replace(/[\\{}]/g, '\\$&');
 }
 
+/**
+ * Converts caption HTML to RTF text: escapes RTF special characters, strips
+ * <span> tags, turns <em> into RTF italics and <a href> into RTF HYPERLINK
+ * fields.
+ *
+ * @param {string|null} transformText The caption HTML.
+ * @return {string} The RTF-formatted caption, or 'None' if the input was empty or null.
+ */
 function htmlToRtfText(transformText) {
 	if (transformText === '' || transformText === null) {
 		transformText = 'None';
@@ -736,6 +856,19 @@ function htmlToRtfText(transformText) {
 
 	return transformText;
 }
+
+/**
+ * Click handler for the "Choose Instance" button.
+ *
+ * Queries the REST API for the selected Instance's Scenes, each Scene's
+ * Modals, and each Modal's Figures, and renders them into #optionCanvas as a
+ * nested checkbox tree (with a "Select all figures" master checkbox). Below
+ * the tree it adds the Document/Slide export format radio buttons, the
+ * "Export Figures" button and its spinner. Does nothing if no Instance is
+ * selected.
+ *
+ * @return {Promise<void>}
+ */
 async function generateFigureOptions() {
 	// Get the integer value of "Location" select element
 	const instanceID = document.getElementById('location').value;

@@ -14,7 +14,7 @@
  * Plugin Name:       Graphic Data Plugin
  * Plugin URI:        https://github.com/ioos/sanctuarywatch_graphicdata
  * Description:       This plugin customizes a Wordpress installation for the requirements of the Graphic Data framework.
- * Version:           1.6.11
+ * Version:           1.7.1
  * Author:            Graphic Data Team
  * Author URI:        https://www.noaa.gov
  * License:           GPL-2.0+
@@ -46,6 +46,7 @@ if ( ! defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) ) {
  */
 require plugin_dir_path( __FILE__ ) . 'includes/admin.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/figure-shortlinks.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/page-title-appearance.php';
 
 
 /**
@@ -209,6 +210,7 @@ function graphic_data_ensure_public_data_dir() {
 function graphic_data_register_blocks() {
 	register_block_type( __DIR__ . '/blocks/insert-figure/build' );
 	register_block_type( __DIR__ . '/blocks/insert-modal/build' );
+	register_block_type( __DIR__ . '/blocks/insert-scene/build' );
 }
 
 add_action( 'init', 'graphic_data_register_blocks' );
@@ -243,6 +245,8 @@ function graphic_data_register_figure_block_meta() {
 		'figure_external_alt',
 		'figure_code',
 		'figure_iframe_code',
+		'uploaded_html_file',
+		'uploaded_path_html',
 		'figure_upload_file',
 		'figure_interactive_arguments',
 		'figure_interactive_args_rendered',
@@ -273,6 +277,9 @@ add_action( 'init', 'graphic_data_register_figure_block_meta' );
 
 add_action( 'rest_api_init', 'graphic_data_register_figure_block_routes' );
 
+
+
+
 /**
  * Registers REST API routes for the figure block.
  *
@@ -280,8 +287,8 @@ add_action( 'rest_api_init', 'graphic_data_register_figure_block_routes' );
  * - GET: retrieves figure block meta via {@see graphic_data_get_figure_block_meta()}
  * - POST/PUT/PATCH: saves figure block meta via {@see graphic_data_save_figure_block_meta()}
  *
- * Both endpoints require the current user to have `edit_post` capability for the
- * requested post ID.
+ * GET allows public access to publicly viewable figures marked as published.
+ * Editors may also read drafts. Saving requires `edit_post` capability.
  *
  * Hooked to `rest_api_init`.
  *
@@ -297,7 +304,19 @@ function graphic_data_register_figure_block_routes() {
 				'callback'            => 'graphic_data_get_figure_block_meta',
 				'permission_callback' => function ( $request ) {
 					$post_id = absint( $request['id'] );
-					return current_user_can( 'edit_post', $post_id );
+					$post = get_post( $post_id );
+
+					if ( ! $post || 'figure' !== $post->post_type ) {
+						return false;
+					}
+
+					if ( current_user_can( 'edit_post', $post_id ) ) {
+						return true;
+					}
+
+					return is_post_publicly_viewable( $post )
+						&& '' === $post->post_password
+						&& 'published' === get_post_meta( $post_id, 'figure_published', true );
 				},
 			),
 			array(
@@ -363,6 +382,8 @@ function graphic_data_get_figure_block_meta( WP_REST_Request $request ) {
 			'figure_external_alt'              => get_post_meta( $post_id, 'figure_external_alt', true ),
 			'figure_code'                      => get_post_meta( $post_id, 'figure_code', true ),
 			'figure_iframe_code'               => get_post_meta( $post_id, 'figure_iframe_code', true ),
+			'uploaded_html_file'               => get_post_meta( $post_id, 'uploaded_html_file', true ),
+			'uploaded_path_html'               => get_post_meta( $post_id, 'uploaded_path_html', true ),
 			'figure_upload_file'               => get_post_meta( $post_id, 'figure_upload_file', true ),
 			'uploaded_file'                    => get_post_meta( $post_id, 'uploaded_file', true ),
 			'figure_interactive_arguments'     => get_post_meta( $post_id, 'figure_interactive_arguments', true ),
@@ -378,59 +399,6 @@ function graphic_data_get_figure_block_meta( WP_REST_Request $request ) {
 		)
 	);
 }
-
-// function graphic_data_save_figure_block_meta( WP_REST_Request $request ) {
-// 	$post_id = absint( $request['id'] );
-
-// 	if ( 'figure' !== get_post_type( $post_id ) ) {
-// 		return new WP_Error(
-// 			'invalid_post_type',
-// 			'This endpoint only supports figure posts.',
-// 			array( 'status' => 400 )
-// 		);
-// 	}
-
-// 	$params = $request->get_json_params();
-
-// 	update_post_meta( $post_id, 'figure_published', sanitize_text_field( $params['figure_published'] ?? 'draft' ) );
-// 	update_post_meta( $post_id, 'location', sanitize_text_field( $params['location'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_scene', sanitize_text_field( $params['figure_scene'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_modal', sanitize_text_field( $params['figure_modal'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_tab', sanitize_text_field( $params['figure_tab'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_order', absint( $params['figure_order'] ?? 1 ) );
-
-// 	update_post_meta( $post_id, 'figure_path', sanitize_text_field( $params['figure_path'] ?? 'Internal' ) );
-// 	update_post_meta( $post_id, 'figure_title', sanitize_text_field( $params['figure_title'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_image', esc_url_raw( $params['figure_image'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_external_url', esc_url_raw( $params['figure_external_url'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_external_alt', sanitize_text_field( $params['figure_external_alt'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_code', wp_kses_post( $params['figure_code'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_upload_file', sanitize_text_field( $params['figure_upload_file'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_interactive_arguments', wp_kses_post( $params['figure_interactive_arguments'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_caption_short', wp_kses_post( $params['figure_caption_short'] ?? '' ) );
-// 	update_post_meta( $post_id, 'figure_caption_long', wp_kses_post( $params['figure_caption_long'] ?? '' ) );
-
-// 	// Save fieldsets in Exopite-compatible associative array shape.
-// 	update_post_meta(
-// 		$post_id,
-// 		'figure_science_info',
-// 		array(
-// 			'figure_science_link_text' => sanitize_text_field( $params['figure_science_link_text'] ?? '' ),
-// 			'figure_science_link_url'  => esc_url_raw( $params['figure_science_link_url'] ?? '' ),
-// 		)
-// 	);
-
-// 	update_post_meta(
-// 		$post_id,
-// 		'figure_data_info',
-// 		array(
-// 			'figure_data_link_text' => sanitize_text_field( $params['figure_data_link_text'] ?? '' ),
-// 			'figure_data_link_url'  => esc_url_raw( $params['figure_data_link_url'] ?? '' ),
-// 		)
-// 	);
-
-// 	return graphic_data_get_figure_block_meta( $request );
-// }
 
 /**
  * Begins execution of the plugin.

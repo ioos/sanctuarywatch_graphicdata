@@ -5,10 +5,14 @@ import {
 	redText,
 	displayEntries,
 	applyPlainTextPaste,
+	moveTitleIntoFormFields,
 } from '@graphic-data/admin-utility';
 
 // the last stop in the field validation process (if needed)
 replaceFieldValuesWithTransientValues();
+
+// Move the post title into the form so it looks like the other fields.
+moveTitleIntoFormFields('Figure Post Title*', 'What is the post title for the figure? Note that this title is for internal use only and will not be seen by site viewers. There is a separate Figure Title field, below, that will be seen by site viewers.');
 
 run_admin_figures();
 

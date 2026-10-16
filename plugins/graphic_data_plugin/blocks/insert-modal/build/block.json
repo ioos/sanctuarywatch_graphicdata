@@ -44,6 +44,14 @@
       "type": "string",
       "default": "transparent"
     },
+    "modalSelectedTabBackgroundColor": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "modalUnselectedTabBackgroundColor": {
+      "type": "string",
+      "default": "transparent"
+    },
     "modalBorderEnabled": {
       "type": "boolean",
       "default": false
@@ -78,5 +86,6 @@
   "textdomain": "graphic-data-insert-interactive-modal",
   "editorScript": "file:./index.js",
   "viewScript": "file:./view.js",
-  "render": "file:./render.php"
+  "render": "file:./render.php",
+  "style": "file:./index.css"
 }

@@ -108,6 +108,7 @@ class Graphic_Data_Deactivation_Cleanup {
 		$this->delete_custom_post_type_posts();
 		$this->delete_instance_type_taxonomy();
 		delete_option( 'graphic_data_settings' );
+		delete_option( 'graphic_data_placeholders_ready' );
 		$this->delete_instance_associated_images();
 	}
 

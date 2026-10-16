@@ -56,7 +56,16 @@ export function render_modal(key, obj, modal_obj){
    
 
         // --- Tagline container ---
-        let tagline_container = document.getElementById('tagline-container');
+        // --- Tagline container ---
+        const tagline_container = document.getElementById('tagline-container');
+        const rawTagline = String(modal_data["modal_tagline"] ?? '').trim();
+        const showTagline = !is_mobile() && rawTagline !== '';
+
+        tagline_container.hidden = !showTagline;
+        tagline_container.innerHTML = showTagline
+            ? '<p>' + rawTagline.replace(/(\r\n|\n){2}/g, '</p><p>') + '</p>'
+            : '';
+
         let modal_tagline = modal_data["modal_tagline"];
         modal_tagline = '<p>' + modal_tagline.replace(/(\r\n|\n){2}/g, '</p><p>') + '</p>';
 

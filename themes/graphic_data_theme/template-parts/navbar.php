@@ -41,6 +41,7 @@
 			$graphic_data_single_instance = graphic_data_single_instance_check();
 			if ( false != $graphic_data_single_instance ) {
 				$graphic_data_scene_location = $graphic_data_single_instance['instanceID'];
+				$graphic_data_use_front_page_nav = false;
 			}
 
 			if ( ! $graphic_data_use_front_page_nav && ! empty( $graphic_data_scene_location ) ) {
@@ -57,6 +58,7 @@
 
 					$graphic_data_args = array(
 						'post_type' => 'scene',
+						'posts_per_page' => -1,
 						'post_status' => 'publish',
 						'meta_query' => array(
 							array(
@@ -74,10 +76,10 @@
 
 					if ( null !== $graphic_data_query && ( $graphic_data_query->have_posts() || ! empty( $graphic_data_navbar_pages ) ) ) {
 						$graphic_data_post_titles = array();
+						$graphic_data_inst_overview_scene = get_post_meta( $graphic_data_scene_location, 'instance_overview_scene', true );
 						while ( $graphic_data_query->have_posts() ) {
 							$graphic_data_query->the_post();
 							$graphic_data_scene_loc = get_post_meta( get_the_ID(), 'scene_location' )[0];
-							$graphic_data_inst_overview_scene = get_post_meta( $graphic_data_scene_loc, 'instance_overview_scene' )[0];
 							$graphic_data_scene_published = get_post_meta( get_the_ID(), 'scene_published', true );
 							$graphic_data_scene_order = get_post_meta( get_the_ID(), 'scene_order', true );
 							$graphic_data_scene_order = is_numeric( $graphic_data_scene_order ) ? (int) $graphic_data_scene_order : 0;

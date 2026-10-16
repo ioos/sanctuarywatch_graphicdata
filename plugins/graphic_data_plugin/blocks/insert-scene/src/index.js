@@ -1,5 +1,6 @@
+import '../../shared/loading.css';
 /**
- * Registers the Graphic Data Figure block in the editor.
+ * Registers the Graphic Data Scene block in the editor.
  *
  * Important:
  * - This file is for the Gutenberg editor bundle.
@@ -18,7 +19,7 @@ import metadata from './block.json';
 /**
  * Define a custom SVG icon for the block.
  */
-const figureIcon = (
+const sceneIcon = (
 	<svg
 		viewBox="0 0 24 24"
 		xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +42,7 @@ const figureIcon = (
  */
 registerBlockType( metadata.name, {
 	...metadata,
-	icon: figureIcon,
+	icon: sceneIcon,
 	edit: Edit,
 	save,
 } );

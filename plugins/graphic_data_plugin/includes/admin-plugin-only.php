@@ -15,6 +15,13 @@
 class Graphic_Data_Plugin_Only_Content {
 
 	/**
+	 * Autoloaded option set once all placeholders exist, so the existence checks can be skipped.
+	 *
+	 * @var string
+	 */
+	const PLACEHOLDERS_READY_OPTION = 'graphic_data_placeholders_ready';
+
+	/**
 	 * Creates a placeholder instance type term if the Graphic Data theme is not active.
 	 *
 	 * Inserts a new term into the `instance_type` taxonomy with a predefined name, slug,
@@ -56,12 +63,12 @@ class Graphic_Data_Plugin_Only_Content {
 	/**
 	 * Create placeholder instance.
 	 *
+	 * Links to the other placeholders are set afterwards by link_placeholders().
+	 *
 	 * @param int $current_user_id The ID of the user to set as post author.
 	 * @return void
 	 */
 	public function create_placeholder_instance( $current_user_id ) {
-		global $wpdb;
-
 		// set up information to be saved as the placeholder instance.
 		$post_title = 'Placeholder Instance';
 		$instance_short_title = 'Placeholder Instance';
@@ -86,15 +93,6 @@ class Graphic_Data_Plugin_Only_Content {
 		if ( ! is_wp_error( $post_id ) ) {
 			update_post_meta( $post_id, 'instance_short_title', $instance_short_title );
 			update_post_meta( $post_id, 'instance_slug', $instance_slug );
-
-			$placeholder_instance_type_id = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT term_id FROM {$wpdb->termmeta} WHERE meta_key = %s AND meta_value = %s",
-					'graphic_data_placeholder_id',
-					1,
-				)
-			);
-			update_post_meta( $post_id, 'instance_type', $placeholder_instance_type_id );
 			update_post_meta( $post_id, 'instance_status', 'Published' );
 			update_post_meta( $post_id, 'instance_legacy_content', 'no' );
 			update_post_meta( $post_id, 'instance_mobile_tile_background_color', $instance_mobile_tile_background_color );
@@ -107,11 +105,12 @@ class Graphic_Data_Plugin_Only_Content {
 	/**
 	 * Create example scenes for the placeholder.
 	 *
+	 * Links to the other placeholders are set afterwards by link_placeholders().
+	 *
 	 * @param int $current_user_id The ID of the user to set as post author.
 	 * @return void
 	 */
 	public function create_placeholder_scene( $current_user_id ) {
-		global $wpdb;
 		$post_title = 'Placeholder Scene';
 		$file_prefix = 'example_files/placeholder/';
 		$scene_infographic = $file_prefix . 'placeholder-scene.svg';
@@ -139,16 +138,8 @@ class Graphic_Data_Plugin_Only_Content {
 
 		// Check if post was created successfully.
 		if ( ! is_wp_error( $post_id ) ) {
-			$placeholder_instance_id = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-					'graphic_data_placeholder_id',
-					2,
-				)
-			);
+			$placeholder_instance_id = $this->find_placeholder_post_id( 2, 'instance' );
 
-			update_post_meta( $post_id, 'scene_location', $placeholder_instance_id );
-			update_post_meta( $placeholder_instance_id, 'instance_overview_scene', $post_id );
 			update_post_meta( $post_id, 'scene_published', 'published' );
 			update_post_meta( $post_id, 'post_title', $post_title ); // This line is only needed because post title is added to the post meta table for regular scene posts, where it is used for several operations.
 			$scene_infographic_url = $this->copy_image_to_media_library( $scene_infographic, 2, $placeholder_instance_id );
@@ -168,76 +159,188 @@ class Graphic_Data_Plugin_Only_Content {
 	}
 
 	/**
-	 * Ensures a placeholder instance type exists when the Graphic Data theme is not active.
+	 * Ensures the placeholder instance type, instance, scene and modal all exist.
 	 *
-	 * Queries postmeta for the `graphic_data_instance_type_placeholder_id` key. If no
-	 * record is found, delegates to {@see create_placeholder_instance_type()} to insert
-	 * the placeholder term. Does nothing when the Graphic Data theme is active, since the
-	 * theme provides its own instance type management.
+	 * Each placeholder is identified by its `graphic_data_placeholder_id` meta value:
+	 * 1 = instance type (termmeta), 2 = instance, 3 = scene, 4 = modal (postmeta).
+	 * Any placeholder that is missing is created by its create_placeholder_*() method.
+	 * Runs regardless of whether the Graphic Data theme is active.
+	 *
+	 * When a run finds everything already exists, the PLACEHOLDERS_READY_OPTION flag is set and later calls
+	 * return immediately. The flag is autoloaded, so checking it costs no extra query. It is
+	 * cleared when a placeholder is deleted, so the next request recreates what is missing.
+	 *
+	 * @return void
+	 */
+	public function placeholder_content_director() {
+		if ( get_option( self::PLACEHOLDERS_READY_OPTION ) ) {
+			return;
+		}
+
+		$all_present = true;
+
+		$current_user_id = get_current_user_id();
+		if ( 0 === $current_user_id ) {
+			$users = get_users(
+				array(
+					'number'  => 1,
+					'orderby' => 'ID',
+					'order'   => 'ASC',
+				)
+			);
+			if ( ! empty( $users ) ) {
+				$current_user_id = $users[0]->ID;
+			}
+		}
+
+		// create placeholder instance type if it isn't there.
+		if ( ! $this->find_placeholder_term_id( 1 ) ) {
+			$all_present = false;
+			$this->create_placeholder_instance_type();
+		}
+
+		// create instance if it isn't there.
+		if ( ! $this->find_placeholder_post_id( 2, 'instance' ) ) {
+			$all_present = false;
+			$this->create_placeholder_instance( $current_user_id );
+		}
+
+		// create scene if it isn't there.
+		if ( ! $this->find_placeholder_post_id( 3, 'scene' ) ) {
+			$all_present = false;
+			$this->create_placeholder_scene( $current_user_id );
+		}
+
+		// create modal if it isn't there.
+		if ( ! $this->find_placeholder_post_id( 4, 'modal' ) ) {
+			$all_present = false;
+			$this->create_placeholder_modal( $current_user_id );
+		}
+
+		// Anything just created may need linking, and existing placeholders may still point
+		// at a deleted one, so rewrite every link between them.
+		if ( ! $all_present ) {
+			$this->link_placeholders();
+		}
+
+		// Only set the flag once a request finds everything already in place, so a failed
+		// creation is retried on the next request instead of being skipped forever.
+		if ( $all_present ) {
+			update_option( self::PLACEHOLDERS_READY_OPTION, 1, true );
+		}
+	}
+
+	/**
+	 * Clears the placeholders-ready flag when a placeholder post is permanently deleted.
+	 *
+	 * Hooked to `before_delete_post`, because post meta is already gone by `deleted_post`.
+	 * Trashing a placeholder does not trigger this, since the post still exists.
+	 *
+	 * @param int $post_id ID of the post being deleted.
+	 * @return void
+	 */
+	public function reset_placeholders_on_post_delete( $post_id ) {
+		if ( '' !== get_post_meta( $post_id, 'graphic_data_placeholder_id', true ) ) {
+			delete_option( self::PLACEHOLDERS_READY_OPTION );
+		}
+	}
+
+	/**
+	 * Clears the placeholders-ready flag when the placeholder instance type is deleted.
+	 *
+	 * Hooked to `pre_delete_term`, because term meta is already gone by `delete_term`.
+	 *
+	 * @param int $term_id ID of the term being deleted.
+	 * @return void
+	 */
+	public function reset_placeholders_on_term_delete( $term_id ) {
+		if ( '' !== get_term_meta( $term_id, 'graphic_data_placeholder_id', true ) ) {
+			delete_option( self::PLACEHOLDERS_READY_OPTION );
+		}
+	}
+
+	/**
+	 * Finds the term ID of a placeholder term by its `graphic_data_placeholder_id` value.
+	 *
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 * @param int $placeholder_id Placeholder marker value (1 = instance type).
+	 * @return int Term ID, or 0 if not found.
+	 */
+	private function find_placeholder_term_id( $placeholder_id ) {
+		global $wpdb;
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT term_id FROM {$wpdb->termmeta} WHERE meta_key = %s AND meta_value = %s ORDER BY term_id ASC LIMIT 1",
+				'graphic_data_placeholder_id',
+				$placeholder_id,
+			)
+		);
+	}
+
+	/**
+	 * Finds the post ID of a placeholder post by its `graphic_data_placeholder_id` value.
+	 *
+	 * The post type is required because placeholder media attachments share marker values
+	 * with placeholder posts (the scene image is tagged 2, the same as the instance).
+	 *
+	 * @global wpdb $wpdb WordPress database abstraction object.
+	 * @param int    $placeholder_id Placeholder marker value (2 = instance, 3 = scene, 4 = modal).
+	 * @param string $post_type      Post type the placeholder must have.
+	 * @return int Post ID, or 0 if not found.
+	 */
+	private function find_placeholder_post_id( $placeholder_id, $post_type ) {
+		global $wpdb;
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
+				'graphic_data_placeholder_id',
+				$placeholder_id,
+				$post_type,
+			)
+		);
+	}
+
+	/**
+	 * Points every placeholder at the current IDs of the others.
+	 *
+	 * Safe to run repeatedly: it looks up each placeholder fresh and overwrites the link
+	 * fields, so a placeholder that survived when another was deleted and recreated is
+	 * reconnected to the new one.
 	 *
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 * @return void
 	 */
-	public function placeholder_content_director() {
+	private function link_placeholders() {
 		global $wpdb;
-		if ( ! GRAPHIC_DATA_IS_ACTIVE_THEME ) {
 
-			$current_user_id = get_current_user_id();
-			if ( 0 === $current_user_id ) {
-				$users = get_users(
-					array(
-						'number'  => 1,
-						'orderby' => 'ID',
-						'order'   => 'ASC',
-					)
-				);
-				if ( ! empty( $users ) ) {
-					$current_user_id = $users[0]->ID;
-				}
-			}
+		$instance_type_id = $this->find_placeholder_term_id( 1 );
+		$instance_id      = $this->find_placeholder_post_id( 2, 'instance' );
+		$scene_id         = $this->find_placeholder_post_id( 3, 'scene' );
+		$modal_id         = $this->find_placeholder_post_id( 4, 'modal' );
 
-			// create placeholder instance type if it isn't there.
-			$instance_type_present = $wpdb->get_var(
-				"SELECT COUNT(*)
-				FROM {$wpdb->postmeta}
-				WHERE meta_key = 'graphic_data_placeholder_id' 
-				AND meta_value = 1"
+		if ( $instance_id ) {
+			update_post_meta( $instance_id, 'instance_type', $instance_type_id );
+			update_post_meta( $instance_id, 'instance_overview_scene', $scene_id );
+		}
+		if ( $scene_id ) {
+			update_post_meta( $scene_id, 'scene_location', $instance_id );
+		}
+		if ( $modal_id ) {
+			update_post_meta( $modal_id, 'modal_location', $instance_id );
+			update_post_meta( $modal_id, 'modal_scene', $scene_id );
+		}
+
+		// Placeholder media is tagged with the instance it belongs to.
+		if ( $instance_id ) {
+			$attachment_ids = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND p.post_type = %s",
+					'graphic_data_placeholder_id',
+					'attachment',
+				)
 			);
-			if ( 0 == $instance_type_present ) {
-				$this->create_placeholder_instance_type();
-			}
-
-			// create instance if it isn't there.
-			$instance_present = $wpdb->get_var(
-				"SELECT COUNT(*)
-				FROM {$wpdb->postmeta}
-				WHERE meta_key = 'graphic_data_placeholder_id' 
-				AND meta_value = 2"
-			);
-			if ( 0 == $instance_present ) {
-				$this->create_placeholder_instance( $current_user_id );
-			}
-
-			// create scene if it isn't there.
-			$scene_present = $wpdb->get_var(
-				"SELECT COUNT(*)
-				FROM {$wpdb->postmeta}
-				WHERE meta_key = 'graphic_data_placeholder_id' 
-				AND meta_value = 3"
-			);
-			if ( 0 == $scene_present ) {
-				$this->create_placeholder_scene( $current_user_id );
-			}
-
-			// create modal if it isn't there.
-			$modal_present = $wpdb->get_var(
-				"SELECT COUNT(*)
-				FROM {$wpdb->postmeta}
-				WHERE meta_key = 'graphic_data_placeholder_id' 
-				AND meta_value = 4"
-			);
-			if ( 0 == $modal_present ) {
-				$this->create_placeholder_modal( $current_user_id );
+			foreach ( $attachment_ids as $attachment_id ) {
+				update_post_meta( (int) $attachment_id, 'graphic_data_instance_id', $instance_id );
 			}
 		}
 	}
@@ -247,14 +350,13 @@ class Graphic_Data_Plugin_Only_Content {
 	 *
 	 * Iterates over a structured array of modal data and inserts each entry as a
 	 * WordPress post of type 'modal'. For each successfully created post, sets
-	 * post meta fields based on the keys present in $modal_array.
+	 * post meta fields based on the keys present in $modal_array. Links to the other
+	 * placeholders are set afterwards by link_placeholders().
 	 *
 	 * @param int $current_user_id  The WordPress user ID to set as the post author.
 	 * @return void
 	 */
 	public function create_placeholder_modal( $current_user_id ) {
-		global $wpdb;
-
 		$post_title = 'Placeholder Modal';
 		$modal_tagline = 'This is a placeholder modal used for behind the scenes purposes when Graphic Data is not used as the theme.';
 
@@ -272,26 +374,6 @@ class Graphic_Data_Plugin_Only_Content {
 		if ( ! is_wp_error( $post_id ) ) {
 			update_post_meta( $post_id, 'modal_published', 'published' );
 			update_post_meta( $post_id, 'post_type', 'modal' ); // needed? Unclear.
-
-			$placeholder_instance_id = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
-					'graphic_data_placeholder_id',
-					2,
-				)
-			);
-			update_post_meta( $post_id, 'modal_location', $placeholder_instance_id );
-
-			$placeholder_scene_id = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
-					'graphic_data_placeholder_id',
-					3,
-					'scene',
-				)
-			);
-			update_post_meta( $post_id, 'modal_scene', $placeholder_scene_id );
-
 			update_post_meta( $post_id, 'modal_icons', 'Placeholder' );
 			update_post_meta( $post_id, 'modal_tagline', $modal_tagline );
 			update_post_meta( $post_id, 'modal_icon_order', 1 );
@@ -322,6 +404,10 @@ class Graphic_Data_Plugin_Only_Content {
 	 *                                     `graphic_data_instance_id` to associate the media with a
 	 *                                     specific plugin instance.
 	 *
+	 * If an attachment with the same placeholder ID and title already exists and its file is
+	 * still on disk, that attachment is reused (and re-tagged with $instance_id) instead of
+	 * uploading another copy.
+	 *
 	 * @return string|false URL of the uploaded attachment on success, or false if the source
 	 *                      file does not exist or the upload process fails.
 	 */
@@ -332,11 +418,36 @@ class Graphic_Data_Plugin_Only_Content {
 			return false;
 		}
 
+		$filename = basename( $plugin_image_path );
+		$attachment_title = sanitize_file_name( pathinfo( $filename, PATHINFO_FILENAME ) );
+
+		// Reuse an earlier copy of this image (same placeholder marker and title) if its file is
+		// still on disk, so recreating a placeholder doesn't add another copy to the media library.
+		$existing_ids = get_posts(
+			array(
+				'post_type'      => 'attachment',
+				'post_status'    => 'inherit',
+				'title'          => $attachment_title,
+				'meta_key'       => 'graphic_data_placeholder_id',
+				'meta_value'     => $placeholder_id,
+				'orderby'        => 'ID',
+				'order'          => 'ASC',
+				'fields'         => 'ids',
+				'posts_per_page' => -1,
+			)
+		);
+		foreach ( $existing_ids as $existing_id ) {
+			$existing_file = get_attached_file( $existing_id );
+			if ( $existing_file && file_exists( $existing_file ) ) {
+				update_post_meta( $existing_id, 'graphic_data_instance_id', $instance_id );
+				return wp_get_attachment_url( $existing_id );
+			}
+		}
+
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 
-		$filename = basename( $plugin_image_path );
 		$upload_file = wp_upload_bits( $filename, null, file_get_contents( $plugin_image_path ) );
 
 		if ( $upload_file['error'] ) {
@@ -345,7 +456,7 @@ class Graphic_Data_Plugin_Only_Content {
 
 		$attachment_data = array(
 			'post_mime_type' => $upload_file['type'],
-			'post_title'     => sanitize_file_name( pathinfo( $filename, PATHINFO_FILENAME ) ),
+			'post_title'     => $attachment_title,
 			'post_content'   => '',
 			'post_status'    => 'inherit',
 		);
