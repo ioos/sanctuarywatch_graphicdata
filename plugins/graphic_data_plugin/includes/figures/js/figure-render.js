@@ -279,6 +279,7 @@ async function renderSavedFigure(
         } catch {
             return;
         }
+        
 }
 
 
@@ -446,6 +447,17 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
         } catch (err) {
             console.error('Plotly interactive plot error:', err);
         }
+
+        //Google Tags
+        document.addEventListener('graphic-data:figureInteractiveGraphLoaded', (event) => {  
+            console.log('Received graphic-data:figureInteractiveGraphLoaded', event.detail);
+        });
+
+
+        document.dispatchEvent( new CustomEvent( 'graphic-data:figureInteractiveGraphLoaded', {
+            detail: { title, postID }
+        } ) );
+
     }
 
     if (window.location.href.includes("post.php") || window.location.href.includes("post-new.php")) {
@@ -655,18 +667,6 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
                 if (modebar) {
                     modebar.style.top = '-28px';
                 }
-
-        		//Google Tags
-                // document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (event) => {  
-                //     console.log('Received graphic-data:figureTimeseriesGraphLoaded', event.detail);
-                // });
-
-
-        		if (!window.location.href.includes('post.php') && !window.location.href.includes("post-new.php")) {
-                    document.dispatchEvent( new CustomEvent( 'graphic-data:figureTimeseriesGraphLoaded', {
-                        detail: { title, postID }
-                    } ) );
-        		}
 
         		break;
         }
@@ -1363,7 +1363,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
 
             enableFigureImageViewer(img);
 
-            //Google Tags
+            // Google Tags
             // document.addEventListener('graphic-data:figureExternalImageLoaded', (event) => {  
             //     console.log('Received graphic-data:figureExternalImageLoaded', event.detail);
             // });

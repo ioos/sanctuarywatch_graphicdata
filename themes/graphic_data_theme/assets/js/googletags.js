@@ -4,6 +4,55 @@ const _settingsEl = document.getElementById('graphic-data-settings');
 const _settings = _settingsEl ? JSON.parse(_settingsEl.textContent) : {};
 const gaMeasurementID = _settings.googleAnalyticsMeasurementId ?? '';
 
+
+// Keep one delegated click listener per tracking type, with current context.
+function setupFigureLinkTracking(eventName, iconSelector, track) {
+	const figures = new Map();
+	document.addEventListener(eventName, (e) => {
+		const { postID: figureID } = e.detail;
+		if (figureID == null || figureID === '') return;
+		figures.set(String(figureID), figureID);
+	});
+	document.addEventListener('click', (e) => {
+		const link = e.target.closest?.('a');
+		if (!link || !link.querySelector(iconSelector)) return;
+		const figure = link.closest('[id^="figure-"]');
+		if (!figure) return;
+		const figureID = figures.get(figure.id.slice('figure-'.length));
+		if (figureID == null) return;
+		const title = figure.querySelector('.figureTitle')?.textContent.trim() || 'Unknown Title';
+		track(figureID, title, link.textContent.trim(), link.href);
+	});
+}
+
+function setupAccordionLinkTracking(eventName, section, label, track) {
+	let context;
+	document.addEventListener(eventName, (e) => {
+		context = e.detail;
+	});
+	document.addEventListener('click', (e) => {
+		if (!context) return;
+		const link = e.target.closest?.('.accordion-body a');
+		if (!link || link.closest('[id^="figure-"]')) return;
+		const modal = link.closest('.modal-content');
+		if (section === 'modal') {
+			if (!modal || !link.closest('#accordion-container')) return;
+		} else if (modal) {
+			return;
+		}
+		const item = link.closest('.accordion-item');
+		const button = item?.querySelector('.accordion-header .accordion-button');
+		if (!button || button.textContent.trim() !== label) return;
+		const id = section === 'modal' ? context.modalID : context.sceneID;
+		if (id == null || id === '') return;
+		const titleElement = section === 'modal'
+			? modal.querySelector('#modal-title')
+			: document.querySelector('#title-container h1');
+		const title = titleElement?.textContent.trim() || context.title || 'Unknown Title';
+		track(link.textContent.trim(), id, link.href, title, gaMeasurementID);
+	});
+}
+
 //FIGURE TRACKING AND ANALYSIS_______________________________________________________________
 /**
  * Pushes a custom event to the dataLayer for tracking figure science link interactions when clicked.
@@ -31,36 +80,7 @@ function figureScienceLinkClick(
 	});
 }
 
-document.addEventListener(
-	'graphic-data:setupFigureScienceLinkTracking',
-	(e) => {
-		const { figureID } = e.detail;
-		document.querySelectorAll('a').forEach(function (link) {
-			const hasClipboardIcon = link.querySelector(
-				'i.fa.fa-clipboard-list'
-			);
-			if (hasClipboardIcon) {
-				link.addEventListener('click', function (event) {
-					const linkTitle = link.textContent.trim();
-					const url = link.href;
-
-					const figureTitleElement =
-						document.querySelector('.figureTitle');
-					const figureTitle = figureTitleElement
-						? figureTitleElement.textContent.trim()
-						: 'Unknown Title';
-
-					figureScienceLinkClick(
-						figureID,
-						figureTitle,
-						linkTitle,
-						url
-					);
-				});
-			}
-		});
-	}
-);
+setupFigureLinkTracking('graphic-data:setupFigureScienceLinkTracking', 'i.fa.fa-clipboard-list', figureScienceLinkClick);
 
 /**
  * Pushes a custom event to the dataLayer for tracking figure data link interactions when clicked.
@@ -83,33 +103,14 @@ function figureDataLinkClick(figureID, figureTitle, dataText, dataLink) {
 	});
 }
 
-document.addEventListener('graphic-data:setupFigureDataLinkTracking', (e) => {
-	const { figureID } = e.detail;
-	document.querySelectorAll('a').forEach(function (link) {
-		const hasClipboardIcon = link.querySelector('i.fa.fa-database');
-		if (hasClipboardIcon) {
-			link.addEventListener('click', function (event) {
-				const linkTitle = link.textContent.trim();
-				const url = link.href;
+setupFigureLinkTracking('graphic-data:setupFigureDataLinkTracking', 'i.fa.fa-database', figureDataLinkClick);
 
-				const figureTitleElement =
-					document.querySelector('.figureTitle');
-				const figureTitle = figureTitleElement
-					? figureTitleElement.textContent.trim()
-					: 'Unknown Title';
-
-				figureDataLinkClick(figureID, figureTitle, linkTitle, url);
-			});
-		}
-	});
-});
-
-document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (e) => {
+document.addEventListener('graphic-data:figureInteractiveGraphLoaded', (e) => {
 	console.log('googletags.js',  e.detail);
-	const { title, figureID } = e.detail;
+	const { title, postID: figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
-		event: 'figureTimeseriesGraphLoaded',
+		event: 'figureInteractiveGraphLoaded',
 		figureType: 'lineChart',
 		pageSection: 'figure',
 		title,
@@ -119,7 +120,7 @@ document.addEventListener('graphic-data:figureTimeseriesGraphLoaded', (e) => {
 
 document.addEventListener('graphic-data:figureInternalImageLoaded', (e) => {
 	console.log('googletags.js',  e.detail);
-	const { title, figureID } = e.detail;
+	const { title, postID: figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureInternalImageLoaded',
@@ -131,7 +132,7 @@ document.addEventListener('graphic-data:figureInternalImageLoaded', (e) => {
 });
 
 document.addEventListener('graphic-data:figureExternalImageLoaded', (e) => {
-	const { title, figureID } = e.detail;
+	const { title, postID: figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureExternalImageLoaded',
@@ -143,7 +144,7 @@ document.addEventListener('graphic-data:figureExternalImageLoaded', (e) => {
 });
 
 document.addEventListener('graphic-data:figureCodeDisplayLoaded', (e) => {
-	const { title, figureID } = e.detail;
+	const { title, postID: figureID } = e.detail;
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureCodeDisplayLoaded',
@@ -196,7 +197,7 @@ function modalMoreInfoLinkClicked(
 ) {
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
-		event: 'modalMoreInfoClicked',
+		event: 'modalMoreInfoLinkClicked',
 		pageSection: 'modal',
 		linkTitle,
 		modalID,
@@ -205,46 +206,7 @@ function modalMoreInfoLinkClicked(
 	});
 }
 
-document.addEventListener(
-	'graphic-data:setupModalMoreInfoLinkTracking',
-	(e) => {
-		const { modalID } = e.detail;
-		document.querySelectorAll('.accordion-body a').forEach(function (link) {
-			link.addEventListener('click', function (event) {
-				// Find the closest .accordion-item
-				const accordionItem =
-					event.currentTarget.closest('.accordion-item');
-				const accordionButton = accordionItem
-					? accordionItem.querySelector(
-							'.accordion-header .accordion-button'
-						)
-					: null;
-				const buttonText = accordionButton.textContent.trim();
-				// Check if the button has the class "More Info"
-				if (buttonText === 'More Info') {
-					const linkTitle = link.textContent.trim();
-					const url = link.href;
-
-					// Get modal title from #modal-title
-					const modalTitleElement =
-						document.getElementById('modal-title');
-					const modalTitle = modalTitleElement
-						? modalTitleElement.textContent.trim()
-						: 'Unknown Title';
-
-					// Push to dataLayer
-					modalMoreInfoLinkClicked(
-						linkTitle,
-						modalID,
-						url,
-						modalTitle,
-						gaMeasurementID
-					);
-				}
-			});
-		});
-	}
-);
+setupAccordionLinkTracking('graphic-data:setupModalMoreInfoLinkTracking', 'modal', 'More Info', modalMoreInfoLinkClicked);
 
 /**
  * Tracks the event when modal images are clicked and pushes relevant data to the dataLayer.
@@ -265,7 +227,7 @@ function modalImagesLinkClicked(
 	console.log(linkTitle, modalID, url, modalTitle, gaMeasurementID);
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
-		event: 'modalMoreInfoClicked',
+		event: 'modalImagesLinkClicked',
 		pageSection: 'modal',
 		linkTitle,
 		modalID,
@@ -274,53 +236,19 @@ function modalImagesLinkClicked(
 	});
 }
 
-document.addEventListener('graphic-data:setupModalImagesLinkTracking', (e) => {
-	const { modalID } = e.detail;
-	document.querySelectorAll('.accordion-body a').forEach(function (link) {
-		link.addEventListener('click', function (event) {
-			// Find the closest .accordion-item
-			const accordionItem =
-				event.currentTarget.closest('.accordion-item');
-			const accordionButton = accordionItem
-				? accordionItem.querySelector(
-						'.accordion-header .accordion-button'
-					)
-				: null;
-			const buttonText = accordionButton.textContent.trim();
-			// Check if the button has the class "More Info"
-			if (buttonText === 'Media') {
-				const linkTitle = link.textContent.trim();
-				const url = link.href;
-
-				// Get modal title from #modal-title
-				const modalTitleElement =
-					document.getElementById('modal-title');
-				const modalTitle = modalTitleElement
-					? modalTitleElement.textContent.trim()
-					: 'Unknown Title';
-
-				// Push to dataLayer
-				modalImagesLinkClicked(
-					linkTitle,
-					modalID,
-					url,
-					modalTitle,
-					gaMeasurementID
-				);
-			}
-		});
-	});
-});
+setupAccordionLinkTracking('graphic-data:setupModalImagesLinkTracking', 'modal', 'Media', modalImagesLinkClicked);
 
 //SCENE TRACKING AND ANALYSIS_______________________________________________________________
 document.addEventListener('graphic-data:sceneLoaded', (e) => {
 	const { title, sceneID, instance_overview_scene } = e.detail;
 	window.dataLayer.push({
 		event: 'sceneLoaded',
+		pageSection: 'scene',
+		title,
 		sceneTitle: title,
 		sceneID,
-		instance_overview_scene,
-		gaMeasurementID, // from module-level const
+		instance: instance_overview_scene,
+		GA4_MeasurementID: gaMeasurementID, // from module-level const
 	});
 });
 
@@ -352,47 +280,7 @@ function sceneMoreInfoLinkClicked(
 	});
 }
 
-document.addEventListener(
-	'graphic-data:setupSceneMoreInfoLinkTracking',
-	(e) => {
-		const { title, sceneID } = e.detail;
-		document.querySelectorAll('.accordion-body a').forEach(function (link) {
-			link.addEventListener('click', function (event) {
-				// Find the closest .accordion-item
-				const accordionItem =
-					event.currentTarget.closest('.accordion-item');
-				const accordionButton = accordionItem
-					? accordionItem.querySelector(
-							'.accordion-header .accordion-button'
-						)
-					: null;
-				const buttonText = accordionButton.textContent.trim();
-				// Check if the button has the class "More Info"
-				if (buttonText === 'More Info') {
-					const linkTitle = link.textContent.trim();
-					const url = link.href;
-
-					// Get scene title from #modal-title
-					const sceneTitleElement = document.querySelector(
-						'#title-container h1'
-					);
-					const sceneTitle = sceneTitleElement
-						? sceneTitleElement.textContent.trim()
-						: 'Unknown Title';
-
-					// Push to dataLayer
-					sceneMoreInfoLinkClicked(
-						linkTitle,
-						sceneID,
-						url,
-						sceneTitle,
-						gaMeasurementID
-					);
-				}
-			});
-		});
-	}
-);
+setupAccordionLinkTracking('graphic-data:setupSceneMoreInfoLinkTracking', 'scene', 'More Info', sceneMoreInfoLinkClicked);
 
 /**
  * Tracks when a scene image is clicked and pushes the event data to the dataLayer.
@@ -422,41 +310,4 @@ function sceneImagesLinkClicked(
 	});
 }
 
-document.addEventListener('graphic-data:setupSceneImagesLinkTracking', (e) => {
-	const { sceneID } = e.detail;
-	document.querySelectorAll('.accordion-body a').forEach(function (link) {
-		link.addEventListener('click', function (event) {
-			// Find the closest .accordion-item
-			const accordionItem =
-				event.currentTarget.closest('.accordion-item');
-			const accordionButton = accordionItem
-				? accordionItem.querySelector(
-						'.accordion-header .accordion-button'
-					)
-				: null;
-			const buttonText = accordionButton.textContent.trim();
-			// Check if the button has the class "More Info"
-			if (buttonText === 'Media') {
-				const linkTitle = link.textContent.trim();
-				const url = link.href;
-
-				// Get scene title from #modal-title
-				const sceneTitleElement = document.querySelector(
-					'#title-container h1'
-				);
-				const sceneTitle = sceneTitleElement
-					? sceneTitleElement.textContent.trim()
-					: 'Unknown Title';
-
-				// Push to dataLayer
-				sceneImagesLinkClicked(
-					linkTitle,
-					sceneID,
-					url,
-					sceneTitle,
-					gaMeasurementID
-				);
-			}
-		});
-	});
-});
+setupAccordionLinkTracking('graphic-data:setupSceneImagesLinkTracking', 'scene', 'Media', sceneImagesLinkClicked);
