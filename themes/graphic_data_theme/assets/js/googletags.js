@@ -111,7 +111,7 @@ document.addEventListener('graphic-data:figureInteractiveGraphLoaded', (e) => {
 	dataLayer.push({
 		GA4_MeasurementID: gaMeasurementID,
 		event: 'figureInteractiveGraphLoaded',
-		figureType: 'lineChart',
+		figureType: 'Interactive',
 		pageSection: 'figure',
 		title,
 		figureID,
@@ -240,16 +240,19 @@ setupAccordionLinkTracking('graphic-data:setupModalImagesLinkTracking', 'modal',
 
 //SCENE TRACKING AND ANALYSIS_______________________________________________________________
 document.addEventListener('graphic-data:sceneLoaded', (e) => {
-	const { title, sceneID, instance_overview_scene } = e.detail;
-	window.dataLayer.push({
-		event: 'sceneLoaded',
-		pageSection: 'scene',
-		title,
-		sceneTitle: title,
-		sceneID,
-		instance: instance_overview_scene,
-		GA4_MeasurementID: gaMeasurementID, // from module-level const
-	});
+    const { title, sceneID, instance_overview_scene } = e.detail;
+
+    window.dataLayer.push({
+        event: 'sceneLoaded',
+        pageSection: 'scene',
+        title,
+        sceneTitle: title,
+        sceneID,
+        instance: instance_overview_scene,
+        instance_overview_scene,
+        GA4_MeasurementID: gaMeasurementID,
+        gaMeasurementID,
+    });
 });
 
 /**
