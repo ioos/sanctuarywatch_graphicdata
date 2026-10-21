@@ -804,7 +804,7 @@
                 "accountId": "6251110826",
                 "containerId": "209664662",
                 "tagId": "40",
-                "name": "GA4 - figureTimeseriesGraphLoaded",
+                "name": "GA4 - figureInteractiveGraphLoaded",
                 "type": "gaawe",
                 "parameter": [
                     {
@@ -886,7 +886,7 @@
                     {
                         "type": "TEMPLATE",
                         "key": "eventName",
-                        "value": "figureCodeDisplayLoaded"
+                        "value": "figureInteractiveGraphLoaded"
                     },
                     {
                         "type": "TEMPLATE",
@@ -1681,7 +1681,7 @@
                 "accountId": "6251110826",
                 "containerId": "209664662",
                 "triggerId": "9",
-                "name": "figureTimeseriesGraphLoaded",
+                "name": "figureInteractiveGraphLoaded",
                 "type": "CUSTOM_EVENT",
                 "customEventFilter": [
                     {
@@ -1695,7 +1695,7 @@
                             {
                                 "type": "TEMPLATE",
                                 "key": "arg1",
-                                "value": "InteractiveGraphLoaded"
+                                "value": "figureInteractiveGraphLoaded"
                             }
                         ]
                     }
