@@ -1,2078 +1,760 @@
-import {
-    fetchFigureUploadMetadata,
-    loadPlotlyScript,
-    waitForElementById,
-    computeStandardDeviation,
-    computePercentile,
-    logFormFieldValues,
-    fillFormFieldValues,
-} from '@graphic-data/plotly-utility';
+/**
+ * Tabulator table figures.
+ *
+ * A table figure is described by a small JSON "spec" that is saved in the
+ * figure_interactive_args_rendered post meta field:
+ *
+ *   {
+ *     type: 'tabulator',
+ *     version: 1,
+ *     figureId: 123,
+ *     dataUrl: '/wp-content/data/figure_123/data.json',
+ *     columns: [ { field, title, format, decimals, headerFilter, frozen } ],
+ *     table:   { pageSize, layout, narrow, download }
+ *   }
+ *
+ * The same three steps are used everywhere a table is shown:
+ *
+ *   buildTabulatorSpec()  settings + column names  -> spec   (pure, no DOM)
+ *   mountTabulatorTable() spec + element           -> table  (admin, frontend, standalone HTML)
+ *   renderTabulatorFigure() glue used by figure-render.js
+ *
+ * Rows are not copied into the spec. They are read from the figure's uploaded
+ * data file each time the table is shown, so post meta stays small.
+ *
+ * IMPORTANT: this module has no bare-specifier imports on purpose. The
+ * standalone figure HTML files import it directly by URL, where no import
+ * map is available.
+ */
 
-const _lineDataEl = document.getElementById(
-    'wp-script-module-data-@graphic-data/tabulator-table'
-);
-let _lineDefaults = {};
-if ( _lineDataEl?.textContent ) {
-    try { _lineDefaults = JSON.parse( _lineDataEl.textContent ); } catch {}
+export const TABULATOR_GRAPH_TYPE = 'Tabulator table';
+export const TABULATOR_SPEC_TYPE = 'tabulator';
+export const TABULATOR_SPEC_VERSION = 1;
+
+/** Site-relative URL of this module, used by the standalone HTML files. */
+export const TABULATOR_MODULE_URL = (() => {
+	try {
+		const url = new URL(import.meta.url);
+		return url.pathname + url.search;
+	} catch {
+		return import.meta.url;
+	}
+})();
+
+const TABULATOR_VERSION = '6.6.1';
+const TABULATOR_CDN = `https://cdn.jsdelivr.net/npm/tabulator-tables@${TABULATOR_VERSION}/dist`;
+const TABULATOR_JS_URL = `${TABULATOR_CDN}/js/tabulator.min.js`;
+const TABULATOR_CSS_URL = `${TABULATOR_CDN}/css/tabulator_simple.min.css`;
+
+/** Tables with at most this many rows render every row, so screen readers can reach them. */
+const BASIC_RENDER_ROW_LIMIT = 1000;
+
+/*
+ * IDs of the admin settings fields. They are stored as [id, value] pairs in
+ * figure_interactive_arguments, the same storage the Plotly figures use.
+ */
+export const TABLE_FIELD = {
+	pageSize: 'TablePageSize',
+	layout: 'TableLayout',
+	narrow: 'TableNarrowScreens',
+	// Display order of the data columns: comma-separated positions in the data file, e.g. "2,0,1".
+	columnOrder: 'TableColumnOrder',
+	headerFilters: 'TableHeaderFilters',
+	freezeFirst: 'TableFreezeFirstColumn',
+	download: 'TableDownload',
+};
+
+/** Per-column field IDs. `index` is the column's position in the data file. */
+export const tableColumnField = {
+	show: (index) => `TableCol${index}Show`,
+	title: (index) => `TableCol${index}Title`,
+	format: (index) => `TableCol${index}Format`,
+	decimals: (index) => `TableCol${index}Decimals`,
+};
+
+export const TABLE_DEFAULTS = {
+	[TABLE_FIELD.pageSize]: 'All',
+	[TABLE_FIELD.layout]: 'fitDataStretch',
+	[TABLE_FIELD.narrow]: 'scroll',
+	[TABLE_FIELD.columnOrder]: '',
+	[TABLE_FIELD.headerFilters]: 'No',
+	[TABLE_FIELD.freezeFirst]: 'No',
+	[TABLE_FIELD.download]: 'No',
+};
+
+/* ------------------------------------------------------------------------ */
+/* Small helpers                                                             */
+/* ------------------------------------------------------------------------ */
+
+function isEditorScreen() {
+	const href = window.location.href;
+	return href.includes('post.php') || href.includes('post-new.php');
+}
+
+function escapeHtml(value) {
+	return String(value ?? '')
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;');
+}
+
+/** Turns "Proxima_Centuri_B" into "Proxima Centuri B". */
+export function defaultColumnTitle(columnName) {
+	return String(columnName).replace(/_/g, ' ').trim();
+}
+
+function isNumericValue(value) {
+	if (typeof value === 'number') {
+		return Number.isFinite(value);
+	}
+	if (typeof value !== 'string' || value.trim() === '') {
+		return false;
+	}
+	return Number.isFinite(Number(value));
 }
 
 /**
- * Asynchronously generates and renders a Plotly time series line chart with interactive features and overlays.
+ * Parses figure_interactive_arguments, a JSON array of [id, value] pairs,
+ * into a plain object. Accepts an object as well.
  *
- * This function loads the necessary Plotly library, retrieves figure configuration and data via REST API calls,
- * constructs the chart's data traces and layout based on user-specified arguments, and injects overlays such as
- * evaluation periods, event markers, standard deviation fills, error bars, mean and percentile lines. It supports
- * both admin and theme contexts for retrieving the figure's post ID.
- *
- * @async
- * @function produceTabulatorTable
- * @param {string}             targetFigureElement   - The ID of the DOM element where the chart should be rendered.
- * @param {string}             interactive_arguments - A JSON string (array of key-value pairs) representing user-specified chart configuration.
- * @param {string|number|null} postID                - The WordPress post ID for the figure. If null, the function attempts to retrieve it from the admin page.
- *
- * @description
- * - Ensures Plotly.js is loaded before proceeding.
- * - Retrieves the figure's configuration and data file path via a REST API call.
- * - Fetches the actual data to be plotted from the resolved file URL.
- * - Dynamically creates a container div for the Plotly chart and appends it to the target element.
- * - Constructs Plotly data traces for each line, including options for error bars, standard deviation fills, mean and percentile lines, and legend visibility.
- * - Configures the chart layout, including axis titles, bounds, grid lines, tick settings, and legend position.
- * - Renders the chart using Plotly.newPlot, then injects overlays (evaluation periods and event markers) using the `injectOverlays` function.
- * - Handles both admin and theme contexts for post ID resolution.
- * - Catches and logs errors related to script loading or network requests.
- *
- * @modifies
- * - Appends a new div to the target DOM element for rendering the chart.
- * - Updates the chart in the DOM with Plotly.
- *
- * @requires
- * - loadPlotlyScript: Ensures Plotly.js is loaded.
- * - waitForElementById: Waits for the target DOM element to be available.
- * - computeStandardDeviation: Computes standard deviation for error bars and fills.
- * - computePercentile: Computes percentiles for percentile lines.
- * - injectOverlays: Adds overlays such as evaluation periods and event markers to the chart.
- *
- * @example
- * // Render a Plotly line chart in the element with ID 'figure_123' using saved arguments and post ID 123:
- * producePlotlyScatterFigure('figure_123', '[["XAxisTitle","Date"],["YAxisTitle","Value"],...]', 123);
- *
- * @throws {Error} Logs errors to the console if Plotly fails to load, network requests fail, or data cannot be parsed.
- *
- * @variables
- * - figureID: The resolved post ID for the figure.
- * - figureArguments: Object containing parsed chart configuration.
- * - rootURL: The root URL of the current site.
- * - figureRestCall: REST API endpoint for retrieving the figure's data file path.
- * - uploaded_path_json: Path to the uploaded data file.
- * - finalURL: Full URL to the data file.
- * - dataToBePlotted: The parsed data object used for plotting.
- * - plotlyDivID: The ID assigned to the Plotly chart container div.
- * - allScattersPlotly: Array of Plotly trace objects for each line and overlay.
- * - layout: Plotly layout object for axis, legend, and display settings.
- * - config: Plotly configuration object for rendering options.
+ * @param {string|Array|Object} interactiveArguments
+ * @return {Object}
  */
-export async function produceTabulatorTable(targetFigureElement, interactive_arguments, postID, targetDocument = document){
-	
+export function parseInteractiveArguments(interactiveArguments) {
+	if (!interactiveArguments) {
+		return {};
+	}
+	if (Array.isArray(interactiveArguments)) {
+		return Object.fromEntries(interactiveArguments);
+	}
+	if (typeof interactiveArguments === 'object') {
+		return { ...interactiveArguments };
+	}
+	let text = String(interactiveArguments);
+	// Older figures were saved with escaped quotes; see fillFormFieldValues().
+	if (text.includes('\\')) {
+		text = text.replace(/\\/g, '');
+	}
+	try {
+		const parsed = JSON.parse(text);
+		return Array.isArray(parsed) ? Object.fromEntries(parsed) : parsed || {};
+	} catch {
+		return {};
+	}
+}
 
-    try {
+/**
+ * True when a parsed figure_interactive_args_rendered value is a table spec.
+ *
+ * @param {*} spec
+ * @return {boolean}
+ */
+export function isTabulatorSpec(spec) {
+	return Boolean(
+		spec &&
+			typeof spec === 'object' &&
+			spec.type === TABULATOR_SPEC_TYPE &&
+			Array.isArray(spec.columns)
+	);
+}
 
-		const renderDocument = targetDocument || document;
-        await loadPlotlyScript(); // ensures Plotly is ready
+/**
+ * Converts an uploaded file path (a server path or URL containing
+ * "wp-content") into a site-relative URL.
+ *
+ * @param {string} uploadedPath
+ * @return {string}
+ */
+export function uploadedPathToUrl(uploadedPath) {
+	const path = String(uploadedPath || '');
+	if (!path.includes('wp-content')) {
+		return path;
+	}
+	return '/wp-content' + path.split('wp-content')[1];
+}
 
-        const rawField = interactive_arguments;
-        const figureArguments = Object.fromEntries(JSON.parse(rawField));
-        const rootURL = window.location.origin;
-		let figureID = '';
-		
-        //Rest call to get uploaded_path_json
-        if (postID == null) {
-            // ADMIN SIDE POST ID GRAB
-            figureID = document.getElementsByName("post_ID")[0].value;
-            //console.log("figureID ADMIN:", figureID);
-        }
-        if (postID != null) {
-            // THEME SIDE POST ID GRAB
-            figureID = postID;
-            //console.log("figureID THEME:", figureID);
-        }
+/**
+ * Turns the parsed contents of an uploaded data file into Tabulator rows.
+ *
+ * Supported shapes:
+ * - Graphic Data JSON: { metadata, data: { column: [values...] } }
+ * - An array of row objects
+ * - GeoJSON FeatureCollection: one row per feature, from its properties
+ *
+ * @param {*} fileContents
+ * @return {Object[]}
+ */
+export function dataFileToRows(fileContents) {
+	if (Array.isArray(fileContents)) {
+		return fileContents;
+	}
+	if (fileContents?.type === 'FeatureCollection' && Array.isArray(fileContents.features)) {
+		return fileContents.features.map((feature) => ({ ...(feature?.properties || {}) }));
+	}
 
-        // in fetch_tab_info in script.js, await render_tab_info & await new Promise were added to give each run of producePlotlyScatterFigure a chance to finish running before the next one kicked off
-        // producePlotlyScatterFigure used to fail here because the script was running before the previous iteration finished. 
-        const data = await fetchFigureUploadMetadata(figureID);
-        const uploaded_path_json = data.uploaded_path_json;
+	const columns = fileContents?.data;
+	if (Array.isArray(columns)) {
+		return columns;
+	}
+	if (!columns || typeof columns !== 'object') {
+		return [];
+	}
 
-        const restOfURL = "/wp-content" + uploaded_path_json.split("wp-content")[1];
-        const finalURL = rootURL + restOfURL;
-        
-        const rawResponse = await fetch(finalURL);
-        if (!rawResponse.ok) {
-            throw new Error('Network response was not ok');
-        }
-        
-        const responseJson = await rawResponse.json();
-		//console.log('[GD] responseJson keys:', Object.keys(responseJson), 'type:', Array.isArray(responseJson) ? 'array' : typeof responseJson);
+	const keys = Object.keys(columns);
+	const rowCount = Math.max(
+		0,
+		...keys.map((key) => (Array.isArray(columns[key]) ? columns[key].length : 0))
+	);
 
-        const dataToBePlotted = responseJson.data;
-		//console.log('[GD] dataToBePlotted:', dataToBePlotted?.length, 'rows, first row:', JSON.stringify(dataToBePlotted?.[0]));
+	const rows = new Array(rowCount);
+	for (let i = 0; i < rowCount; i++) {
+		const row = {};
+		keys.forEach((key) => {
+			const value = Array.isArray(columns[key]) ? columns[key][i] : undefined;
+			row[key] = value === undefined ? null : value;
+		});
+		rows[i] = row;
+	}
+	return rows;
+}
 
-		//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-		let newDiv = document.createElement('div');
-		// let newDiv;
-		// if (!targetDocument || targetDocument === null) {
-        // 	newDiv = document.createElement('div');
-		// }
-		// if (targetDocument) {
-        // 	newDiv = renderDocument.createElement('div');
-		// }
+/** Fetches and parses the data file for a table. */
+async function fetchTableRows(dataUrl) {
+	const url = new URL(dataUrl, window.location.origin);
+	const response = await fetch(url.toString());
+	if (!response.ok) {
+		throw new Error(`Unable to load table data (${response.status}): ${url}`);
+	}
+	return dataFileToRows(await response.json());
+}
 
-		// considerations for unique hashing for multiple uses vs onetime use.
-		let plotlyDivID = `plotlyFigure${figureID}`;
-		// let plotlyDivID;
-		// const uniqueHash = window.crypto?.randomUUID?.() ||`${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-		// // if (targetDocument != renderDocument) {
-		// 	plotlyDivID = `plotlyFigure${figureID}`;
-		// }
-		// if (targetDocument === renderDocument) {
-		// 	plotlyDivID = `plotlyFigure${figureID}_${uniqueHash}`;
-		// }
-
-
-        newDiv.id = plotlyDivID
-        newDiv.classList.add("container", `figure_interactive${figureID}`);
-
-		//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-		
-		let targetElement = await waitForElementById(targetFigureElement);
-		targetElement.appendChild(newDiv);
-		// let targetElement;
-		// if (!targetDocument) {
-		// 	targetElement = await waitForElementById(targetFigureElement);
-		// 	targetElement.appendChild(newDiv);
-		// }
-		// if (targetDocument) {
-		// 	targetElement = renderDocument.getElementById(targetFigureElement);
-		// 	targetElement.appendChild(newDiv);
-		// }
-		
-		const numScatters = figureArguments['NumberOfScatters'];
-
-		let plotlyX;
-		let plotlyY;
-		let columnXHeader;
-		let columnYHeader;
-		let targetScatterColumn;
-		let singleScatterPlotly;
-		let allScattersPlotly = [];
-		let shapesForLayout = [];
-
-
-		//Shows the grid lines if it is set to 'on' in the figure arguments
-		const showGrid = figureArguments['showGrid'];
-		if (showGrid === 'on') {
-			var showGridBool = true;     
-		} else {
-			var showGridBool = false;     
+/** REST nonce for editor screens, when one is available. */
+function getRestNonce() {
+	try {
+		const moduleData = JSON.parse(
+			document.getElementById('wp-script-module-data-@graphic-data/file-upload')?.textContent ?? '{}'
+		);
+		if (moduleData.nonce) {
+			return moduleData.nonce;
 		}
+	} catch {}
+	return window.wpApiSettings?.nonce || '';
+}
 
-		//Shows the graph ticks on the outside if it is set to 'on' in the figure arguments
-		const graphTicks = figureArguments['graphTicks'];
-		if (graphTicks === 'on') {
-			var graphTickModeBool = '';
-			var graphTickPositionBool = '';       
-		} else {
-			var graphTickModeBool = 'auto';
-			var graphTickPositionBool = 'outside';    
-		}
-		//console.log('graphTicks', graphTicks);            
-		//console.log('graphTickModeBool', graphTickModeBool);
-		//console.log('graphTickPositionBool', graphTickPositionBool);
+/**
+ * Looks up the uploaded data file for a figure.
+ *
+ * @param {number|string} figureId
+ * @return {Promise<string>} Site-relative URL of the data file.
+ */
+export async function fetchFigureDataUrl(figureId) {
+	const nonce = getRestNonce();
+	const response = await fetch(
+		`${window.location.origin}/wp-json/wp/v2/figure/${figureId}?_fields=uploaded_path_json`,
+		{ headers: nonce ? { 'X-WP-Nonce': nonce } : {} }
+	);
+	const body = await response.json();
+	if (!response.ok) {
+		throw new Error(body?.message || `Unable to load figure ${figureId} (${response.status}).`);
+	}
+	if (typeof body.uploaded_path_json !== 'string' || body.uploaded_path_json.trim() === '') {
+		throw new Error(`Figure ${figureId} has no uploaded data file.`);
+	}
+	return uploadedPathToUrl(body.uploaded_path_json);
+}
 
-		// Plotly figure production logic
-		for (let i = 1; i <= figureArguments['NumberOfScatters']; i++) {
-			const targetScatterColumn = 'Scatter' + i;
-			const columnXHeader = figureArguments['XAxis'];
-			const columnYHeader = figureArguments[targetScatterColumn];
+/* ------------------------------------------------------------------------ */
+/* Library loading                                                           */
+/* ------------------------------------------------------------------------ */
 
-			const plotlyX = dataToBePlotted[columnXHeader];
-			const plotlyY = dataToBePlotted[columnYHeader];
+let tabulatorPromise = null;
+const stylePromises = new WeakMap();
 
-			const stdDev = computeStandardDeviation(plotlyY);
+/**
+ * Adds the Tabulator stylesheet to a document once.
+ *
+ * Call this for any document a table is moved into, for example the block
+ * editor's canvas iframe. Tables are drawn in one document and can be moved
+ * into another, and the stylesheet does not travel with them.
+ *
+ * @param {Document} [targetDocument] Document that will display tables.
+ * @return {Promise<void>} Resolves when the stylesheet has loaded (or failed).
+ */
+export function ensureTabulatorStyles(targetDocument = document) {
+	if (!targetDocument?.head) {
+		return Promise.resolve();
+	}
+	if (stylePromises.has(targetDocument)) {
+		return stylePromises.get(targetDocument);
+	}
 
-			const dateFormat = figureArguments['XAxisFormat'];
-			let xHoverFormat = '';
+	let link = targetDocument.querySelector('link[data-graphic-data-tabulator]');
+	let promise;
+	if (link) {
+		promise = Promise.resolve();
+	} else {
+		link = targetDocument.createElement('link');
+		link.rel = 'stylesheet';
+		link.href = TABULATOR_CSS_URL;
+		link.dataset.graphicDataTabulator = 'true';
+		promise = new Promise((resolve) => {
+			link.addEventListener('load', () => resolve(), { once: true });
+			link.addEventListener('error', () => resolve(), { once: true });
+		});
+		targetDocument.head.appendChild(link);
+	}
 
-			switch (dateFormat) {
-			case 'YYYY':
-				xHoverFormat = '%Y';
-				break;
-			case 'YYYY-MM':
-				xHoverFormat = '%Y-%m';
-				break;
-			case 'YYYY-MM-DD':
-				xHoverFormat = '%Y-%m-%d';
-				break;
-			default:
-				xHoverFormat = ''; // fallback to raw
-			}
+	stylePromises.set(targetDocument, promise);
+	return promise;
+}
 
-			// Then build your hovertemplate:
-			const xHoverValue = xHoverFormat
-			? `%{x|${xHoverFormat}}`
-			: `%{x}`;
+/**
+ * Loads the Tabulator script and stylesheet once per page.
+ *
+ * @return {Promise<Function>} The Tabulator constructor.
+ */
+export function loadTabulator() {
+	if (window.Tabulator) {
+		return Promise.resolve(window.Tabulator);
+	}
+	if (tabulatorPromise) {
+		return tabulatorPromise;
+	}
 
-			// Scatter type, marker type, and marker size
-			const lineType = figureArguments[targetScatterColumn + 'ScatterType'];
-			if (lineType === undefined) {
-				const lineType = 'solid';
-			} 
-			//console.log('lineType', lineType);
-			const markerType = figureArguments[targetScatterColumn + 'MarkerType'];
-			const markerSize = parseInt(figureArguments[targetScatterColumn + 'MarkerSize'], 10);
+	ensureTabulatorStyles(document);
 
-			//Shows the legend if it is set to 'on' in the figure arguments
-			const showLegend = figureArguments[targetScatterColumn + 'Legend'];
-			if (showLegend === 'on') {
-				var showLegendBool = true;     
+	tabulatorPromise = new Promise((resolve, reject) => {
+		const script = document.createElement('script');
+		script.src = TABULATOR_JS_URL;
+		script.async = true;
+		script.dataset.graphicDataTabulator = 'true';
+		script.addEventListener('load', () => {
+			if (window.Tabulator) {
+				resolve(window.Tabulator);
 			} else {
-				var showLegendBool = false;     
+				reject(new Error('Tabulator failed to initialize.'));
 			}
+		});
+		script.addEventListener('error', () => {
+			tabulatorPromise = null;
+			reject(new Error('The Tabulator library could not be loaded.'));
+		});
+		document.head.appendChild(script);
+	});
 
-			//Connects gaps in line where there is missing data
-			const connectGapsOpt = figureArguments[targetScatterColumn + 'ConnectGaps'] === 'on';     
+	return tabulatorPromise;
+}
 
-			//Show Standard error bars
-			const showError = figureArguments[targetScatterColumn + 'ErrorBars'];
-			const showError_InputValuesOpt = figureArguments[targetScatterColumn + 'ErrorBarsInputValues'];
-			if (showError === 'on') {
-				//Error bars using Standard Deviation based on dataset Y-axis values (Auto Calculated)
-				if (showError_InputValuesOpt === 'auto') {
-					var errorBarY = {
-						type: 'data',
-						array: new Array(plotlyY.length).fill(stdDev),
-						visible: true,
-						color: figureArguments[targetScatterColumn + 'ErrorBarsColor'],
-						thickness: 1.5,
-						width: 8
-					};   
-				}
-				//Error bars (values imported from spreadsheet per point in dataset)
-				//Do we want high and low bounds here?
-				if (showError_InputValuesOpt != 'auto') {
-					const showError_InputValue = dataToBePlotted[showError_InputValuesOpt].filter(item => item !== "");
-					var errorBarY = {
-						type: 'data',
-						array: showError_InputValue.map(val => parseFloat(val)), // Convert to number if needed
-						visible: true,
-						color: figureArguments[targetScatterColumn + 'ErrorBarsColor'],
-						thickness: 1.5,
-						width: 8
-					}; 
-				}          
+/* ------------------------------------------------------------------------ */
+/* Build: settings -> spec                                                   */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * Resolves the saved column order into a full list of data-file positions.
+ *
+ * Positions that are invalid or repeated are ignored. Columns the saved
+ * order does not mention, such as columns added by a new data file, follow
+ * in data-file order.
+ *
+ * @param {string} savedOrder  Comma-separated positions, e.g. "2,0,1".
+ * @param {number} columnCount Number of columns in the data file.
+ * @return {number[]} Every position from 0 to columnCount - 1, once each.
+ */
+export function resolveColumnOrder(savedOrder, columnCount) {
+	const order = [];
+	String(savedOrder || '')
+		.split(',')
+		.map((part) => Number.parseInt(part, 10))
+		.forEach((position) => {
+			if (Number.isInteger(position) && position >= 0 && position < columnCount && !order.includes(position)) {
+				order.push(position);
 			}
-			if (showError != 'on') {
-				var errorBarY = {};
-			}
+		});
+	for (let position = 0; position < columnCount; position++) {
+		if (!order.includes(position)) {
+			order.push(position);
+		}
+	}
+	return order;
+}
 
-			// Main line with or w/o error bars
-			const singleScatterPlotly = {
-				x: plotlyX,
-				y: plotlyY,
-				mode: 'markers',
-				type: 'scatter',
-				name: `${figureArguments[targetScatterColumn + 'Title']}`,
-				showlegend: showLegendBool,
-				line: {
-					dash: lineType // e.g., 'dash', 'dot', etc.
-				},
-				marker: {
-					color: figureArguments[targetScatterColumn + 'Color'],
-					symbol: markerType,
-					size: markerSize // Convert markerSize to integer
+/**
+ * Builds a table spec from the admin settings.
+ *
+ * @param {Object|string|Array} settings     Parsed or raw figure_interactive_arguments.
+ * @param {string[]}            columnNames  Column names in data-file order.
+ * @param {Object}              context
+ * @param {string}              context.dataUrl   Site-relative URL of the data file.
+ * @param {number|string}       context.figureId  Figure post ID.
+ * @param {Object[]}            [context.rows]    Rows, used to detect numeric columns.
+ * @return {Object} Table spec.
+ */
+export function buildTabulatorSpec(settings, columnNames, { dataUrl, figureId, rows = [] } = {}) {
+	const values = { ...TABLE_DEFAULTS, ...parseInteractiveArguments(settings) };
+	const valueOf = (id, fallback = '') => {
+		const value = values[id];
+		return value === undefined || value === null || value === '' ? fallback : String(value);
+	};
 
-				},
-				error_y: errorBarY,
-				connectgaps: connectGapsOpt, 
-				hovertemplate:
-					`${figureArguments['XAxisTitle']}: ${xHoverValue}<br>` +
-					`${figureArguments['YAxisTitle']}: %{y}<extra></extra>`
-					//figureArguments['XAxisTitle'] + ': %{x}<br>' +
-					//figureArguments['YAxisTitle'] + ': %{y}'
-			};
-			allScattersPlotly.push(singleScatterPlotly);
+	const sample = rows.slice(0, 200);
+	const freezeFirst = valueOf(TABLE_FIELD.freezeFirst) === 'Yes';
+	const headerFilters = valueOf(TABLE_FIELD.headerFilters) === 'Yes';
 
-
-			//Show Standard Deviation Scatters
-			const showSD = figureArguments[targetScatterColumn + 'StdDev'];
-			const showSD_InputValuesOpt = figureArguments[targetScatterColumn + 'StdDevInputValues'];
-			//Standard Deviation of dataset based on dataset Y-axis values (AutoCalculated)
-			if (showSD == 'on' && showSD_InputValuesOpt === 'auto') {
-				const plotlyYSanitized = plotlyY.map(val => {
-					if (
-						val === null ||
-						val === undefined ||
-						val === "" ||
-						(typeof val === "string" && val.trim().toUpperCase() === "NA") ||
-						isNaN(val)
-					) {
-						return 0;
-					}
-					return parseFloat(val);
-				});
-				let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
-				const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
-				//console.log('mean', mean);
-				//console.log('stdDev', stdDev);
-				const upperY = plotlyY.map(y => mean + stdDev);
-				const lowerY = plotlyY.map(y => mean - stdDev);
-				const filteredX = plotlyX.filter(item => item !== "");
-				// Shared legend group name
-				const legendGroupName = `${figureArguments[targetScatterColumn + 'Title']} ±1 SD`;
-
-				// Upper SD line
-				const stdUpperScatter = {
-					x: filteredX,
-					y: upperY,
-					type: 'scatter',
-					mode: 'lines',
-					name: legendGroupName,
-					legendgroup: legendGroupName,
-					line: {
-						dash: 'dash',
-						color: figureArguments[targetScatterColumn + 'StdDevColor']
-					},
-					hoverinfo: 'skip',
-					showlegend: showLegendBool, // only the first one shows in legend
-					visible: true
-				};
-
-				// Lower SD line
-				const stdLowerScatter = {
-					x: filteredX,
-					y: lowerY,
-					type: 'scatter',
-					mode: 'lines',
-					name: legendGroupName,      // same name, but hidden in legend
-					legendgroup: legendGroupName,
-					line: {
-						dash: 'dash',
-						color: figureArguments[targetScatterColumn + 'StdDevColor']
-					},
-					hoverinfo: 'skip',
-					showlegend: false,          // hides duplicate legend entry
-					visible: true
-				};
-
-				// Push both to plot
-				allScattersPlotly.push(stdUpperScatter, stdLowerScatter);
-			}
-			//Standard Deviation (values imported from spreadsheet per point in dataset)
-			//Do we want high and low bounds here?
-			if (showSD == 'on' && showSD_InputValuesOpt != 'auto') {
-				const stdSingleValue = dataToBePlotted[showSD_InputValuesOpt].filter(item => item !== "NA").reduce((a, b) => a + b, 0) / dataToBePlotted[showSD_InputValuesOpt].length;
-				//console.log('stdSingleValue', stdSingleValue);
-				const plotlyYSanitized = plotlyY.map(val => {
-					if (
-						val === null ||
-						val === undefined ||
-						val === "" ||
-						(typeof val === "string" && val.trim().toUpperCase() === "NA") ||
-						isNaN(val)
-					) {
-						return 0;
-					}
-					return parseFloat(val);
-				});
-				let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
-				const mean = plotlyYSanitized.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
-				const upperY = plotlyY.map(y => mean + stdSingleValue);
-				const lowerY = plotlyY.map(y => mean - stdSingleValue);
-				const filteredX = plotlyX.filter(item => item !== "");
-				// Shared legend group name
-				const legendGroupName = `${figureArguments[targetScatterColumn + 'Title']} ±1 SD`;
-
-				// Upper SD line
-				const stdUpperScatter = {
-					x: filteredX,
-					y: upperY,
-					type: 'scatter',
-					mode: 'lines',
-					name: legendGroupName,
-					legendgroup: legendGroupName,
-					line: {
-						dash: 'dash',
-						color: figureArguments[targetScatterColumn + 'StdDevColor']
-					},
-					hoverinfo: 'skip',
-					showlegend: showLegendBool, // only the first one shows in legend
-					visible: true
-				};
-
-				// Lower SD line
-				const stdLowerScatter = {
-					x: filteredX,
-					y: lowerY,
-					type: 'scatter',
-					mode: 'lines',
-					name: legendGroupName,      // same name, but hidden in legend
-					legendgroup: legendGroupName,
-					line: {
-						dash: 'dash',
-						color: figureArguments[targetScatterColumn + 'StdDevColor']
-					},
-					hoverinfo: 'skip',
-					showlegend: false,          // hides duplicate legend entry
-					visible: true
-				};
-
-				// Push both to plot
-				allScattersPlotly.push(stdUpperScatter, stdLowerScatter);
-			}
-			
-			//Percentiles and Mean lines
-			const showPercentiles = figureArguments[targetScatterColumn + 'Percentiles'];
-			const showMean = figureArguments[targetScatterColumn + 'Mean'];
-			const showMean_ValuesOpt = figureArguments[targetScatterColumn + 'MeanField'];
-			if (showPercentiles === 'on' || showMean === 'on') {
-
-				//Calculate Percentiles (Auto Calculated) based on dataset Y-axis values
-				//Do we want to be able to set high and low bounds per point here? (That wouldn't make sense to me)
-				const p10 = computePercentile(plotlyY, 10);
-				const p90 = computePercentile(plotlyY, 90);
-				const filteredX = plotlyX.filter(item => item !== "");
-				const xMinPercentile = Math.min(...filteredX);
-				const xMaxPercentile = Math.max(...filteredX);
-				if (showPercentiles === 'on') {
-					allScattersPlotly.push({
-						x: [xMinPercentile, xMaxPercentile],
-						y: [p10, p10],
-						mode: 'lines',
-						line: { dash: 'dot', color: figureArguments[targetScatterColumn + 'Color'] + '60'},
-						name: `${figureArguments[targetScatterColumn + 'Title']} 10th Percentile (Bottom)`,
-						type: 'scatter',
-						visible: true,
-						showlegend: false
-					});
-					allScattersPlotly.push({
-						x: [xMinPercentile, xMaxPercentile],
-						y: [p90, p90],
-						mode: 'lines',
-						line: { dash: 'dot', color: figureArguments[targetScatterColumn + 'Color'] + '60'},
-						name: `${figureArguments[targetScatterColumn + 'Title']} 10th & 90th Percentile`,
-						type: 'scatter',
-						visible: true,
-						showlegend: showLegendBool
-					});
-				}
-
-				// Calculate mean
-
-				//Calculate mean (Auto Calculated) based on dataset Y-axis values
-				if (showMean_ValuesOpt === 'auto' && showMean === 'on') {
-					let plotlyYSafeArray = plotlyY.map(value => value === "NA" ? 0 : value);
-					let plotlyYSafeArrayLength = plotlyY.filter(value => value !== null && value !== "NA").length;
-					const mean = plotlyYSafeArray.reduce((a, b) => a + b, 0) / plotlyYSafeArrayLength;
-					//console.log('mean', mean);
-					//console.log('plotlyY', plotlyY);
-					const filteredX = plotlyX.filter(item => item !== "");
-					//console.log('filteredX', filteredX);
-
-					let xMin;
-					let xMax;
-					xMin = Math.min(...filteredX);
-					xMax = Math.max(...filteredX);
-					if (isNaN(xMin) || isNaN(xMax)) {
-						xMin = new Date(filteredX[0]);
-						xMax = new Date(filteredX[filteredX.length - 1]);
-					}
-
-					allScattersPlotly.push({
-						x: [xMin, xMax],
-						y: [mean, mean],
-						mode: 'lines',
-						line: { dash: 'solid', color: figureArguments[targetScatterColumn + 'Color'] + '60'},
-						name: `${figureArguments[targetScatterColumn + 'Title']} Mean`,
-						type: 'scatter',
-						visible: true,
-						showlegend: showLegendBool
-					});
-				}
-				//Get mean from the spreadsheet (values imported from spreadsheet per point in dataset)
-				if (showMean_ValuesOpt != 'auto' && showMean === 'on') {
-					const ExistingMeanValue = dataToBePlotted[showMean_ValuesOpt].filter(item => item !== "");
-					const mean = ExistingMeanValue.reduce((a, b) => a + b, 0) / ExistingMeanValue.length;
-					const filteredX = plotlyX.filter(item => item !== "");
-					
-					let xMin;
-					let xMax;
-					xMin = Math.min(...filteredX);
-					xMax = Math.max(...filteredX);
-					if (isNaN(xMin) || isNaN(xMax)) {
-						xMin = new Date(filteredX[0]);
-						xMax = new Date(filteredX[filteredX.length - 1]);
-					}
-					
-					allScattersPlotly.push({
-						x: [xMin, xMax],
-						y: [mean, mean],
-						mode: 'lines',
-						line: { dash: 'solid', color: figureArguments[targetScatterColumn + 'Color'] + '60'},
-						name: `${figureArguments[targetScatterColumn + 'Title']} Mean`,
-						type: 'scatter',
-						visible: true,
-						showlegend: showLegendBool
-					});
-				}
-			}
-
+	const columns = [];
+	resolveColumnOrder(valueOf(TABLE_FIELD.columnOrder), columnNames.length).forEach((index) => {
+		const field = columnNames[index];
+		if (valueOf(tableColumnField.show(index), 'Show') === 'Hide') {
+			return;
 		}
 
-		//const container = document.getElementById(plotlyDivID); 
+		const present = sample.map((row) => row?.[field]).filter((v) => v !== null && v !== undefined && v !== '');
+		const numeric = present.length > 0 && present.every(isNumericValue);
 
-		//GRAPH DISPLAY SETTINGS
-		var layout = {
-			xaxis: {
-				title: {
-				text: figureArguments['XAxisTitle']
-				},
-				linecolor: 'black', 
-				linewidth: 1,
-				range: [figureArguments['XAxisLowBound'], figureArguments['YAxisHighBound']],
-				tickmode: graphTickModeBool,
-				ticks: graphTickPositionBool,
-				showgrid: showGridBool,                 
-			},
-			yaxis: {
-				title: {
-				text: figureArguments['YAxisTitle']
-				},
-				linecolor: 'black', 
-				linewidth: 1,
-				range: [figureArguments['YAxisLowBound'], figureArguments['YAxisHighBound']],
-				tickmode: graphTickModeBool,
-				ticks: graphTickPositionBool,
-				showgrid: showGridBool, 
-			},
-			legend: {
-				orientation: 'h',       // horizontal layout
-				y: 1.1,                 // position legend above the plot
-				x: 0.5,                 // center the legend
-				xanchor: 'center',
-				yanchor: 'bottom'
-			},
-			autosize: true,
-			margin: { t: 60, b: 60, l: 60, r: 60 },
-			hovermode: 'closest',
-			//width: container.clientWidth, 
-			//height: container.clientHeight,
-			cliponaxis: true
-			};
-		
+		let format = valueOf(tableColumnField.format(index), 'auto');
+		if (format === 'auto') {
+			format = numeric ? 'number' : 'text';
+		}
 
-		const config = {
-		responsive: true,  // This makes the plot resize with the browser window
-		renderer: 'svg',
-		displayModeBar: true,
-		displaylogo: false,
-		modeBarButtonsToRemove: [
-			'zoom2d', 'lasso2d', 'autoScale2d',
-			'hoverClosestCartesian', 'hoverCompareCartesian' //'toImage', 'resetScale2d', 'select2d'
-		]
+		const decimalsText = valueOf(tableColumnField.decimals(index));
+		const decimals = decimalsText === '' ? null : Math.max(0, Math.min(10, parseInt(decimalsText, 10) || 0));
+
+		columns.push({
+			field,
+			title: valueOf(tableColumnField.title(index), defaultColumnTitle(field)),
+			format,
+			decimals: format === 'number' ? decimals : null,
+			headerFilter: headerFilters,
+			frozen: freezeFirst && columns.length === 0,
+		});
+	});
+
+	const pageSizeText = valueOf(TABLE_FIELD.pageSize, 'All');
+	const pageSize = pageSizeText === 'All' ? 0 : Math.max(1, parseInt(pageSizeText, 10) || 25);
+
+	return {
+		type: TABULATOR_SPEC_TYPE,
+		version: TABULATOR_SPEC_VERSION,
+		figureId: Number(figureId) || 0,
+		dataUrl: String(dataUrl || ''),
+		columns,
+		table: {
+			pageSize,
+			layout: valueOf(TABLE_FIELD.layout) === 'fitColumns' ? 'fitColumns' : 'fitDataStretch',
+			narrow: valueOf(TABLE_FIELD.narrow) === 'collapse' ? 'collapse' : 'scroll',
+			download: valueOf(TABLE_FIELD.download) === 'Yes',
+		},
+	};
+}
+
+/* ------------------------------------------------------------------------ */
+/* Mount: spec -> Tabulator                                                  */
+/* ------------------------------------------------------------------------ */
+
+function numberFormatter(decimals) {
+	// No thousands separators, so values such as years display as stored.
+	const formatter =
+		decimals === null || decimals === undefined
+			? null
+			: new Intl.NumberFormat(undefined, {
+					minimumFractionDigits: decimals,
+					maximumFractionDigits: decimals,
+					useGrouping: false,
+			  });
+
+	return (cell) => {
+		const value = cell.getValue();
+		if (value === null || value === undefined || value === '') {
+			return '';
+		}
+		if (formatter && isNumericValue(value)) {
+			return formatter.format(Number(value));
+		}
+		return escapeHtml(value);
+	};
+}
+
+function toTabulatorColumns(spec) {
+	const collapse = spec.table?.narrow === 'collapse';
+
+	return spec.columns.map((column, index) => {
+		const definition = {
+			field: column.field,
+			title: column.title || defaultColumnTitle(column.field),
+			headerSort: true,
+			// All cells and headers are left justified, including numbers.
+			hozAlign: 'left',
+			headerHozAlign: 'left',
+			// Field names may contain dots; never treat them as nested paths.
+			formatter: column.format === 'number' ? numberFormatter(column.decimals) : 'plaintext',
 		};
 
-		// Set up the plotlyDiv (The div the the plot will be rendered in)
-		//Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
-		
-		let plotDiv = document.getElementById(plotlyDivID);
-		// let plotDiv;
-		// if (!targetDocument) {
-		// 	plotDiv = document.getElementById(plotlyDivID);
-		// }
-		// if (targetDocument) {
-		// 	plotDiv = renderDocument.getElementById(plotlyDivID);
-		// }
-		plotDiv.style.setProperty("width", "100%", "important");
-		plotDiv.style.setProperty("max-width", "none", "important");
-						
-		// Create the plot with all lines
-		// await Plotly.newPlot(plotlyDivID, allScattersPlotly, layout, config);
+		if (column.format === 'number') {
+			definition.sorter = 'number';
+		} else {
+			definition.sorter = 'alphanum';
+		}
 
-		await Plotly.newPlot(plotDiv, allScattersPlotly, layout, config).then(() => {
-			// After the plot is created, inject overlays if any, this is here because you can only get overlays that span the entire yaxis after the graph has been rendered.
-			// You need the specific values for the entire yaxis
-			injectOverlays(plotDiv, layout, allScattersPlotly, figureArguments, dataToBePlotted);
-		});
+		if (column.headerFilter) {
+			definition.headerFilter = 'input';
+			definition.headerFilterPlaceholder = 'Filter';
+		}
 
-		Plotly.Plots.resize(plotDiv);
+		// Frozen columns are not compatible with collapsing columns.
+		if (column.frozen && !collapse) {
+			definition.frozen = true;
+		}
 
+		if (collapse) {
+			// Keep the first column visible; collapse the others from right to left.
+			definition.responsive = index === 0 ? 0 : spec.columns.length - index;
+		}
 
+		return definition;
+	});
+}
 
-		// if (window.location.href.includes('post.php')) {
-		// 	//Save the plotly figure as an html file. 
-		// 	const savedFigure = {
-		// 		data: plotDiv.data,
-		// 		layout: plotDiv.layout,
-		// 		config: { responsive: true }
-		// 	};
-			
-		// 	const figureiframeGenerator = createFigureIframeHtml(savedFigure, figureID, rootURL);
-		// }
-
-		// if () {
-		// 	document.querySelector('[data-depend-id="figure_preview"]').addEventListener('click', function() {
-		// 		saveHtmlFileToServer(figureiframeGenerator.figIframeHtml, figureiframeGenerator.figIframeHtmlFileName, figureiframeGenerator.figIframeHtmlPath, postId);
-		// 	});
-		// }	
-
-		//STANDALONE CODE TO INJECT INTO CODE BLOCK> WORKS INTERMITTENTLY
-		// const snippet = buildPlotlySnippetEmbedCode(
-		// 	savedFigure,
-		// 	`plotly-snippet-${figureID}`
-		// );
-		
-		// console.log("snippet", snippet);
-
-        
-
-    } catch (error) {
-        console.error('Error loading scripts:', error);
-    }
+function resolveDataUrl(spec, figureId) {
+	let dataUrl = spec.dataUrl || '';
+	// A duplicated figure keeps the original spec until it is saved again,
+	// but its data file has been copied into its own folder.
+	const currentId = Number(figureId) || 0;
+	if (currentId && spec.figureId && currentId !== spec.figureId) {
+		dataUrl = dataUrl.replace(`/figure_${spec.figureId}/`, `/figure_${currentId}/`);
+	}
+	return dataUrl;
 }
 
 /**
- * Loads and merges default interactive line arguments with the current arguments,
- * ensuring proper handling of line-specific keys and other configuration options.
- * Updates the value of the "figure_interactive_arguments" field and displays
- * the line fields accordingly.
+ * Renders a table spec into an element.
  *
- * @function loadDefaultInteractiveScatterArguments
- * @param {Object} jsonColumns - JSON object representing the columns of the line chart.
- *
- * @description
- * This function is designed to handle the merging of default and current arguments
- * for an interactive line chart. It ensures that line-specific keys are updated based
- * on the number of lines specified, while also preserving the original order of keys
- * in the current arguments. Non-line-specific keys are always updated with default values.
- * The merged arguments are written back to the "figure_interactive_arguments" field
- * as a JSON string and used to display the line fields.
- *
- * The function uses several helper functions:
- * - `safeParseJSON(s)`: Safely parses a JSON string, returning `null` if parsing fails.
- * - `pairsToObject(pairs)`: Converts an array of key-value pairs to an object.
- * - `kvStringToObject(str)`: Converts a key-value string to an object.
- * - `toObjectFlexible(s)`: Converts a string to an object, supporting JSON and key-value formats.
- * - `toPairsFlexible(s)`: Converts a string to an array of key-value pairs, supporting JSON and key-value formats.
- * - `objectToPairsPreserveOrder(obj, currentPairs)`: Converts an object to an array of key-value pairs,
- *    preserving the order of keys from the current pairs.
- *
- * @modifies
- * - Reads and updates the value of the "figure_interactive_arguments" field in the DOM.
- * - Reads the value of the "NumberOfScatters" input field to determine the number of lines.
- * - Calls `displayScatterFields` to update the line fields in the UI.
- *
- * @variables
- * - `field`: The DOM element representing the "figure_interactive_arguments" field.
- * - `currentStr`: The current value of the "figure_interactive_arguments" field.
- * - `defaultsStr`: The default arguments for the interactive line chart.
- * - `currentPairs`: The current arguments as an array of key-value pairs.
- * - `currentObj`: The current arguments as an object.
- * - `defaultsObj`: The default arguments as an object.
- * - `numEl`: The DOM element representing the "NumberOfScatters" input field.
- * - `numberOfScatters`: The number of lines specified in the "NumberOfScatters" input field.
- * - `mergedPairs`: The merged arguments as an array of key-value pairs.
- * - `mergedPairs_string`: The merged arguments as a JSON string.
- *
- * @return {void}
- *
- * @example
- * // Assuming `argumentsDefaultsScatter.interactive_line_arguments` contains default arguments
- * // and the "figure_interactive_arguments" field exists in the DOM:
- * loadDefaultInteractiveScatterArguments(jsonColumns);
- *
- * @throws {Error} This function does not throw errors but may fail silently if
- * required DOM elements are not present.
- *
- * @global
- * - `argumentsDefaultsScatter` (optional): A global object containing default arguments
- *   for the interactive line chart.
+ * @param {HTMLElement|string} target          Element, or the ID of the element, to render into.
+ * @param {Object}             spec            Table spec from buildTabulatorSpec().
+ * @param {Object}             [options]
+ * @param {Object[]}           [options.rows]      Rows, if already loaded.
+ * @param {string}             [options.dataUrl]   Overrides spec.dataUrl.
+ * @param {number|string}      [options.figureId]  Current figure ID, used for duplicated figures.
+ * @param {string}             [options.label]     Accessible name for the table.
+ * @return {Promise<Object>} Handle with table, resize(), setHeight() and destroy().
  */
-function loadDefaultInteractiveScatterArguments(jsonColumns) {
-	// ---------- helpers ----------
-	function safeParseJSON(s) {
-		try {
-			return JSON.parse(s);
-		} catch {
-			return null;
-		}
+export async function mountTabulatorTable(target, spec, options = {}) {
+	const host = typeof target === 'string' ? document.getElementById(target) : target;
+	if (!host) {
+		throw new Error('Table target element was not found.');
+	}
+	if (!isTabulatorSpec(spec)) {
+		throw new Error('The saved table settings are missing or invalid.');
 	}
 
-	function pairsToObject(pairs) {
-		const o = {};
-		if (Array.isArray(pairs)) {
-			for (const p of pairs) {
-				if (Array.isArray(p) && p.length >= 2) {
-					o[String(p[0])] = String(p[1] ?? '');
-				}
+	const [Tabulator, rows] = await Promise.all([
+		loadTabulator(),
+		options.rows
+			? Promise.resolve(options.rows)
+			: fetchTableRows(options.dataUrl || resolveDataUrl(spec, options.figureId)),
+	]);
+
+	// The host may live in another document, such as an iframe.
+	ensureTabulatorStyles(host.ownerDocument);
+
+	const wrapper = document.createElement('div');
+	wrapper.className = 'graphic-data-tabulator';
+	wrapper.style.width = '100%';
+
+	let downloadButton = null;
+	if (spec.table?.download) {
+		const toolbar = document.createElement('div');
+		toolbar.className = 'graphic-data-tabulator-toolbar';
+		toolbar.style.cssText = 'display:flex;justify-content:flex-end;margin-bottom:6px;';
+		downloadButton = document.createElement('button');
+		downloadButton.type = 'button';
+		downloadButton.className = 'graphic-data-tabulator-download';
+		downloadButton.textContent = 'Download CSV';
+		downloadButton.style.cssText =
+			'font-size:0.85em;padding:4px 10px;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;';
+		toolbar.appendChild(downloadButton);
+		wrapper.appendChild(toolbar);
+	}
+
+	const tableElement = document.createElement('div');
+	tableElement.className = 'graphic-data-tabulator-table';
+	if (options.label) {
+		tableElement.setAttribute('aria-label', options.label);
+	}
+	wrapper.appendChild(tableElement);
+	host.appendChild(wrapper);
+
+	const pageSize = Number(spec.table?.pageSize) || 0;
+
+	const tabulatorOptions = {
+		data: rows,
+		columns: toTabulatorColumns(spec),
+		layout: spec.table?.layout || 'fitDataStretch',
+		nestedFieldSeparator: false,
+		placeholder: 'No data available',
+		// Render every row for small tables so all of them are in the DOM for assistive technology.
+		renderVertical: rows.length <= BASIC_RENDER_ROW_LIMIT ? 'basic' : 'virtual',
+	};
+
+	if (pageSize > 0) {
+		tabulatorOptions.pagination = true;
+		tabulatorOptions.paginationSize = pageSize;
+		tabulatorOptions.paginationCounter = 'rows';
+	}
+	if (spec.table?.narrow === 'collapse') {
+		tabulatorOptions.responsiveLayout = 'collapse';
+	}
+
+	const table = new Tabulator(tableElement, tabulatorOptions);
+
+	await new Promise((resolve) => {
+		table.on('tableBuilt', resolve);
+	});
+
+	if (downloadButton) {
+		const fileName = `figure-${options.figureId || spec.figureId || 'table'}.csv`;
+		downloadButton.addEventListener('click', () => table.download('csv', fileName));
+	}
+
+	// Tables built inside a hidden tab have no width. Redraw whenever the
+	// available width changes, which also covers a tab becoming visible.
+	let resizeObserver = null;
+	if (typeof ResizeObserver !== 'undefined') {
+		let previousWidth = wrapper.clientWidth;
+		let frame = 0;
+		resizeObserver = new ResizeObserver(() => {
+			const width = wrapper.clientWidth;
+			if (!width || width === previousWidth) {
+				return;
 			}
-		}
-		return o;
-	}
-	function kvStringToObject(str) {
-		const o = {};
-		if (!str) {
-			return o;
-		}
-		for (const part of str.split(/[;,]/)) {
-			const [k, v] = part.split(/[:=]/).map((s) => (s || '').trim());
-			if (k) {
-				o[k] = v ?? '';
-			}
-		}
-		return o;
-	}
-	function toObjectFlexible(s) {
-		if (!s) {
-			return {};
-		}
-		const asJSON = safeParseJSON(s);
-		if (asJSON && typeof asJSON === 'object') {
-			return Array.isArray(asJSON) ? pairsToObject(asJSON) : asJSON;
-		}
-		return kvStringToObject(s);
-	}
-	function toPairsFlexible(s) {
-		const asJSON = safeParseJSON(s);
-		if (Array.isArray(asJSON)) {
-			return asJSON;
-		}
-		const obj = toObjectFlexible(s);
-		return Object.entries(obj).map(([k, v]) => [k, v]);
-	}
-	// preserve original order from currentPairs; append unseen keys at the end
-	function objectToPairsPreserveOrder(obj, currentPairs) {
-		const seen = new Set();
-		const out = [];
-		for (const [k] of currentPairs) {
-			if (!seen.has(k) && k in obj) {
-				out.push([k, String(obj[k] ?? '')]);
-				seen.add(k);
-			}
-		}
-		// append any remaining keys (e.g., required keys not in original)
-		for (const k of Object.keys(obj)) {
-			if (!seen.has(k)) {
-				out.push([k, String(obj[k] ?? '')]);
-			}
-		}
-		return out;
+			previousWidth = width;
+			cancelAnimationFrame(frame);
+			frame = requestAnimationFrame(() => table.redraw(true));
+		});
+		resizeObserver.observe(wrapper);
 	}
 
-	// ---------- main ----------
-	// Use the passed interactive_arguments parameter (works in preview modal context
-	// where the form field may not be in the document). Fall back to DOM read for
-	// the settings-page context where the parameter is not passed.
-	const field = document.getElementsByName('figure_interactive_arguments')[0];
-	const currentStr = interactive_arguments || (field ? field.value : '') || '';
-	console.log('[GD] currentStr length:', currentStr.length, 'preview:', currentStr.substring(0, 100));
-	if (!currentStr) {
-		console.log('[GD] EARLY RETURN — no currentStr');
-		return;
-	}
+	const handle = {
+		table,
+		element: wrapper,
+		resize: () => table.redraw(true),
+		setHeight: (height) => table.setHeight(height),
+		destroy: () => {
+			resizeObserver?.disconnect();
+			table.destroy();
+			wrapper.remove();
+		},
+	};
+	wrapper.graphicDataTable = handle;
+	return handle;
+}
 
-	const defaultsStr = _lineDefaults.interactive_line_arguments || '';
+/* ------------------------------------------------------------------------ */
+/* Glue for figure-render.js                                                 */
+/* ------------------------------------------------------------------------ */
 
-	// Parse both to objects and keep original pair order from current
-	const currentPairs = toPairsFlexible(currentStr);
-	const currentObj = toObjectFlexible(currentStr);
-	const defaultsObj = toObjectFlexible(defaultsStr);
-
-	// How many lines should be considered?
-	const numEl = document.getElementById('NumberOfScatters');
-	const numberOfScatters = numEl && numEl.value ? parseInt(numEl.value, 10) : 0;
-	if (numberOfScatters > 0) {
-		currentObj.NumberOfScatters = String(numberOfScatters);
-	}
-
-	// Overwrite ONLY keys that:
-	//  - start with Scatter1..Scatter{N}, AND
-	//  - already exist in currentObj, AND
-	//  - also exist in defaultsObj
-	if (numberOfScatters > 0) {
-		const linePrefixes = Array.from(
-			{ length: numberOfScatters },
-			(_, i) => `Scatter${i + 1}`
-		);
-		for (const key of Object.keys(currentObj)) {
-			const isWithinScatters = linePrefixes.some((prefix) =>
-				key.startsWith(prefix)
-			);
-			if (isWithinScatters && key in defaultsObj) {
-				currentObj[key] = defaultsObj[key];
-			}
+async function waitForElement(id, timeout = 15000, interval = 100) {
+	const start = Date.now();
+	while (Date.now() - start < timeout) {
+		const element = document.getElementById(id);
+		if (element) {
+			return element;
 		}
+		await new Promise((resolve) => setTimeout(resolve, interval));
 	}
+	throw new Error(`Element with id ${id} not found after ${timeout}ms`);
+}
 
-	// Ensure/overwrite these non-line keys regardless of line count
-	currentObj.showGrid = defaultsObj.showGrid ?? 'on';
-	currentObj.graphTicks = defaultsObj.graphTicks ?? 'on';
-	currentObj.XAxisFormat = defaultsObj.XAxisFormat ?? 'YYYY';
-
-	// Convert back to array-of-pairs, preserving the original order from currentPairs
-	const mergedPairs = objectToPairsPreserveOrder(currentObj, currentPairs);
-
-	// Write back EXACTLY as array-of-pairs JSON
-	const mergedPairs_string = JSON.stringify(mergedPairs);
-
-	// console.log('interactive_arguments', currentStr);
-	// console.log('default_interactive_line_arguments', defaultsStr);
-	// console.log('mergedPairs_string', mergedPairs_string);
-
-	document.getElementsByName('figure_interactive_arguments')[0].value =
-		mergedPairs_string;
-
-	displayScatterFields(numberOfScatters, jsonColumns, mergedPairs_string);
+function writeRenderedField(value) {
+	const field = document.getElementsByName('figure_interactive_args_rendered')[0];
+	if (field) {
+		field.value = value;
+	}
 }
 
 /**
- * Dynamically generates and appends form fields for configuring Plotly time series line chart parameters in the UI.
+ * Builds a table spec from saved settings by loading the figure's data file.
  *
- * This function creates a set of HTML form controls (checkboxes, text inputs, color pickers, and select dropdowns)
- * for customizing various aspects of a Plotly time series line chart, such as grid lines, axis titles, axis bounds,
- * number of lines, axis date format, and line-specific options (color, type, marker, error bars, standard deviation, mean, percentiles, legend, etc.).
- * The generated fields are appended to the element with ID 'graphGUI'.
- * The function also prepopulates field values using the provided interactive arguments and attaches event listeners
- * to update the underlying data model when fields are changed.
- *
- * @function plotlyScatterParameterFields
- * @param {Object}        jsonColumns           - An object representing available data columns, where keys are column identifiers and values are column names.
- * @param {Object|string} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
- *
- * @description
- * The function performs the following steps:
- * 1. Creates a container div for the parameter fields.
- * 2. Adds checkboxes for toggling grid lines and graph ticks.
- * 3. Adds input fields for X and Y axis titles and their low/high bounds.
- * 4. Adds a select dropdown for the number of lines to be plotted (1–14).
- * 5. Adds a select dropdown for the X axis date format.
- * 6. Appends all generated fields to the 'graphGUI' element in the DOM.
- * 7. Calls `displayScatterFields` to generate additional line-specific configuration fields based on the selected number of lines.
- * 8. Attaches event listeners to all fields to update the hidden input storing the configuration as a JSON string.
- *
- * @modifies
- * - Appends a new div with ID 'secondaryGraphFields' to the element with ID 'graphGUI'.
- * - Updates the value of the hidden input field named 'figure_interactive_arguments' when any field is changed.
- * - Calls `displayScatterFields` to update line-specific fields dynamically.
- *
- * @requires
- * - fillFormFieldValues: Function to retrieve saved values for form fields.
- * - logFormFieldValues: Function to update the hidden input with current form values.
- * - displayScatterFields: Function to generate line-specific configuration fields.
- *
- * @listens change - Updates the hidden input and UI when any field is changed.
- *
- * @example
- * // Example usage:
- * const jsonColumns = { col1: "Column 1", col2: "Column 2" };
- * const interactive_arguments = { XAxisTitle: "Year", NumberOfScatters: 2 };
- * plotlyScatterParameterFields(jsonColumns, interactive_arguments);
- *
- * @global
- * - Assumes the existence of a DOM element with ID 'graphGUI'.
- * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
+ * @param {number|string} figureId
+ * @param {string|Object} interactiveArguments
+ * @return {Promise<{spec: Object, rows: Object[]}>}
  */
-function plotlyScatterParameterFields(jsonColumns, interactive_arguments){
-  let newDiv = document.createElement("div");
-  newDiv.id = 'secondaryGraphFields';
-  const targetElement = document.getElementById('graphGUI');
+export async function buildTabulatorSpecForFigure(figureId, interactiveArguments) {
+	const dataUrl = await fetchFigureDataUrl(figureId);
+	const response = await fetch(new URL(dataUrl, window.location.origin).toString());
+	if (!response.ok) {
+		throw new Error(`Unable to load table data (${response.status}).`);
+	}
+	const fileContents = await response.json();
+	const rows = dataFileToRows(fileContents);
 
-  let newRow;
-  let newColumn1;
-  let newColumn2;
+	let columnNames;
+	if (fileContents?.data && !Array.isArray(fileContents.data)) {
+		columnNames = Object.keys(fileContents.data);
+	} else {
+		columnNames = Object.keys(rows[0] || {});
+	}
 
-
-  //Add checkboxes for showgrid and graphTicks
-    const features = ["showGrid", "graphTicks"];
-    const featureNames = ["Show X&Y Scatters on Grid", "Remove Outside Graph Ticks"];
-    for (let i = 0; i < features.length; i++) {
-        const feature = features[i];
-        const featureName = featureNames[i];
-
-        let newRow = document.createElement("div");
-        newRow.classList.add("row", "fieldPadding");
-
-        let newColumn1 = document.createElement("div");
-        newColumn1.classList.add("col-3");
-        let newColumn2 = document.createElement("div");
-        newColumn2.classList.add("col");
-
-        let label = document.createElement("label");
-        label.for = feature;
-        label.innerHTML = `${featureName}`;
-        let checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.id = feature;
-        checkbox.name = "plotFields";
-
-        let fieldValueSaved = fillFormFieldValues(checkbox.id, interactive_arguments);
-        checkbox.value = fieldValueSaved === 'on' ? 'on' : "";
-        checkbox.checked = fieldValueSaved === 'on';
-
-        // Toggle visibility dynamically
-        checkbox.addEventListener('change', function () {
-            checkbox.value = checkbox.checked ? 'on' : "";
-            logFormFieldValues();
-        });
-
-        newColumn1.appendChild(label);
-        newColumn2.appendChild(checkbox);
-        newRow.append(newColumn1, newColumn2);
-        newDiv.append(newRow);
-
-        newRow.style.display = "none";
-        
-    }
-
-  // Create input fields for X and Y Axis Titles
-  const axisTitleArray = ["X", "Y"];
-
-  axisTitleArray.forEach((axisTitle) => {
-      newRow = document.createElement("div");
-      newRow.classList.add("row", "fieldPadding");
-      newColumn1 = document.createElement("div");
-      newColumn1.classList.add("col-3");   
-      newColumn2 = document.createElement("div");
-      newColumn2.classList.add("col");
-
-      let labelInputAxisTitle = document.createElement("label");
-      labelInputAxisTitle.for = axisTitle + "AxisTitle";
-      labelInputAxisTitle.innerHTML = axisTitle + " Axis Title";
-      let inputAxisTitle = document.createElement("input");
-      inputAxisTitle.id = axisTitle + "AxisTitle";
-      inputAxisTitle.name = "plotFields";
-      inputAxisTitle.size = "70";
-      let fieldValueSaved = fillFormFieldValues(inputAxisTitle.id, interactive_arguments);
-      if (fieldValueSaved != undefined){
-          inputAxisTitle.value = fieldValueSaved;
-      }
-      inputAxisTitle.addEventListener('change', function() {
-          logFormFieldValues();
-      });
-      newColumn1.appendChild(labelInputAxisTitle);
-      newColumn2.appendChild(inputAxisTitle);
-      newRow.append(newColumn1, newColumn2);
-      newDiv.append(newRow);    
-
-      const rangeBound =["Low", "High"];
-      rangeBound.forEach((bound) => {
-          newRow = document.createElement("div");
-          newRow.classList.add("row", "fieldPadding");
-          newColumn1 = document.createElement("div");
-          newColumn1.classList.add("col-3");   
-          newColumn2 = document.createElement("div");
-          newColumn2.classList.add("col");
-
-          let labelBound = document.createElement("label");
-          labelBound.for =  axisTitle + bound + "Bound";
-          labelBound.innerHTML = axisTitle + " Axis, " + bound + " Bound";
-          let inputBound = document.createElement("input");
-          inputBound.id = axisTitle + "Axis" + bound + "Bound";
-          inputBound.name = "plotFields";
-          inputBound.type = "number";
-          fieldValueSaved = fillFormFieldValues(inputBound.id, interactive_arguments);
-          if (fieldValueSaved != undefined){
-              inputBound.value = fieldValueSaved;
-          }
-          inputBound.addEventListener('change', function() {
-              logFormFieldValues();
-          });
-          newColumn1.appendChild(labelBound);
-          newColumn2.appendChild(inputBound);
-          newRow.append(newColumn1, newColumn2);
-          newDiv.append(newRow); 
-      });
-
-  });
-
-
-
-  // Create select field for number of lines to be plotted
-  let labelSelectNumberScatters = document.createElement("label");
-  labelSelectNumberScatters.for = "NumberOfScatters";
-  labelSelectNumberScatters.innerHTML = "Number of Scatters to Be Plotted";
-  let selectNumberScatters = document.createElement("select");
-  selectNumberScatters.id = "NumberOfScatters";
-  selectNumberScatters.name = "plotFields";
-  selectNumberScatters.addEventListener('change', function() {
-      displayScatterFields(selectNumberScatters.value, jsonColumns, interactive_arguments) });
-  selectNumberScatters.addEventListener('change', function() {
-          logFormFieldValues();
-      });
-
-  for (let i = 1; i < 15; i++){
-      let selectNumberScattersOption = document.createElement("option");
-      selectNumberScattersOption.value = i;
-      selectNumberScattersOption.innerHTML = i; 
-      selectNumberScatters.appendChild(selectNumberScattersOption);
-  }
-  let fieldValueSaved = fillFormFieldValues(selectNumberScatters.id, interactive_arguments);
-  if (fieldValueSaved != undefined){
-      selectNumberScatters.value = fieldValueSaved;
-  }
-  newRow = document.createElement("div");
-  newRow.classList.add("row", "fieldPadding");
-  newColumn1 = document.createElement("div");
-  newColumn1.classList.add("col-3");   
-  newColumn2 = document.createElement("div");
-  newColumn2.classList.add("col");
-
-  newColumn1.appendChild(labelSelectNumberScatters);
-  newColumn2.appendChild(selectNumberScatters);
-  newRow.append(newColumn1, newColumn2);
-  newDiv.append(newRow);
-
-
-  //X Axis Date Format
-  let labelSelectXAxisFormat = document.createElement("label");
-  labelSelectXAxisFormat.for = "XAxisFormat";
-  labelSelectXAxisFormat.innerHTML = "X Axis Date Format";
-  let selectXAxisFormat = document.createElement("select");
-  selectXAxisFormat.id = "XAxisFormat";
-  selectXAxisFormat.name = "plotFields";
-  selectXAxisFormat.addEventListener('change', function() {
-      logFormFieldValues();
-  });
-
-  const dateFormats =["None", "YYYY", "YYYY-MM","YYYY-MM-DD"];
-
-  dateFormats.forEach((dateFormat) => {
-      let selectXAxisFormatOption = document.createElement("option");
-      selectXAxisFormatOption.value = dateFormat;
-      selectXAxisFormatOption.innerHTML = dateFormat; 
-      selectXAxisFormat.appendChild(selectXAxisFormatOption);
-  });
-  fieldValueSaved = fillFormFieldValues(selectXAxisFormat.id, interactive_arguments);
-  if (fieldValueSaved != undefined){
-      selectXAxisFormat.value = fieldValueSaved;
-  }
-
-  newRow = document.createElement("div");
-  newRow.classList.add("row", "fieldPadding");
-  newColumn1 = document.createElement("div");
-  newColumn1.classList.add("col-3");   
-  newColumn2 = document.createElement("div");
-  newColumn2.classList.add("col");
-
-  newColumn1.appendChild(labelSelectXAxisFormat);
-  newColumn2.appendChild(selectXAxisFormat);
-  newRow.append(newColumn1, newColumn2);
-  newDiv.append(newRow);
-
-  let newHR = document.createElement("hr");
-  newHR.style = "margin-top:15px";
-  newDiv.append(newHR);        
-
-  targetElement.appendChild(newDiv);
-
-  // Run display line fields
-  displayScatterFields(selectNumberScatters.value, jsonColumns, interactive_arguments);
+	const spec = buildTabulatorSpec(interactiveArguments, columnNames, { dataUrl, figureId, rows });
+	return { spec, rows };
 }
 
 /**
- * Dynamically generates and appends form fields for configuring line-specific and overlay parameters
- * for a Plotly time series line chart in the UI.
+ * Renders a table figure if the figure is a table. Called by
+ * render_interactive_plots() before any Plotly handling.
  *
- * This function creates a set of HTML form controls for each line to be plotted, including dropdowns for
- * selecting data columns, line and marker styles, and checkboxes for enabling features such as legend display,
- * connecting gaps, mean lines, standard deviation fills, error bars, and percentile lines. It also generates
- * controls for overlays such as evaluation periods and event markers, including their specific configuration fields.
- * The generated fields are appended to the element with ID 'graphGUI'.
- * The function prepopulates field values using the provided interactive arguments and attaches event listeners
- * to update the underlying data model when fields are changed.
+ * - On editor screens, when the settings choose a table, the spec is rebuilt
+ *   from the current settings and written to figure_interactive_args_rendered.
+ * - Everywhere else, a saved table spec is rendered as is.
  *
- * @function displayScatterFields
- * @param {number}        numScatters              - The number of lines to generate configuration fields for.
- * @param {Object}        jsonColumns           - An object representing available data columns, where keys are column identifiers and values are column names.
- * @param {Object|string} interactive_arguments - An object or JSON string containing previously saved form field values, used to prepopulate the GUI fields.
- *
- * @description
- * The function performs the following steps:
- * 1. Removes any existing line assignment container from the DOM.
- * 2. For each line, generates dropdowns for selecting the data column, line title, color, line type, marker type, and marker size.
- * 3. Adds checkboxes for enabling/disabling legend, connecting gaps, mean line, standard deviation fill, error bars, and percentile lines.
- * 4. For features that require additional configuration (mean, error bars, standard deviation), generates dropdowns for selecting the source column and color pickers.
- * 5. Generates controls for overlays, including evaluation period and event markers, with their own configuration fields (dates, colors, labels, axis, etc.).
- * 6. Adds a button to apply default line styles to all lines.
- * 7. Appends all generated fields to the 'graphGUI' element in the DOM.
- * 8. Prepopulates all fields using the provided interactive arguments and attaches event listeners to update the hidden input storing the configuration as a JSON string.
- *
- * @modifies
- * - Appends a new div with ID 'assignColumnsToPlot' to the element with ID 'graphGUI'.
- * - Updates the value of the hidden input field named 'figure_interactive_arguments' when any field is changed.
- *
- * @requires
- * - fillFormFieldValues: Function to retrieve saved values for form fields.
- * - logFormFieldValues: Function to update the hidden input with current form values.
- * - loadDefaultInteractiveScatterArguments: Function to apply default line styles.
- *
- * @listens change - Updates the hidden input and UI when any field is changed.
- *
- * @example
- * // Example usage:
- * const jsonColumns = { col1: "Column 1", col2: "Column 2" };
- * const interactive_arguments = { XAxisTitle: "Year", NumberOfScatters: 2 };
- * displayScatterFields(2, jsonColumns, interactive_arguments);
- *
- * @global
- * - Assumes the existence of a DOM element with ID 'graphGUI'.
- * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
+ * @param {Object}      args
+ * @param {string}      args.targetId              ID of the element to render into.
+ * @param {number}      args.postID                Figure post ID.
+ * @param {string}      args.interactiveArguments  figure_interactive_arguments.
+ * @param {Object|null} args.savedSpec             Parsed figure_interactive_args_rendered.
+ * @param {string}      [args.label]               Accessible name for the table.
+ * @return {Promise<boolean>} True when the figure is a table and was handled.
  */
-function displayScatterFields(numScatters, jsonColumns, interactive_arguments) {
-	const assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
-	// If the element exists
-	if (assignColumnsToPlot) {
-		// Remove the scene window
-		assignColumnsToPlot.parentNode.removeChild(assignColumnsToPlot);
+export async function renderTabulatorFigure({ targetId, postID, interactiveArguments, savedSpec, label }) {
+	const settings = parseInteractiveArguments(interactiveArguments);
+	const editor = isEditorScreen();
+	const rebuildFromSettings = editor && settings.graphType === TABULATOR_GRAPH_TYPE;
+
+	if (!rebuildFromSettings && !(!editor && isTabulatorSpec(savedSpec))) {
+		return false;
 	}
 
-	if (numScatters > 0) {
-		const newDiv = document.createElement('div');
-		newDiv.id = 'assignColumnsToPlot';
+	let target = null;
+	try {
+		target = await waitForElement(targetId);
 
-		//"EvaluationPeriod" & "EventMarkers"
-		const features = ['EvaluationPeriod', 'EventMarkers'];
-		const featureNames = ['Evaluation Period', 'Event Markers'];
-		for (let i = 0; i < features.length; i++) {
-			const feature = features[i];
-			const featureName = featureNames[i];
-
-			const newRow = document.createElement('div');
-			newRow.classList.add('row', 'fieldPadding');
-
-			const newColumn1 = document.createElement('div');
-			newColumn1.classList.add('col-3');
-			const newColumn2 = document.createElement('div');
-			newColumn2.classList.add('col');
-
-			const label = document.createElement('label');
-			label.for = feature;
-			label.innerHTML = `${featureName}`;
-			const checkbox = document.createElement('input');
-			checkbox.type = 'checkbox';
-			checkbox.id = feature;
-			checkbox.name = 'plotFields';
-
-			const fieldValueSaved = fillFormFieldValues(
-				checkbox.id,
-				interactive_arguments
-			);
-			checkbox.value = fieldValueSaved === 'on' ? 'on' : '';
-			checkbox.checked = fieldValueSaved === 'on';
-
-			newColumn1.appendChild(label);
-			newColumn2.appendChild(checkbox);
-			newRow.append(newColumn1, newColumn2);
-			newRow.style.marginTop = '20px';
-			newRow.style.marginBottom = '20px';
-			newDiv.append(newRow);
-
-			// === Add dropdowns for feature-specific data ===
-			if (['EvaluationPeriod', 'EventMarkers'].includes(feature)) {
-				const dropdownContainer = document.createElement('div');
-				dropdownContainer.classList.add('row', 'fieldPadding');
-
-				const dropdownLabelCol = document.createElement('div');
-				dropdownLabelCol.classList.add('col-3');
-				const dropdownInputCol = document.createElement('div');
-				dropdownInputCol.classList.add('col');
-
-				function createDropdown(labelText, selectId) {
-					const label = document.createElement('label');
-					label.innerHTML = labelText;
-					const select = document.createElement('select');
-					select.id = selectId;
-					select.name = 'plotFields';
-
-					if (feature === 'EventMarkers') {
-						for (const col of [1, 2, 3, 4, 5, 6]) {
-							const opt = document.createElement('option');
-							opt.value = col;
-							opt.innerHTML = col;
-							select.appendChild(opt);
-						}
-
-						const saved = fillFormFieldValues(
-							select.id,
-							interactive_arguments
-						);
-						if (saved) {
-							select.value = saved;
-						}
-
-						select.addEventListener('change', logFormFieldValues);
-						return { label, select };
-					}
-				}
-
-				function createDatefield(labelText, inputId) {
-					const label = document.createElement('label');
-					label.textContent = labelText;
-					label.htmlFor = inputId; // Link label to input
-
-					const input = document.createElement('input'); // Correct element
-					input.type = 'date';
-					input.id = inputId;
-					input.name = 'plotFields';
-
-					const saved = fillFormFieldValues(
-						input.id,
-						interactive_arguments
-					);
-					if (saved) {
-						input.value = saved;
-					}
-
-					input.addEventListener('change', logFormFieldValues);
-					return { label, input };
-				}
-
-				function createTextfield(labelText, inputId) {
-					const label = document.createElement('label');
-					label.textContent = labelText;
-					label.htmlFor = inputId; // Link label to input
-
-					const input = document.createElement('input'); // Correct element
-					input.type = 'text';
-					input.id = inputId;
-					input.name = 'plotFields';
-					input.style.width = '200px';
-
-					const saved = fillFormFieldValues(
-						input.id,
-						interactive_arguments
-					);
-					if (saved) {
-						input.value = saved;
-					}
-
-					input.addEventListener('change', logFormFieldValues);
-					return { label, input };
-				}
-
-				function createColorfield(labelText, inputId) {
-					const label = document.createElement('label');
-					label.textContent = labelText;
-					label.htmlFor = inputId; // Link label to input
-
-					const input = document.createElement('input'); // Correct element
-					input.type = 'color';
-					input.id = inputId;
-					input.name = 'plotFields';
-
-					const saved = fillFormFieldValues(
-						input.id,
-						interactive_arguments
-					);
-					if (saved) {
-						input.value = saved;
-					}
-
-					input.addEventListener('change', logFormFieldValues);
-					return { label, input };
-				}
-
-				const controls = [];
-
-				if (feature === 'EvaluationPeriod') {
-					const { label: labelStartDate, input: StartDateValues } =
-						createDatefield(`Start Date`, feature + 'StartDate');
-					const { label: labelEndDate, input: EndDateValues } =
-						createDatefield('End Date', feature + 'EndDate');
-					const { label: labelColor, input: ColorValue } =
-						createColorfield(`Fill Color`, feature + 'FillColor');
-					const { label: textLabel, input: textInput } =
-						createTextfield(`Display Text`, feature + 'Text');
-					controls.push(
-						labelStartDate,
-						document.createElement('br'),
-						StartDateValues,
-						document.createElement('br'),
-						document.createElement('br'),
-						labelEndDate,
-						document.createElement('br'),
-						EndDateValues,
-						document.createElement('br'),
-						document.createElement('br'),
-						labelColor,
-						document.createElement('br'),
-						ColorValue,
-						document.createElement('br'),
-						document.createElement('br'),
-						textLabel,
-						document.createElement('br'),
-						textInput,
-						document.createElement('br')
-					);
-				}
-
-				if (feature === 'EventMarkers') {
-					const { label, select } = createDropdown(
-						'Number of Event Markers',
-						feature + 'Field'
-					);
-					controls.push(label, select);
-
-					// A wrapper that we'll (re)fill with the N sets of fields
-					const wrapper = document.createElement('div');
-					wrapper.id = feature + 'FieldsWrapper';
-					controls.push(wrapper);
-
-					const renderEventMarkerFields = (n) => {
-						wrapper.innerHTML = ''; // Clear previous
-
-						for (let i = 0; i < n; i++) {
-							// === Axis Selector ===
-							const axisLabel = document.createElement('label');
-							axisLabel.textContent = `Event Marker Axis ${i + 1}`;
-							const axisSelect = document.createElement('select');
-							axisSelect.id = `${feature}EventAxis${i}`;
-							axisSelect.name = 'plotFields';
-
-							['x', 'y'].forEach((axis) => {
-								const opt = document.createElement('option');
-								opt.value = axis;
-								opt.textContent = axis.toUpperCase() + ' Axis';
-								axisSelect.appendChild(opt);
-							});
-							const savedAxis = fillFormFieldValues(
-								axisSelect.id,
-								interactive_arguments
-							);
-							if (savedAxis) {
-								axisSelect.value = savedAxis;
-							}
-
-							// === Scatter Type Selector ===
-							const lineTypeLabel = document.createElement('label');
-							lineTypeLabel.textContent = `Scatter Type ${i + 1}`;
-							lineTypeLabel.htmlFor = `${feature}ScatterType${i}`;
-
-							const lineTypeSelect = document.createElement('select');
-							lineTypeSelect.id = `${feature}ScatterType${i}`;
-							lineTypeSelect.name = 'plotFields';
-
-							[
-								'solid',
-								'dash',
-								'dot',
-								'dashdot',
-								'longdash',
-								'longdashdot',
-							].forEach((type) => {
-								const opt = document.createElement('option');
-								opt.value = type;
-								opt.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-								lineTypeSelect.appendChild(opt);
-							});
-
-							const savedScatterType = fillFormFieldValues(
-								lineTypeSelect.id,
-								interactive_arguments
-							);
-
-							// Important: force a default value even if nothing is saved yet
-							lineTypeSelect.value = savedScatterType || 'solid';
-
-							lineTypeSelect.addEventListener('change', logFormFieldValues);
-
-							// === Shared Inputs ===
-							const { label: textLabel, input: textInput } =
-								createTextfield(
-									`Display Text ${i + 1}`,
-									`${feature}EventText${i}`
-								);
-							const { label: colorLabel, input: colorInput } =
-								createColorfield(
-									`Scatter Color ${i + 1}`,
-									`${feature}EventColor${i}`
-								);
-							fillFormFieldValues(
-								textInput.id,
-								interactive_arguments
-							);
-							fillFormFieldValues(
-								colorInput.id,
-								interactive_arguments
-							);
-
-							// === X-axis Fields ===
-							const xWrapper = document.createElement('div');
-							const { label: dateLabel, input: dateInput } =
-								createDatefield(
-									`Event Date ${i + 1} (X-Axis)`,
-									`${feature}EventDate${i}`
-								);
-							fillFormFieldValues(
-								dateInput.id,
-								interactive_arguments
-							);
-							xWrapper.append(
-								dateLabel,
-								document.createElement('br'),
-								dateInput,
-								document.createElement('br')
-							);
-
-							// === Y-axis Fields ===
-							const yWrapper = document.createElement('div');
-							const { label: yLabel, input: yInput } =
-								createTextfield(
-									`Event Y Value ${i + 1}`,
-									`${feature}EventYValue${i}`
-								);
-							fillFormFieldValues(
-								yInput.id,
-								interactive_arguments
-							);
-							yWrapper.append(
-								yLabel,
-								document.createElement('br'),
-								yInput,
-								document.createElement('br')
-							);
-
-							// === Container & Toggle Logic ===
-							const block = document.createElement('div');
-							block.append(
-								document.createElement('hr'),
-								axisLabel,
-								document.createElement('br'),
-								axisSelect,
-								document.createElement('br'),
-								document.createElement('br'),
-								lineTypeLabel,
-								document.createElement('br'),
-								lineTypeSelect,
-								document.createElement('br'),
-								document.createElement('br'),
-								xWrapper,
-								yWrapper,
-								document.createElement('br'),
-								textLabel,
-								document.createElement('br'),
-								textInput,
-								document.createElement('br'),
-								document.createElement('br'),
-								colorLabel,
-								document.createElement('br'),
-								colorInput,
-								document.createElement('br')
-							);
-
-							// Handle visibility
-							const toggleAxisFields = (val) => {
-								xWrapper.style.display =
-									val === 'x' ? 'block' : 'none';
-								yWrapper.style.display =
-									val === 'y' ? 'block' : 'none';
-							};
-							toggleAxisFields(axisSelect.value); // Initial state
-							axisSelect.addEventListener('change', (e) => {
-								toggleAxisFields(e.target.value);
-								logFormFieldValues();
-							});
-
-							wrapper.appendChild(block);
-						}
-					};
-
-					// Initial render using saved or current value
-					const initialN = parseInt(select.value, 10) || 0;
-					renderEventMarkerFields(initialN);
-
-					// Re-render on change
-					select.addEventListener('change', (e) => {
-						const n = parseInt(e.target.value, 10) || 0;
-						renderEventMarkerFields(n);
-					});
-				}
-
-				// Initially hide the dropdown container
-				dropdownContainer.style.display = checkbox.checked
-					? 'flex'
-					: 'none';
-
-				controls.forEach((control) =>
-					dropdownInputCol.appendChild(control)
-				);
-				dropdownContainer.append(dropdownLabelCol, dropdownInputCol);
-				newDiv.append(dropdownContainer);
-
-				// Toggle visibility dynamically
-				checkbox.addEventListener('change', function () {
-					checkbox.value = checkbox.checked ? 'on' : '';
-					dropdownContainer.style.display = checkbox.checked
-						? 'flex'
-						: 'none';
-					logFormFieldValues();
-				});
-			} else {
-				checkbox.addEventListener('change', function () {
-					checkbox.value = checkbox.checked ? 'on' : '';
-					logFormFieldValues();
-				});
-			}
-		}
-		const newHR = document.createElement('hr');
-		newHR.style = 'margin-top:15px';
-		newDiv.append(newHR);
-
-		// Create the button for default styles
-		const labelApplyDefaults = document.createElement('label');
-		labelApplyDefaults.for = 'ApplyScatterDefaults';
-		labelApplyDefaults.innerHTML = 'Apply Custom Scatter Styles to All Scatters';
-
-		const btnApplyDefaults = document.createElement('button');
-		btnApplyDefaults.id = 'ApplyScatterDefaults';
-		btnApplyDefaults.type = 'button'; // prevent accidental form submit
-		btnApplyDefaults.classList.add('button', 'button-primary'); // WP admin button style
-		btnApplyDefaults.innerHTML = 'Click to Apply Styles';
-
-		// Add event listener
-		btnApplyDefaults.addEventListener('click', function () {
-			// Call your function here
-			loadDefaultInteractiveScatterArguments(
-				jsonColumns,
-				interactive_arguments
-			);
-		});
-
-		// Wrap in row/col just like your select
-		const newRowBtn = document.createElement('div');
-		newRowBtn.classList.add('row', 'fieldPadding');
-		const newColumn1Btn = document.createElement('div');
-		newColumn1Btn.classList.add('col-3');
-		const newColumn2Btn = document.createElement('div');
-		newColumn2Btn.classList.add('col');
-		newColumn1Btn.appendChild(labelApplyDefaults);
-		newColumn2Btn.appendChild(btnApplyDefaults);
-		newRowBtn.append(newColumn1Btn, newColumn2Btn);
-		newDiv.append(newRowBtn);
-
-		const fieldLabels = [['XAxis', 'X Axis Column']];
-		for (let i = 1; i <= numScatters; i++) {
-			fieldLabels.push(['Scatter' + i, 'Scatter ' + i + ' Column']);
+		let spec = savedSpec;
+		let rows;
+		if (rebuildFromSettings) {
+			({ spec, rows } = await buildTabulatorSpecForFigure(postID, settings));
+			writeRenderedField(JSON.stringify(spec, null, 2));
 		}
 
-		fieldLabels.forEach((fieldLabel) => {
-			//Select the data source from dropdown menu
-			const labelSelectColumn = document.createElement('label');
-			labelSelectColumn.for = fieldLabel[0];
-			labelSelectColumn.innerHTML = fieldLabel[1];
-			const selectColumn = document.createElement('select');
-			selectColumn.id = fieldLabel[0];
-			selectColumn.name = 'plotFields';
-			selectColumn.addEventListener('change', function () {
-				logFormFieldValues();
-			});
+		await mountTabulatorTable(target, spec, { rows, figureId: postID, label });
 
-			let selectColumnOption = document.createElement('option');
-			selectColumnOption.value = 'None';
-			selectColumnOption.innerHTML = 'None';
-			selectColumn.appendChild(selectColumnOption);
-
-			Object.entries(jsonColumns).forEach(
-				([jsonColumnsKey, jsonColumnsValue]) => {
-					selectColumnOption = document.createElement('option');
-					selectColumnOption.value = jsonColumnsValue; // jsonColumnsKey;
-					selectColumnOption.innerHTML = jsonColumnsValue;
-					selectColumn.appendChild(selectColumnOption);
-				}
+		if (!editor) {
+			document.dispatchEvent(
+				new CustomEvent('graphic-data:figureTableLoaded', { detail: { title: label, postID } })
 			);
-
-			let fieldValueSaved = fillFormFieldValues(
-				selectColumn.id,
-				interactive_arguments
-			);
-			if (fieldValueSaved != undefined) {
-				selectColumn.value = fieldValueSaved;
-			}
-
-			let newRow = document.createElement('div');
-			newRow.classList.add('row', 'fieldPadding');
-
-			let fieldLabelNumber = '';
-
-			if (fieldLabel[0] != 'XAxis') {
-				fieldLabelNumber = parseInt(fieldLabel[0].slice(-1));
-				if (fieldLabelNumber % 2 != 0) {
-					newRow.classList.add('row', 'fieldBackgroundColor');
-				}
-			}
-
-			let newColumn1 = document.createElement('div');
-			newColumn1.classList.add('col-3');
-			let newColumn2 = document.createElement('div');
-			newColumn2.classList.add('col');
-
-			newColumn1.appendChild(labelSelectColumn);
-			newColumn2.appendChild(selectColumn);
-			newRow.append(newColumn1, newColumn2);
-			newDiv.append(newRow);
-
-			// Add line label and color fields, line type, marker type, and marker size
-			if (fieldLabel[0] != 'XAxis') {
-				// Add line label field
-				newRow = document.createElement('div');
-				newRow.classList.add('row', 'fieldPadding');
-
-				if (fieldLabelNumber % 2 != 0) {
-					newRow.classList.add('row', 'fieldBackgroundColor');
-				}
-
-				newColumn1 = document.createElement('div');
-				newColumn1.classList.add('col-3');
-				newColumn2 = document.createElement('div');
-				newColumn2.classList.add('col');
-
-				const labelInputTitle = document.createElement('label');
-				labelInputTitle.for = fieldLabel[0] + 'Title';
-				labelInputTitle.innerHTML = fieldLabel[1] + ' Title';
-				const inputTitle = document.createElement('input');
-				inputTitle.id = fieldLabel[0] + 'Title';
-				inputTitle.size = '70';
-				inputTitle.name = 'plotFields';
-
-				inputTitle.addEventListener('change', function () {
-					logFormFieldValues();
-				});
-				fieldValueSaved = fillFormFieldValues(
-					inputTitle.id,
-					interactive_arguments
-				);
-				if (fieldValueSaved != undefined) {
-					inputTitle.value = fieldValueSaved;
-				}
-				if (fieldValueSaved === undefined) {
-					// Make each line's default title set to the name of the column name that is selected for that line. Only if the line title is not already set.
-					//const DropdownValueSaved = fillFormFieldValues(selectColumn.id, interactive_arguments);
-					if (fieldLabel[0].includes('Scatter')) {
-						selectColumn.addEventListener('change', function () {
-							DropdownValueSaved = selectColumn.value;
-							if (
-								DropdownValueSaved != 'None' &&
-								fieldValueSaved === undefined
-							) {
-								//console.log('fieldValueSaved2', fieldValueSaved);
-								inputTitle.value = DropdownValueSaved;
-								//console.log('DropdownValueSaved2', DropdownValueSaved);
-							}
-						});
-					}
-				}
-
-				newColumn1.appendChild(labelInputTitle);
-				newColumn2.appendChild(inputTitle);
-				newRow.append(newColumn1, newColumn2);
-				newDiv.append(newRow);
-
-				// Add color field
-				newRow = document.createElement('div');
-				newRow.classList.add('row', 'fieldPadding');
-				if (fieldLabelNumber % 2 != 0) {
-					newRow.classList.add('row', 'fieldBackgroundColor');
-				}
-				newColumn1 = document.createElement('div');
-				newColumn1.classList.add('col-3');
-				newColumn2 = document.createElement('div');
-				newColumn2.classList.add('col');
-
-				const labelInputColor = document.createElement('label');
-				labelInputColor.for = fieldLabel[0] + 'Color';
-				labelInputColor.innerHTML = fieldLabel[1] + ' Color';
-				const inputColor = document.createElement('input');
-				inputColor.id = fieldLabel[0] + 'Color';
-				inputColor.name = 'plotFields';
-				inputColor.type = 'color';
-				fieldValueSaved = fillFormFieldValues(
-					inputColor.id,
-					interactive_arguments
-				);
-				if (fieldValueSaved != undefined) {
-					inputColor.value = fieldValueSaved;
-				}
-				inputColor.addEventListener('change', function () {
-					logFormFieldValues();
-				});
-
-				newColumn1.appendChild(labelInputColor);
-				newColumn2.appendChild(inputColor);
-				newRow.append(newColumn1, newColumn2);
-				newDiv.append(newRow);
-
-				// Add lineType type dropdown
-				const lineTypeRow = document.createElement('div');
-				lineTypeRow.classList.add('row', 'fieldPadding');
-				if (fieldLabelNumber % 2 != 0) {
-					lineTypeRow.classList.add('fieldBackgroundColor');
-				}
-
-				const lineTypeCol1 = document.createElement('div');
-				lineTypeCol1.classList.add('col-3');
-				const lineTypeCol2 = document.createElement('div');
-				lineTypeCol2.classList.add('col');
-
-				const lineTypeLabel = document.createElement('label');
-				lineTypeLabel.textContent = fieldLabel[1] + ' Scatter Type';
-				lineTypeLabel.htmlFor = fieldLabel[0] + 'ScatterType';
-				const lineTypeSelect = document.createElement('select');
-				lineTypeSelect.id = fieldLabel[0] + 'ScatterType';
-				lineTypeSelect.name = 'plotFields';
-
-				//line types
-				[
-					'solid',
-					'dash',
-					'dot',
-					'dashdot',
-					'longdash',
-					'longdashdot',
-				].forEach((type) => {
-					const opt = document.createElement('option');
-					opt.value = type;
-					opt.innerHTML =
-						type.charAt(0).toUpperCase() + type.slice(1);
-					lineTypeSelect.appendChild(opt);
-				});
-
-				const lineTypeSaved = fillFormFieldValues(
-					lineTypeSelect.id,
-					interactive_arguments
-				);
-				if (lineTypeSaved) {
-					lineTypeSelect.value = lineTypeSaved;
-				}
-
-				lineTypeSelect.addEventListener('change', logFormFieldValues);
-				lineTypeCol1.appendChild(lineTypeLabel);
-				lineTypeCol2.appendChild(lineTypeSelect);
-				lineTypeRow.append(lineTypeCol1, lineTypeCol2);
-				newDiv.append(lineTypeRow);
-
-				// Add marker type dropdown
-				const markerRow = document.createElement('div');
-				markerRow.classList.add('row', 'fieldPadding');
-				if (fieldLabelNumber % 2 != 0) {
-					markerRow.classList.add('fieldBackgroundColor');
-				}
-
-				const markerCol1 = document.createElement('div');
-				markerCol1.classList.add('col-3');
-				const markerCol2 = document.createElement('div');
-				markerCol2.classList.add('col');
-
-				const markerLabel = document.createElement('label');
-				markerLabel.textContent = fieldLabel[1] + ' Marker Type';
-				markerLabel.htmlFor = fieldLabel[0] + 'MarkerType';
-				const markerSelect = document.createElement('select');
-				markerSelect.id = fieldLabel[0] + 'MarkerType';
-				markerSelect.name = 'plotFields';
-
-				[
-					'circle',
-					'square',
-					'diamond',
-					'x',
-					'triangle-up',
-					'triangle-down',
-					'pentagon',
-					'hexagon',
-					'star',
-					'hourglass',
-					'bowtie',
-					'cross',
-				].forEach((type) => {
-					const opt = document.createElement('option');
-					opt.value = type;
-					opt.innerHTML =
-						type.charAt(0).toUpperCase() + type.slice(1);
-					markerSelect.appendChild(opt);
-				});
-
-				const markerSaved = fillFormFieldValues(
-					markerSelect.id,
-					interactive_arguments
-				);
-				if (markerSaved) {
-					markerSelect.value = markerSaved;
-				}
-
-				markerSelect.addEventListener('change', logFormFieldValues);
-				markerCol1.appendChild(markerLabel);
-				markerCol2.appendChild(markerSelect);
-				markerRow.append(markerCol1, markerCol2);
-				newDiv.append(markerRow);
-
-				// Add markerSize type dropdown
-				const markerSizeRow = document.createElement('div');
-				markerSizeRow.classList.add('row', 'fieldPadding');
-				if (fieldLabelNumber % 2 != 0) {
-					markerSizeRow.classList.add('fieldBackgroundColor');
-				}
-
-				const markerSizeCol1 = document.createElement('div');
-				markerSizeCol1.classList.add('col-3');
-				const markerSizeCol2 = document.createElement('div');
-				markerSizeCol2.classList.add('col');
-
-				const markerSizeLabel = document.createElement('label');
-				markerSizeLabel.textContent = fieldLabel[1] + ' Marker Size';
-				markerSizeLabel.htmlFor = fieldLabel[0] + 'MarkerSize';
-				const markerSizeSelect = document.createElement('select');
-				markerSizeSelect.id = fieldLabel[0] + 'MarkerSize';
-				markerSizeSelect.name = 'plotFields';
-
-				// Sizes 1 through 20
-				[0, 1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20].forEach(
-					(size) => {
-						const opt = document.createElement('option');
-						opt.value = size;
-						opt.innerHTML = size + ' px';
-						markerSizeSelect.appendChild(opt);
-					}
-				);
-
-				markerSizeSelect.value = 10;
-
-				const markerSizeSaved = fillFormFieldValues(
-					markerSizeSelect.id,
-					interactive_arguments
-				);
-				if (markerSizeSaved) {
-					markerSizeSelect.value = markerSizeSaved;
-				}
-
-				markerSizeSelect.addEventListener('change', logFormFieldValues);
-				markerSizeCol1.appendChild(markerSizeLabel);
-				markerSizeCol2.appendChild(markerSizeSelect);
-				markerSizeRow.append(markerSizeCol1, markerSizeCol2);
-				newDiv.append(markerSizeRow);
-
-				//Add checkboxes for error bars, standard deviation, mean, and percentiles
-				const features = [
-					'Legend',
-					'ConnectGaps',
-					'Mean',
-					'StdDev',
-					'ErrorBars',
-					'Percentiles',
-				];
-				const featureNames = [
-					'Add Scatter to Legend',
-					'Connect Missing Data Gaps',
-					'Mean Scatter',
-					'+-1 Std Dev Scatters ',
-					'Symmetric Error Bars',
-					'90th & 10th Percentile Scatters',
-				];
-				for (let i = 0; i < features.length; i++) {
-					const feature = features[i];
-					const featureName = featureNames[i];
-
-					const newRow = document.createElement('div');
-					newRow.classList.add('row', 'fieldPadding');
-					if (fieldLabelNumber % 2 != 0) {
-						newRow.classList.add('row', 'fieldBackgroundColor');
-					}
-
-					const newColumn1 = document.createElement('div');
-					newColumn1.classList.add('col-3');
-					const newColumn2 = document.createElement('div');
-					newColumn2.classList.add('col');
-
-					const label = document.createElement('label');
-					label.for = fieldLabel[0] + feature;
-					label.innerHTML = `${featureName}`;
-					const checkbox = document.createElement('input');
-					checkbox.type = 'checkbox';
-					checkbox.id = fieldLabel[0] + feature;
-					checkbox.name = 'plotFields';
-
-					const fieldValueSaved = fillFormFieldValues(
-						checkbox.id,
-						interactive_arguments
-					);
-					checkbox.value = fieldValueSaved === 'on' ? 'on' : '';
-					checkbox.checked = fieldValueSaved === 'on';
-
-					newColumn1.appendChild(label);
-					newColumn2.appendChild(checkbox);
-					newRow.append(newColumn1, newColumn2);
-					newDiv.append(newRow);
-
-					// === Add dropdowns for feature-specific data ===
-					if (['Mean', 'ErrorBars', 'StdDev'].includes(feature)) {
-						const dropdownContainer = document.createElement('div');
-						dropdownContainer.classList.add('row', 'fieldPadding');
-						if (fieldLabelNumber % 2 != 0) {
-							dropdownContainer.classList.add(
-								'row',
-								'fieldBackgroundColor'
-							);
-						}
-
-						const dropdownLabelCol = document.createElement('div');
-						dropdownLabelCol.classList.add('col-3');
-						const dropdownInputCol = document.createElement('div');
-						dropdownInputCol.classList.add('col');
-
-						//---------------------------------------------------------------- START FUNCTIONS
-
-						function createDropdown(labelText, selectId) {
-							const label = document.createElement('label');
-							label.innerHTML = labelText;
-							const select = document.createElement('select');
-							select.id = selectId;
-							select.name = 'plotFields';
-
-							if (
-								feature === 'Mean' ||
-								feature === 'ErrorBars' ||
-								feature === 'StdDev'
-							) {
-								const autoOpt =
-									document.createElement('option');
-
-								if (feature != 'ErrorBars') {
-									autoOpt.value = 'auto';
-									autoOpt.innerHTML =
-										'Auto Calculate Based on Scatter Column Selection';
-									select.appendChild(autoOpt);
-								}
-								if (feature === 'ErrorBars') {
-									autoOpt.value = 'auto';
-									autoOpt.innerHTML = 'Example Error Bars';
-									select.appendChild(autoOpt);
-								}
-
-								for (const col of Object.values(jsonColumns)) {
-									const opt =
-										document.createElement('option');
-									opt.value = col;
-									opt.innerHTML = col;
-									select.appendChild(opt);
-								}
-
-								const saved = fillFormFieldValues(
-									select.id,
-									interactive_arguments
-								);
-								if (saved) {
-									select.value = saved;
-								}
-
-								select.addEventListener(
-									'change',
-									logFormFieldValues
-								);
-								return { label, select };
-							}
-						}
-
-						function createColorfield(labelText, inputId) {
-							const label = document.createElement('label');
-							label.textContent = labelText;
-							label.htmlFor = inputId; // Link label to input
-
-							const input = document.createElement('input'); // Correct element
-							input.type = 'color';
-							input.id = inputId;
-							input.name = 'plotFields';
-
-							const saved = fillFormFieldValues(
-								input.id,
-								interactive_arguments
-							);
-							if (saved) {
-								input.value = saved;
-							}
-
-							input.addEventListener(
-								'change',
-								logFormFieldValues
-							);
-							return { label, input };
-						}
-
-						//---------------------------------------------------------------- END FUNCTIONS
-
-						const controls = [];
-
-						// Add features for Mean
-						if (feature === 'Mean') {
-							const { label, select } = createDropdown(
-								'Mean Source Column',
-								fieldLabel[0] + feature + 'Field'
-							);
-							controls.push(label, select);
-						}
-
-						// Add features for ErrorBars
-						if (feature === 'ErrorBars' || feature === 'StdDev') {
-							const { label: labelValues, select: selectValues } =
-								createDropdown(
-									`${featureName} Input Column Values`,
-									fieldLabel[0] + feature + 'InputValues'
-								);
-							const { label: labelColor, input: ColorValue } =
-								createColorfield(
-									`Color`,
-									fieldLabel[0] + feature + 'Color'
-								);
-							controls.push(
-								labelValues,
-								document.createElement('br'),
-								selectValues,
-								document.createElement('br'),
-								labelColor,
-								document.createElement('br'),
-								ColorValue
-							);
-						}
-
-						// Initially hide the dropdown container becasue the box hasnt been checked
-						dropdownContainer.style.display = checkbox.checked
-							? 'flex'
-							: 'none';
-
-						controls.forEach((control) =>
-							dropdownInputCol.appendChild(control)
-						);
-						dropdownContainer.append(
-							dropdownLabelCol,
-							dropdownInputCol
-						);
-						newDiv.append(dropdownContainer);
-
-						// Toggle visibility dynamically
-						checkbox.addEventListener('change', function () {
-							checkbox.value = checkbox.checked ? 'on' : '';
-							dropdownContainer.style.display = checkbox.checked
-								? 'flex'
-								: 'none';
-							logFormFieldValues();
-						});
-					} else {
-						checkbox.addEventListener('change', function () {
-							checkbox.value = checkbox.checked ? 'on' : '';
-							logFormFieldValues();
-						});
-					}
-				}
-			}
-
-			const targetElement = document.getElementById('graphGUI');
-			targetElement.appendChild(newDiv);
-		});
+		}
+	} catch (error) {
+		console.error('Table figure error:', error);
+		if (rebuildFromSettings) {
+			// Never leave a stale spec (or an older Plotly figure) behind for the save step.
+			writeRenderedField('');
+		}
+		if (target) {
+			const message = document.createElement('p');
+			message.className = 'figure-error';
+			message.textContent = 'The table could not be loaded.';
+			target.appendChild(message);
+		}
 	}
+
+	return true;
 }
-// Bridge for classic scripts until they are modularized.
-window.plotlyScatterParameterFields = plotlyScatterParameterFields;

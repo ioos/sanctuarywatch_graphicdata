@@ -1453,10 +1453,12 @@ function flicker_highlight_icons() {
 		const elem = document.querySelector('g[id="' + key + '"]');
 		if (elem) {
 			// Add transition for smooth fading
+			// Toggle the stroke color rather than stroke-opacity: stroke-opacity is
+			// inherited by child shapes, so setting it to 0 on the group hides the
+			// children's own strokes (e.g. unfilled ellipses and paths disappear)
+			elem.style.transition = 'stroke 1s ease-in-out';
 
-			elem.style.transition = 'stroke-opacity 1s ease-in-out';
-
-			// Initial state
+			let highlight_color;
 			if (
 				graphicDataSceneData.sceneSameHoverColorSections != 'yes' &&
 				sectionObj[key] != 'None'
@@ -1470,25 +1472,22 @@ function flicker_highlight_icons() {
 
 				const this_color = `scene_section_hover_color${section_num}`;
 				const text_color = `scene_section_hover_text_color${section_num}`;
-				elem.style.stroke = scene_data[sectionObj[key]][this_color];
+				highlight_color = scene_data[sectionObj[key]][this_color];
 			} else {
-				elem.style.stroke = graphicDataSceneData.sceneDefaultHoverColor;
+				highlight_color = graphicDataSceneData.sceneDefaultHoverColor;
 			}
 
+			// Initial state: no highlight stroke
 			elem.style.strokeWidth = '3';
-			elem.style.strokeOpacity = '0';
+			elem.style.stroke = '';
 
 			// Create flickering effect
-			let increasing = true;
+			let highlighted = false;
 			setInterval(() => {
-				if (increasing) {
-					elem.style.strokeOpacity = '0.5';
-					increasing = false;
-				} else {
-					elem.style.strokeOpacity = '0';
-					increasing = true;
-				}
-			}, 1800); // Change every 1 second
+				highlighted = !highlighted;
+				// '' removes the override so children fall back to their own stroke
+				elem.style.stroke = highlighted ? highlight_color : '';
+			}, 1800); // Change every 1.8 seconds
 		}
 	}
 }
