@@ -114,6 +114,12 @@ async function renderFigureBlock(block) {
 			figureMedia.style.objectFit = 'contain';
 		}
 
+		// Tabulator tables: apply the block's fixed height, if any.
+		const tableHandle = targetDiv.querySelector('.graphic-data-tabulator')?.graphicDataTable;
+		if (tableHandle && figureHeight > 0) {
+			tableHandle.setHeight(figureHeight);
+		}
+
 		if (plotDiv && window.Plotly?.Plots?.resize) {
 			window.Plotly.Plots.resize(plotDiv);
 		}

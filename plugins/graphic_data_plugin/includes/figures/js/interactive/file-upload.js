@@ -1,4 +1,6 @@
 import { logFormFieldValues, fillFormFieldValues } from '@graphic-data/plotly-utility';
+import { TABULATOR_GRAPH_TYPE } from '@graphic-data/tabulator-table';
+import { tabulatorTableParameterFields } from '@graphic-data/tabulator-table-settings';
 
 // Module-level replacement for wpApiSettings.
 const moduleData = JSON.parse(
@@ -197,16 +199,16 @@ async function loadJson(targetContainer) {
 						const graphType3 = document.createElement('option');
 						graphType3.value = 'Plotly line graph (time series)';
 						graphType3.innerHTML ='Plotly line graph, time series, or scatter plot';
-						// const graphType4 = document.createElement('option');
-						// graphType4.value = 'Tabulator Table';
-						// graphType4.innerHTML = 'Tabulator Table';
+						const graphTypeTable = document.createElement('option');
+						graphTypeTable.value = TABULATOR_GRAPH_TYPE;
+						graphTypeTable.textContent = 'Table (Tabulator)';
 						// let graphType4 = document.createElement("option");
 						// graphType4.value = "Plotly map";
 						// graphType4.innerHTML = "Plotly map";
 						selectGraphType.appendChild(graphType1);
 						selectGraphType.appendChild(graphType2);
 						selectGraphType.appendChild(graphType3);
-						// selectGraphType.appendChild(graphType4);
+						selectGraphType.appendChild(graphTypeTable);
 						// selectGraphType.appendChild(graphType4);
 
 						//Admin is able to call to the interactive_arguments using document.getElementsByName("figure_interactive_arguments")[0].value;
@@ -349,11 +351,11 @@ function secondaryGraphFields(graphType, interactive_arguments, jsonColumns) {
 			clearPreviousGraphFields();
 			plotlyLineParameterFields(jsonColumns, interactive_arguments);
 			break;
-		// case 'Tabulator Table':
-		//tabulator-table
-		// 	// Clear any previously created graph fields
-		// 	clearPreviousGraphFields();
-		// 	break;
+		case TABULATOR_GRAPH_TYPE:
+			// Clear any previously created graph fields and build the table settings
+			clearPreviousGraphFields();
+			tabulatorTableParameterFields(jsonColumns);
+			break;
 	}
 }
 

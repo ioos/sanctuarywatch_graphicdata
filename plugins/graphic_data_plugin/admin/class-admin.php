@@ -112,10 +112,19 @@ class Graphic_Data_Admin {
 				GRAPHIC_DATA_PLUGIN_VERSION
 			);
 
+			// Tabulator table runtime. It has no module dependencies, so standalone figure HTML can import it by URL.
 			wp_register_script_module(
 				'@graphic-data/tabulator-table',
 				$interactive_base . 'tabulator-table.js',
-				array( '@graphic-data/plotly-utility' ),
+				array(),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
+			// Tabulator table settings shown on the Figure edit screen.
+			wp_register_script_module(
+				'@graphic-data/tabulator-table-settings',
+				$interactive_base . 'tabulator-table-settings.js',
+				array( '@graphic-data/plotly-utility', '@graphic-data/tabulator-table' ),
 				GRAPHIC_DATA_PLUGIN_VERSION
 			);
 
@@ -148,6 +157,7 @@ class Graphic_Data_Admin {
 					'@graphic-data/modal-render',
 					'@graphic-data/figure-render',
 					'@graphic-data/scene-render',
+					'@graphic-data/tabulator-table',
 				),
 				GRAPHIC_DATA_PLUGIN_VERSION
 			);
@@ -249,6 +259,7 @@ class Graphic_Data_Admin {
 				array(
 					'@graphic-data/plotly-bar',
 					'@graphic-data/tabulator-table',
+					'@graphic-data/tabulator-table-settings',
 					'@graphic-data/plotly-timeseries-line',
 					'@graphic-data/plotly-map',
 				),

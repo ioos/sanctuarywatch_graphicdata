@@ -1,7 +1,7 @@
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { producePlotlyMap } from '@graphic-data/plotly-map';
-import { produceTabulatorTable } from '@graphic-data/tabulator-table';
+import { renderTabulatorFigure } from '@graphic-data/tabulator-table';
 import { loadPlotlyScript, waitForElementById } from '@graphic-data/plotly-utility';
 import { is_mobile } from '@graphic-data/scene-shared';
 
@@ -352,6 +352,21 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
         document.dispatchEvent( new CustomEvent( 'graphic-data:figurePreviewError', {
             detail: { tabContentElement, figureType }
         } ) );
+    }
+
+    // Tabulator tables have their own render path (spec + mount) and return here.
+    // Every other interactive figure continues to the Plotly handling below, unchanged.
+    if (figureType === 'Interactive') {
+        const tableHandled = await renderTabulatorFigure({
+            targetId,
+            postID,
+            interactiveArguments: interactive_arguments,
+            savedSpec: savedFigure,
+            label: title,
+        });
+        if (tableHandled) {
+            return;
+        }
     }
 
 	async function waitForElementByIdPolling(

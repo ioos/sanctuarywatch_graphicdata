@@ -6,6 +6,7 @@ import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { render_tab_info } from '@graphic-data/figure-render';
 import { render_interactive_plots } from '@graphic-data/figure-render';
+import { ensureTabulatorStyles } from '@graphic-data/tabulator-table';
 import { is_mobile } from '@graphic-data/scene-shared';
 
 import {
@@ -565,6 +566,18 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					previewElement.appendChild(containerDiv);
 					stagingHost.remove();
 					stagingHost = null;
+				}
+
+				// Tabulator tables: their stylesheet does not move with them into the
+				// editor iframe, so add it there, then redraw at the final size.
+				const tableHandle = containerDiv.querySelector('.graphic-data-tabulator')
+					?.graphicDataTable;
+				if (tableHandle) {
+					await ensureTabulatorStyles(targetDocument);
+					if (normalizedHeight > 0) {
+						tableHandle.setHeight(normalizedHeight);
+					}
+					tableHandle.resize();
 				}
 
 				/**

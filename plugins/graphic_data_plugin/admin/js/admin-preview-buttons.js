@@ -1,6 +1,11 @@
 import { render_modal } from '@graphic-data/modal-render';
 import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-render';
 import { make_title, loadSVG } from '@graphic-data/scene-render';
+import {
+	TABULATOR_GRAPH_TYPE,
+	TABULATOR_MODULE_URL,
+	isTabulatorSpec,
+} from '@graphic-data/tabulator-table';
 
 // graphicDataSceneData is used by the preview handlers to pass form data to
 // make_title() / scene-render.js. Keep on window so scene-render can read it.
@@ -1424,7 +1429,16 @@ async function generateAndSaveFigureFromPreview(
 			 * JSON should already be stored in the textarea, so there
 			 * is no need to render Plotly again.
 			 */
-			if (!isFinishingInitialSave) {
+			/*
+			 * Tabulator tables write their spec before
+			 * render_interactive_plots() resolves, so there is nothing
+			 * to wait for.
+			 */
+			const isTabulatorTable =
+				document.getElementById('graphType')?.value ===
+				TABULATOR_GRAPH_TYPE;
+
+			if (!isFinishingInitialSave && !isTabulatorTable) {
 				await waitForPlotlyToFinish();
 			}
 
@@ -2477,6 +2491,57 @@ export async function createFigureHtml(
 	}
 
 	/**
+	 * Creates the markup for a Tabulator table figure.
+	 *
+	 * The page imports the same tabulator-table.js module used by the
+	 * admin preview and the frontend, and passes it the saved table spec.
+	 * Rows are read from the figure's data file when the page loads.
+	 *
+	 * @return {string} Table markup and module script.
+	 */
+	function buildTabulatorFigureHTML() {
+		const targetIDJSON =
+			serializeForScript(
+				figureContentElementID
+			);
+
+		return `
+			<div
+				id="${escapeHtml(figureContentElementID)}"
+				class="tabulator-figure"
+			></div>
+
+			<script type="module">
+				import { mountTabulatorTable } from ${serializeForScript(TABULATOR_MODULE_URL)};
+
+				const target = document.getElementById(${targetIDJSON});
+				const sendDocumentHeight =
+					window.graphicDataFigureEmbed &&
+					window.graphicDataFigureEmbed.sendHeight;
+
+				mountTabulatorTable(target, ${serializeForScript(savedFigure)}, {
+					figureId: ${serializeForScript(normalizedFigureID)},
+					label: ${serializeForScript(figureTitle)}
+				})
+					.catch(function (error) {
+						console.error("Unable to render table figure:", error);
+						if (target) {
+							target.innerHTML =
+								'<p class="figure-error">' +
+								'The table could not be loaded.' +
+								'</p>';
+						}
+					})
+					.finally(function () {
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+					});
+			</script>
+		`;
+	}
+
+	/**
 	 * Creates a Code figure.
 	 *
 	 * Script elements are recreated because scripts inserted through
@@ -2742,6 +2807,9 @@ export async function createFigureHtml(
 				return buildCodeFigureHTML();
 
 			case 'Interactive':
+				if (isTabulatorSpec(savedFigure)) {
+					return buildTabulatorFigureHTML();
+				}
 				return buildInteractiveFigureHTML();
 
 			default:

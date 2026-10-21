@@ -696,11 +696,11 @@ function graphic_data_enqueue_scripts() {
 			graphic_data_get_theme_asset_version()
 		);
 
-		// register the plotly scatter module used in interactive figures.
+		// register the Tabulator table module used in interactive figures.
 		wp_register_script_module(
 			'@graphic-data/tabulator-table',
 			content_url() . '/plugins/graphic_data_plugin/includes/figures/js/interactive/tabulator-table.js',
-			array( '@graphic-data/plotly-utility' ),
+			array(),
 			graphic_data_get_theme_asset_version()
 		);
 
