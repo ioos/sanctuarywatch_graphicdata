@@ -1,3 +1,5 @@
+import { renderComparisonFigure } from './interactive/image-comparison.js';
+import { renderCarouselFigure } from './interactive/image-carousel.js';
 import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { producePlotlyMap } from '@graphic-data/plotly-map';
@@ -354,6 +356,16 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
             detail: { tabContentElement, figureType }
         } ) );
     }
+
+    if (figureType === 'Interactive' && await renderComparisonFigure({
+        targetId, interactiveArguments: interactive_arguments, savedSpec: savedFigure,
+        label: title, targetDocument,
+    })) return;
+
+    if (figureType === 'Interactive' && await renderCarouselFigure({
+        targetId, interactiveArguments: interactive_arguments, savedSpec: savedFigure,
+        label: title, targetDocument,
+    })) return;
 
     // Tabulator tables have their own render path (spec + mount) and return here.
     // Every other interactive figure continues to the Plotly handling below, unchanged.

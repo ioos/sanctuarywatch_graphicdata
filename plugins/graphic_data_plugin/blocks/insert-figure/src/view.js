@@ -114,6 +114,12 @@ async function renderFigureBlock(block) {
 			figureMedia.style.objectFit = 'contain';
 		}
 
+
+        const comparison = targetDiv.querySelector('.gd-comparison-stack')?.graphicDataComparison;
+        if (comparison && figureHeight > 0) comparison.setHeight(figureHeight);
+        const carousel = targetDiv.querySelector('.gd-carousel')?.graphicDataCarousel;
+        if (carousel && figureHeight > 0) carousel.setHeight(figureHeight);
+
 		// Tabulator tables: apply the block's fixed height, if any.
 		const tableHandle = targetDiv.querySelector('.graphic-data-tabulator')?.graphicDataTable;
 		if (tableHandle && figureHeight > 0) {

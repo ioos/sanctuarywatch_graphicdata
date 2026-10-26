@@ -3,6 +3,7 @@
  * Register class that defines the Figure custom content type as well as associated Figure functions
  */
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
+require_once __DIR__ . '/carousel-images.php';
 
 /**
  * Handles the Figure custom post type for the Graphic Data plugin.
@@ -1222,6 +1223,7 @@ class Graphic_Data_Figure {
 			'_edit_lock',
 			'_edit_last',
 			'_wp_old_slug',
+			'figure_published',
 			'figure_iframe_code',
 			'parent_duplicate',
 			'uploaded_path_html',
@@ -1244,6 +1246,11 @@ class Graphic_Data_Figure {
 			}
 		}
 
+
+		/*
+		* Start the duplicate in Draft regardless of the original Figure's status.
+		*/
+		update_post_meta( $new_post_id, 'figure_published', 'draft' );
 
 		/*
 		* Determine what type of Figure this is.

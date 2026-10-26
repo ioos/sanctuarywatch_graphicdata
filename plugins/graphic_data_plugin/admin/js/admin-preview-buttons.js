@@ -1,3 +1,5 @@
+import { COMPARISON_TYPE, COMPARISON_MODULE_URL, isComparisonSpec } from '../../includes/figures/js/interactive/image-comparison.js';
+import { CAROUSEL_TYPE, CAROUSEL_MODULE_URL, isCarouselSpec } from '../../includes/figures/js/interactive/image-carousel.js';
 import { render_modal } from '@graphic-data/modal-render';
 import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-render';
 import { make_title, loadSVG } from '@graphic-data/scene-render';
@@ -23,6 +25,7 @@ const graphicDataSiteTitle =
 document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
     const { tabContentElement: divID, figureType } = e.detail;
 	if (figureType === 'Interactive') {
+        if ([CAROUSEL_TYPE, COMPARISON_TYPE].includes(document.getElementById('graphType')?.value)) return;
 		//Preview error message in admin
 
 		let fileInputElement;
@@ -64,7 +67,7 @@ document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
 			errorMessageSummary.style.margin = '5%';
 			// Clear any previous error messages if necessary
 			errorMessageSummary.textContent =
-				'Please upload a file, choose a graph type, and make data selections to preview an interactive figure. Be sure to check all options.';
+				'Please upload a file, choose an interactive type, and make data selections to preview an interactive figure. Be sure to check all options.';
 
 			// Avoid appending multiple error messages repeatedly
 			if (!divID.contains(errorMessageSummary)) {
@@ -114,7 +117,7 @@ document.addEventListener( 'graphic-data:figurePreviewError', ( e ) => {
 function waitForPlotlyToFinish(timeoutMs = 10000) {
 	return new Promise((resolve, reject) => {
 		const expectedErrorMessage =
-			'Please upload a file, choose a graph type, and make data selections to preview an interactive figure. Be sure to check all options.';
+			'Please upload a file, choose an interactive type, and make data selections to preview an interactive figure. Be sure to check all options.';
 
 		let observer = null;
 		let plotDiv = null;
@@ -492,11 +495,13 @@ if (previewFigureOrModalElements.length > 0) {
 
 			// --- GATHER FIGURE DATA FROM FORM FIELDS ---
 			if (hasFigurePreview !== null && hasFigurePreview.length > 0) {
+				document.getElementById('secondaryGraphFields')?.syncCaptionEditors?.();
 
 				// we're going to pause the save if we're saving a figure to allow for it to load.
 				const figureType = document.getElementsByName('figure_path')[0]?.value;
 
 				const existingFileName = document.getElementById('existing-file-name')?.value.trim() || '';
+                const isImageFigure = [CAROUSEL_TYPE, COMPARISON_TYPE].includes(document.getElementById('graphType')?.value);
 				//console.log('existingFileName', existingFileName);
 
 				const status = document.querySelector('[name="figure_published"]')?.value;
@@ -513,11 +518,11 @@ if (previewFigureOrModalElements.length > 0) {
 						return;
 					}
 
-					if (figureType === "Interactive" && window.location.href.includes('post-new.php')) {
+					if (figureType === "Interactive" && !isImageFigure && window.location.href.includes('post-new.php')) {
 						return;
 					}
 
-					if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '') {
+					if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '' && !isImageFigure) {
 						if (status === 'draft') {
 							event.preventDefault();
 							try {
@@ -793,11 +798,11 @@ if (previewFigureOrModalElements.length > 0) {
 
 					if (el.id === 'publish') {
 
-						if (figureType === "Interactive" && window.location.href.includes('post-new.php')) {
+						if (figureType === "Interactive" && !isImageFigure && window.location.href.includes('post-new.php')) {
 						return;
 						}
 
-						if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '') {
+						if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '' && !isImageFigure) {
 						return;
 						}
 
@@ -818,7 +823,10 @@ if (previewFigureOrModalElements.length > 0) {
 						generateAndSaveFigureFromPreview(el, info_obj, info_obj_figure_only);
 					}
 							
-				})();
+				})().catch((error) => {
+                    console.error('Figure preview failed:', error);
+                    alert(error.message || 'The figure could not be prepared.');
+                });
 			}
 		});
 	});
@@ -1438,7 +1446,7 @@ async function generateAndSaveFigureFromPreview(
 				document.getElementById('graphType')?.value ===
 				TABULATOR_GRAPH_TYPE;
 
-			if (!isFinishingInitialSave && !isTabulatorTable) {
+			if (!isFinishingInitialSave && !isTabulatorTable && ![CAROUSEL_TYPE, COMPARISON_TYPE].includes(document.getElementById('graphType')?.value)) {
 				await waitForPlotlyToFinish();
 			}
 
@@ -1447,7 +1455,7 @@ async function generateAndSaveFigureFromPreview(
 
 			if (!renderedValue) {
 				throw new Error(
-					'No rendered Plotly JSON was found.'
+					'No rendered interactive figure was found.'
 				);
 			}
 
@@ -1456,7 +1464,7 @@ async function generateAndSaveFigureFromPreview(
 					JSON.parse(renderedValue);
 			} catch (error) {
 				throw new Error(
-					'The rendered Plotly JSON could not ' +
+					'The rendered interactive figure could not ' +
 					'be parsed.',
 					{
 						cause: error
@@ -1652,6 +1660,12 @@ async function generateAndSaveFigureFromPreview(
 			originalButtonText,
 			spinner
 		);
+
+        // A failed image-figure export must not silently publish a stale specification.
+        if ([CAROUSEL_TYPE, COMPARISON_TYPE].includes(document.getElementById('graphType')?.value)) {
+            alert(error.message || 'The image figure could not be prepared for saving.');
+            return;
+        }
 
 		if (!window.location.href.includes('post-new.php')) {
 			alert(
@@ -2490,6 +2504,31 @@ export async function createFigureHtml(
 		`;
 	}
 
+    /** Export the native comparison renderer without external script dependencies. */
+    function buildComparisonFigureHTML() {
+        return `<div id="${escapeHtml(figureContentElementID)}"></div>
+            <script type="module">
+                import { mountImageComparison } from ${serializeForScript(COMPARISON_MODULE_URL)};
+                const target = document.getElementById(${serializeForScript(figureContentElementID)});
+                mountImageComparison(target, ${serializeForScript(savedFigure)}, { label: ${serializeForScript(figureTitle)} })
+                    .catch(error => { target.textContent = 'The image comparison could not be loaded.'; console.error(error); })
+                    .finally(() => window.graphicDataFigureEmbed?.sendHeight?.());
+            </script>`;
+    }
+
+    /** Export the same carousel renderer used by blocks and previews. */
+    function buildCarouselFigureHTML() {
+        return `<div id="${escapeHtml(figureContentElementID)}"></div>
+            <script type="module">
+                import { mountImageCarousel } from ${serializeForScript(CAROUSEL_MODULE_URL)};
+                const target = document.getElementById(${serializeForScript(figureContentElementID)});
+                mountImageCarousel(target, ${serializeForScript(savedFigure)}, { label: ${serializeForScript(figureTitle)} })
+                    .catch(error => { target.textContent = 'The image carousel could not be loaded.'; console.error(error); })
+                    .finally(() => window.graphicDataFigureEmbed?.sendHeight?.());
+            </script>`;
+    }
+
+
 	/**
 	 * Creates the markup for a Tabulator table figure.
 	 *
@@ -2499,6 +2538,7 @@ export async function createFigureHtml(
 	 *
 	 * @return {string} Table markup and module script.
 	 */
+
 	function buildTabulatorFigureHTML() {
 		const targetIDJSON =
 			serializeForScript(
@@ -2807,6 +2847,12 @@ export async function createFigureHtml(
 				return buildCodeFigureHTML();
 
 			case 'Interactive':
+				if (isComparisonSpec(savedFigure)) {
+                    return buildComparisonFigureHTML();
+                }
+				if (isCarouselSpec(savedFigure)) {
+                    return buildCarouselFigureHTML();
+                }
 				if (isTabulatorSpec(savedFigure)) {
 					return buildTabulatorFigureHTML();
 				}

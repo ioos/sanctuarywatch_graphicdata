@@ -315,7 +315,7 @@ function run_admin_figures() {
 			case 'Interactive':
 				//Show the fields we want to see
 				codeContainer.style.display = 'none';
-				uploadFileContainer.style.display = 'block';
+				uploadFileContainer.style.display = ['Image Carousel', 'Image Comparison Slider'].includes(document.getElementById('graphType')?.value) ? 'none' : 'block';
 				figure_interactive_settings.style.display = 'block';
 
 				//Hide the fields we do not want to see and show the fields we want to see
