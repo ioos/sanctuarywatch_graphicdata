@@ -1,3 +1,4 @@
+import { enableFigureImageViewer } from '../../includes/figures/js/image-viewer.js';
 import { COMPARISON_TYPE, COMPARISON_MODULE_URL, isComparisonSpec } from '../../includes/figures/js/interactive/image-comparison.js';
 import { CAROUSEL_TYPE, CAROUSEL_MODULE_URL, isCarouselSpec } from '../../includes/figures/js/interactive/image-carousel.js';
 import { render_modal } from '@graphic-data/modal-render';
@@ -674,6 +675,8 @@ if (previewFigureOrModalElements.length > 0) {
 						'figure_data_info[figure_data_link_text]'
 					)[0]?.value,
 
+                    figureInternalUrlCheckbox: document.querySelector('[name="figure_internal_url_checkbox"]')?.checked ? 'yes' : '',
+                    figureInternalUrl: document.querySelector('[name="figure_internal_url"]')?.value || '',
 					imageLink: (function () {
 						const type =
 							document.getElementsByName('figure_path')[0]?.value;
@@ -732,6 +735,8 @@ if (previewFigureOrModalElements.length > 0) {
 					dataLink: '',
 					dataText: '',
 				
+                    figureInternalUrlCheckbox: document.querySelector('[name="figure_internal_url_checkbox"]')?.checked ? 'yes' : '',
+                    figureInternalUrl: document.querySelector('[name="figure_internal_url"]')?.value || '',
 					imageLink: (function () {
 						const type =
 							document.getElementsByName('figure_path')[0]?.value ?? '';
@@ -2129,12 +2134,27 @@ export async function createFigureHtml(
 			`;
 		}
 
+        // Include the optional website link in both saved HTML variants.
+        let imageDestination = '';
+        if (imageType === 'Internal' && info_obj.figureInternalUrlCheckbox === 'yes') {
+            try {
+                const destination = new URL(String(info_obj.figureInternalUrl || '').trim());
+                if (['https:', 'http:'].includes(destination.protocol)) {
+                    imageDestination = destination.href;
+                }
+            } catch { /* Leave an invalid or missing destination unlinked. */ }
+        }
+
+        const useImageViewer = imageType === 'External' ||
+            (imageType === 'Internal' && info_obj.figureInternalUrlCheckbox !== 'yes');
+
 		const shouldRetrieveAltText =
 			imageType === 'Internal' &&
 			!imageAlt;
 
 		return `
 			<div class="figure-image-container">
+                ${imageDestination ? '<a href="' + escapeHtml(imageDestination) + '" target="_blank" rel="noopener noreferrer" style="display:block;max-width:100%">' : ''}
 				<img
 					id="${escapeHtml(imageElementID)}"
 					class="figure-image"
@@ -2143,6 +2163,7 @@ export async function createFigureHtml(
 					loading="lazy"
 					decoding="async"
 				>
+                ${imageDestination ? '</a>' : ''}
 
 				<p
 					id="${escapeHtml(errorElementID)}"
@@ -2190,6 +2211,8 @@ export async function createFigureHtml(
 
 						return;
 					}
+
+                    ${useImageViewer ? '(' + enableFigureImageViewer.toString() + ')(image);' : ''}
 
 					function handleImageLoaded() {
 						image.hidden = false;
