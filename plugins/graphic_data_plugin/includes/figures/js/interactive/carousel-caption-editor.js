@@ -16,7 +16,7 @@ export function attachCarouselCaptionEditors(root, rows, captions) {
 					wpautop: true,
 					height: 160,
 					menubar: false,
-					toolbar1: 'bold italic bullist numlist blockquote link unlink undo redo removeformat',
+					toolbar1: 'bold italic alignleft aligncenter alignright alignjustify bullist numlist blockquote link unlink undo redo removeformat',
 					toolbar2: '',
 					setup(editor) {
 						editor.on('init input change undo redo SetContent', () => {

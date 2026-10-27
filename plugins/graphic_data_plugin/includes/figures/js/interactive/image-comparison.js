@@ -68,8 +68,8 @@ export async function mountImageComparison(target, spec, { label = 'Image compar
 	.gd-comparison-stack figcaption[data-position=top]{top:12px}
 	.gd-comparison-stack figcaption[data-position=center]{top:50%;transform:translateY(-50%)}
 	.gd-comparison-stack figcaption[data-position=bottom]{bottom:12px}
-	.gd-comparison-stack .gd-comparison-divider{position:absolute;z-index:3;top:0;bottom:0;left:var(--gd-divider);width:3px;transform:translateX(-50%);background:white;box-shadow:0 0 3px #222;pointer-events:none}
-	.gd-comparison-stack .gd-comparison-divider span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;background:#111;color:#fff;border:2px solid white;padding:8px;white-space:nowrap;font-size:20px;line-height:1}
+	.gd-comparison-stack .gd-comparison-divider{position:absolute;z-index:3;top:0;bottom:0;left:var(--gd-divider);width:8px;transform:translateX(-50%);background:white;box-shadow:0 0 5px #222;pointer-events:none}
+	.gd-comparison-stack .gd-comparison-divider span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;background:#111;color:#fff;border:2px solid white;padding-bottom:10px;padding-left:10px;padding-right:10px;padding-top:5px;white-space:nowrap;font-size:32px;line-height:1;justify-content:center;align-items:center;display:flex;user-select:none}
 	.gd-comparison-stack .gd-comparison-control{display:block;margin-top:8px;color:inherit;font-size:14px;text-align:left}
 	.gd-comparison-stack input[type=range]{display:block;width:100%;margin:6px 0;min-height:32px;cursor:ew-resize;accent-color:#234b68}
 	.gd-comparison-stack input[type=range]:focus-visible{outline:3px solid #1675b6;outline-offset:3px}

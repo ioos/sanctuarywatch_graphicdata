@@ -1,4 +1,4 @@
-/** Small, explicit rich-text vocabulary for captions; no scripts, media, or inline CSS. */
+/** Small, explicit rich-text vocabulary for captions; no scripts or media; only validated text alignment styles. */
 export function sanitizeCarouselCaption(html, doc = document) {
 	const template = doc.createElement('template');
 	template.innerHTML = String(html || '');
@@ -10,6 +10,11 @@ export function sanitizeCarouselCaption(html, doc = document) {
 		let target = parent;
 		if (allowed.has(node.tagName)) {
 			target = doc.createElement(node.tagName.toLowerCase());
+            // Keep TinyMCE paragraph alignment without allowing arbitrary inline CSS.
+            const alignment = node.style.textAlign;
+            if (['left', 'center', 'right', 'justify'].includes(alignment)) {
+                target.style.textAlign = alignment;
+            }
 			if (node.tagName === 'A') {
 				const href = (node.getAttribute('href') || '').trim();
 				// Reject encoded control-character protocol tricks as well as executable URLs.

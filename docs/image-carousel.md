@@ -16,7 +16,7 @@ Each row has an optional rich-text caption below the image (hidden without reser
 
 ## Storage
 
-`figure_interactive_arguments` keeps the existing `[id, value]` format, including `graphType = "Image Carousel"` and all configured image rows. Captions use the WordPress Visual/Text editor (bold, italic, lists, blockquotes, and links). CaptionFormat distinguishes HTML from older literal plain-text captions. Allowed markup is sanitized before rendering; blank editor markup collapses the caption area. JSON escapes angle brackets so WordPress does not alter rich-text attributes inside serialized strings. Hidden rows are retained when the carousel settings UI is temporarily unmounted.
+`figure_interactive_arguments` keeps the existing `[id, value]` format, including `graphType = "Image Carousel"` and all configured image rows. Captions use the WordPress Visual/Text editor (bold, italic, lists, blockquotes, links, and left/center/right/justified alignment). CaptionFormat distinguishes HTML from older literal plain-text captions. Allowed markup is sanitized before rendering; blank editor markup collapses the caption area. JSON escapes angle brackets so WordPress does not alter rich-text attributes inside serialized strings. Hidden rows are retained when the carousel settings UI is temporarily unmounted.
 
 `figure_interactive_args_rendered` contains `{type: "image-carousel", version: 1, playback, slides}` with only active images. Each slide holds an attachment ID, display URL, responsive candidates, dimensions, plain text, and alternative text.
 
@@ -59,3 +59,5 @@ Compiled block assets were not manually edited or built. An already-running proc
 The working tree was clean at the start, at commit `ad21977fb652bef9196c2c73537be036aa1712ed`.
 A pre-change archive of tracked files is at `/private/tmp/graphic-data-before-carousel.tar`.
 No commits or database changes were made by this implementation. Review subsequent edits before reverting source files; do not overwrite unrelated work or generated assets indiscriminately.
+
+Each image also has Caption padding (pixels), from 0 to 100, defaulting to 0. This adds space inside a nonempty caption on all sides. Alignment is preserved as validated text-align styles; other inline CSS is removed.

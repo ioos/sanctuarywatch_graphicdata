@@ -52,6 +52,7 @@ export function buildCarouselSpec(argumentsValue) {
 			caption: fields[`${prefix}CaptionFormat`] === 'html'
                 ? sanitizeCarouselCaption(fields[`${prefix}Caption`])
                 : String(fields[`${prefix}Caption`] || '').trim(),
+            captionPadding: bounded(fields[`${prefix}CaptionPadding`], 0, 0, 100),
             captionFormat: fields[`${prefix}CaptionFormat`] === 'html' ? 'html' : 'text',
 			textPosition: textPosition(fields[`${prefix}TextPosition`]),
 			alt: String(fields[`${prefix}Alt`] || ''),
@@ -91,7 +92,7 @@ export async function mountImageCarousel(target, spec, { label = 'Image carousel
 	.gd-carousel .gd-slide[aria-hidden=false]{opacity:1;z-index:2;pointer-events:auto}
 	.gd-carousel .gd-slide img{width:100%;height:100%;object-fit:contain;display:block}
 	.gd-carousel .gd-text{position:absolute;max-width:calc(100% - 20px);max-height:45%;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:rgba(0,0,0,.88);color:white;padding:8px 12px;border-radius:6px;font-size:clamp(12px,2vw,16px)}
-	.gd-carousel .gd-caption{margin:10px 0 0;text-align:left;overflow-wrap:anywhere;line-height:1.5}
+	.gd-carousel .gd-caption{margin:2% 1.5% 1.5%;text-align:left;overflow-wrap:anywhere;line-height:1.5}
 	.gd-carousel .gd-caption[data-format=text]{white-space:pre-wrap}
 	.gd-carousel .gd-caption > :first-child{margin-top:0}
 	.gd-carousel .gd-caption > :last-child{margin-bottom:0}
@@ -202,6 +203,7 @@ export async function mountImageCarousel(target, spec, { label = 'Image carousel
 		return loads[i];
 	}
 	function update() {
+		caption.style.padding = `${bounded(spec.slides[index].captionPadding, 0, 0, 100)}px`;
 		caption.dataset.format = spec.slides[index].captionFormat === 'html' ? 'html' : 'text';
         if (caption.dataset.format === 'html') caption.innerHTML = sanitizeCarouselCaption(spec.slides[index].caption, caption.ownerDocument);
         else caption.textContent = String(spec.slides[index].caption || '').trim();

@@ -81,7 +81,14 @@ export function carouselParameterFields(argumentsValue) {
         field(row, prefix + 'CaptionFormat', '', 'hidden', 'html').value = 'html';
         captions.push(caption);
         caption.addEventListener('input', logFormFieldValues);
-        explain(caption, 'Formatted context shown below this image. Use bold, italic, lists, or links. Leave blank to hide the caption area.');
+        explain(caption, 'Formatted context shown below this image. Use bold, italic, lists, links, or the alignment buttons. Leave blank to hide the caption area.');
+        const padding = field(row, prefix + 'CaptionPadding', 'Caption padding (pixels)', 'number', '0');
+        padding.parentElement.style.textAlign = 'left';
+        padding.style.textAlign = 'left';
+        padding.min = '0';
+        padding.max = '100';
+        padding.step = '1';
+        explain(padding, 'Extra space inside the caption on all sides (0–100 pixels). Applies only when this image has a caption.');
 		root.append(row);
 		rows.push(row);
 	}

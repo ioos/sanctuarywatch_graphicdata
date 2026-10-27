@@ -209,6 +209,11 @@ async function richCaptions() {
         assert.ok(clean.includes('href="https://example.test/details"'));
         assert.ok(clean.includes('rel="noopener noreferrer"'));
         assert.ok(!clean.includes('onclick'));
+        for (const alignment of ['left','center','right','justify']) {
+            const formatted=sanitizer.sanitizeCarouselCaption('<p style="text-align:'+alignment+';color:red;position:fixed">Aligned</p>');
+            assert.equal(formatted,'<p style="text-align: '+alignment+';">Aligned</p>');
+        }
+        assert.equal(sanitizer.sanitizeCarouselCaption('<p style="text-align:inherit">Plain</p>'),'<p>Plain</p>');
         assert.equal(sanitizer.sanitizeCarouselCaption('<p><br>&nbsp;</p>'),'');
         assert.equal(sanitizer.sanitizeCarouselCaption('<script>alert(1)</script><img src=x onerror=alert(1)>'),'');
         assert.ok(!sanitizer.sanitizeCarouselCaption('<a href="java&#x09;script:alert(1)">Bad link</a>').includes('href'));
@@ -230,6 +235,7 @@ async function richCaptions() {
                     callbacks.get('init')?.();
                 }};
             assert.ok(settings.tinymce.toolbar1.includes('bold'));
+            assert.ok(settings.tinymce.toolbar1.includes('alignleft aligncenter alignright alignjustify'));
             assert.ok(settings.quicktags);
             editors.set(id,editor);settings.tinymce.setup(editor);
         },remove(id){removed.push(id);editors.delete(id)}}};
@@ -252,11 +258,23 @@ async function richCaptions() {
         count.value='2';count.dispatchEvent(new e.w.Event('change'));
         editors.get('CarouselImage1Caption').setContent('<p><em>Latest edit</em></p>');
         const root=e.w.document.getElementById('secondaryGraphFields');root.syncCaptionEditors();
+        const padding=e.w.document.getElementById('CarouselImage1CaptionPadding');
+        assert.equal(padding.value,'0');
+        padding.value='18';padding.dispatchEvent(new e.w.Event('change'));
         const saved=Object.fromEntries(JSON.parse(args.value));assert.equal(saved.CarouselImage1Caption,'<p><em>Latest edit</em></p>');assert.ok(!args.value.includes('<p>'));
         const api=await e.load('image-carousel.js');
-        const spec=api.buildCarouselSpec(saved);const handle=await api.mountImageCarousel(e.w.document.getElementById('target'),spec);
+        saved.CarouselImage1Caption='<p style="text-align: justify;"><em>Latest edit</em></p>';
+        const spec=api.buildCarouselSpec(saved);
+        assert.equal(spec.slides[0].captionPadding,18);
+        assert.equal(api.buildCarouselSpec({...saved,CarouselImage1CaptionPadding:'-1'}).slides[0].captionPadding,0);
+        assert.equal(api.buildCarouselSpec({...saved,CarouselImage1CaptionPadding:'200'}).slides[0].captionPadding,100);
+        assert.equal(api.buildCarouselSpec({...saved,CarouselImage1CaptionPadding:'bad'}).slides[0].captionPadding,0);
+        const handle=await api.mountImageCarousel(e.w.document.getElementById('target'),spec);
         assert.equal(e.w.document.querySelector('.gd-caption em').textContent,'Latest edit');
+        assert.equal(e.w.document.querySelector('.gd-caption').style.padding,'18px');
+        assert.equal(e.w.document.querySelector('.gd-caption p').style.textAlign,'justify');
         await e.clock.tickAsync(4000);assert.equal(e.w.document.querySelector('.gd-caption').hidden,true);
+        assert.equal(e.w.document.querySelector('.gd-caption').style.padding,'0px');
         handle.destroy();
         root.cleanupCaptionEditors();assert.equal(removed.length,3);assert.equal(editors.size,0);
         assert.equal(Object.fromEntries(JSON.parse(args.value)).CarouselImage1Caption,'<p><em>Latest edit</em></p>');
