@@ -264,7 +264,18 @@ function run_admin_figures() {
 				)[0].parentElement.parentElement.parentElement.style.display =
 					'block';
 
+				const checkbox = document.getElementsByName(
+					'figure_internal_url_checkbox'
+				)[0];
+
+				const urlField = document.getElementsByName(
+					'figure_internal_url'
+				)[0];
+
+				checkbox.parentElement.parentElement.parentElement.style.display = 'block';
+
 				//Hide the fields we do not want to see
+				urlField.parentElement.parentElement.style.display = 'none';
 				codeContainer.style.display = 'none';
 				uploadFileContainer.style.display = 'none';
 
@@ -284,6 +295,14 @@ function run_admin_figures() {
 				document.querySelectorAll(
 					'[data-depend-id="figure_preview"]'
 				)[0].parentElement.parentElement.style.display = 'block';
+
+				function toggleInternalUrl() {
+					urlField.parentElement.parentElement.style.display =
+						checkbox.checked ? 'block' : 'none';
+				}
+
+				checkbox.addEventListener('change', toggleInternalUrl);
+				toggleInternalUrl();
 				break;
 
 			case 'External':
@@ -315,7 +334,7 @@ function run_admin_figures() {
 			case 'Interactive':
 				//Show the fields we want to see
 				codeContainer.style.display = 'none';
-				uploadFileContainer.style.display = 'block';
+				uploadFileContainer.style.display = ['Image Carousel', 'Image Comparison Slider'].includes(document.getElementById('graphType')?.value) ? 'none' : 'block';
 				figure_interactive_settings.style.display = 'block';
 
 				//Hide the fields we do not want to see and show the fields we want to see

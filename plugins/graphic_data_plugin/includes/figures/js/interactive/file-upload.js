@@ -1,316 +1,136 @@
-import { logFormFieldValues, fillFormFieldValues } from '@graphic-data/plotly-utility';
+import { COMPARISON_TYPE } from './image-comparison.js';
+import { comparisonParameterFields } from './image-comparison-settings.js';
 import { TABULATOR_GRAPH_TYPE } from '@graphic-data/tabulator-table';
 import { tabulatorTableParameterFields } from '@graphic-data/tabulator-table-settings';
+import { CAROUSEL_TYPE, carouselSettings } from './image-carousel.js';
+import { carouselParameterFields } from './image-carousel-settings.js';
 
-// Module-level replacement for wpApiSettings.
 const moduleData = JSON.parse(
-    document.getElementById( 'wp-script-module-data-@graphic-data/file-upload' )?.textContent ?? '{}'
+	document.getElementById('wp-script-module-data-@graphic-data/file-upload')?.textContent || '{}',
 );
-const nonce = moduleData.nonce ?? '';
+let requestVersion = 0;
 
-/**
- * Checks if an uploaded file exists and loads its JSON content.
- * Handles the removal of existing interactive settings and dynamically updates the UI
- * based on the presence of the uploaded file.
- */
+/** Kept as the public entry point for the existing editor/upload integration. */
 export async function checkIfFileExistsAndLoadJson() {
+	const upload = document.querySelector('.exopite-sof-field-upload');
+	const button = document.querySelector('.figure_interactive_settings');
+	const settingsRow =
+		button?.closest('.exopite-sof-field') ||
+		document.getElementById('graphGUI')?.closest('.exopite-sof-field');
+	if (!upload || !settingsRow) return;
+	button?.remove();
+	const container = settingsRow.querySelector('.exopite-sof-fieldset');
+	if (!container) return;
+	if (document.getElementById('graphType')) {
+		document.getElementById('graphType').dispatchEvent(new Event('change'));
+		return;
+	}
+	const argsField = document.getElementsByName('figure_interactive_arguments')[0];
+	let saved;
 	try {
-		// Remove the existing "Interactive Settings" button if it exists
-		const button = document.querySelector(
-			'.exopite-sof-btn.figure_interactive_settings'
-		);
-		if (button) {
-			button.remove();
-		}
-
-		// Construct the REST API URL to fetch the uploaded file path
-		const rootURL = window.location.origin;
-		const figureID = document.getElementsByName('post_ID')[0].value;
-		const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-		let uploaded_path_json;
-
-		// Fetch the uploaded file path from the REST API
-		//const response = await fetch(figureRestCall);
-		const response = await fetch(figureRestCall, {
-			headers: {
-				'X-WP-Nonce': nonce,
-			},
-		});
-
-		if (response.ok) {
-			const data = await response.json();
-			uploaded_path_json = data.uploaded_path_json;
-
-			// Find the target div inside "exopite-sof-field-button"
-			const targetContainer = document.querySelector(
-				'.exopite-sof-field.exopite-sof-field-button .exopite-sof-fieldset'
-			);
-
-			// Check if the post meta variable exists (assuming it's in the "meta" field)
-			if (uploaded_path_json !== '') {
-				if (targetContainer) {
-					// Call the loadJson function and populate its contents inside the div
-					loadJson(targetContainer); // Call function with meta value
-				}
-			}
-
-			// If no uploaded file path exists, remove the container and display a message
-			if (uploaded_path_json === '') {
-				const divContainer = document.querySelector(
-					'.exopite-sof-field.exopite-sof-field-button'
-				);
-				if (divContainer) {
-					divContainer.remove();
-				}
-				//targetContainer.innerHTML = "Please upload a valid 'Interactive Figure File' and click  the 'Update' button in the top right of the page to access this feature.";
-			}
-		} else {
-			// If the response is not OK, log an error message
-			uploaded_path_json = '';
-		}
-	} catch (error) {
-		// Log any errors that occur during the fetch or processing
-		console.error('Error fetching post meta:', error.message);
+		saved = carouselSettings(argsField.value);
+	} catch {
+		saved = {};
 	}
-}
-
-/**
- * Loads JSON data from the uploaded file and dynamically updates the UI.
- * Handles metadata extraction, graph configuration, and UI updates based on the JSON content.
- *
- * @param {HTMLElement} targetContainer - The container element where the graph configuration UI will be appended.
- */
-async function loadJson(targetContainer) {
-	const postPageType = window.location.href.includes('post-new.php');
-	let response;
-	let jsonColumns;
-	let fieldValueSaved;
-
-	if (!postPageType) {
+	container.replaceChildren();
+	const gui = document.createElement('div');
+	gui.id = 'graphGUI';
+	gui.className = 'container graphGUI';
+	container.append(gui);
+	const label = document.createElement('label');
+	label.htmlFor = 'graphType';
+	label.textContent = 'Interactive type';
+	const select = document.createElement('select');
+	select.id = 'graphType';
+	select.name = 'plotFields';
+	[
+		['None', 'Choose an interactive type'],
+		['Plotly bar graph', 'Bar chart'],
+		['Plotly line graph (time series)', 'Timeseries / line / scatter plot'],
+		[TABULATOR_GRAPH_TYPE, 'Table (Tabulator)'],
+		[CAROUSEL_TYPE, 'Image Carousel'],
+		[COMPARISON_TYPE, 'Image Comparison Slider'],
+	].forEach(([value, text]) => select.add(new Option(text, value)));
+	if (saved.graphType === 'Plotly map') select.add(new Option('Map', 'Plotly map'));
+	select.value = saved.graphType || 'None';
+	gui.append(label, select);
+	// Keep settings together; put the type choice before its conditional upload control.
+	settingsRow.parentNode.insertBefore(settingsRow, upload);
+	const notice = document.createElement('p');
+	gui.append(notice);
+	async function configure() {
+		const version = ++requestVersion;
+		document.getElementById('secondaryGraphFields')?.cleanupCaptionEditors?.();
+		document.getElementById('secondaryGraphFields')?.remove();
+		clearPreviousGraphFields();
+		gui.querySelector('.gd-data-metadata')?.remove();
+		const interactive = document.getElementsByName('figure_path')[0]?.value === 'Interactive';
+		settingsRow.style.display = interactive ? 'block' : 'none';
+		upload.style.display =
+			interactive && ![CAROUSEL_TYPE, COMPARISON_TYPE, 'None'].includes(select.value)
+				? 'block'
+				: 'none';
+		notice.textContent = '';
+		// Preserve settings until their controls have been restored.
+		const stored = carouselSettings(argsField.value);
+		stored.graphType = select.value;
+		argsField.value = JSON.stringify(Object.entries(stored));
+		if (select.value === COMPARISON_TYPE) {
+			comparisonParameterFields(argsField.value);
+			return;
+		}
+		if (select.value === CAROUSEL_TYPE) {
+			carouselParameterFields(argsField.value);
+			return;
+		}
+		if (select.value === 'None') return;
+		notice.textContent =
+			'Upload a CSV or JSON file and save the figure to configure its data columns.';
+		const id = document.getElementsByName('post_ID')[0]?.value;
+		if (!id) return;
 		try {
-			const rootURL = window.location.origin;
-			// REST API call to get the uploaded JSON file path
-			const figureID = document.getElementsByName('post_ID')[0].value;
-			const figureRestCall = `${rootURL}/wp-json/wp/v2/figure/${figureID}?_fields=uploaded_path_json`;
-			response = await fetch(figureRestCall);
-
-			if (response.ok) {
-				let data = await response.json();
-				const uploaded_path_json = data.uploaded_path_json;
-				const restOfURL =
-					'/wp-content' + uploaded_path_json.split('wp-content')[1];
-
-				// Check if the uploaded file path is empty and alert the user
-				if (uploaded_path_json === '') {
-					alert('Please upload a file before creating a graph');
-				}
-
-				const finalURL = rootURL + restOfURL;
-				try {
-					// Fetch the actual JSON file using the constructed URL
-					response = await fetch(finalURL);
-					if (!response.ok) {
-						throw new Error('Network response was not ok');
-					}
-					data = await response.json();
-
-					// Convert metadata keys into an array of key-value pairs for display
-					let metadataRows = [];
-					if (
-						data.metadata &&
-						Object.keys(data.metadata).length > 0
-					) {
-						metadataRows = Object.keys(data.metadata).map(
-							(key) => ({
-								key,
-								value: data.metadata[key],
-							})
-						);
-					}
-
-					// Initialize jsonColumns to read .geojson ot regular .json files
-					if (!uploaded_path_json.includes('.geojson')) {
-						// Map data columns into an object with index-based keys
-						jsonColumns = Object.fromEntries(
-							Object.keys(data.data).map((key, index) => [
-								index,
-								key,
-							])
-						);
-					}
-					if (uploaded_path_json.includes('.geojson')) {
-						function extractJsonColumnsFromGeojson(geojson) {
-							if (
-								!geojson ||
-								!geojson.features ||
-								geojson.features.length === 0
-							) {
-								return {};
-							}
-
-							const props = geojson.features[0].properties;
-							return Object.fromEntries(
-								Object.keys(props).map((key, index) => [
-									index,
-									key,
-								])
-							);
-						}
-
-						jsonColumns = extractJsonColumnsFromGeojson(data);
-					}
-
-					// Check the number of columns in the JSON data
-					const lengthJsonColumns =
-						Object.entries(jsonColumns).length;
-					if (lengthJsonColumns > 1) {
-						// Remove the existing graph GUI if it exists
-						const graphGUI = document.getElementById('graphGUI');
-						if (graphGUI) {
-							// Remove the scene window
-							graphGUI.parentNode.removeChild(graphGUI);
-						}
-
-						// Create a new container for the graph GUI
-						const targetElement = targetContainer;
-						const newDiv = document.createElement('div');
-						newDiv.id = 'graphGUI';
-						newDiv.classList.add('container', 'graphGUI');
-
-						// If metadata exists, display it in a floating box
-						displayMetadataBox(metadataRows, newDiv);
-
-						// Create a label and dropdown for selecting the graph type
-						const labelGraphType = document.createElement('label');
-						labelGraphType.for = 'graphType';
-						labelGraphType.innerHTML = 'Graph Type';
-						const selectGraphType =
-							document.createElement('select');
-						selectGraphType.id = 'graphType';
-						selectGraphType.name = 'plotFields';
-
-						// Add options to the dropdown for different graph types
-						const graphType1 = document.createElement('option');
-						graphType1.value = 'None';
-						graphType1.innerHTML = 'None';
-						const graphType2 = document.createElement('option');
-						graphType2.value = 'Plotly bar graph';
-						graphType2.innerHTML = 'Plotly bar graph';
-						const graphType3 = document.createElement('option');
-						graphType3.value = 'Plotly line graph (time series)';
-						graphType3.innerHTML ='Plotly line graph, time series, or scatter plot';
-						const graphTypeTable = document.createElement('option');
-						graphTypeTable.value = TABULATOR_GRAPH_TYPE;
-						graphTypeTable.textContent = 'Table (Tabulator)';
-						// let graphType4 = document.createElement("option");
-						// graphType4.value = "Plotly map";
-						// graphType4.innerHTML = "Plotly map";
-						selectGraphType.appendChild(graphType1);
-						selectGraphType.appendChild(graphType2);
-						selectGraphType.appendChild(graphType3);
-						selectGraphType.appendChild(graphTypeTable);
-						// selectGraphType.appendChild(graphType4);
-
-						//Admin is able to call to the interactive_arguments using document.getElementsByName("figure_interactive_arguments")[0].value;
-						//interactive_arguments is for the theme side, it is blank here because it is a place holder variable
-						let interactive_arguments = document.getElementsByName(
-							'figure_interactive_arguments'
-						)[0].value;
-
-						// CHECK FOR "\" AND REMOVE IF EXISTS, This is to fix escaping issues for existing figures
-						if (interactive_arguments.includes('\\')) {
-							interactive_arguments =
-								interactive_arguments.replace(/\\/g, '');
-						}
-
-						fieldValueSaved = fillFormFieldValues(
-							selectGraphType.id
-						);
-
-						// Add event listeners to handle changes in the dropdown selection
-						if (fieldValueSaved !== undefined) {
-							selectGraphType.value = fieldValueSaved;
-						}
-						selectGraphType.addEventListener('change', function () {
-							secondaryGraphFields(
-								this.value,
-								interactive_arguments,
-								jsonColumns
-							);
-						});
-						selectGraphType.addEventListener('change', function () {
-							logFormFieldValues();
-						});
-
-						// Create a new row and columns for the dropdown and label
-						const newRow = document.createElement('div');
-						newRow.classList.add('row', 'fieldPadding');
-						const newColumn1 = document.createElement('div');
-						newColumn1.classList.add('col-3');
-						const newColumn2 = document.createElement('div');
-						newColumn2.classList.add('col');
-
-						// Append the label and dropdown to the columns
-						newColumn1.appendChild(labelGraphType);
-						newColumn2.appendChild(selectGraphType);
-						newRow.append(newColumn1, newColumn2);
-						newDiv.append(newRow);
-
-						// Append the row to the new graph GUI container
-						targetElement.appendChild(newDiv);
-
-						// Trigger secondary graph fields if a saved value exists
-						if (fieldValueSaved !== undefined) {
-							secondaryGraphFields(
-								selectGraphType.value,
-								interactive_arguments,
-								jsonColumns
-							);
-						}
-					}
-				} catch (error) {
-					// Log any errors that occur during the JSON loading process
-					console.error('Error loading JSON:', error);
-					targetContainer.innerHTML =
-						'The file formatting is incorrect. Please fix the error and reupload your file.';
-				}
+			const response = await fetch(
+				`${location.origin}/wp-json/wp/v2/figure/${id}?_fields=uploaded_path_json`,
+				{ headers: { 'X-WP-Nonce': moduleData.nonce || '' } },
+			);
+			if (!response.ok) throw new Error('Could not read the uploaded data path.');
+			const meta = await response.json();
+			if (!meta.uploaded_path_json) return;
+			const path = '/wp-content' + meta.uploaded_path_json.split('wp-content')[1];
+			const dataResponse = await fetch(path);
+			if (!dataResponse.ok) throw new Error('Could not load the data file.');
+			const data = await dataResponse.json();
+			if (version !== requestVersion) return;
+			const columnNames = meta.uploaded_path_json.includes('.geojson')
+				? Object.keys(data.features?.[0]?.properties || {})
+				: Object.keys(data.data || {});
+			if (columnNames.length < 2) {
+				notice.textContent = 'The data file must contain at least two columns.';
+				return;
 			}
+			notice.textContent = '';
+			const metadata = document.createElement('div');
+			metadata.className = 'gd-data-metadata';
+			// Metadata is plain text, not executable markup.
+			if (data.metadata)
+				metadata.textContent =
+					'Current metadata: ' +
+					Object.entries(data.metadata)
+						.map(([key, value]) => `${key}: ${value}`)
+						.join(' · ');
+			gui.append(metadata);
+			secondaryGraphFields(
+				select.value,
+				argsField.value,
+				Object.fromEntries(columnNames.map((name, i) => [i, name])),
+			);
 		} catch (error) {
-			console.log('Error fetching uploaded file path:', error);
+			if (version === requestVersion) notice.textContent = error.message;
 		}
 	}
-}
-
-/**
- * Displays metadata in a formatted box within the provided container.
- * Converts metadata key-value pairs into readable text and appends it to the container.
- *
- * @param {Array}       metadataRows - An array of objects containing metadata key-value pairs.
- * @param {HTMLElement} newDiv       - The container element where the metadata will be displayed.
- */
-function displayMetadataBox(metadataRows, newDiv) {
-	// Convert metadata object to readable text with both key and value
-	let metadataText = 'Current Metadata:<br><br>';
-
-	// Check if metadata rows exist
-	if (metadataRows.length >= 1) {
-		// Iterate over each metadata row and format it as key-value pairs
-		metadataRows.forEach((row) => {
-			// Remove any commas from the metadata value for cleaner display
-			const cleanedValue = row.value.replace(/,/g, '');
-			metadataText += `<span style="font-size: 13px;">${row.key}: ${cleanedValue}</span><br>`;
-		});
-	} else {
-		// Display a message if no metadata is found
-		metadataText += `<span style="font-size: 13px;">No metadata found.</span><br>`;
-	}
-
-	// Add a light grey horizontal line at the bottom after all metadata rows
-	metadataText += `<br><hr style="border: 0.5px solid lightgrey; margin-top: 8px;">`;
-	// Insert the formatted metadata text into the existing div
-	newDiv.innerHTML = metadataText;
-	// Ensure it's visible
-	newDiv.style.display = 'block';
+	select.addEventListener('change', configure);
+	document.getElementsByName('figure_path')[0]?.addEventListener('change', configure);
+	await configure();
 }
 
 /**
@@ -321,7 +141,6 @@ function displayMetadataBox(metadataRows, newDiv) {
  * @param {string} interactive_arguments - A string containing saved interactive arguments for pre-filling fields.
  */
 function secondaryGraphFields(graphType, interactive_arguments, jsonColumns) {
-
 	// Get the container for secondary graph fields
 	const secondaryGraphDiv = document.getElementById('secondaryGraphFields');
 	// If the element exists

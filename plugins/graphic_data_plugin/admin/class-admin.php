@@ -252,6 +252,9 @@ class Graphic_Data_Admin {
 			// Enqueue figure-render.js.
 			wp_enqueue_script_module( '@graphic-data/figure-render' );
 
+			wp_enqueue_media();
+			wp_enqueue_editor();
+
 			// Enqueue file-upload.js.
 			wp_register_script_module(
 				'@graphic-data/file-upload',
@@ -287,6 +290,7 @@ class Graphic_Data_Admin {
 				'script_module_data_@graphic-data/file-upload',
 				function ( array $data ): array {
 					$data['nonce'] = wp_create_nonce( 'wp_rest' );
+					$data['carouselNonce'] = wp_create_nonce( 'graphic_data_carousel_image' );
 					return $data;
 				}
 			);

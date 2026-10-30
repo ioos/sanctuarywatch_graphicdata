@@ -3,6 +3,7 @@
  * Register class that defines the Figure custom content type as well as associated Figure functions
  */
 include_once plugin_dir_path( __DIR__ ) . 'admin/class-utility.php';
+require_once __DIR__ . '/carousel-images.php';
 
 /**
  * Handles the Figure custom post type for the Graphic Data plugin.
@@ -695,6 +696,19 @@ class Graphic_Data_Figure {
 					'sanitize'      => 'sanitize_text_field',
 				),
 				array(
+					'id'          => 'figure_internal_url_checkbox',
+					'type'        => 'checkbox',
+					'title'       => 'Open image to another URL when clicked?',
+					'description' => 'Should the image open to another url when clicked? If so, check this box and provide the internal URL below.',
+				),
+				array(
+					'id'          => 'figure_internal_url',
+					'type'        => 'text',
+					'title'       => ' URL for image to open to when clicked.',
+					'description' => 'What is the internal URL for the figure?',
+					'sanitize'      => 'sanitize_url',
+				),
+				array(
 					'id'    => 'figure_image',
 					'type'  => 'image',
 					'title' => 'Figure image*',
@@ -853,6 +867,8 @@ class Graphic_Data_Figure {
 			array( 'figure_interactive_arguments', 'string', 'Arguments used in interactive figures' ),
 			array( 'figure_interactive_args_rendered', 'string', 'Full arguments used to render interactive figures' ),
 			array( 'figure_title', 'string', 'The title of the figure, for any figure type.' ),
+			array( 'figure_internal_url_checkbox', 'string', 'Open image to another URL when clicked?' ),
+			array( 'figure_internal_url', 'string', 'url to open to when the image is clicked' ),
 		);
 		// Register fields in REST API.
 		foreach ( $fields_to_be_registered as $target_fields_to_be_registered ) {
@@ -925,7 +941,7 @@ class Graphic_Data_Figure {
 	 * @since    1.0.0
 	 */
 	public function register_figure_rest_fields() {
-		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_iframe_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'figure_interactive_args_rendered', 'uploaded_path_json', 'figure_title', 'uploaded_html_file', 'uploaded_path_html'); // figure_temp_filepath.
+		$figure_rest_fields = array( 'figure_published', 'figure_modal', 'figure_tab', 'figure_order', 'figure_science_info', 'figure_data_info', 'figure_path', 'figure_image', 'figure_external_url', 'figure_external_alt', 'figure_code', 'figure_iframe_code', 'figure_upload_file', 'figure_caption_short', 'figure_caption_long', 'figure_interactive_arguments', 'figure_interactive_args_rendered', 'uploaded_path_json', 'figure_title', 'uploaded_html_file', 'uploaded_path_html','figure_internal_url_checkbox','figure_internal_url'); // figure_temp_filepath.
 		$function_utilities = new Graphic_Data_Utility();
 		$function_utilities->register_custom_rest_fields( 'figure', $figure_rest_fields );
 	}
@@ -1222,6 +1238,7 @@ class Graphic_Data_Figure {
 			'_edit_lock',
 			'_edit_last',
 			'_wp_old_slug',
+			'figure_published',
 			'figure_iframe_code',
 			'parent_duplicate',
 			'uploaded_path_html',
@@ -1244,6 +1261,11 @@ class Graphic_Data_Figure {
 			}
 		}
 
+
+		/*
+		* Start the duplicate in Draft regardless of the original Figure's status.
+		*/
+		update_post_meta( $new_post_id, 'figure_published', 'draft' );
 
 		/*
 		* Determine what type of Figure this is.

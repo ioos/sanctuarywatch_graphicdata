@@ -277,13 +277,25 @@ export function loadExternalScript(url) {
  * logFormFieldValues(); // After a change to one of the above plotFields, the hidden input will be updated
  */
 export function logFormFieldValues() {
+    // TinyMCE content may be newer than its backing textarea (e.g. just before preview).
+    document.querySelectorAll('textarea[data-carousel-rich-caption]').forEach((field) => {
+        const editor = window.tinymce?.get(field.id);
+        // TinyMCE registers instances before their content has finished loading.
+        if (editor?.initialized && !editor.isHidden()) field.value = editor.getContent();
+    });
 	const allFields = document.getElementsByName('plotFields');
 	const fieldValues = [];
+    // Preserve inactive image-figure rows if their settings UI is temporarily unmounted.
+    try {
+        const saved = JSON.parse(document.getElementsByName('figure_interactive_arguments')[0].value || '[]');
+        const currentIds = new Set(Array.from(allFields, (field) => field.id));
+        saved.forEach(([id, value]) => { if (/^(Carousel|Comparison)/.test(id) && !currentIds.has(id)) fieldValues.push([id, value]); });
+    } catch { /* New figures have no saved settings. */ }
 	allFields.forEach((uniqueField) => {
 		fieldValues.push([uniqueField.id, uniqueField.value]);
 	});
 	document.getElementsByName('figure_interactive_arguments')[0].value =
-		JSON.stringify(fieldValues);
+		JSON.stringify(fieldValues).replace(/</g, '\\u003c').replace(/>/g, '\\u003e');
 }
 
 /**

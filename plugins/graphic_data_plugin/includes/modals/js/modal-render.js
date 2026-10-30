@@ -653,6 +653,8 @@ function trapFocus(modalElement) {
                             longCaption: figure_data["figure_caption_long"],
                             figureType: figure_data["figure_path"],
                             figureTitle: figure_data["figure_title"],
+                            figureInternalUrlCheckbox: figure_data["figure_internal_url_checkbox"],
+                            figureInternalUrl: figure_data["figure_internal_url"],
                             figure_interactive_arguments: figure_data["figure_interactive_arguments"],
                             figure_interactive_args_rendered: figure_data["figure_interactive_args_rendered"],
                         };

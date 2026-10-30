@@ -568,6 +568,12 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					stagingHost = null;
 				}
 
+
+        const comparison = containerDiv.querySelector('.gd-comparison-stack')?.graphicDataComparison;
+        if (comparison && normalizedHeight > 0) comparison.setHeight(normalizedHeight);
+        const carousel = containerDiv.querySelector('.gd-carousel')?.graphicDataCarousel;
+        if (carousel && normalizedHeight > 0) carousel.setHeight(normalizedHeight);
+
 				// Tabulator tables: their stylesheet does not move with them into the
 				// editor iframe, so add it there, then redraw at the final size.
 				const tableHandle = containerDiv.querySelector('.graphic-data-tabulator')
