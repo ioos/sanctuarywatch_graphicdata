@@ -68,6 +68,10 @@ add_filter(
  */
 function graphic_data_redirect_figure_shortlink() {
 
+	if ( is_admin() ) {
+		return;
+	}
+
     global $wp;
 
 	// error_log(
@@ -84,6 +88,11 @@ function graphic_data_redirect_figure_shortlink() {
 		'graphic_data_figure_id'
 	);
 
+	// Unrelated requests have no figure ID and should be ignored silently.
+	if ( empty( $raw_figure_id ) || ! is_scalar( $raw_figure_id ) ) {
+		return;
+	}
+
 	// error_log(
 	// 	'FIGURE SHORTLINK DEBUG figure ID = ' .
 	// 	print_r( $raw_figure_id, true )
@@ -97,10 +106,6 @@ function graphic_data_redirect_figure_shortlink() {
 	 * ---------------------------------------------------------
 	 */
 
-	$raw_figure_id = get_query_var(
-		'graphic_data_figure_id'
-	);
-
 	// error_log(
 	// 	'FIGURE SHORTLINK: Raw figure ID = ' .
 	// 	print_r( $raw_figure_id, true )
@@ -110,19 +115,11 @@ function graphic_data_redirect_figure_shortlink() {
 		$raw_figure_id
 	);
 
-	error_log(
-		'FIGURE SHORTLINK: Sanitized figure ID = ' .
-		$figure_id
-	);
-
 	if ( ! $figure_id ) {
-			error_log(
-				'FIGURE SHORTLINK STOPPED: No valid figure ID found.'
-			);
-			return;
-		}
+		return;
+	}
 
-		$figure_post = get_post(
+	$figure_post = get_post(
 		$figure_id
 	);
 
