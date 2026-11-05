@@ -232,7 +232,10 @@ function run_admin_figures() {
 			'.exopite-sof-field.exopite-sof-field-button'
 		); // Add an ID or a unique class
 
-		const checkbox = document.getElementsByName('figure_internal_url_checkbox')[0];
+		// The options framework also inserts a hidden input with this name.
+		const checkbox = document.querySelector(
+			'input[type="checkbox"][name="figure_internal_url_checkbox"]'
+		);
 
 		const urlField = document.getElementsByName('figure_internal_url')[0];
 
@@ -312,6 +315,7 @@ function run_admin_figures() {
 
 				//Hide the fields we do not want to see
 				checkbox.parentElement.parentElement.parentElement.style.display = 'none';
+				urlField.parentElement.parentElement.style.display = 'none';
 				codeContainer.style.display = 'none';
 				uploadFileContainer.style.display = 'none';
 				if (!window.location.href.includes('post-new.php')) {
@@ -332,6 +336,7 @@ function run_admin_figures() {
 				//Show the fields we want to see
 				codeContainer.style.display = 'none';
 				checkbox.parentElement.parentElement.parentElement.style.display = 'none';
+				urlField.parentElement.parentElement.style.display = 'none';
 				uploadFileContainer.style.display = ['Image Carousel', 'Image Comparison Slider'].includes(document.getElementById('graphType')?.value) ? 'none' : 'block';
 				figure_interactive_settings.style.display = 'block';
 
@@ -363,6 +368,7 @@ function run_admin_figures() {
 
 				//Hide the fields we do not want to see
 				checkbox.parentElement.parentElement.parentElement.style.display = 'none';
+				urlField.parentElement.parentElement.style.display = 'none';
 				uploadFileContainer.style.display = 'none';
 				if (!window.location.href.includes('post-new.php')) {
 					figure_interactive_settings.style.display = 'none';
@@ -508,4 +514,3 @@ document.addEventListener('DOMContentLoaded', function () {
 // 		.catch(err => console.error('AJAX error saving HTML:', err));
 // 	});
 //   })();
-
