@@ -17,6 +17,56 @@ if ( _barDataEl?.textContent ) {
     try { _barDefaults = JSON.parse( _barDataEl.textContent ); } catch {}
 }
 
+function getBarAxisType(columnXHeader, plotlyX) {
+    const xValues = (plotlyX || []).filter(
+        value => value != null && String(value).trim() !== ''
+    );
+
+    const isNumeric = xValues.length > 0 && xValues.every(
+        value => Number.isFinite(Number(value))
+    );
+
+    const isDate = xValues.length > 0 && xValues.every(
+        value =>
+            typeof value === 'string' &&
+            /^\d{4}-\d{2}-\d{2}(?:[T ].*)?$/.test(value) &&
+            !Number.isNaN(Date.parse(value))
+    );
+
+    if (columnXHeader === 'None') {
+        return 'category';
+    } else if (isNumeric) {
+        return 'linear';
+    } else if (isDate) {
+        return 'date';
+    }
+    return 'category';
+}
+
+function getBarDisplayAxisType(figureArguments, dataToBePlotted) {
+    const columnXHeader = figureArguments['XAxis'];
+    const groupsByCategory = Array.from(
+        { length: Number(figureArguments['NumberOfBars']) },
+        (_, index) => figureArguments[`Bar${index + 1}Stacked`] === 'on'
+    ).some(Boolean);
+
+    return columnXHeader !== 'None' && groupsByCategory
+        ? 'category'
+        : getBarAxisType(columnXHeader, dataToBePlotted[columnXHeader]);
+}
+
+function buildBarHover({ categoryLabel, categoryValue, seriesLabel, valueLabel }) {
+    const lines = [];
+    if (categoryLabel && categoryValue != null) {
+        lines.push(`${categoryLabel}: ${categoryValue}`);
+    }
+    if (seriesLabel) {
+        lines.push(`Series: ${seriesLabel}`);
+    }
+    lines.push(`${valueLabel || 'Value'}: %{y}`);
+    return lines.join('<br>') + '<extra></extra>';
+}
+
 /**
  * Adds overlay elements (such as evaluation periods and event markers) to a Plotly time series line chart.
  *
@@ -68,14 +118,8 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
     const columnXHeader = figureArguments['XAxis'];
     const plotlyX = dataToBePlotted[columnXHeader];
 
-    //Allow for cases where no X axis is selected
-    if (columnXHeader === 'None') {
-        layout.xaxis = layout.xaxis || {};
-        layout.xaxis.type = 'category';
-    } else {
-        layout.xaxis = layout.xaxis || {};
-        layout.xaxis.type = 'date';
-    }
+    layout.xaxis = layout.xaxis || {};
+    layout.xaxis.type = getBarDisplayAxisType(figureArguments, dataToBePlotted);
 
     const dateFormat = figureArguments['XAxisFormat'];
     let xHoverFormat = '';
@@ -93,7 +137,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
     default:
         xHoverFormat = ''; // fallback to raw
     }
-    const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
+    const xHoverValue = layout.xaxis.type === 'date' && xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
 
 
     layout.yaxis = layout.yaxis || {};
@@ -419,7 +463,14 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
 				default:
 					xHoverFormat = ''; // fallback to raw
 				}
-				const xHoverValue = xHoverFormat ? `%{x|${xHoverFormat}}` : `%{x}`;
+				const categoryType = getBarAxisType(columnXHeader, dataToBePlotted[columnXHeader]);
+				const useDateHover = categoryType === 'date' && xHoverFormat;
+				const xHoverValue = useDateHover ? `%{x|${xHoverFormat}}` : '%{x}';
+				const hoverLabels = {
+					categoryLabel: columnXHeader === 'None' ? null : figureArguments['XAxisTitle'] || columnXHeader,
+					seriesLabel: figureArguments[targetBarColumn + 'Title'] || columnYHeader,
+					valueLabel: figureArguments['YAxisTitle'],
+				};
 
 				//console.log('fillType', fillType);
 
@@ -459,7 +510,12 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
 								pattern: { shape: fillType, size: 4, solidity: 0.5 }
 							},
 							//hovertemplate: `${columnXHeader}: ${stackCategory}`
-							hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`
+								customdata: [stackCategory],
+								hovertemplate: buildBarHover({
+									...hoverLabels,
+									categoryLabel: columnXHeader,
+									categoryValue: useDateHover ? `%{customdata|${xHoverFormat}}` : '%{customdata}',
+								})
 
 						});
 					});
@@ -686,7 +742,7 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
 							pattern: { shape: fillType, size: 4, solidity: 0.5 }
 						},
 						//hovertemplate: `${figureArguments['XAxisTitle'] || ''}: %{x}<br>${figureArguments['YAxisTitle'] || ''}: %{y}`,
-						hovertemplate: `${figureArguments['XAxisTitle'] || columnXHeader}: ${xHoverValue}<br>${figureArguments['YAxisTitle'] || ''}: %{y}<extra></extra>`,
+							hovertemplate: buildBarHover({ ...hoverLabels, categoryValue: xHoverValue }),
 						...(error_y ? { error_y } : {})
 					};
 					allBarsPlotly.push(trace);
@@ -699,8 +755,9 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
 		// Set layout barmode based on stacked column option
 		var layout = {
 			barmode: barStackedByX ? 'stack' : 'group',
-			xaxis: {
-				title: { text: figureArguments['XAxisTitle'] || '' },
+				xaxis: {
+					type: getBarDisplayAxisType(figureArguments, dataToBePlotted),
+					title: { text: figureArguments['XAxisTitle'] || '' },
 				linecolor: 'black',
 				linewidth: 1,
 				tickmode: 'array',
@@ -967,7 +1024,7 @@ function loadDefaultInteractiveBarArguments(jsonColumns) {
 			const isWithinBars = barPrefixes.some((prefix) =>
 				key.startsWith(prefix)
 			);
-			if (isWithinBars && key in defaultsObj) {
+			if (isWithinBars && key in defaultsObj && !/^Bar\d+Stacked$/.test(key)) {
 				currentObj[key] = defaultsObj[key];
 			}
 		}
@@ -1189,7 +1246,10 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
   selectNumberBars.id = "NumberOfBars";
   selectNumberBars.name = "plotFields";
   selectNumberBars.addEventListener('change', function() {
-      displayBarFields(selectNumberBars.value, jsonColumns, interactive_arguments) });
+      const arrangement = document.getElementById('BarArrangement')?.value;
+      logFormFieldValues();
+      displayBarFields(selectNumberBars.value, jsonColumns, interactive_arguments, arrangement);
+  });
   selectNumberBars.addEventListener('change', function() {
           logFormFieldValues();
       });
@@ -1307,7 +1367,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
  *
  * @throws {Error} If the target element with ID `graphGUI` does not exist in the DOM.
  */
-function displayBarFields(numBars, jsonColumns, interactive_arguments) {
+function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangementOverride) {
 	const assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
 	// If the element exists
 	if (assignColumnsToPlot) {
@@ -1318,6 +1378,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 	if (numBars > 0) {
 		const newDiv = document.createElement('div');
 		newDiv.id = 'assignColumnsToPlot';
+		const categoryControls = [];
 
 		//"EvaluationPeriod" & "EventMarkers"
 		const features = ['EvaluationPeriod', 'EventMarkers'];
@@ -1707,13 +1768,13 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 
 		// Add checkbox for StackedBarColumns
 		const labelStackedBarColumns = document.createElement('label');
-		labelStackedBarColumns.for = 'StackedBarColumns';
-		labelStackedBarColumns.innerHTML =
-			'Group Bars by X Axis (Stacked Columns)';
+		labelStackedBarColumns.htmlFor = 'BarArrangement';
+		labelStackedBarColumns.textContent = 'Bar Arrangement';
 		const checkboxStackedBarColumns = document.createElement('input');
 		checkboxStackedBarColumns.type = 'checkbox';
 		checkboxStackedBarColumns.id = 'StackedBarColumns';
 		checkboxStackedBarColumns.name = 'plotFields';
+		checkboxStackedBarColumns.hidden = true;
 		checkboxStackedBarColumns.addEventListener('change', function () {
 			checkboxStackedBarColumns.value = checkboxStackedBarColumns.checked
 				? 'on'
@@ -1730,6 +1791,49 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 			? 'on'
 			: '';
 
+		// This UI control coordinates the existing saved checkbox arguments.
+		const arrangementSelect = document.createElement('select');
+		arrangementSelect.id = 'BarArrangement';
+		arrangementSelect.setAttribute('aria-describedby', 'BarArrangementDescription');
+		const arrangements = [
+			['side-by-side', 'Side by Side'],
+			['stack-series', 'Stack Series by X Value'],
+			['stack-categories', 'Stack Categories by Series'],
+		];
+		for (const [value, label] of arrangements) {
+			const option = document.createElement('option');
+			option.value = value;
+			option.textContent = label;
+			arrangementSelect.appendChild(option);
+		}
+		const arrangementDescription = document.createElement('p');
+		arrangementDescription.id = 'BarArrangementDescription';
+		arrangementDescription.classList.add('description');
+		const updateArrangementDescription = () => {
+			arrangementDescription.textContent = {
+				'side-by-side': 'Series appear beside each other at each X Axis Column value.',
+				'stack-series': 'Each X Axis Column value becomes one bar, with selected series stacked inside it.',
+				'stack-categories': 'Each selected bar column becomes one bar. Values from the X Axis Column form its stacked segments.',
+				'custom': 'Existing per-bar grouping settings are preserved. Choose an arrangement to apply it to all bars.',
+			}[arrangementSelect.value];
+		};
+		const applyArrangement = () => {
+			if (arrangementSelect.value === 'custom') return;
+			checkboxStackedBarColumns.checked = arrangementSelect.value !== 'side-by-side';
+			checkboxStackedBarColumns.value = checkboxStackedBarColumns.checked ? 'on' : '';
+			for (const { checkbox, container } of categoryControls) {
+				checkbox.checked = arrangementSelect.value === 'stack-categories';
+				checkbox.value = checkbox.checked ? 'on' : '';
+				container.style.display = checkbox.checked ? 'flex' : 'none';
+			}
+		};
+		arrangementSelect.addEventListener('change', () => {
+			applyArrangement();
+			arrangementSelect.querySelector('option[value="custom"]')?.remove();
+			updateArrangementDescription();
+			logFormFieldValues();
+		});
+
 		let newRow = document.createElement('div');
 		newRow.classList.add('row', 'fieldPadding');
 		let newColumn1 = document.createElement('div');
@@ -1739,6 +1843,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 
 		newColumn1.appendChild(labelStackedBarColumns);
 		newColumn2.appendChild(checkboxStackedBarColumns);
+		newColumn2.append(arrangementSelect, arrangementDescription);
 		newRow.append(newColumn1, newColumn2);
 		newDiv.append(newRow);
 
@@ -2030,6 +2135,10 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 					);
 					checkbox.value = fieldValueSaved === 'on' ? 'on' : '';
 					checkbox.checked = fieldValueSaved === 'on';
+					if (feature === 'Stacked') {
+						newRow.hidden = true;
+						newRow.style.display = 'none';
+					}
 
 					newColumn1.appendChild(label);
 					newColumn2.appendChild(checkbox);
@@ -2260,6 +2369,9 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 						newDiv.append(dropdownContainer);
 
 						// Toggle visibility dynamically
+						if (feature === 'Stacked') {
+							categoryControls.push({ checkbox, container: dropdownContainer });
+						}
 						checkbox.addEventListener('change', function () {
 							checkbox.value = checkbox.checked ? 'on' : '';
 							dropdownContainer.style.display = checkbox.checked
@@ -2279,6 +2391,23 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments) {
 			const targetElement = document.getElementById('graphGUI');
 			targetElement.appendChild(newDiv);
 		});
+		const groupedCount = categoryControls.filter(({ checkbox }) => checkbox.checked).length;
+		let arrangement = groupedCount === 0
+			? (checkboxStackedBarColumns.checked ? 'stack-series' : 'side-by-side')
+			: (groupedCount === categoryControls.length && checkboxStackedBarColumns.checked
+				? 'stack-categories' : 'custom');
+		if (arrangements.some(([value]) => value === arrangementOverride)) {
+			arrangement = arrangementOverride;
+		}
+		if (arrangement === 'custom') {
+			const option = document.createElement('option');
+			option.value = 'custom';
+			option.textContent = 'Custom (Existing Settings)';
+			arrangementSelect.appendChild(option);
+		}
+		arrangementSelect.value = arrangement;
+		if (arrangementOverride && arrangementOverride !== 'custom') applyArrangement();
+		updateArrangementDescription();
 	}
 }
 
