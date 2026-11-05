@@ -111,13 +111,21 @@ export async function checkIfFileExistsAndLoadJson() {
 			notice.textContent = '';
 			const metadata = document.createElement('div');
 			metadata.className = 'gd-data-metadata';
-			// Metadata is plain text, not executable markup.
-			if (data.metadata)
-				metadata.textContent =
-					'Current metadata: ' +
-					Object.entries(data.metadata)
-						.map(([key, value]) => `${key}: ${value}`)
-						.join(' · ');
+			// Restore the original layout without interpreting uploaded text as HTML.
+			metadata.style.display = 'block';
+			metadata.append('Current Metadata:', document.createElement('br'), document.createElement('br'));
+			const metadataRows = Object.entries(data.metadata || {});
+			const rows = metadataRows.length ? metadataRows : [[null, 'No metadata found.']];
+			rows.forEach(([key, value]) => {
+				const row = document.createElement('span');
+				row.style.fontSize = '13px';
+				const cleanedValue = String(value ?? '').replace(/,/g, '');
+				row.textContent = key === null ? cleanedValue : `${key}: ${cleanedValue}`;
+				metadata.append(row, document.createElement('br'));
+			});
+			const divider = document.createElement('hr');
+			divider.style.cssText = 'border:0.5px solid lightgrey;margin-top:8px';
+			metadata.append(document.createElement('br'), divider);
 			gui.append(metadata);
 			secondaryGraphFields(
 				select.value,
