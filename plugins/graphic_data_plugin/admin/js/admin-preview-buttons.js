@@ -542,6 +542,15 @@ if (previewFigureOrModalElements.length > 0) {
 						}
 					}
 
+					if (figureType === "Interactive" && window.location.href.includes('post.php') && existingFileName === '') {
+						
+						const graphType = document.getElementById('graphType')?.value;
+
+						if (graphType === 'None') {
+							return;
+						}
+					}
+
 					if (status === 'draft' && !window.location.href.includes('post-new.php')) {
 
 						event.preventDefault();
@@ -571,7 +580,7 @@ if (previewFigureOrModalElements.length > 0) {
 					}
 
 
-					//console.log('event.preventDefault() triggered');
+					console.log('event.preventDefault() triggered');
 					event.preventDefault();
 
 				}
@@ -820,11 +829,20 @@ if (previewFigureOrModalElements.length > 0) {
 							}
 						}
 
+						if (figureType === "Interactive" && window.location.href.includes('post.php')) {
+							
+							const graphType = document.getElementById('graphType')?.value;
+
+							if (graphType === 'None') {
+								return;
+							}
+						}
+
 						if (status === 'draft') {
 							return;
 						}
 
-						// console.log('generateAndSaveFigureFromPreview triggered');
+						//console.log('generateAndSaveFigureFromPreview triggered');
 						generateAndSaveFigureFromPreview(el, info_obj, info_obj_figure_only);
 					}
 							
@@ -1414,6 +1432,8 @@ async function generateAndSaveFigureFromPreview(
 
 	spinner.classList.add('is-active');
 
+	//console.log('generateAndSaveFigureFromPreview not completed 0');
+
 	try {
 		let renderedValueJSON = null;
 
@@ -1477,6 +1497,7 @@ async function generateAndSaveFigureFromPreview(
 				);
 			}
 		}
+		// console.log('generateAndSaveFigureFromPreview not completed 1');
 
 		/*
 		 * FIRST SAVE
@@ -1505,12 +1526,19 @@ async function generateAndSaveFigureFromPreview(
 			 * requestSubmit() submits the form without generating
 			 * another click event.
 			 */
-			postForm.requestSubmit(
-				publishButton
-			);
+
+			// postForm.requestSubmit(
+			// 	publishButton
+			// );
+
+			if (postForm.reportValidity()) {
+				window.jQuery(window).off('beforeunload.edit-post');
+				postForm.requestSubmit(publishButton);
+			}
 
 			return;
 		}
+		// console.log('generateAndSaveFigureFromPreview not completed 2');
 
 		/*
 		 * The HTML file must never be created without a valid post ID.
@@ -1571,12 +1599,16 @@ async function generateAndSaveFigureFromPreview(
 			})
 		);
 
+		// console.log('generateAndSaveFigureFromPreview not completed 3');
+
 		await saveHtmlToServer(
 			figureIframeGenerator.figIframeHtml,
 			`${figureIframeGenerator.figIframeHtmlFileName}.html`,
 			figureIframeGenerator.figIframeHtmlPath,
 			postID
 		);
+
+		// console.log('generateAndSaveFigureFromPreview not completed 4');
 
 		//Second object with figure and title only
 
@@ -1631,6 +1663,7 @@ async function generateAndSaveFigureFromPreview(
 		 * Remove the flag before the second submission. Otherwise,
 		 * the next reload would trigger another save.
 		 */
+		// console.log('generateAndSaveFigureFromPreview not completed 5');
 		sessionStorage.removeItem(
 			pendingFigureHtmlSaveKey
 		);
@@ -1642,6 +1675,8 @@ async function generateAndSaveFigureFromPreview(
 			setTimeout(resolve, 0);
 		});
 
+		// console.log('generateAndSaveFigureFromPreview not completed 6');
+
 		restorePublishButton(
 			publishButton,
 			originalButtonText,
@@ -1651,9 +1686,11 @@ async function generateAndSaveFigureFromPreview(
 		/*
 		 * Submit without creating another click event.
 		 */
+		//console.log('generateAndSaveFigureFromPreview not completed 7');
 		postForm.requestSubmit(
 			publishButton
 		);
+		//console.log('generateAndSaveFigureFromPreview completed');
 	} catch (error) {
 		console.error(
 			'Figure preparation failed:',
