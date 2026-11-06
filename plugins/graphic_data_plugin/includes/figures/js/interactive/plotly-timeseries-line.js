@@ -1811,6 +1811,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 
 			let newRow = document.createElement('div');
 			newRow.classList.add('row', 'fieldPadding');
+			newRow.style.borderTop = '1px solid #ccc';
 
 			let fieldLabelNumber = '';
 
@@ -1828,6 +1829,47 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 
 			newColumn1.appendChild(labelSelectColumn);
 			newColumn2.appendChild(selectColumn);
+            if (fieldLabel[0] !== 'XAxis') {
+                const position = Number(fieldLabel[0].slice(4));
+                for (const [direction, symbol, name] of [[-1, '↑', 'up'], [1, '↓', 'down']]) {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'button button-medium';
+                    button.textContent = symbol;
+                    button.dataset.lineMove = name;
+                    button.dataset.linePosition = String(position);
+                    button.setAttribute('aria-label', 'Move line ' + position + ' ' + name);
+                    button.title = 'Move line ' + position + ' ' + name;
+                    button.style.marginLeft = '6px';
+					button.style.marginTop = '10px';
+                    button.disabled = position + direction < 1 || position + direction > Number(numLines);
+                    button.addEventListener('click', () => {
+                        // Capture edits before exchanging complete numbered settings groups.
+                        logFormFieldValues();
+                        const saved = document.getElementsByName('figure_interactive_arguments')[0];
+                        const destination = position + direction;
+                        const moved = JSON.parse(saved.value).map(([id, value]) => {
+                            const match = /^Line(\d+)(.*)$/.exec(id);
+                            if (!match) return [id, value];
+                            const index = Number(match[1]);
+                            if (index === position) return ['Line' + destination + match[2], value];
+                            if (index === destination) return ['Line' + position + match[2], value];
+                            return [id, value];
+                        });
+                        saved.value = JSON.stringify(moved);
+                        displayLineFields(numLines, jsonColumns, saved.value);
+                        logFormFieldValues();
+                        const buttons = document.querySelectorAll('[data-line-position="' + destination + '"]');
+                        const preferred = Array.from(buttons).find(item => item.dataset.lineMove === name && !item.disabled);
+                        (preferred || Array.from(buttons).find(item => !item.disabled))?.focus();
+                    });
+                    newColumn2.appendChild(button);
+                }
+				const label = document.createElement('label');
+				label.style.marginLeft = '6px';
+				label.innerHTML = '<br>Move Up/Down';
+				newColumn2.appendChild(label);
+            }
 			newRow.append(newColumn1, newColumn2);
 			newDiv.append(newRow);
 

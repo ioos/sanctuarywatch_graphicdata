@@ -1913,6 +1913,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 
 			let newRow = document.createElement('div');
 			newRow.classList.add('row', 'fieldPadding');
+			newRow.style.borderTop = '1px solid #ccc';
 			let fieldLabelNumber = '';
 
 			if (fieldLabel[0] != 'XAxis') {
@@ -1927,8 +1928,51 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 			let newColumn2 = document.createElement('div');
 			newColumn2.classList.add('col');
 
+
+
 			newColumn1.appendChild(labelSelectColumn);
 			newColumn2.appendChild(selectColumn);
+            if (fieldLabel[0] !== 'XAxis') {
+                const position = Number(fieldLabel[0].slice(3));
+                for (const [direction, symbol, name] of [[-1, '↑', 'up'], [1, '↓', 'down']]) {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'button button-medium';
+                    button.textContent = symbol;
+                    button.dataset.barMove = name;
+                    button.dataset.barPosition = String(position);
+                    button.setAttribute('aria-label', 'Move bar ' + position + ' ' + name);
+                    button.title = 'Move bar ' + position + ' ' + name;
+                    button.style.marginLeft = '6px';
+					button.style.marginTop = '10px';
+                    button.disabled = position + direction < 1 || position + direction > Number(numBars);
+                    button.addEventListener('click', () => {
+                        // Capture edits before exchanging complete numbered settings groups.
+                        logFormFieldValues();
+                        const saved = document.getElementsByName('figure_interactive_arguments')[0];
+                        const destination = position + direction;
+                        const moved = JSON.parse(saved.value).map(([id, value]) => {
+                            const match = /^Bar(\d+)(.*)$/.exec(id);
+                            if (!match) return [id, value];
+                            const index = Number(match[1]);
+                            if (index === position) return ['Bar' + destination + match[2], value];
+                            if (index === destination) return ['Bar' + position + match[2], value];
+                            return [id, value];
+                        });
+                        saved.value = JSON.stringify(moved);
+                        displayBarFields(numBars, jsonColumns, saved.value);
+                        logFormFieldValues();
+                        const buttons = document.querySelectorAll('[data-bar-position="' + destination + '"]');
+                        const preferred = Array.from(buttons).find(item => item.dataset.barMove === name && !item.disabled);
+                        (preferred || Array.from(buttons).find(item => !item.disabled))?.focus();
+                    });
+                    newColumn2.appendChild(button);
+                }
+				const label = document.createElement('label');
+				label.style.marginLeft = '6px';
+				label.innerHTML = '<br>Move Up/Down';
+				newColumn2.appendChild(label);
+            }
 			newRow.append(newColumn1, newColumn2);
 			newDiv.append(newRow);
 
