@@ -1876,13 +1876,20 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 		//Create select fields for X Axis and each line to be plotted
 		const fieldLabels = [['XAxis', 'X Axis Column']];
 		for (let i = 1; i <= numBars; i++) {
-			fieldLabels.push(['Bar' + i, 'Bar ' + i + ' Column']);
+			fieldLabels.push(['Bar' + i, '', i]);
+
 		}
 
 		fieldLabels.forEach((fieldLabel) => {
 			const labelSelectColumn = document.createElement('label');
 			labelSelectColumn.for = fieldLabel[0];
-			labelSelectColumn.innerHTML = fieldLabel[1];
+			if (fieldLabel[2] !== undefined) {
+				labelSelectColumn.innerHTML = `Bar Column ${fieldLabel[2]} (Series)`;
+				labelSelectColumn.style.fontWeight = "540"; 
+				labelSelectColumn.style.fontSize= "16px";
+			} else {
+				labelSelectColumn.innerHTML = fieldLabel[1];
+			}
 			const selectColumn = document.createElement('select');
 			selectColumn.id = fieldLabel[0];
 			selectColumn.name = 'plotFields';
@@ -1892,7 +1899,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 
 			let selectColumnOption = document.createElement('option');
 			selectColumnOption.value = 'None';
-			selectColumnOption.innerHTML = 'None';
+			selectColumnOption.innerHTML = 'No Series Selected...';
 			selectColumn.appendChild(selectColumnOption);
 
 			Object.entries(jsonColumns).forEach(

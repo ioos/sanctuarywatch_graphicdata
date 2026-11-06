@@ -1772,14 +1772,20 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 
 		const fieldLabels = [['XAxis', 'X Axis Column']];
 		for (let i = 1; i <= numLines; i++) {
-			fieldLabels.push(['Line' + i, 'Line ' + i + ' Column']);
+			fieldLabels.push(['Line' + i, '', i]);
 		}
 
 		fieldLabels.forEach((fieldLabel) => {
 			//Select the data source from dropdown menu
 			const labelSelectColumn = document.createElement('label');
 			labelSelectColumn.for = fieldLabel[0];
-			labelSelectColumn.innerHTML = fieldLabel[1];
+			if (fieldLabel[2] !== undefined) {
+				labelSelectColumn.innerHTML = `Line Column ${fieldLabel[2]}`;
+				labelSelectColumn.style.fontWeight = "540"; 
+				labelSelectColumn.style.fontSize= "16px";
+			} else {
+				labelSelectColumn.innerHTML = fieldLabel[1];
+			}
 			const selectColumn = document.createElement('select');
 			selectColumn.id = fieldLabel[0];
 			selectColumn.name = 'plotFields';
@@ -1789,7 +1795,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 
 			let selectColumnOption = document.createElement('option');
 			selectColumnOption.value = 'None';
-			selectColumnOption.innerHTML = 'None';
+			selectColumnOption.innerHTML = 'No Series Selected...';
 			selectColumn.appendChild(selectColumnOption);
 
 			Object.entries(jsonColumns).forEach(
