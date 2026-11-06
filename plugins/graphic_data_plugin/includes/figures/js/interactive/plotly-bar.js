@@ -1886,7 +1886,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 			if (fieldLabel[2] !== undefined) {
 				labelSelectColumn.innerHTML = `Bar Column ${fieldLabel[2]} (Series)`;
 				labelSelectColumn.style.fontWeight = "540"; 
-				labelSelectColumn.style.fontSize= "16px";
+				labelSelectColumn.style.fontSize= "16.5px";
 			} else {
 				labelSelectColumn.innerHTML = fieldLabel[1];
 			}
