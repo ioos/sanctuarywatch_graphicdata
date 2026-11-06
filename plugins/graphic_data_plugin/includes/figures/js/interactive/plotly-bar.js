@@ -1811,9 +1811,9 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 		arrangementDescription.classList.add('description');
 		const updateArrangementDescription = () => {
 			arrangementDescription.textContent = {
-				'side-by-side': 'Series appear beside each other at each X Axis Column value.',
-				'stack-series': 'Each X Axis Column value becomes one bar, with selected series stacked inside it.',
-				'stack-categories': 'Each selected bar column becomes one bar. Values from the X Axis Column form its stacked segments.',
+				'side-by-side': 'Series appear beside each other at each X Axis Column value. *OPTIONAL "X Axis Column" Selection (Recommended to leave as "No Series Selected"). Only make selections for each series.*',
+				'stack-series': 'Each X Axis Column value becomes one bar, with selected series stacked inside it. *REQUIRES "X Axis Column" Selection*',
+				'stack-categories': 'Each selected bar column becomes one bar. Values from the X Axis Column form its stacked segments. *REQUIRES "X Axis Column" Selection*',
 				'custom': 'Existing per-bar grouping settings are preserved. Choose an arrangement to apply it to all bars.',
 			}[arrangementSelect.value];
 		};

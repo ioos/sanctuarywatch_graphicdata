@@ -39,7 +39,7 @@ export async function checkIfFileExistsAndLoadJson() {
 	container.append(gui);
 	const label = document.createElement('label');
 	label.htmlFor = 'graphType';
-	label.textContent = 'Interactive type';
+	label.textContent = 'Interactive Type: ';
 	const select = document.createElement('select');
 	select.id = 'graphType';
 	select.name = 'plotFields';
