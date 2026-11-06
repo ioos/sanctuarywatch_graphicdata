@@ -1782,7 +1782,7 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 			if (fieldLabel[2] !== undefined) {
 				labelSelectColumn.innerHTML = `Line Column ${fieldLabel[2]}`;
 				labelSelectColumn.style.fontWeight = "540"; 
-				labelSelectColumn.style.fontSize= "16.5px";
+				labelSelectColumn.style.fontSize= "17px";
 			} else {
 				labelSelectColumn.innerHTML = fieldLabel[1];
 			}
