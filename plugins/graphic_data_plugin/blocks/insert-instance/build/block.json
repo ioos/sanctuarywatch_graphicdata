@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "create-block/graphic-data-insert-instance",
+  "version": "0.1.0",
+  "title": "Graphic Data - Instance",
+  "category": "media",
+  "description": "Insert an instance tile into a post",
+  "example": {},
+  "attributes": {
+    "instancePostId": {
+      "type": "number",
+      "default": 0
+    },
+    "instanceWidth": {
+      "type": "number",
+      "default": 100
+    },
+    "instanceWidthUnit": {
+      "type": "string",
+      "default": "%"
+    },
+    "instanceMaxWidth": {
+      "type": "number",
+      "default": 360
+    },
+    "instanceAlignment": {
+      "type": "string",
+      "default": "center"
+    }
+  },
+  "supports": {
+    "html": false,
+    "typography": {
+      "fontSize": true
+    }
+  },
+  "textdomain": "graphic-data-insert-instance",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "style": "file:./index.css"
+}

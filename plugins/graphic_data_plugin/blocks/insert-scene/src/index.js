@@ -1,4 +1,5 @@
 import '../../shared/loading.css';
+import './index.css';
 /**
  * Registers the Graphic Data Scene block in the editor.
  *
