@@ -7,6 +7,7 @@ import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { render_tab_info } from '@graphic-data/figure-render';
 import { render_interactive_plots } from '@graphic-data/figure-render';
 import { ensureTabulatorStyles } from '@graphic-data/tabulator-table';
+import { ensureLeafletStyles } from '../../../includes/figures/js/interactive/leaflet-map.js';
 import { is_mobile } from '@graphic-data/scene-shared';
 
 import {
@@ -584,6 +585,20 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						tableHandle.setHeight(normalizedHeight);
 					}
 					tableHandle.resize();
+				}
+
+				// Leaflet maps: same as tables; the stylesheet must be added to the
+				// editor iframe, and the map recalculates its size once it is there.
+				const mapHandle = containerDiv.querySelector(
+					'.graphic-data-leaflet-map'
+				)?.graphicDataMap;
+				if (mapHandle) {
+					await ensureLeafletStyles(targetDocument);
+					if (normalizedHeight > 0) {
+						mapHandle.setHeight(normalizedHeight);
+					} else {
+						mapHandle.resize();
+					}
 				}
 
 				/**

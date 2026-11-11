@@ -9,6 +9,20 @@ import {
 	TABULATOR_MODULE_URL,
 	isTabulatorSpec,
 } from '@graphic-data/tabulator-table';
+import {
+	LEAFLET_MAP_GRAPH_TYPE,
+	isLeafletMapSpec,
+} from '../../includes/figures/js/interactive/leaflet-map.js';
+
+/*
+ * Site-relative URL of the map module, imported by the standalone figure HTML.
+ * Resolved here rather than inside leaflet-map.js, because that module is also
+ * bundled into the blocks, where import.meta.url would be a build-time path.
+ */
+const LEAFLET_MAP_MODULE_URL = new URL(
+	'../../includes/figures/js/interactive/leaflet-map.js',
+	import.meta.url
+).pathname;
 
 // graphicDataSceneData is used by the preview handlers to pass form data to
 // make_title() / scene-render.js. Keep on window so scene-render can read it.
@@ -1470,8 +1484,19 @@ async function generateAndSaveFigureFromPreview(
 			const isTabulatorTable =
 				document.getElementById('graphType')?.value ===
 				TABULATOR_GRAPH_TYPE;
+			// Leaflet maps also write their spec during the preview render.
+			const isLeafletMap =
+				document.getElementById('graphType')?.value ===
+				LEAFLET_MAP_GRAPH_TYPE;
 
-			if (!isFinishingInitialSave && !isTabulatorTable && ![CAROUSEL_TYPE, COMPARISON_TYPE].includes(document.getElementById('graphType')?.value)) {
+			if (
+				!isFinishingInitialSave &&
+				!isTabulatorTable &&
+				!isLeafletMap &&
+				![CAROUSEL_TYPE, COMPARISON_TYPE].includes(
+					document.getElementById('graphType')?.value
+				)
+			) {
 				await waitForPlotlyToFinish();
 			}
 
@@ -2642,6 +2667,52 @@ export async function createFigureHtml(
 	}
 
 	/**
+	 * Creates the markup for a Leaflet map figure.
+	 *
+	 * The page imports the same leaflet-map.js module used by the admin
+	 * preview and the frontend, and passes it the saved map spec. Features
+	 * are read from the figure's GeoJSON file when the page loads.
+	 *
+	 * @return {string} Map markup and module script.
+	 */
+	function buildLeafletMapFigureHTML() {
+		return `
+			<div
+				id="${escapeHtml(figureContentElementID)}"
+				class="leaflet-map-figure"
+			></div>
+
+			<script type="module">
+				import { mountLeafletMap } from ${serializeForScript(LEAFLET_MAP_MODULE_URL)};
+
+				const target = document.getElementById(${serializeForScript(figureContentElementID)});
+				const sendDocumentHeight =
+					window.graphicDataFigureEmbed &&
+					window.graphicDataFigureEmbed.sendHeight;
+
+				mountLeafletMap(target, ${serializeForScript(savedFigure)}, {
+					figureId: ${serializeForScript(normalizedFigureID)},
+					label: ${serializeForScript(figureTitle)}
+				})
+					.catch(function (error) {
+						console.error("Unable to render map figure:", error);
+						if (target) {
+							target.innerHTML =
+								'<p class="figure-error">' +
+								'The map could not be loaded.' +
+								'</p>';
+						}
+					})
+					.finally(function () {
+						if (sendDocumentHeight) {
+							sendDocumentHeight();
+						}
+					});
+			</script>
+		`;
+	}
+
+	/**
 	 * Creates a Code figure.
 	 *
 	 * Script elements are recreated because scripts inserted through
@@ -2915,6 +2986,9 @@ export async function createFigureHtml(
                 }
 				if (isTabulatorSpec(savedFigure)) {
 					return buildTabulatorFigureHTML();
+				}
+				if (isLeafletMapSpec(savedFigure)) {
+					return buildLeafletMapFigureHTML();
 				}
 				return buildInteractiveFigureHTML();
 
