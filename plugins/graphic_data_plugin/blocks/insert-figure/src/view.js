@@ -126,6 +126,14 @@ async function renderFigureBlock(block) {
 			tableHandle.setHeight(figureHeight);
 		}
 
+		// Leaflet maps: apply the block's fixed height, if any.
+		const mapHandle = targetDiv.querySelector(
+			'.graphic-data-leaflet-map'
+		)?.graphicDataMap;
+		if (mapHandle && figureHeight > 0) {
+			mapHandle.setHeight(figureHeight);
+		}
+
 		if (plotDiv && window.Plotly?.Plots?.resize) {
 			window.Plotly.Plots.resize(plotDiv);
 		}

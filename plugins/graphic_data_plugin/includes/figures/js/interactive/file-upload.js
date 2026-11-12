@@ -4,6 +4,10 @@ import { TABULATOR_GRAPH_TYPE } from '@graphic-data/tabulator-table';
 import { tabulatorTableParameterFields } from '@graphic-data/tabulator-table-settings';
 import { CAROUSEL_TYPE, carouselSettings } from './image-carousel.js';
 import { carouselParameterFields } from './image-carousel-settings.js';
+import { LEAFLET_MAP_GRAPH_TYPE } from './leaflet-map.js';
+import { leafletMapParameterFields } from './leaflet-map-settings.js';
+
+const DEFAULT_UPLOAD_ACCEPT = '.json, .csv, .geojson';
 
 const moduleData = JSON.parse(
 	document.getElementById('wp-script-module-data-@graphic-data/file-upload')?.textContent || '{}',
@@ -43,15 +47,26 @@ export async function checkIfFileExistsAndLoadJson() {
 	const select = document.createElement('select');
 	select.id = 'graphType';
 	select.name = 'plotFields';
-	[
-		['None', 'Choose an interactive type'],
+	// [stored value, label]. Labels are what authors see; values are saved with the figure.
+	const types = [
 		['Plotly bar graph', 'Bar chart'],
 		['Plotly line graph (time series)', 'Timeseries / line / scatter plot'],
-		[TABULATOR_GRAPH_TYPE, 'Table (Tabulator)'],
+		[TABULATOR_GRAPH_TYPE, 'Table'],
+		[LEAFLET_MAP_GRAPH_TYPE, 'Map'],
 		[CAROUSEL_TYPE, 'Image Carousel'],
 		[COMPARISON_TYPE, 'Image Comparison Slider'],
+	];
+	// Older figures may use the retired Plotly map; offer it only to them.
+	if (saved.graphType === 'Plotly map') {
+		types.push(['Plotly map', 'Map (legacy Plotly)']);
+	}
+	// The prompt stays first; the types follow in alphabetical order of their labels.
+	[
+		['None', 'Choose an interactive type'],
+		...types.sort(([, a], [, b]) =>
+			a.localeCompare(b, undefined, { sensitivity: 'base' })
+		),
 	].forEach(([value, text]) => select.add(new Option(text, value)));
-	if (saved.graphType === 'Plotly map') select.add(new Option('Map', 'Plotly map'));
 	select.value = saved.graphType || 'None';
 	gui.append(label, select);
 	// Keep settings together; put the type choice before its conditional upload control.
@@ -71,6 +86,12 @@ export async function checkIfFileExistsAndLoadJson() {
 				? 'block'
 				: 'none';
 		notice.textContent = '';
+		const isMap = select.value === LEAFLET_MAP_GRAPH_TYPE;
+		// Maps take a single GeoJSON file; the other data-driven types take CSV or JSON.
+		const fileInput = document.getElementById('uploaded-file');
+		if (fileInput) {
+			fileInput.accept = isMap ? '.geojson' : DEFAULT_UPLOAD_ACCEPT;
+		}
 		// Preserve settings until their controls have been restored.
 		const stored = carouselSettings(argsField.value);
 		stored.graphType = select.value;
@@ -84,8 +105,9 @@ export async function checkIfFileExistsAndLoadJson() {
 			return;
 		}
 		if (select.value === 'None') return;
-		notice.textContent =
-			'Upload a CSV or JSON file and save the figure to configure its data columns.';
+		notice.textContent = isMap
+			? 'Upload a GeoJSON (.geojson) file and save the figure to configure its map layers.'
+			: 'Upload a CSV or JSON file and save the figure to configure its data columns.';
 		const id = document.getElementsByName('post_ID')[0]?.value;
 		if (!id) return;
 		try {
@@ -97,10 +119,23 @@ export async function checkIfFileExistsAndLoadJson() {
 			const meta = await response.json();
 			if (!meta.uploaded_path_json) return;
 			const path = '/wp-content' + meta.uploaded_path_json.split('wp-content')[1];
-			const dataResponse = await fetch(path);
+			// A replaced file keeps its URL when the new file has the same name, so always
+			// check with the server rather than reuse a cached copy of the old file.
+			const dataResponse = await fetch(path, { cache: 'no-cache' });
 			if (!dataResponse.ok) throw new Error('Could not load the data file.');
 			const data = await dataResponse.json();
 			if (version !== requestVersion) return;
+			if (isMap) {
+				if (!/\.geojson$/i.test(meta.uploaded_path_json.trim())) {
+					notice.textContent =
+						'Maps need a GeoJSON (.geojson) file. Delete the current file and upload a GeoJSON file.';
+					return;
+				}
+				notice.textContent = '';
+				showMetadata(data);
+				secondaryGraphFields(select.value, argsField.value, {}, data);
+				return;
+			}
 			const columnNames = meta.uploaded_path_json.includes('.geojson')
 				? Object.keys(data.features?.[0]?.properties || {})
 				: Object.keys(data.data || {});
@@ -109,24 +144,7 @@ export async function checkIfFileExistsAndLoadJson() {
 				return;
 			}
 			notice.textContent = '';
-			const metadata = document.createElement('div');
-			metadata.className = 'gd-data-metadata';
-			// Restore the original layout without interpreting uploaded text as HTML.
-			metadata.style.display = 'block';
-			metadata.append('Current Metadata:', document.createElement('br'), document.createElement('br'));
-			const metadataRows = Object.entries(data.metadata || {});
-			const rows = metadataRows.length ? metadataRows : [[null, 'No metadata found.']];
-			rows.forEach(([key, value]) => {
-				const row = document.createElement('span');
-				row.style.fontSize = '13px';
-				const cleanedValue = String(value ?? '').replace(/,/g, '');
-				row.textContent = key === null ? cleanedValue : `${key}: ${cleanedValue}`;
-				metadata.append(row, document.createElement('br'));
-			});
-			const divider = document.createElement('hr');
-			divider.style.cssText = 'border:0.5px solid lightgrey;margin-top:8px';
-			metadata.append(document.createElement('br'), divider);
-			gui.append(metadata);
+			showMetadata(data);
 			secondaryGraphFields(
 				select.value,
 				argsField.value,
@@ -135,6 +153,34 @@ export async function checkIfFileExistsAndLoadJson() {
 		} catch (error) {
 			if (version === requestVersion) notice.textContent = error.message;
 		}
+	}
+	/** Shows the data file's top-level "metadata" object (CSV/JSON and GeoJSON files alike). */
+	function showMetadata(data) {
+		const metadata = document.createElement('div');
+		metadata.className = 'gd-data-metadata';
+		// Restore the original layout without interpreting uploaded text as HTML.
+		metadata.style.display = 'block';
+		metadata.append(
+			'Current Metadata:',
+			document.createElement('br'),
+			document.createElement('br')
+		);
+		const metadataRows = Object.entries(data?.metadata || {});
+		const rows = metadataRows.length
+			? metadataRows
+			: [[null, 'No metadata found.']];
+		rows.forEach(([key, value]) => {
+			const row = document.createElement('span');
+			row.style.fontSize = '13px';
+			const cleanedValue = String(value ?? '').replace(/,/g, '');
+			row.textContent =
+				key === null ? cleanedValue : `${key}: ${cleanedValue}`;
+			metadata.append(row, document.createElement('br'));
+		});
+		const divider = document.createElement('hr');
+		divider.style.cssText = 'border:0.5px solid lightgrey;margin-top:8px';
+		metadata.append(document.createElement('br'), divider);
+		gui.append(metadata);
 	}
 	select.addEventListener('change', configure);
 	document.getElementsByName('figure_path')[0]?.addEventListener('change', configure);
@@ -147,8 +193,15 @@ export async function checkIfFileExistsAndLoadJson() {
  *
  * @param {string} graphType             - The type of graph selected by the user (e.g., "None", "Plotly bar graph", "Plotly line graph (time series)").
  * @param {string} interactive_arguments - A string containing saved interactive arguments for pre-filling fields.
+ * @param {Object} jsonColumns           - Column names keyed by position.
+ * @param {*}      [fileContents]        - Parsed data file; used by map figures, which need the whole GeoJSON.
  */
-function secondaryGraphFields(graphType, interactive_arguments, jsonColumns) {
+function secondaryGraphFields(
+	graphType,
+	interactive_arguments,
+	jsonColumns,
+	fileContents
+) {
 	// Get the container for secondary graph fields
 	const secondaryGraphDiv = document.getElementById('secondaryGraphFields');
 	// If the element exists
@@ -177,6 +230,11 @@ function secondaryGraphFields(graphType, interactive_arguments, jsonColumns) {
 			// Clear previous fields and create new fields specific to line graphs
 			clearPreviousGraphFields();
 			plotlyLineParameterFields(jsonColumns, interactive_arguments);
+			break;
+		case LEAFLET_MAP_GRAPH_TYPE:
+			// Clear any previously created graph fields and build the map layer settings
+			clearPreviousGraphFields();
+			leafletMapParameterFields(fileContents);
 			break;
 		case TABULATOR_GRAPH_TYPE:
 			// Clear any previously created graph fields and build the table settings

@@ -101,7 +101,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				echo '<strong>Upload Information:</strong><br>';
 				echo esc_attr__( 'Max amount of files: ', 'exopite-sof' ) . $this->field['options']['filecount'] . '<br>';
 				//echo esc_attr__( 'Allowed file types: ', 'exopite-sof' ) . '.csv, .json, .geojson'  . '<br>';
-				echo esc_attr__( 'Allowed file types: ', 'exopite-sof' ) . '.csv, .json'  . '<br>';
+				echo esc_attr__( 'Allowed file types: ', 'exopite-sof' ) . '.csv, .json (charts and tables), .geojson (maps)'  . '<br>';
 				echo esc_attr__( 'Maximum Allowed File Size: ', 'exopite-sof' ) . '300MB'  . '<br>';
 				echo esc_attr__( 'Recommended File Size: ', 'exopite-sof' ) . '<= 5MB'  . '<br><br>';
 
@@ -454,6 +454,26 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 			 * @returns {} - Trigger the file upload and posts the files and the file name and path to the database.
 			 */
 
+			/**
+			 * GeoJSON validator - true when the parsed file holds at least one Feature,
+			 * either directly or inside a FeatureCollection (including files that hold
+			 * several FeatureCollections in an array or object).
+			 *
+			 * @param {*} node - Parsed GeoJSON.
+			 * @param {number} depth - Recursion depth guard.
+			 * @returns {boolean}
+			 */
+			function containsGeoJsonFeatures(node, depth) {
+				depth = depth || 0;
+				if (!node || typeof node !== 'object' || depth > 8) return false;
+				if (Array.isArray(node)) return node.some(function (item) { return containsGeoJsonFeatures(item, depth + 1); });
+				if (node.type === 'Feature') return true;
+				if (node.type === 'FeatureCollection') {
+					return Array.isArray(node.features) && node.features.some(function (item) { return containsGeoJsonFeatures(item, depth + 1); });
+				}
+				return Object.keys(node).some(function (key) { return containsGeoJsonFeatures(node[key], depth + 1); });
+			}
+
 			if (document.getElementById('upload-btn')) {
 				document.getElementById('upload-btn').addEventListener('click', function() {
 				
@@ -471,6 +491,13 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				var formData = new FormData();
 				var file = fileInput.files[0];
 				var fileName = file.name.toLowerCase();
+
+				// Map figures plot a single GeoJSON file.
+				var graphTypeSelect = document.getElementById('graphType');
+				if (graphTypeSelect && graphTypeSelect.value === 'Leaflet map' && !fileName.endsWith('.geojson')) {
+					alert("Map figures need a GeoJSON (.geojson) file.");
+					return;
+				}
 
 
 				var postIdInput = document.querySelector('[name="post_id"]');
@@ -620,6 +647,10 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 							var reader = new FileReader();
 							reader.onload = function(event) {
 								try {
+									var geojsonData = JSON.parse(event.target.result);
+									if (!containsGeoJsonFeatures(geojsonData)) {
+										throw new Error("The file does not contain any GeoJSON features.");
+									}
 
 									//alert("Success: " + (data.message || "File Upload Successful.") + "\n\n" + "Click 'Update' button in the top-right to save your changes, access the delete button, and the Interactive Figure Settings.");
 									alert("Success: " + (data.message || "File Upload Successful." + '\n\n' + 'Click "OK" to save your changes.'));

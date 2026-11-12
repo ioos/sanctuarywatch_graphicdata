@@ -5,7 +5,9 @@
 		"start:insert-modal": "wp-scripts start --source-path=blocks/insert-modal/src --output-path=blocks/insert-modal/build --webpack-copy-php",
 		"build:insert-modal": "wp-scripts build --source-path=blocks/insert-modal/src --output-path=blocks/insert-modal/build --webpack-copy-php",
 		"start:insert-scene": "wp-scripts start --source-path=blocks/insert-scene/src --output-path=blocks/insert-scene/build --webpack-copy-php",
-		"build:insert-scene": "wp-scripts build --source-path=blocks/insert-scene/src --output-path=blocks/insert-scene/build --webpack-copy-php"
+		"build:insert-scene": "wp-scripts build --source-path=blocks/insert-scene/src --output-path=blocks/insert-scene/build --webpack-copy-php",
+		"start:insert-instance": "wp-scripts start --source-path=blocks/insert-instance/src --output-path=blocks/insert-instance/build --webpack-copy-php",
+		"build:insert-instance": "wp-scripts build --source-path=blocks/insert-instance/src --output-path=blocks/insert-instance/build --webpack-copy-php"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^35.0.0"

@@ -5,6 +5,7 @@ import { producePlotlyLineFigure } from '@graphic-data/plotly-timeseries-line';
 import { producePlotlyBarFigure } from '@graphic-data/plotly-bar';
 import { producePlotlyMap } from '@graphic-data/plotly-map';
 import { renderTabulatorFigure } from '@graphic-data/tabulator-table';
+import { renderLeafletMapFigure } from './interactive/leaflet-map.js';
 import { loadPlotlyScript, waitForElementById } from '@graphic-data/plotly-utility';
 import { is_mobile } from '@graphic-data/scene-shared';
 
@@ -199,6 +200,21 @@ export async function render_interactive_plots(tabContentElement, info_obj, targ
             return;
         }
     }
+
+	// Leaflet maps, like tables, have their own render path (spec + mount) and return here.
+	if (figureType === 'Interactive') {
+		const mapHandled = await renderLeafletMapFigure({
+			targetId,
+			postID,
+			interactiveArguments: interactive_arguments,
+			savedSpec: savedFigure,
+			label: title,
+			targetDocument,
+		});
+		if (mapHandled) {
+			return;
+		}
+	}
 
 	async function waitForElementByIdPolling(
 		id,
