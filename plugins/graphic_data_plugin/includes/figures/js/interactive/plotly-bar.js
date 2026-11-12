@@ -1975,12 +1975,12 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
                     });
                     newColumn2.appendChild(button);
                 }
-				const label = document.createElement('label');
-				label.style.marginLeft = '6px';
-				label.style.fontSize = ".75rem";	
-				label.style.lineHeight = "1";	
-				label.innerHTML = '<br>Move Up/Down';
-				newColumn2.appendChild(label);
+				// const label = document.createElement('label');
+				// label.style.marginLeft = '6px';
+				// label.style.fontSize = ".75rem";	
+				// label.style.lineHeight = "1";	
+				// label.innerHTML = '<br>Move Up/Down';
+				// newColumn2.appendChild(label);
             }
 			newRow.append(newColumn1, newColumn2);
 			newDiv.append(newRow);
