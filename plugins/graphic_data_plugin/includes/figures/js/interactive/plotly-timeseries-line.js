@@ -1871,10 +1871,10 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
                     });
                     newColumn2.appendChild(button);
                 }
-				// const label = document.createElement('label');
-				// label.style.marginLeft = '6px';
-				// label.innerHTML = '<br>Move Up/Down';
-				// newColumn2.appendChild(label);
+				const label = document.createElement('label');
+				label.style.marginLeft = '6px';
+				label.innerHTML = '<br>Move Up/Down';
+				newColumn2.appendChild(label);
             }
 			newRow.append(newColumn1, newColumn2);
 			newDiv.append(newRow);
