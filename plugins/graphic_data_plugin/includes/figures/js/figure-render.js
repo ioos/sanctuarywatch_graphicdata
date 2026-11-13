@@ -1036,6 +1036,48 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
         figureLinkControls.appendChild(closeLink);
         figureLinkControls.appendChild(shareDropdown);
 
+        // Check the signed-in user's permissions without delaying figure rendering.
+        const editConfigElement = document.getElementById('graphic-data-figure-edit-config');
+        if (editConfigElement) {
+            const addEditLink = async () => {
+                try {
+                    const config = JSON.parse(editConfigElement.textContent);
+                    const url = new URL(config.url);
+                    url.searchParams.set('action', 'graphic_data_figure_edit_link');
+                    url.searchParams.set('nonce', config.nonce);
+                    url.searchParams.set('post_id', postID);
+                    const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
+                    if (!response.ok) return;
+                    const result = await response.json();
+                    if (!result.success || !result.data?.url) return;
+
+                    const editLink = document.createElement('a');
+                    editLink.href = result.data.url;
+                    editLink.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                            aria-hidden="true" focusable="false">
+                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                        </svg>
+                        <span>Edit Figure</span>
+                    `;
+                    editLink.target = '_self';
+                    editLink.title = 'Edit Figure';
+                    editLink.style.display = 'inline-flex';
+                    editLink.style.alignItems = 'center';
+                    editLink.style.gap = '4px';
+                    editLink.style.color = 'rgba(68, 68, 68, 0.55)';
+                    editLink.style.textDecoration = 'none';
+                    editLink.style.fontSize = '0.8em';
+                    editLink.style.whiteSpace = 'nowrap';
+                    figureLinkControls.insertBefore(editLink, closeLink);
+                } catch (error) {
+                    // Leave the optional edit control hidden if permission lookup fails.
+                    console.error('Unable to check figure edit access:', error);
+                }
+            };
+            void addEditLink();
+        }
+
         figureLinkContainer.appendChild(figureIndex);
         figureLinkContainer.appendChild(figureLinkControls);
 
@@ -1426,4 +1468,3 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
   
   
   
-

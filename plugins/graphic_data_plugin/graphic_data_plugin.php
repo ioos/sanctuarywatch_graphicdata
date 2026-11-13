@@ -46,6 +46,7 @@ if ( ! defined( 'GRAPHIC_DATA_PLUGIN_VERSION' ) ) {
  */
 require plugin_dir_path( __FILE__ ) . 'includes/admin.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/figure-shortlinks.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/admin-frontend-edit-link.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/page-title-appearance.php';
 
 

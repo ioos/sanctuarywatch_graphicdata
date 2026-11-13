@@ -32,6 +32,55 @@ export function render_modal(key, obj, modal_obj){
     let id = resolvedChildObj[key]['modal_id'];
     //console.log("MODAL ID", id);
 
+    // Clear the previous modal's edit link immediately, including pending lookups.
+    const closeButton = document.getElementById('close');
+    const modalHeader = closeButton?.parentElement;
+    const editRequest = {};
+    if (modalHeader) {
+        if (modalHeader.graphicDataCloseMargin !== undefined) {
+            closeButton.style.marginLeft = modalHeader.graphicDataCloseMargin;
+        }
+        modalHeader.graphicDataEditRequest = editRequest;
+        modalHeader.querySelector('.graphic-data-edit-modal')?.remove();
+    }
+    const editConfigElement = document.getElementById('graphic-data-figure-edit-config');
+    if (modalHeader && editConfigElement && id) {
+        const addModalEditLink = async () => {
+            try {
+                const config = JSON.parse(editConfigElement.textContent);
+                const url = new URL(config.url);
+                url.searchParams.set('action', 'graphic_data_modal_edit_link');
+                url.searchParams.set('nonce', config.nonce);
+                url.searchParams.set('post_id', id);
+                const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
+                if (!response.ok) return;
+                const result = await response.json();
+                if (!result.success || !result.data?.url ||
+                    modalHeader.graphicDataEditRequest !== editRequest) return;
+
+                const editLink = document.createElement('a');
+                editLink.className = 'graphic-data-edit-modal';
+                editLink.href = result.data.url;
+                editLink.target = '_self';
+                editLink.title = 'Edit Modal';
+                editLink.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                        aria-hidden="true" focusable="false">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    <span>Edit Modal</span>
+                `;
+                editLink.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; margin-left: auto; margin-right: 16px; color: rgba(68, 68, 68, 0.55); text-decoration: none; font-size: 0.8em; white-space: nowrap;';
+                modalHeader.graphicDataCloseMargin = closeButton.style.marginLeft;
+                closeButton.style.marginLeft = '0';
+                modalHeader.insertBefore(editLink, closeButton);
+            } catch (error) {
+                console.error('Unable to check modal edit access:', error);
+            }
+        };
+        void addModalEditLink();
+    }
+
     //function for rendering the modal content after fetching data
     async function populateModalContent(modal_data, child_obj, key) {
         // --- Title ---
@@ -854,5 +903,3 @@ function create_tabs(iter, tab_id, tab_label, title = "", modal_id, is_first_tab
     
 
 }
-
-
