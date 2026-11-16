@@ -43,6 +43,19 @@ function graphic_data_admin_bar_preview( $admin_bar ) {
 		'href'  => '#graphic-data-preview-mobile',
 		'meta'  => array( 'title' => __( 'Preview current editor contents (mobile mode)', 'graphic_data_plugin' ) ),
 	) );
+
+	// Reuse the list-table duplication action for saved figures only.
+	if ( 'figure' === $post->post_type && 'auto-draft' !== $post->post_status ) {
+		$admin_bar->add_node( array(
+			'id'    => 'graphic-data-duplicate-figure',
+			'title' => '<span style="color: #ff6b6b;">' . esc_html__( 'Duplicate Figure', 'graphic_data_plugin' ) . '</span>',
+			'href'  => wp_nonce_url(
+				admin_url( 'admin.php?action=duplicate_figure&post=' . absint( $post->ID ) ),
+				'duplicate_figure_' . absint( $post->ID )
+			),
+			'meta'  => array( 'title' => __( 'Duplicate the saved figure as a new draft', 'graphic_data_plugin' ) ),
+		) );
+	}
 }
 
 /** Expose the permission lookup only on signed-in frontend pages. */
