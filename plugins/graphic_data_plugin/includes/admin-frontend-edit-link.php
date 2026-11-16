@@ -11,6 +11,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_action( 'wp_head', 'graphic_data_figure_edit_link_config' );
 
+add_action( 'admin_bar_menu', 'graphic_data_admin_bar_preview', 100 );
+
+/** Launch the existing live preview from the post editor's toolbar. */
+function graphic_data_admin_bar_preview( $admin_bar ) {
+	if ( ! is_admin() ) {
+		return;
+	}
+	$screen = get_current_screen();
+	$labels = array(
+		'scene'  => __( 'Preview Scene', 'graphic_data_plugin' ),
+		'modal'  => __( 'Preview Modal', 'graphic_data_plugin' ),
+		'figure' => __( 'Preview Figure', 'graphic_data_plugin' ),
+	);
+	if ( ! $screen || 'post' !== $screen->base || ! isset( $labels[ $screen->post_type ] ) ) {
+		return;
+	}
+	$post = get_post();
+	if ( ! $post || ! current_user_can( 'edit_post', $post->ID ) ) {
+		return;
+	}
+	$admin_bar->add_node( array(
+		'id'    => 'graphic-data-preview',
+		'title' => $labels[ $screen->post_type ] . ' ' . __( '(Desktop)', 'graphic_data_plugin' ),
+		'href'  => '#graphic-data-preview',
+		'meta'  => array( 'title' => __( 'Preview current editor contents (desktop mode)', 'graphic_data_plugin' ) ),
+	) );
+	$admin_bar->add_node( array(
+		'id'    => 'graphic-data-preview-mobile',
+		'title' => $labels[ $screen->post_type ] . ' ' . __( '(Mobile)', 'graphic_data_plugin' ),
+		'href'  => '#graphic-data-preview-mobile',
+		'meta'  => array( 'title' => __( 'Preview current editor contents (mobile mode)', 'graphic_data_plugin' ) ),
+	) );
+}
+
 /** Expose the permission lookup only on signed-in frontend pages. */
 function graphic_data_figure_edit_link_config() {
 	if ( ! is_user_logged_in() ) {

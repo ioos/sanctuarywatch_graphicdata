@@ -75,6 +75,17 @@ export function stripHTML(value = '') {
 async function populatePreview(frame, modal, reportError, signal, pluginUrl, selectedTabBackgroundColor, unselectedTabBackgroundColor, previewMode) {
 	const previewWindow = frame.contentWindow;
 	const previewDocument = frame.contentDocument;
+	// Frontend edit controls use the parent's authenticated configuration. Editor
+	// previews have no such configuration and continue to omit these controls.
+	const editConfig = frame.ownerDocument.getElementById('graphic-data-figure-edit-config');
+	if (editConfig) {
+		const config = JSON.parse(editConfig.textContent);
+		const configElement = previewDocument.createElement('script');
+		configElement.type = 'application/json';
+		configElement.id = editConfig.id;
+		configElement.textContent = JSON.stringify({ ...config, linkTarget: '_top' });
+		previewDocument.head.appendChild(configElement);
+	}
 	// These overrides belong only to this disposable editor iframe. The shared
 	// renderer also checks device type and innerWidth when formatting figures.
 	if (previewMode !== 'responsive') {
@@ -123,7 +134,9 @@ async function populatePreview(frame, modal, reportError, signal, pluginUrl, sel
 	const nativeFetch = previewWindow.fetch.bind(previewWindow);
 	const requests = new Map();
 	previewWindow.fetch = async (input, options) => {
-		const url = typeof input === 'string' ? input : input.url;
+		// fetch accepts strings, URL objects (including from the iframe), and
+		// Request objects. URL objects expose href rather than Request's url.
+		const url = typeof input === 'string' ? input : (input.url ?? String(input));
 		const restIndex = url.indexOf('/wp-json/');
 		if (restIndex === -1) {
 			return nativeFetch(new URL(url, window.location.origin).href, { ...options, signal });
@@ -232,7 +245,7 @@ async function populatePreview(frame, modal, reportError, signal, pluginUrl, sel
 			fill: rgba(68, 68, 68, 0.7) !important;
 		}
 		/* A close/share/embed action applies to an overlay or public page, not this inline block. */
-		.figure > div > div:has(> details) { display: none !important; }
+		.figure > div > div:has(> details) > :not(.graphic-data-edit-figure) { display: none !important; }
 	`;
 	previewDocument.head.appendChild(style);
 

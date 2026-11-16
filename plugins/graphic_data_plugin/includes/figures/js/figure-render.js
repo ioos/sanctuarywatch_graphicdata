@@ -1052,6 +1052,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
                     if (!result.success || !result.data?.url) return;
 
                     const editLink = document.createElement('a');
+                    editLink.className = 'graphic-data-edit-figure';
                     editLink.href = result.data.url;
                     editLink.innerHTML = `
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
@@ -1060,7 +1061,7 @@ export async function render_tab_info(tabContentElement, tabContentContainer, in
                         </svg>
                         <span>Edit Figure</span>
                     `;
-                    editLink.target = '_self';
+                    editLink.target = config.linkTarget === '_top' ? '_top' : '_self';
                     editLink.title = 'Edit Figure';
                     editLink.style.display = 'inline-flex';
                     editLink.style.alignItems = 'center';

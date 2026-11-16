@@ -34,10 +34,10 @@ export function render_modal(key, obj, modal_obj){
 
     // Clear the previous modal's edit link immediately, including pending lookups.
     const closeButton = document.getElementById('close');
-    const modalHeader = closeButton?.parentElement;
+    const modalHeader = closeButton?.parentElement || document.querySelector('#inline-modal .modal-header');
     const editRequest = {};
     if (modalHeader) {
-        if (modalHeader.graphicDataCloseMargin !== undefined) {
+        if (closeButton && modalHeader.graphicDataCloseMargin !== undefined) {
             closeButton.style.marginLeft = modalHeader.graphicDataCloseMargin;
         }
         modalHeader.graphicDataEditRequest = editRequest;
@@ -61,7 +61,7 @@ export function render_modal(key, obj, modal_obj){
                 const editLink = document.createElement('a');
                 editLink.className = 'graphic-data-edit-modal';
                 editLink.href = result.data.url;
-                editLink.target = '_self';
+                editLink.target = config.linkTarget === '_top' ? '_top' : '_self';
                 editLink.title = 'Edit Modal';
                 editLink.innerHTML = `
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
@@ -71,8 +71,10 @@ export function render_modal(key, obj, modal_obj){
                     <span>Edit Modal</span>
                 `;
                 editLink.style.cssText = 'display: inline-flex; align-items: center; gap: 4px; margin-left: auto; margin-right: 16px; color: rgba(68, 68, 68, 0.55); text-decoration: none; font-size: 0.8em; white-space: nowrap;';
-                modalHeader.graphicDataCloseMargin = closeButton.style.marginLeft;
-                closeButton.style.marginLeft = '0';
+                if (closeButton) {
+                    modalHeader.graphicDataCloseMargin = closeButton.style.marginLeft;
+                    closeButton.style.marginLeft = '0';
+                }
                 modalHeader.insertBefore(editLink, closeButton);
             } catch (error) {
                 console.error('Unable to check modal edit access:', error);

@@ -247,6 +247,19 @@ function waitForPlotlyToFinish(timeoutMs = 10000) {
 // We're going to iterate through all the types of buttons (preview and save) on the admin screen and have different behaviors when a button is clicked
 let postID = document.querySelector('[name="post_id"], [name="post_ID"]').value;
 let postType = document.querySelector('[name="post_type"]').value;
+
+// Reuse the existing preview handlers so toolbar previews include unsaved fields.
+document.addEventListener('click', (event) => {
+	const toolbarLink = event.target.closest('#wp-admin-bar-graphic-data-preview a, #wp-admin-bar-graphic-data-preview-mobile a');
+	if (!toolbarLink) return;
+	event.preventDefault();
+	if (!['scene', 'modal', 'figure'].includes(postType)) return;
+	const suffix = toolbarLink.closest('#wp-admin-bar-graphic-data-preview-mobile') ? '_mobile' : '';
+	const previewButton = document.querySelector(`[data-depend-id="${postType}_preview${suffix}"]`);
+	if (previewButton) {
+		previewButton.click();
+	}
+});
 let previewFigureOrModalElements; 
 
 //Define our post type and the id so we can use it later in the save process for the html

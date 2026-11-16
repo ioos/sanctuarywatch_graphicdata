@@ -618,14 +618,14 @@ class Graphic_Data_Admin {
 	}
 
 	/**
-	 * Remove "view" link from admin screen for instance, modal, and figure posts.
+	 * Hide instance View links and use scene shortlinks for figures and modals.
 	 *
 	 * @param array   $actions An array of row action links.
 	 * @param WP_Post $post    The post object.
 	 * @since    1.0.0
 	 */
 	public function remove_view_link_from_post_type( $actions, $post ) {
-		if ( ( 'instance' === $post->post_type || 'modal' === $post->post_type ) && isset( $actions['view'] ) ) {
+		if ( 'instance' === $post->post_type && isset( $actions['view'] ) ) {
 			unset( $actions['view'] ); // Remove the "View" link.
 		}
 
@@ -634,6 +634,13 @@ class Graphic_Data_Admin {
 			$actions['view'] = sprintf(
 				'<a href="%s" target="_blank" rel="noopener noreferrer">View</a>',
 				esc_url( home_url( '/f/' . $post->ID . '/' ) )
+			);
+		}
+
+		if ( 'modal' === $post->post_type && 'publish' === $post->post_status ) {
+			$actions['view'] = sprintf(
+				'<a href="%s" target="_blank" rel="noopener noreferrer">View</a>',
+				esc_url( home_url( '/m/' . $post->ID . '/' ) )
 			);
 		}
 

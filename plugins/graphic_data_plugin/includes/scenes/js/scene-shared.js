@@ -1420,6 +1420,10 @@ export async function handleHashNavigation() {
 		//____________________________
 		//TAB CONTROL SELECTION
 		//____________________________
+		// A modal-only shortlink lets rendering select the first available tab.
+		if (!tabId && !figureId) {
+			return;
+		}
 		let tabButton;
 		let tabButtonId;
 		if (is_mobile()) {
