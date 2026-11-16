@@ -127,7 +127,7 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 				echo 'Please format your .csv or .json file as shown in the examples below. If they are not formatted properly, your file will be rejected.<br>';
 				echo '<a href="' . esc_url($example_folder . $example_csv) . '" target="_blank">Download example.csv</a><br>';
 				echo '<a href="' . esc_url($example_folder . $example_json) . '" target="_blank">Download example.json</a><br>';
-				//echo '<a href="' . esc_url($example_folder . $example_geojson) . '" target="_blank">Download example.geojson</a><br>';
+				echo '<a href="' . esc_url($example_folder . $example_geojson) . '" target="_blank">Download example.geojson</a><br>';
 				echo '<br>';
 				echo '<br>';
 				?>
