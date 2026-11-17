@@ -277,33 +277,37 @@ if (!previewFigureOrModalElements) {
 
 //console.log('previewFigureOrModalElements', previewFigureOrModalElements);
 
+// Preview replacement is synchronous: these preview shells omit Bootstrap's
+// fade transition so hide() finishes restoring scroll/focus before disposal.
+let previewShowTimer;
+function removeExistingPreviews() {
+	clearTimeout(previewShowTimer);
+	['myModal', 'mobileModal', 'sceneModal'].forEach((id) => {
+		const modal = document.getElementById(id);
+		if (!modal) return;
+		const instance = window.bootstrap?.Modal.getInstance(modal);
+		instance?.hide();
+		instance?.dispose();
+		modal.remove();
+	});
+	// Recover orphan backdrops left by older preview instances as well.
+	if (!document.querySelector('.modal.show')) {
+		document.querySelectorAll('.modal-backdrop').forEach((backdrop) => backdrop.remove());
+		document.body.classList.remove('modal-open');
+	}
+}
+
 // If the number of elements in previewFigureOrModalElements list is greater than 0, let's iterate through these options.
 if (previewFigureOrModalElements.length > 0) {
 	previewFigureOrModalElements.forEach((el) => {
 		el.addEventListener('click', async function (event) {
-			window.mobileBool =
-				el.getAttribute('data-depend-id') === 'scene_preview_mobile';
-
-
-			// Prevent duplicate injection, remove existing to make way for new.
-			if (
-				document.getElementById('myModal') ||
-				document.getElementById('mobileModal')
-			) {
-				const modalEl = document.getElementById('myModal');
-				const mobileModal = document.getElementById('mobileModal');
-				if (modalEl) {
-					modalEl.remove();
-				}
-				if (mobileModal) {
-					mobileModal.remove();
-				}
-			}
+			removeExistingPreviews();
+			window.mobileBool = false;
 
 			// --- INJECT MODAL HTML MARKUP to wpcontent---
 			const markup = `
                     <!-- for the mobile image stuff -->
-                    <div class="modal fade" id="mobileModal" tabindex="-1">
+                    <div class="modal" id="mobileModal" tabindex="-1">
                     <div class="modal-dialog modal-lg" style="margin-top: 5%; max-width: 95%;">
                         <div class="modal-content">
                         <div class="modal-header">
@@ -315,7 +319,7 @@ if (previewFigureOrModalElements.length > 0) {
                     </div>
                     </div>
 
-                    <div class="modal fade" id="myModal" tabindex="-1">
+                    <div class="modal" id="myModal" tabindex="-1">
                     <div class="modal-dialog modal-lg" style="margin: 5% auto;">
                         <div class="modal-content" aria-labelledby="modal-title">
                         <div class="modal-header">
@@ -371,10 +375,11 @@ if (previewFigureOrModalElements.length > 0) {
 
 
 			// Wait for DOM update, then show the modal (Bootstrap 5 API)
-			setTimeout(() => {
-				const modalEl = document.getElementById('myModal');
-				if (modalEl && typeof bootstrap !== 'undefined') {
-					const modalInstance = new bootstrap.Modal(modalEl);
+			previewShowTimer = setTimeout(() => {
+				const modalEl = modalEl2;
+				if (!modalEl?.isConnected) return;
+				if (typeof bootstrap !== 'undefined') {
+					const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
 					modalInstance.show();
 				} else {
 					console.warn(
@@ -448,6 +453,7 @@ if (previewFigureOrModalElements.length > 0) {
 					modal_info_entries,
 					modal_photo_entries,
 					modal_tab_number: modalTabNumber,
+					modal_tab_order: document.getElementsByName('modal_tab_order')[0]?.value || '',
 					icon_function: 'Modal',
 					modal_icon_order: '1',
 					icon_toc_section: '1',
@@ -1078,25 +1084,13 @@ if (!previewSceneElements) {
 if (previewSceneElements.length > 0) {
 	previewSceneElements.forEach((el) => {
 		el.addEventListener('click', async function () {
+			removeExistingPreviews();
 			window.mobileBool =
 				el.getAttribute('data-depend-id') === 'scene_preview_mobile';
 
-			// Remove any previous scene preview modal and clean up Bootstrap state
-			const existingModal = document.getElementById('sceneModal');
-			if (existingModal) {
-				bootstrap.Modal.getInstance(existingModal)?.dispose();
-				existingModal.remove();
-			}
-			document
-				.querySelectorAll('.modal-backdrop')
-				.forEach((b) => b.remove());
-			document.body.classList.remove('modal-open');
-			document.body.style.removeProperty('overflow');
-			document.body.style.removeProperty('padding-right');
-
 			// --- INJECT MODAL HTML MARKUP to wpcontent---
 			const markup = `
-                    <div class="modal fade" id="sceneModal" tabindex="-1">
+                    <div class="modal" id="sceneModal" tabindex="-1">
                     <div class="modal-dialog modal-xl modal-dialog-scrollable">
                         <div class="modal-content">
 
@@ -1136,8 +1130,9 @@ if (previewSceneElements.length > 0) {
 			}
 
 			// Wait for DOM update, then show the modal (Bootstrap 5 API)
-			setTimeout(() => {
-				if (modalEl && typeof bootstrap !== 'undefined') {
+			previewShowTimer = setTimeout(() => {
+				if (!modalEl?.isConnected) return;
+				if (typeof bootstrap !== 'undefined') {
 					const modalInstance =
 						bootstrap.Modal.getOrCreateInstance(modalEl);
 					modalInstance.show();
