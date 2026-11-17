@@ -32,7 +32,7 @@ class Graphic_Data_Admin {
 			}
 		}
 
-		wp_enqueue_style( 'graphic_data_plugin', plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), GRAPHIC_DATA_PLUGIN_VERSION, 'all' );
+		wp_enqueue_style( 'graphic_data_plugin', plugin_dir_url( __FILE__ ) . 'css/admin.css', array(), GRAPHIC_DATA_PLUGIN_VERSION . '.' . filemtime( __DIR__ . '/css/admin.css' ), 'all' );
 
 		wp_enqueue_style(
 			'font-awesome-admin',

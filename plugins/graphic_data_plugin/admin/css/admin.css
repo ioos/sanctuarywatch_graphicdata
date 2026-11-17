@@ -208,6 +208,30 @@
   margin-right: 10px;
 }
 
+/* Keep the publishing sidebar available on long Graphic Data editor forms.
+ * Stick the entire column so the Publish box is not bounded by its short parent.
+ * Short viewports and WordPress's single-column layout keep normal scrolling.
+ */
+@media screen and (min-width: 851px) and (min-height: 600px) {
+  /* WordPress clears these floats outside #post-body. Clear them inside as
+   * well so the sticky column's containing block spans the whole editor.
+   */
+  body:is(.post-type-scene, .post-type-modal, .post-type-figure):is(.post-php, .post-new-php)
+  #poststuff #post-body.columns-2::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  body:is(.post-type-scene, .post-type-modal, .post-type-figure):is(.post-php, .post-new-php):not(.is-dragging-metaboxes)
+  #poststuff #post-body.columns-2 #postbox-container-1 {
+    position: sticky;
+    top: 44px; /* 32px admin toolbar plus breathing room. */
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+}
+
  /* get rid of preview, and save draft buttons in post edit screens */
  #minor-publishing-actions { display: none !important; }
 
@@ -253,4 +277,3 @@
     margin: 0;
     padding: 0;
 } */
-

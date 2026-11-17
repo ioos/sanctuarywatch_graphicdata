@@ -13,6 +13,19 @@ add_action( 'wp_head', 'graphic_data_figure_edit_link_config' );
 
 add_action( 'admin_bar_menu', 'graphic_data_admin_bar_preview', 100 );
 
+add_action( 'admin_bar_menu', 'graphic_data_hide_list_archive_link', 100 );
+
+/** Hide the archive toolbar link only on Graphic Data post list screens. */
+function graphic_data_hide_list_archive_link( $admin_bar ) {
+	if ( ! is_admin() ) {
+		return;
+	}
+	$screen = get_current_screen();
+	if ( $screen && 'edit' === $screen->base && in_array( $screen->post_type, array( 'instance', 'scene', 'modal', 'figure' ), true ) ) {
+		$admin_bar->remove_node( 'archive' );
+	}
+}
+
 /** Launch the existing live preview from the post editor's toolbar. */
 function graphic_data_admin_bar_preview( $admin_bar ) {
 	if ( ! is_admin() ) {

@@ -886,8 +886,6 @@ if (previewFigureOrModalElements.length > 0) {
 if (previewFigureOrModalElements.length > 0) {
 	previewFigureOrModalElements.forEach((el) => {
 		el.addEventListener('click', async function () {
-			window.mobileBool =
-				el.getAttribute('data-depend-id') === 'scene_preview_mobile';
 
 			// Only inject CSS if not already loaded
 			if (
@@ -1217,25 +1215,32 @@ if (previewSceneElements.length > 0) {
 
 //________________________________________________________________________________________
 
-//Applies to  Scene, Figure, and Modals previews
-// When the modal close button is clicked, remove both CSS files
-document.addEventListener('click', function (e) {
-	if (e.target && e.target.id === 'close1') {
-		const css1 = document.getElementById('theme-css1');
-		const css2 = document.getElementById('theme-css2');
-		if (css1) {
-			css1.remove();
-		}
-		if (css2) {
-			css2.remove();
-		}
+// Keep preview styles tied to the preview lifecycle, regardless of its trigger.
+function removePreviewStyles() {
+	['theme-css1', 'theme-css2', 'sw-modal-accordion-btn-css'].forEach((id) => {
+		document.getElementById(id)?.remove();
+	});
+}
 
-		// const css3 = document.createElement('link');
-		// css3.id = 'theme-css3';
-		// css3.rel = 'stylesheet';
-		// css3.href = `${window.location.origin}/wp-content/themes/graphic_data_theme/assets/css/bootstrap.min.css`;
-		// document.head.appendChild(css3);
+// Capture runs before the existing button handlers inject the selected mode's CSS.
+// Toolbar actions click these same controls, so both entry points stay identical.
+document.addEventListener('click', (event) => {
+	if (event.target.closest(
+		'[data-depend-id="scene_preview"], [data-depend-id="scene_preview_mobile"], ' +
+		'[data-depend-id="modal_preview"], [data-depend-id="modal_preview_mobile"], ' +
+		'[data-depend-id="figure_preview"], [data-depend-id="figure_preview_mobile"]'
+	)) {
+		removePreviewStyles();
 	}
+}, true);
+
+// Bootstrap emits this for Close, Escape, backdrop clicks, and programmatic hide.
+// Closing the auxiliary full-image modal must not strip an open preview's CSS.
+document.addEventListener('hidden.bs.modal', (event) => {
+	if (!['myModal', 'sceneModal'].includes(event.target.id)) return;
+	if (document.querySelector('#myModal.show, #sceneModal.show')) return;
+	removePreviewStyles();
+	window.mobileBool = false;
 });
 
 
