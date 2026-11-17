@@ -1,3 +1,4 @@
+import { getModalTabOrder } from '../../../includes/modals/js/tab-order.js';
 import { configureSceneFigureControls } from './figure-controls';
 import apiFetch from '@wordpress/api-fetch';
 import { render_tab_info, render_interactive_plots } from '@graphic-data/figure-render';
@@ -152,7 +153,7 @@ export function openSceneModal(child, config) {
 			resizeVisiblePlots();
 		}
 		const tabFigures = [];
-		for (let tab = 1; tab <= Number(modal.modal_tab_number || 0); tab++) {
+		for (const tab of getModalTabOrder(modal.modal_tab_order, modal.modal_tab_number || 0)) {
 			const group = figures.filter(figure => Number(figure.figure_tab) === tab);
 			if (!group.length) continue;
 			const button = doc.createElement('button'); button.type = 'button'; button.id = `${id}-tab-${tab}`;

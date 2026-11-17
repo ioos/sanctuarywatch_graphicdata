@@ -1,3 +1,4 @@
+import { getModalTabOrder } from '../../includes/modals/js/tab-order.js';
 import { checkIfFileExistsAndLoadJson } from '@graphic-data/file-upload';
 
 import {
@@ -188,7 +189,7 @@ function run_admin_figures() {
 
 				if (figureModal != ' ' && figureModal != '') {
 					let targetField = '';
-					for (let i = 1; i < 7; i++) {
+					for (const i of getModalTabOrder(data.modal_tab_order, data.modal_tab_number)) {
 						targetField = 'modal_tab_title' + i;
 						if (data[targetField] != '') {
 							const optionTitleTab =

@@ -1,3 +1,4 @@
+import { getModalTabOrder } from './tab-order.js';
 import { render_interactive_plots, render_tab_info } from '@graphic-data/figure-render';
 import {  is_mobile, slugify, createAccordionItem, getSceneData, child_obj as sharedChildObj } from '@graphic-data/scene-shared';
 
@@ -232,7 +233,8 @@ export function render_modal(key, obj, modal_obj){
         // --- Tabs ---
         let num_tabs = Number(modal_data["modal_tab_number"]);
         let first_tab_with_figures_found = false;
-        for (let i = 1; i <= num_tabs; i++) {
+        const tabOrder = getModalTabOrder(modal_data.modal_tab_order, num_tabs);
+        for (const i of tabOrder) {
             let tab_key = `modal_tab_title${i}`;
             let tab_title = modal_data[tab_key];
             //console.log('tab_title', tab_title);
@@ -324,7 +326,7 @@ export function render_modal(key, obj, modal_obj){
                         is_first_tab_with_figures
                     );
 
-                    if (i === num_tabs) {
+                    if (i === tabOrder[tabOrder.length - 1]) {
                         let mdialog =
                             document.querySelector(
                                 "#myModal > div"
@@ -344,7 +346,7 @@ export function render_modal(key, obj, modal_obj){
                 * Only the first tab encountered with published
                 * figures receives true.
                 */
-                const is_first_tab_with_figures = true;
+                const is_first_tab_with_figures = i === tabOrder[0];
 
                 console.log('is_first_tab_with_figures', is_first_tab_with_figures);
 
@@ -357,7 +359,7 @@ export function render_modal(key, obj, modal_obj){
                     is_first_tab_with_figures
                 );
 
-                if (i === num_tabs) {
+                if (i === tabOrder[tabOrder.length - 1]) {
                     let mdialog =
                         document.querySelector(
                             "#myModal > div"

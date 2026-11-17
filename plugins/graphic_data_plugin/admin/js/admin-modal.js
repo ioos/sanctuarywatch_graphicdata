@@ -1,3 +1,4 @@
+import { getModalTabOrder } from '../../includes/modals/js/tab-order.js';
 import {
 	replaceFieldValuesWithTransientValues,
 	redText,
@@ -445,47 +446,70 @@ function iconFunction() {
 	modalWindow();
 }
 
-/**
- * Shows or hides modal tab title fields based on the specified number of tab entries.
- *
- * This function manages the visibility and values of up to six modal tab title input fields in the modal form.
- * For each tab title field beyond the specified entry number, the field is hidden and its value is cleared.
- * For each tab title field up to and including the specified entry number, the field is shown.
- *
- * @function displayTabEntries
- * @param {number|string} entry_number - The number of tab title fields to display (typically 1–6).
- *
- * @description
- * - Iterates from 6 down to entry_number + 1, hiding and clearing each tab title field.
- * - Iterates from 1 up to entry_number, showing each tab title field.
- * - Ensures that only the desired number of tab title fields are visible and populated in the UI.
- *
- * @modifies
- * - The display style and value of input fields named "modal_tab_title{n}" in the DOM, where {n} is 1–6.
- *
- * @example
- * // Show the first three tab title fields and hide the rest:
- * displayTabEntries(3);
- *
- * @global
- * - Assumes the existence of input fields named "modal_tab_title{n}" in the DOM, where {n} is 1–6.
- */
+/** Keep tab identities and titles intact while changing presentation order. */
 function displayTabEntries(entry_number) {
-	let target_element = '';
-	for (let i = 6; i > entry_number; i--) {
-		target_element = 'modal_tab_title' + i;
-		document.getElementsByName(
-			target_element
-		)[0].parentElement.parentElement.style.display = 'none';
-		document.getElementsByName(target_element)[0].value = '';
-	}
-
-	for (let i = 1; i <= entry_number; i++) {
-		target_element = 'modal_tab_title' + i;
-		document.getElementsByName(
-			target_element
-		)[0].parentElement.parentElement.style.display = 'block';
-	}
+	const orderField = document.getElementsByName('modal_tab_order')[0];
+	const order = getModalTabOrder(orderField?.value);
+	const active = order.filter((id) => id <= Number(entry_number));
+	if (orderField) orderField.value = order.join(',');
+	const rows = order.map((id) => {
+		const input = document.getElementsByName(`modal_tab_title${id}`)[0];
+		return { id, input, row: input?.closest('.exopite-sof-field') };
+	}).filter(({ row }) => row);
+	// Reorder the existing field wrappers; keep the framework's DOM structure.
+	const anchor = document.createComment('modal tab fields');
+	rows[0]?.row.before(anchor);
+	rows.forEach(({ id, input, row }) => {
+		anchor.before(row);
+		row.style.display = active.includes(id) ? 'block' : 'none';
+		const position = active.indexOf(id);
+		const heading = row.querySelector('.exopite-sof-title');
+		if (heading) {
+			let orderLabel = heading.querySelector('.modal-tab-display-order');
+			if (!orderLabel) {
+				orderLabel = document.createElement('span');
+				orderLabel.className = 'modal-tab-display-order';
+				orderLabel.style.cssText = 'display: inline-block; margin-left: 16px; color: #50575e; font-weight: 400;';
+				heading.appendChild(orderLabel);
+			}
+			orderLabel.textContent = position >= 0 ? `Display order: ${position + 1} of ${active.length}` : '';
+		}
+		if (!orderField) return;
+		let controls = row.querySelector('.modal-tab-move-controls');
+		if (!controls) {
+			controls = document.createElement('div');
+			controls.className = 'modal-tab-move-controls';
+			controls.style.marginTop = '8px';
+			[-1, 1].forEach((direction) => {
+				const button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'button';
+				button.textContent = direction < 0 ? 'Move Up' : 'Move Down';
+				button.style.marginRight = '8px';
+				button.addEventListener('click', () => {
+					const current = getModalTabOrder(orderField.value);
+					const count = document.getElementsByName('modal_tab_number')[0].value;
+					const visible = getModalTabOrder(orderField.value, count);
+					const neighbor = visible[visible.indexOf(id) + direction];
+					if (!neighbor) return;
+					const from = current.indexOf(id), to = current.indexOf(neighbor);
+					[current[from], current[to]] = [current[to], current[from]];
+					orderField.value = current.join(',');
+					orderField.dispatchEvent(new Event('change', { bubbles: true }));
+					displayTabEntries(count);
+					(button.disabled ? controls.querySelector('button:not(:disabled)') : button)?.focus();
+				});
+				controls.appendChild(button);
+			});
+			input.after(controls);
+		}
+		controls.children[0].disabled = position <= 0;
+		controls.children[1].disabled = position < 0 || position === active.length - 1;
+		Array.from(controls.children).forEach((button) => {
+			button.setAttribute('aria-label', `${button.textContent}: Tab ${id}`);
+		});
+	});
+	anchor.remove();
 }
 
 /**

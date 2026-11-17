@@ -280,7 +280,7 @@ class Graphic_Data_Modal {
 				'id'      => 'modal_tab_number',
 				'type'    => 'range',
 				'title'   => 'Number of Modal Tabs*',
-				'description' => 'How many modal tabs are there?',
+				'description' => 'How many modal tabs are there? The tabs below are ordered from top to bottom: Display order 1 appears first, followed by 2, 3, and so on. Use Move Up / Move Down to change this order. The number in "Modal Tab Title" identifies the tab and stays the same when you move it. Reducing the tab count hides the highest-numbered tab titles, regardless of display order; increasing it restores them.',
 				'min'     => 1,
 				'default'     => 1,
 				'max'     => 6,
@@ -403,6 +403,13 @@ class Graphic_Data_Modal {
 		array_splice( $fields, 19, 0, $photo_fields );
 		array_splice( $fields, 26, 0, $tab_fields );
 
+		$fields[] = array(
+			'id' => 'modal_tab_order',
+			'type' => 'hidden',
+			'default' => '1,2,3,4,5,6',
+			'sanitize' => [ $function_utilities, 'sanitize_modal_tab_order' ],
+		);
+
 		// If we're just running this function to get the custom field list for field validation, return early.
 		if ( $return_fields_only ) {
 			return $fields;
@@ -429,6 +436,7 @@ class Graphic_Data_Modal {
 			array( 'modal_info_entries', 'integer', 'The number of info links' ),
 			array( 'modal_photo_entries', 'integer', 'The number of photo links' ),
 			array( 'modal_tab_number', 'integer', 'The number of modal tabs' ),
+			array( 'modal_tab_order', 'string', 'Modal tab display order' ),
 		);
 
 		for ( $i = 1; $i < 7; $i++ ) {
@@ -494,6 +502,7 @@ class Graphic_Data_Modal {
 			'modal_info_entries',
 			'modal_photo_entries',
 			'modal_tab_number',
+			'modal_tab_order',
 			'icon_toc_section',
 		);
 

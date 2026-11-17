@@ -1115,6 +1115,14 @@ class Graphic_Data_Utility {
 		return absint( $value );
 	}
 
+	/** Normalize display order without changing the stable tab IDs. */
+	public function sanitize_modal_tab_order( $value ) {
+		$ids = array_filter( explode( ',', is_string( $value ) ? $value : '' ), static function ( $id ) {
+			return preg_match( '/^[1-6]$/', trim( $id ) );
+		} );
+		return implode( ',', array_unique( array_merge( array_map( 'intval', $ids ), range( 1, 6 ) ) ) );
+	}
+
 	/**
 	 * Retrieve tab titles for a given modal.
 	 *
@@ -1129,7 +1137,10 @@ class Graphic_Data_Utility {
 	public function return_modal_tabs( $modal_id ) {
 		$potential_tabs[''] = '';
 		if ( '' != $modal_id ) {
-			for ( $i = 1; $i < 7; $i++ ) {
+			$order = $this->sanitize_modal_tab_order( get_post_meta( $modal_id, 'modal_tab_order', true ) );
+			$count = (int) get_post_meta( $modal_id, 'modal_tab_number', true );
+			foreach ( explode( ',', $order ) as $i ) {
+				if ( (int) $i > $count ) continue;
 				$target_field = 'modal_tab_title' . $i;
 				$target_title = get_post_meta( $modal_id, $target_field, true );
 				if ( '' != $target_title && null != $target_title ) {
