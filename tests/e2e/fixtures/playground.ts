@@ -1,6 +1,7 @@
 import { test as base, expect, Page, ConsoleMessage } from '@playwright/test';
 import { runCLI } from '@wp-playground/cli';
 import fs from 'node:fs';
+import net from 'node:net';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -38,7 +39,7 @@ type PlaygroundFixtures = {
 };
 
 type WorkerFixtures = {
-    playgroundServer: { serverUrl: string; close: () => Promise<void> };
+    playgroundServer: PlaygroundSite;
 };
 
 export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
@@ -57,84 +58,9 @@ export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
      */
     playgroundServer: [
         async ({}, use) => {
-            const blueprintPath = path.resolve(
-                __dirname,
-                '..',
-                'blueprints',
-                'blueprint.test.json',
-            );
-            const blueprint = JSON.parse(fs.readFileSync(blueprintPath, 'utf8'));
-
-            // Fail fast with a clear error if either host path is missing.
-            if (!fs.existsSync(PLUGIN_HOST_PATH)) {
-                throw new Error(
-                    `Plugin directory not found at ${PLUGIN_HOST_PATH}. ` +
-                        `Edit PLUGIN_HOST_PATH in fixtures/playground.ts if your ` +
-                        `graphic_data_plugin lives somewhere else.`,
-                );
-            }
-            if (!fs.existsSync(THEME_HOST_PATH)) {
-                throw new Error(
-                    `Theme directory not found at ${THEME_HOST_PATH}. ` +
-                        `Edit THEME_HOST_PATH in fixtures/playground.ts if your ` +
-                        `graphic_data_theme lives somewhere else.`,
-                );
-            }
-
-            const cli = await runCLI({
-                command: 'server',
-                php: '8.3',
-                wp: '6.8',
-                blueprint,
-                mount: [
-                    {
-                        hostPath: PLUGIN_HOST_PATH,
-                        vfsPath: '/wordpress/wp-content/plugins/graphic_data_plugin',
-                    },
-                    {
-                        hostPath: THEME_HOST_PATH,
-                        vfsPath: '/wordpress/wp-content/themes/graphic_data_theme',
-                    },
-                ],
-            });
-
-            // Sanity-check blueprint success before running any tests.
-            //
-            // We disable redirect-following so an infinite redirect loop
-            // (which previously happened when the helper hooked `init`
-            // instead of `muplugins_loaded`) surfaces as a clear HTTP
-            // status rather than a 20-deep "redirect count exceeded" from
-            // undici.
-            const statusUrl = `${cli.serverUrl}/?graphic_data_test_status=1`;
-            const res = await fetch(statusUrl, { redirect: 'manual' });
-
-            if (res.status !== 200) {
-                await cli.server?.close();
-                throw new Error(
-                    `Status endpoint returned HTTP ${res.status} (expected 200). ` +
-                        `Location header: ${res.headers.get('location') ?? 'none'}. ` +
-                        `This usually means the helper mu-plugin isn't being loaded, ` +
-                        `or WordPress is canonicalizing the URL before our handler runs.`,
-                );
-            }
-
-            const status: any = await res.json();
-            if (status.setup !== 'success') {
-                await cli.server?.close();
-                throw new Error(
-                    `Blueprint setup did not complete cleanly. ` +
-                        `Status endpoint returned: ${JSON.stringify(status)}`,
-                );
-            }
-
-            await use({
-                serverUrl: cli.serverUrl,
-                close: async () => {
-                    await cli.server?.close();
-                },
-            });
-
-            await cli.server?.close();
+            const site = await startPlayground();
+            await use(site);
+            await site.close();
         },
         { scope: 'worker', timeout: 180_000 },
     ],
@@ -214,18 +140,164 @@ export const test = base.extend<PlaygroundFixtures, WorkerFixtures>({
 
 export { expect };
 
+export type PlaygroundSite = {
+    serverUrl: string;
+    /** Playground's PHP API, for running PHP against the site (`run({ code })`). */
+    playground: any;
+    close: () => Promise<void>;
+};
+
+/**
+ * Boot a Playground server with the local plugin and theme mounted.
+ *
+ * Specs that need more than one site (for example the Content Transfer
+ * round trip) call this directly; other specs use the playgroundServer
+ * fixture.
+ *
+ * @wp-playground/cli API notes:
+ *   - `blueprint` is a parsed JSON object (NOT a filepath).
+ *   - `mount` is an ARRAY of { hostPath, vfsPath } pairs.
+ *   - `php` and `wp` must be passed as top-level options; the CLI
+ *     does NOT read preferredVersions from the blueprint at boot.
+ *   - Pinning a real `wp` version is more reliable across CLI updates
+ *     than 'latest'.
+ *   - v3.x returns `serverUrl`; the locked v1.x only returns the HTTP
+ *     server, so the URL is built from its port.
+ *
+ * @param options.tutorialContent Seed the tutorial content (default true).
+ *                                Without it the site has the plugin and
+ *                                theme but no Graphic Data content.
+ */
+export async function startPlayground(
+    { tutorialContent = true }: { tutorialContent?: boolean } = {},
+): Promise<PlaygroundSite> {
+    const blueprintPath = path.resolve(
+        __dirname,
+        '..',
+        'blueprints',
+        'blueprint.test.json',
+    );
+    const blueprint = JSON.parse(fs.readFileSync(blueprintPath, 'utf8'));
+    if (!tutorialContent) {
+        blueprint.steps = blueprint.steps.filter(
+            (step: any) =>
+                !(step.step === 'runPHP' && step.code.includes('create_playground_tutorial_content')) &&
+                !(step.step === 'setSiteOptions' && step.options?.graphic_data_settings),
+        );
+        blueprint.steps.push({
+            step: 'setSiteOptions',
+            options: { blueprint_setup_notice: 'success' },
+        });
+    }
+
+    // Fail fast with a clear error if either host path is missing.
+    if (!fs.existsSync(PLUGIN_HOST_PATH)) {
+        throw new Error(
+            `Plugin directory not found at ${PLUGIN_HOST_PATH}. ` +
+                `Edit PLUGIN_HOST_PATH in fixtures/playground.ts if your ` +
+                `graphic_data_plugin lives somewhere else.`,
+        );
+    }
+    if (!fs.existsSync(THEME_HOST_PATH)) {
+        throw new Error(
+            `Theme directory not found at ${THEME_HOST_PATH}. ` +
+                `Edit THEME_HOST_PATH in fixtures/playground.ts if your ` +
+                `graphic_data_theme lives somewhere else.`,
+        );
+    }
+
+    const cli: any = await runCLI({
+        command: 'server',
+        php: '8.3',
+        wp: '6.8',
+        // Without a port every site asks for 9400; a second site then
+        // listens elsewhere but its WordPress address still says 9400.
+        port: await getFreePort(),
+        blueprint,
+        mount: [
+            {
+                hostPath: PLUGIN_HOST_PATH,
+                vfsPath: '/wordpress/wp-content/plugins/graphic_data_plugin',
+            },
+            {
+                hostPath: THEME_HOST_PATH,
+                vfsPath: '/wordpress/wp-content/themes/graphic_data_theme',
+            },
+        ],
+    });
+    const serverUrl: string =
+        cli.serverUrl ?? `http://127.0.0.1:${cli.server.address().port}`;
+    const close = async () => {
+        await new Promise((resolve) => cli.server?.close(resolve));
+    };
+
+    // Sanity-check blueprint success before running any tests.
+    //
+    // We disable redirect-following so an infinite redirect loop
+    // (which previously happened when the helper hooked `init`
+    // instead of `muplugins_loaded`) surfaces as a clear HTTP
+    // status rather than a 20-deep "redirect count exceeded" from
+    // undici.
+    const statusUrl = `${serverUrl}/?graphic_data_test_status=1`;
+    const res = await fetch(statusUrl, { redirect: 'manual' });
+
+    if (res.status !== 200) {
+        await close();
+        throw new Error(
+            `Status endpoint returned HTTP ${res.status} (expected 200). ` +
+                `Location header: ${res.headers.get('location') ?? 'none'}. ` +
+                `This usually means the helper mu-plugin isn't being loaded, ` +
+                `or WordPress is canonicalizing the URL before our handler runs.`,
+        );
+    }
+
+    const status: any = await res.json();
+    if (status.setup !== 'success') {
+        await close();
+        throw new Error(
+            `Blueprint setup did not complete cleanly. ` +
+                `Status endpoint returned: ${JSON.stringify(status)}`,
+        );
+    }
+
+    return { serverUrl, playground: cli.playground, close };
+}
+
+/** A port nothing is listening on. */
+function getFreePort(): Promise<number> {
+    return new Promise((resolve, reject) => {
+        const server = net.createServer();
+        server.unref();
+        server.on('error', reject);
+        server.listen(0, '127.0.0.1', () => {
+            const { port } = server.address() as net.AddressInfo;
+            server.close(() => resolve(port));
+        });
+    });
+}
+
 /**
  * Log in as admin via wp-login.php. The blueprint's `login: true` creates
  * a session only for the request that applied the blueprint; test pages
  * launch fresh browser contexts with no cookies, so we re-auth here.
  */
-async function loginAsAdmin(page: Page, serverUrl: string): Promise<void> {
+export async function loginAsAdmin(page: Page, serverUrl: string): Promise<void> {
+    // Visiting the form sets WordPress's test cookie. The form is then
+    // posted directly: typing into it races wp-login.php's own script,
+    // which can empty the password field as it starts.
     await page.goto(`${serverUrl}/wp-login.php`);
-    const loginForm = page.locator('#loginform');
-    if (await loginForm.isVisible().catch(() => false)) {
-        await page.locator('#user_login').fill('admin');
-        await page.locator('#user_pass').fill('password');
-        await page.locator('#wp-submit').click();
+    if (await page.locator('#loginform').isVisible().catch(() => false)) {
+        await page.request.post(`${serverUrl}/wp-login.php`, {
+            form: {
+                log: 'admin',
+                pwd: 'password',
+                'wp-submit': 'Log In',
+                redirect_to: `${serverUrl}/wp-admin/`,
+                testcookie: '1',
+            },
+        });
+        await page.goto(`${serverUrl}/wp-admin/`);
         await page.waitForURL(/wp-admin/);
+        await expect(page.locator('#loginform')).toHaveCount(0);
     }
 }

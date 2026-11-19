@@ -878,7 +878,9 @@ class Graphic_Data_Tutorial_Content {
 		global $wpdb;
 		$target_icon_array = [ 'Image', 'Video', 'Interactive Bar Chart', 'Interactive Line Chart', 'Code Block' ];
 		$figure_tutorial_id = 45;
-		$modal_tutorial_id_array = [ 15, 21, 27, 33, 39 ]; // Image.
+		// tutorial_id of each scene's Image modal: create_tutorial_modals() gives
+		// each scene seven modals numbered from ( $q + 1 ) * 7 + 9.
+		$modal_tutorial_id_array = [ 16, 23, 30, 37, 44 ];
 
 		// Load the details of the figures to be saved as tutorial figures from a json.
 		$figure_details_json_path = GRAPHIC_DATA_PLUGIN_DIR . 'example_files/tutorial/figure_details.json';
@@ -903,11 +905,13 @@ class Graphic_Data_Tutorial_Content {
 				$target_figure_details_element = $target_figure_details[ $b ];
 				// Make a copy of each figure for every scene to which it is to be attached.
 				for ( $q = 0; $q < 5; $q++ ) {
+					// Figures get tutorial IDs from 45 too, so match modals only.
 					$tutorial_modal_id = $wpdb->get_var(
 						$wpdb->prepare(
-							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = %s AND meta_value = %s",
+							"SELECT pm.post_id FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = %s AND pm.meta_value = %s AND p.post_type = %s ORDER BY pm.post_id ASC LIMIT 1",
 							'tutorial_id',
 							$target_tutorial_id_array[ $q ],
+							'modal',
 						)
 					);
 					$tutorial_scene_id = $wpdb->get_var(

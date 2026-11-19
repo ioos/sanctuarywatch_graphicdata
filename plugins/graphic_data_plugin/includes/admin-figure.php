@@ -1189,12 +1189,14 @@ class Graphic_Data_Figure {
 
 
 		/*
-		* Create the new Figure as a draft.
+		* Create the new Figure as published. Figures are always published in
+		* WordPress terms (the edit screen has no Save Draft button); whether
+		* the copy appears on the site is set by figure_published below.
 		*/
 		$new_post_id = wp_insert_post(
 			array(
 				'post_type'      => 'figure',
-				'post_status'    => 'draft',
+				'post_status'    => 'publish',
 				'post_title'     => $post->post_title . ' - Copy',
 				'post_content'   => $post->post_content,
 				'post_excerpt'   => $post->post_excerpt,
@@ -1263,7 +1265,8 @@ class Graphic_Data_Figure {
 
 
 		/*
-		* Start the duplicate in Draft regardless of the original Figure's status.
+		* Start the duplicate with a Figure status of Draft regardless of the
+		* original Figure's status, so it does not appear on the site yet.
 		*/
 		update_post_meta( $new_post_id, 'figure_published', 'draft' );
 

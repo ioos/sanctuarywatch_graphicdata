@@ -11,6 +11,7 @@ There are three tiers:
 1. **Smoke** (`specs/smoke/`): plugin activates, admin loads, tutorial content seeded, no PHP fatals. Seconds.
 2. **Admin JS** (`specs/admin-js/`): specific behaviors in `admin-scene.js`, `admin-modal.js`, `utility.js`, etc. These pin down the public contract so a refactored class has to produce the same DOM effects. This is the main reason this harness exists.
 3. **Frontend** (`specs/frontend/`): single-scene page rendering, hotspot-to-modal flow in `script.js`.
+4. **Content Transfer** (`specs/content-transfer/`): two Playground sites, one with the tutorial content and one without. Instances are exported from one and imported into the other through the Content Transfer screen, the second site's export is compared with the first's, and newer-format packages and a spreadsheet (TSV) bulk import with bar and line charts are imported. The schema upgrade steps have a separate test that needs no WordPress: `php tests/content-transfer/schema-upgrade.test.php` from the repo root.
 
 Every test runs with console/pageerror listeners attached. Any uncaught JS error or `console.error` fails the test at teardown. That's the single most valuable feature for catching the "small JS change, unanticipated bug" pattern.
 
@@ -30,6 +31,7 @@ npm test                 # all tiers
 npm run test:smoke       # tier 1 only (fast)
 npm run test:admin-js    # tier 2 — the refactor safety net
 npm run test:frontend    # tier 3
+npx playwright test specs/content-transfer   # tier 4 (about 4 minutes)
 npm run test:ui          # interactive UI mode — best for iterating
 npm run test:debug       # step through a test with the inspector
 npm run test:report      # open the HTML report from the last run
@@ -98,6 +100,8 @@ test('my feature', async ({ adminPage }) => {
 });
 ```
 
+For tests that need more than one site, call `startPlayground()` from `fixtures/playground.ts` once per site (pass `{ tutorialContent: false }` for a site without the tutorial content). Each site gets its own port, and `site.playground.run({ code })` runs PHP against it. See `specs/content-transfer/round-trip.spec.ts`.
+
 For tests that intentionally trigger errors, opt out:
 
 ```ts
@@ -140,7 +144,9 @@ The intended use during your class-based refactor:
 
 **Tests hang on first run** — the first `runCLI` call downloads PHP/WP WASM blobs. Expect 30-60s. Subsequent runs use cached blobs.
 
-**Port conflicts** — `port: 0` tells Playground to pick a random free port. If you're seeing bind errors, some other process is likely holding ports at the OS level; restarting your shell usually clears it.
+**Downloads are corrupt or about twice their size** — `@wp-playground/cli` 1.x passes PHP's binary output through as text. `package.json` asks for 3.x; if `node_modules` still has 1.x, run `npm install`.
+
+**Port conflicts** — the fixture picks a free port for each site, because Playground otherwise uses 9400 for every site. If you're seeing bind errors, some other process is likely holding ports at the OS level; restarting your shell usually clears it.
 
 **JS errors from unrelated code (Heartbeat, emoji)** — add patterns to `allowedPatterns` in `fixtures/playground.ts`.
 

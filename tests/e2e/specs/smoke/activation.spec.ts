@@ -52,9 +52,9 @@ test.describe('Smoke: plugin activation and seeding', () => {
     });
 
     test('graphic data settings page loads', async ({ adminPage }) => {
-        // Menu slug is `theme_settings`, registered in
-        // includes/admin-settings-page.php via add_menu_page.
-        await adminPage.goto('/wp-admin/admin.php?page=theme_settings');
+        // Menu slug is `graphic-data-settings`, registered in
+        // admin/class-search.php via add_submenu_page.
+        await adminPage.goto('/wp-admin/admin.php?page=graphic-data-settings');
         await expect(adminPage.locator('body')).not.toContainText('Fatal error');
         await expect(adminPage.locator('#wpbody-content')).toBeVisible();
     });

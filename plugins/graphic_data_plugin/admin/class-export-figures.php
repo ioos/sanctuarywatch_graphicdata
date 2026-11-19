@@ -25,7 +25,7 @@ class Graphic_Data_Export_Figures {
 	public function export_figures_page() {
 		?>
 		<div class="wrap">
-			<h1>Export Figures</h1>
+			<h1>Figure Reports</h1>
 			<p>Select an Instance for figure export:</p>
 			<p>
 			<?php
