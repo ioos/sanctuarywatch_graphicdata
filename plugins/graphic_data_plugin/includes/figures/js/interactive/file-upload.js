@@ -177,8 +177,8 @@ export async function checkIfFileExistsAndLoadJson() {
 				key === null ? cleanedValue : `${key}: ${cleanedValue}`;
 			metadata.append(row, document.createElement('br'));
 		});
-		const divider = document.createElement('hr');
-		divider.style.cssText = 'border:0.5px solid lightgrey;margin-top:8px';
+		const divider = document.createElement('div');
+		divider.style.cssText = 'margin-top:8px';
 		metadata.append(document.createElement('br'), divider);
 		gui.append(metadata);
 	}

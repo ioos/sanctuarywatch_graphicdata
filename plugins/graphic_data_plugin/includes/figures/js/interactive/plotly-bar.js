@@ -50,9 +50,53 @@ function getBarDisplayAxisType(figureArguments, dataToBePlotted) {
         (_, index) => figureArguments[`Bar${index + 1}Stacked`] === 'on'
     ).some(Boolean);
 
-    return columnXHeader !== 'None' && groupsByCategory
-        ? 'category'
-        : getBarAxisType(columnXHeader, dataToBePlotted[columnXHeader]);
+    if (columnXHeader === 'None' || groupsByCategory) return 'category';
+    switch (figureArguments.XAxisDataType) {
+        case 'number': return 'linear';
+        case 'year':
+        case 'date': return 'date';
+        case 'category': return 'category';
+        default: return getBarAxisType(columnXHeader, dataToBePlotted[columnXHeader]);
+    }
+}
+
+function normalizeBarDate(value) {
+    if (value == null || String(value).trim() === '') return null;
+    const text = String(value).trim();
+    if (/^\d{4}$/.test(text)) return text + '-01-01';
+    if (/^\d{4}-\d{2}$/.test(text)) return text + '-01';
+    return text;
+}
+
+function getBarAxisOptions(args, data) {
+    const type = getBarDisplayAxisType(args, data);
+    if (args.XAxisDataType === 'category') return { type, categoryorder: 'trace' };
+    if (!['date', 'year'].includes(args.XAxisDataType) || type !== 'date') return { type };
+    const formats = { YYYY: '%Y', 'YYYY-MM': '%Y-%m', 'YYYY-MM-DD': '%Y-%m-%d' };
+    const format = args.XAxisFormat || 'YYYY';
+    const result = { type, tickformat: formats[format] || '', hoverformat: formats[format] || '' };
+    const values = (data[args.XAxis] || []).concat([args.XAxisLowBound, args.XAxisHighBound])
+        .map(normalizeBarDate).filter(Boolean).map(value => Date.parse(value)).filter(Number.isFinite);
+    let low = Infinity, high = -Infinity;
+    for (const value of values) { low = Math.min(low, value); high = Math.max(high, value); }
+    const span = values.length ? Math.max(0, high - low) : 0;
+    if (format === 'YYYY') {
+        result.tickmode = 'linear';
+        result.dtick = 'M' + (12 * Math.max(1, Math.ceil(span / (365.25 * 86400000 * 8))));
+        result.tick0 = '2000-01-01';
+    } else if (format === 'YYYY-MM') {
+        result.tickmode = 'linear';
+        result.dtick = 'M' + Math.max(1, Math.ceil(span / (30.4375 * 86400000 * 8)));
+        result.tick0 = '2000-01-01';
+    } else if (format === 'YYYY-MM-DD') {
+        result.tickmode = 'linear';
+        result.dtick = Math.max(1, Math.ceil(span / (86400000 * 8))) * 86400000;
+        result.tick0 = '2000-01-01';
+    }
+    if (args.XAxisLowBound && args.XAxisHighBound) {
+        result.range = [normalizeBarDate(args.XAxisLowBound), normalizeBarDate(args.XAxisHighBound)];
+    }
+    return result;
 }
 
 function buildBarHover({ categoryLabel, categoryValue, seriesLabel, valueLabel }) {
@@ -119,7 +163,7 @@ function injectOverlays(plotDiv, layout, mainDataTraces, figureArguments, dataTo
     const plotlyX = dataToBePlotted[columnXHeader];
 
     layout.xaxis = layout.xaxis || {};
-    layout.xaxis.type = getBarDisplayAxisType(figureArguments, dataToBePlotted);
+    Object.assign(layout.xaxis, getBarAxisOptions(figureArguments, dataToBePlotted));
 
     const dateFormat = figureArguments['XAxisFormat'];
     let xHoverFormat = '';
@@ -376,6 +420,10 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
         
         const responseJson = await rawResponse.json();
         const dataToBePlotted = responseJson.data;
+        if (['date', 'year'].includes(figureArguments.XAxisDataType) && Array.isArray(dataToBePlotted[figureArguments.XAxis])) {
+            dataToBePlotted[figureArguments.XAxis] = dataToBePlotted[figureArguments.XAxis].map(normalizeBarDate);
+        }
+
 
         //Important for blocks to work - We need one to work with the document from the block and one for the regular document the function normally runs in.
 		let newDiv;
@@ -463,7 +511,7 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
 				default:
 					xHoverFormat = ''; // fallback to raw
 				}
-				const categoryType = getBarAxisType(columnXHeader, dataToBePlotted[columnXHeader]);
+				const categoryType = getBarDisplayAxisType(figureArguments, dataToBePlotted);
 				const useDateHover = categoryType === 'date' && xHoverFormat;
 				const xHoverValue = useDateHover ? `%{x|${xHoverFormat}}` : '%{x}';
 				const hoverLabels = {
@@ -765,7 +813,8 @@ export async function producePlotlyBarFigure(targetFigureElement, interactive_ar
 				automargin: true,
 				range: [figureArguments['XAxisLowBound'], figureArguments['XAxisHighBound']],
 				tickmode: graphTickModeBool,
-				ticks: graphTickPositionBool 
+				ticks: graphTickPositionBool,
+                ...getBarAxisOptions(figureArguments, dataToBePlotted)
 			},
 			yaxis: {
 				title: { text: figureArguments['YAxisTitle'] || '' },
@@ -1155,6 +1204,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
   axisTitleArray.forEach((axisTitle) => {
 	newRow = document.createElement("div");
 	newRow.classList.add("row", "fieldPadding");
+    newRow.dataset.barAxisControl = axisTitle === "X" ? "options" : "y-options";
 	newColumn1 = document.createElement("div");
 	newColumn1.classList.add("col-3");   
 	newColumn2 = document.createElement("div");
@@ -1163,10 +1213,14 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
 	let labelInputAxis = document.createElement("label");
 	labelInputAxis.for = axisTitle + "AxisTitle";
 	labelInputAxis.innerHTML = axisTitle + " Axis Options";
+    labelInputAxis.style.fontWeight = "540";
+	labelInputAxis.style.fontSize= "1rem";
+	labelInputAxis.style.marginTop= "15px";
 
 	let labelInputAxisTitle = document.createElement("label");
 	labelInputAxisTitle.for = axisTitle + "AxisTitle";
 	labelInputAxisTitle.innerHTML = "Title";
+	labelInputAxisTitle.style.marginTop= "15px";
 
 	let inputAxisTitle = document.createElement("input");
 	inputAxisTitle.id = axisTitle + "AxisTitle";
@@ -1190,6 +1244,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
 	const rangeBound =["Low", "High"];
 	newRow = document.createElement("div");
 	newRow.classList.add("row", "fieldPadding");
+    newRow.dataset.barAxisControl = axisTitle === "X" ? "options" : "y-options";
 	newColumn1 = document.createElement("div");
 	newColumn1.classList.add("col-3");   
 	newColumn2 = document.createElement("div");
@@ -1202,6 +1257,7 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
 
 	  const boundColumn = document.createElement('div');
 	  boundColumn.classList.add('col');
+        if (axisTitle === "X") boundColumn.style.paddingLeft = "0";
 
 	  let inputBound = document.createElement("input");
 	  inputBound.id = axisTitle + "Axis" + bound + "Bound";
@@ -1271,10 +1327,38 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
   newColumn2 = document.createElement("div");
   newColumn2.classList.add("col");
 
+  newRow.dataset.barAxisControl = 'bar-count';
   newColumn1.appendChild(labelSelectNumberBars);
   newColumn2.appendChild(selectNumberBars);
   newRow.append(newColumn1, newColumn2);
   newDiv.append(newRow);
+
+  const axisTypeRow = document.createElement('div');
+  axisTypeRow.classList.add('row', 'fieldPadding');
+  axisTypeRow.dataset.barAxisControl = 'type';
+  const axisTypeLabelCol = document.createElement('div');
+  axisTypeLabelCol.className = 'col-3';
+  const axisTypeInputCol = document.createElement('div');
+  axisTypeInputCol.className = 'col';
+  const axisTypeLabel = document.createElement('label');
+  axisTypeLabel.htmlFor = 'XAxisDataType';
+  axisTypeLabel.textContent = 'X Axis Data Type';
+  const axisTypeSelect = document.createElement('select');
+  axisTypeSelect.id = 'XAxisDataType';
+  axisTypeSelect.name = 'plotFields';
+  for (const [value, label] of [['auto', 'Automatic'], ['number', 'Number'], ['date', 'Date'], ['category', 'Category']]) {
+      axisTypeSelect.add(new Option(label, value));
+  }
+  const savedAxisType = fillFormFieldValues('XAxisDataType', interactive_arguments);
+  axisTypeSelect.value = savedAxisType === 'year' ? 'date' : (['auto', 'number', 'date', 'category'].includes(savedAxisType) ? savedAxisType : 'auto');
+  axisTypeSelect.addEventListener('change', logFormFieldValues);
+  const axisTypeHelp = document.createElement('p');
+  axisTypeHelp.className = 'description';
+  axisTypeHelp.textContent = 'Date accepts YYYY, YYYY-MM, or YYYY-MM-DD and preserves time spacing. Category spaces labels equally. Category-grouped arrangements retain a category axis. Date bounds accept the same date formats.';
+  axisTypeLabelCol.append(axisTypeLabel);
+  axisTypeInputCol.append(axisTypeSelect, axisTypeHelp);
+  axisTypeRow.append(axisTypeLabelCol, axisTypeInputCol);
+  newDiv.append(axisTypeRow);
 
   let labelSelectXAxisFormat = document.createElement("label");
   labelSelectXAxisFormat.for = "XAxisFormat";
@@ -1306,14 +1390,21 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
   newColumn2 = document.createElement("div");
   newColumn2.classList.add("col");
 
+  newRow.dataset.barAxisControl = 'format';
   newColumn1.appendChild(labelSelectXAxisFormat);
   newColumn2.appendChild(selectXAxisFormat);
   newRow.append(newColumn1, newColumn2);
   newDiv.append(newRow);
+  const dateFormatRow = newRow;
+  const syncDateFormatVisibility = () => {
+      dateFormatRow.style.display = axisTypeSelect.value === 'date' ? '' : 'none';
+  };
+  axisTypeSelect.addEventListener('change', syncDateFormatVisibility);
+  syncDateFormatVisibility();
 
-  let newHR = document.createElement("hr");
-  newHR.style = "margin-top:15px";
-  newDiv.append(newHR);        
+//   let newHR = document.createElement("hr");
+//   newHR.style = "margin-top:15px";
+//   newDiv.append(newHR);        
 
   targetElement.appendChild(newDiv);
 
@@ -1368,6 +1459,10 @@ function plotlyBarParameterFields(jsonColumns, interactive_arguments){
  * @throws {Error} If the target element with ID `graphGUI` does not exist in the DOM.
  */
 function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangementOverride) {
+    // Retain these controls and their listeners when bar rows are rebuilt.
+    const axisControls = Array.from(document.querySelectorAll('[data-bar-axis-control]'));
+    axisControls.forEach(row => row.remove());
+
 	const assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
 	// If the element exists
 	if (assignColumnsToPlot) {
@@ -1403,6 +1498,7 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 			checkbox.id = feature;
 			checkbox.name = 'plotFields';
 
+
 			const fieldValueSaved = fillFormFieldValues(
 				checkbox.id,
 				interactive_arguments
@@ -1413,8 +1509,8 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 			newColumn1.appendChild(label);
 			newColumn2.appendChild(checkbox);
 			newRow.append(newColumn1, newColumn2);
-			newRow.style.marginTop = '20px';
-			newRow.style.marginBottom = '20px';
+			// newRow.style.marginTop = '20px';
+			newRow.style.marginBottom = '15px';
 			newDiv.append(newRow);
 
 			// === Add dropdowns for feature-specific data ===
@@ -1762,8 +1858,9 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 				});
 			}
 		}
+        const overlayRows = Array.from(newDiv.children);
 		const newHR = document.createElement('hr');
-		newHR.style = 'margin-top:15px';
+		newHR.style.cssText = 'margin-bottom:15px; margin-top:0;';
 		newDiv.append(newHR);
 
 		// Add checkbox for StackedBarColumns
@@ -1845,12 +1942,14 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 		newColumn2.appendChild(checkboxStackedBarColumns);
 		newColumn2.append(arrangementSelect, arrangementDescription);
 		newRow.append(newColumn1, newColumn2);
+        const arrangementRow = newRow;
 		newDiv.append(newRow);
 
 		// Create the button for default styles
 		const labelApplyDefaults = document.createElement('label');
 		labelApplyDefaults.for = 'ApplyBarDefaults';
 		labelApplyDefaults.innerHTML = 'Apply Custom Bar Styles to All Bars';
+		labelApplyDefaults.style.marginBottom = '15px';
 
 		const btnApplyDefaults = document.createElement('button');
 		btnApplyDefaults.id = 'ApplyBarDefaults';
@@ -1877,7 +1976,6 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 		const fieldLabels = [['XAxis', 'X Axis Column']];
 		for (let i = 1; i <= numBars; i++) {
 			fieldLabels.push(['Bar' + i, '', i]);
-
 		}
 
 		fieldLabels.forEach((fieldLabel) => {
@@ -1886,12 +1984,14 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 			if (fieldLabel[2] !== undefined) {
 				labelSelectColumn.innerHTML = `Bar Column ${fieldLabel[2]} (Series)`;
 				labelSelectColumn.style.fontWeight = "540"; 
-				labelSelectColumn.style.fontSize= "17px";
+				labelSelectColumn.style.fontSize= "1rem";
+				labelSelectColumn.style.marginTop= "15px";
 			} else {
 				labelSelectColumn.innerHTML = fieldLabel[1];
 			}
 			const selectColumn = document.createElement('select');
 			selectColumn.id = fieldLabel[0];
+			selectColumn.style.marginTop= "15px";
 			selectColumn.name = 'plotFields';
 			selectColumn.addEventListener('change', function () {
 				logFormFieldValues();
@@ -1984,6 +2084,28 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
             }
 			newRow.append(newColumn1, newColumn2);
 			newDiv.append(newRow);
+            if (fieldLabel[0] === 'XAxis') {
+                const axisSection = document.createElement('div');
+                axisSection.className = 'gd-bar-x-axis-section';
+                axisSection.style.cssText = 'background-color:#F5F5F5;display:flow-root;border-top:1px solid #ccc';
+                newRow.style.borderTop = '0';
+                const axisSectionStyle = document.createElement('style');
+                axisSectionStyle.textContent = '.gd-bar-x-axis-section .row { margin-left: 0; margin-right: 0; }';
+                axisSection.append(axisSectionStyle);
+                newDiv.insertBefore(axisSection, newRow);
+                axisControls.filter(row => row.dataset.barAxisControl === 'options').forEach(row => axisSection.append(row));
+                axisSection.append(newRow);
+                for (const kind of ['type', 'format']) {
+                    axisControls.filter(row => row.dataset.barAxisControl === kind).forEach(row => axisSection.append(row));
+                }
+                axisSection.append(...overlayRows);
+                newDiv.append(newHR);
+                axisControls.filter(row => row.dataset.barAxisControl === 'y-options').forEach(row => newDiv.append(row));
+                newDiv.append(arrangementRow);
+                axisControls.filter(row => row.dataset.barAxisControl === 'bar-count').forEach(row => newDiv.append(row));
+                newDiv.append(newRowBtn);
+            }
+
 
 			if (fieldLabel[0] != 'XAxis') {
 				// Add line label field
@@ -2181,6 +2303,10 @@ function displayBarFields(numBars, jsonColumns, interactive_arguments, arrangeme
 					checkbox.type = 'checkbox';
 					checkbox.id = fieldLabel[0] + feature;
 					checkbox.name = 'plotFields';
+
+					if (feature === 'Percentiles') {
+						label.style.marginBottom = '15px';
+					}
 
 					const fieldValueSaved = fillFormFieldValues(
 						checkbox.id,

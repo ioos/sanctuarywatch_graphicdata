@@ -1125,6 +1125,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   axisTitleArray.forEach((axisTitle) => {
       newRow = document.createElement("div");
       newRow.classList.add("row", "fieldPadding");
+      newRow.dataset.lineAxisControl = axisTitle === "X" ? "options" : "y-options";
       newColumn1 = document.createElement("div");
       newColumn1.classList.add("col-3");   
       newColumn2 = document.createElement("div");
@@ -1133,10 +1134,14 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
       let labelInputAxis = document.createElement("label");
       labelInputAxis.for = axisTitle + "AxisTitle";
       labelInputAxis.innerHTML = axisTitle + " Axis Options";
+      labelInputAxis.style.fontWeight = "540";
+	  labelInputAxis.style.fontSize= "1rem";
+	  labelInputAxis.style.marginTop= "15px";
 
 	  let labelInputAxisTitle = document.createElement("label");
       labelInputAxisTitle.for = axisTitle + "AxisTitle";
       labelInputAxisTitle.innerHTML = "Title";
+	  labelInputAxisTitle.style.marginTop= "15px";
 
       let inputAxisTitle = document.createElement("input");
       inputAxisTitle.id = axisTitle + "AxisTitle";
@@ -1160,6 +1165,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
 	  const rangeBound =["Low", "High"];
 	  newRow = document.createElement("div");
 	  newRow.classList.add("row", "fieldPadding");
+      newRow.dataset.lineAxisControl = axisTitle === "X" ? "options" : "y-options";
 	  newColumn1 = document.createElement("div");
 	  newColumn1.classList.add("col-3");   
 	  newColumn2 = document.createElement("div");
@@ -1172,6 +1178,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
 
 		const boundColumn = document.createElement('div');
 		boundColumn.classList.add('col');
+        if (axisTitle === "X") boundColumn.style.paddingLeft = "0";
 
 		let inputBound = document.createElement("input");
 		inputBound.id = axisTitle + "Axis" + bound + "Bound";
@@ -1216,7 +1223,8 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   selectNumberLines.id = "NumberOfLines";
   selectNumberLines.name = "plotFields";
   selectNumberLines.addEventListener('change', function() {
-      displayLineFields(selectNumberLines.value, jsonColumns, interactive_arguments) });
+      logFormFieldValues();
+      displayLineFields(selectNumberLines.value, jsonColumns, document.getElementsByName('figure_interactive_arguments')[0].value); });
   selectNumberLines.addEventListener('change', function() {
           logFormFieldValues();
       });
@@ -1238,6 +1246,7 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   newColumn2 = document.createElement("div");
   newColumn2.classList.add("col");
 
+  newRow.dataset.lineAxisControl = 'line-count';
   newColumn1.appendChild(labelSelectNumberLines);
   newColumn2.appendChild(selectNumberLines);
   newRow.append(newColumn1, newColumn2);
@@ -1275,14 +1284,13 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
   newColumn2 = document.createElement("div");
   newColumn2.classList.add("col");
 
+  newRow.dataset.lineAxisControl = 'format';
   newColumn1.appendChild(labelSelectXAxisFormat);
   newColumn2.appendChild(selectXAxisFormat);
   newRow.append(newColumn1, newColumn2);
   newDiv.append(newRow);
 
-  let newHR = document.createElement("hr");
-  newHR.style = "margin-top:15px";
-  newDiv.append(newHR);        
+        
 
   targetElement.appendChild(newDiv);
 
@@ -1340,6 +1348,8 @@ function plotlyLineParameterFields(jsonColumns, interactive_arguments){
  * - Assumes the existence of a hidden input named 'figure_interactive_arguments'.
  */
 function displayLineFields(numLines, jsonColumns, interactive_arguments) {
+    const axisControls = Array.from(document.querySelectorAll('[data-line-axis-control]'));
+    axisControls.forEach(row => row.remove());
 	const assignColumnsToPlot = document.getElementById('assignColumnsToPlot');
 	// If the element exists
 	if (assignColumnsToPlot) {
@@ -1384,8 +1394,8 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 			newColumn1.appendChild(label);
 			newColumn2.appendChild(checkbox);
 			newRow.append(newColumn1, newColumn2);
-			newRow.style.marginTop = '20px';
-			newRow.style.marginBottom = '20px';
+			// newRow.style.marginTop = '20px';
+			newRow.style.marginBottom = '15px';
 			newDiv.append(newRow);
 
 			// === Add dropdowns for feature-specific data ===
@@ -1735,14 +1745,16 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 				});
 			}
 		}
+        const overlayRows = Array.from(newDiv.children);
 		const newHR = document.createElement('hr');
-		newHR.style = 'margin-top:15px';
+		newHR.style.cssText = 'margin-bottom:15px;margin-top:0';
 		newDiv.append(newHR);
 
 		// Create the button for default styles
 		const labelApplyDefaults = document.createElement('label');
 		labelApplyDefaults.for = 'ApplyLineDefaults';
 		labelApplyDefaults.innerHTML = 'Apply Custom Line Styles to All Lines';
+		labelApplyDefaults.style.marginBottom = '15px';
 
 		const btnApplyDefaults = document.createElement('button');
 		btnApplyDefaults.id = 'ApplyLineDefaults';
@@ -1782,12 +1794,14 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 			if (fieldLabel[2] !== undefined) {
 				labelSelectColumn.innerHTML = `Line Column ${fieldLabel[2]}`;
 				labelSelectColumn.style.fontWeight = "540"; 
-				labelSelectColumn.style.fontSize= "17px";
+				labelSelectColumn.style.fontSize= "1rem";
+				labelSelectColumn.style.marginTop= "15px";
 			} else {
 				labelSelectColumn.innerHTML = fieldLabel[1];
 			}
 			const selectColumn = document.createElement('select');
 			selectColumn.id = fieldLabel[0];
+			selectColumn.style.marginTop= "15px";
 			selectColumn.name = 'plotFields';
 			selectColumn.addEventListener('change', function () {
 				logFormFieldValues();
@@ -1878,6 +1892,28 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
             }
 			newRow.append(newColumn1, newColumn2);
 			newDiv.append(newRow);
+            if (fieldLabel[0] === 'XAxis') {
+                const axisSection = document.createElement('div');
+                axisSection.className = 'gd-line-x-axis-section';
+                axisSection.style.cssText = 'background-color:#F5F5F5;display:flow-root;border-top:1px solid #ccc';
+                newRow.style.borderTop = '0';
+                const sectionStyle = document.createElement('style');
+                sectionStyle.textContent = '.gd-line-x-axis-section .row { margin-left:0; margin-right:0; }';
+                axisSection.append(sectionStyle);
+                newDiv.insertBefore(axisSection, newRow);
+                axisControls.filter(row => row.dataset.lineAxisControl === 'options').forEach(row => axisSection.append(row));
+                axisSection.append(newRow);
+                for (const kind of ['format']) {
+                    axisControls.filter(row => row.dataset.lineAxisControl === kind).forEach(row => axisSection.append(row));
+                }
+                axisSection.append(...overlayRows);
+                newDiv.append(newHR);
+                for (const kind of ['y-options', 'line-count']) {
+                    axisControls.filter(row => row.dataset.lineAxisControl === kind).forEach(row => newDiv.append(row));
+                }
+                newDiv.append(newRowBtn);
+            }
+
 
 			// Add line label and color fields, line type, marker type, and marker size
 			if (fieldLabel[0] != 'XAxis') {
@@ -2157,6 +2193,10 @@ function displayLineFields(numLines, jsonColumns, interactive_arguments) {
 					checkbox.type = 'checkbox';
 					checkbox.id = fieldLabel[0] + feature;
 					checkbox.name = 'plotFields';
+
+					if (feature === 'Percentiles') {
+						label.style.marginBottom = '15px';
+					}
 
 					const fieldValueSaved = fillFormFieldValues(
 						checkbox.id,
