@@ -413,3 +413,19 @@ export function applyPlainTextPaste(editorIds) {
 		}
 	});
 }
+
+/**
+ * Clicks the post edit screen's Publish / Update button. The upload field
+ * (exopite-simple-options/fields/upload.php) prints its own copy of this
+ * function for its inline scripts.
+ *
+ * @return {void}
+ */
+export function clickUpdateButton() {
+	const updateButton = document.getElementById('publish');
+	if (updateButton) {
+		updateButton.click();
+	} else {
+		console.error('Update button not found!');
+	}
+}

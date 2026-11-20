@@ -9,7 +9,7 @@ import { test, expect } from '../../fixtures/playground';
  */
 
 test.describe('utility.js: cookie-driven field restoration', () => {
-    test('fields are restored from the allCustomFields global when present', async ({
+    test('fields are restored from the transient-fields JSON when present', async ({
         adminPage,
     }) => {
         await adminPage.goto('/wp-admin/edit.php?post_type=scene');
@@ -21,29 +21,25 @@ test.describe('utility.js: cookie-driven field restoration', () => {
             adminPage.locator('[data-depend-id="scene_toc_style"]'),
         ).toBeVisible({ timeout: 30_000 });
 
-        const restored = await adminPage.evaluate(() => {
-            // @ts-expect-error — global exposed by the plugin's JS.
-            window.allCustomFields = { scene_toc_style: 'list' };
-            // @ts-expect-error — global exposed by the plugin's JS.
-            if (typeof window.replaceFieldValuesWithTransientValues !== 'function') {
-                return { ok: false, reason: 'function not global' };
-            }
-            // @ts-expect-error
-            window.replaceFieldValuesWithTransientValues();
+        // After a failed save, the server prints the submitted values as
+        // <script id="graphic-data-transient-fields"> (class-utility.php) and
+        // replaceFieldValuesWithTransientValues() copies them into the form.
+        const restored = await adminPage.evaluate(async () => {
+            const data = document.createElement('script');
+            data.type = 'application/json';
+            data.id = 'graphic-data-transient-fields';
+            data.textContent = JSON.stringify({ scene_toc_style: 'list' });
+            document.body.append(data);
+            // @ts-expect-error — resolved by the page's import map.
+            const utility = await import('@graphic-data/admin-utility');
+            utility.replaceFieldValuesWithTransientValues();
             const el = document.querySelector(
                 '[data-depend-id="scene_toc_style"]',
             ) as HTMLSelectElement | null;
-            return { ok: true, value: el?.value };
+            return el?.value;
         });
 
-        expect(
-            restored.ok,
-            `Expected replaceFieldValuesWithTransientValues to be reachable. ` +
-                `Got: ${JSON.stringify(restored)}. ` +
-                `If you refactored utility.js behind a class, update this test ` +
-                `to call the new public API.`,
-        ).toBe(true);
-        expect(restored.value).toBe('list');
+        expect(restored).toBe('list');
     });
 });
 

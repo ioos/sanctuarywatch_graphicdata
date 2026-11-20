@@ -177,6 +177,13 @@ class Graphic_Data_Plugin {
 			plugin_dir_url( __FILE__ ),
 			GRAPHIC_DATA_PLUGIN_VERSION
 		);
+
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-content-transfer.php';
+
+		new Graphic_Data_Content_Transfer(
+			plugin_dir_url( __DIR__ ),
+			GRAPHIC_DATA_PLUGIN_VERSION
+		);
 	}
 
 	/**

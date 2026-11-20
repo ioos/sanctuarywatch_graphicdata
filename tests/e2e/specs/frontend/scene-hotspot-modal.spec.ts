@@ -44,40 +44,25 @@ test.describe('Frontend: scene hotspot opens the correct modal', () => {
 			timeout: 15_000,
 		});
 
-		// Step 3: wait for theme JS to finish wiring the scene.
+		// Steps 3-5: click the hotspot until the modal opens.
 		//
-		// The theme's add_modal() function iterates child_obj and attaches a
-		// click handler to each SVG group. If we click before child_obj is
-		// populated and add_modal() has run, the click fires on a naked <g>
-		// with no handler and nothing happens.
-		await page.waitForFunction(
-			() => {
-				return (
-					typeof child_obj !== 'undefined' &&
-					// @ts-expect-error
-					Object.keys(child_obj).length > 0
-				);
-			},
-			null,
-			{ timeout: 15_000 }
-		);
-		await page.waitForLoadState('networkidle');
-
-		// Step 4: dispatch click on the group.
+		// The theme's scripts attach a click handler to each SVG group once the
+		// scene data is processed. They are ES modules now, so there is no
+		// global (such as child_obj) to wait for; a click that lands before the
+		// handler exists does nothing, so it is retried.
 		//
 		// <g> elements don't have native click hitboxes, so Playwright's .click()
 		// is intercepted by overlay paths. The theme's own handleHashNavigation
-		// uses dispatchEvent for this same reason (script.js line 544).
-		const hotspotGroup = page.locator('#Interactive-Bar-Chart');
-		await expect(hotspotGroup).toBeAttached({ timeout: 5_000 });
-		await hotspotGroup.dispatchEvent('click');
-
-		// Step 5: modal opens.
+		// uses dispatchEvent for this same reason.
 		//
 		// The theme opens modals by setting modal.style.display = "block", NOT
-		// by adding Bootstrap's .show class. (scene-render.js line 2244)
+		// by adding Bootstrap's .show class.
+		const hotspotGroup = page.locator('#Interactive-Bar-Chart');
 		const modal = page.locator('#myModal');
-		await expect(modal).toHaveCSS('display', 'block', { timeout: 5_000 });
+		await expect(async () => {
+			await hotspotGroup.dispatchEvent('click');
+			await expect(modal).toHaveCSS('display', 'block', { timeout: 1_000 });
+		}).toPass({ timeout: 20_000 });
 
 		// Step 6: correct modal content.
 		const modalTitle = modal.locator('#modal-title');

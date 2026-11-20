@@ -68,7 +68,27 @@ export async function checkIfFileExistsAndLoadJson() {
 		),
 	].forEach(([value, text]) => select.add(new Option(text, value)));
 	select.value = saved.graphType || 'None';
-	gui.append(label, select);
+	// Copies the settings as one line of JSON, for the figure_interactive_arguments
+	// column of a bulk import (Graphic Data > Content Transfer).
+	const copyLabel = 'Copy settings for bulk import';
+	const copyButton = document.createElement('button');
+	copyButton.type = 'button';
+	copyButton.className = 'button button-small';
+	copyButton.textContent = copyLabel;
+	copyButton.addEventListener('click', async () => {
+		const text = JSON.stringify(Object.entries(carouselSettings(argsField.value)));
+		try {
+			await navigator.clipboard.writeText(text);
+			copyButton.textContent = 'Settings copied';
+			setTimeout(() => {
+				copyButton.textContent = copyLabel;
+			}, 2000);
+		} catch {
+			// eslint-disable-next-line no-alert
+			window.prompt('Copy these settings:', text);
+		}
+	});
+	gui.append(label, select, ' ', copyButton);
 	// Keep settings together; put the type choice before its conditional upload control.
 	settingsRow.parentNode.insertBefore(settingsRow, upload);
 	const notice = document.createElement('p');

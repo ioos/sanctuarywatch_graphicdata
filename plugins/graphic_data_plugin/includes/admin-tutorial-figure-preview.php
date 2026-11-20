@@ -2,8 +2,8 @@
 /**
  * Generates standalone figure preview HTML files for programmatically-created figures.
  *
- * This is a PHP port of the client-side generator in admin/js/admin-preview-buttons.js
- * (createFigureHtml, saveHtmlToServer) and the Plotly trace builders in
+ * This is a PHP port of the client-side generator (createFigureHtml in
+ * admin/js/figure-html.js, saveHtmlToServer in admin/js/admin-preview-buttons.js) and the Plotly trace builders in
  * includes/figures/js/interactive/plotly-timeseries-line.js and plotly-bar.js. It exists
  * because create_tutorial_figures() creates "figure" posts with pure server-side PHP (no
  * browser present), so the normal browser-driven HTML-generation flow never runs for them.
@@ -100,7 +100,7 @@ class Graphic_Data_Tutorial_Figure_Preview {
 	// =====================================================================
 
 	/**
-	 * PHP port of createFigureHtml() (admin/js/admin-preview-buttons.js).
+	 * PHP port of createFigureHtml() (admin/js/figure-html.js).
 	 *
 	 * @param int        $post_id      Figure post ID.
 	 * @param string     $root_url     Site root URL.

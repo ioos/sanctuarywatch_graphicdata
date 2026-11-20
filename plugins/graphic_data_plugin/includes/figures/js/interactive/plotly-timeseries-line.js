@@ -802,19 +802,21 @@ export async function producePlotlyLineFigure(targetFigureElement, interactive_a
 
 		Plotly.Plots.resize(plotDiv);
 		
+		const savedFigure = {
+			data: plotDiv.data,
+			layout: plotDiv.layout,
+			config: config
+		};
+
 		//When the graph is rendered in preview save the full arguments into the field.
 		if (window.location.href.includes('post.php')) {
-			//Save the plotly figure as an html file. 
-			const savedFigure = {
-				data: plotDiv.data,
-				layout: plotDiv.layout,
-				config: config
-			};
-
+			//Save the plotly figure as an html file.
 			const figure_interactive_args_rendered = document.querySelector('textarea[data-depend-id="figure_interactive_args_rendered"]');
 			figure_interactive_args_rendered.value = JSON.stringify(savedFigure, null, 2);
-			
-		}       
+
+		}
+		// Also returned, for building bulk-imported figures on the Content Transfer page.
+		return savedFigure;
 
     } catch (error) {
         console.error('Error loading scripts:', error);

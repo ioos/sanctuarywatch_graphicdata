@@ -391,8 +391,12 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 
 					if (data.success) {
 						alert(data.data?.message || "File deleted successfully.");
+						// The Update click listener only reads the flag while the
+						// click is dispatched. Clear it afterwards so a blocked save
+						// does not skip the figure checks on the next Update.
 						window.fileDeleteSaveInProgress = true;
 						clickUpdateButton();
+						window.fileDeleteSaveInProgress = false;
 					} else {
 						alert(data.data?.message || "Delete failed. Please save or refresh the page.");
 					}

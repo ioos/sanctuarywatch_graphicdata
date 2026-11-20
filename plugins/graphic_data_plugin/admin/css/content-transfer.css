@@ -1,0 +1,177 @@
+/**
+ * Graphic Data Content Transfer admin styles.
+ *
+ * @package Graphic_Data_Plugin
+ */
+
+.graphic-data-content-transfer__section {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	padding: 16px 20px;
+	margin-top: 20px;
+	max-width: 1200px;
+}
+
+.graphic-data-content-transfer__section h2 {
+	margin-top: 0;
+}
+
+.graphic-data-content-transfer__scope {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 24px;
+	margin-bottom: 12px;
+}
+
+.graphic-data-content-transfer__instances {
+	columns: 3 220px;
+	margin: 0 0 12px;
+}
+
+#graphic-data-transfer-item-figure {
+	max-width: 100%;
+	min-width: 280px;
+}
+
+.graphic-data-content-transfer__tree {
+	max-height: 480px;
+	overflow-y: auto;
+	border: 1px solid #dcdcde;
+	padding: 4px 12px;
+}
+
+.graphic-data-content-transfer__tree-group {
+	border-bottom: 1px solid #f0f0f1;
+	padding: 6px 0;
+}
+
+.graphic-data-content-transfer__tree-group:last-child {
+	border-bottom: 0;
+}
+
+.graphic-data-content-transfer__tree-group summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.graphic-data-content-transfer__tree-count {
+	color: #646970;
+	font-weight: 400;
+}
+
+.graphic-data-content-transfer__toggle-all {
+	display: block;
+	margin: 8px 0 4px;
+	font-style: italic;
+}
+
+.graphic-data-content-transfer__tree ul {
+	margin: 4px 0 0 22px;
+}
+
+.graphic-data-content-transfer__tree > .graphic-data-content-transfer__tree-group > ul {
+	margin-left: 0;
+}
+
+.graphic-data-content-transfer__tree li {
+	margin: 2px 0;
+}
+
+.graphic-data-content-transfer__type {
+	display: inline-block;
+	min-width: 48px;
+	padding: 0 4px;
+	border-radius: 2px;
+	background: #f0f0f1;
+	color: #50575e;
+	font-size: 11px;
+	text-align: center;
+}
+
+.graphic-data-content-transfer__selected-count {
+	color: #646970;
+}
+
+.graphic-data-content-transfer__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.graphic-data-content-transfer__status {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.graphic-data-content-transfer__status .spinner {
+	float: none;
+	margin: 0;
+}
+
+.graphic-data-content-transfer__preview {
+	margin-top: 16px;
+	border-top: 1px solid #dcdcde;
+	padding-top: 8px;
+}
+
+.graphic-data-content-transfer__counts {
+	list-style: disc;
+	margin-left: 20px;
+}
+
+.graphic-data-content-transfer__preview details {
+	margin: 12px 0;
+}
+
+.graphic-data-content-transfer__preview summary {
+	cursor: pointer;
+	margin-bottom: 8px;
+}
+
+.graphic-data-content-transfer__rules {
+	list-style: disc;
+	margin-left: 20px;
+	color: #50575e;
+}
+
+.graphic-data-content-transfer__status progress {
+	width: 240px;
+}
+
+.graphic-data-content-transfer__history {
+	margin-top: 8px;
+}
+
+.graphic-data-content-transfer__history details ul {
+	margin: 4px 0 0 16px;
+	list-style: disc;
+}
+
+.graphic-data-content-transfer__preview .notice ul {
+	list-style: disc;
+	margin-left: 20px;
+}
+
+/* Import: link choices */
+.graphic-data-content-transfer__preview td select {
+	max-width: 100%;
+	min-width: 14em;
+}
+
+/*
+ * admin.css hides every .notice-success to remove WordPress's "Post updated"
+ * box; this page's own success messages must still show.
+ */
+.graphic-data-content-transfer .notice-success {
+	display: block;
+}
+
+/* Off-screen area where bulk-imported charts are drawn to build their saved figure. */
+.graphic-data-content-transfer__render {
+	position: absolute;
+	top: 0;
+	left: -10000px;
+	width: 900px;
+}

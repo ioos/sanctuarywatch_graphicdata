@@ -119,8 +119,8 @@ class Graphic_Data_Search {
 
 		add_submenu_page(
 			'graphic-data-search',
-			'Graphic Data Figure Export', // Page title.
-			'Figure Export', // Menu title.
+			'Graphic Data Figure Reports', // Page title.
+			'Figure Reports', // Menu title.
 			'edit_posts', // Capability required.
 			'graphic-data-export-figures', // Menu slug.
 			array( new Graphic_Data_Export_Figures(), 'export_figures_page' ),

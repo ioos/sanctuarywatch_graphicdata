@@ -149,6 +149,14 @@ class Graphic_Data_Admin {
 				GRAPHIC_DATA_PLUGIN_VERSION
 			);
 
+			// Standalone figure HTML generator, shared with the Content Transfer page.
+			wp_register_script_module(
+				'@graphic-data/figure-html',
+				plugin_dir_url( __FILE__ ) . 'js/figure-html.js',
+				array( '@graphic-data/tabulator-table' ),
+				GRAPHIC_DATA_PLUGIN_VERSION
+			);
+
 			wp_register_script_module(
 				'@graphic-data/admin-preview-buttons',
 				plugin_dir_url( __FILE__ ) . 'js/admin-preview-buttons.js',
@@ -158,6 +166,7 @@ class Graphic_Data_Admin {
 					'@graphic-data/figure-render',
 					'@graphic-data/scene-render',
 					'@graphic-data/tabulator-table',
+					'@graphic-data/figure-html',
 				),
 				GRAPHIC_DATA_PLUGIN_VERSION
 			);
