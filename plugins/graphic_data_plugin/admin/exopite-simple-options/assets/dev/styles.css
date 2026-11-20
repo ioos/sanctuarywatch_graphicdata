@@ -181,7 +181,7 @@
 @media only screen and (min-width: 600px) {
     .exopite-sof-wrapper fieldset {
         display: inline-block;
-        float: right;
+        /* float: right; */
     }
     .exopite-sof-header input,
     .exopite-sof-header h1 {
@@ -191,7 +191,7 @@
     }
 }
 .exopite-sof-header input {
-    float: right;
+    /* float: right; */
 }
 .exopite-sof-footer {
     padding: 6px 15px;
