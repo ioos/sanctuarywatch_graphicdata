@@ -475,14 +475,27 @@ class Graphic_Data_Transfer_Tsv {
 			return new WP_Error( 'graphic_data_transfer_zip', 'Could not create the template.' );
 		}
 
+		foreach ( self::FILES as $type => $file ) {
+			$zip->addFromString( $file, self::to_tsv( array( array_keys( self::get_columns( $type ) ) ) ) );
+		}
+		$zip->addFromString( self::README_FILE, self::to_tsv( self::get_readme_rows() ) );
+		$zip->addEmptyDir( 'media' );
+		$zip->addEmptyDir( 'data' );
+		return $zip->close() ? true : new WP_Error( 'graphic_data_transfer_zip', 'Could not create the template.' );
+	}
+
+	/**
+	 * Rows of README.tsv: the general rules, then every column of every file.
+	 *
+	 * @return array[]
+	 */
+	public static function get_readme_rows() {
 		$readme = array( array( 'File', 'Column', 'Required', 'Allowed values', 'Blank means', 'Description' ) );
 		foreach ( self::get_general_notes() as $note ) {
 			$readme[] = array( '(all files)', '', '', '', '', $note );
 		}
 		foreach ( self::FILES as $type => $file ) {
-			$columns = self::get_columns( $type );
-			$zip->addFromString( $file, self::to_tsv( array( array_keys( $columns ) ) ) );
-			foreach ( $columns as $name => $column ) {
+			foreach ( self::get_columns( $type ) as $name => $column ) {
 				$readme[] = array(
 					$file,
 					$name,
@@ -493,10 +506,7 @@ class Graphic_Data_Transfer_Tsv {
 				);
 			}
 		}
-		$zip->addFromString( self::README_FILE, self::to_tsv( $readme ) );
-		$zip->addEmptyDir( 'media' );
-		$zip->addEmptyDir( 'data' );
-		return $zip->close() ? true : new WP_Error( 'graphic_data_transfer_zip', 'Could not create the template.' );
+		return $readme;
 	}
 
 	/**
@@ -570,7 +580,7 @@ class Graphic_Data_Transfer_Tsv {
 	 * @param array[] $rows Rows of cells.
 	 * @return string
 	 */
-	private static function to_tsv( $rows ) {
+	public static function to_tsv( $rows ) {
 		$lines = array();
 		foreach ( $rows as $row ) {
 			$cells = array();
@@ -1642,7 +1652,7 @@ class Graphic_Data_Transfer_Tsv {
 	 * @param string $raw Settings JSON.
 	 * @return array<string, mixed>|null Settings by name, or null if invalid.
 	 */
-	private static function parse_settings( $raw ) {
+	public static function parse_settings( $raw ) {
 		$decoded = json_decode( $raw, true );
 		if ( ! is_array( $decoded ) ) {
 			return null;

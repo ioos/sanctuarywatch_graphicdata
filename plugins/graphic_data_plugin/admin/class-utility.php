@@ -1325,10 +1325,12 @@ class Graphic_Data_Utility {
 	private function modal_helper( $child_post_id, $child_ids, $child_id, $idx = 0 ) {
 		// Get icon_type to check if modal.
 		$icon_type = get_post_meta( $child_post_id, 'icon_function', true ) ?? '';
-		$icon_title = get_post_meta( $child_post_id, 'post_title', true ) ?? '';
+		// Title and type come from the post itself: only Modals saved on the edit
+		// screen have post_title / post_type meta, so imported Modals would be skipped.
+		$icon_title = get_the_title( $child_post_id );
 		$modal = false;
 		$external_url = '';
-		$is_modal = get_post_meta( $child_post_id, 'post_type', true ) ?? '';
+		$is_modal = 'modal' === get_post_type( $child_post_id );
 		$icon_order = get_post_meta( $child_post_id, 'modal_icon_order', true ) ?? '';
 		// Create array/map from child id to different attributes (ie hyperlinks).
 		if ( $is_modal ) {
