@@ -14,7 +14,7 @@ if ( ! is_user_logged_in() && 'draft' === $graphic_data_about_published ) {
 }
 
 $graphic_data_number_about_boxes = get_post_meta( $graphic_data_post_id, 'numberAboutBoxes', true );
-$graphic_data_about_post_title = get_post_meta( $graphic_data_post_id, 'post_title', true );
+$graphic_data_about_post_title = get_the_title( $graphic_data_post_id );
 $graphic_data_about_central_array = get_post_meta( $graphic_data_post_id, 'centralAbout', true );
 $graphic_data_about_central_main = $graphic_data_about_central_array['aboutMain'];
 $graphic_data_about_central_details = $graphic_data_about_central_array['aboutDetail'];

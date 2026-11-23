@@ -20,6 +20,8 @@ import fs from 'node:fs';
  *      fields it skips, and one with an unknown content type is refused.
  *   5. A spreadsheet (TSV) bulk import with bar and line charts gets the
  *      saved chart data built in the browser, then the HTML.
+ *   6. Instances exported as spreadsheets, edited and bulk imported into
+ *      the target come back with the source's fields, links and data.
  */
 
 test.describe.configure({ mode: 'serial' });
@@ -497,4 +499,195 @@ test('a spreadsheet bulk import builds bar and line charts', async ({ browser })
         expect(figure.traces.length, title).toBeGreaterThan(0);
         expect(figure.traces.some((trace: any) => trace.type === type && trace.points > 0), title).toBe(true);
     }
+});
+
+/**
+ * PHP that describes a site's Instances, Scenes, Modals and Figures by
+ * type and slug, in the terms a spreadsheet keeps: each column's value,
+ * links as the linked post's type and slug, whether an image is set, and
+ * a hash of each Figure's data. With a suffix, only posts whose slug ends
+ * in it are described, and the suffix is removed from slugs.
+ */
+function describeContent(suffix: string): string {
+    return `$suffix = '${suffix}';
+        $slug = function ($name) use ($suffix) {
+            return '' !== $suffix && substr($name, -strlen($suffix)) === $suffix ? substr($name, 0, -strlen($suffix)) : $name;
+        };
+        $out = array();
+        foreach (array('instance', 'scene', 'modal', 'figure') as $type) {
+            $posts = get_posts(array('post_type' => $type, 'post_status' => 'any', 'numberposts' => -1, 'meta_query' => array(array('key' => 'graphic_data_placeholder_id', 'compare' => 'NOT EXISTS'))));
+            foreach ($posts as $post) {
+                if ('' !== $suffix ? $slug($post->post_name) === $post->post_name : (bool) get_post_meta($post->ID, Graphic_Data_Transfer_Schema::BATCH_META_KEY, true)) {
+                    continue;
+                }
+                $item = array('post_title' => $post->post_title);
+                foreach (Graphic_Data_Transfer_Tsv::get_columns($type) as $name => $column) {
+                    if (in_array($column['kind'], array('ref', 'title', 'slug', 'data'), true)) {
+                        continue;
+                    }
+                    if ('' !== $column['parent']) {
+                        $set = get_post_meta($post->ID, $column['parent'], true);
+                        $stored = is_array($set) && isset($set[$name]) ? $set[$name] : null;
+                    } else {
+                        $stored = metadata_exists('post', $post->ID, $name) ? get_post_meta($post->ID, $name, true) : null;
+                    }
+                    if (null === $stored) {
+                        continue;
+                    }
+                    switch ($column['kind']) {
+                        case 'post':
+                            $linked = get_post((int) $stored);
+                            $item[$name] = $linked ? $linked->post_type . ':' . $slug($linked->post_name) : '';
+                            break;
+                        case 'term':
+                            $term = get_term((int) $stored);
+                            $item[$name] = $term && !is_wp_error($term) ? $term->slug : '';
+                            break;
+                        case 'media':
+                            $item[$name] = '' === (string) $stored ? '' : 'set';
+                            break;
+                        case 'html':
+                            $item[$name] = wp_kses_post((string) $stored);
+                            break;
+                        case 'settings':
+                            $item[$name] = Graphic_Data_Transfer_Tsv::parse_settings((string) $stored);
+                            break;
+                        default:
+                            // instance_slug is edited along with the slugs.
+                            $item[$name] = 'instance_slug' === $name ? $slug((string) $stored) : (string) $stored;
+                    }
+                }
+                if ('figure' === $type) {
+                    $json = (string) get_post_meta($post->ID, 'uploaded_path_json', true);
+                    $item['data'] = $json && file_exists($json) ? md5(trim(file_get_contents($json))) : '';
+                }
+                $out[$type . ':' . $slug($post->post_name)] = $item;
+            }
+        }
+        echo wp_json_encode($out);`;
+}
+
+test('Instances exported as spreadsheets come back through a bulk import', async ({ browser }, testInfo) => {
+    test.setTimeout(600_000);
+    const file = testInfo.outputPath('spreadsheets.zip');
+    const from = await openAdmin(browser, source);
+    const page = from.page;
+    for (const id of await instanceIds(source, `array('key' => 'graphic_data_placeholder_id', 'compare' => 'NOT EXISTS')`)) {
+        await page.locator(`input[name="instance_ids[]"][value="${id}"]`).check();
+    }
+    await page.locator('input[name="format"][value="tsv"]').check();
+    await expect(page.locator('.graphic-data-content-transfer__format-notice')).toBeVisible();
+    await expect(page.locator('input[name="include_pages"]')).toBeDisabled();
+    await expect(page.locator('input[name="include_about"]')).toBeDisabled();
+    await page.click('#graphic-data-transfer-preview');
+    await expect(page.getByRole('heading', { name: 'These spreadsheets will contain' })).toBeVisible({ timeout: 120_000 });
+    const [download] = await Promise.all([page.waitForEvent('download'), page.locator('#graphic-data-transfer-download').click()]);
+    expect(download.suggestedFilename()).toMatch(/^graphic-data-spreadsheets-instances-\d{4}-\d\d-\d\d\.zip$/);
+    await download.saveAs(file);
+    expect(from.errors).toEqual([]);
+    await from.close();
+
+    // Edit the spreadsheets as a user would: give every item a new slug, so
+    // that the rows are not copies of what test 2 imported into the target.
+    // Pages cannot be in spreadsheets, so the tutorial Modals' links to a
+    // page (slug:<slug>) find the copy that test 2 imported.
+    await target.playground.writeFile('/tmp/sheets.zip', new Uint8Array(fs.readFileSync(file)));
+    const edited: { zip: string; rows: Record<string, number> } = await php(
+        target,
+        `$in = new ZipArchive(); $in->open('/tmp/sheets.zip');
+        $out = new ZipArchive(); $out->open('/tmp/edited.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
+        $rows = array();
+        for ($i = 0; $i < $in->numFiles; $i++) {
+            $name = $in->getNameIndex($i);
+            $data = $in->getFromIndex($i);
+            if ('/' === substr($name, -1)) {
+                $out->addEmptyDir(rtrim($name, '/'));
+                continue;
+            }
+            if ('.tsv' === substr($name, -4) && 'README.tsv' !== $name) {
+                $handle = fopen('php://temp', 'r+');
+                fwrite($handle, preg_replace('/^\\xEF\\xBB\\xBF/', '', $data));
+                rewind($handle);
+                $table = array();
+                while (false !== ($cells = fgetcsv($handle, 0, "\\t", '"', ''))) {
+                    $table[] = $cells;
+                }
+                foreach (array('post_name', 'instance_slug') as $column) {
+                    $index = array_search($column, $table[0], true);
+                    for ($r = 1; false !== $index && $r < count($table); $r++) {
+                        $table[$r][$index] .= '-edited';
+                    }
+                }
+                $rows[$name] = count($table) - 1;
+                $data = Graphic_Data_Transfer_Tsv::to_tsv($table);
+            }
+            $out->addFromString($name, $data);
+        }
+        $out->close();
+        echo wp_json_encode(array('zip' => base64_encode(file_get_contents('/tmp/edited.zip')), 'rows' => $rows));`,
+    );
+
+    const sourceContent = await php(source, describeContent(''));
+    const count = (type: string) => Object.keys(sourceContent).filter((key) => key.startsWith(type + ':')).length;
+    expect(edited.rows).toEqual({
+        'instance_types.tsv': expect.any(Number),
+        'instances.tsv': count('instance'),
+        'scenes.tsv': count('scene'),
+        'modals.tsv': count('modal'),
+        'figures.tsv': count('figure'),
+    });
+
+    const to = await openAdmin(browser, target);
+    const output = await checkPackage(to.page, { name: 'edited.zip', mimeType: 'application/zip', buffer: Buffer.from(edited.zip, 'base64') });
+    await expect(output.locator('.notice-error')).toHaveCount(0);
+    await runImport(to.page);
+    expect(to.errors).toEqual([]);
+    await to.close();
+
+    // Every field the spreadsheets hold comes back; fields the source never
+    // stored take their default, so they are not compared.
+    const targetContent = await php(target, describeContent('-edited'));
+    expect(Object.keys(targetContent).sort()).toEqual(Object.keys(sourceContent).sort());
+    const differences: string[] = [];
+    for (const [key, item] of Object.entries<Record<string, unknown>>(sourceContent)) {
+        for (const [field, value] of Object.entries(item)) {
+            if (JSON.stringify(targetContent[key][field]) !== JSON.stringify(value)) {
+                differences.push(`${key} ${field}: ${JSON.stringify(value)} became ${JSON.stringify(targetContent[key][field])}`);
+            }
+        }
+    }
+    expect(differences).toEqual([]);
+
+    const state = await php(
+        target,
+        `$out = array('held' => array(), 'no_html' => array(), 'no_render' => array());
+        foreach (array('instance', 'scene', 'modal', 'figure') as $type) {
+            foreach (get_posts(array('post_type' => $type, 'post_status' => 'any', 'numberposts' => -1)) as $post) {
+                if ('-edited' !== substr($post->post_name, -7)) {
+                    continue;
+                }
+                $status_key = Graphic_Data_Transfer_Schema::get_publication_meta_key($type);
+                if (in_array(get_post_meta($post->ID, $status_key, true), array('draft', 'Draft'), true)) {
+                    $out['held'][] = $post->post_title;
+                }
+                if ('figure' === $type && 'published' === get_post_meta($post->ID, 'figure_published', true)) {
+                    if (!file_exists((string) get_post_meta($post->ID, 'uploaded_path_html', true))) {
+                        $out['no_html'][] = $post->post_title;
+                    }
+                    if ('Interactive' === get_post_meta($post->ID, 'figure_path', true) && !json_decode((string) get_post_meta($post->ID, 'figure_interactive_args_rendered', true))) {
+                        $out['no_render'][] = $post->post_title;
+                    }
+                }
+            }
+        }
+        $out['queue'] = count(Graphic_Data_Figure_Html_Rebuild::get_queue());
+        echo wp_json_encode($out);`,
+    );
+    const sourceHeld = Object.values<Record<string, unknown>>(sourceContent)
+        .filter((item) => ['draft', 'Draft'].includes(String(item.scene_published ?? item.modal_published ?? item.figure_published ?? item.instance_status)))
+        .map((item) => item.post_title);
+    expect(state.held.sort()).toEqual(sourceHeld.sort());
+    expect(state.no_html).toEqual([]);
+    expect(state.no_render).toEqual([]);
+    expect(state.queue).toBe(0);
 });

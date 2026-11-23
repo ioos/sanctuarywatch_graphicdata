@@ -5,9 +5,10 @@
  * Adds a "Content Transfer" submenu under `graphic-data-search` for moving
  * Graphic Data content between sites. Administrators can export whole
  * Instances (optionally with their tagged pages and the About post) or any
- * selection of Scenes, Modals and Figures, and import packages (see
- * Graphic_Data_Transfer_Importer). Editors can export and import a single
- * Figure.
+ * selection of Scenes, Modals and Figures, as a package or as spreadsheets
+ * for a bulk import (see Graphic_Data_Transfer_Tsv_Exporter), and import
+ * packages and bulk imports (see Graphic_Data_Transfer_Importer). Editors
+ * can export and import a single Figure.
  *
  * Not to be confused with "Figure Reports" (Graphic_Data_Export_Figures),
  * which turns figure content into documents and slides.
@@ -22,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once plugin_dir_path( __DIR__ ) . 'admin/class-transfer-schema.php';
 require_once plugin_dir_path( __DIR__ ) . 'admin/class-transfer-exporter.php';
+require_once plugin_dir_path( __DIR__ ) . 'admin/class-transfer-tsv-exporter.php';
 require_once plugin_dir_path( __DIR__ ) . 'admin/class-transfer-importer.php';
 require_once plugin_dir_path( __DIR__ ) . 'admin/class-figure-html-rebuild.php';
 
@@ -222,6 +224,23 @@ class Graphic_Data_Content_Transfer {
 					<?php wp_nonce_field( self::NONCE_ACTION ); ?>
 
 					<?php if ( $full ) : ?>
+						<fieldset class="graphic-data-content-transfer__format">
+							<legend><strong>Format</strong></legend>
+							<label><input type="radio" name="format" value="package" checked> Package, for moving content to another site</label>
+							<label><input type="radio" name="format" value="tsv"> Spreadsheets (TSV), for editing in a spreadsheet and bringing back with a bulk import</label>
+						</fieldset>
+						<div class="notice notice-warning inline graphic-data-content-transfer__format-notice" data-format="tsv" hidden>
+							<p><strong>Spreadsheets carry less than a package.</strong> Use a package to move content between sites.</p>
+							<ul>
+								<li>Importing the edited spreadsheets creates new content; it does not update the content you exported. Rows whose slug matches existing content are imported as copies with their Status set to Draft.</li>
+								<li>Pages and the About content cannot be included.</li>
+								<li>Images and files linked inside formatted text are not included; those links keep pointing to this site. Other images are included, and are added to the Media Library again when imported, with their alt text and caption but not their title or description.</li>
+								<li>An Interactive figure's chart is not included. It is rebuilt from the figure's settings when imported, which works for bar and line graphs, tables, maps, carousels and comparison sliders; other kinds are imported with their Status set to Draft.</li>
+								<li>Links to content that is not exported are written as slug:&lt;slug&gt;, so that content must exist on the site you import into.</li>
+								<li>Spreadsheet programs can change values as they open a file, for example turning text that looks like a date or number into one. Check the files before uploading them, and save them as tab-delimited text in UTF-8.</li>
+							</ul>
+						</div>
+
 						<fieldset class="graphic-data-content-transfer__scope">
 							<legend class="screen-reader-text">What to export</legend>
 							<label><input type="radio" name="scope" value="instances" checked> Whole Instances</label>
@@ -264,7 +283,7 @@ class Graphic_Data_Content_Transfer {
 
 					<p class="graphic-data-content-transfer__actions">
 						<button type="button" class="button" id="graphic-data-transfer-preview">Preview export</button>
-						<button type="submit" class="button button-primary" <?php disabled( ! class_exists( 'ZipArchive' ) ); ?>>Download export package</button>
+						<button type="submit" class="button button-primary" id="graphic-data-transfer-download" <?php disabled( ! class_exists( 'ZipArchive' ) ); ?>>Download export package</button>
 					</p>
 				</form>
 
@@ -314,7 +333,7 @@ class Graphic_Data_Content_Transfer {
 					(TSV) spreadsheets, one per content type, with the images and figure data they use. It is checked and imported
 					like a package. Pages and the About content cannot be bulk imported.
 					<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=graphic_data_transfer_tsv_template' ), self::NONCE_ACTION ) ); ?>">Download the bulk import template</a>
-					(its README.tsv describes every column).
+					(its README.tsv describes every column), or export existing content above in the Spreadsheets format to start from it.
 				</p>
 			<?php else : ?>
 				<p class="description">
@@ -718,7 +737,7 @@ class Graphic_Data_Content_Transfer {
 			wp_send_json_error( array( 'message' => $selection->get_error_message() ) );
 		}
 
-		$exporter = new Graphic_Data_Transfer_Exporter( $selection );
+		$exporter = $this->get_exporter( $selection );
 		$result   = $exporter->build();
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
@@ -738,7 +757,7 @@ class Graphic_Data_Content_Transfer {
 			$this->die_with_error( $selection );
 		}
 
-		$exporter = new Graphic_Data_Transfer_Exporter( $selection );
+		$exporter = $this->get_exporter( $selection );
 		$zip_path = wp_tempnam( 'graphic-data-export' );
 		$result   = $exporter->write_zip( $zip_path );
 		if ( is_wp_error( $result ) ) {
@@ -1047,6 +1066,23 @@ class Graphic_Data_Content_Transfer {
 			wp_send_json_error( array( 'message' => $importer->get_error_message() ) );
 		}
 		return $importer;
+	}
+
+	/**
+	 * Exporter for a selection in the submitted format: a package, or
+	 * (administrators only) spreadsheets for a bulk import.
+	 *
+	 * @param array $selection Normalised selection.
+	 * @return Graphic_Data_Transfer_Exporter|Graphic_Data_Transfer_Tsv_Exporter
+	 */
+	private function get_exporter( $selection ) {
+		$exporter = new Graphic_Data_Transfer_Exporter( $selection );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by the callers.
+		$format = isset( $_POST['format'] ) ? sanitize_key( wp_unslash( $_POST['format'] ) ) : '';
+		if ( 'tsv' === $format && current_user_can( self::FULL_CAPABILITY ) ) {
+			return new Graphic_Data_Transfer_Tsv_Exporter( $exporter );
+		}
+		return $exporter;
 	}
 
 	/**

@@ -23,6 +23,22 @@
 	margin-bottom: 12px;
 }
 
+.graphic-data-content-transfer__format {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin-bottom: 12px;
+}
+
+.graphic-data-content-transfer__format legend {
+	margin-bottom: 4px;
+}
+
+.graphic-data-content-transfer__format-notice ul {
+	list-style: disc;
+	margin-left: 20px;
+}
+
 .graphic-data-content-transfer__instances {
 	columns: 3 220px;
 	margin: 0 0 12px;

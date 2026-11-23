@@ -231,6 +231,8 @@ foreach ( $graphic_data_results as $graphic_data_row ) {
 		)
 	);
 }
+// Only Scenes saved on the edit screen have post_title meta, so take the real title.
+$graphic_data_title_arr['post_title'] = get_the_title( $graphic_data_post_id );
 
 // save instance color settings for mobile background and mobile text to page.
 $graphic_data_instance_mobile_tile_background_color = get_post_meta( $graphic_data_instance, 'instance_mobile_tile_background_color', true );

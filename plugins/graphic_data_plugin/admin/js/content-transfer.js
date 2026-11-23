@@ -10,6 +10,9 @@
  *   2. "Preview export" posts the form to admin-ajax.php
  *      (`graphic_data_transfer_preview`) and renders what the package will
  *      contain, including references that will need relinking on import.
+ *      Administrators can export spreadsheets (TSV) for a bulk import instead
+ *      of a package; choosing them shows what spreadsheets cannot carry and
+ *      turns off the page and About options.
  *
  * The download itself is a normal form submission to admin-post.php so the
  * browser handles the zip file.
@@ -95,6 +98,7 @@ const BULK_PACKAGE_TYPE = 'bulk';
  * @property {Array<{type: string, title: string, missing: Array<{type: string, linkable: boolean}>}>}                  unassigned
  *                                                                                                                                   Scenes, Modals and Figures missing a required parent within the package.
  * @property {string[]}                                                                                                 warnings     Non-fatal problems.
+ * @property {string}                                                                                                   [format]     'tsv' for spreadsheets.
  */
 
 const TYPE_LABELS = {
@@ -119,7 +123,7 @@ const TREE_GROUP_SELECTOR = '.graphic-data-content-transfer__tree-group';
 if (form && previewButton && status && output) {
 	form.addEventListener('change', (event) => {
 		const target = event.target;
-		if (target.name === 'scope') {
+		if (target.name === 'scope' || target.name === 'format') {
 			updateVisibility();
 		} else if (target.name === 'post_ids[]') {
 			// Ticking or unticking an item applies to everything beneath it.
@@ -156,23 +160,42 @@ if (rebuildSection) {
 }
 
 /**
- * Show only the panel for the selected scope. Inputs in hidden panels are
- * disabled so they are not submitted.
+ * Show only the panel for the selected scope, and the notice and button
+ * text for the selected format. Inputs in hidden panels, and the page and
+ * About options when exporting spreadsheets, are disabled so they are not
+ * submitted.
  */
 function updateVisibility() {
 	const scopeInput =
 		form.querySelector('[name="scope"]:checked') ||
 		form.querySelector('[name="scope"]');
 	const scope = scopeInput ? scopeInput.value : 'single';
+	const formatInput = form.querySelector('[name="format"]:checked');
+	const format = formatInput ? formatInput.value : 'package';
 
 	form.querySelectorAll('.graphic-data-content-transfer__panel').forEach(
 		(panel) => {
 			panel.hidden = panel.dataset.scope !== scope;
 			panel.querySelectorAll('input, select').forEach((input) => {
-				input.disabled = panel.hidden;
+				input.disabled =
+					panel.hidden ||
+					(format === 'tsv' &&
+						['include_pages', 'include_about'].includes(
+							input.name
+						));
 			});
 		}
 	);
+	form.querySelectorAll('[data-format]').forEach((element) => {
+		element.hidden = element.dataset.format !== format;
+	});
+	const download = document.getElementById('graphic-data-transfer-download');
+	if (download) {
+		download.textContent =
+			format === 'tsv'
+				? 'Download spreadsheets'
+				: 'Download export package';
+	}
 }
 
 /**
@@ -255,8 +278,11 @@ function renderError(message) {
 function renderSummary(summary) {
 	const parts = [];
 
+	const spreadsheets = summary.format === 'tsv';
 	const heading = document.createElement('h3');
-	heading.textContent = 'This package will contain';
+	heading.textContent = spreadsheets
+		? 'These spreadsheets will contain'
+		: 'This package will contain';
 	parts.push(heading);
 
 	const counts = document.createElement('ul');
@@ -314,8 +340,9 @@ function renderSummary(summary) {
 		externalHeading.textContent =
 			'Links to content that is not in this package';
 		const explanation = document.createElement('p');
-		explanation.textContent =
-			'When this package is imported, you will be asked what each of these should link to on the destination site. Page blocks that are left unlinked keep their place on the page but show nothing.';
+		explanation.textContent = spreadsheets
+			? 'These links are written as slug:<slug>. The site you import the spreadsheets into must have content with that slug, or the import stops and lists the row; before the import runs, you can point each link at something else.'
+			: 'When this package is imported, you will be asked what each of these should link to on the destination site. Page blocks that are left unlinked keep their place on the page but show nothing.';
 		parts.push(
 			externalHeading,
 			explanation,

@@ -155,6 +155,26 @@ class Graphic_Data_Transfer_Exporter {
 	}
 
 	/**
+	 * Everything build() collected, for writing it in another format (see
+	 * Graphic_Data_Transfer_Tsv_Exporter).
+	 *
+	 * @return array{posts: array<int, array>, terms: array<int, array>, media: array<string, array>, media_files: array<string, string>, data_files: array[]}
+	 *         Posts and terms keyed by source ID, media keyed by media key,
+	 *         media file paths keyed by zip path, and data files with their
+	 *         figure ('post'), meta key ('field'), zip path ('file') and
+	 *         path ('path').
+	 */
+	public function get_collected() {
+		return array(
+			'posts'       => $this->posts,
+			'terms'       => $this->terms,
+			'media'       => $this->media,
+			'media_files' => $this->media_files,
+			'data_files'  => $this->data_files,
+		);
+	}
+
+	/**
 	 * Package type recorded in the manifest.
 	 *
 	 * 'figure' marks a single-figure package, the only kind Editors may import.
