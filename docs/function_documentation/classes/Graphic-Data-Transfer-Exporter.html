@@ -231,6 +231,14 @@ permalink: /function_documentation/classes/Graphic-Data-Transfer-Exporter.html
 <dd>Collect all content, references, media and data files for the selection.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Transfer-Exporter.html#method_get_collected">get_collected()</a>
+    <span>
+                                &nbsp;: array{posts: array<int,array>, terms: array<int,array>, media: array<string,array>, media_files: array<string,string>, data_files: array[]}    </span>
+</dt>
+<dd>Everything build() collected, for writing it in another format (see
+Graphic_Data_Transfer_Tsv_Exporter).</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Transfer-Exporter.html#method_get_file_name">get_file_name()</a>
     <span>
                                 &nbsp;: string    </span>
@@ -863,6 +871,53 @@ plus instance_ids, include_pages and include_about for
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_get_collected">
+        get_collected()
+        <a href="classes/Graphic-Data-Transfer-Exporter.html#method_get_collected" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">167</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Everything build() collected, for writing it in another format (see
+Graphic_Data_Transfer_Tsv_Exporter).</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">get_collected</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array{posts: array<int,array>, terms: array<int,array>, media: array<string,array>, media_files: array<string,string>, data_files: array[]}</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array{posts: array<int,array>, terms: array<int,array>, media: array<string,array>, media_files: array<string,string>, data_files: array[]}</span>
+                    &mdash;
+                <section class="phpdocumentor-description"><p>Posts and terms keyed by source ID, media keyed by media key,
+media file paths keyed by zip path, and data files with their
+figure ('post'), meta key ('field'), zip path ('file') and
+path ('path').</p>
+</section>
+
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_get_file_name">
         get_file_name()
         <a href="classes/Graphic-Data-Transfer-Exporter.html#method_get_file_name" class="headerlink"><i class="fas fa-link"></i></a>
@@ -871,7 +926,7 @@ plus instance_ids, include_pages and include_about for
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">330</span>
+    <span class="phpdocumentor-element-found-in__line">350</span>
 
     </aside>
 
@@ -913,7 +968,7 @@ graphic-data-selection-2026-11-18.zip or graphic-data-figure-sea-temps-2026-11-1
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">164</span>
+    <span class="phpdocumentor-element-found-in__line">184</span>
 
     </aside>
 
@@ -958,7 +1013,7 @@ graphic-data-selection-2026-11-18.zip or graphic-data-figure-sea-temps-2026-11-1
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">180</span>
+    <span class="phpdocumentor-element-found-in__line">200</span>
 
     </aside>
 
@@ -998,7 +1053,7 @@ preview shown before downloading.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">282</span>
+    <span class="phpdocumentor-element-found-in__line">302</span>
 
     </aside>
 
@@ -1049,7 +1104,7 @@ preview shown before downloading.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">665</span>
+    <span class="phpdocumentor-element-found-in__line">685</span>
 
     </aside>
 
@@ -1104,7 +1159,7 @@ preview shown before downloading.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">600</span>
+    <span class="phpdocumentor-element-found-in__line">620</span>
 
     </aside>
 
@@ -1153,7 +1208,7 @@ on the target site.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">409</span>
+    <span class="phpdocumentor-element-found-in__line">429</span>
 
     </aside>
 
@@ -1200,7 +1255,7 @@ on the target site.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">531</span>
+    <span class="phpdocumentor-element-found-in__line">551</span>
 
     </aside>
 
@@ -1292,7 +1347,7 @@ on the target site.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">448</span>
+    <span class="phpdocumentor-element-found-in__line">468</span>
 
     </aside>
 
@@ -1339,7 +1394,7 @@ on the target site.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">504</span>
+    <span class="phpdocumentor-element-found-in__line">524</span>
 
     </aside>
 
@@ -1396,7 +1451,7 @@ blocks nested inside groups or columns.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">729</span>
+    <span class="phpdocumentor-element-found-in__line">749</span>
 
     </aside>
 
@@ -1456,7 +1511,7 @@ of the same name in this figure's data folder is used instead.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">353</span>
+    <span class="phpdocumentor-element-found-in__line">373</span>
 
     </aside>
 
@@ -1503,7 +1558,7 @@ of the same name in this figure's data folder is used instead.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">558</span>
+    <span class="phpdocumentor-element-found-in__line">578</span>
 
     </aside>
 
@@ -1551,7 +1606,7 @@ URLs embedded in rich-text HTML) and queue the files for the package.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">484</span>
+    <span class="phpdocumentor-element-found-in__line">504</span>
 
     </aside>
 
@@ -1609,7 +1664,7 @@ title so the importer can ask the user what to link them to.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">644</span>
+    <span class="phpdocumentor-element-found-in__line">664</span>
 
     </aside>
 
@@ -1665,7 +1720,7 @@ title so the importer can ask the user what to link them to.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">792</span>
+    <span class="phpdocumentor-element-found-in__line">812</span>
 
     </aside>
 
@@ -1704,7 +1759,7 @@ title so the importer can ask the user what to link them to.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">814</span>
+    <span class="phpdocumentor-element-found-in__line">834</span>
 
     </aside>
 
@@ -1755,7 +1810,7 @@ title so the importer can ask the user what to link them to.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">260</span>
+    <span class="phpdocumentor-element-found-in__line">280</span>
 
     </aside>
 
@@ -1815,7 +1870,7 @@ when the post has no parent at all.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">701</span>
+    <span class="phpdocumentor-element-found-in__line">721</span>
 
     </aside>
 
@@ -1876,7 +1931,7 @@ the importer can point it at the same size of the new attachment.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">779</span>
+    <span class="phpdocumentor-element-found-in__line">799</span>
 
     </aside>
 
@@ -1916,7 +1971,7 @@ under two meta keys).</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">586</span>
+    <span class="phpdocumentor-element-found-in__line">606</span>
 
     </aside>
 
@@ -1956,7 +2011,7 @@ whether written as http, https or protocol-relative.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">386</span>
+    <span class="phpdocumentor-element-found-in__line">406</span>
 
     </aside>
 
@@ -2029,7 +2084,7 @@ whether written as http, https or protocol-relative.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php"><a href="files/plugins-graphic-data-plugin-admin-class-transfer-exporter.html"><abbr title="plugins/graphic_data_plugin/admin/class-transfer-exporter.php">class-transfer-exporter.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">761</span>
+    <span class="phpdocumentor-element-found-in__line">781</span>
 
     </aside>
 
@@ -2119,6 +2174,7 @@ escapes it (for example via ../).</p>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/Graphic-Data-Transfer-Exporter.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Transfer-Exporter.html#method_build">build()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Transfer-Exporter.html#method_get_collected">get_collected()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Transfer-Exporter.html#method_get_file_name">get_file_name()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Transfer-Exporter.html#method_get_package_type">get_package_type()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Transfer-Exporter.html#method_get_summary">get_summary()</a></li>

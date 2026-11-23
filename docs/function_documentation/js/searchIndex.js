@@ -256,6 +256,11 @@ Search.appendIndex(
             "summary": "Load\u0020an\u0020import\u0020job\u0020or\u0020stop\u0020with\u0020an\u0020error.",
             "url": "classes/Graphic-Data-Content-Transfer.html#method_load_importer"
         },                {
+            "fqsen": "\\Graphic_Data_Content_Transfer\u003A\u003Aget_exporter\u0028\u0029",
+            "name": "get_exporter",
+            "summary": "Exporter\u0020for\u0020a\u0020selection\u0020in\u0020the\u0020submitted\u0020format\u003A\u0020a\u0020package,\u0020or\n\u0028administrators\u0020only\u0029\u0020spreadsheets\u0020for\u0020a\u0020bulk\u0020import.",
+            "url": "classes/Graphic-Data-Content-Transfer.html#method_get_exporter"
+        },                {
             "fqsen": "\\Graphic_Data_Content_Transfer\u003A\u003Aget_selection_from_request\u0028\u0029",
             "name": "get_selection_from_request",
             "summary": "Read\u0020and\u0020validate\u0020the\u0020export\u0020selection\u0020from\u0020the\u0020submitted\u0020form,\nenforcing\u0020what\u0020the\u0020current\u0020user\u0020is\u0020allowed\u0020to\u0020export.",
@@ -1111,6 +1116,11 @@ Search.appendIndex(
             "summary": "Collect\u0020all\u0020content,\u0020references,\u0020media\u0020and\u0020data\u0020files\u0020for\u0020the\u0020selection.",
             "url": "classes/Graphic-Data-Transfer-Exporter.html#method_build"
         },                {
+            "fqsen": "\\Graphic_Data_Transfer_Exporter\u003A\u003Aget_collected\u0028\u0029",
+            "name": "get_collected",
+            "summary": "Everything\u0020build\u0028\u0029\u0020collected,\u0020for\u0020writing\u0020it\u0020in\u0020another\u0020format\u0020\u0028see\nGraphic_Data_Transfer_Tsv_Exporter\u0029.",
+            "url": "classes/Graphic-Data-Transfer-Exporter.html#method_get_collected"
+        },                {
             "fqsen": "\\Graphic_Data_Transfer_Exporter\u003A\u003Aget_package_type\u0028\u0029",
             "name": "get_package_type",
             "summary": "Package\u0020type\u0020recorded\u0020in\u0020the\u0020manifest.",
@@ -1856,6 +1866,156 @@ Search.appendIndex(
             "summary": "Hidden\u0020meta\u0020key\u0020holding\u0020the\u0020ID\u0020of\u0020the\u0020import\u0020that\u0020created\u0020a\u0020post,\nattachment\u0020or\u0020term,\u0020so\u0020the\u0020import\u0020can\u0020be\u0020undone.",
             "url": "classes/Graphic-Data-Transfer-Schema.html#constant_BATCH_META_KEY"
         },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter",
+            "name": "Graphic_Data_Transfer_Tsv_Exporter",
+            "summary": "Class\u0020Graphic_Data_Transfer_Tsv_Exporter.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "Constructor.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method___construct"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Abuild\u0028\u0029",
+            "name": "build",
+            "summary": "Collect\u0020the\u0020content\u0020and\u0020turn\u0020it\u0020into\u0020rows.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_build"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aget_summary\u0028\u0029",
+            "name": "get_summary",
+            "summary": "What\u0020the\u0020spreadsheets\u0020will\u0020contain,\u0020for\u0020the\u0020preview\u003A\u0020the\u0020package\nsummary\u0020without\u0020the\u0020pages\u0020and\u0020About\u0020content,\u0020with\u0020this\u0020format\u0027s\u0020files\nand\u0020warnings.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_get_summary"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Awrite_zip\u0028\u0029",
+            "name": "write_zip",
+            "summary": "Write\u0020the\u0020zip\u003A\u0020the\u0020TSV\u0020files\u0020\u0028every\u0020content\u0020type,\u0020so\u0020that\u0020rows\u0020can\u0020be\nadded\u0020to\u0020any\u0020of\u0020them\u0029,\u0020README.tsv,\u0020and\u0020the\u0020media\u0020and\u0020data\u0020files.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_write_zip"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aget_file_name\u0028\u0029",
+            "name": "get_file_name",
+            "summary": "Suggested\u0020download\u0020file\u0020name,\u0020for\u0020example\ngraphic\u002Ddata\u002Dspreadsheets\u002Dinstances\u002D2026\u002D11\u002D21.zip.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_get_file_name"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aadd_row\u0028\u0029",
+            "name": "add_row",
+            "summary": "Add\u0020a\u0020row,\u0020noting\u0020cells\u0020that\u0020are\u0020too\u0020long\u0020for\u0020Excel.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_add_row"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aget_header\u0028\u0029",
+            "name": "get_header",
+            "summary": "Header\u0020row\u0020of\u0020a\u0020TSV\u0020file\u003A\u0020the\u0020template\u0027s\u0020columns,\u0020with\u0020the\u0020alt\u0020text\nand\u0020caption\u0020columns\u0020of\u0020any\u0020image\u0020that\u0020has\u0020them.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_get_header"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aget_post_row\u0028\u0029",
+            "name": "get_post_row",
+            "summary": "Cells\u0020of\u0020a\u0020post\u0027s\u0020row.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_get_post_row"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aget_link_cell\u0028\u0029",
+            "name": "get_link_cell",
+            "summary": "Link\u0020to\u0020another\u0020post\u003A\u0020ref\u003A\u003Cref\u003E\u0020if\u0020it\u0020is\u0020exported,\u0020slug\u003A\u003Cslug\u003E\u0020if\u0020it\nis\u0020not\u0020\u0028so\u0020that\u0020the\u0020import\u0020can\u0020find\u0020it\u0020on\u0020this\u0020or\u0020another\u0020site\u0029.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_get_link_cell"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aget_media_cells\u0028\u0029",
+            "name": "get_media_cells",
+            "summary": "Cells\u0020of\u0020an\u0020image\u003A\u0020media\/\u003Cfile\u003E\u0020for\u0020a\u0020file\u0020in\u0020the\u0020export\u0020\u0028with\u0020its\u0020alt\ntext\u0020and\u0020caption\u0029,\u0020otherwise\u0020the\u0020address\u0020as\u0020it\u0020is.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_get_media_cells"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aget_data_cell\u0028\u0029",
+            "name": "get_data_cell",
+            "summary": "A\u0020figure\u0027s\u0020data\u0020file\u003A\u0020its\u0020GeoJSON\u0020file,\u0020its\u0020CSV\u0020file\u0020if\u0020that\u0020converts\nto\u0020exactly\u0020the\u0020JSON\u0020the\u0020figure\u0020uses\u0020\u0028an\u0020older\u0020CSV\u0020may\u0020be\u0020left\u0020over\nfrom\u0020before\u0020a\u0020JSON\u0020file\u0020was\u0020uploaded\u0029,\u0020otherwise\u0020its\u0020JSON\u0020file.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_get_data_cell"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aescape\u0028\u0029",
+            "name": "escape",
+            "summary": "Double\u0020the\u0020backslashes\u0020in\u0020a\u0020text\u0020cell,\u0020which\u0020the\u0020import\u0020reads\u0020as\nescapes.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_escape"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aget_uploads_url_pattern\u0028\u0029",
+            "name": "get_uploads_url_pattern",
+            "summary": "Regular\u0020expression\u0020matching\u0020addresses\u0020in\u0020this\u0020site\u0027s\u0020uploads\u0020folder.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_get_uploads_url_pattern"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Aadd_warnings\u0028\u0029",
+            "name": "add_warnings",
+            "summary": "Warn\u0020about\u0020what\u0020these\u0020spreadsheets\u0020lose\u0020compared\u0020with\u0020a\u0020package.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_add_warnings"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003Alist_titles\u0028\u0029",
+            "name": "list_titles",
+            "summary": "Quoted\u0020titles,\u0020shortened\u0020after\u0020five.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#method_list_titles"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003AEXCEL_CELL_LIMIT",
+            "name": "EXCEL_CELL_LIMIT",
+            "summary": "Longest\u0020cell\u0020Excel\u0020can\u0020hold.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#constant_EXCEL_CELL_LIMIT"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003AMAX_LONG_CELLS",
+            "name": "MAX_LONG_CELLS",
+            "summary": "List\u0020at\u0020most\u0020this\u0020many\u0020cells\u0020that\u0020are\u0020too\u0020long\u0020for\u0020Excel.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#constant_MAX_LONG_CELLS"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024exporter",
+            "name": "exporter",
+            "summary": "Package\u0020exporter\u0020that\u0020collects\u0020the\u0020content.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_exporter"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024built",
+            "name": "built",
+            "summary": "Whether\u0020build\u0028\u0029\u0020has\u0020run.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_built"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024rows",
+            "name": "rows",
+            "summary": "Rows\u0020of\u0020each\u0020TSV\u0020file\u0020\u0028column\u0020name\u0020\u003D\u003E\u0020cell\u0029,\u0020by\u0020content\u0020type.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_rows"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024media_extras",
+            "name": "media_extras",
+            "summary": "Media\u0020columns\u0020that\u0020have\u0020alt\u0020text\u0020or\u0020a\u0020caption,\u0020by\u0020content\u0020type.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_media_extras"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024files",
+            "name": "files",
+            "summary": "Files\u0020to\u0020add\u0020to\u0020the\u0020zip\u003A\u0020zip\u0020path\u0020\u003D\u003E\u0020local\u0020path.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_files"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024post_refs",
+            "name": "post_refs",
+            "summary": "Ref\u0020of\u0020each\u0020exported\u0020post,\u0020by\u0020source\u0020ID.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_post_refs"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024term_refs",
+            "name": "term_refs",
+            "summary": "Ref\u0020of\u0020each\u0020exported\u0020Instance\u0020Type,\u0020by\u0020term\u0020ID.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_term_refs"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024media_by_url",
+            "name": "media_by_url",
+            "summary": "Media\u0020entry\u0020of\u0020each\u0020exported\u0020address.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_media_by_url"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024collected",
+            "name": "collected",
+            "summary": "What\u0020build\u0028\u0029\u0020collected\u0020\u0028see\u0020Graphic_Data_Transfer_Exporter\u003A\u003Aget_collected\u0028\u0029\u0029.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_collected"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024embedded_files",
+            "name": "embedded_files",
+            "summary": "Titles\u0020of\u0020the\u0020items\u0020whose\u0020formatted\u0020text\u0020links\u0020to\u0020files\u0020in\u0020uploads.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_embedded_files"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024long_cells",
+            "name": "long_cells",
+            "summary": "Cells\u0020too\u0020long\u0020for\u0020Excel\u003A\u0020file,\u0020row\u0020and\u0020column.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_long_cells"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv_Exporter\u003A\u003A\u0024warnings",
+            "name": "warnings",
+            "summary": "Problems\u0020the\u0020export\u0020is\u0020shown\u0020with.",
+            "url": "classes/Graphic-Data-Transfer-Tsv-Exporter.html#property_warnings"
+        },                {
             "fqsen": "\\Graphic_Data_Transfer_Tsv",
             "name": "Graphic_Data_Transfer_Tsv",
             "summary": "Class\u0020Graphic_Data_Transfer_Tsv.",
@@ -1885,6 +2045,11 @@ Search.appendIndex(
             "name": "write_template",
             "summary": "Write\u0020the\u0020template\u0020zip\u003A\u0020an\u0020empty\u0020TSV\u0020file\u0020per\u0020content\u0020type\u0020\u0028header\u0020row\nonly\u0029\u0020and\u0020README.tsv\u0020describing\u0020every\u0020column.",
             "url": "classes/Graphic-Data-Transfer-Tsv.html#method_write_template"
+        },                {
+            "fqsen": "\\Graphic_Data_Transfer_Tsv\u003A\u003Aget_readme_rows\u0028\u0029",
+            "name": "get_readme_rows",
+            "summary": "Rows\u0020of\u0020README.tsv\u003A\u0020the\u0020general\u0020rules,\u0020then\u0020every\u0020column\u0020of\u0020every\u0020file.",
+            "url": "classes/Graphic-Data-Transfer-Tsv.html#method_get_readme_rows"
         },                {
             "fqsen": "\\Graphic_Data_Transfer_Tsv\u003A\u003Aget_general_notes\u0028\u0029",
             "name": "get_general_notes",
