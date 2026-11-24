@@ -1031,6 +1031,76 @@ Search.appendIndex(
             "summary": "The\u0020nonce\u0020field\u0020name\u0020used\u0020when\u0020saving\u0020the\u0020Instance\u0020section.",
             "url": "classes/Graphic-Data-Page-Options.html#constant_NONCE_NAME"
         },                {
+            "fqsen": "\\Graphic_Data_Revisions",
+            "name": "Graphic_Data_Revisions",
+            "summary": "Class\u0020Graphic_Data_Revisions.",
+            "url": "classes/Graphic-Data-Revisions.html"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003Aadd_revisioned_meta_keys\u0028\u0029",
+            "name": "add_revisioned_meta_keys",
+            "summary": "Add\u0020each\u0020Graphic\u0020Data\u0020type\u0027s\u0020fields\u0020to\u0020the\u0020meta\u0020keys\u0020core\u0020revisions.",
+            "url": "classes/Graphic-Data-Revisions.html#method_add_revisioned_meta_keys"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003Aadd_revision_fields\u0028\u0029",
+            "name": "add_revision_fields",
+            "summary": "Add\u0020each\u0020field\u0020to\u0020the\u0020fields\u0020the\u0020Revisions\u0020screen\u0020compares.",
+            "url": "classes/Graphic-Data-Revisions.html#method_add_revision_fields"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003Aget_field_text\u0028\u0029",
+            "name": "get_field_text",
+            "summary": "Text\u0020of\u0020a\u0020field\u0020for\u0020the\u0020Revisions\u0020screen.",
+            "url": "classes/Graphic-Data-Revisions.html#method_get_field_text"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003Arecord_saved_revision\u0028\u0029",
+            "name": "record_saved_revision",
+            "summary": "Note\u0020the\u0020revision\u0020saved\u0020for\u0020a\u0020post\u0020during\u0020this\u0020request.",
+            "url": "classes/Graphic-Data-Revisions.html#method_record_saved_revision"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003Afinish_restore\u0028\u0029",
+            "name": "finish_restore",
+            "summary": "Finish\u0020restoring\u0020a\u0020revision.",
+            "url": "classes/Graphic-Data-Revisions.html#method_finish_restore"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003Aremember_revision_data_files\u0028\u0029",
+            "name": "remember_revision_data_files",
+            "summary": "Note\u0020the\u0020data\u0020files\u0020of\u0020a\u0020Figure\u0020revision\u0020that\u0020is\u0020about\u0020to\u0020be\u0020deleted.",
+            "url": "classes/Graphic-Data-Revisions.html#method_remember_revision_data_files"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003Aremove_revision_data_files\u0028\u0029",
+            "name": "remove_revision_data_files",
+            "summary": "Remove\u0020the\u0020data\u0020files\u0020that\u0020only\u0020a\u0020deleted\u0020Figure\u0020revision\u0020used.",
+            "url": "classes/Graphic-Data-Revisions.html#method_remove_revision_data_files"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003Aget_labels\u0028\u0029",
+            "name": "get_labels",
+            "summary": "Edit\u0020screen\u0020labels\u0020of\u0020a\u0020post\u0020type\u0027s\u0020fields,\u0020from\u0020the\u0020bulk\u0020import\ncolumn\u0020definitions\u0020\u0028Graphic_Data_Transfer_Tsv\u003A\u003Aget_columns\u0028\u0029\u0029.",
+            "url": "classes/Graphic-Data-Revisions.html#method_get_labels"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003APOST_TYPES",
+            "name": "POST_TYPES",
+            "summary": "Post\u0020types\u0020whose\u0020fields\u0020are\u0020revisioned.",
+            "url": "classes/Graphic-Data-Revisions.html#constant_POST_TYPES"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003AFIELD_PREFIX",
+            "name": "FIELD_PREFIX",
+            "summary": "Start\u0020of\u0020the\u0020names\u0020given\u0020to\u0020the\u0020fields\u0020on\u0020the\u0020Revisions\u0020screen.\u0020Kept\napart\u0020from\u0020the\u0020meta\u0020keys\u0020themselves,\u0020which\u0020are\u0020also\u0020form\u0020fields\u0020on\u0020the\nedit\u0020screen\u0020and\u0020so\u0020would\u0020be\u0020copied\u0020into\u0020autosaves\u0020as\u0020post\u0020fields.",
+            "url": "classes/Graphic-Data-Revisions.html#constant_FIELD_PREFIX"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003A\u0024saved_revisions",
+            "name": "saved_revisions",
+            "summary": "Revision\u0020saved\u0020since\u0020the\u0020current\u0020restore\u0020began,\u0020by\u0020post\u0020ID.",
+            "url": "classes/Graphic-Data-Revisions.html#property_saved_revisions"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003A\u0024deleted_revision_files",
+            "name": "deleted_revision_files",
+            "summary": "Figure\u0020and\u0020data\u0020file\u0020names\u0020of\u0020each\u0020Figure\u0020revision\u0020being\u0020deleted,\u0020by\nrevision\u0020ID.",
+            "url": "classes/Graphic-Data-Revisions.html#property_deleted_revision_files"
+        },                {
+            "fqsen": "\\Graphic_Data_Revisions\u003A\u003A\u0024labels",
+            "name": "labels",
+            "summary": "Field\u0020labels\u0020and\u0020fieldset\u0020item\u0020labels,\u0020by\u0020post\u0020type.",
+            "url": "classes/Graphic-Data-Revisions.html#property_labels"
+        },                {
             "fqsen": "\\Graphic_Data_Search",
             "name": "Graphic_Data_Search",
             "summary": "Class\u0020Graphic_Data_Search",
@@ -2815,6 +2885,21 @@ Search.appendIndex(
             "name": "custom_file_upload_handler",
             "summary": "Handles\u0020the\u0020custom\u0020file\u0020upload\u0020process\u0020for\u0020the\u0020Graphic\u0020Data\u0020plugin.",
             "url": "classes/Graphic-Data-Figure.html#method_custom_file_upload_handler"
+        },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aget_unique_data_file_name\u0028\u0029",
+            "name": "get_unique_data_file_name",
+            "summary": "Name\u0020for\u0020a\u0020data\u0020file\u0020uploaded\u0020to\u0020a\u0020Figure\u0027s\u0020folder\u0020that\u0020leaves\u0020every\nexisting\u0020file\u0020in\u0020place\u003A\u0020data.csv,\u0020else\u0020data\u002D1.csv,\u0020data\u002D2.csv\u0020and\u0020so\u0020on.",
+            "url": "classes/Graphic-Data-Figure.html#method_get_unique_data_file_name"
+        },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aget_data_file_names\u0028\u0029",
+            "name": "get_data_file_names",
+            "summary": "Names\u0020of\u0020the\u0020data\u0020files\u0020a\u0020Figure,\u0020or\u0020one\u0020of\u0020its\u0020revisions,\u0020uses.",
+            "url": "classes/Graphic-Data-Figure.html#method_get_data_file_names"
+        },                {
+            "fqsen": "\\Graphic_Data_Figure\u003A\u003Aremove_unused_data_files\u0028\u0029",
+            "name": "remove_unused_data_files",
+            "summary": "Remove\u0020data\u0020files\u0020from\u0020a\u0020Figure\u0027s\u0020folder\u0020that\u0020neither\u0020the\u0020Figure\u0020nor\nany\u0020of\u0020its\u0020revisions\u0020uses,\u0020so\u0020that\u0020restoring\u0020a\u0020revision\u0020brings\u0020its\u0020data\nback.\u0020Files\u0020are\u0020compared\u0020by\u0020name,\u0020since\u0020the\u0020stored\u0020paths\u0020may\u0020be\u0020from\nanother\u0020server.",
+            "url": "classes/Graphic-Data-Figure.html#method_remove_unused_data_files"
         },                {
             "fqsen": "\\Graphic_Data_Figure\u003A\u003Agraphic_data_duplicate_figure\u0028\u0029",
             "name": "graphic_data_duplicate_figure",

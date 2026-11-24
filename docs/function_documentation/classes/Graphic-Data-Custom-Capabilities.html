@@ -230,7 +230,7 @@ permalink: /function_documentation/classes/Graphic-Data-Custom-Capabilities.html
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-capabilities.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-capabilities.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-capabilities.php">class-new-capabilities.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">437</span>
+    <span class="phpdocumentor-element-found-in__line">450</span>
 
     </aside>
 
@@ -457,7 +457,7 @@ from every role other than editor, administrator, and super administrator.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/admin/class-new-capabilities.php"><a href="files/plugins-graphic-data-plugin-admin-class-new-capabilities.html"><abbr title="plugins/graphic_data_plugin/admin/class-new-capabilities.php">class-new-capabilities.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">355</span>
+    <span class="phpdocumentor-element-found-in__line">356</span>
 
     </aside>
 
@@ -470,9 +470,10 @@ from every role other than editor, administrator, and super administrator.</p>
     <div class="phpdocumentor-label-line">
         </div>
     
-        <section class="phpdocumentor-description"><p>On <code class="prettyprint">post.php</code> for scene, modal, and figure post types, verifies that the
-Author's assigned instances include the instance associated with the
-post being edited. If the user has no assigned instances or the post belongs
+        <section class="phpdocumentor-description"><p>On <code class="prettyprint">post.php</code> for scene, modal, and figure post types, and on
+<code class="prettyprint">revision.php</code> (where a revision can be restored) for their revisions,
+verifies that the Author's assigned instances include the instance
+associated with the post being edited. If the user has no assigned instances or the post belongs
 to an unassigned instance, the user is redirected to the post type's list screen.
 Administrators and non-Content-Editor roles are not affected.</p>
 </section>

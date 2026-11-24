@@ -231,6 +231,13 @@ and file upload/delete handlers for interactive figure data.</p>
 <dd>Callback function for the /media/alt-text-by-url REST route.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_get_data_file_names">get_data_file_names()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, string&gt;    </span>
+</dt>
+<dd>Names of the data files a Figure, or one of its revisions, uses.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Figure.html#method_get_figure_filter_value">get_figure_filter_value()</a>
     <span>
                                 &nbsp;: bool|string|int    </span>
@@ -289,6 +296,16 @@ returns its bytes as base64.</dd>
 <dd>Registers a custom REST API route to get alt text by image URL.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_remove_unused_data_files">remove_unused_data_files()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Remove data files from a Figure&#039;s folder that neither the Figure nor
+any of its revisions uses, so that restoring a revision brings its data
+back. Files are compared by name, since the stored paths may be from
+another server.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/Graphic-Data-Figure.html#method_restrict_figure_code_save">restrict_figure_code_save()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
@@ -302,6 +319,14 @@ saving user is an administrator.</dd>
                                 &nbsp;: void    </span>
 </dt>
 <dd>Store figure filter values in user metadata with 20-minute expiration.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/Graphic-Data-Figure.html#method_get_unique_data_file_name">get_unique_data_file_name()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+<dd>Name for a data file uploaded to a Figure&#039;s folder that leaves every
+existing file in place: data.csv, else data-1.csv, data-2.csv and so on.</dd>
 
     </dl>
 
@@ -654,7 +679,7 @@ from being applied.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1849</span>
+    <span class="phpdocumentor-element-found-in__line">1924</span>
 
     </aside>
 
@@ -1035,7 +1060,7 @@ to be hooked into the 'rest_figure_query' filter.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">2162</span>
+    <span class="phpdocumentor-element-found-in__line">2139</span>
 
     </aside>
 
@@ -1089,6 +1114,57 @@ to be hooked into the 'rest_figure_query' filter.</p>
                 <section class="phpdocumentor-description"><p>The REST API response.</p>
 </section>
 
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_data_file_names">
+        get_data_file_names()
+        <a href="classes/Graphic-Data-Figure.html#method_get_data_file_names" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1157</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Names of the data files a Figure, or one of its revisions, uses.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">get_data_file_names</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$post_id</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$post_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Figure or revision ID.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, string&gt;</span>
             </section>
 
 </article>
@@ -1187,7 +1263,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1371</span>
+    <span class="phpdocumentor-element-found-in__line">1443</span>
 
     </aside>
 
@@ -1247,7 +1323,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1141</span>
+    <span class="phpdocumentor-element-found-in__line">1213</span>
 
     </aside>
 
@@ -1296,7 +1372,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1637</span>
+    <span class="phpdocumentor-element-found-in__line">1709</span>
 
     </aside>
 
@@ -1350,7 +1426,7 @@ the metadata entries and returns false. Otherwise, it returns the stored value.<
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1513</span>
+    <span class="phpdocumentor-element-found-in__line">1585</span>
 
     </aside>
 
@@ -1410,7 +1486,7 @@ in Figure post meta.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">1703</span>
+    <span class="phpdocumentor-element-found-in__line">1775</span>
 
     </aside>
 
@@ -1510,7 +1586,7 @@ proxies the request through WordPress instead.</p>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">2131</span>
+    <span class="phpdocumentor-element-found-in__line">2108</span>
 
     </aside>
 
@@ -1540,6 +1616,65 @@ proxies the request through WordPress instead.</p>
                                                                                                         
                                     </dd>
                         </dl>
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_remove_unused_data_files">
+        remove_unused_data_files()
+        <a href="classes/Graphic-Data-Figure.html#method_remove_unused_data_files" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1178</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Remove data files from a Figure&#039;s folder that neither the Figure nor
+any of its revisions uses, so that restoring a revision brings its data
+back. Files are compared by name, since the stored paths may be from
+another server.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">remove_unused_data_files</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$figure_id</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">array&lt;string|int, string&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$file_names</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$figure_id</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Figure ID.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$file_names</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, string&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Names of the files to remove if unused.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
 
         
     
@@ -1707,6 +1842,69 @@ It handles all three filter types: instance, scene, and icon.</p>
     
     
 </article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_get_unique_data_file_name">
+        get_unique_data_file_name()
+        <a href="classes/Graphic-Data-Figure.html#method_get_unique_data_file_name" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="plugins/graphic_data_plugin/includes/admin-figure.php"><a href="files/plugins-graphic-data-plugin-includes-admin-figure.html"><abbr title="plugins/graphic_data_plugin/includes/admin-figure.php">admin-figure.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">1140</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Name for a data file uploaded to a Figure&#039;s folder that leaves every
+existing file in place: data.csv, else data-1.csv, data-2.csv and so on.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">get_unique_data_file_name</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dir</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$file_name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>A CSV's name also leaves free the name of the JSON made from it.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$dir</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Figure's data folder, with a trailing slash.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$file_name</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Name of the uploaded file.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
+</article>
             </section>
 
         
@@ -1741,6 +1939,7 @@ It handles all three filter types: instance, scene, and icon.</p>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_figure_location_filter_results">figure_location_filter_results()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_filter_figure_by_figure_modal">filter_figure_by_figure_modal()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_get_alt_text_by_url_callback">get_alt_text_by_url_callback()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_get_data_file_names">get_data_file_names()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_get_figure_filter_value">get_figure_filter_value()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_graphic_data_copy_figure_data_files">graphic_data_copy_figure_data_files()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_graphic_data_duplicate_figure">graphic_data_duplicate_figure()</a></li>
@@ -1749,8 +1948,10 @@ It handles all three filter types: instance, scene, and icon.</p>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_proxy_external_image_handler">proxy_external_image_handler()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_register_figure_rest_fields">register_figure_rest_fields()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_register_get_alt_text_by_url_route">register_get_alt_text_by_url_route()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_remove_unused_data_files">remove_unused_data_files()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_restrict_figure_code_save">restrict_figure_code_save()</a></li>
                                             <li class=""><a href="classes/Graphic-Data-Figure.html#method_store_figure_filter_values">store_figure_filter_values()</a></li>
+                                            <li class=""><a href="classes/Graphic-Data-Figure.html#method_get_unique_data_file_name">get_unique_data_file_name()</a></li>
                                     </ul>
             </li>
                     </ul>
