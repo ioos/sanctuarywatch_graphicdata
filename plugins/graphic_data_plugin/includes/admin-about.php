@@ -53,7 +53,7 @@ class Graphic_Data_About {
 			'has_archive'        => false,
 			'hierarchical'       => false,
 			'menu_position'      => 20,
-			'supports'           => array( 'title' ), // array( 'title', 'revisions' ).
+			'supports'           => array( 'title', 'revisions' ),
 		);
 
 		register_post_type( 'about', $args );

@@ -63,7 +63,7 @@ class Graphic_Data_Modal {
 			'has_archive'        => true,
 			'hierarchical'       => false,
 			'menu_position'      => null,
-			'supports'           => array( 'title' ), // array( 'title', 'revisions' ).
+			'supports'           => array( 'title', 'revisions' ),
 		);
 		register_post_type( 'modal', $args );
 	}

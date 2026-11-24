@@ -489,7 +489,7 @@ class Graphic_Data_Figure {
 			'has_archive'        => true,
 			'hierarchical'       => false,
 			'menu_position'      => 40,
-			'supports'           => array( 'title' ), // array( 'title', 'revisions' ),.
+			'supports'           => array( 'title', 'revisions' ),
 		);
 
 		register_post_type( 'figure', $args );
@@ -991,7 +991,10 @@ class Graphic_Data_Figure {
 	 * @return void Outputs a JSON response indicating success or failure.
 	 */
 	public static function custom_file_upload_handler() {
-		ob_clean(); // Ensure no unwanted output.
+		// Ensure no unwanted output (there may be no buffer to clean).
+		if ( ob_get_level() ) {
+			ob_clean();
+		}
 
 		// First, verify nonce.
 		if (
@@ -1049,9 +1052,16 @@ class Graphic_Data_Figure {
 			mkdir( $upload_dir, 0775, true );
 		}
 
+		// Data files never replace an existing file, which an earlier revision of the Figure may still use.
+		if ( 'json' === $file_ext && '' != $csv_path ) {
+			// The JSON made from the Figure's CSV in the browser goes next to that CSV, under the same name.
+			$file_name = preg_replace( '/\.csv$/', '.json', basename( $csv_path ) );
+		} elseif ( in_array( $file_ext, [ 'csv', 'json', 'geojson' ], true ) ) {
+			$file_name = self::get_unique_data_file_name( $upload_dir, $file_name );
+		}
+
 		// Move the file to the upload folder and update the database fields.
 		$destination = $upload_dir . basename( $file_name );
-		$destination_json = $upload_dir . basename( preg_replace( '/\.csv$/', '.json', $file_name ) );
 
 		// Move the uploaded file to the destination directory.
 		if ( move_uploaded_file( $file_tmp_name, $destination ) ) {
@@ -1115,6 +1125,68 @@ class Graphic_Data_Figure {
 		} else {
 			// Send an error response if the file upload fails.
 			wp_send_json_error( [ 'message' => 'File upload failed.' ], 500 );
+		}
+	}
+
+	/**
+	 * Name for a data file uploaded to a Figure's folder that leaves every
+	 * existing file in place: data.csv, else data-1.csv, data-2.csv and so on.
+	 * A CSV's name also leaves free the name of the JSON made from it.
+	 *
+	 * @param string $dir       Figure's data folder, with a trailing slash.
+	 * @param string $file_name Name of the uploaded file.
+	 * @return string
+	 */
+	private static function get_unique_data_file_name( $dir, $file_name ) {
+		$base = pathinfo( $file_name, PATHINFO_FILENAME );
+		$ext  = pathinfo( $file_name, PATHINFO_EXTENSION );
+		for ( $i = 0; ; $i++ ) {
+			$candidate = $i ? $base . '-' . $i : $base;
+			if ( ! file_exists( $dir . $candidate . '.' . $ext ) && ( 'csv' !== $ext || ! file_exists( $dir . $candidate . '.json' ) ) ) {
+				return $candidate . '.' . $ext;
+			}
+		}
+	}
+
+	/**
+	 * Names of the data files a Figure, or one of its revisions, uses.
+	 *
+	 * @param int $post_id Figure or revision ID.
+	 * @return string[]
+	 */
+	public static function get_data_file_names( $post_id ) {
+		$names = [];
+		foreach ( [ 'uploaded_path_csv', 'uploaded_path_json', 'uploaded_path_geojson', 'uploaded_file' ] as $key ) {
+			$value = (string) get_post_meta( $post_id, $key, true );
+			if ( '' !== $value ) {
+				$names[] = basename( $value );
+			}
+		}
+		return array_values( array_unique( $names ) );
+	}
+
+	/**
+	 * Remove data files from a Figure's folder that neither the Figure nor
+	 * any of its revisions uses, so that restoring a revision brings its data
+	 * back. Files are compared by name, since the stored paths may be from
+	 * another server.
+	 *
+	 * @param int      $figure_id  Figure ID.
+	 * @param string[] $file_names Names of the files to remove if unused.
+	 * @return void
+	 */
+	public static function remove_unused_data_files( $figure_id, $file_names ) {
+		$used = self::get_data_file_names( $figure_id );
+		foreach ( wp_get_post_revisions( $figure_id, [ 'check_enabled' => false ] ) as $revision ) {
+			$used = array_merge( $used, self::get_data_file_names( $revision->ID ) );
+		}
+
+		$dir = ABSPATH . 'wp-content/data/figure_' . (int) $figure_id . '/';
+		foreach ( array_diff( array_unique( array_map( 'basename', $file_names ) ), $used ) as $name ) {
+			$path = $dir . $name;
+			if ( in_array( strtolower( pathinfo( $name, PATHINFO_EXTENSION ) ), [ 'csv', 'json', 'geojson' ], true ) && is_file( $path ) ) {
+				wp_delete_file( $path );
+			}
 		}
 	}
 
@@ -1701,7 +1773,10 @@ class Graphic_Data_Figure {
 	 * @return void Outputs a JSON response with the image's base64 data and MIME type.
 	 */
 	public static function proxy_external_image_handler() {
-		ob_clean(); // Ensure no unwanted output.
+		// Ensure no unwanted output (there may be no buffer to clean).
+		if ( ob_get_level() ) {
+			ob_clean();
+		}
 
 		// First, verify nonce.
 		if (
@@ -1847,7 +1922,10 @@ class Graphic_Data_Figure {
 	// }
 
 	public static function custom_file_delete_handler() {
-		ob_clean(); // Ensure no unwanted output.
+		// Ensure no unwanted output (there may be no buffer to clean).
+		if ( ob_get_level() ) {
+			ob_clean();
+		}
 
 		// Verify nonce.
 		if (
@@ -1998,128 +2076,27 @@ class Graphic_Data_Figure {
 		* ---------------------------------------------------------
 		* NON-HTML UPLOADED DATA FILES
 		* ---------------------------------------------------------
-		*/
-
-		$file_name_json = strtolower(
-			preg_replace(
-				'/\.csv$/i',
-				'.json',
-				$file_name
-			)
-		);
-
-		$file_path_json = $delete_dir . basename(
-			preg_replace(
-				'/\.csv$/i',
-				'.json',
-				$file_name_json
-			)
-		);
-
-		// Check if the uploaded data file exists.
-		if ( ! file_exists( $file_path ) ) {
-			wp_send_json_error(
-				[
-					'message' => 'File does not exist.',
-				],
-				404
-			);
-		}
-
-		/*
-		* CSV
 		*
-		* Delete the JSON file generated from the CSV.
+		* The data file (and, for a CSV, the JSON made from it) is taken
+		* off the Figure. It stays on the server while a revision of the
+		* Figure uses it, so restoring that revision brings the data back
+		* (see remove_unused_data_files()). A file that is already
+		* missing is still taken off, so a new one can be uploaded.
 		*/
-		if ( 'csv' === $file_extension ) {
+		$file_names   = self::get_data_file_names( $post_id );
+		$file_names[] = $file_name;
 
-			if ( file_exists( $file_path_json ) ) {
-				unlink( $file_path_json );
-			}
-
-			update_post_meta(
-				$post_id,
-				'uploaded_path_csv',
-				''
-			);
-
-			update_post_meta(
-				$post_id,
-				'uploaded_path_json',
-				''
-			);
-
-			update_post_meta(
-				$post_id,
-				'uploaded_file',
-				''
-			);
+		foreach ( [ 'uploaded_path_csv', 'uploaded_path_json', 'uploaded_path_geojson', 'uploaded_file', 'plotFields' ] as $key ) {
+			update_post_meta( $post_id, $key, '' );
 		}
 
-		/*
-		* GeoJSON
-		*/
-		if ( 'geojson' === $file_extension ) {
+		self::remove_unused_data_files( $post_id, $file_names );
 
-			update_post_meta(
-				$post_id,
-				'uploaded_path_geojson',
-				''
-			);
-
-			update_post_meta(
-				$post_id,
-				'uploaded_path_json',
-				''
-			);
-
-			update_post_meta(
-				$post_id,
-				'uploaded_file',
-				''
-			);
-		}
-
-		// Delete the requested uploaded data file.
-		if ( unlink( $file_path ) ) {
-
-			update_post_meta(
-				$post_id,
-				'uploaded_path_csv',
-				''
-			);
-
-			update_post_meta(
-				$post_id,
-				'uploaded_path_json',
-				''
-			);
-
-			update_post_meta(
-				$post_id,
-				'uploaded_file',
-				''
-			);
-
-			update_post_meta(
-				$post_id,
-				'plotFields',
-				''
-			);
-
-			wp_send_json_success(
-				[
-					'message' => 'File deleted successfully.',
-					'path'    => $file_path,
-				]
-			);
-		}
-
-		wp_send_json_error(
+		wp_send_json_success(
 			[
-				'message' => 'Failed to delete the file.',
-			],
-			500
+				'message' => 'File deleted successfully.',
+				'path'    => $file_path,
+			]
 		);
 	}
 

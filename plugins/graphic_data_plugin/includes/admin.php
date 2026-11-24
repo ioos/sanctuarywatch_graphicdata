@@ -184,6 +184,9 @@ class Graphic_Data_Plugin {
 			plugin_dir_url( __DIR__ ),
 			GRAPHIC_DATA_PLUGIN_VERSION
 		);
+
+		// The class that adds the Graphic Data fields to WordPress revisions.
+		require_once plugin_dir_path( __DIR__ ) . 'admin/class-revisions.php';
 	}
 
 	/**
@@ -384,6 +387,15 @@ class Graphic_Data_Plugin {
 		$this->loader->add_action( 'init', $plugin_admin_plugin_only, 'placeholder_content_director' );
 		$this->loader->add_action( 'before_delete_post', $plugin_admin_plugin_only, 'reset_placeholders_on_post_delete' );
 		$this->loader->add_action( 'pre_delete_term', $plugin_admin_plugin_only, 'reset_placeholders_on_term_delete' );
+
+		// Load class and functions that add the Graphic Data fields to WordPress revisions.
+		$plugin_revisions = new Graphic_Data_Revisions();
+		$this->loader->add_filter( 'wp_post_revision_meta_keys', $plugin_revisions, 'add_revisioned_meta_keys', 10, 2 );
+		$this->loader->add_filter( '_wp_post_revision_fields', $plugin_revisions, 'add_revision_fields', 10, 2 );
+		$this->loader->add_action( '_wp_put_post_revision', $plugin_revisions, 'record_saved_revision', 20, 2 );
+		$this->loader->add_action( 'wp_restore_post_revision', $plugin_revisions, 'finish_restore', 20, 2 );
+		$this->loader->add_action( 'before_delete_post', $plugin_revisions, 'remember_revision_data_files' );
+		$this->loader->add_action( 'deleted_post', $plugin_revisions, 'remove_revision_data_files' );
 
 		// Load class and functions associated with the optional data wipe on uninstall.
 		$plugin_deactivation_cleanup = new Graphic_Data_Deactivation_Cleanup();

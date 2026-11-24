@@ -342,9 +342,10 @@ class Graphic_Data_Custom_Capabilities {
 	/**
 	 * Restricts access to individual post edit screens for authors.
 	 *
-	 * On `post.php` for scene, modal, and figure post types, verifies that the
-	 * Author's assigned instances include the instance associated with the
-	 * post being edited. If the user has no assigned instances or the post belongs
+	 * On `post.php` for scene, modal, and figure post types, and on
+	 * `revision.php` (where a revision can be restored) for their revisions,
+	 * verifies that the Author's assigned instances include the instance
+	 * associated with the post being edited. If the user has no assigned instances or the post belongs
 	 * to an unassigned instance, the user is redirected to the post type's list screen.
 	 * Administrators and non-Content-Editor roles are not affected.
 	 *
@@ -356,7 +357,7 @@ class Graphic_Data_Custom_Capabilities {
 		global $pagenow;
 
 		// Only on post editing screens.
-		if ( ! is_admin() || ! in_array( $pagenow, array( 'post.php', 'post-new.php' ) ) ) {
+		if ( ! is_admin() || ! in_array( $pagenow, array( 'post.php', 'post-new.php', 'revision.php' ) ) ) {
 			return;
 		}
 
@@ -364,6 +365,18 @@ class Graphic_Data_Custom_Capabilities {
 		$post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only access control check on page load, no form processing.
 		$post_id   = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
+
+		// The Revisions screen names a revision; check the post it belongs to.
+		if ( 'revision.php' === $pagenow ) {
+			foreach ( array( 'revision', 'to', 'from' ) as $param ) {
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only access control check on page load, no form processing.
+				$revision_id = isset( $_GET[ $param ] ) ? absint( $_GET[ $param ] ) : 0;
+				if ( $revision_id > 0 ) {
+					$post_id = (int) wp_get_post_parent_id( $revision_id );
+					break;
+				}
+			}
+		}
 
 		// Determine the actual post type being edited.
 		if ( $post_id > 0 ) {
@@ -393,7 +406,7 @@ class Graphic_Data_Custom_Capabilities {
 		}
 
 		// If editing an existing post.
-		if ( 'post.php' === $pagenow && $post_id > 0 ) {
+		if ( in_array( $pagenow, array( 'post.php', 'revision.php' ), true ) && $post_id > 0 ) {
 			$current_user = wp_get_current_user();
 			$user_instances = get_user_meta( $current_user->ID, 'assigned_instances', true );
 			$redirect_url = admin_url( 'edit.php?post_type=' . $current_post_type );

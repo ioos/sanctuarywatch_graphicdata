@@ -591,6 +591,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 										// Hide the upload button and the file input
 										uploadBtn.style.display = "none";
 										fileInput.style.display = "none";
+										// Leave the file input out of the save: the server may have renamed the
+										// file, and the save would store the chosen name as uploaded_file.
+										fileInput.disabled = true;
 										clickUpdateButton();
 
 										// Display message after hiding the buttons
@@ -630,6 +633,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 									// Hide the upload button and the file input
 									uploadBtn.style.display = "none";
 									fileInput.style.display = "none";
+									// Leave the file input out of the save: the server may have renamed the
+									// file, and the save would store the chosen name as uploaded_file.
+									fileInput.disabled = true;
 									clickUpdateButton();
 
 									// Display message after hiding the buttons
@@ -662,6 +668,9 @@ if ( ! class_exists( 'Exopite_Simple_Options_Framework_Field_upload' ) ) {
 									// Hide the upload button and the file input
 									uploadBtn.style.display = "none";
 									fileInput.style.display = "none";
+									// Leave the file input out of the save: the server may have renamed the
+									// file, and the save would store the chosen name as uploaded_file.
+									fileInput.disabled = true;
 									clickUpdateButton();
 
 								} catch (error) {
